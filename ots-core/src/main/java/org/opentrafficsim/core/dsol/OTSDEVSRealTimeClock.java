@@ -97,4 +97,11 @@ public class OTSDEVSRealTimeClock extends
         return new Time.Rel(factor, TimeUnit.MILLISECOND);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "OTSDEVSRealTimeClock [time=" + getSimulatorTime().getTime() + "]";
+    }
+
 }

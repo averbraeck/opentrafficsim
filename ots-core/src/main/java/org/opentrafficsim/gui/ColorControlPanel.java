@@ -130,4 +130,11 @@ public class ColorControlPanel extends JPanel implements ActionListener
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ColorControlPanel [gtuColorer=" + this.gtuColorer + "]";
+    }
+
 }

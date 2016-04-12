@@ -72,8 +72,7 @@ public interface DiscreteDistFloatScalar
      * @param <T> The absolute floatscalar type
      * @param <U> The unit type used
      */
-    class Abs<T extends FloatScalar.Abs<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar
-        implements Absolute
+    class Abs<T extends FloatScalar.Abs<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar implements Absolute
     {
         /**
          * @param distribution the wrapped distribution function.
@@ -96,7 +95,7 @@ public interface DiscreteDistFloatScalar
         /**
          * @return a drawn number from the distribution in the given unit.
          */
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         public final T draw()
         {
             switch (getUnit().getClass().getSimpleName())
@@ -117,6 +116,13 @@ public interface DiscreteDistFloatScalar
                     return (T) new FloatScalar.Abs(getDistribution().draw(), getUnit());
             }
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "DiscreteDistFloatScalar.Abs [T=" + getUnit().getClass().getSimpleName() + "]";
+        }
     }
 
     /**
@@ -124,8 +130,7 @@ public interface DiscreteDistFloatScalar
      * @param <T> The absolute float scalar type
      * @param <U> The unit type used
      */
-    class Rel<T extends FloatScalar.Rel<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar
-        implements Relative
+    class Rel<T extends FloatScalar.Rel<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar implements Relative
     {
         /**
          * @param distribution the wrapped distribution function.
@@ -148,7 +153,7 @@ public interface DiscreteDistFloatScalar
         /**
          * @return a drawn number from the distribution in the given unit.
          */
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         public final T draw()
         {
             switch (getUnit().getClass().getSimpleName())
@@ -172,20 +177,18 @@ public interface DiscreteDistFloatScalar
                     return (T) new FloatDimensionless.Rel(getDistribution().draw(), getUnit());
 
                 case "ElectricalChargeUnit":
-                    return (T) new FloatElectricalCharge((float) getDistribution().draw(),
-                        (ElectricalChargeUnit) getUnit());
+                    return (T) new FloatElectricalCharge((float) getDistribution().draw(), (ElectricalChargeUnit) getUnit());
 
                 case "ElectricalCurrentUnit":
-                    return (T) new FloatElectricalCurrent((float) getDistribution().draw(),
-                        (ElectricalCurrentUnit) getUnit());
+                    return (T) new FloatElectricalCurrent((float) getDistribution().draw(), (ElectricalCurrentUnit) getUnit());
 
                 case "ElectricalPotentialUnit":
                     return (T) new FloatElectricalPotential((float) getDistribution().draw(),
-                        (ElectricalPotentialUnit) getUnit());
+                            (ElectricalPotentialUnit) getUnit());
 
                 case "ElectricalResistanceUnit":
                     return (T) new FloatElectricalResistance((float) getDistribution().draw(),
-                        (ElectricalResistanceUnit) getUnit());
+                            (ElectricalResistanceUnit) getUnit());
 
                 case "EnergyUnit":
                     return (T) new FloatEnergy((float) getDistribution().draw(), (EnergyUnit) getUnit());
@@ -235,6 +238,14 @@ public interface DiscreteDistFloatScalar
                 default:
                     return (T) new FloatScalar.Rel(getDistribution().draw(), getUnit());
             }
+        }
+
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "DiscreteDistFloatScalar.Rel [T=" + getUnit().getClass().getSimpleName() + "]";
         }
     }
 

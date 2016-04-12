@@ -117,6 +117,14 @@ public interface ContinuousDistFloatScalar
                     return (T) new FloatScalar.Abs((float) getDistribution().draw(), getUnit());
             }
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "ContinuousDistFloatScalar.Abs [T=" + getUnit().getClass().getSimpleName() + "]";
+        }
+        
     }
 
     /**
@@ -236,6 +244,14 @@ public interface ContinuousDistFloatScalar
                     return (T) new FloatScalar.Rel((float) getDistribution().draw(), getUnit());
             }
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "ContinuousDistFloatScalar.Rel [T=" + getUnit().getClass().getSimpleName() + "]";
+        }
+        
     }
 
 }

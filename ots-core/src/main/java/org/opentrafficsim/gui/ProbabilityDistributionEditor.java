@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.beans.PropertyChangeListener;
+import java.util.Arrays;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -140,6 +141,13 @@ public class ProbabilityDistributionEditor extends JPanel
     public final void removePropertyChangeListener(final String key, final PropertyChangeListener pcl)
     {
         this.slider.removePropertyChangeListener(key, pcl);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ProbabilityDistributionEditor [slider=" + this.slider + ", labels=" + Arrays.toString(this.labels) + "]";
     }
 
 }

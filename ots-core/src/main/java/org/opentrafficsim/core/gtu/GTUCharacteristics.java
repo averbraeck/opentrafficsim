@@ -126,4 +126,12 @@ public class GTUCharacteristics
         return this.network;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "GTUCharacteristics [gtuType=" + this.gtuType + ", length=" + this.length + ", width=" + this.width
+                + ", maximumVelocity=" + this.maximumVelocity + "]";
+    }
+
 }

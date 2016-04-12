@@ -42,4 +42,11 @@ public class ProbabilisticRouteGenerator implements RouteGenerator
     {
         return this.distribution.draw();
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ProbabilisticRouteGenerator [distribution=" + this.distribution + "]";
+    }
 }

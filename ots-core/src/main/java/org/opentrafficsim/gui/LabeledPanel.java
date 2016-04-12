@@ -27,4 +27,11 @@ public class LabeledPanel extends JPanel
         super();
         setBorder(new TitledBorder(null, caption, TitledBorder.LEADING, TitledBorder.TOP, null, null));
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LabeledPanel [caption=" + ((TitledBorder) getBorder()).getTitle() + "]";
+    }
 }

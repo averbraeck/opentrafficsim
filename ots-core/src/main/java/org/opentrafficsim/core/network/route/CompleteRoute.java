@@ -57,7 +57,7 @@ public class CompleteRoute extends Route
                 if (!fromNode.isDirectionallyConnectedTo(this.gtuType, toNode))
                 {
                     throw new NetworkException("CompleteRoute: node " + fromNode
-                        + " not directly or not directionally connected to node " + toNode);
+                            + " not directly or not directionally connected to node " + toNode);
                 }
             }
             fromNode = toNode;
@@ -74,7 +74,7 @@ public class CompleteRoute extends Route
             if (!lastNode.isDirectionallyConnectedTo(this.gtuType, node))
             {
                 throw new NetworkException("CompleteRoute: last node " + lastNode
-                    + " not directly or not directionally connected to node " + node);
+                        + " not directly or not directionally connected to node " + node);
             }
         }
         super.addNode(node);
@@ -97,6 +97,13 @@ public class CompleteRoute extends Route
             }
         }
         return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "CompleteRoute [gtuType=" + this.gtuType + ", nodes=" + super.getNodes() + "]";
     }
 
 }

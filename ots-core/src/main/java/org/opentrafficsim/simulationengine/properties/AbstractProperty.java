@@ -163,6 +163,13 @@ public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T
             throw new UnsupportedOperationException();
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "PropertyIterator [currentIndex=" + this.currentIndex + ", list=" + this.list + "]";
+        }
+
     }
 
 }

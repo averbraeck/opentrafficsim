@@ -69,4 +69,11 @@ public class StaticObject implements ObjectInterface
         return this.geometry.getBounds();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "StaticObject [geometry=" + this.geometry + ", height=" + this.height + "]";
+    }
+
 }

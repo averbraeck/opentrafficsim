@@ -72,8 +72,7 @@ public interface DiscreteDistDoubleScalar
      * @param <T> The absolute doublescalar type
      * @param <U> The unit type used
      */
-    class Abs<T extends DoubleScalar.Abs<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar
-        implements Absolute
+    class Abs<T extends DoubleScalar.Abs<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar implements Absolute
     {
         /**
          * @param distribution the wrapped distribution function.
@@ -96,7 +95,7 @@ public interface DiscreteDistDoubleScalar
         /**
          * @return a drawn number from the distribution in the given unit.
          */
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         public final T draw()
         {
             switch (getUnit().getClass().getSimpleName())
@@ -117,6 +116,14 @@ public interface DiscreteDistDoubleScalar
                     return (T) new DoubleScalar.Abs(getDistribution().draw(), getUnit());
             }
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "DiscreteDistDoubleScalar.Abs [T=" + getUnit().getClass().getSimpleName() + "]";
+        }
+
     }
 
     /**
@@ -124,8 +131,7 @@ public interface DiscreteDistDoubleScalar
      * @param <T> The absolute doublescalar type
      * @param <U> The unit type used
      */
-    class Rel<T extends DoubleScalar.Rel<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar
-        implements Relative
+    class Rel<T extends DoubleScalar.Rel<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar implements Relative
     {
         /**
          * @param distribution the wrapped distribution function.
@@ -148,7 +154,7 @@ public interface DiscreteDistDoubleScalar
         /**
          * @return a drawn number from the distribution in the given unit.
          */
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         public final T draw()
         {
             switch (getUnit().getClass().getSimpleName())
@@ -232,6 +238,14 @@ public interface DiscreteDistDoubleScalar
                     return (T) new DoubleScalar.Rel(getDistribution().draw(), getUnit());
             }
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "DiscreteDistDoubleScalar.Rel [T=" + getUnit().getClass().getSimpleName() + "]";
+        }
+
     }
 
 }

@@ -45,5 +45,12 @@ public class IdGenerator implements Serializable
         }
         return this.baseName + number;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "IdGenerator [baseName=" + this.baseName + ", last=" + this.last + "]";
+    }
     
 }

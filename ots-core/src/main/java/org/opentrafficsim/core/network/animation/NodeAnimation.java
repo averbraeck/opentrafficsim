@@ -34,8 +34,7 @@ public class NodeAnimation extends Renderable2D implements Serializable
      * @throws NamingException when animation context cannot be found.
      * @throws RemoteException on communication failure
      */
-    public NodeAnimation(final Node node, final OTSSimulatorInterface simulator) throws NamingException,
-        RemoteException
+    public NodeAnimation(final Node node, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
     {
         super(node, simulator);
     }
@@ -46,6 +45,13 @@ public class NodeAnimation extends Renderable2D implements Serializable
     {
         graphics.setColor(Color.BLACK);
         graphics.draw(new Ellipse2D.Double(-1.0, -1.0, 2.0, 2.0));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "NodeAnimation [node=" + super.getSource() + "]";
     }
 
 }

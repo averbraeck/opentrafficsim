@@ -68,4 +68,11 @@ public class LinkDirection implements Serializable
     {
         return this.direction.equals(GTUDirectionality.DIR_PLUS) ? this.link.getStartNode() : this.link.getEndNode();
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LinkDirection [link=" + this.link + ", direction=" + this.direction + "]";
+    }
 }

@@ -59,9 +59,16 @@ public class ParameterTypeLinearDensity extends ParameterType<LinearDensityUnit,
      * @param check Check for parameter values.
      */
     public ParameterTypeLinearDensity(final String id, final String description, final LinearDensity defaultValue,
-        final Check check)
+            final Check check)
     {
         super(id, description, LinearDensity.class, defaultValue, check);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ParameterTypeLinearDensity [id=" + super.getId() + "]";
     }
 
 }

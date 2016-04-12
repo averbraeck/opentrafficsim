@@ -115,4 +115,11 @@ public class OTSSimulationPanel extends JPanel
         return this.statusBar;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "OTSSimulationPanel [simulatorTime=" + this.simulator.getSimulatorTime().getTime() + "]";
+    }
+
 }

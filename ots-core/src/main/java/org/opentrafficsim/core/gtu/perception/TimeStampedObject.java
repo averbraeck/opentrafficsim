@@ -53,4 +53,11 @@ public class TimeStampedObject<C> implements Serializable
         return this.timestamp;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "TimeStampedObject [object=" + this.object + ", timestamp=" + this.timestamp + "]";
+    }
+
 }

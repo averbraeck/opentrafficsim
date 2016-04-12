@@ -883,6 +883,14 @@ public final class Test
             return "fail";
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "MyCallable [referenceLine=" + this.referenceLine + ", offset=" + this.offset + ", offsetMethod="
+                    + this.offsetMethod + "]";
+        }
+
     }
 
 }

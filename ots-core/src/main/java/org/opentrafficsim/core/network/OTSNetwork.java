@@ -152,7 +152,7 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
         if (!containsNode(link.getStartNode()) || !containsNode(link.getEndNode()))
         {
             throw new NetworkException("Start node or end node of Link " + link.getId() + " not registered in network "
-                + this.id);
+                    + this.id);
         }
         this.linkMap.put(link.getId(), link);
     }
@@ -241,19 +241,19 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
         if (containsRoute(gtuType, route))
         {
             throw new NetworkException("Route " + route + " for GTUType " + gtuType + " already registered in network "
-                + this.id);
+                    + this.id);
         }
         if (this.routeMap.containsKey(gtuType) && this.routeMap.get(gtuType).keySet().contains(route.getId()))
         {
             throw new NetworkException("Route with name " + route.getId() + " for GTUType " + gtuType
-                + " already registered in network " + this.id);
+                    + " already registered in network " + this.id);
         }
         for (Node node : route.getNodes())
         {
             if (!containsNode(node))
             {
-                throw new NetworkException("Node " + node.getId() + " of route " + route.getId() + " for GTUType "
-                    + gtuType + " not registered in network " + this.id);
+                throw new NetworkException("Node " + node.getId() + " of route " + route.getId() + " for GTUType " + gtuType
+                        + " not registered in network " + this.id);
             }
         }
         if (!this.routeMap.containsKey(gtuType))
@@ -269,8 +269,7 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
     {
         if (!containsRoute(gtuType, route))
         {
-            throw new NetworkException("Route " + route + " for GTUType " + gtuType + " not registered in network "
-                + this.id);
+            throw new NetworkException("Route " + route + " for GTUType " + gtuType + " not registered in network " + this.id);
         }
         this.routeMap.get(gtuType).remove(route.getId());
     }
@@ -352,13 +351,13 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
             // determine if the link is accessible for the GTUType , and in which direction(s)
             LongitudinalDirectionality directionality = link.getDirectionality(gtuType);
             if (directionality.equals(LongitudinalDirectionality.DIR_PLUS)
-                || directionality.equals(LongitudinalDirectionality.DIR_BOTH))
+                    || directionality.equals(LongitudinalDirectionality.DIR_BOTH))
             {
                 graph.addEdge(link.getStartNode(), link.getEndNode(), linkEdge);
                 graph.setEdgeWeight(linkEdge, link.getLength().doubleValue());
             }
             if (directionality.equals(LongitudinalDirectionality.DIR_MINUS)
-                || directionality.equals(LongitudinalDirectionality.DIR_BOTH))
+                    || directionality.equals(LongitudinalDirectionality.DIR_BOTH))
             {
                 graph.addEdge(link.getEndNode(), link.getStartNode(), linkEdge);
                 graph.setEdgeWeight(linkEdge, link.getLength().doubleValue());
@@ -370,7 +369,7 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
     /** {@inheritDoc} */
     @Override
     public final CompleteRoute getShortestRouteBetween(final GTUType gtuType, final Node nodeFrom, final Node nodeTo)
-        throws NetworkException
+            throws NetworkException
     {
         CompleteRoute route = new CompleteRoute("Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo, gtuType);
         SimpleWeightedGraph<Node, LinkEdge<Link>> graph = this.linkGraphs.get(gtuType);
@@ -388,12 +387,12 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
         for (LinkEdge<Link> link : path.getPathEdgeList())
         {
             if (!link.getLink().getEndNode().equals(route.destinationNode())
-                && route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getEndNode()))
+                    && route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getEndNode()))
             {
                 route.addNode(link.getLink().getEndNode());
             }
             else if (!link.getLink().getStartNode().equals(route.destinationNode())
-                && route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getStartNode()))
+                    && route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getStartNode()))
             {
                 route.addNode(link.getLink().getStartNode());
             }
@@ -408,11 +407,11 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
     /** {@inheritDoc} */
     @Override
     public final CompleteRoute getShortestRouteBetween(final GTUType gtuType, final Node nodeFrom, final Node nodeTo,
-        final List<Node> nodesVia) throws NetworkException
+            final List<Node> nodesVia) throws NetworkException
     {
         CompleteRoute route =
-            new CompleteRoute("Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo + " via "
-                + nodesVia.toString(), gtuType);
+                new CompleteRoute(
+                        "Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo + " via " + nodesVia.toString(), gtuType);
         SimpleWeightedGraph<Node, LinkEdge<Link>> graph = this.linkGraphs.get(gtuType);
         if (graph == null)
         {
@@ -436,19 +435,19 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
             for (LinkEdge<Link> link : path.getPathEdgeList())
             {
                 if (!link.getLink().getEndNode().equals(route.destinationNode())
-                    && route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getEndNode()))
+                        && route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getEndNode()))
                 {
                     route.addNode(link.getLink().getEndNode());
                 }
                 else if (!link.getLink().getStartNode().equals(route.destinationNode())
-                    && route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getStartNode()))
+                        && route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getStartNode()))
                 {
                     route.addNode(link.getLink().getStartNode());
                 }
                 else
                 {
                     throw new NetworkException(
-                        "Cannot connect two links when calculating shortest route with intermediate nodes");
+                            "Cannot connect two links when calculating shortest route with intermediate nodes");
                 }
             }
             from = to;
@@ -501,6 +500,14 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
     public final boolean containsGtuId(final String gtuId)
     {
         return this.gtuMap.containsKey(gtuId);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "OTSNetwork [id=" + this.id + ", nodeMapSize=" + this.nodeMap.size() + ", linkMapSize=" + this.linkMap.size()
+                + ", routeMapSize=" + this.routeMap.size() + ", gtuMapSize=" + this.gtuMap.size() + "]";
     }
 
 }

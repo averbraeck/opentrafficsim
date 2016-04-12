@@ -55,4 +55,11 @@ public class SimulatorFrame extends JFrame
         setExtendedState(Frame.MAXIMIZED_BOTH);
         setVisible(true);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "SimulatorFrame []";
+    }
 }

@@ -102,4 +102,11 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
         return rel;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "OTSSimTimeDouble [time=" + this.time + "]";
+    }
+
 }

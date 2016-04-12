@@ -276,4 +276,11 @@ public class OTSShape extends OTSLine3D
                 new OTSShape(new OTSPoint3D(25, 25), new OTSPoint3D(35, 25), new OTSPoint3D(35, 35), new OTSPoint3D(25, 35));
         System.out.println("s1.intersect(s3): " + s1.intersects(s3));
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "OTSShape [shape=" + this.shape + "]";
+    }
 }
