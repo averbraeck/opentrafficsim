@@ -142,4 +142,11 @@ public class FlowContourPlot extends ContourPlot
             / this.getYAxis().getCurrentGranularity();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "FlowContourPlot [cumulativeLengths.size=" + this.cumulativeLengths.size() + "]";
+    }
+
 }

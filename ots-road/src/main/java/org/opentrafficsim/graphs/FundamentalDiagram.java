@@ -90,7 +90,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
     /** Definition of the density axis. */
     private Axis densityAxis = new Axis(new LinearDensity(0, LinearDensityUnit.PER_KILOMETER), new LinearDensity(200,
-        LinearDensityUnit.PER_KILOMETER), null, 0d, "Density [veh/km]", "Density", "density %.1f veh/km");
+            LinearDensityUnit.PER_KILOMETER), null, 0d, "Density [veh/km]", "Density", "density %.1f veh/km");
 
     /**
      * @return densityAxis
@@ -101,8 +101,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     }
 
     /** Definition of the speed axis. */
-    private Axis speedAxis = new Axis(new Speed(0, SpeedUnit.KM_PER_HOUR), new Speed(180, SpeedUnit.KM_PER_HOUR), null,
-        0d, "Speed [km/h]", "Speed", "speed %.0f km/h");
+    private Axis speedAxis = new Axis(new Speed(0, SpeedUnit.KM_PER_HOUR), new Speed(180, SpeedUnit.KM_PER_HOUR), null, 0d,
+            "Speed [km/h]", "Speed", "speed %.0f km/h");
 
     /**
      * @return speedAxis
@@ -121,8 +121,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     }
 
     /** Definition of the flow axis. */
-    private Axis flowAxis = new Axis(new Frequency(0, FrequencyUnit.PER_HOUR),
-        new Frequency(3000d, FrequencyUnit.HERTZ), null, 0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
+    private Axis flowAxis = new Axis(new Frequency(0, FrequencyUnit.PER_HOUR), new Frequency(3000d, FrequencyUnit.HERTZ), null,
+            0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
 
     /** The currently shown X-axis. */
     private Axis xAxis;
@@ -163,8 +163,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @param position DoubleScalarRel&lt;LengthUnit&gt;; longitudinal position of the detector on the Lane
      * @throws NetworkException on network inconsistency
      */
-    public FundamentalDiagram(final String caption, final Time.Rel aggregationTime, final Lane lane,
-        final Length.Rel position) throws NetworkException
+    public FundamentalDiagram(final String caption, final Time.Rel aggregationTime, final Lane lane, final Length.Rel position)
+            throws NetworkException
     {
         if (aggregationTime.getSI() <= 0)
         {
@@ -175,7 +175,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         this.position = position;
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", false));
         this.chartPanel =
-            ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false, false);
+                ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false, false);
         FixCaption.fixCaption(this.chartPanel);
         final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) this.chartPanel.getXYPlot().getRenderer();
         renderer.setBaseLinesVisible(true);
@@ -253,10 +253,10 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @return JRatioButtonMenuItem; the newly added item
      */
     private JRadioButtonMenuItem addMenuItem(final JMenu subMenu, final ButtonGroup group, final Axis xAxisToSelect,
-        final Axis yAxisToSelect, final boolean selected)
+            final Axis yAxisToSelect, final boolean selected)
     {
         final JRadioButtonMenuItem item =
-            new JRadioButtonMenuItem(yAxisToSelect.getShortName() + " / " + xAxisToSelect.getShortName());
+                new JRadioButtonMenuItem(yAxisToSelect.getShortName() + " / " + xAxisToSelect.getShortName());
         item.setSelected(selected);
         item.setActionCommand(yAxisToSelect.getShortName() + "/" + xAxisToSelect.getShortName());
         item.addActionListener(this);
@@ -439,6 +439,14 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         return getSample(item, this.yAxis);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "FundamentalDiagram [caption=" + this.caption + ", aggregationTime=" + this.aggregationTime + ", samples.size="
+                + this.samples.size() + "]";
+    }
+
     /**
      * Storage for one sample of data collected by a point-detector that accumulates harmonic mean speed and flow.
      * <p>
@@ -514,6 +522,13 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
             this.flow += 1;
             sumReciprocalSpeeds += 1d / speed.getSI();
             this.harmonicMeanSpeed = this.flow / sumReciprocalSpeeds;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "Sample [harmonicMeanSpeed=" + this.harmonicMeanSpeed + ", flow=" + this.flow + "]";
         }
     }
 
@@ -597,10 +612,10 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
          * @throws NetworkException on network inconsistency
          */
         public FundamentalDiagramSensor(final Lane lane, final Length.Rel longitudinalPosition,
-            final OTSDEVSSimulatorInterface simulator) throws NetworkException
+                final OTSDEVSSimulatorInterface simulator) throws NetworkException
         {
-            super(lane, longitudinalPosition, RelativePosition.REFERENCE, "FUNDAMENTAL_DIAGRAM_SENSOR@"
-                + lane.toString(), simulator);
+            super(lane, longitudinalPosition, RelativePosition.REFERENCE, "FUNDAMENTAL_DIAGRAM_SENSOR@" + lane.toString(),
+                    simulator);
             lane.addSensor(this, GTUType.ALL);
         }
 

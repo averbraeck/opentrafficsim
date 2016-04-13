@@ -17,9 +17,9 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
-import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypes;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -477,6 +477,15 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
     public final void setDestroyGtuOnFailure(final boolean destroyGtuOnFailure)
     {
         this.destroyGtuOnFailure = destroyGtuOnFailure;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LaneBasedGTUFollowingChange0TacticalPlanner [earliestNexLaneChangeTime=" + this.earliestNexLaneChangeTime
+                + ", referenceLane=" + this.referenceLane + ", referencePos=" + this.referencePos + ", destroyGtuOnFailure="
+                + this.destroyGtuOnFailure + "]";
     }
 
 }

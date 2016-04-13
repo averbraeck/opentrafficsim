@@ -38,8 +38,8 @@ public class SpeedContourPlot extends ContourPlot
     public SpeedContourPlot(final String caption, final List<Lane> path) throws OTSSimulationException
     {
         super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
-            STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), path, 0d, 40d, 150d,
-            "speed %.1f km/h", "%.1f km/h", 20d);
+                STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), path, 0d, 40d, 150d,
+                "speed %.1f km/h", "%.1f km/h", 20d);
     }
 
     /** Storage for the total time spent in each cell. */
@@ -65,16 +65,16 @@ public class SpeedContourPlot extends ContourPlot
             this.cumulativeLengths = new ArrayList<MutableDoubleVector.Abs<LengthUnit>>();
         }
         int highestBinNeeded =
-            (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit) * this.getXAxis().getCurrentGranularity()
-                / this.getXAxis().getGranularities()[0]);
+                (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit) * this.getXAxis().getCurrentGranularity()
+                        / this.getXAxis().getGranularities()[0]);
         while (highestBinNeeded >= this.cumulativeTimes.size())
         {
             try
             {
-                this.cumulativeTimes.add(new MutableTimeVector.Abs(new double[this.getYAxis().getBinCount()],
-                    TimeUnit.SECOND, StorageType.DENSE));
+                this.cumulativeTimes.add(new MutableTimeVector.Abs(new double[this.getYAxis().getBinCount()], TimeUnit.SECOND,
+                        StorageType.DENSE));
                 this.cumulativeLengths.add(new MutableLengthVector.Abs(new double[this.getYAxis().getBinCount()],
-                    LengthUnit.METER, StorageType.DENSE));
+                        LengthUnit.METER, StorageType.DENSE));
             }
             catch (ValueException exception)
             {
@@ -86,7 +86,7 @@ public class SpeedContourPlot extends ContourPlot
     /** {@inheritDoc} */
     @Override
     public final void incrementBinData(final int timeBin, final int distanceBin, final double duration,
-        final double distanceCovered, final double acceleration)
+            final double distanceCovered, final double acceleration)
     {
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.getYAxis().getBinCount())
         {
@@ -109,7 +109,7 @@ public class SpeedContourPlot extends ContourPlot
     /** {@inheritDoc} */
     @Override
     public final double computeZValue(final int firstTimeBin, final int endTimeBin, final int firstDistanceBin,
-        final int endDistanceBin)
+            final int endDistanceBin)
     {
         double cumulativeTimeInSI = 0;
         double cumulativeLengthInSI = 0;
@@ -136,8 +136,8 @@ public class SpeedContourPlot extends ContourPlot
         }
         catch (ValueException exception)
         {
-            System.err.println(String.format("Error in getZValue(timeBinRange=[%d-%d], distanceBinRange=[%d-%d]",
-                firstTimeBin, endTimeBin, firstDistanceBin, endDistanceBin));
+            System.err.println(String.format("Error in getZValue(timeBinRange=[%d-%d], distanceBinRange=[%d-%d]", firstTimeBin,
+                    endTimeBin, firstDistanceBin, endDistanceBin));
             exception.printStackTrace();
         }
         if (0 == cumulativeTimeInSI)
@@ -145,6 +145,14 @@ public class SpeedContourPlot extends ContourPlot
             return Double.NaN;
         }
         return 3600d / 1000 * cumulativeLengthInSI / cumulativeTimeInSI;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "SpeedContourPlot [cumulativeTimes.size=" + this.cumulativeTimes.size() + ", cumulativeLengths.size="
+                + this.cumulativeLengths.size() + "]";
     }
 
 }

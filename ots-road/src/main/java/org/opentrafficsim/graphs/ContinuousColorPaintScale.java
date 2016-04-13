@@ -2,6 +2,7 @@ package org.opentrafficsim.graphs;
 
 import java.awt.Color;
 import java.awt.Paint;
+import java.util.Arrays;
 
 import org.jfree.chart.renderer.PaintScale;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
@@ -145,6 +146,14 @@ public class ContinuousColorPaintScale implements PaintScale
     public final String getFormat()
     {
         return this.format;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ContinuousColorPaintScale [bounds=" + Arrays.toString(this.bounds) + ", boundColors="
+                + Arrays.toString(this.boundColors) + "]";
     }
 
 }

@@ -125,4 +125,11 @@ public class HeadwayDistance implements Headway
         return false;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "HeadwayDistance [distance=" + this.distance + "]";
+    }
+
 }

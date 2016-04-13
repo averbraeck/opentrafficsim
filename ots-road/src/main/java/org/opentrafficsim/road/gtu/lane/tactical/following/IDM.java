@@ -6,9 +6,9 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypes;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 
 /**
  * Implementation of the IDM. See <a
@@ -54,5 +54,12 @@ public class IDM extends AbstractIDM
             leaders.get(leaders.firstKey())).si;
         double aInt = -a.si * (sStar / leaders.firstKey().si) * (sStar / leaders.firstKey().si);
         return new Acceleration(aFree + aInt, AccelerationUnit.SI);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "IDM []";
     }
 }

@@ -6,8 +6,8 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypes;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.Headway;
@@ -84,6 +84,13 @@ public class FixedLaneChangeModel implements LaneChangeModel
     {
         return "Fixed lane change model. This model returns a lane change decision that is independent of the actual "
             + "traffic. It is used mostly for testing.";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "FixedLaneChangeModel [laneChange=" + this.laneChange + "]";
     }
 
 }

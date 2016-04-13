@@ -12,8 +12,8 @@ import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 
 /**
  * Extended version of FixedAccelerationModel. The addition is that this GTUFollowingModel stores a series of acceleration and
@@ -222,6 +222,14 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
         final SortedMap<Rel, Speed> leaders) throws ParameterException
     {
         return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "SequentialFixedAccelerationModel [steps=" + this.steps + ", maximumSafeDeceleration="
+                + this.maximumSafeDeceleration + "]";
     }
     
 }

@@ -127,4 +127,11 @@ public class DensityContourPlot extends ContourPlot
             / this.getYAxis().getCurrentGranularity();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "DensityContourPlot [cumulativeTimes.size=" + this.cumulativeTimes.size() + "]";
+    }
+
 }

@@ -1,5 +1,7 @@
 package org.opentrafficsim.graphs;
 
+import java.io.Serializable;
+
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 
 /**
@@ -12,8 +14,11 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  * initial version Jul 28, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-class Axis
+class Axis implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20140000L;
+
     /** Lowest value along this axis. */
     private final DoubleScalar<?> minimumValue;
 
@@ -202,6 +207,14 @@ class Axis
     public String getName()
     {
         return this.name;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "Axis [minimumValue=" + this.minimumValue + ", maximumValue=" + this.maximumValue + ", currentGranularity="
+                + this.currentGranularity + ", name=" + this.name + ", shortName=" + this.shortName + "]";
     }
 
 }

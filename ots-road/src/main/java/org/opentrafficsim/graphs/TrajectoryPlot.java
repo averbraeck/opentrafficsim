@@ -469,11 +469,11 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         public final void addSegment(final LaneBasedGTU car, final Lane lane, final double positionOffset)
                 throws NetworkException, GTUException
         {
-//            if ("4".equals(car.getId()) && "Lane lane.0 of FirstVia to SecondVia".equals(lane.toString()))
-//            {
-//                System.out.println("Enter. positions.size is " + this.positions.size() + ", currentEndPosition is "
-//                        + this.currentEndPosition);
-//            }
+            // if ("4".equals(car.getId()) && "Lane lane.0 of FirstVia to SecondVia".equals(lane.toString()))
+            // {
+            // System.out.println("Enter. positions.size is " + this.positions.size() + ", currentEndPosition is "
+            // + this.currentEndPosition);
+            // }
             try
             {
                 final int startSample =
@@ -484,7 +484,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
                 {
                     Time.Abs sampleTime = new Time.Abs(sample * getSampleInterval().getSI(), TimeUnit.SI);
                     Double position = car.position(lane, car.getReference(), sampleTime).getSI() + positionOffset;
-                    if (this.positions.size() > 0 && null != this.currentEndPosition && position < this.currentEndPosition.getSI() - 0.001)
+                    if (this.positions.size() > 0 && null != this.currentEndPosition
+                            && position < this.currentEndPosition.getSI() - 0.001)
                     {
                         if (0 != positionOffset)
                         {
@@ -565,6 +566,15 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
                 return Double.NaN;
             }
             return this.positions.get(item);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "Trajectory [currentEndTime=" + this.currentEndTime + ", currentEndPosition=" + this.currentEndPosition
+                    + ", id=" + this.id + ", positions.size=" + this.positions.size() + ", firstSample=" + this.firstSample
+                    + "]";
         }
     }
 
@@ -684,6 +694,15 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         newChart.setTitle((String) null);
         addChangeListener(newChart.getPlot());
         return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "TrajectoryPlot [sampleInterval=" + this.sampleInterval + ", path=" + this.path + ", cumulativeLengths.size="
+                + this.cumulativeLengths.size() + ", maximumTime=" + this.maximumTime + ", caption=" + this.caption
+                + ", trajectories.size=" + this.trajectories.size() + "]";
     }
 
 }

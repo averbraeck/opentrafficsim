@@ -37,8 +37,8 @@ public class AccelerationContourPlot extends ContourPlot
     public AccelerationContourPlot(final String caption, final List<Lane> path) throws OTSSimulationException
     {
         super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
-            STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), path, -5d, 0d, 3d,
-            "acceleration %.1f m/s/s", "%.1f m/s/s", 1d);
+                STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), path, -5d, 0d, 3d,
+                "acceleration %.1f m/s/s", "%.1f m/s/s", 1d);
     }
 
     /** Storage for the total time spent in each cell. */
@@ -64,16 +64,16 @@ public class AccelerationContourPlot extends ContourPlot
             this.cumulativeAccelerations = new ArrayList<MutableAccelerationVector>();
         }
         int highestBinNeeded =
-            (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit) * this.getXAxis().getCurrentGranularity()
-                / this.getXAxis().getGranularities()[0]);
+                (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit) * this.getXAxis().getCurrentGranularity()
+                        / this.getXAxis().getGranularities()[0]);
         while (highestBinNeeded >= this.cumulativeTimes.size())
         {
             try
             {
-                this.cumulativeTimes.add(new MutableTimeVector.Abs(new double[this.getYAxis().getBinCount()],
-                    TimeUnit.SECOND, StorageType.DENSE));
-                this.cumulativeAccelerations.add(new MutableAccelerationVector(
-                    new double[this.getYAxis().getBinCount()], AccelerationUnit.METER_PER_SECOND_2, StorageType.DENSE));
+                this.cumulativeTimes.add(new MutableTimeVector.Abs(new double[this.getYAxis().getBinCount()], TimeUnit.SECOND,
+                        StorageType.DENSE));
+                this.cumulativeAccelerations.add(new MutableAccelerationVector(new double[this.getYAxis().getBinCount()],
+                        AccelerationUnit.METER_PER_SECOND_2, StorageType.DENSE));
             }
             catch (ValueException exception)
             {
@@ -85,7 +85,7 @@ public class AccelerationContourPlot extends ContourPlot
     /** {@inheritDoc} */
     @Override
     public final void incrementBinData(final int timeBin, final int distanceBin, final double duration,
-        final double distanceCovered, final double acceleration)
+            final double distanceCovered, final double acceleration)
     {
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.getYAxis().getBinCount())
         {
@@ -108,7 +108,7 @@ public class AccelerationContourPlot extends ContourPlot
     /** {@inheritDoc} */
     @Override
     public final double computeZValue(final int firstTimeBin, final int endTimeBin, final int firstDistanceBin,
-        final int endDistanceBin)
+            final int endDistanceBin)
     {
         double cumulativeTimeInSI = 0;
         double cumulativeAccelerationInSI = 0;
@@ -135,8 +135,8 @@ public class AccelerationContourPlot extends ContourPlot
         }
         catch (ValueException exception)
         {
-            System.err.println(String.format("Error in getZValue(timeBinRange=[%d-%d], distanceBinRange=[%d-%d]",
-                firstTimeBin, endTimeBin, firstDistanceBin, endDistanceBin));
+            System.err.println(String.format("Error in getZValue(timeBinRange=[%d-%d], distanceBinRange=[%d-%d]", firstTimeBin,
+                    endTimeBin, firstDistanceBin, endDistanceBin));
             exception.printStackTrace();
         }
         if (0 == cumulativeTimeInSI)
@@ -144,6 +144,14 @@ public class AccelerationContourPlot extends ContourPlot
             return Double.NaN;
         }
         return cumulativeAccelerationInSI / cumulativeTimeInSI;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "AccelerationContourPlot [cumulativeTimes.size" + this.cumulativeTimes.size()
+                + ", cumulativeAccelerations.size=" + this.cumulativeAccelerations.size() + "]";
     }
 
 }

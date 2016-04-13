@@ -202,6 +202,13 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         super.destroy();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LaneBasedIndividualGTU [relativePositions=" + this.relativePositions + "]";
+    }
+
     /**
      * Build an individual car and use easy setter methods to instantiate the car. Typical use looks like:
      * 
@@ -527,6 +534,16 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
                     this.perception, this.animationClass, this.gtuColorer, this.network);
             return gtu;
 
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "LaneBasedIndividualCarBuilder [id=" + this.id + ", gtuType=" + this.gtuType
+                    + ", initialLongitudinalPositions=" + this.initialLongitudinalPositions + ", initialSpeed="
+                    + this.initialSpeed + ", length=" + this.length + ", width=" + this.width + ", maximumVelocity="
+                    + this.maximumVelocity + ", strategicalPlanner=" + this.strategicalPlanner + "]";
         }
 
     }

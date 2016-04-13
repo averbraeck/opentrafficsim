@@ -116,4 +116,12 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
         return this.maximumSpeedDist;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "GTUGeneratorIndividual [lengthDist=" + this.lengthDist + ", widthDist=" + this.widthDist
+                + ", maximumSpeedDist=" + this.maximumSpeedDist + "]";
+    }
+
 }

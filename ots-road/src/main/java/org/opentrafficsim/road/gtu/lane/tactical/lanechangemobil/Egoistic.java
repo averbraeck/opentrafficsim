@@ -37,4 +37,11 @@ public final class Egoistic extends AbstractLaneChangeModel
         return "Egoistic lane change model (as described by Treiber).";
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "Egoistic []";
+    }
+
 }
