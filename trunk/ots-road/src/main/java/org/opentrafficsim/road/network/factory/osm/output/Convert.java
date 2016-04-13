@@ -809,6 +809,13 @@ public final class Convert
         progressListener.progress(new ProgressEvent(net, "Found " + foundEndpoints.size() + " Sinks and Sources."));
         return net;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "Convert []";
+    }
 }
 
 /**

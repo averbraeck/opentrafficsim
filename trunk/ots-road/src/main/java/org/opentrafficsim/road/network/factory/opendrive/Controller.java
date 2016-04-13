@@ -260,4 +260,11 @@ public class Controller
         this.trafficLights.get(sequence2).add(trafficLight);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "Controller [id=" + this.id + ", trafficLights=" + this.trafficLights + "]";
+    }
+
 }

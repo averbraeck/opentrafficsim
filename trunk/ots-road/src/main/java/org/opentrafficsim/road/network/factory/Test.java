@@ -34,4 +34,11 @@ public class Test
         System.out.println(xy[0] + ", " + xy[1]);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "Test []";
+    }
+
 }

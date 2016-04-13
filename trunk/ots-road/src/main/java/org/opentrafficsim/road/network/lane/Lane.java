@@ -1280,5 +1280,14 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             return this.sensor;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "GTUTypeSensor [gtuType=" + this.gtuType + ", sensor=" + this.sensor + "]";
+        }
+        
     }
+    
 }

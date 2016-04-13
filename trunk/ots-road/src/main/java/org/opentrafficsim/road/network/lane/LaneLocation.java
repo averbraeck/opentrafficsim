@@ -68,4 +68,12 @@ public class LaneLocation
         return new Length.Abs(this.lane.getLength().getSI() * this.fractionalLongitudinalPosition, LengthUnit.METER);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LaneLocation [lane=" + this.lane + ", fractionalLongitudinalPosition=" + this.fractionalLongitudinalPosition
+                + "]";
+    }
+
 }

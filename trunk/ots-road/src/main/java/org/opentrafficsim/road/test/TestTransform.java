@@ -47,5 +47,12 @@ public class TestTransform
         System.out.println(s);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "TestTransform []";
+    }
+
 }
 

@@ -127,4 +127,12 @@ public final class ReadOSMFile
     {
         this.sinkImplementation.setProgressListener(progressListener);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ReadOSMFile [sinkImplementation=" + this.sinkImplementation + ", isReaderThreadDead=" + this.isReaderThreadDead
+                + "]";
+    }
 }

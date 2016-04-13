@@ -242,4 +242,14 @@ public class OTSToRTIData
         this.timeStamp = timeStamp;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "OTSToRTIData [timeStamp=" + this.timeStamp + ", NumCars=" + this.NumCars + ", NumPedestrians="
+                + this.NumPedestrians + ", NumObjects=" + this.NumObjects + ", exoPos=" + this.exoPos + ", exoOri="
+                + this.exoOri + ", exoVel=" + this.exoVel + ", pedPos=" + this.pedPos + ", pedOri=" + this.pedOri + ", pedVel="
+                + this.pedVel + ", objPos=" + this.objPos + ", objOri=" + this.objOri + ", objVel=" + this.objVel + "]";
+    }
+
 }

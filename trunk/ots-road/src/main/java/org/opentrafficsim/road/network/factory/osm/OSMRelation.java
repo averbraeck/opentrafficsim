@@ -120,4 +120,12 @@ public class OSMRelation
         return result;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "OSMRelation [id=" + this.id + ", tags=" + this.tags + ", wayIds=" + this.wayIds + ", nodeIds=" + this.nodeIds
+                + "]";
+    }
+
 }

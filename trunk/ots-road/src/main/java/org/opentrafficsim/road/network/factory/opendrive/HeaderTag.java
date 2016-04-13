@@ -169,4 +169,14 @@ public class HeaderTag
     {
         return this.originLong;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "HeaderTag [name=" + this.name + ", revMajor=" + this.revMajor + ", revMinor=" + this.revMinor + ", version="
+                + this.version + ", date=" + this.date + ", north=" + this.north + ", south=" + this.south + ", east="
+                + this.east + ", west=" + this.west + ", vendor=" + this.vendor + ", originLat=" + this.originLat
+                + ", originLong=" + this.originLong + ", originHdg=" + this.originHdg + "]";
+    }
 }

@@ -70,4 +70,11 @@ public class communicationTest
             System.err.println(e);
         }
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "communicationTest []";
+    }
 }

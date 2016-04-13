@@ -41,4 +41,11 @@ public class WarningListenerImpl implements WarningListener
     {
         return this.warningLog;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "WarningListenerImpl [currentWarning=" + this.currentWarning + ", warningLog=" + this.warningLog + "]";
+    }
 }

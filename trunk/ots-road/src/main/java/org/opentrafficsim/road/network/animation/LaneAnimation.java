@@ -74,4 +74,11 @@ public class LaneAnimation extends Renderable2D
             graphics.fill(endCircle);
         }
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LaneAnimation [color=" + this.color + ", drawCenterLine=" + this.drawCenterLine + "]";
+    }
 }

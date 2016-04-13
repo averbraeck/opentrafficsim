@@ -48,4 +48,11 @@ public class ProgressEvent extends EventObject
     {
         return String.format("%8d ", (this.when - first) % 100000000L) + this.progressInformation;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ProgressEvent [progressInformation=" + this.progressInformation + ", when=" + this.when + "]";
+    }
 }

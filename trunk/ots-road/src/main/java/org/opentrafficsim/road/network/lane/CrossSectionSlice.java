@@ -60,4 +60,12 @@ public class CrossSectionSlice
     {
         return this.width;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "CrossSectionSlice [relativeLength=" + this.relativeLength + ", designLineOffset=" + this.designLineOffset
+                + ", width=" + this.width + "]";
+    }
 }

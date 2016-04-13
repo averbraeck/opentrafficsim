@@ -96,4 +96,13 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform
         return new double[]{x, y};
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "CoordinateTransformLonLatToXY [centerX=" + this.centerX + ", centerY=" + this.centerY + ", lonCenter="
+                + this.lonCenter + ", latCenter=" + this.latCenter + ", latToM=" + this.latToM + ", lonToM=" + this.lonToM
+                + "]";
+    }
+
 }

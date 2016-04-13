@@ -41,4 +41,11 @@ public class ProgressListenerImpl implements ProgressListener
     {
         return this.log;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ProgressListenerImpl [currentProgress=" + this.currentProgress + ", log=" + this.log + "]";
+    }
 }

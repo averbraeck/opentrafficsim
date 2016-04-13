@@ -111,6 +111,13 @@ public class TestLaneDirections extends AbstractWrappableAnimation
         return new Rectangle2D.Double(-50, 0, 400, 200);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "TestLaneDirections []";
+    }
+
     /**
      * Model to test the XML parser.
      * <p>
@@ -160,6 +167,13 @@ public class TestLaneDirections extends AbstractWrappableAnimation
 
         {
             return this.simulator;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "TestXMLModel [simulator=" + this.simulator + "]";
         }
 
     }

@@ -192,4 +192,11 @@ public class SubjectiveCar extends AbstractGTU
         return null;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "SubjectiveCar [position=" + this.position + ", length=" + this.length + ", width=" + this.width + "]";
+    }
+
 }

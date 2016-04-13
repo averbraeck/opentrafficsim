@@ -68,4 +68,11 @@ public class NextSplitInfo implements Serializable
     {
         return this.correctCurrentLanes;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "NextSplitInfo [nextSplitNode=" + this.nextSplitNode + ", correctCurrentLanes=" + this.correctCurrentLanes + "]";
+    }
 }

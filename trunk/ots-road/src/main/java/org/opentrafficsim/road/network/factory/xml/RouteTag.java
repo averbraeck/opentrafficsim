@@ -77,4 +77,11 @@ class RouteTag
             this.route.addNode(nodeTag.node);
         }
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "RouteTag [name=" + this.name + ", routeNodeTags=" + this.routeNodeTags + ", route=" + this.route + "]";
+    }
 }

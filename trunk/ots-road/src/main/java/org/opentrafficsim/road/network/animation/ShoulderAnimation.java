@@ -48,4 +48,11 @@ public class ShoulderAnimation extends Renderable2D
         Shoulder shoulder = (Shoulder) getSource();
         PaintPolygons.paintMultiPolygon(graphics, this.color, shoulder.getLocation(), shoulder.getContour(), true);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ShoulderAnimation [color=" + this.color + "]";
+    }
 }

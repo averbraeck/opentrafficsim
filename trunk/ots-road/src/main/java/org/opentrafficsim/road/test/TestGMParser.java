@@ -144,6 +144,13 @@ public class TestGMParser extends AbstractWrappableAnimation
         return new Rectangle2D.Double(0, 2900, 1400, 1200);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "TestGMParser []";
+    }
+
     /**
      * Model to test the GM XML parser.
      * <p>
@@ -254,6 +261,13 @@ public class TestGMParser extends AbstractWrappableAnimation
             return this.simulator;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "TestGMModel [simulator=" + this.simulator + "]";
+        }
+
     }
 
     class CoordinateTransformRD implements CoordinateTransform
@@ -296,6 +310,13 @@ public class TestGMParser extends AbstractWrappableAnimation
                 exception.printStackTrace();
                 return new double[]{0, 0};
             }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "CoordinateTransformRD [dx=" + this.dx + ", dy=" + this.dy + "]";
         }
     }
 
@@ -371,13 +392,29 @@ public class TestGMParser extends AbstractWrappableAnimation
         {
             public double x, y;
 
-
             public Coords(double x, double y)
             {
                 this.x = x;
                 this.y = y;
             }
+
+
+            /** {@inheritDoc} */
+            @Override
+            public final String toString()
+            {
+                return "Coords [x=" + this.x + ", y=" + this.y + "]";
+            }
+            
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "WGS84ToRDNewTransform []";
+        }
+        
     }
 
 }

@@ -33,7 +33,12 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
  * 2316, pp. 47-57. Note in the official versions of TRB and TRR some errors appeared due to the typesetting of the papers (not
  * in the preprint provided here). A list of errata for the official versions is found <a
  * href="http://victorknoop.eu/research/papers/Erratum_LMRS.pdf">here</a>.
- * @author Wouter Schakel
+ * <p>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * <p>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
+ * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 public class LMRS extends AbstractLaneBasedTacticalPlanner
 {
@@ -43,7 +48,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
 
     /** Free lane change desire threshold. */
     public static final ParameterTypeDouble DFREE = new ParameterTypeDouble("dFree", "Free lane change desire threshold.",
-        0.365, UNITINTERVAL)
+            0.365, UNITINTERVAL)
     {
         public void check(final double value, final BehavioralCharacteristics bc) throws ParameterException
         {
@@ -60,7 +65,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
 
     /** Synchronized lane change desire threshold. */
     public static final ParameterTypeDouble DSYNC = new ParameterTypeDouble("dSync",
-        "Synchronized lane change desire threshold.", 0.577, UNITINTERVAL)
+            "Synchronized lane change desire threshold.", 0.577, UNITINTERVAL)
     {
         public void check(final double value, final BehavioralCharacteristics bc) throws ParameterException
         {
@@ -77,7 +82,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
 
     /** Cooperative lane change desire threshold. */
     public static final ParameterTypeDouble DCOOP = new ParameterTypeDouble("dCoop",
-        "Cooperative lane change desire threshold.", 0.788, UNITINTERVAL)
+            "Cooperative lane change desire threshold.", 0.788, UNITINTERVAL)
     {
         public void check(final double value, final BehavioralCharacteristics bc) throws ParameterException
         {
@@ -155,7 +160,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     /** {@inheritDoc} */
     @Override
     public OperationalPlan generateOperationalPlan(final GTU gtu, final Time.Abs startTime,
-        final DirectedPoint locationAtStartTime) throws OperationalPlanException, GTUException, NetworkException
+            final DirectedPoint locationAtStartTime) throws OperationalPlanException, GTUException, NetworkException
     {
 
         // TODO: Remove this when other todo's are done, it is used as a placeholder where some acceleration needs to be
@@ -267,7 +272,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
             thetaRight = (dCoop - Math.abs(dRightMandatory)) / (dCoop - dSync);
         }
         Desire totalDesire =
-            new Desire(dLeftMandatory + thetaLeft * dLeftVoluntary, dRightMandatory + thetaRight * dRightVoluntary);
+                new Desire(dLeftMandatory + thetaLeft * dLeftVoluntary, dRightMandatory + thetaRight * dRightVoluntary);
 
         /*
          * Gap acceptance The adjacent gap is accepted if acceleration is safe for the potential follower and for this driver.
@@ -277,14 +282,14 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
         Acceleration aSelf = dummy;
         boolean leftAllowed = true; // TODO: get from perception / infrastructure, with relaxation
         boolean acceptLeft =
-            aSelf.getSI() >= -b.si * totalDesire.getLeft() && aFollow.getSI() >= -b.si * totalDesire.getLeft()
-                && leftAllowed;
+                aSelf.getSI() >= -b.si * totalDesire.getLeft() && aFollow.getSI() >= -b.si * totalDesire.getLeft()
+                        && leftAllowed;
         aFollow = dummy;
         aSelf = dummy;
         boolean rightAllowed = true; // TODO: get from perception / infrastructure, with relaxation
         boolean acceptRight =
-            aSelf.getSI() >= -b.si * totalDesire.getRight() && aFollow.getSI() >= -b.si * totalDesire.getRight()
-                && rightAllowed;
+                aSelf.getSI() >= -b.si * totalDesire.getRight() && aFollow.getSI() >= -b.si * totalDesire.getRight()
+                        && rightAllowed;
 
         /*
          * Lane change decision A lane change is initiated for the largest desire if this is above the threshold and the gap is
@@ -397,6 +402,14 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
             return a;
         }
         return new Acceleration(-b.si, AccelerationUnit.SI);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LMRS [minimumAcceleration=" + this.minimumAcceleration + ", mandatoryIncentives=" + this.mandatoryIncentives
+                + ", voluntaryIncentives=" + this.voluntaryIncentives + "]";
     }
 
 }

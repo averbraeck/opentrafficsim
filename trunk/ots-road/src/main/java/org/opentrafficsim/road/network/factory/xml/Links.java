@@ -99,6 +99,13 @@ final class Links
             this.y = y;
             this.z = z;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "XYZ [x=" + this.x + ", y=" + this.y + ", z=" + this.z + "]";
+        }
     }
 
     /**
