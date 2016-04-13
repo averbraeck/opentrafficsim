@@ -1,12 +1,12 @@
-package org.opentrafficsim.core.gtu.drivercharacteristics;
+package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.io.Serializable;
 
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.value.vdouble.scalar.Acceleration;
 
 /**
- * Wrapper class for Speed parameters.
+ * Wrapper class for Acceleration parameters.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -18,7 +18,7 @@ import org.djunits.value.vdouble.scalar.Speed;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class ParameterTypeSpeed extends ParameterType<SpeedUnit, Speed> implements Serializable
+public class ParameterTypeAcceleration extends ParameterType<AccelerationUnit, Acceleration> implements Serializable
 {
 
     /** */
@@ -29,9 +29,9 @@ public class ParameterTypeSpeed extends ParameterType<SpeedUnit, Speed> implemen
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      */
-    public ParameterTypeSpeed(final String id, final String description)
+    public ParameterTypeAcceleration(final String id, final String description)
     {
-        super(id, description, Speed.class);
+        super(id, description, Acceleration.class);
     }
 
     /**
@@ -40,9 +40,9 @@ public class ParameterTypeSpeed extends ParameterType<SpeedUnit, Speed> implemen
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
      */
-    public ParameterTypeSpeed(final String id, final String description, final Speed defaultValue)
+    public ParameterTypeAcceleration(final String id, final String description, final Acceleration defaultValue)
     {
-        super(id, description, Speed.class, defaultValue);
+        super(id, description, Acceleration.class, defaultValue);
     }
 
     /**
@@ -51,9 +51,9 @@ public class ParameterTypeSpeed extends ParameterType<SpeedUnit, Speed> implemen
      * @param description Parameter description or full name.
      * @param check Check for parameter values.
      */
-    public ParameterTypeSpeed(final String id, final String description, final Check check)
+    public ParameterTypeAcceleration(final String id, final String description, final Check check)
     {
-        super(id, description, Speed.class, check);
+        super(id, description, Acceleration.class, check);
     }
 
     /**
@@ -63,16 +63,17 @@ public class ParameterTypeSpeed extends ParameterType<SpeedUnit, Speed> implemen
      * @param defaultValue Default value.
      * @param check Check for parameter values.
      */
-    public ParameterTypeSpeed(final String id, final String description, final Speed defaultValue, final Check check)
+    public ParameterTypeAcceleration(final String id, final String description, final Acceleration defaultValue,
+            final Check check)
     {
-        super(id, description, Speed.class, defaultValue, check);
+        super(id, description, Acceleration.class, defaultValue, check);
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "ParameterTypeSpeed [id=" + super.getId() + "]";
+        return "ParameterTypeAcceleration [id=" + super.getId() + "]";
     }
 
 }

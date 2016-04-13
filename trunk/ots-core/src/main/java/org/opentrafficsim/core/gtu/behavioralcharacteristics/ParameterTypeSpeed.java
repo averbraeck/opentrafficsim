@@ -1,12 +1,12 @@
-package org.opentrafficsim.core.gtu.drivercharacteristics;
+package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.io.Serializable;
 
-import org.djunits.unit.FrequencyUnit;
-import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.Speed;
 
 /**
- * Wrapper class for Frequency parameters.
+ * Wrapper class for Speed parameters.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -18,7 +18,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class ParameterTypeFrequency extends ParameterType<FrequencyUnit, Frequency> implements Serializable
+public class ParameterTypeSpeed extends ParameterType<SpeedUnit, Speed> implements Serializable
 {
 
     /** */
@@ -29,9 +29,9 @@ public class ParameterTypeFrequency extends ParameterType<FrequencyUnit, Frequen
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      */
-    public ParameterTypeFrequency(final String id, final String description)
+    public ParameterTypeSpeed(final String id, final String description)
     {
-        super(id, description, Frequency.class);
+        super(id, description, Speed.class);
     }
 
     /**
@@ -40,9 +40,9 @@ public class ParameterTypeFrequency extends ParameterType<FrequencyUnit, Frequen
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
      */
-    public ParameterTypeFrequency(final String id, final String description, final Frequency defaultValue)
+    public ParameterTypeSpeed(final String id, final String description, final Speed defaultValue)
     {
-        super(id, description, Frequency.class, defaultValue);
+        super(id, description, Speed.class, defaultValue);
     }
 
     /**
@@ -51,9 +51,9 @@ public class ParameterTypeFrequency extends ParameterType<FrequencyUnit, Frequen
      * @param description Parameter description or full name.
      * @param check Check for parameter values.
      */
-    public ParameterTypeFrequency(final String id, final String description, final Check check)
+    public ParameterTypeSpeed(final String id, final String description, final Check check)
     {
-        super(id, description, Frequency.class, check);
+        super(id, description, Speed.class, check);
     }
 
     /**
@@ -63,17 +63,16 @@ public class ParameterTypeFrequency extends ParameterType<FrequencyUnit, Frequen
      * @param defaultValue Default value.
      * @param check Check for parameter values.
      */
-    public ParameterTypeFrequency(final String id, final String description, final Frequency defaultValue,
-        final Check check)
+    public ParameterTypeSpeed(final String id, final String description, final Speed defaultValue, final Check check)
     {
-        super(id, description, Frequency.class, defaultValue, check);
+        super(id, description, Speed.class, defaultValue, check);
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "ParameterTypeFrequency [id=" + super.getId() + "]";
+        return "ParameterTypeSpeed [id=" + super.getId() + "]";
     }
 
 }

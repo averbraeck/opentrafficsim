@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.PerceivedObject;
 

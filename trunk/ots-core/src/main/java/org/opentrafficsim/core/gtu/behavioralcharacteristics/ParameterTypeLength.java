@@ -1,12 +1,12 @@
-package org.opentrafficsim.core.gtu.drivercharacteristics;
+package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.io.Serializable;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Length;
 
 /**
- * Wrapper class for Acceleration parameters.
+ * Wrapper class for Length parameters.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -18,7 +18,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class ParameterTypeAcceleration extends ParameterType<AccelerationUnit, Acceleration> implements Serializable
+public class ParameterTypeLength extends ParameterType<LengthUnit, Length.Rel> implements Serializable
 {
 
     /** */
@@ -29,9 +29,9 @@ public class ParameterTypeAcceleration extends ParameterType<AccelerationUnit, A
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      */
-    public ParameterTypeAcceleration(final String id, final String description)
+    public ParameterTypeLength(final String id, final String description)
     {
-        super(id, description, Acceleration.class);
+        super(id, description, Length.Rel.class);
     }
 
     /**
@@ -40,9 +40,9 @@ public class ParameterTypeAcceleration extends ParameterType<AccelerationUnit, A
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
      */
-    public ParameterTypeAcceleration(final String id, final String description, final Acceleration defaultValue)
+    public ParameterTypeLength(final String id, final String description, final Length.Rel defaultValue)
     {
-        super(id, description, Acceleration.class, defaultValue);
+        super(id, description, Length.Rel.class, defaultValue);
     }
 
     /**
@@ -51,9 +51,9 @@ public class ParameterTypeAcceleration extends ParameterType<AccelerationUnit, A
      * @param description Parameter description or full name.
      * @param check Check for parameter values.
      */
-    public ParameterTypeAcceleration(final String id, final String description, final Check check)
+    public ParameterTypeLength(final String id, final String description, final Check check)
     {
-        super(id, description, Acceleration.class, check);
+        super(id, description, Length.Rel.class, check);
     }
 
     /**
@@ -63,17 +63,17 @@ public class ParameterTypeAcceleration extends ParameterType<AccelerationUnit, A
      * @param defaultValue Default value.
      * @param check Check for parameter values.
      */
-    public ParameterTypeAcceleration(final String id, final String description, final Acceleration defaultValue,
-            final Check check)
+    public ParameterTypeLength(final String id, final String description, final Length.Rel defaultValue,
+        final Check check)
     {
-        super(id, description, Acceleration.class, defaultValue, check);
+        super(id, description, Length.Rel.class, defaultValue, check);
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "ParameterTypeAcceleration [id=" + super.getId() + "]";
+        return "ParameterTypeLength [id=" + super.getId() + "]";
     }
 
 }

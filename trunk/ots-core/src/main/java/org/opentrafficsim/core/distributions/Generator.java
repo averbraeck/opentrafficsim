@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.distributions;
 
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 
 /**
  * Interface for classes that have a draw method with no arguments.

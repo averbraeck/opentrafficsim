@@ -1,9 +1,8 @@
-package org.opentrafficsim.core.gtu.drivercharacteristics;
+package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.io.Serializable;
 
 import org.djunits.unit.DimensionlessUnit;
-import org.djunits.value.formatter.EngineeringFormatter;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 
 /**
@@ -18,52 +17,30 @@ import org.djunits.value.vdouble.scalar.Dimensionless;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author Wouter Schakel
  */
-public class ParameterTypeDouble extends AbstractParameterType<DimensionlessUnit, Dimensionless> implements Serializable
+public class ParameterTypeInteger extends AbstractParameterType<DimensionlessUnit, Dimensionless> implements Serializable
 {
-
     /** */
-    private static final long serialVersionUID = 120160400;
+    private static final long serialVersionUID = 20160400L;
 
     /**
-     * Constructor without default value and check.
+     * Constructor without check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
-     */
-    public ParameterTypeDouble(final String id, final String description)
-    {
-        this(id, description, Double.NaN, null);
-    }
-
-    /**
-     * Constructor with default value, without check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name..
      * @param defaultValue Default value.
      */
-    public ParameterTypeDouble(final String id, final String description, final double defaultValue)
+    public ParameterTypeInteger(final String id, final String description, final int defaultValue)
     {
         this(id, description, defaultValue, null);
     }
 
     /**
-     * Constructor without default value, with check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param check Check for parameter values.
-     */
-    public ParameterTypeDouble(final String id, final String description, final Check check)
-    {
-        this(id, description, Double.NaN, check);
-    }
-
-    /**
-     * Constructor with default value and check.
+     * Constructor with check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
      * @param check Check for parameter values.
      */
-    public ParameterTypeDouble(final String id, final String description, final double defaultValue, final Check check)
+    public ParameterTypeInteger(final String id, final String description, final int defaultValue, final Check check)
     {
         super(id, description, Dimensionless.class, new Dimensionless(defaultValue, DimensionlessUnit.SI), check);
         try
@@ -79,20 +56,20 @@ public class ParameterTypeDouble extends AbstractParameterType<DimensionlessUnit
     }
 
     /**
-     * Default double value.
-     * @return Default double value.
+     * Default integer value.
+     * @return Default integer value.
      * @throws ParameterException If no default value was given.
      */
-    public final Double getDefaultValue() throws ParameterException
+    public final Integer getDefaultValue() throws ParameterException
     {
         ParameterException.throwIf(null == this.defaultValue, "No default value was set for " + getId());
-        return super.defaultValue.si;
+        return (int) super.defaultValue.si;
     }
 
     /** {@inheritDoc} */
     public final String printValue(final BehavioralCharacteristics behavioralCharacteristics) throws ParameterException
     {
-        return EngineeringFormatter.format(behavioralCharacteristics.getParameter(this));
+        return Integer.toString(behavioralCharacteristics.getParameter(this));
     }
 
     /**
@@ -101,7 +78,7 @@ public class ParameterTypeDouble extends AbstractParameterType<DimensionlessUnit
      * @param bc Set of behavioral characteristics.
      * @throws ParameterException If the value does not comply with constraints.
      */
-    public void check(final double value, final BehavioralCharacteristics bc) throws ParameterException
+    public void check(final int value, final BehavioralCharacteristics bc) throws ParameterException
     {
         //
     }
@@ -111,7 +88,7 @@ public class ParameterTypeDouble extends AbstractParameterType<DimensionlessUnit
     @Override
     public String toString()
     {
-        return "ParameterTypeDouble [id=" + getId() + ", description=" + getDescription() + "]";
+        return "ParameterTypeInteger [id=" + getId() + ", description=" + getDescription() + "]";
     }
 
 }
