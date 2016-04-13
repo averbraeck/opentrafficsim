@@ -55,4 +55,11 @@ public class HeadwayTrafficLight extends AbstractHeadway
     {
         return this.trafficLight;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "HeadwayTrafficLight [trafficLight=" + this.trafficLight + "]";
+    }
 }

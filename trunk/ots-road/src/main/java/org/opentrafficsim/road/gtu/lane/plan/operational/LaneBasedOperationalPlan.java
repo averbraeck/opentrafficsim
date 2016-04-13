@@ -106,4 +106,12 @@ public class LaneBasedOperationalPlan extends OperationalPlan
     {
         return this.targetLaneList;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LaneBasedOperationalPlan [referenceLaneList=" + this.referenceLaneList + ", targetLaneList="
+                + this.targetLaneList + "]";
+    }
 }

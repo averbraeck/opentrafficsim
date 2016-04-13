@@ -77,7 +77,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
 
     /** Definition of the density axis. */
     private Axis densityAxis = new Axis(new LinearDensity(0, LinearDensityUnit.PER_KILOMETER), new LinearDensity(200,
-        LinearDensityUnit.PER_KILOMETER), null, 0d, "Density [veh/km]", "Density", "density %.1f veh/km");
+            LinearDensityUnit.PER_KILOMETER), null, 0d, "Density [veh/km]", "Density", "density %.1f veh/km");
 
     /**
      * @return densityAxis
@@ -88,8 +88,8 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
     }
 
     /** Definition of the speed axis. */
-    private Axis speedAxis = new Axis(new Speed(0, SpeedUnit.KM_PER_HOUR), new Speed(120, SpeedUnit.KM_PER_HOUR), null,
-        0d, "Speed [km/h]", "Speed", "speed %.0f km/h");
+    private Axis speedAxis = new Axis(new Speed(0, SpeedUnit.KM_PER_HOUR), new Speed(120, SpeedUnit.KM_PER_HOUR), null, 0d,
+            "Speed [km/h]", "Speed", "speed %.0f km/h");
 
     /**
      * @return speedAxis
@@ -108,8 +108,8 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
     }
 
     /** Definition of the flow axis. */
-    private Axis flowAxis = new Axis(new Frequency(0, FrequencyUnit.PER_HOUR),
-        new Frequency(3000d, FrequencyUnit.HERTZ), null, 0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
+    private Axis flowAxis = new Axis(new Frequency(0, FrequencyUnit.PER_HOUR), new Frequency(3000d, FrequencyUnit.HERTZ), null,
+            0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
 
     /** The currently shown X-axis. */
     private Axis xAxis;
@@ -162,7 +162,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
      * @throws SimRuntimeException in case scheduling of the sampler fails
      */
     public FundamentalDiagramLane(final String caption, final Time.Rel aggregationTime, final Lane lane,
-        final OTSDEVSSimulatorInterface simulator) throws NetworkException, SimRuntimeException
+            final OTSDEVSSimulatorInterface simulator) throws NetworkException, SimRuntimeException
     {
         if (aggregationTime.getSI() <= 0)
         {
@@ -174,7 +174,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
         this.simulator = simulator;
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", false));
         this.chartPanel =
-            ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false, false);
+                ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false, false);
         FixCaption.fixCaption(this.chartPanel);
         final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) this.chartPanel.getXYPlot().getRenderer();
         renderer.setBaseShapesVisible(true);
@@ -243,10 +243,10 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
      * @return JRatioButtonMenuItem; the newly added item
      */
     private JRadioButtonMenuItem addMenuItem(final JMenu subMenu, final ButtonGroup group, final Axis xAxisToSelect,
-        final Axis yAxisToSelect, final boolean selected)
+            final Axis yAxisToSelect, final boolean selected)
     {
         final JRadioButtonMenuItem item =
-            new JRadioButtonMenuItem(yAxisToSelect.getShortName() + " / " + xAxisToSelect.getShortName());
+                new JRadioButtonMenuItem(yAxisToSelect.getShortName() + " / " + xAxisToSelect.getShortName());
         item.setSelected(selected);
         item.setActionCommand(yAxisToSelect.getShortName() + "/" + xAxisToSelect.getShortName());
         item.addActionListener(this);
@@ -486,6 +486,14 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "FundamentalDiagramLane [caption=" + this.caption + ", aggregationTime=" + this.aggregationTime
+                + ", samples.size=" + this.samples.size() + ", lane=" + this.lane + ", flow=" + this.flow + "]";
+    }
+
     /**
      * Storage for one sample of data collected with mean speed [m/s] and number of vehicles per km. Flow per second can be
      * calculated from these two numbers; currently the flow is provided (but never used).
@@ -544,6 +552,13 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
                 throw new Error("Sample.getValue: Can not identify axis");
             }
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "Sample [meanSpeed=" + this.meanSpeed + ", density=" + this.density + ", flow=" + this.flow + "]";
+        }
     }
 
     /** */
@@ -567,5 +582,13 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
             FundamentalDiagramLane.this.flow += 1;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "FlowSensor []";
+        }
+
     }
+
 }

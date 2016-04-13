@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.network.NetworkException;
 
@@ -52,6 +52,13 @@ public class LanePerceptionFull extends AbstractLanePerception implements Percep
         updateParallelHeadwaysRight();
         updateLaneTrafficLeft();
         updateLaneTrafficRight();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LanePerceptionFull []";
     }
 
 }

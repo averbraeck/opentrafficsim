@@ -168,4 +168,11 @@ public class HeadwayGTU extends AbstractHeadway
         return this.gtuStatus.contains(GTUStatus.HONK);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "HeadwayGTU [gtuType=" + this.gtuType + ", gtuStatus=" + this.gtuStatus + "]";
+    }
+
 }

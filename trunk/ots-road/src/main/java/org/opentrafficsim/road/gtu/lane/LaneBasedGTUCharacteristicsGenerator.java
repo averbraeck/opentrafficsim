@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.lane;
 
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 
 /**
  * Interface for objects that can generate a LaneBasedGTUCharacteristics object.

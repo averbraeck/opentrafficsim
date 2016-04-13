@@ -44,4 +44,11 @@ public class Altruistic extends AbstractLaneChangeModel
         return "Altruistic lane change model (as described by Treiber).";
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "Altruistic []";
+    }
+
 }

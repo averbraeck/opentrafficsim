@@ -22,4 +22,11 @@ public class DualHeadwaySpaceChecker implements SpaceChecker
         return false;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "DualHeadwaySpaceChecker []";
+    }
+
 }

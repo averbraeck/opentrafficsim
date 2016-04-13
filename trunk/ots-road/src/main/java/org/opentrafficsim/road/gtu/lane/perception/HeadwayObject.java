@@ -89,4 +89,11 @@ public class HeadwayObject extends AbstractHeadway
         super(ObjectType.OBJECT, id, overlapFront, overlap, overlapRear);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "HeadwayObject []";
+    }
+
 }

@@ -10,8 +10,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypes;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -112,5 +112,12 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         OperationalPlan op =
                 new OperationalPlan(gtu, lanePathInfo.getPath(), startTime, gtu.getVelocity(), operationalPlanSegmentList);
         return op;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LaneBasedGTUFollowingTacticalPlanner [carFollowingModel=" + getCarFollowingModel() + "]";
     }
 }

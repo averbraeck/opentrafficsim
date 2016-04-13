@@ -27,7 +27,7 @@ public class DirectedAltruistic extends AbstractDirectedLaneChangeModel
         // This implementation returns the average of the two in order to avoid this sensitivity problem.
         AccelerationUnit unit = accelerationSteps.getLeaderAcceleration().getUnit();
         return new Acceleration((accelerationSteps.getLeaderAcceleration().getInUnit() + accelerationSteps
-            .getFollowerAcceleration().getInUnit(unit)) / 2, unit);
+                .getFollowerAcceleration().getInUnit(unit)) / 2, unit);
     }
 
     /** {@inheritDoc} */
@@ -42,6 +42,13 @@ public class DirectedAltruistic extends AbstractDirectedLaneChangeModel
     public final String getLongName()
     {
         return "Altruistic lane change model (as described by Treiber).";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "DirectedAltruistic [name=" + getName() + "]";
     }
 
 }

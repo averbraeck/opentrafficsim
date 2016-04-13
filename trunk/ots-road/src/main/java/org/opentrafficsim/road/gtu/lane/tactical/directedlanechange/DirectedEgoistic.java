@@ -37,4 +37,11 @@ public final class DirectedEgoistic extends AbstractDirectedLaneChangeModel
         return "Egoistic lane change model (as described by Treiber).";
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "DirectedEgoistic [name=" + this.getName() + "]";
+    }
+
 }

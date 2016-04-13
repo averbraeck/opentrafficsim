@@ -110,4 +110,11 @@ public class LaneStructure
         return this.length;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LaneStructure [length=" + this.length + ", rootLSR=" + this.rootLSR + "]";
+    }
+
 }

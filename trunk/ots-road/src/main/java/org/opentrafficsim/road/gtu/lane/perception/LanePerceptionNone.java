@@ -45,4 +45,11 @@ public class LanePerceptionNone extends AbstractLanePerception implements Percep
         // do not perceive anything standard -- just look when you need information.
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LanePerceptionNone []";
+    }
+
 }

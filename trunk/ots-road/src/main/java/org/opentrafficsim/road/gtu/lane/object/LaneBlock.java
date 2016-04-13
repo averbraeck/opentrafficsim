@@ -66,7 +66,7 @@ public class LaneBlock extends AbstractTrafficLight
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "LaneBlock [lane=" + this.laneTL + ", position=" + this.positionTL + "]";
     }

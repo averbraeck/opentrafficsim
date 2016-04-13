@@ -47,5 +47,12 @@ public class SimpleTrafficLight extends AbstractTrafficLight
         setBlocked(false);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "SimpleTrafficLight []";
+    }
+
 }
 

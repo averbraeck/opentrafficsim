@@ -11,8 +11,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 
 /**
  * The Intelligent Driver Model by Treiber, Hennecke and Helbing.
@@ -204,6 +204,14 @@ public class IDMOld extends AbstractGTUFollowingModelMobil
         final SortedMap<Rel, Speed> leaders) throws ParameterException
     {
         return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "IDMOld [s0=" + this.s0 + ", a=" + this.a + ", b=" + this.b + ", tSafe=" + this.tSafe + ", stepSize="
+                + this.stepSize + ", delta=" + this.delta + "]";
     }
 
 }

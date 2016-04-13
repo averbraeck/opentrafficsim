@@ -63,4 +63,11 @@ public class DirectedFixedLaneChangeModel implements DirectedLaneChangeModel
                 + "traffic. It is used mostly for testing.";
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "DirectedFixedLaneChangeModel [name=" + getName() + "]";
+    }
+
 }

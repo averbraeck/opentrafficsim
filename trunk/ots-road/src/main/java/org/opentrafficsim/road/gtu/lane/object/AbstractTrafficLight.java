@@ -28,7 +28,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
-import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
@@ -344,6 +344,21 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
         return (LanePerceptionFull) super.getPerception();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void addTrigger(Lane lane, SimEvent<OTSSimTimeDouble> event)
+    {
+        // Nothing to do as this is not really a GTU.
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "AbstractTrafficLight [laneTL=" + this.laneTL + ", positionTL=" + this.positionTL + ", blocked=" + this.blocked
+                + "]";
+    }
+
     /* ========================================================================================================= */
 
     /**
@@ -404,6 +419,13 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
         {
             this.behavioralCharacteristics = drivingCharacteristics;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "DummyStrategicalPlanner [behavioralCharacteristics=" + this.behavioralCharacteristics + "]";
+        }
     }
 
     /** */
@@ -420,12 +442,13 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
             return new OperationalPlan(gtu, locationAtStartTime, startTime, new Time.Rel(1.0, TimeUnit.MINUTE));
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "DummyTacticalPlanner []";
+        }
+
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void addTrigger(Lane lane, SimEvent<OTSSimTimeDouble> event)
-    {
-        // Nothing to do as this is not really a GTU.
-    }
 }

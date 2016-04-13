@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.strategical;
 
-import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 
 /**

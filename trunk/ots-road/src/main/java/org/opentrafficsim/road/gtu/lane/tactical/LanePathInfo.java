@@ -120,4 +120,12 @@ public class LanePathInfo implements Serializable
         return this.referencePosition;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LanePathInfo [path=" + this.path + ", laneDirectionList=" + this.laneDirectionList + ", referencePosition="
+                + this.referencePosition + "]";
+    }
+
 }
