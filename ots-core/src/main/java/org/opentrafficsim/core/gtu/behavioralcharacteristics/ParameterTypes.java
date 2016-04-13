@@ -1,7 +1,7 @@
-package org.opentrafficsim.core.gtu.drivercharacteristics;
+package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
-import static org.opentrafficsim.core.gtu.drivercharacteristics.AbstractParameterType.Check.POSITIVE;
-import static org.opentrafficsim.core.gtu.drivercharacteristics.AbstractParameterType.Check.NEGATIVE;
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.NEGATIVE;
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.POSITIVE;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;

@@ -1,6 +1,7 @@
-package org.opentrafficsim.core.gtu.drivercharacteristics;
+package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
-import org.opentrafficsim.core.gtu.drivercharacteristics.AbstractParameterType.Check;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check;
+
 
 /**
  * In order to define default constraints within a Parameter Type, an <tt>enum</tt> is available. This interface supplies easy

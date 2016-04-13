@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.gtu.drivercharacteristics;
+package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.util.Arrays;
 import java.util.IllegalFormatException;

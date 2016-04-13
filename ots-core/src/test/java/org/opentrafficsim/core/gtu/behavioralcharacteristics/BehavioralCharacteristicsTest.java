@@ -16,17 +16,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
-import org.opentrafficsim.core.gtu.drivercharacteristics.AbstractParameterType.Check;
-import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.drivercharacteristics.CheckInterface;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterType;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypeAcceleration;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypeDouble;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypeFrequency;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypeInteger;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypeLinearDensity;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypeSpeed;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check;
 
 /**
  * <p>
