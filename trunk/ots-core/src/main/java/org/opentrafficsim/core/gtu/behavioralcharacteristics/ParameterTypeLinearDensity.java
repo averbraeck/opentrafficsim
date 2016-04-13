@@ -71,7 +71,7 @@ public class ParameterTypeLinearDensity extends ParameterType<LinearDensityUnit,
     @Override
     public final String toString()
     {
-        return "ParameterTypeLinearDensity [id=" + super.getId() + "]";
+        return "ParameterTypeLinearDensity [id=" + getId() + ", description=" + getDescription() + "]";
     }
 
 }

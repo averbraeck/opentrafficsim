@@ -71,7 +71,7 @@ public class ParameterTypeFrequency extends ParameterType<FrequencyUnit, Frequen
     @Override
     public final String toString()
     {
-        return "ParameterTypeFrequency [id=" + super.getId() + "]";
+        return "ParameterTypeFrequency [id=" + getId() + ", description=" + getDescription() + "]";
     }
 
 }
