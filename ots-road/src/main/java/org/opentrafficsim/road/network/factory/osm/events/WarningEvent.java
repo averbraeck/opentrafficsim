@@ -38,4 +38,11 @@ public class WarningEvent extends EventObject
     {
         return this.warning;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "WarningEvent [warning=" + this.warning + "]";
+    }
 }

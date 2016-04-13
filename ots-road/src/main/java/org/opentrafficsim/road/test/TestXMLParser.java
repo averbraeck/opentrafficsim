@@ -111,6 +111,13 @@ public class TestXMLParser extends AbstractWrappableAnimation
         return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "TestXMLParser []";
+    }
+
     /**
      * Model to test the XML parser.
      * <p>
@@ -163,6 +170,13 @@ public class TestXMLParser extends AbstractWrappableAnimation
 
         {
             return this.simulator;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "TestXMLModel [simulator=" + this.simulator + "]";
         }
 
     }

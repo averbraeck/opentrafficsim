@@ -113,6 +113,13 @@ public class LMRSTests extends AbstractWrappableAnimation
         return new Rectangle2D.Double(-100, -100, 3200, 200);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "LMRSTests []";
+    }
+
     /**
      * Model to test the XML parser.
      * <p>
@@ -166,6 +173,13 @@ public class LMRSTests extends AbstractWrappableAnimation
 
         {
             return this.simulator;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "TestXMLModel [simulator=" + this.simulator + "]";
         }
 
     }

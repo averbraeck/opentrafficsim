@@ -120,4 +120,12 @@ class LaneSectionTag
             System.err.println("Exception in finding lanes");
         return lanes1;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LaneSectionTag [id=" + this.id + ", s=" + this.s + ", leftLaneTags=" + this.leftLaneTags + ", centerLaneTags="
+                + this.centerLaneTags + ", rightLaneTags=" + this.rightLaneTags + ", lanes=" + this.lanes + "]";
+    }
 }

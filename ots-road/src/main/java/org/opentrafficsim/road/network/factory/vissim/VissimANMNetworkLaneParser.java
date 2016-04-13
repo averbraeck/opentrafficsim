@@ -117,7 +117,7 @@ public class VissimANMNetworkLaneParser
      */
     @SuppressWarnings("checkstyle:needbraces")
     public final OTSNetwork build(final URL url) throws NetworkException, ParserConfigurationException, SAXException,
-        IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException
+            IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException
     {
         if (url.getFile().length() > 0 && !(new File(url.getFile()).exists()))
             throw new SAXException("XmlNetworkLaneParser.build: File url.getFile() does not exist");
@@ -130,8 +130,7 @@ public class VissimANMNetworkLaneParser
         NodeList networkNodeList = document.getDocumentElement().getChildNodes();
 
         if (!document.getDocumentElement().getNodeName().equals("NETWORK"))
-            throw new SAXException(
-                "XmlNetworkLaneParser.build: XML document does not start with an NETWORK tag, found "
+            throw new SAXException("XmlNetworkLaneParser.build: XML document does not start with an NETWORK tag, found "
                     + document.getDocumentElement().getNodeName() + " instead");
 
         // there should be some definitions using DEFINITIONS tags (could be more than one due to include files)
@@ -204,6 +203,13 @@ public class VissimANMNetworkLaneParser
         // network.addRoute(GTUType.ALL, routeTag.route);
         // }
         return network;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "VissimANMNetworkLaneParser [gtuTypes=" + this.gtuTypes + ", laneTypes=" + this.laneTypes + "]";
     }
 
 }

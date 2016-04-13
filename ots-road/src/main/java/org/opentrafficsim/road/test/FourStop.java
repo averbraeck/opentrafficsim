@@ -113,6 +113,13 @@ public class FourStop extends AbstractWrappableAnimation
         return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "FourStop []";
+    }
+
     /**
      * Model to test the XML parser.
      * <p>
@@ -162,6 +169,13 @@ public class FourStop extends AbstractWrappableAnimation
 
         {
             return this.simulator;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "TestXMLModel [simulator=" + this.simulator + "]";
         }
 
     }

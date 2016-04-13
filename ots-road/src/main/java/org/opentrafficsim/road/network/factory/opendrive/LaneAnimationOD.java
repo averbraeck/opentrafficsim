@@ -159,4 +159,11 @@ public class LaneAnimationOD extends Renderable2D
         paintArrow(graphics, Color.blue, lane.getLocation(), lane.getCenterLine(), 0.75,
             lane.getDirectionality(GTUType.ALL));
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LaneAnimationOD [color=" + this.color + "]";
+    }
 }

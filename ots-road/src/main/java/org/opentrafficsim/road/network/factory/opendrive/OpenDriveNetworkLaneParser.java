@@ -116,7 +116,7 @@ public class OpenDriveNetworkLaneParser
      */
     @SuppressWarnings("checkstyle:needbraces")
     public final OTSNetwork build(final URL url) throws NetworkException, ParserConfigurationException, SAXException,
-        IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException
+            IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException
     {
         if (url.getFile().length() > 0 && !(new File(url.getFile()).exists()))
             throw new SAXException("OpenDriveNetworkLaneParser.build: File url.getFile() does not exist");
@@ -130,8 +130,8 @@ public class OpenDriveNetworkLaneParser
 
         if (!document.getDocumentElement().getNodeName().equals("OpenDRIVE"))
             throw new SAXException(
-                "OpenDriveNetworkLaneParser.build: XML document does not start with an OpenDRIVE tag, found "
-                    + document.getDocumentElement().getNodeName() + " instead");
+                    "OpenDriveNetworkLaneParser.build: XML document does not start with an OpenDRIVE tag, found "
+                            + document.getDocumentElement().getNodeName() + " instead");
 
         this.network = new OTSNetwork(url.toString());
 
@@ -216,7 +216,7 @@ public class OpenDriveNetworkLaneParser
      * @return the OTSNetwork with the static information about the network
      * @throws NetworkException if items cannot be added to the Network
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private OTSNetwork makeNetwork(final String name) throws NetworkException
     {
         this.network = new OTSNetwork(name);
@@ -243,6 +243,19 @@ public class OpenDriveNetworkLaneParser
     public HeaderTag getHeaderTag()
     {
         return this.headerTag;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "OpenDriveNetworkLaneParser [headerTag=" + this.headerTag + ", controllerTags.size="
+                + this.controllerTags.size() + ", junctionTags.size=" + this.junctionTags.size() + ", roadTags.size="
+                + this.roadTags.size() + ", gtuTypes.size=" + this.gtuTypes.size() + ", laneTypes.size="
+                + this.laneTypes.size() + ", simulator=" + this.simulator + ", network=" + this.network + ", signalTags.size="
+                + this.signalTags.size() + ", trafficLightsBySignals.size=" + this.trafficLightsBySignals.size()
+                + ", trafficLightsByLanes.size=" + this.trafficLightsByLanes.size() + ", animationMap.size="
+                + this.animationMap.size() + "]";
     }
 
 }

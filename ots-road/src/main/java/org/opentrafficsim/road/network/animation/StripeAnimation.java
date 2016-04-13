@@ -24,6 +24,7 @@ import com.vividsolutions.jts.linearref.LengthIndexedLine;
 import com.vividsolutions.jts.operation.buffer.BufferParameters;
 
 /**
+ * Draw road stripes.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -230,5 +231,12 @@ public class StripeAnimation extends Renderable2D
 
         /** Double solid line ||, don't cross. */
         DOUBLE
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "StripeAnimation [type=" + this.type + ", line=" + this.line + "]";
     }
 }

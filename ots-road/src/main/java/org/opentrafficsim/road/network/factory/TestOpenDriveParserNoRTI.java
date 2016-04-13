@@ -159,6 +159,13 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
         return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "TestOpenDriveParserNoRTI []";
+    }
+
     /**
      * Model to test the XML parser.
      * <p>
@@ -592,6 +599,13 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                     new AccelerationGTUColorer(new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2),
                         new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2))};
             return new SwitchableGTUColorer(0, gtuColorers);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "TestOpenDriveModel [rtiCars.size=" + this.rtiCars.size() + "]";
         }
     }
 

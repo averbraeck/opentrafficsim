@@ -124,4 +124,11 @@ public class PackUDPData
         // return ByteBuffer.wrap(intBytes).order(ByteOrder.LITTLE_ENDIAN).getInt();
         return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(value).array();
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "PackUDPData []";
+    }
 }

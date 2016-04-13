@@ -287,4 +287,11 @@ public class OSMParser implements Sink
     {
         this.progressListener = progressListener;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "OSMParser [net=" + this.net + ", wantedTags=" + this.wantedTags + ", filterKeys=" + this.filterKeys + "]";
+    }
 }

@@ -121,7 +121,7 @@ public class XmlNetworkLaneParser
      */
     @SuppressWarnings("checkstyle:needbraces")
     public final OTSNetwork build(final URL url) throws NetworkException, ParserConfigurationException, SAXException,
-        IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException
+            IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException
     {
         if (url.getFile().length() > 0 && !(new File(url.getFile()).exists()))
             throw new SAXException("XmlNetworkLaneParser.build: File url.getFile() does not exist");
@@ -135,8 +135,7 @@ public class XmlNetworkLaneParser
         NodeList networkNodeList = document.getDocumentElement().getChildNodes();
 
         if (!document.getDocumentElement().getNodeName().equals("NETWORK"))
-            throw new SAXException(
-                "XmlNetworkLaneParser.build: XML document does not start with an NETWORK tag, found "
+            throw new SAXException("XmlNetworkLaneParser.build: XML document does not start with an NETWORK tag, found "
                     + document.getDocumentElement().getNodeName() + " instead");
 
         // there should be some definitions using DEFINITIONS tags (could be more than one due to include files)
@@ -208,6 +207,19 @@ public class XmlNetworkLaneParser
             this.network.addRoute(GTUType.ALL, routeTag.route);
         }
         return this.network;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "XmlNetworkLaneParser [globalTag=" + this.globalTag + ", nodeTags.size=" + this.nodeTags.size()
+                + ", linkTags.size=" + this.linkTags.size() + ", gtuTags.size=" + this.gtuTags.size() + ", gtuMixTags.size="
+                + this.gtuMixTags.size() + ", routeTags.size=" + this.routeTags.size() + ", routeMixTags.size="
+                + this.routeMixTags.size() + ", shortestRouteTagssize.=" + this.shortestRouteTags.size()
+                + ", shortestRouteMixTags.size=" + this.shortestRouteMixTags.size() + ", roadTypeTags.size="
+                + this.roadTypeTags.size() + ", gtuTypes.size=" + this.gtuTypes.size() + ", laneTypes.size="
+                + this.laneTypes.size() + "]";
     }
 
 }

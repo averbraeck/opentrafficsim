@@ -67,5 +67,12 @@ public class LaneBasedStrategicalPlannerNone extends AbstractLaneBasedStrategica
         return null;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LaneBasedStrategicalPlannerNone []";
+    }
+
 }
 

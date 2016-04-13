@@ -84,4 +84,11 @@ class LanesTag
         }
         return null;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LanesTag [laneSectionTags=" + this.laneSectionTags + "]";
+    }
 }

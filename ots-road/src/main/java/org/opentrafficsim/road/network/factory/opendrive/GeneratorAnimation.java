@@ -103,5 +103,12 @@ public class GeneratorAnimation extends Renderable2D
             return new BoundingBox(this.width, this.width, 0.0);
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "GenPos [location=" + this.location + ", width=" + this.width + "]";
+        }
+
     }
 }

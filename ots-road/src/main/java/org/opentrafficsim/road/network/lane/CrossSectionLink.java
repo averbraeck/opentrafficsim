@@ -162,4 +162,12 @@ public class CrossSectionLink extends OTSLink implements Serializable
     {
         return this.lanes;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "CrossSectionLink [crossSectionElementList=" + this.crossSectionElementList + ", lanes=" + this.lanes
+                + ", laneKeepingPolicy=" + this.laneKeepingPolicy + "]";
+    }
 }

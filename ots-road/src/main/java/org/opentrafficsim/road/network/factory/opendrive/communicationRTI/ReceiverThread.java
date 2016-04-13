@@ -7,6 +7,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -43,7 +44,7 @@ public class ReceiverThread extends Thread
 
     /** */
     List<LaneBasedIndividualGTU> rtiCars;
-    
+
     /** */
     OTSNetwork network;
 
@@ -55,8 +56,7 @@ public class ReceiverThread extends Thread
      * @throws SocketException when communication fails
      */
     public ReceiverThread(OTSDEVSSimulatorInterface simulator, GTUType carType, List<LaneBasedIndividualGTU> rtiCars,
-        final OTSNetwork network)
-        throws SocketException
+            final OTSNetwork network) throws SocketException
     {
         super();
         this.Socket = new DatagramSocket(8090);
@@ -94,8 +94,8 @@ public class ReceiverThread extends Thread
                 // System.out.println("yaw is " + simData.getEgoOri().getYaw() + ", pitch is " + simData.getEgoOri().getPitch()
                 // + ", roll is " + simData.getEgoOri().getRoll());
                 DirectedPoint position =
-                    new DirectedPoint(simData.getEgoPos().getY(), simData.getEgoPos().getX(), 1.0, 0.0, 0.0,
-                        (Math.PI / 2 - simData.getEgoOri().getYaw()));
+                        new DirectedPoint(simData.getEgoPos().getY(), simData.getEgoPos().getX(), 1.0, 0.0, 0.0,
+                                (Math.PI / 2 - simData.getEgoOri().getYaw()));
 
                 if (this.car == null)
                     this.car = new SubjectiveCar("nissan", this.carType, this.simulator, position, this.network);
@@ -141,6 +141,14 @@ public class ReceiverThread extends Thread
             // new Thread(new Responder(socket, packet)).start();
         }
         System.err.println("RECEIVEDATA = NULL - ReceiverThread ended");
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "ReceiverThread [Socket=" + this.Socket + ", car=" + this.car + ", carType=" + this.carType + ", rtiCars.size="
+                + this.rtiCars.size() + "]";
     }
 
 }

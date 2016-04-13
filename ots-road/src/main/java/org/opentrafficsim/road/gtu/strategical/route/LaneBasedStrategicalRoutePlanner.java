@@ -246,4 +246,12 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         return this.route;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LaneBasedStrategicalRoutePlanner [route=" + this.route + ", fixedTacticalPlanner=" + this.fixedTacticalPlanner
+                + "]";
+    }
+
 }

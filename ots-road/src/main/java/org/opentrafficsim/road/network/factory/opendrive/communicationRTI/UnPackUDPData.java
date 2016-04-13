@@ -97,4 +97,11 @@ public class UnPackUDPData
 
         return ByteBuffer.wrap(intBytes).order(ByteOrder.LITTLE_ENDIAN).getInt();
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "UnPackUDPData []";
+    }
 }

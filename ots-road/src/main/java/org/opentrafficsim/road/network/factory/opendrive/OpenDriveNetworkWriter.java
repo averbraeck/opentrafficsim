@@ -62,4 +62,11 @@ public class OpenDriveNetworkWriter
     private void writeJunctions()
     {
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "OpenDriveNetworkWriter [network=" + this.network + ", output=" + this.output + "]";
+    }
 }

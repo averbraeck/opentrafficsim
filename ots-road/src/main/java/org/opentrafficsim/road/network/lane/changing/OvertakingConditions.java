@@ -71,6 +71,13 @@ public interface OvertakingConditions
         {
             return OvertakingDirection.LEFT;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "LeftOnly []";
+        }
     }
 
     /**
@@ -94,6 +101,13 @@ public interface OvertakingConditions
         {
             return OvertakingDirection.RIGHT;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "RightOnly []";
+        }
     }
 
     /**
@@ -115,6 +129,13 @@ public interface OvertakingConditions
         {
             return OvertakingDirection.NONE;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "None []";
+        }
     }
 
     /**
@@ -135,6 +156,13 @@ public interface OvertakingConditions
             final LaneBasedGTU predecessorGTU)
         {
             return OvertakingDirection.BOTH;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "LeftAndRight []";
         }
     }
 
@@ -169,6 +197,13 @@ public interface OvertakingConditions
             return gtu.getVelocity().lt(this.rightOvertakingSpeedMax) ? OvertakingDirection.BOTH
                 : OvertakingDirection.LEFT;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "LeftAlwaysRightSpeed [rightOvertakingSpeedMax=" + this.rightOvertakingSpeedMax + "]";
+        }
     }
 
     /**
@@ -201,6 +236,13 @@ public interface OvertakingConditions
         {
             return gtu.getVelocity().lt(this.leftOvertakingSpeedMax) ? OvertakingDirection.BOTH
                 : OvertakingDirection.RIGHT;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "RightAlwaysLeftSpeed [leftOvertakingSpeedMax=" + this.leftOvertakingSpeedMax + "]";
         }
     }
 
@@ -255,6 +297,13 @@ public interface OvertakingConditions
             }
             return OvertakingDirection.NONE;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "LeftSet [overtakingGTUs=" + this.overtakingGTUs + ", overtakenGTUs=" + this.overtakenGTUs + "]";
+        }
     }
 
     /**
@@ -307,6 +356,13 @@ public interface OvertakingConditions
                 return OvertakingDirection.RIGHT;
             }
             return OvertakingDirection.NONE;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "RightSet [overtakingGTUs=" + this.overtakingGTUs + ", overtakenGTUs=" + this.overtakenGTUs + "]";
         }
     }
 
@@ -371,6 +427,14 @@ public interface OvertakingConditions
             }
             return right ? OvertakingDirection.RIGHT : OvertakingDirection.NONE;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "LeftSetRightSpeed [overtakingGTUs=" + this.overtakingGTUs + ", overtakenGTUs=" + this.overtakenGTUs
+                    + ", rightOvertakingSpeedMax=" + this.rightOvertakingSpeedMax + "]";
+        }
     }
 
     /**
@@ -433,6 +497,14 @@ public interface OvertakingConditions
                 return left ? OvertakingDirection.BOTH : OvertakingDirection.RIGHT;
             }
             return left ? OvertakingDirection.LEFT : OvertakingDirection.NONE;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "RightSetLeftSpeed [overtakingGTUs=" + this.overtakingGTUs + ", overtakenGTUs=" + this.overtakenGTUs
+                    + ", leftOvertakingSpeedMax=" + this.leftOvertakingSpeedMax + "]";
         }
     }
 

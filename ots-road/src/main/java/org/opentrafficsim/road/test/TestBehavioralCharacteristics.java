@@ -46,5 +46,12 @@ public class TestBehavioralCharacteristics
         bc.setParameter(ptd, 3.0);
         bc.setParameter(ptd, Double.NaN);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "TestBehavioralCharacteristics []";
+    }
 }
 

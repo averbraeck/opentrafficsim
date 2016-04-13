@@ -116,4 +116,11 @@ public class OSMWay
         }
         return result;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "OSMWay [id=" + this.id + ", nodes=" + this.nodes + ", waytags=" + this.waytags + "]";
+    }
 }
