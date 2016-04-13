@@ -7,13 +7,13 @@ import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterType;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypeBoolean;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypeDouble;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypeInteger;
-import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypes;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterType;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeBoolean;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeInteger;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 
 /**
  * Factory for defaults in demos.
