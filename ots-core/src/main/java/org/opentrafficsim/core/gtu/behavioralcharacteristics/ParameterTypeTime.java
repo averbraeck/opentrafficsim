@@ -70,7 +70,7 @@ public class ParameterTypeTime extends ParameterType<TimeUnit, Time.Rel> impleme
     @Override
     public final String toString()
     {
-        return "ParameterTypeTime [id=" + super.getId() + "]";
+        return "ParameterTypeTime [id=" + getId() + ", description=" + getDescription() + "]";
     }
 
 }

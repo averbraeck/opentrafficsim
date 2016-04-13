@@ -70,7 +70,7 @@ public class ParameterTypeSpeed extends ParameterType<SpeedUnit, Speed> implemen
     @Override
     public final String toString()
     {
-        return "ParameterTypeSpeed [id=" + super.getId() + "]";
+        return "ParameterTypeSpeed [id=" + getId() + ", description=" + getDescription() + "]";
     }
 
 }

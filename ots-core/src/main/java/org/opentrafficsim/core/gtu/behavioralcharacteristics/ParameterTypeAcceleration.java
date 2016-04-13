@@ -71,7 +71,7 @@ public class ParameterTypeAcceleration extends ParameterType<AccelerationUnit, A
     @Override
     public final String toString()
     {
-        return "ParameterTypeAcceleration [id=" + super.getId() + "]";
+        return "ParameterTypeAcceleration [id=" + getId() + ", description=" + getDescription() + "]";
     }
 
 }
