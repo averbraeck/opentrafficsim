@@ -2,7 +2,6 @@ package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check;
 
-
 /**
  * In order to define default constraints within a Parameter Type, an <tt>enum</tt> is available. This interface supplies easy
  * access to the values of this <tt>enum</tt>. To use this interface, simply implement it as below. The value <tt>POSITIVE</tt>
@@ -55,19 +54,24 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterTy
  * the the others' check.</b> <br>
  * <br>
  * The type of the first argument in the <tt>check()</tt> method depends on the super Parameter Type. For example:<br>
- * <li><tt>double</tt> for <tt>ParameterTypeDouble</tt></li> <li><tt>int</tt> for <tt>ParameterTypeInteger</tt></li> <li>
- * <tt>Speed</tt> for <tt>ParameterTypeSpeed</tt></li> <li><tt>Length.Rel</tt> for <tt>ParameterTypeLength</tt></li> <li>
- * <tt>T</tt> for <tt>ParameterType&lt;T&gt;</tt></li> Note that <tt>ParameterTypeBoolean</tt> has no check method as checks on
- * booleans are senseless.<br>
+ * <ul>
+ * <li><tt>double</tt> for <tt>ParameterTypeDouble</tt></li>
+ * <li><tt>int</tt> for <tt>ParameterTypeInteger</tt></li>
+ * <li>
+ * <tt>Speed</tt> for <tt>ParameterTypeSpeed</tt></li>
+ * <li><tt>Length.Rel</tt> for <tt>ParameterTypeLength</tt></li>
+ * <li>
+ * <tt>T</tt> for <tt>ParameterType&lt;T&gt;</tt></li>
+ * </ul>
+ * Note that <tt>ParameterTypeBoolean</tt> has no check method as checks on booleans are senseless.<br>
  * <br>
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
- * </p>
- * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
- * initial version 7 apr. 2016 <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * <p>
+ * @version $Revision$, $LastChangedDate$, by $Author$, 
+ *          initial version Apr 13, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 @SuppressWarnings({"checkstyle:interfaceistype", "checkstyle:javadoctype", "checkstyle:javadocvariable", "javadoc"})
