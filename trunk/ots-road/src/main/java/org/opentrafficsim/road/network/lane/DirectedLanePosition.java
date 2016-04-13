@@ -37,9 +37,9 @@ public class DirectedLanePosition
         throws GTUException
     {
         super();
-        GTUException.failIf(lane == null, "lane is null");
-        GTUException.failIf(position == null, "position is null");
-        GTUException.failIf(gtuDirection == null, "gtuDirection is null");
+        GTUException.throwIf(lane == null, "lane is null");
+        GTUException.throwIf(position == null, "position is null");
+        GTUException.throwIf(gtuDirection == null, "gtuDirection is null");
         this.lane = lane;
         this.position = position;
         this.gtuDirection = gtuDirection;

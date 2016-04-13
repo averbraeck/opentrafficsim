@@ -21,10 +21,10 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 
 /**
  * Implementation of the LMRS (Lane change Model with Relaxation and Synchronization). See Schakel, W.J., Knoop, V.L., and Van
@@ -49,11 +49,11 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
         {
             if (bc.contains(DSYNC))
             {
-                ParameterException.failIf(value >= bc.getParameter(DSYNC), "Value of dFree is above or equal to dSync.");
+                ParameterException.throwIf(value >= bc.getParameter(DSYNC), "Value of dFree is above or equal to dSync.");
             }
             if (bc.contains(DCOOP))
             {
-                ParameterException.failIf(value >= bc.getParameter(DCOOP), "Value of dFree is above or equal to dCoop.");
+                ParameterException.throwIf(value >= bc.getParameter(DCOOP), "Value of dFree is above or equal to dCoop.");
             }
         }
     };
@@ -66,11 +66,11 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
         {
             if (bc.contains(DFREE))
             {
-                ParameterException.failIf(value <= bc.getParameter(DFREE), "Value of dSync is below or equal to dFree.");
+                ParameterException.throwIf(value <= bc.getParameter(DFREE), "Value of dSync is below or equal to dFree.");
             }
             if (bc.contains(DCOOP))
             {
-                ParameterException.failIf(value >= bc.getParameter(DCOOP), "Value of dSync is above or equal to dCoop.");
+                ParameterException.throwIf(value >= bc.getParameter(DCOOP), "Value of dSync is above or equal to dCoop.");
             }
         }
     };
@@ -83,11 +83,11 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
         {
             if (bc.contains(DFREE))
             {
-                ParameterException.failIf(value <= bc.getParameter(DFREE), "Value of dCoop is below or equal to dFree.");
+                ParameterException.throwIf(value <= bc.getParameter(DFREE), "Value of dCoop is below or equal to dFree.");
             }
             if (bc.contains(DSYNC))
             {
-                ParameterException.failIf(value <= bc.getParameter(DSYNC), "Value of dCoop is below or equal to dSync.");
+                ParameterException.throwIf(value <= bc.getParameter(DSYNC), "Value of dCoop is below or equal to dSync.");
             }
         }
     };

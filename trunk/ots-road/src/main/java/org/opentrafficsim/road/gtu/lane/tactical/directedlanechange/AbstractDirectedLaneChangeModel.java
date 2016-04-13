@@ -15,11 +15,11 @@ import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGTUFollowingModelMobil;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
-import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -41,8 +41,8 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
     /** {@inheritDoc} */
     @Override
     public final DirectedLaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
-            final LateralDirectionality direction, final Collection<HeadwayGTU> sameLaneGTUs,
-            final Collection<HeadwayGTU> otherLaneGTUs, final Length.Rel maxDistance, final Speed speedLimit,
+            final LateralDirectionality direction, final Collection<Headway> sameLaneGTUs,
+            final Collection<Headway> otherLaneGTUs, final Length.Rel maxDistance, final Speed speedLimit,
             final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold, final Time.Rel laneChangeTime)
             throws GTUException, ParameterException
     {
@@ -50,7 +50,8 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
         Lane lane = positions.keySet().iterator().next();
         Length.Rel longitudinalPosition = positions.get(lane);
         Lane otherLane = gtu.getPerception().bestAccessibleAdjacentLane(lane, direction, longitudinalPosition);
-        GTUFollowingModelOld gtuFollowingModel = (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner()).getCarFollowingModel();
+        GTUFollowingModelOld gtuFollowingModel =
+                (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner()).getCarFollowingModel();
         if (null == gtuFollowingModel)
         {
             throw new Error(gtu + " has null GTUFollowingModel");
@@ -67,7 +68,7 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
                         speedLimit, laneChangeTime);
         if (null != otherLaneAccelerationSteps
                 && otherLaneAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getBehavioralCharacteristics()
-                .getParameter(ParameterTypes.B).getSI())
+                        .getParameter(ParameterTypes.B).getSI())
         {
             otherLaneAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;
         }

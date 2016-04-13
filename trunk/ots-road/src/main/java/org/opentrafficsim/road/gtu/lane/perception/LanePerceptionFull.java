@@ -41,15 +41,15 @@ public class LanePerceptionFull extends AbstractLanePerception implements Percep
 
     /** {@inheritDoc} */
     @Override
-    public void perceive() throws GTUException, NetworkException, ParameterException
+    public final void perceive() throws GTUException, NetworkException, ParameterException
     {
         updateSpeedLimit();
-        updateForwardHeadwayGTU();
-        updateBackwardHeadwayGTU();
+        updateForwardHeadway();
+        updateBackwardHeadway();
         updateAccessibleAdjacentLanesLeft();
         updateAccessibleAdjacentLanesRight();
-        updateParallelGTUsLeft();
-        updateParallelGTUsRight();
+        updateParallelHeadwaysLeft();
+        updateParallelHeadwaysRight();
         updateLaneTrafficLeft();
         updateLaneTrafficRight();
     }

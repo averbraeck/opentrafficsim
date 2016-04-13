@@ -9,9 +9,9 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
-import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 
 /**
  * Dummy lane change model with totally predictable results (used for testing).
@@ -29,24 +29,22 @@ public class DirectedFixedLaneChangeModel implements DirectedLaneChangeModel
     @SuppressWarnings("checkstyle:parameternumber")
     @Override
     public final DirectedLaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
-        final LateralDirectionality direction, final Collection<HeadwayGTU> sameLaneTraffic,
-        final Collection<HeadwayGTU> otherLaneTraffic, final Length.Rel maxDistance, final Speed speedLimit,
-        final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold,
-        final Time.Rel laneChangeTime) throws GTUException
+            final LateralDirectionality direction, final Collection<Headway> sameLaneTraffic,
+            final Collection<Headway> otherLaneTraffic, final Length.Rel maxDistance, final Speed speedLimit,
+            final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold, final Time.Rel laneChangeTime)
+            throws GTUException
     {
-        GTUFollowingModelOld gtuFollowingModel = (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) gtu
-                .getTacticalPlanner()).getCarFollowingModel();
+        GTUFollowingModelOld gtuFollowingModel =
+                (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner()).getCarFollowingModel();
         if (null == direction)
         {
-            return new DirectedLaneMovementStep(gtuFollowingModel
-                .computeDualAccelerationStep(gtu, sameLaneTraffic, maxDistance, speedLimit)
-                    .getLeaderAccelerationStep(), null);
+            return new DirectedLaneMovementStep(gtuFollowingModel.computeDualAccelerationStep(gtu, sameLaneTraffic,
+                    maxDistance, speedLimit).getLeaderAccelerationStep(), null);
         }
         else
         {
-            return new DirectedLaneMovementStep(gtuFollowingModel
-                .computeDualAccelerationStep(gtu, otherLaneTraffic, maxDistance, speedLimit)
-                .getLeaderAccelerationStep(), direction);
+            return new DirectedLaneMovementStep(gtuFollowingModel.computeDualAccelerationStep(gtu, otherLaneTraffic,
+                    maxDistance, speedLimit).getLeaderAccelerationStep(), direction);
         }
     }
 
@@ -62,7 +60,7 @@ public class DirectedFixedLaneChangeModel implements DirectedLaneChangeModel
     public final String getLongName()
     {
         return "Fixed lane change model. This model returns a lane change decision that is independent of the actual "
-            + "traffic. It is used mostly for testing.";
+                + "traffic. It is used mostly for testing.";
     }
 
 }

@@ -8,6 +8,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.Headway;
 
 /**
  * GTU following model interface. <br>
@@ -120,7 +121,7 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * Two AccelerationStep values are returned in a DualAccelerationStep.<br>
      * or should slow down for a crossing from accelerating to unsafe speeds.
      * @param gtu LaneBasedGTU; the GTU for which the accelerations are computed
-     * @param otherGtuHeadways Collection&lt;HeadwayGTU&gt;; the other GTUs. A negative headway value indicates that the other
+     * @param otherHeadways Collection&lt;HeadwayGTU&gt;; the other GTUs. A negative headway value indicates that the other
      *            GTU is a follower. NB. If the referenceGTU is contained in this Collection, it is ignored.
      * @param maxDistance Length.Rel; the maximum distance we can cover at the current time, e.g. as the result of a lane drop
      * @param speedLimit Speed; the local speed limit
@@ -129,7 +130,7 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @throws GTUException when the velocity of the gtu cannot be determined
      */
     DualAccelerationStep computeDualAccelerationStep(final LaneBasedGTU gtu,
-        final Collection<HeadwayGTU> otherGtuHeadways, final Length.Rel maxDistance, final Speed speedLimit) throws GTUException;
+        final Collection<Headway> otherHeadways, final Length.Rel maxDistance, final Speed speedLimit) throws GTUException;
 
     /**
      * Compute the lowest accelerations (or most severe decelerations) that would be used if a referenceGTU is present
@@ -139,7 +140,7 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * Two AccelerationStep values are returned in a DualAccelerationStep.<br>
      * or should slow down for a crossing from accelerating to unsafe speeds.
      * @param gtu LaneBasedGTU; the GTU for which the accelerations are computed
-     * @param otherGtuHeadways Collection&lt;HeadwayGTU&gt;; the other GTUs. A negative headway value indicates that the other
+     * @param otherHeadways Collection&lt;HeadwayGTU&gt;; the other GTUs. A negative headway value indicates that the other
      *            GTU is a follower. NB. If the referenceGTU is contained in this Collection, it is ignored.
      * @param maxDistance Length.Rel; the maximum distance we can cover at the current time, e.g. as the result of a lane drop
      * @param speedLimit Speed; the local speed limit
@@ -149,7 +150,7 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @throws GTUException when the velocity of the gtu cannot be determined
      */
     DualAccelerationStep computeDualAccelerationStep(final LaneBasedGTU gtu,
-        final Collection<HeadwayGTU> otherGtuHeadways, final Length.Rel maxDistance, final Speed speedLimit,
+        final Collection<Headway> otherHeadways, final Length.Rel maxDistance, final Speed speedLimit,
         final Time.Rel stepSize) throws GTUException;
 
     /**

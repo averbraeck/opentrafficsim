@@ -74,10 +74,10 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
             final OTSNetwork network) throws GTUException
     {
         super(typeId, idGenerator, lengthGenerator, widthGenerator, maximumSpeedGenerator, simulator, network);
-        GTUException.failIf(null == strategicalPlannerGenerator, "strategicalPlannerGenerator is null");
-        GTUException.failIf(null == perceptionGenerator, "perceptionGenerator is null");
-        GTUException.failIf(null == initialLongitudinalPositions, "initialLongitudinalPositions is null");
-        GTUException.failIf(null == initialSpeedGenerator, "initialSpeedGenerator is null");
+        GTUException.throwIf(null == strategicalPlannerGenerator, "strategicalPlannerGenerator is null");
+        GTUException.throwIf(null == perceptionGenerator, "perceptionGenerator is null");
+        GTUException.throwIf(null == initialLongitudinalPositions, "initialLongitudinalPositions is null");
+        GTUException.throwIf(null == initialSpeedGenerator, "initialSpeedGenerator is null");
         this.strategicalPlannerGenerator = strategicalPlannerGenerator;
         this.perceptionGenerator = perceptionGenerator;
         this.initialLongitudinalPositions = initialLongitudinalPositions;

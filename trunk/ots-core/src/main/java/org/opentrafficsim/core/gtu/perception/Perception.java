@@ -39,6 +39,7 @@ public interface Perception extends Serializable
     /**
      * Return time stamped information about the perceived objects with their (estimated) location, speed, and state.
      * @return a time stamped collection of objects within the perception range and angle
+     * @throws GTUException when the GTU was not initialized yet.
      */
-    TimeStampedObject<Collection<PerceivedObject>> getTimeStampedPerceivedObjects();
+    TimeStampedObject<Collection<PerceivedObject>> getTimeStampedPerceivedObjects() throws GTUException;
 }
