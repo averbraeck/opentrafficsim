@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
+import java.io.Serializable;
+
 import org.djunits.value.vdouble.scalar.Length;
 
 /**
@@ -69,8 +71,11 @@ import org.djunits.value.vdouble.scalar.Length;
  * initial version Feb 20, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class LaneStructure
+public class LaneStructure implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20160400L;
+
     /** The length of this structure, to see if it needs updating. */
     private Length.Rel length;
 

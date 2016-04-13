@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ import org.opentrafficsim.simulationengine.OTSSimulationException;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public abstract class ContourPlot extends JFrame implements ActionListener, XYZDataset, MultipleViewerChart,
-        LaneBasedGTUSampler
+        LaneBasedGTUSampler, Serializable
 {
     /** */
     private static final long serialVersionUID = 20140716L;
@@ -246,6 +247,9 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         final ChartPanel cp = new ChartPanel(chart);
         final PointerHandler ph = new PointerHandler()
         {
+            /** */
+            private static final long serialVersionUID = 20140000L;
+
             /** {@inheritDoc} */
             @Override
             void updateHint(final double domainValue, final double rangeValue)

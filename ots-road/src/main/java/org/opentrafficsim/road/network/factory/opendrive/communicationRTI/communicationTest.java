@@ -3,6 +3,7 @@ package org.opentrafficsim.road.network.factory.opendrive.communicationRTI;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -11,8 +12,11 @@ import org.opentrafficsim.road.network.factory.opendrive.data.OTSToRTIData;
 import org.opentrafficsim.road.network.factory.opendrive.data.RTIToOTSData;
 
 /** */
-public class communicationTest
+public class communicationTest implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20160000L;
+
     /**
      * @param args args
      * @throws IOException i/o exception

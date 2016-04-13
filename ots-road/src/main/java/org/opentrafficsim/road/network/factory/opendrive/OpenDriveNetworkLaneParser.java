@@ -2,6 +2,7 @@ package org.opentrafficsim.road.network.factory.opendrive;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -39,8 +40,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class OpenDriveNetworkLaneParser
+public class OpenDriveNetworkLaneParser implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** Header tag. */
     @SuppressWarnings("visibilitymodifier")
     protected HeaderTag headerTag = null;

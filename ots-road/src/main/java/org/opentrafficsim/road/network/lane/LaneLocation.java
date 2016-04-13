@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.lane;
 
+import java.io.Serializable;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 
@@ -14,8 +16,11 @@ import org.djunits.value.vdouble.scalar.Length;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneLocation
+public class LaneLocation implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20141022L;
+
     /** The lane of the location of a point relative to the GTU. */
     private final Lane lane;
 

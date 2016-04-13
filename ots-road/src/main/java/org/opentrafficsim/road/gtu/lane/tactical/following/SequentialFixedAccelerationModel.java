@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -27,8 +28,11 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelMobil
+public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelMobil implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150206L;
+
     /** The list of result values of this SequentialFixedAccelerationModel. */
     private final List<FixedAccelerationModel> steps = new ArrayList<FixedAccelerationModel>();
 

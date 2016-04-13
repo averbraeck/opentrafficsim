@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -20,12 +21,15 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-08-12 16:37:45 +0200 (Wed, 12 Aug 2015) $, @version $Revision: 1240 $, by $Author: averbraeck $,
- * initial version an 30, 2015 <br>
+ * initial version Jan 30, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SensorAnimation extends Renderable2D
+public class SensorAnimation extends Renderable2D implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150130L;
+
     /** The half width left and right of the center line that is used to draw the block. */
     private final double halfWidth;
 

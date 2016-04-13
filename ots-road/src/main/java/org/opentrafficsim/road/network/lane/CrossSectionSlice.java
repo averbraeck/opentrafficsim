@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.lane;
 
+import java.io.Serializable;
+
 import org.djunits.value.vdouble.scalar.Length;
 
 /**
@@ -13,8 +15,11 @@ import org.djunits.value.vdouble.scalar.Length;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CrossSectionSlice
+public class CrossSectionSlice implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20151126L;
+
     /** The relative position from the start, measured along the design line of the parent link. */
     private final Length.Rel relativeLength;
 

@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.osm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -17,8 +18,11 @@ import org.opentrafficsim.road.network.factory.osm.events.WarningListener;
  * initial version 31 dec. 2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
-public class OSMLink
+public class OSMLink implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20141231L;
+
     /** The Link ID. It is generated out of the Start ID and the End ID and (if present) the name tag. */
     private final String id;
 

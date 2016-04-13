@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.generator;
 
+import java.io.Serializable;
+
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.unit.LengthUnit;
@@ -29,8 +31,11 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class GTUGeneratorIndividual extends AbstractGTUGenerator
+public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20160000L;
+
     /** Simulator to schedule next arrival events. */
     private final OTSDEVSSimulatorInterface simulator;
 

@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.osm;
 
+import java.io.Serializable;
+
 /**
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -9,8 +11,11 @@ package org.opentrafficsim.road.network.factory.osm;
  * initial version 31 dec. 2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
-public class OSMTag
+public class OSMTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20141231L;
+
     /** The (not necessarily unique) Key of the tag. */
     private final String key;
 

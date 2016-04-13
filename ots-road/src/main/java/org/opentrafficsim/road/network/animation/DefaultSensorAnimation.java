@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -24,8 +25,11 @@ import org.opentrafficsim.road.network.lane.Sensor;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class DefaultSensorAnimation extends Renderable2D
+public class DefaultSensorAnimation extends Renderable2D implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20141229L;
+
     /** The color of the sensor. */
     private final Color color;
 

@@ -3,6 +3,7 @@ package org.opentrafficsim.road.network.factory.osm.input;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -28,8 +29,11 @@ import crosby.binary.osmosis.OsmosisReader;
  * @author <a href="http://www.tbm.tudelft.nl/mzhang">Mingxin Zhang </a>
  * @author <a>Moritz Bergmann</a>
  */
-public final class ReadOSMFile
+public final class ReadOSMFile implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20141231L;
 
     /** The parser/network builder. */
     private OSMParser sinkImplementation = null;

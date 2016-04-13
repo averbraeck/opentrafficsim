@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +28,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class NodeTag
+class NodeTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;

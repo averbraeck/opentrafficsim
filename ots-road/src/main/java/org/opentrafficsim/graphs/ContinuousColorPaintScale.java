@@ -2,6 +2,7 @@ package org.opentrafficsim.graphs;
 
 import java.awt.Color;
 import java.awt.Paint;
+import java.io.Serializable;
 import java.util.Arrays;
 
 import org.jfree.chart.renderer.PaintScale;
@@ -20,8 +21,11 @@ import org.opentrafficsim.simulationengine.OTSSimulationException;
  * initial version Jul 30, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ContinuousColorPaintScale implements PaintScale
+public class ContinuousColorPaintScale implements PaintScale, Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20140000L;
+
     /** Boundary values for this ColorPaintScale. */
     private double[] bounds;
 

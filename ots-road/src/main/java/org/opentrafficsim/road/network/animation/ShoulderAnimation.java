@@ -3,6 +3,7 @@ package org.opentrafficsim.road.network.animation;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.ImageObserver;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -22,8 +23,11 @@ import org.opentrafficsim.road.network.lane.Shoulder;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class ShoulderAnimation extends Renderable2D
+public class ShoulderAnimation extends Renderable2D implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20141017L;
+    
     /** The animation color. */
     private final Color color;
 

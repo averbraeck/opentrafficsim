@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.lane;
 
+import java.io.Serializable;
+
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -16,8 +18,11 @@ import org.opentrafficsim.core.gtu.GTUException;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class DirectedLanePosition
+public class DirectedLanePosition implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20151111L;
+
     /** The lane for the position. */
     private final Lane lane;
 

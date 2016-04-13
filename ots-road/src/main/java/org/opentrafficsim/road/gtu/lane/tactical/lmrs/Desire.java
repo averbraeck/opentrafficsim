@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import java.io.Serializable;
+
 import org.opentrafficsim.core.network.LateralDirectionality;
 
 /**
@@ -14,8 +16,11 @@ import org.opentrafficsim.core.network.LateralDirectionality;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class Desire
+public class Desire implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20160413L;
 
     /** Level of left desire. */
     private final double left;

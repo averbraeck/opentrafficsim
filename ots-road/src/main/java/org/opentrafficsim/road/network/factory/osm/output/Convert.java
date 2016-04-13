@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.factory.osm.output;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,8 +58,11 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a>Moritz Bergmann</a>
  */
-public final class Convert
+public final class Convert implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20141230L;
 
     /**
      * Construct a converter.
@@ -824,11 +828,14 @@ public final class Convert
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-09-16 19:20:07 +0200 (Wed, 16 Sep 2015) $, @version $Revision: 1405 $, by $Author: averbraeck $,
- * initial version ar 3, 2015 <br>
+ * initial version Mar 3, 2015 <br>
  * @author <a>Moritz Bergmann</a>
  */
-class LaneAttributes
+class LaneAttributes implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150303L;
+
     /** Type of the lane (immutable). */
     private final LaneType laneType;
 

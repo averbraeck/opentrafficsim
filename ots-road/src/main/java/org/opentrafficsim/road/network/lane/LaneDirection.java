@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.lane;
 
+import java.io.Serializable;
+
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 
 /**
@@ -12,8 +14,11 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneDirection
+public class LaneDirection implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20160330L;
+
     /** The lane. */
     private final Lane lane;
 

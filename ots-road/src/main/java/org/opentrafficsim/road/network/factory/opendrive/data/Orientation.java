@@ -1,8 +1,13 @@
 package org.opentrafficsim.road.network.factory.opendrive.data;
 
+import java.io.Serializable;
+
 /** */
-public class Orientation
+public class Orientation implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+
     /** */
     private float yaw; // position[m]
 

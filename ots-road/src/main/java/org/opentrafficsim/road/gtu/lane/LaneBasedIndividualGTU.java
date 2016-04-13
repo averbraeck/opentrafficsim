@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane;
 
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
@@ -235,8 +236,11 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      */
     @SuppressWarnings("checkstyle:hiddenfield")
-    public static class LaneBasedIndividualCarBuilder
+    public static class LaneBasedIndividualCarBuilder implements Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20160000L;
+
         /** The id of the GTU. */
         private String id = null;
 

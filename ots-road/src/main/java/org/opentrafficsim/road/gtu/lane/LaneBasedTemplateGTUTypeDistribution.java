@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane;
 
+import java.io.Serializable;
+
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -15,9 +17,12 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBasedTemplateGTUTypeDistribution implements LaneBasedGTUCharacteristicsGenerator
+public class LaneBasedTemplateGTUTypeDistribution implements LaneBasedGTUCharacteristicsGenerator, Serializable
 {
 
+    /** */
+    private static final long serialVersionUID = 20160000L;
+    
     /** The Distribution of lane based template GTU types. */
     private final Distribution<LaneBasedTemplateGTUType> distribution;
 

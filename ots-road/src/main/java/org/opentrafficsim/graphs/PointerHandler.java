@@ -4,6 +4,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.event.PlotChangeEvent;
@@ -11,6 +12,7 @@ import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
 
 /**
+ * Handle mouse events for a graph.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -19,8 +21,11 @@ import org.jfree.chart.plot.XYPlot;
  * initial version Aug 13, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-abstract class PointerHandler implements MouseListener, MouseMotionListener
+abstract class PointerHandler implements MouseListener, MouseMotionListener, Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20140000L;
+
     /** {@inheritDoc} */
     @Override
     public void mouseDragged(final MouseEvent e)

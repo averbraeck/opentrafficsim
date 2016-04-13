@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -28,8 +29,11 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class DefaultCarAnimation extends Renderable2D
+public class DefaultCarAnimation extends Renderable2D implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+    
     /** The GTUColorer that determines the fill color for the car. */
     private GTUColorer gtuColorer;
 

@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -20,8 +21,11 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneStructureRecord
+public class LaneStructureRecord implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20160400L;
+
     /** The lane of the LSR. */
     private final Lane lane;
 
