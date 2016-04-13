@@ -3,6 +3,7 @@ package org.opentrafficsim.graphs;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
@@ -57,7 +58,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * initial version Jul 31, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FundamentalDiagram extends JFrame implements XYDataset, ActionListener
+public class FundamentalDiagram extends JFrame implements XYDataset, ActionListener, Serializable
 {
     /** */
     private static final long serialVersionUID = 20140701L;
@@ -192,6 +193,9 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         final ChartPanel cp = new ChartPanel(this.chartPanel);
         PointerHandler ph = new PointerHandler()
         {
+            /** */
+            private static final long serialVersionUID = 20140000L;
+
             /** {@inheritDoc} */
             @Override
             void updateHint(final double domainValue, final double rangeValue)
@@ -449,34 +453,12 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
     /**
      * Storage for one sample of data collected by a point-detector that accumulates harmonic mean speed and flow.
-     * <p>
-     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <p>
-     * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
-     * <p>
-     * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
-     * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
-     * following conditions are met:
-     * <ul>
-     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
-     * disclaimer.</li>
-     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
-     * disclaimer in the documentation and/or other materials provided with the distribution.</li>
-     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
-     * promote products derived from this software without specific prior written permission.</li>
-     * </ul>
-     * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
-     * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
-     * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
-     * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services;
-     * loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in
-     * contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this
-     * software, even if advised of the possibility of such damage. $LastChangedDate: 2015-07-15 11:18:39 +0200 (Wed, 15 Jul
-     * 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $, initial versionJul 31, 2014 <br>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class Sample
+    class Sample implements Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20140000L;
+
         /** Harmonic mean speed observed during this sample [m/s]. */
         private double harmonicMeanSpeed;
 

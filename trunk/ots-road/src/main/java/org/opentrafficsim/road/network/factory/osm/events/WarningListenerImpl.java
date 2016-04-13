@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.osm.events;
 
+import java.io.Serializable;
+
 /**
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -9,8 +11,11 @@ package org.opentrafficsim.road.network.factory.osm.events;
  * initial version 20.03.2015 <br>
  * @author <a>Moritz Bergmann</a>
  */
-public class WarningListenerImpl implements WarningListener
+public class WarningListenerImpl implements WarningListener, Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150320L;
+
     /** Textual description of current warning. */
     private String currentWarning;
 

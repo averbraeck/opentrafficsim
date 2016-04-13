@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.object;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -364,8 +365,11 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
     /**
      * Dummy strategical planner.
      */
-    static class DummyStrategicalPlanner implements LaneBasedStrategicalPlanner
+    static class DummyStrategicalPlanner implements LaneBasedStrategicalPlanner, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20160400L;
+        
         /** */
         private BehavioralCharacteristics behavioralCharacteristics;
 

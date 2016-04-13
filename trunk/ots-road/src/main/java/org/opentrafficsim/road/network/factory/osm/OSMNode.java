@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.osm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +16,11 @@ import org.opentrafficsim.core.network.OTSNode;
  * initial version 31 dec. 2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
-public class OSMNode
+public class OSMNode implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20141231L;
+
     /** The id of this OSMNode. */
     private final long id;
 

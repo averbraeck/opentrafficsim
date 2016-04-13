@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
+import java.io.Serializable;
 import java.util.SortedMap;
 
 import org.djunits.unit.AccelerationUnit;
@@ -27,8 +28,11 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class IDMPlus extends AbstractIDM
+public class IDMPlus extends AbstractIDM implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20160405L;
 
     /** {@inheritDoc} */
     @Override

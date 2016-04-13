@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.test;
 
+import java.io.Serializable;
+
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
@@ -17,8 +19,11 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TestBehavioralCharacteristics
+public class TestBehavioralCharacteristics implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20160324L;
 
     /**
      * 
@@ -35,6 +40,9 @@ public class TestBehavioralCharacteristics
 
         ParameterTypeDouble ptd = new ParameterTypeDouble("mijnParam", "mijn parameter")
         {
+            /** */
+            private static final long serialVersionUID = 20160400L;
+
             /** {@inheritDoc} */
             @Override
             public void check(double value, BehavioralCharacteristics bc) throws ParameterException

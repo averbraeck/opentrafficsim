@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
+import java.io.Serializable;
 import java.util.SortedMap;
 
 import org.djunits.unit.AccelerationUnit;
@@ -24,8 +25,11 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil
+public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150206L;
+
     /** Acceleration that will be returned in GTUFollowingModelResult by computeAcceleration. */
     private Acceleration acceleration;
 

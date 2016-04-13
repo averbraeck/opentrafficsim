@@ -50,6 +50,9 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     public static final ParameterTypeDouble DFREE = new ParameterTypeDouble("dFree", "Free lane change desire threshold.",
             0.365, UNITINTERVAL)
     {
+        /** */
+        private static final long serialVersionUID = 20160400L;
+
         public void check(final double value, final BehavioralCharacteristics bc) throws ParameterException
         {
             if (bc.contains(DSYNC))
@@ -67,6 +70,9 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     public static final ParameterTypeDouble DSYNC = new ParameterTypeDouble("dSync",
             "Synchronized lane change desire threshold.", 0.577, UNITINTERVAL)
     {
+        /** */
+        private static final long serialVersionUID = 20160400L;
+
         public void check(final double value, final BehavioralCharacteristics bc) throws ParameterException
         {
             if (bc.contains(DFREE))
@@ -84,6 +90,9 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     public static final ParameterTypeDouble DCOOP = new ParameterTypeDouble("dCoop",
             "Cooperative lane change desire threshold.", 0.788, UNITINTERVAL)
     {
+        /** */
+        private static final long serialVersionUID = 20160400L;
+
         public void check(final double value, final BehavioralCharacteristics bc) throws ParameterException
         {
             if (bc.contains(DFREE))

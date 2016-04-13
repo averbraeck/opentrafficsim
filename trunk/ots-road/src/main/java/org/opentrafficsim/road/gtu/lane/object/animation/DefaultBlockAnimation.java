@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -24,8 +25,11 @@ import org.opentrafficsim.road.gtu.lane.object.LaneBlock;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class DefaultBlockAnimation extends Renderable2D
+public class DefaultBlockAnimation extends Renderable2D implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20160400L;
+    
     /** The half width left and right of the center line that is used to draw the block. */
     private final double halfWidth;
 

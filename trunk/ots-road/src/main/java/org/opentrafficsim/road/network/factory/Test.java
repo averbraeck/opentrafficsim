@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory;
 
+import java.io.Serializable;
+
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
 
 /**
@@ -12,8 +14,11 @@ import nl.javel.gisbeans.io.esri.CoordinateTransform;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class Test
+public class Test implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20151130L;
+
     /**
      * @param args args
      */

@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.factory.osm.input;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,8 +37,11 @@ import org.opentrafficsim.road.network.factory.osm.events.ProgressListener;
  * @author <a href="http://www.tbm.tudelft.nl/mzhang">Mingxin Zhang </a>
  * @author <a>Moritz Bergmann</a>
  */
-public class OSMParser implements Sink
+public class OSMParser implements Sink, Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20141231L;
+
     /** The OSMNetwork. */
     private OSMNetwork net = new OSMNetwork("tempnet");
 

@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
+import java.io.Serializable;
 import java.util.SortedMap;
 
 import org.djunits.unit.AccelerationUnit;
@@ -27,8 +28,11 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
  *          initial version Jul 4, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class IDMPlusOld extends AbstractGTUFollowingModelMobil
+public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20140704L;
+
     /** Preferred net longitudinal distance when stopped [m]. */
     private final Length.Rel s0;
 

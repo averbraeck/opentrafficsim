@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil;
 
+import java.io.Serializable;
+
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
 
@@ -14,8 +16,11 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneMovementStep
+public class LaneMovementStep implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150206L;
+
     /** The resulting acceleration and duration of validity. */
     private final AccelerationStep gfmr;
 

@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.osm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,8 +14,11 @@ import java.util.List;
  * initial version 31 dec. 2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
-public class OSMWay
+public class OSMWay implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20141231L;
+
     /** The id of the way. */
     private final long id;
 

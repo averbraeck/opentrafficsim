@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.strategical.route;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -34,8 +35,11 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategicalPlanner implements
-        LaneBasedStrategicalPlanner
+        LaneBasedStrategicalPlanner, Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150724L;
+
     /** The route to drive. */
     private final Route route;
 

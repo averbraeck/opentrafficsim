@@ -3,6 +3,7 @@ package org.opentrafficsim.road.test;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
+import java.io.Serializable;
 
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSShape;
@@ -17,8 +18,11 @@ import org.opentrafficsim.core.geometry.OTSShape;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TestTransform
+public class TestTransform implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20160403L;
 
     /**
      * 

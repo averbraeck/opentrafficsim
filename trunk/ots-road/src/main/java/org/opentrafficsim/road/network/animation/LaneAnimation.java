@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.ImageObserver;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -25,8 +26,11 @@ import org.opentrafficsim.road.network.lane.Lane;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class LaneAnimation extends Renderable2D
+public class LaneAnimation extends Renderable2D implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20141017L;
+
     /** Color of the lane. */
     private final Color color;
 

@@ -1,8 +1,13 @@
 package org.opentrafficsim.road.network.factory.opendrive.data;
 
+import java.io.Serializable;
+
 /** */
-public class AngularVel
+public class AngularVel implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+
     /** */
     private float yawRate; // position[m]
 

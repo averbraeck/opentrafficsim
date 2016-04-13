@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -44,8 +45,11 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class ListGTUGenerator
+public class ListGTUGenerator implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+
     /** Name of this ListGTUGenerator. */
     private final String name;
 

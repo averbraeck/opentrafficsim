@@ -3,6 +3,7 @@ package org.opentrafficsim.graphs;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
@@ -182,6 +183,9 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
         final ChartPanel cp = new ChartPanel(this.chartPanel);
         PointerHandler ph = new PointerHandler()
         {
+            /** */
+            private static final long serialVersionUID = 120140000;
+
             /** {@inheritDoc} */
             @Override
             void updateHint(final double domainValue, final double rangeValue)
@@ -498,14 +502,13 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
      * Storage for one sample of data collected with mean speed [m/s] and number of vehicles per km. Flow per second can be
      * calculated from these two numbers; currently the flow is provided (but never used).
      * <p>
-     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * </p>
-     * $LastChangedDate: 2015-07-15 11:18:39 +0200 (Wed, 15 Jul 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
-     * initial versionJul 31, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class Sample
+    class Sample implements Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20140000L;
+
         /** Mean speed observed during this sample [m/s]. */
         private final double meanSpeed;
 

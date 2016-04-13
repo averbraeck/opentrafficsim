@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
@@ -73,8 +74,11 @@ final class Links
     }
 
     /** Helper class to temporarily store coordinate. */
-    private static class XYZ
+    private static class XYZ implements Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20150725L;
+
         /** The x coordinate. */
         @SuppressWarnings("checkstyle:visibilitymodifier")
         double x;

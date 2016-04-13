@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.generator;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
@@ -44,8 +45,11 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBasedGTUGenerator
+public class LaneBasedGTUGenerator implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20160000L;
+
     /** FIFO for templates that have not been generated yet due to insufficient room/headway. */
     private final Queue<LaneBasedGTUCharacteristics> unplacedTemplates = new LinkedList<LaneBasedGTUCharacteristics>();
 

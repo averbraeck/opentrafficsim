@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.factory.osm;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,8 +22,11 @@ import org.opentrafficsim.road.network.factory.osm.events.WarningListener;
  * initial version 31 dec. 2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
-public class OSMNetwork
+public class OSMNetwork implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20141231L;
+
     /** The name of the Network (immutable). */
     private final String name;
 

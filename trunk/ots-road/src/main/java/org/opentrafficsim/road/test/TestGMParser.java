@@ -3,6 +3,7 @@ package org.opentrafficsim.road.test;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -163,7 +164,7 @@ public class TestGMParser extends AbstractWrappableAnimation
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class TestGMModel implements OTSModelInterface
+    class TestGMModel implements OTSModelInterface, Serializable
     {
         /** */
         private static final long serialVersionUID = 20141121L;
@@ -270,8 +271,14 @@ public class TestGMParser extends AbstractWrappableAnimation
 
     }
 
-    class CoordinateTransformRD implements CoordinateTransform
+    /**
+     * Convert coordinates to/from the Dutch RD system.
+     */
+    class CoordinateTransformRD implements CoordinateTransform, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20141017L;
+
         /** */
         final double dx;
 
@@ -329,9 +336,12 @@ public class TestGMParser extends AbstractWrappableAnimation
      * href="http://www.dekoepel.nl/pdf/Transformatieformules.pdf">this</a> paper.
      * @author Gert-Jan Stolk
      **/
-    public static class WGS84ToRDNewTransform
+    public static class WGS84ToRDNewTransform implements Serializable
     {
 
+        /** */
+        private static final long serialVersionUID = 20141017L;
+        
         //@formatter:off
         private static final double r[][] = { /* p down, q right */
             {  155000.00, 190094.945,   -0.008, -32.391, 0.0   , },
@@ -388,8 +398,14 @@ public class TestGMParser extends AbstractWrappableAnimation
             return result;
         }
 
-        static class Coords
+        /** 
+         * Coordinate pair.
+         */
+        static class Coords implements Serializable
         {
+            /** */
+            private static final long serialVersionUID = 20141017L;
+            
             public double x, y;
 
             public Coords(double x, double y)

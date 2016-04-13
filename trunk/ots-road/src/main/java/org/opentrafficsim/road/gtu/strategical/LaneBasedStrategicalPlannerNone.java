@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.strategical;
 
+import java.io.Serializable;
+
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -20,8 +22,11 @@ import org.opentrafficsim.core.network.Node;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBasedStrategicalPlannerNone extends AbstractLaneBasedStrategicalPlanner
+public class LaneBasedStrategicalPlannerNone extends AbstractLaneBasedStrategicalPlanner implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20150724L;
 
     /**
      * 

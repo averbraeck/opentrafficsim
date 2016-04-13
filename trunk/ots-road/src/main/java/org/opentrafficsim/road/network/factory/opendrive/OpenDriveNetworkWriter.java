@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.io.Serializable;
+
 import org.opentrafficsim.core.network.OTSNetwork;
 
 /**
@@ -11,8 +13,11 @@ import org.opentrafficsim.core.network.OTSNetwork;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class OpenDriveNetworkWriter
+public class OpenDriveNetworkWriter implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** OTS network */
     @SuppressWarnings("visibilitymodifier")
     protected OTSNetwork network = null;

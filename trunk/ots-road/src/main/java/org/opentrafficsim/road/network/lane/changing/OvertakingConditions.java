@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.lane.changing;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import org.djunits.value.vdouble.scalar.Speed;
@@ -62,8 +63,11 @@ public interface OvertakingConditions
      * initial version Sep 13, 2015
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      */
-    public static class LeftOnly implements OvertakingConditions
+    public static class LeftOnly implements OvertakingConditions, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20150913L;
+        
         /** {@inheritDoc} */
         @Override
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
@@ -92,8 +96,11 @@ public interface OvertakingConditions
      * initial version Sep 13, 2015
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      */
-    public static class RightOnly implements OvertakingConditions
+    public static class RightOnly implements OvertakingConditions, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20150913L;
+        
         /** {@inheritDoc} */
         @Override
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
@@ -120,8 +127,11 @@ public interface OvertakingConditions
      * initial version Sep 13, 2015
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      */
-    public static class None implements OvertakingConditions
+    public static class None implements OvertakingConditions, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20150913L;
+        
         /** {@inheritDoc} */
         @Override
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
@@ -148,8 +158,11 @@ public interface OvertakingConditions
      * initial version Sep 13, 2015
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      */
-    public static class LeftAndRight implements OvertakingConditions
+    public static class LeftAndRight implements OvertakingConditions, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20150913L;
+        
         /** {@inheritDoc} */
         @Override
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
@@ -176,8 +189,11 @@ public interface OvertakingConditions
      * initial version Sep 13, 2015
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      */
-    public static class LeftAlwaysRightSpeed implements OvertakingConditions
+    public static class LeftAlwaysRightSpeed implements OvertakingConditions, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20150913L;
+        
         /** The speed under which overtaking on the "wrong" side is allowed. */
         private final Speed rightOvertakingSpeedMax;
 
@@ -216,8 +232,11 @@ public interface OvertakingConditions
      * initial version Sep 13, 2015
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      */
-    public static class RightAlwaysLeftSpeed implements OvertakingConditions
+    public static class RightAlwaysLeftSpeed implements OvertakingConditions, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20150913L;
+        
         /** The speed under which overtaking on the "wrong" side is allowed. */
         private final Speed leftOvertakingSpeedMax;
 
@@ -261,8 +280,11 @@ public interface OvertakingConditions
      * initial version Sep 13, 2015
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      */
-    public static class LeftSet implements OvertakingConditions
+    public static class LeftSet implements OvertakingConditions, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20150913L;
+        
         /** A collection of GTUs that can overtake another collection of GTUs. */
         private final Collection<GTUType> overtakingGTUs;
 
@@ -321,8 +343,11 @@ public interface OvertakingConditions
      * initial version Sep 13, 2015
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      */
-    public static class RightSet implements OvertakingConditions
+    public static class RightSet implements OvertakingConditions, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20150913L;
+        
         /** A collection of GTUs that can overtake another collection of GTUs. */
         private final Collection<GTUType> overtakingGTUs;
 
@@ -381,8 +406,11 @@ public interface OvertakingConditions
      * initial version Sep 13, 2015
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      */
-    public static class LeftSetRightSpeed implements OvertakingConditions
+    public static class LeftSetRightSpeed implements OvertakingConditions, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20150913L;
+        
         /** A collection of GTUs that can overtake another collection of GTUs. */
         private final Collection<GTUType> overtakingGTUs;
 
@@ -452,8 +480,11 @@ public interface OvertakingConditions
      * initial version Sep 13, 2015
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      */
-    public static class RightSetLeftSpeed implements OvertakingConditions
+    public static class RightSetLeftSpeed implements OvertakingConditions, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20150913L;
+        
         /** A collection of GTUs that can overtake another collection of GTUs. */
         private final Collection<GTUType> overtakingGTUs;
 

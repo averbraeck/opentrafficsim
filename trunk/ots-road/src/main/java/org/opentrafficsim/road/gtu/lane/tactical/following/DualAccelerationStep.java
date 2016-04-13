@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
+import java.io.Serializable;
+
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Time;
 
@@ -14,8 +16,11 @@ import org.djunits.value.vdouble.scalar.Time;
  *          initial version 11 mrt. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class DualAccelerationStep
+public class DualAccelerationStep implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150311L;
+
     /** AccelerationStep for the leader. */
     private final AccelerationStep leaderAccelerationStep;
 

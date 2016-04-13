@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,8 +30,11 @@ import org.opentrafficsim.road.gtu.lane.object.TrafficLight.TrafficLightColor;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class Controller
+public class Controller implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20150715L;
 
     /** */
     private OTSDEVSSimulatorInterface simulator;

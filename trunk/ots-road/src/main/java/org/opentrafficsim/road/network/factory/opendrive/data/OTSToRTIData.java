@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.opendrive.data;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,8 +8,11 @@ import java.util.List;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 
 /** */
-public class OTSToRTIData
+public class OTSToRTIData implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+
     /** */
     private long timeStamp;
 

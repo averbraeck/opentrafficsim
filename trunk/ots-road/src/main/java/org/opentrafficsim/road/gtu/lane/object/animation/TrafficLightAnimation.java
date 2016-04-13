@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.object.animation;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.ImageObserver;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -26,8 +27,11 @@ import org.opentrafficsim.road.gtu.lane.object.TrafficLight;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrafficLightAnimation extends Renderable2D
+public class TrafficLightAnimation extends Renderable2D implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20160000L;
+    
     /** The point (0,0,0). */
     private static final DirectedPoint POINT_000 = new DirectedPoint();
 

@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -24,8 +25,11 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
  *          initial version 11 feb. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FixedLaneChangeModel implements LaneChangeModel
+public class FixedLaneChangeModel implements LaneChangeModel, Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150211L;
+    
     /** Lane change that will always be returned by this FixedLaneChangeModel. */
     private final LateralDirectionality laneChange;
 
