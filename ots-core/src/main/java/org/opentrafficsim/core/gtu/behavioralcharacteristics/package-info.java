@@ -6,6 +6,8 @@
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$,
  *          initial version Apr 13, 2016 <br>
+ * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 package org.opentrafficsim.core.gtu.behavioralcharacteristics;
+
