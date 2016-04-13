@@ -193,6 +193,8 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         behavioralCharacteristics.setParameter(ParameterTypes.T, new Time.Rel(1, SECOND));
         behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
         behavioralCharacteristics.setParameter(AbstractIDM.DELTA, 1d);
+        behavioralCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, ParameterTypes.LOOKAHEAD.getDefaultValue());
+        behavioralCharacteristics.setParameter(ParameterTypes.LOOKBACKOLD, ParameterTypes.LOOKBACKOLD.getDefaultValue());
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(
         // 1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d), laneChangeModel);
