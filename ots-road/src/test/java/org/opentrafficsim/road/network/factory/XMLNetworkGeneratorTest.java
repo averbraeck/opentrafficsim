@@ -123,7 +123,7 @@ public class XMLNetworkGeneratorTest implements UNITS
                         {
                             // TODO repair headway in such a way that vehicle does not have to brake (safe distance)
                             System.err.println("Velocity of GTU " + gtu + "<> 10 m/s: " + gtu.getVelocity() + ", headway = "
-                                + gtu.getPerception().getForwardHeadwayGTU().getDistance());
+                                + gtu.getPerception().getForwardHeadway().getDistance());
                             // fail("Velocity of GTU " + gtu + "<> 10 m/s: " + gtu.getVelocity() + ", headway = "
                             // + gtu.headway(new Length.Rel(250.0, METER)));
                         }

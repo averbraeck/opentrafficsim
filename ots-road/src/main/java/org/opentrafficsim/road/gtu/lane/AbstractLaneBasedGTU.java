@@ -156,12 +156,12 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     private static DirectedPoint verifyInitialLocation(Set<DirectedLanePosition> initialLongitudinalPositions)
         throws GTUException
     {
-        GTUException.failIf(null == initialLongitudinalPositions, "InitialLongitudinalPositions is null");
-        GTUException.failIf(0 == initialLongitudinalPositions.size(), "InitialLongitudinalPositions is empty set");
+        GTUException.throwIf(null == initialLongitudinalPositions, "InitialLongitudinalPositions is null");
+        GTUException.throwIf(0 == initialLongitudinalPositions.size(), "InitialLongitudinalPositions is empty set");
         DirectedPoint lastPoint = null;
         for (DirectedLanePosition pos : initialLongitudinalPositions)
         {
-            GTUException.failIf(lastPoint != null && pos.getLocation().distance(lastPoint) > 1E-6,
+            GTUException.throwIf(lastPoint != null && pos.getLocation().distance(lastPoint) > 1E-6,
                 "initial locations for GTU have distance > 1 mm");
             lastPoint = pos.getLocation();
         }
@@ -173,7 +173,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     public final void enterLane(final Lane lane, final Length.Rel position, final GTUDirectionality gtuDirection)
         throws GTUException
     {
-        GTUException.failIf(!MOVEMENT_LANE_BASED, "MOVEMENT_LANE_BASED is true, but enterLane() is called");
+        GTUException.throwIf(!MOVEMENT_LANE_BASED, "MOVEMENT_LANE_BASED is true, but enterLane() is called");
         if (lane == null || gtuDirection == null || position == null)
         {
             throw new GTUException("enterLane - one of the arguments is null");
@@ -211,7 +211,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      */
     public final void leaveLane(final Lane lane, final boolean beingDestroyed) throws GTUException
     {
-        GTUException.failIf(!MOVEMENT_LANE_BASED, "MOVEMENT_LANE_BASED is true, but leaveLane() is called");
+        GTUException.throwIf(!MOVEMENT_LANE_BASED, "MOVEMENT_LANE_BASED is true, but leaveLane() is called");
         if (null == this.lanes.get(lane))
         {
             // No problem -- this method can be scheduled and the GTU can already have left the lane

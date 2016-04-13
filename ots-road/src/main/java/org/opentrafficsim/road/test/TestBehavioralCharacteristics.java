@@ -39,7 +39,7 @@ public class TestBehavioralCharacteristics
             @Override
             public void check(double value, BehavioralCharacteristics bc) throws ParameterException
             {
-                ParameterException.failIf(value>1.0, "Value is NaN...");
+                ParameterException.throwIf(value>1.0, "Value is NaN...");
             }
             
         };

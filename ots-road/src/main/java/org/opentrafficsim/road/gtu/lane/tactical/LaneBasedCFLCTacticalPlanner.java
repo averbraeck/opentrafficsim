@@ -35,9 +35,9 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
-import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneMovementStep;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
@@ -81,10 +81,10 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
 
     /** Standard time horizon for route choices. */
     private static final Time.Rel TIMEHORIZON = new Time.Rel(90, TimeUnit.SECOND);
-    
+
     /** Lane change model for this tactical planner. */
-    private LaneChangeModel laneChangeModel; 
-    
+    private LaneChangeModel laneChangeModel;
+
     /**
      * Instantiated a tactical planner with GTU following and lane change behavior.
      * @param carFollowingModel Car-following model.
@@ -99,7 +99,8 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
     /** {@inheritDoc} */
     @Override
     public OperationalPlan generateOperationalPlan(final GTU gtu, final Time.Abs startTime,
-            final DirectedPoint locationAtStartTime) throws OperationalPlanException, NetworkException, GTUException, ParameterException
+            final DirectedPoint locationAtStartTime) throws OperationalPlanException, NetworkException, GTUException,
+            ParameterException
     {
         try
         {
@@ -117,23 +118,24 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             // NOTE: delete this if perception takes place independent of the tactical planning (different frequency)
             perception.perceive();
 
-            Length.Rel maximumForwardHeadway = laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
-            Length.Rel maximumReverseHeadway = laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACKOLD);
+            Length.Rel maximumForwardHeadway =
+                    laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
+            Length.Rel maximumReverseHeadway =
+                    laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACKOLD);
             Time.Abs now = gtu.getSimulator().getSimulatorTime().getTime();
             Speed speedLimit = perception.getSpeedLimit();
 
             // look at the conditions for headway on the current lane
-            HeadwayGTU sameLaneLeader = perception.getForwardHeadwayGTU();
-            HeadwayGTU sameLaneFollower = perception.getBackwardHeadwayGTU();
-            Collection<HeadwayGTU> sameLaneTraffic = new ArrayList<HeadwayGTU>();
-            if (null != sameLaneLeader.getGtuId())
+            Headway sameLaneLeader = perception.getForwardHeadway();
+            Headway sameLaneFollower = perception.getBackwardHeadway();
+            Collection<Headway> sameLaneTraffic = new ArrayList<Headway>();
+            if (sameLaneLeader.getObjectType().isGtu())
             {
                 sameLaneTraffic.add(sameLaneLeader);
             }
-            if (null != sameLaneFollower.getGtuId())
+            if (sameLaneFollower.getObjectType().isGtu())
             {
-                sameLaneTraffic.add(new HeadwayGTU(sameLaneFollower.getGtuId(), sameLaneFollower.getGtuSpeed(),
-                        sameLaneFollower.getDistance().si, sameLaneFollower.getGtuType()));
+                sameLaneTraffic.add(sameLaneFollower);
             }
 
             // Are we in the right lane for the route?
@@ -145,26 +147,25 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             // TODO skip if:
             // - we are in the right lane and drive at max speed or we accelerate maximally
             // - there are no other lanes
-            Collection<HeadwayGTU> leftLaneTraffic = perception.getNeighboringGTUsLeft();
-            Collection<HeadwayGTU> rightLaneTraffic = perception.getNeighboringGTUsRight();
+            Collection<Headway> leftLaneTraffic = perception.getNeighboringHeadwaysLeft();
+            Collection<Headway> rightLaneTraffic = perception.getNeighboringHeadwaysRight();
 
             // FIXME: whether we drive on the right should be stored in some central place.
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;
             final Acceleration defaultLeftLaneIncentive =
-                    LateralDirectionality.LEFT == preferred ? PREFERREDLANEINCENTIVE : NONPREFERREDLANEINCENTIVE;
+                    preferred.isLeft() ? PREFERREDLANEINCENTIVE : NONPREFERREDLANEINCENTIVE;
             final Acceleration defaultRightLaneIncentive =
-                    LateralDirectionality.RIGHT == preferred ? PREFERREDLANEINCENTIVE : NONPREFERREDLANEINCENTIVE;
-            
+                    preferred.isRight() ? PREFERREDLANEINCENTIVE : NONPREFERREDLANEINCENTIVE;
+
             AccelerationVector defaultLaneIncentives =
                     new AccelerationVector(new double[] { defaultLeftLaneIncentive.getSI(), STAYINCURRENTLANEINCENTIVE.getSI(),
                             defaultRightLaneIncentive.getSI() }, AccelerationUnit.SI, StorageType.DENSE);
             AccelerationVector laneIncentives = laneIncentives(laneBasedGTU, defaultLaneIncentives);
             LaneMovementStep lcmr =
                     this.laneChangeModel.computeLaneChangeAndAcceleration(laneBasedGTU, sameLaneTraffic, rightLaneTraffic,
-                            leftLaneTraffic, speedLimit,
-                            new Acceleration(laneIncentives.get(preferred == LateralDirectionality.RIGHT ? 2 : 0)),
+                            leftLaneTraffic, speedLimit, new Acceleration(laneIncentives.get(preferred.isRight() ? 2 : 0)),
                             new Acceleration(laneIncentives.get(1)),
-                            new Acceleration(laneIncentives.get(preferred == LateralDirectionality.RIGHT ? 0 : 2)));
+                            new Acceleration(laneIncentives.get(preferred.isRight() ? 0 : 2)));
             Time.Rel duration = lcmr.getGfmr().getValidUntil().minus(gtu.getSimulator().getSimulatorTime().getTime());
             // if ("1".equals(gtu.getId()))
             // {

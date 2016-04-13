@@ -8,23 +8,22 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.perception.Perception;
+import org.opentrafficsim.core.gtu.perception.TimeStampedObject;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.perception.PerceivedObject;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
  * Interface for perception in a lane-based model. The following information can be perceived:
  * <ul>
  * <li>maximum speed we can use at the current location; either time stamped or just the information</li>
- * <li>forward headway and first GTU in front; either time stamped or just the information</li>
- * <li>backward headway and first GTU behind; either time stamped or just the information</li>
+ * <li>forward headway and first object (e.g., GTU) in front; either time stamped or just the information</li>
+ * <li>backward headway and first object (e.g., GTU) behind; either time stamped or just the information</li>
  * <li>accessible adjacent lanes on the left or right; either time stamped or just the information</li>
- * <li>parallel GTUs on the left or right; either time stamped or just the information</li>
- * <li>GTUs in parallel, in front and behind on the left or right neighboring lane, with their headway relative to our GTU;
- * either time stamped or just the information</li>
+ * <li>parallel objects (e.g., GTUa) on the left or right; either time stamped or just the information</li>
+ * <li>Objects (e.g., GTUs) in parallel, in front and behind on the left or right neighboring lane, with their headway relative
+ * to our GTU; either time stamped or just the information</li>
  * </ul>
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -53,14 +52,14 @@ public interface LanePerception extends Perception
     /************************************************************************************************************/
 
     /**
-     * @return forwardHeadwayGTU, the forward headway and first GTU in front
+     * @return forwardHeadway, the forward headway and first object (e.g., a GTU) in front
      */
-    HeadwayGTU getForwardHeadwayGTU();
+    Headway getForwardHeadway();
 
     /**
-     * @return backwardHeadwayGTU, the backward headway and first GTU behind
+     * @return backwardHeadwayGTU, the backward headway and first object (e.g., a GTU) behind
      */
-    HeadwayGTU getBackwardHeadwayGTU();
+    Headway getBackwardHeadway();
 
     /**
      * @return accessibleAdjacentLanesLeft, the accessible adjacent lanes on the left
@@ -73,63 +72,67 @@ public interface LanePerception extends Perception
     Map<Lane, Set<Lane>> getAccessibleAdjacentLanesRight();
 
     /**
-     * @return neighboringGTUsLeft, the GTUs in parallel, in front and behind on the left neighboring lane, with their headway
-     *         relative to our GTU
-     */
-    Collection<HeadwayGTU> getNeighboringGTUsLeft();
-
-    /**
-     * @return neighboringGTUsRight, the GTUs in parallel, in front and behind on the right neighboring lane, with their headway
-     *         relative to our GTU
-     */
-    Collection<HeadwayGTU> getNeighboringGTUsRight();
-
-    /**
-     * @return parallelGTUsLeft, the parallel GTUs on the left
-     */
-    Set<LaneBasedGTU> getParallelGTUsLeft();
-
-    /**
-     * @return parallelGTUsRight, the parallel GTUs on the right
-     */
-    Set<LaneBasedGTU> getParallelGTUsRight();
-
-    /**
-     * @return speedLimit
-     */
-    Speed getSpeedLimit();
-
-    /**
      * @param lateralDirection the direction to return the accessible adjacent lane map for
      * @return the accessible adjacent lane map for the given direction
      */
     Map<Lane, Set<Lane>> accessibleAdjacentLaneMap(LateralDirectionality lateralDirection);
 
     /**
-     * @param lateralDirection the direction to return the parallel GTU map for
-     * @return the parallel GTU map for the given direction
+     * @return neighboringHeadwaysLeft, the objects (e.g., GTUs) in parallel, in front and behind on the left neighboring lane,
+     *         with their headway relative to our GTU, and information about the status of the adjacent objects
      */
-    Set<LaneBasedGTU> parallelGTUs(LateralDirectionality lateralDirection);
+    Collection<Headway> getNeighboringHeadwaysLeft();
 
     /**
-     * @param lateralDirection the direction to return the neighboring GTU collection for
-     * @return the neighboring GTU collection for the given direction
+     * @return neighboringHeadwaysRight, the objects (e.g., GTUs) in parallel, in front and behind on the right neighboring
+     *         lane, with their headway relative to our GTU, and information about the status of the adjacent objects
      */
-    Collection<HeadwayGTU> neighboringGTUCollection(LateralDirectionality lateralDirection);
+    Collection<Headway> getNeighboringHeadwaysRight();
+
+    /**
+     * @param lateralDirection the direction to return the parallel headway collection for
+     * @return the the objects (e.g., GTUs) in parallel, in front and behind for the lane in the given direction, with their
+     *         headway relative to our GTU, and information about the status of the adjacent objects
+     */
+    Collection<Headway> getNeighboringHeadways(LateralDirectionality lateralDirection);
+
+    /**
+     * @return parallelHeadwaysLeft, the parallel objects (e.g., GTUs) on the left, with information about their status and
+     *         parallel overlap with our GTU.
+     */
+    Collection<Headway> getParallelHeadwaysLeft();
+
+    /**
+     * @return parallelHeadwaysRight, the parallel objects (e.g., GTUs) on the right, with information about their status and
+     *         parallel overlap with our GTU.
+     */
+    Collection<Headway> getParallelHeadwaysRight();
+
+    /**
+     * @param lateralDirection the direction to return the neighboring headway collection for
+     * @return the the parallel objects (e.g., GTUs) for the given direction, with information about their status and parallel
+     *         overlap with our GTU.
+     */
+    Collection<Headway> getParallelHeadways(LateralDirectionality lateralDirection);
+
+    /**
+     * @return speedLimit
+     */
+    Speed getSpeedLimit();
 
     /************************************************************************************************************/
     /********************************** RETRIEVING TIMESTAMPED INFORMATION ************************************/
     /************************************************************************************************************/
 
     /**
-     * @return TimeStamped forwardHeadwayGTU, the forward headway and first GTU in front
+     * @return TimeStamped forwardHeadway, the forward headway and first object (e.g., a GTU) in front
      */
-    TimeStampedObject<HeadwayGTU> getTimeStampedForwardHeadwayGTU();
+    TimeStampedObject<Headway> getTimeStampedForwardHeadway();
 
     /**
-     * @return TimeStamped backwardHeadwayGTU, the backward headway and first GTU behind
+     * @return TimeStamped backwardHeadwayGTU, the backward headway and first object (e.g., a GTU) behind
      */
-    TimeStampedObject<HeadwayGTU> getTimeStampedBackwardHeadwayGTU();
+    TimeStampedObject<Headway> getTimeStampedBackwardHeadway();
 
     /**
      * @return TimeStamped accessibleAdjacentLanesLeft, the accessible adjacent lanes on the left
@@ -142,64 +145,55 @@ public interface LanePerception extends Perception
     TimeStampedObject<Map<Lane, Set<Lane>>> getTimeStampedAccessibleAdjacentLanesRight();
 
     /**
-     * @return TimeStamped neighboringGTUsLeft, the GTUs in parallel, in front and behind on the left neighboring lane, with
-     *         their headway relative to our GTU
+     * @return TimeStamped neighboringHeadwaysLeft, the objects (e.g., GTUs) in parallel, in front and behind on the left
+     *         neighboring lane, with their headway relative to our GTU, and information about the status of the adjacent
+     *         objects
      */
-    TimeStampedObject<Collection<HeadwayGTU>> getTimeStampedNeighboringGTUsLeft();
+    TimeStampedObject<Collection<Headway>> getTimeStampedNeighboringHeadwaysLeft();
 
     /**
-     * @return TimeStamped neighboringGTUsRight, the GTUs in parallel, in front and behind on the right neighboring lane, with
-     *         their headway relative to our GTU
+     * @return TimeStamped neighboringHeadwaysRight, the objects (e.g., GTUs) in parallel, in front and behind on the right
+     *         neighboring lane, with their headway relative to our GTU, and information about the status of the adjacent
+     *         objects
      */
-    TimeStampedObject<Collection<HeadwayGTU>> getTimeStampedNeighboringGTUsRight();
+    TimeStampedObject<Collection<Headway>> getTimeStampedNeighboringHeadwaysRight();
 
     /**
-     * @return TimeStamped parallelGTUsLeft, the parallel GTUs on the left
+     * @return TimeStamped parallelHeadwaysLeft, the parallel objects (e.g., GTUs) on the left, with information about their
+     *         status and parallel overlap with our GTU.
      */
-    TimeStampedObject<Set<LaneBasedGTU>> getTimeStampedParallelGTUsLeft();
+    TimeStampedObject<Collection<Headway>> getTimeStampedParallelHeadwaysLeft();
 
     /**
-     * @return TimeStamped parallelGTUsRight, the parallel GTUs on the right
+     * @return TimeStamped parallelHeadwaysRight, the parallel objects (e.g., GTUs) on the right, with information about their
+     *         status and parallel overlap with our GTU.
      */
-    TimeStampedObject<Set<LaneBasedGTU>> getTimeStampedParallelGTUsRight();
+    TimeStampedObject<Collection<Headway>> getTimeStampedParallelHeadwaysRight();
 
     /**
      * @return TimeStamped speedLimit
      */
     TimeStampedObject<Speed> getTimeStampedSpeedLimit();
 
-    /**
-     * @return TimeStamped perceived objects
-     * @throws GTUException when GTU was not initialized
-     */
-    TimeStampedObject<Set<PerceivedObject>> getTimeStampedPerceivedObjects() throws GTUException;
-
     /************************************************************************************************************/
-    /********************************** UPDATING OF THE INFORMATION *******************************************/
+    /********************************** UPDATING OF THE INFORMATION *********************************************/
     /************************************************************************************************************/
 
     /**
-     * Update the perceived speed limit.
-     * @throws NetworkException when the speed limit for a GTU type cannot be retreived from the network.
-     * @throws GTUException when the GTU was not initialized yet.
-     */
-    void updateSpeedLimit() throws GTUException, NetworkException;
-
-    /**
-     * Update who's in front of us and how far away the nearest GTU is.
+     * Update who's in front of us and how far away the nearest object (e.g., a GTU) is.
      * @throws GTUException when the GTU was not initialized yet.
      * @throws NetworkException when the headway cannot be determined for this GTU, usually due to routing problems.
-     * @throws ParameterException when there is a parameter problem.
+     * @throws ParameterException when there is a parameter problem, e.g., retrieving the forwardHeadwayDistance.
      */
-    void updateForwardHeadwayGTU() throws GTUException, NetworkException, ParameterException;
+    void updateForwardHeadway() throws GTUException, NetworkException, ParameterException;
 
     /**
-     * Update who's behind us and how far away the nearest GTU is.
+     * Update who's behind us and how far away the nearest object (e.g., a GTU) is.
      * @throws GTUException when the GTU was not initialized yet.
      * @throws NetworkException when the headway cannot be determined for this GTU, usually due to routing problems.
-     * @throws ParameterException when there is a parameter problem
+     * @throws ParameterException when there is a parameter problem, e.g., retrieving the backwardHeadwayDistance.
      */
-    void updateBackwardHeadwayGTU() throws GTUException, NetworkException, ParameterException;
+    void updateBackwardHeadway() throws GTUException, NetworkException, ParameterException;
 
     /**
      * Build a set of Lanes that is adjacent to the given lane that this GTU can enter, for the left lateral direction.
@@ -214,19 +208,19 @@ public interface LanePerception extends Perception
     void updateAccessibleAdjacentLanesRight() throws GTUException;
 
     /**
-     * Update the information about the GTUs parallel to our GTU on the left side.
+     * Update the information about the objects (e.g., GTUs) parallel to our GTU on the left side.
      * @throws GTUException when the GTU was not initialized yet.
      */
-    void updateParallelGTUsLeft() throws GTUException;
+    void updateParallelHeadwaysLeft() throws GTUException;
 
     /**
-     * Update the information about the GTUs parallel to our GTU on the right side.
+     * Update the information about the objects (e.g., GTUs) parallel to our GTU on the right side.
      * @throws GTUException when the GTU was not initialized yet.
      */
-    void updateParallelGTUsRight() throws GTUException;
+    void updateParallelHeadwaysRight() throws GTUException;
 
     /**
-     * Update the information about the GTUs left of our GTU, and behind us or ahead on the left hand side.
+     * Update the information about the objects (e.g., GTUs) left of our GTU, and behind us or ahead on the left hand side.
      * @throws GTUException when the GTU was not initialized yet.
      * @throws NetworkException when there is an inconsistency in the lanes on this network
      * @throws ParameterException when there is a parameter problem.
@@ -234,11 +228,18 @@ public interface LanePerception extends Perception
     void updateLaneTrafficLeft() throws GTUException, NetworkException, ParameterException;
 
     /**
-     * Update the information about the GTUs right of our GTU, and behind us or ahead on the left hand side.
+     * Update the information about the objects (e.g., GTUs) right of our GTU, and behind us or ahead on the left hand side.
      * @throws GTUException when the GTU was not initialized yet.
      * @throws NetworkException when there is an inconsistency in the lanes on this network
      * @throws ParameterException when there is a parameter problem.
      */
     void updateLaneTrafficRight() throws GTUException, NetworkException, ParameterException;
+
+    /**
+     * Update the perceived speed limit.
+     * @throws NetworkException when the speed limit for a GTU type cannot be retreived from the network.
+     * @throws GTUException when the GTU was not initialized yet.
+     */
+    void updateSpeedLimit() throws GTUException, NetworkException;
 
 }
