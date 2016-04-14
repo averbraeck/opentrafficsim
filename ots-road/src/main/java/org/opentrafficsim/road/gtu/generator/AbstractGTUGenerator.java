@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.generator;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -52,8 +53,11 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractGTUGenerator
+public abstract class AbstractGTUGenerator implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150202L;
+
     /** The generator name. Will be used for generated GTUs as Name:# where # is the id of the GTU when ID is a String. */
     private final String name;
 

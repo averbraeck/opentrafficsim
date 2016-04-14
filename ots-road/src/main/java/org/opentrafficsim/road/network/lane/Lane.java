@@ -1197,7 +1197,7 @@ public class Lane extends CrossSectionElement implements Serializable
     public final String toString()
     {
         CrossSectionLink link = getParentLink();
-        return String.format("Lane %s of %s", getId(), link.toString());
+        return String.format("Lane %s of %s", getId(), link.getId());
     }
 
     /** {@inheritDoc} */

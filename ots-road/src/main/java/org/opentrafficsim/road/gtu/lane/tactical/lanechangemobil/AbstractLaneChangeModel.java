@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
@@ -32,8 +33,11 @@ import org.opentrafficsim.road.network.lane.Lane;
  *          initial version 4 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractLaneChangeModel implements LaneChangeModel
+public abstract class AbstractLaneChangeModel implements LaneChangeModel, Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20141104L;
+    
     /** Attempt to overcome rounding errors. */
     private static Acceleration extraThreshold = new Acceleration(0.000001, AccelerationUnit.SI);
 
