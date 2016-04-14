@@ -4,7 +4,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
-import java.io.Serializable;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.event.PlotChangeEvent;
@@ -21,10 +20,8 @@ import org.jfree.chart.plot.XYPlot;
  * initial version Aug 13, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-abstract class PointerHandler implements MouseListener, MouseMotionListener, Serializable
+abstract class PointerHandler implements MouseListener, MouseMotionListener
 {
-    /** */
-    private static final long serialVersionUID = 20140000L;
 
     /** {@inheritDoc} */
     @Override

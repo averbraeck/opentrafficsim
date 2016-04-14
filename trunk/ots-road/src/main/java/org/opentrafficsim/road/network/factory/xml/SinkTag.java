@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml;
 
+import java.io.Serializable;
+
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.xml.CrossSectionElementTag.ElementType;
 import org.w3c.dom.NamedNodeMap;
@@ -15,8 +17,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class SinkTag
+class SinkTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+    
     /** Position of the sink on the link, relative to the design line, stored as a string to parse when the length is known. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String positionStr = null;
@@ -58,5 +63,12 @@ class SinkTag
         sinkTag.positionStr = position.getNodeValue().trim();
 
         linkTag.sinkTags.put(laneName, sinkTag);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "SinkTag [positionStr=" + this.positionStr + "]";
     }
 }

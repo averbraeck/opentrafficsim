@@ -63,11 +63,9 @@ public interface OvertakingConditions
      * initial version Sep 13, 2015
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      */
-    public static class LeftOnly implements OvertakingConditions, Serializable
+    public static class LeftOnly implements OvertakingConditions
     {
-        /** */
-        private static final long serialVersionUID = 20150913L;
-        
+
         /** {@inheritDoc} */
         @Override
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
@@ -96,10 +94,8 @@ public interface OvertakingConditions
      * initial version Sep 13, 2015
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      */
-    public static class RightOnly implements OvertakingConditions, Serializable
+    public static class RightOnly implements OvertakingConditions
     {
-        /** */
-        private static final long serialVersionUID = 20150913L;
         
         /** {@inheritDoc} */
         @Override
@@ -127,10 +123,8 @@ public interface OvertakingConditions
      * initial version Sep 13, 2015
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      */
-    public static class None implements OvertakingConditions, Serializable
+    public static class None implements OvertakingConditions
     {
-        /** */
-        private static final long serialVersionUID = 20150913L;
         
         /** {@inheritDoc} */
         @Override
@@ -158,10 +152,8 @@ public interface OvertakingConditions
      * initial version Sep 13, 2015
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      */
-    public static class LeftAndRight implements OvertakingConditions, Serializable
+    public static class LeftAndRight implements OvertakingConditions
     {
-        /** */
-        private static final long serialVersionUID = 20150913L;
         
         /** {@inheritDoc} */
         @Override

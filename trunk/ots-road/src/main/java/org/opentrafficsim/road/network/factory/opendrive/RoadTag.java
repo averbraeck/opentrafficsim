@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
@@ -61,8 +62,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class RoadTag
+class RoadTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** Unique ID within database (preferably an integer number, uint32_t). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String id = null;
@@ -1057,6 +1061,18 @@ class RoadTag
             else
                 System.err.println("Unknown signal references");
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "RoadTag [id=" + this.id + ", name=" + this.name + ", length=" + this.length + ", junctionId=" + this.junctionId
+                + ", linkTag=" + this.linkTag + ", planViewTag=" + this.planViewTag + ", elevationProfileTag="
+                + this.elevationProfileTag + ", lateralProfileTag=" + this.lateralProfileTag + ", lanesTag=" + this.lanesTag
+                + ", signalsTag=" + this.signalsTag + ", objectsTag=" + this.objectsTag + ", typeTag=" + this.typeTag
+                + ", link=" + this.link + ", designLine=" + this.designLine + ", startNode=" + this.startNode + ", endNode="
+                + this.endNode + ", subLinks=" + this.subLinks + "]";
     }
 
 }

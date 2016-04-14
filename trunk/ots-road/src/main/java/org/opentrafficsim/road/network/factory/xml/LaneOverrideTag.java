@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml;
 
 import java.awt.Color;
+import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -23,8 +24,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 24, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class LaneOverrideTag
+class LaneOverrideTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150724L;
+
     /** Speed limit. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Speed speed = null;
@@ -85,6 +89,14 @@ class LaneOverrideTag
 
         linkTag.laneOverrideTags.put(name.trim(), laneOverrideTag);
 
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LaneOverrideTag [speed=" + this.speed + ", direction=" + this.direction + ", color=" + this.color
+                + ", overtakingConditions=" + this.overtakingConditions + "]";
     }
 
 }

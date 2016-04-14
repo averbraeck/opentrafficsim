@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +25,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ShortestRouteTag
+class ShortestRouteTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
@@ -105,5 +109,13 @@ class ShortestRouteTag
 
             parser.shortestRouteTags.put(shortestRouteTag.name.trim(), shortestRouteTag);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ShortestRouteTag [name=" + this.name + ", from=" + this.from + ", via=" + this.via + ", to=" + this.to
+                + ", costPerTime=" + this.costPerTime + ", costPerDistance=" + this.costPerDistance + "]";
     }
 }

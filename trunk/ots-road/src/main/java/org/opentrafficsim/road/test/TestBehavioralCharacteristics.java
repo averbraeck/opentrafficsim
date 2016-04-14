@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.test;
 
-import java.io.Serializable;
-
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
@@ -19,11 +17,8 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TestBehavioralCharacteristics implements Serializable
+public class TestBehavioralCharacteristics
 {
-
-    /** */
-    private static final long serialVersionUID = 20160324L;
 
     /**
      * 
@@ -47,9 +42,9 @@ public class TestBehavioralCharacteristics implements Serializable
             @Override
             public void check(double value, BehavioralCharacteristics bc) throws ParameterException
             {
-                ParameterException.throwIf(value>1.0, "Value is NaN...");
+                ParameterException.throwIf(value > 1.0, "Value is NaN...");
             }
-            
+
         };
         bc.setParameter(ptd, 3.0);
         bc.setParameter(ptd, Double.NaN);
@@ -62,4 +57,3 @@ public class TestBehavioralCharacteristics implements Serializable
         return "TestBehavioralCharacteristics []";
     }
 }
-

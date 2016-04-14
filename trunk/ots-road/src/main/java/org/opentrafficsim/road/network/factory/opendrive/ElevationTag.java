@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.io.Serializable;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.NetworkException;
@@ -16,8 +18,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ElevationTag
+class ElevationTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** Start position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel s = null;
@@ -88,5 +93,13 @@ class ElevationTag
                 .plus(elevationTag.d.multiplyBy(Math.pow(elevationTag.s.doubleValue(), 3))));
 
         return elevationTag;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ElevationTag [s=" + this.s + ", a=" + this.a + ", b=" + this.b + ", c=" + this.c + ", d=" + this.d
+                + ", elevation=" + this.elevation + "]";
     }
 }

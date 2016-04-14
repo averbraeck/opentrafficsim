@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import nl.tudelft.simulation.language.reflection.ClassUtil;
@@ -24,8 +25,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class TrafficLightTag
+class TrafficLightTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** Name, cannot be null in implementation of traffic light. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = "";
@@ -114,6 +118,14 @@ class TrafficLightTag
         if (!linkTag.trafficLightTags.containsKey(laneName))
             linkTag.trafficLightTags.put(laneName, new ArrayList<TrafficLightTag>());
         linkTag.trafficLightTags.get(laneName).add(trafficLightTag);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "TrafficLightTag [name=" + this.name + ", positionStr=" + this.positionStr + ", className=" + this.className
+                + "]";
     }
 
 }

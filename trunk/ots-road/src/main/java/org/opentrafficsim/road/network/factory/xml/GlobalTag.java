@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -25,8 +26,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class GlobalTag
+class GlobalTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** Default speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Speed defaultMaxSpeed = null;
@@ -103,5 +107,14 @@ class GlobalTag
 
             // TODO parse other GTUColorer tags
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "GlobalTag [defaultMaxSpeed=" + this.defaultMaxSpeed + ", defaultLaneWidth=" + this.defaultLaneWidth
+                + ", velocityGTUColorerMaxSpeed=" + this.velocityGTUColorerMaxSpeed + ", defaultLaneKeepingPolicy="
+                + this.defaultLaneKeepingPolicy + ", defaultOvertakingConditions=" + this.defaultOvertakingConditions + "]";
     }
 }

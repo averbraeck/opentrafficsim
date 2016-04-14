@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.io.Serializable;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.road.network.factory.XMLParser;
@@ -17,8 +19,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ArcTag
+class ArcTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+    
     /** Degree of the curve at the start(s-coordinate?). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel curvature = null;
@@ -51,5 +56,12 @@ class ArcTag
 
         if (typeCount > 1)
             throw new SAXException("ROAD: more than one arc tag!");
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ArcTag [curvature=" + this.curvature + "]";
     }
 }

@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.io.Serializable;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.NetworkException;
@@ -18,8 +20,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class HeightTag
+class HeightTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** The sOffst. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel sOffst = null;
@@ -68,5 +73,12 @@ class HeightTag
 
         if (heightCount > 1)
             System.err.println("ROAD: more than one height tag for road");
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "HeightTag [sOffst=" + this.sOffst + ", inner=" + this.inner + ", outer=" + this.outer + "]";
     }
 }

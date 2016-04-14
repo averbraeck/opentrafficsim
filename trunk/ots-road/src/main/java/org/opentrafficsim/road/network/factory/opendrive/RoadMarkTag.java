@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.io.Serializable;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.NetworkException;
@@ -18,8 +20,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class RoadMarkTag
+class RoadMarkTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** The sOffst. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel sOffst = null;
@@ -91,5 +96,13 @@ class RoadMarkTag
             roadMarkCount++;
         }
 
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "RoadMarkTag [sOffst=" + this.sOffst + ", type=" + this.type + ", weight=" + this.weight + ", color="
+                + this.color + ", width=" + this.width + ", laneChange=" + this.laneChange + "]";
     }
 }

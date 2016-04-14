@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
-import java.io.Serializable;
-
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
@@ -16,11 +14,8 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class IncentiveDummy implements MandatoryIncentive, Serializable
+public class IncentiveDummy implements MandatoryIncentive
 {
-
-    /** */
-    private static final long serialVersionUID = 20160413L;
 
     /** {@inheritDoc} */
     @Override

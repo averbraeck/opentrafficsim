@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.io.Serializable;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
@@ -20,8 +22,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class TypeTag
+class TypeTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** Start position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel s = null;
@@ -68,5 +73,12 @@ class TypeTag
 
         if (typeCount > 1)
             throw new SAXException("ROAD: more than one TYPE tag for road id=" + roadTag.id);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "TypeTag [s=" + this.s + ", type=" + this.type + ", maxSpeed=" + this.maxSpeed + "]";
     }
 }

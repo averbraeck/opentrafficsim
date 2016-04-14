@@ -247,4 +247,16 @@ class LinkTag implements Serializable
         /** Opposite. */
         OPPOSITE;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LinkTag [predecessorId=" + this.predecessorId + ", predecessorType=" + this.predecessorType
+                + ", predecessorContactPoint=" + this.predecessorContactPoint + ", successorId=" + this.successorId
+                + ", successorType=" + this.successorType + ", successorContactPoint=" + this.successorContactPoint
+                + ", leftNeighborRoadId=" + this.leftNeighborRoadId + ", leftNeighborDirection=" + this.leftNeighborDirection
+                + ", rightNeighborRoadId=" + this.rightNeighborRoadId + ", rightNeighborDirection="
+                + this.rightNeighborDirection + "]";
+    }
 }

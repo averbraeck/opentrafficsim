@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -26,8 +27,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class RoadTypeTag
+class RoadTypeTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
@@ -141,5 +145,14 @@ class RoadTypeTag
             throw new NetworkException("ROADTYPE: No elements defined for road type " + roadTypeTag.name);
 
         return roadTypeTag;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "RoadTypeTag [name=" + this.name + ", speed=" + this.speed + ", width=" + this.width + ", cseTags="
+                + this.cseTags + ", laneKeepingPolicy=" + this.laneKeepingPolicy + ", overtakingConditions="
+                + this.overtakingConditions + "]";
     }
 }

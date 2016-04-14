@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,9 +19,12 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class LateralProfileTag
+class LateralProfileTag implements Serializable
 {
 
+    /** */
+    private static final long serialVersionUID = 20150723L;
+    
     /** GeometryTags */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<SuperElevationTag> superElevationTags = new ArrayList<SuperElevationTag>();
@@ -52,5 +56,12 @@ class LateralProfileTag
                 lateralProfileTag.superElevationTags.add(superElevationTag);
             }
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LateralProfileTag [superElevationTags=" + this.superElevationTags + "]";
     }
 }

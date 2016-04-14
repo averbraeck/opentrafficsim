@@ -435,9 +435,6 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
     /** */
     static class DummyTacticalPlanner implements TacticalPlanner
     {
-        /** */
-        private static final long serialVersionUID = 1L;
-
         /** {@inheritDoc} */
         @Override
         public OperationalPlan generateOperationalPlan(final GTU gtu, final Time.Abs startTime,

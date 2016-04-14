@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.io.Serializable;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
@@ -19,9 +20,12 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ElevationProfileTag
+class ElevationProfileTag implements Serializable
 {
 
+    /** */
+    private static final long serialVersionUID = 20150723L;
+    
     /** ElevationTags */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     NavigableMap<Double, ElevationTag> elevationTags = new TreeMap<Double, ElevationTag>();
@@ -47,5 +51,12 @@ class ElevationProfileTag
                 elevationProfileTag.elevationTags.put(elevationTag.s.si, elevationTag);
             }
         roadTag.elevationProfileTag = elevationProfileTag;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ElevationProfileTag [elevationTags=" + this.elevationTags + "]";
     }
 }

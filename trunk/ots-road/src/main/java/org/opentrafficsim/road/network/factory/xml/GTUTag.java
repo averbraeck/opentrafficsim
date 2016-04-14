@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml;
 
+import java.io.Serializable;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
@@ -30,8 +32,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class GTUTag
+class GTUTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
@@ -168,6 +173,15 @@ class GTUTag
             return new Altruistic();
         }
         throw new NetworkException("Unknown lane change model: " + modelName);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "GTUTag [name=" + this.name + ", gtuType=" + this.gtuType + ", lengthDist=" + this.lengthDist + ", widthDist="
+                + this.widthDist + ", followingModel=" + this.followingModel + ", laneChangeModel=" + this.laneChangeModel
+                + ", maxSpeedDist=" + this.maxSpeedDist + "]";
     }
 
 }

@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.io.Serializable;
+
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Angle;
@@ -18,8 +20,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ObjectTag
+class ObjectTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** Parameter s. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel s = null;
@@ -150,5 +155,15 @@ class ObjectTag
 
         return objectTag;
 
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ObjectTag [s=" + this.s + ", t=" + this.t + ", id=" + this.id + ", name=" + this.name + ", orientation="
+                + this.orientation + ", zOffset=" + this.zOffset + ", type=" + this.type + ", validLength=" + this.validLength
+                + ", length=" + this.length + ", width=" + this.width + ", height=" + this.height + ", hdg=" + this.hdg
+                + ", pitch=" + this.pitch + ", roll=" + this.roll + "]";
     }
 }

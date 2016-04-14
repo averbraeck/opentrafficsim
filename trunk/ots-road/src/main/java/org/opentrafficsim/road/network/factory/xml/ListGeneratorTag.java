@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -22,8 +23,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ListGeneratorTag
+class ListGeneratorTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** URI of the list. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     URI uri = null;
@@ -130,5 +134,14 @@ class ListGeneratorTag
         // TODO GTUColorer
 
         linkTag.listGeneratorTags.put(laneName, listGeneratorTag);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ListGeneratorTag [uri=" + this.uri + ", positionStr=" + this.positionStr + ", gtuTag=" + this.gtuTag
+                + ", gtuMixTag=" + this.gtuMixTag + ", initialSpeedDist=" + this.initialSpeedDist + ", gtuColorer="
+                + this.gtuColorer + "]";
     }
 }

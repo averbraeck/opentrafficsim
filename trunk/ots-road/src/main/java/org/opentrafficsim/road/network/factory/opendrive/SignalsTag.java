@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +19,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class SignalsTag
+class SignalsTag implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20150723L;
 
     /** Signal tags */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -57,5 +61,12 @@ class SignalsTag
             }
         }
         roadTag.signalsTag = signalsTag;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "SignalsTag [signalTags=" + this.signalTags + ", signalReferenceTag=" + this.signalReferenceTag + "]";
     }
 }
