@@ -22,18 +22,39 @@ public class ParameterTypeInteger extends AbstractParameterType<DimensionlessUni
     private static final long serialVersionUID = 20160400L;
 
     /**
-     * Constructor without check.
+     * Constructor without default value and check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
+     */
+    public ParameterTypeInteger(final String id, final String description)
+    {
+        this(id, description, 0, null, false);
+    }
+
+    /**
+     * Constructor with default value, without check.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name..
      * @param defaultValue Default value.
      */
     public ParameterTypeInteger(final String id, final String description, final int defaultValue)
     {
-        this(id, description, defaultValue, null);
+        this(id, description, defaultValue, null, true);
     }
 
     /**
-     * Constructor with check.
+     * Constructor without default value, with check.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     * @param check Check for parameter values.
+     */
+    public ParameterTypeInteger(final String id, final String description, final Check check)
+    {
+        this(id, description, 0, check, false);
+    }
+
+    /**
+     * Constructor with default value and check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
@@ -41,7 +62,22 @@ public class ParameterTypeInteger extends AbstractParameterType<DimensionlessUni
      */
     public ParameterTypeInteger(final String id, final String description, final int defaultValue, final Check check)
     {
-        super(id, description, Dimensionless.class, new Dimensionless(defaultValue, DimensionlessUnit.SI), check);
+        super(id, description, Dimensionless.class, new Dimensionless(defaultValue, DimensionlessUnit.SI), check, true);
+    }
+
+    /**
+     * Private constructor with default value and check, which may check the default value.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     * @param defaultValue Default value.
+     * @param check Check for parameter values.
+     * @param hasDefaultValue Whether to check the default value for null.
+     */
+    private ParameterTypeInteger(final String id, final String description, final int defaultValue, final Check check,
+        final boolean hasDefaultValue)
+    {
+        super(id, description, Dimensionless.class, hasDefaultValue ? new Dimensionless(defaultValue, DimensionlessUnit.SI)
+            : null, check, hasDefaultValue);
         try
         {
             // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of
@@ -53,6 +89,39 @@ public class ParameterTypeInteger extends AbstractParameterType<DimensionlessUni
             throw new RuntimeException("Default value does not comply with constraints.", exception);
         }
     }
+    
+//    /**
+//     * Constructor without check.
+//     * @param id Short name of parameter.
+//     * @param description Parameter description or full name.
+//     * @param defaultValue Default value.
+//     */
+//    public ParameterTypeInteger(final String id, final String description, final int defaultValue)
+//    {
+//        this(id, description, defaultValue, null);
+//    }
+//
+//    /**
+//     * Constructor with check.
+//     * @param id Short name of parameter.
+//     * @param description Parameter description or full name.
+//     * @param defaultValue Default value.
+//     * @param check Check for parameter values.
+//     */
+//    public ParameterTypeInteger(final String id, final String description, final int defaultValue, final Check check)
+//    {
+//        super(id, description, Dimensionless.class, new Dimensionless(defaultValue, DimensionlessUnit.SI), check);
+//        try
+//        {
+//            // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of
+//            // other parameter types.
+//            check(defaultValue, new BehavioralCharacteristics());
+//        }
+//        catch (ParameterException exception)
+//        {
+//            throw new RuntimeException("Default value does not comply with constraints.", exception);
+//        }
+//    }
 
     /**
      * Default integer value.
@@ -61,7 +130,7 @@ public class ParameterTypeInteger extends AbstractParameterType<DimensionlessUni
      */
     public final Integer getDefaultValue() throws ParameterException
     {
-        ParameterException.throwIf(null == this.defaultValue, "No default value was set for " + getId());
+        ParameterException.throwIf(null == this.defaultValue, "No default value was set for '%s'.", getId());
         return (int) super.defaultValue.si;
     }
 

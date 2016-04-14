@@ -12,8 +12,7 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, 
- *          initial version Apr 13, 2016 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <U> Unit of the value.
@@ -21,7 +20,7 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  */
 public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleScalar.Rel<U>> implements Serializable
 {
-    
+
     /** */
     private static final long serialVersionUID = 20160400L;
 
@@ -44,25 +43,25 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
 
     /** Default check. */
     private final Check check;
-    
+
     /** List of default checks for ParameterTypes. */
     public enum Check
     {
         /** Checks for &gt;0. */
-        POSITIVE, 
-        
+        POSITIVE,
+
         /** Checks for &lt;0. */
-        NEGATIVE, 
-        
+        NEGATIVE,
+
         /** Checks for &ge;0. */
-        POSITIVEZERO, 
-        
+        POSITIVEZERO,
+
         /** Checks for &le;0. */
         NEGATIVEZERO,
-        
+
         /** Checks for &ne;0. */
         NONZERO,
-        
+
         /** Checks for range [0...1]. */
         UNITINTERVAL;
     }
@@ -75,9 +74,9 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
      */
     public AbstractParameterType(final String id, final String description, final Class<T> valueClass)
     {
-        this(id, description, valueClass, null, null);
+        this(id, description, valueClass, null, null, false);
     }
-    
+
     /**
      * Constructor with default value, without check.
      * @param id Short name of parameter.
@@ -87,7 +86,7 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
      */
     public AbstractParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue)
     {
-        this(id, description, valueClass, defaultValue, null);
+        this(id, description, valueClass, defaultValue, null, true);
     }
 
     /**
@@ -99,9 +98,9 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
      */
     public AbstractParameterType(final String id, final String description, final Class<T> valueClass, final Check check)
     {
-        this(id, description, valueClass, null, check);
+        this(id, description, valueClass, null, check, false);
     }
-    
+
     /**
      * Constructor with default value and check.
      * @param id Short name of parameter.
@@ -110,15 +109,35 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
      * @param defaultValue Default value.
      * @param check Check for parameter values.
      */
-    public AbstractParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue, final Check check)
+    public AbstractParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue,
+        final Check check)
     {
+        this(id, description, valueClass, defaultValue, check, true);
+    }
+
+    /**
+     * Protected constructor with default value and check, which may check the default value.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     * @param valueClass Class of the value.
+     * @param defaultValue Default value.
+     * @param check Check for parameter values.
+     * @param hasDefaultValue Whether to check the default value for null.
+     */
+    protected AbstractParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue,
+        final Check check, final boolean hasDefaultValue)
+    {
+        if (hasDefaultValue && defaultValue == null)
+        {
+            throw new RuntimeException("Default values of parameter types may not be null.");
+        }
         this.id = id;
         this.description = description;
         this.valueClass = valueClass;
         this.defaultValue = defaultValue;
         this.uniqueId = UUID.randomUUID();
         this.check = check;
-        if (this.defaultValue != null) 
+        if (this.defaultValue != null)
         {
             try
             {
@@ -162,45 +181,47 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
      * @param value The value to check.
      * @throws ParameterException If the value does not comply with constraints.
      */
-    protected final void checkCheck(final T value) throws ParameterException 
+    protected final void checkCheck(final T value) throws ParameterException
     {
         if (this.check == null)
         {
             return;
         }
+        ParameterException.throwIf(value == null, "Value null of parameter '%s' could not be checked with default check.",
+            this.id);
         switch (this.check)
         {
             case POSITIVE:
-                ParameterException.throwIf(value.si <= 0.0, "Value of parameter '" + this.id + "' must be above zero.");
+                ParameterException.throwIf(value.si <= 0.0, "Value of parameter '%s' must be above zero.", this.id);
                 break;
-                
+
             case NEGATIVE:
-                ParameterException.throwIf(value.si >= 0.0, "Value of parameter '" + this.id + "' must be below zero.");
+                ParameterException.throwIf(value.si >= 0.0, "Value of parameter '%s' must be below zero.", this.id);
                 break;
-                
+
             case POSITIVEZERO:
-                ParameterException.throwIf(value.si < 0.0, "Value of parameter '" + this.id + "' may not be below zero.");
+                ParameterException.throwIf(value.si < 0.0, "Value of parameter '%s' may not be below zero.", this.id);
                 break;
-                
+
             case NEGATIVEZERO:
-                ParameterException.throwIf(value.si > 0.0, "Value of parameter '" + this.id + "' may not be above zero.");
+                ParameterException.throwIf(value.si > 0.0, "Value of parameter '%s' may not be above zero.", this.id);
                 break;
-                
+
             case NONZERO:
-                ParameterException.throwIf(value.si == 0.0, "Value of parameter '" + this.id + "' may not be zero.");
+                ParameterException.throwIf(value.si == 0.0, "Value of parameter '%s' may not be zero.", this.id);
                 break;
-                
+
             case UNITINTERVAL:
-                ParameterException.throwIf(value.si < 0.0 || value.si > 1.0, "Value of parameter '" + this.id 
-                    + "' must be in range [0...1]");
+                ParameterException.throwIf(value.si < 0.0 || value.si > 1.0,
+                    "Value of parameter '%s' must be in range [0...1]", this.id);
                 break;
-            
+
             default:
                 throw new ParameterException("Unknown parameter check value.");
-                
+
         }
     }
-    
+
     /**
      * Print the given value from the map in BehavioralCharachteristics in a presentable format.
      * @param behavioralCharacteristics Behavioral characteristics to get the value from.

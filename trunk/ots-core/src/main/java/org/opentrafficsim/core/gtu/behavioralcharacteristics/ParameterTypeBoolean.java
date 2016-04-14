@@ -11,8 +11,7 @@ import org.djunits.value.vdouble.scalar.Dimensionless;
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, 
- *          initial version Apr 13, 2016 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
@@ -22,16 +21,40 @@ public class ParameterTypeBoolean extends AbstractParameterType<DimensionlessUni
     private static final long serialVersionUID = 20160400L;
 
     /**
-     * Constructor.
+     * Constructor without default value.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     */
+    public ParameterTypeBoolean(final String id, final String description)
+    {
+        this(id, description, false, false);
+    }
+
+    /**
+     * Constructor with default value.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
      */
     public ParameterTypeBoolean(final String id, final String description, final boolean defaultValue)
     {
-        super(id, description, Dimensionless.class, new Dimensionless(defaultValue ? 1.0 : 0.0, DimensionlessUnit.SI));
+        this(id, description, defaultValue, true);
     }
-    
+
+    /**
+     * Private constructor with default value, which may check the default value.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     * @param defaultValue Default value.
+     * @param hasDefaultValue Whether to check the default value for null.
+     */
+    public ParameterTypeBoolean(final String id, final String description, final boolean defaultValue,
+        final boolean hasDefaultValue)
+    {
+        super(id, description, Dimensionless.class, hasDefaultValue ? new Dimensionless(defaultValue ? 1.0 : 0.0,
+            DimensionlessUnit.SI) : null, null, hasDefaultValue);
+    }
+
     /**
      * Default boolean value.
      * @return Default boolean value.
@@ -39,15 +62,16 @@ public class ParameterTypeBoolean extends AbstractParameterType<DimensionlessUni
      */
     public final Boolean getDefaultValue() throws ParameterException
     {
+        ParameterException.throwIf(null == this.defaultValue, "No default value was set for '%s'.", getId());
         return super.defaultValue.si != 0.0;
     }
-    
+
     /** {@inheritDoc} */
-    public final String printValue(final BehavioralCharacteristics behavioralCharacteristics) throws ParameterException 
+    public final String printValue(final BehavioralCharacteristics behavioralCharacteristics) throws ParameterException
     {
         return Boolean.toString(behavioralCharacteristics.getParameter(this));
     }
-    
+
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override

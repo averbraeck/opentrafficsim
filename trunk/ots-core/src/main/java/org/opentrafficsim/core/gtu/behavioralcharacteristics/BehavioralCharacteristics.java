@@ -15,8 +15,7 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, 
- *          initial version Apr 13, 2016 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
@@ -26,11 +25,10 @@ public class BehavioralCharacteristics implements Serializable
     /** */
     private static final long serialVersionUID = 20160400L;
 
-    // TODO: !=EMPTY may not work across multiple computers
     /**
-     * Object to recognize that none was set previously.
+     * Object to recognize that no value was set previously.
      */
-    private static final Dimensionless EMPTY = new Dimensionless(0, DimensionlessUnit.SI);
+    private static final Empty EMPTY = new Empty();
 
     /** List of parameters. */
     private final Map<AbstractParameterType<?, ?>, DoubleScalar.Rel<?>> parameters = new HashMap<>();
@@ -49,6 +47,8 @@ public class BehavioralCharacteristics implements Serializable
     public final <U extends Unit<U>, T extends DoubleScalar.Rel<U>> void setParameter(
         final ParameterType<U, T> parameterType, final T value) throws ParameterException
     {
+        ParameterException.throwIf(value == null,
+                "Parameter of type '%s' was assigned a null value, this is not allowed.", parameterType.getId());
         parameterType.check(value, this);
         saveSetParameter(parameterType, value);
     }
@@ -126,16 +126,16 @@ public class BehavioralCharacteristics implements Serializable
      */
     public final void resetParameter(final AbstractParameterType<?, ?> parameterType) throws ParameterException
     {
-        ParameterException.throwIf(!this.previous.containsKey(parameterType), "Reset on parameter of type '"
-            + parameterType.getId() + "' could not be performed, it was not set.");
-        if (this.previous.get(parameterType) != EMPTY)
-        {
-            this.parameters.put(parameterType, this.previous.get(parameterType));
-        }
-        else
+        ParameterException.throwIf(!this.previous.containsKey(parameterType),
+            "Reset on parameter of type '%s' could not be performed, it was not set.", parameterType.getId());
+        if (this.previous.get(parameterType) instanceof Empty)
         {
             // no value was set before last set, so make parameter type not set
             this.parameters.remove(parameterType);
+        }
+        else
+        {
+            this.parameters.put(parameterType, this.previous.get(parameterType));
         }
         this.previous.remove(parameterType); // prevent consecutive resets
     }
@@ -199,8 +199,8 @@ public class BehavioralCharacteristics implements Serializable
      */
     private void checkContains(final AbstractParameterType<?, ?> parameterType) throws ParameterException
     {
-        ParameterException.throwIf(!contains(parameterType), "Could not get parameter of type '" + parameterType.getId()
-            + "' as it was not set.");
+        ParameterException.throwIf(!contains(parameterType), "Could not get parameter of type '%s' as it was not set.",
+            parameterType.getId());
     }
 
     /**
@@ -225,13 +225,13 @@ public class BehavioralCharacteristics implements Serializable
     /** {@inheritDoc} */
     public final String toString()
     {
-        String out = "BehavioralCharacteristics [";
+        StringBuilder out = new StringBuilder("BehavioralCharacteristics [");
         String sep = "";
         for (AbstractParameterType<?, ?> apt : this.parameters.keySet())
         {
             try
             {
-                out += (sep + apt.getId() + "=" + apt.printValue(this));
+                out.append(sep).append(apt.getId()).append("=").append(apt.printValue(this));
                 sep = ", ";
             }
             catch (ParameterException pe)
@@ -239,7 +239,32 @@ public class BehavioralCharacteristics implements Serializable
                 // We know the parameter has been set as we get the keySet from parameters
             }
         }
-        return out + "]";
+        out.append("]");
+        return out.toString();
+    }
+
+    /**
+     * Class to put in a HashMap to recognize that no value was set at some point.
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 14, 2016 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    private static class Empty extends Dimensionless
+    {
+        /** */
+        private static final long serialVersionUID = 20160414L;
+
+        /**
+         * Empty constructor.
+         */
+        Empty()
+        {
+            super(Double.NaN, DimensionlessUnit.SI);
+        }
     }
 
 }
