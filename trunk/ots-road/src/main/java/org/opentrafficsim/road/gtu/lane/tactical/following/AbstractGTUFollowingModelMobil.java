@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import org.djunits.unit.AccelerationUnit;
@@ -27,8 +28,11 @@ import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanne
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingModelOld
+public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingModelOld, Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150219L;
+
     /** Prohibitive deceleration used to construct the TOODANGEROUS result below. */
     private static final AccelerationStep PROHIBITIVEACCELERATIONSTEP = new AccelerationStep(new Acceleration(
             Double.NEGATIVE_INFINITY, AccelerationUnit.SI), new Time.Abs(Double.NaN, TimeUnit.SI), new Time.Rel(Double.NaN,

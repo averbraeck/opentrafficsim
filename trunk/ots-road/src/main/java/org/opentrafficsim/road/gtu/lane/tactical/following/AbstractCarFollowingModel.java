@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
+import java.io.Serializable;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -17,10 +18,19 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
  * for free acceleration, and a single vehicle in the set for single-leader acceleration. As a result, implementations of this
  * class only need to implement a single, and simpler, method covering different calls to the car-following model. The headway
  * towards the first vehicle being followed is guaranteed to be positive.
- * @author Wouter Schakel
+ * <p>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * <p>
+ * @version $Revision$, $LastChangedDate$, by $Author$,
+ *          initial version Apr 2016 <br>
+ * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class AbstractCarFollowingModel implements CarFollowingModel
+public abstract class AbstractCarFollowingModel implements CarFollowingModel, Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20160400L;
 
     /** {@inheritDoc} */
     public final Acceleration freeAcceleration(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed,

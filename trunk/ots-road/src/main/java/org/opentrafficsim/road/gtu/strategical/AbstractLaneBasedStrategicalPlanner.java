@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.strategical;
 
+import java.io.Serializable;
+
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 
 /**
@@ -12,8 +14,11 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacter
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractLaneBasedStrategicalPlanner implements LaneBasedStrategicalPlanner
+public abstract class AbstractLaneBasedStrategicalPlanner implements LaneBasedStrategicalPlanner, Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20151126L;
+    
     /** The personal driving characteristics, which contain settings for the tactical planner. */
     protected BehavioralCharacteristics behavioralCharacteristics;
 

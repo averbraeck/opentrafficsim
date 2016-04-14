@@ -205,7 +205,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         }
         return result;
     }
-
+    
     /**
      * Create a XYBlockChart.
      * @param container JFrame; the JFrame that will be populated with the chart and the status label
