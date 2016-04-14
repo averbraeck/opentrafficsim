@@ -126,7 +126,7 @@ public class VerifyRequiredMethods
             {
                 if (c.isEnum())
                 {
-                    // System.out.println("Class " + c.getName() + " is an enum and (by inheritence) implements Serializable");
+                    // System.out.println("Class " + c.getName() + " is an enum and (by inheritance) implements Serializable");
                 }
                 else if (!ClassList.hasNonStaticFields(c))
                 {
