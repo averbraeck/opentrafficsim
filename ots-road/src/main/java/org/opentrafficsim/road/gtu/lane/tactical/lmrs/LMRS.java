@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.UNITINTERVAL;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -40,7 +41,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class LMRS extends AbstractLaneBasedTacticalPlanner
+public class LMRS extends AbstractLaneBasedTacticalPlanner implements Serializable
 {
 
     /** Serialization id. */

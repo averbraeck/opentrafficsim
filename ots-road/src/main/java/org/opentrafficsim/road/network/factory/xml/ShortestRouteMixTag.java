@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +20,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ShortestRouteMixTag
+class ShortestRouteMixTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
@@ -94,6 +98,13 @@ class ShortestRouteMixTag
             throw new NetworkException("SHORTESTROUTEMIX: " + shortestRouteMixTag.name + " SHORTESTROUTE "
                 + shortestRouteName.getNodeValue().trim() + ": weight not defined");
         shortestRouteMixTag.weights.add(Double.parseDouble(weight.getNodeValue()));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ShortestRouteMixTag [name=" + this.name + ", routes=" + this.routes + ", weights=" + this.weights + "]";
     }
 
 }

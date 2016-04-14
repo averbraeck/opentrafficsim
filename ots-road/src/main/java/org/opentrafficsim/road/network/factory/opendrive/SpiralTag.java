@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.io.Serializable;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.road.network.factory.XMLParser;
@@ -17,8 +19,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class SpiralTag
+class SpiralTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** Degree of the curve at the start(s-coordinate?). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel curvStart = null;
@@ -60,5 +65,12 @@ class SpiralTag
 
         if (typeCount > 1)
             throw new SAXException("ROAD: more than one spiral tag!");
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "SpiralTag [curvStart=" + this.curvStart + ", curvEnd=" + this.curvEnd + "]";
     }
 }

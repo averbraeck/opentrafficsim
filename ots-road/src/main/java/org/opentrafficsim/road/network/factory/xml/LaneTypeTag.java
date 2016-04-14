@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml;
 
+import java.io.Serializable;
+
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -17,8 +19,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class LaneTypeTag
+class LaneTypeTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+    
     /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
@@ -48,5 +53,12 @@ class LaneTypeTag
             LaneType laneType = new LaneType(laneTypeTag.name);
             parser.laneTypes.put(laneTypeTag.name, laneType);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LaneTypeTag [name=" + this.name + "]";
     }
 }

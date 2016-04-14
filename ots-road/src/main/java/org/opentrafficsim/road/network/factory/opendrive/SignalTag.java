@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.io.Serializable;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.NetworkException;
@@ -16,8 +18,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class SignalTag
+class SignalTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** Parameter s. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel s = null;
@@ -123,5 +128,14 @@ class SignalTag
 
         return signalTag;
 
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "SignalTag [s=" + this.s + ", t=" + this.t + ", id=" + this.id + ", name=" + this.name + ", dynamic="
+                + this.dynamic + ", orientation=" + this.orientation + ", zOffset=" + this.zOffset + ", country="
+                + this.country + ", type=" + this.type + ", subtype=" + this.subtype + ", value=" + this.value + "]";
     }
 }

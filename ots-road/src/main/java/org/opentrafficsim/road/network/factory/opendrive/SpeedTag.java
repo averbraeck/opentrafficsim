@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.io.Serializable;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
@@ -20,8 +22,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class SpeedTag
+class SpeedTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** The s offst. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel sOffst = null;
@@ -60,5 +65,12 @@ class SpeedTag
             speedCount++;
         }
 
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "SpeedTag [sOffst=" + this.sOffst + ", max=" + this.max + "]";
     }
 }

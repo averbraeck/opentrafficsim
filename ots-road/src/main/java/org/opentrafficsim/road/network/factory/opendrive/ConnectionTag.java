@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.io.Serializable;
+
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.opentrafficsim.road.network.factory.opendrive.LinkTag.ContactPointEnum;
@@ -16,8 +18,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ConnectionTag
+class ConnectionTag implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20150723L;
 
     /** Id of the lane. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -99,5 +104,14 @@ class ConnectionTag
         }
 
         return connectionTag;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ConnectionTag [id=" + this.id + ", incomingRoad=" + this.incomingRoad + ", connectingRoad="
+                + this.connectingRoad + ", contactPoint=" + this.contactPoint + ", laneLinkFrom=" + this.laneLinkFrom
+                + ", laneLinkTo=" + this.laneLinkTo + "]";
     }
 }

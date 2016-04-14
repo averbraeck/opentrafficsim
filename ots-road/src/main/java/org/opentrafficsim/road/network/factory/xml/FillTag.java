@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +34,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class FillTag
+class FillTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** Lane name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String laneName = null;
@@ -224,6 +228,16 @@ class FillTag
         // TODO RouteMix
         // TODO ShortestRoute
         // TODO ShortestRouteMix
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "FillTag [laneName=" + this.laneName + ", gtuTag=" + this.gtuTag + ", gtuMixTag=" + this.gtuMixTag
+                + ", distanceDist=" + this.distanceDist + ", initialSpeedDist=" + this.initialSpeedDist + ", maxGTUs="
+                + this.maxGTUs + ", routeTag=" + this.routeTag + ", routeMixTag=" + this.routeMixTag + ", shortestRouteTag="
+                + this.shortestRouteTag + ", shortestRouteMixTag=" + this.shortestRouteMixTag + "]";
     }
 
 }

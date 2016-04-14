@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml;
 
+import java.io.Serializable;
+
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -19,8 +21,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 24, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ArcTag
+class ArcTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150724L;
+
     /** Angle. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Angle.Abs angle = null;
@@ -83,5 +88,13 @@ class ArcTag
             (dir.equals("L") || dir.equals("LEFT") || dir.equals("COUNTERCLOCKWISE")) ? ArcDirection.LEFT
                 : ArcDirection.RIGHT;
 
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ArcTag [angle=" + this.angle + ", radius=" + this.radius + ", direction=" + this.direction + ", center="
+                + this.center + ", startAngle=" + this.startAngle + "]";
     }
 }

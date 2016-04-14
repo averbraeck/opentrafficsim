@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
-import java.io.Serializable;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -26,11 +25,8 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
  *          initial version Apr 2016 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class AbstractCarFollowingModel implements CarFollowingModel, Serializable
+public abstract class AbstractCarFollowingModel implements CarFollowingModel
 {
-
-    /** */
-    private static final long serialVersionUID = 20160400L;
 
     /** {@inheritDoc} */
     public final Acceleration freeAcceleration(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed,

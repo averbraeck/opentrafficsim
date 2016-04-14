@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +21,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class CompatibilityTag
+class CompatibilityTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** Lane type name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String laneTypeName = null;
@@ -100,6 +104,13 @@ class CompatibilityTag
         {
             parser.laneTypes.get(laneTypeTag.laneTypeName).addCompatibility(gtuTag.gtuType);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "CompatibilityTag [laneTypeName=" + this.laneTypeName + ", gtuList=" + this.gtuList + "]";
     }
 
 }

@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.io.Serializable;
+
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.w3c.dom.NamedNodeMap;
@@ -15,8 +17,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ControllerTag
+class ControllerTag implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20150723L;
 
     /** Id of the lane. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -87,5 +92,13 @@ class ControllerTag
         }
 
         return controllerTag;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ControllerTag [id=" + this.id + ", type=" + this.type + ", name=" + this.name + ", sequence=" + this.sequence
+                + ", controlSignalID=" + this.controlSignalID + ", controlType=" + this.controlType + "]";
     }
 }

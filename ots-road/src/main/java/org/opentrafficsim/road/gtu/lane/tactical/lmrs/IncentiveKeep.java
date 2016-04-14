@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
-import java.io.Serializable;
-
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
@@ -16,11 +14,8 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class IncentiveKeep implements VoluntaryIncentive, Serializable
+public class IncentiveKeep implements VoluntaryIncentive
 {
-
-    /** */
-    private static final long serialVersionUID = 20160413L;
 
     /** {@inheritDoc} */
     @Override

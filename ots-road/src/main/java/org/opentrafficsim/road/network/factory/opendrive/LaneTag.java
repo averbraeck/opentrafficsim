@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +19,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class LaneTag
+class LaneTag implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20150723L;
 
     /** Id of the lane. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -112,5 +116,14 @@ class LaneTag
         HeightTag.parseHeight(node.getChildNodes(), parser, laneTag);
 
         return laneTag;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LaneTag [id=" + this.id + ", type=" + this.type + ", level=" + this.level + ", successorId=" + this.successorId
+                + ", predecessorId=" + this.predecessorId + ", widthTags=" + this.widthTags + ", roadMarkTags="
+                + this.roadMarkTags + ", speedTags=" + this.speedTags + ", heightTag=" + this.heightTag + "]";
     }
 }

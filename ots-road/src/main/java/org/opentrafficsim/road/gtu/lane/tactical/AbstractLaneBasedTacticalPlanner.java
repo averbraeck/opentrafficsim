@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -37,11 +38,11 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanner
+public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanner, Serializable
 {
     /** */
     private static final long serialVersionUID = 20151125L;
-
+    
     /** Car-following model. */
     private CarFollowingModel carFollowingModel;
     

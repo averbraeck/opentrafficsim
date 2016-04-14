@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.directedlanechange;
 
-import java.io.Serializable;
-
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
 
@@ -15,11 +13,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
  *          initial version Sep 19, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public final class DirectedEgoistic extends AbstractDirectedLaneChangeModel implements Serializable
+public final class DirectedEgoistic extends AbstractDirectedLaneChangeModel
 {
-    /** */
-    private static final long serialVersionUID = 20160400L;
-
     /** {@inheritDoc} */
     @Override
     public Acceleration applyDriverPersonality(final DualAccelerationStep accelerations)

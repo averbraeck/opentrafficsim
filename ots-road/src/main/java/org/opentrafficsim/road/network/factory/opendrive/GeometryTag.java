@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 import org.djunits.unit.AngleUnit;
@@ -23,8 +24,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class GeometryTag
+class GeometryTag implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20150723L;
 
     /** Sequence of the geometry. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -132,5 +136,14 @@ class GeometryTag
         OTSNode node = new OTSNode(geometryTag.id, coordinate, angle, slope);
         geometryTag.node = node;
         return node;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "GeometryTag [id=" + this.id + ", s=" + this.s + ", x=" + this.x + ", y=" + this.y + ", z=" + this.z + ", hdg="
+                + this.hdg + ", length=" + this.length + ", spiralTag=" + this.spiralTag + ", arcTag=" + this.arcTag
+                + ", node=" + this.node + ", interLine=" + this.interLine + "]";
     }
 }

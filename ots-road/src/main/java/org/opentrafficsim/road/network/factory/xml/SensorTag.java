@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import nl.tudelft.simulation.language.reflection.ClassUtil;
@@ -24,8 +25,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class SensorTag
+class SensorTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
@@ -153,5 +157,13 @@ class SensorTag
                 throw new SAXException("SENSOR: wrong type of TRIGGER for sensor " + sensorTag.name + " on lane "
                     + laneName);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "SensorTag [name=" + this.name + ", positionStr=" + this.positionStr + ", className=" + this.className
+                + ", triggerPosition=" + this.triggerPosition + "]";
     }
 }

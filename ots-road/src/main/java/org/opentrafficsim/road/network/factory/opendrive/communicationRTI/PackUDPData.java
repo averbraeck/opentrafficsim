@@ -1,17 +1,13 @@
 package org.opentrafficsim.road.network.factory.opendrive.communicationRTI;
 
-import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import org.opentrafficsim.road.network.factory.opendrive.data.OTSToRTIData;
 
 /** */
-public class PackUDPData implements Serializable
+public class PackUDPData
 {
-    /** */
-    private static final long serialVersionUID = 20160000L;
-
     /**
      * @param data data to pack
      * @return packed bytes

@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.generator;
 
-import java.io.Serializable;
-
 /**
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -14,11 +12,8 @@ import java.io.Serializable;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class DualHeadwaySpaceChecker implements SpaceChecker, Serializable
+public class DualHeadwaySpaceChecker implements SpaceChecker
 {
-    
-    /** */
-    private static final long serialVersionUID = 20160400L;
 
     /** {@inheritDoc} */
     @Override

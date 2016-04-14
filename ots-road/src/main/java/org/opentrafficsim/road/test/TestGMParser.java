@@ -336,7 +336,7 @@ public class TestGMParser extends AbstractWrappableAnimation
      * href="http://www.dekoepel.nl/pdf/Transformatieformules.pdf">this</a> paper.
      * @author Gert-Jan Stolk
      **/
-    public static class WGS84ToRDNewTransform implements Serializable
+    public static class WGS84ToRDNewTransform
     {
 
         /** */
@@ -430,7 +430,7 @@ public class TestGMParser extends AbstractWrappableAnimation
         {
             return "WGS84ToRDNewTransform []";
         }
-        
+
     }
 
 }

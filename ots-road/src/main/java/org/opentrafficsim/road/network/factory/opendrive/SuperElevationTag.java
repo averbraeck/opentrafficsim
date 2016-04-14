@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.io.Serializable;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.NetworkException;
@@ -16,8 +18,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class SuperElevationTag
+class SuperElevationTag implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20150723L;
 
     /** Sequence of the geometry. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -84,5 +89,13 @@ class SuperElevationTag
         elevationTag.d = new Length.Rel(Double.parseDouble(d.getNodeValue().trim()), LengthUnit.METER);
 
         return elevationTag;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "SuperElevationTag [id=" + this.id + ", s=" + this.s + ", a=" + this.a + ", b=" + this.b + ", c=" + this.c
+                + ", d=" + this.d + "]";
     }
 }

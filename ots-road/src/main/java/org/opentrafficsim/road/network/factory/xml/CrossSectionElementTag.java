@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.UUID;
 
 import org.djunits.unit.LengthUnit;
@@ -28,8 +29,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class CrossSectionElementTag
+class CrossSectionElementTag implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150723L;
+
     /** Element types. */
     @SuppressWarnings({"javadoc", "checkstyle:javadocvariable"})
     enum ElementType
@@ -352,6 +356,16 @@ class CrossSectionElementTag
             return StripeType.RIGHTONLY;
         }
         throw new NetworkException("Unknown stripe type: " + stripeStr);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "CrossSectionElementTag [elementType=" + this.elementType + ", name=" + this.name + ", laneTypeString="
+                + this.laneTypeString + ", laneType=" + this.laneType + ", stripeType=" + this.stripeType + ", offset="
+                + this.offset + ", speed=" + this.speed + ", width=" + this.width + ", direction=" + this.direction
+                + ", color=" + this.color + ", overtakingConditions=" + this.overtakingConditions + "]";
     }
 
 }

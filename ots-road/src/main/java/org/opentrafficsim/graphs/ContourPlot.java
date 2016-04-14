@@ -247,9 +247,6 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         final ChartPanel cp = new ChartPanel(chart);
         final PointerHandler ph = new PointerHandler()
         {
-            /** */
-            private static final long serialVersionUID = 20140000L;
-
             /** {@inheritDoc} */
             @Override
             void updateHint(final double domainValue, final double rangeValue)
