@@ -5,16 +5,21 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check;
 
@@ -293,7 +298,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         try
         {
             bc.getParameter(a);
-            fail("Get of parameter that was not given, then set and reset, does not fail.");
+            fail("Get of parameter that was not given before set and reset, does not fail.");
         }
         catch (ParameterException pe)
         {
@@ -350,33 +355,34 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         bc.setParameter(a, 2);
         bc.resetParameter(a);
         assertEquals("Value after reset should be the same as before last set.", 1, bc.getParameter(a));
-        
-        // check null is not the same as 'no value': no value -> set(null) -> reset -> get
-        // (null setting does not work on primitive data types, parameter type 'a' cannot be used)
-        ParameterTypeFrequency b = new ParameterTypeFrequency("b", "blong");
-        bc = new BehavioralCharacteristics();
-        bc.setParameter(b, null);
-        bc.resetParameter(b);
-        try
-        {
-            // as there was no value before the null set, this should fail
-            bc.getParameter(b);
-            fail("Reset after setting of null is not properly handled.");
-        }
-        catch (ParameterException pe)
-        {
-            // should fail
-        }
-        
-        // check null is not the same as no value: no value -> set(null) -> set(value) -> reset -> get(null?)
-        bc.setParameter(b, null);
-        bc.setParameter(b, new Frequency(12, FrequencyUnit.SI));
-        bc.resetParameter(b);
-        // assertEquals() with null cannot be used (defaults into deprecated array method)
-        if (bc.getParameter(b) != null)
-        {
-            fail("Value after reset is not equal to null, which it was before the last set.");
-        }
+
+        // If null value is ever going to be allowed, use these tests to check proper set/reset.
+        // // check null is not the same as 'no value': no value -> set(null) -> reset -> get
+        // // (null setting does not work on primitive data types, parameter type 'a' cannot be used)
+        // ParameterTypeFrequency b = new ParameterTypeFrequency("b", "blong");
+        // bc = new BehavioralCharacteristics();
+        // bc.setParameter(b, null);
+        // bc.resetParameter(b);
+        // try
+        // {
+        // // as there was no value before the null set, this should fail
+        // bc.getParameter(b);
+        // fail("Reset after setting of null is not properly handled.");
+        // }
+        // catch (ParameterException pe)
+        // {
+        // // should fail
+        // }
+        //
+        // // check null is not the same as no value: no value -> set(null) -> set(value) -> reset -> get(null?)
+        // bc.setParameter(b, null);
+        // bc.setParameter(b, new Frequency(12, FrequencyUnit.SI));
+        // bc.resetParameter(b);
+        // // assertEquals() with null cannot be used (defaults into deprecated array method)
+        // if (bc.getParameter(b) != null)
+        // {
+        // fail("Value after reset is not equal to null, which it was before the last set.");
+        // }
 
     }
 
@@ -424,6 +430,207 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         assertNotEquals("Values of different parameter type value classes should not be equal.", bc1.getParameter(a1), bc1
             .getParameter(b1));
 
+    }
+
+    /**
+     * Test that exceptions are thrown when trying to use null values.
+     */
+    @Test
+    public final void testNullNotAllowed()
+    {
+        // null default value
+        try
+        {
+            new ParameterType<SpeedUnit, Speed>("v", "vlong", Speed.class, null, POSITIVE);
+            fail("Setting a default value of 'null' on ParameterType did not fail.");
+        }
+        catch (RuntimeException re)
+        {
+            // should fail
+        }
+        try
+        {
+            new ParameterTypeSpeed("v", "vlong", null, POSITIVE);
+            fail("Setting a default value of 'null' on ParameterTypeSpeed did not fail.");
+        }
+        catch (RuntimeException re)
+        {
+            // should fail
+        }
+
+        // set null value
+        ParameterType<SpeedUnit, Speed> v = new ParameterType<SpeedUnit, Speed>("v", "vlong", Speed.class);
+        BehavioralCharacteristics bc = new BehavioralCharacteristics();
+        try
+        {
+            bc.setParameter(v, null);
+            fail("Setting a value of 'null' did not fail.");
+        }
+        catch (ParameterException pe)
+        {
+            // should fail
+        }
+
+    }
+
+    /**
+     * Checks whether default values are properly set, or not in case not given.
+     * @throws SecurityException Reflection.
+     * @throws NoSuchMethodException Reflection.
+     * @throws InvocationTargetException Reflection.
+     * @throws IllegalArgumentException Reflection.
+     * @throws IllegalAccessException Reflection.
+     * @throws InstantiationException Reflection.
+     */
+    @Test
+    public final void checkDefaultValues() throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+        InvocationTargetException, NoSuchMethodException, SecurityException
+    {
+        // @formatter:off
+        checkDefaultValuesPerClass(ParameterType.class,              new Speed(3, SpeedUnit.SI));
+        checkDefaultValuesPerClass(ParameterTypeSpeed.class,         new Speed(3, SpeedUnit.SI));
+        checkDefaultValuesPerClass(ParameterTypeAcceleration.class,  new Acceleration(3, AccelerationUnit.SI));
+        checkDefaultValuesPerClass(ParameterTypeLength.class,        new Length.Rel(3, LengthUnit.SI));
+        checkDefaultValuesPerClass(ParameterTypeFrequency.class,     new Frequency(3, FrequencyUnit.SI));
+        checkDefaultValuesPerClass(ParameterTypeTime.class,          new Time.Rel(3, TimeUnit.SI));
+        checkDefaultValuesPerClass(ParameterTypeLinearDensity.class, new LinearDensity(3, LinearDensityUnit.SI));
+        checkDefaultValuesPerClass(ParameterTypeBoolean.class,       new Boolean(false));
+        checkDefaultValuesPerClass(ParameterTypeDouble.class,        new Double(3));
+        checkDefaultValuesPerClass(ParameterTypeInteger.class,       new Integer(3));
+        // @formatter:on
+    }
+
+    /**
+     * @param clazz AbstractParameterType subclass to test.
+     * @param defaultValue Default value to test with.
+     * @param <R> Subclass of AbstractParameterType.
+     * @throws SecurityException Reflection.
+     * @throws NoSuchMethodException Reflection.
+     * @throws InvocationTargetException Reflection.
+     * @throws IllegalArgumentException Reflection.
+     * @throws IllegalAccessException Reflection.
+     * @throws InstantiationException Reflection.
+     */
+    private <R extends AbstractParameterType<?, ?>> void checkDefaultValuesPerClass(final Class<R> clazz,
+        final Object defaultValue) throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+        InvocationTargetException, NoSuchMethodException, SecurityException
+    {
+
+        // none set
+        AbstractParameterType<?, ?> ld;
+        if (clazz.equals(ParameterType.class))
+        {
+            ld =
+                clazz.getDeclaredConstructor(String.class, String.class, Class.class).newInstance("v", "vcong",
+                    getClass(defaultValue));
+        }
+        else
+        {
+            ld = clazz.getDeclaredConstructor(String.class, String.class).newInstance("v", "vcong");
+        }
+        try
+        {
+            ld.getDefaultValue();
+            fail("Could obtain a default value that was not set.");
+        }
+        catch (ParameterException pe)
+        {
+            // should fail
+        }
+        // none set, including default check
+        if (!clazz.equals(ParameterTypeBoolean.class)) // boolean has no checks
+        {
+            if (clazz.equals(ParameterType.class))
+            {
+                ld =
+                    clazz.getDeclaredConstructor(String.class, String.class, Class.class, Check.class).newInstance("v",
+                        "vcong", getClass(defaultValue), POSITIVE);
+            }
+            else
+            {
+                ld =
+                    clazz.getDeclaredConstructor(String.class, String.class, Check.class)
+                        .newInstance("v", "vcong", POSITIVE);
+            }
+            try
+            {
+                ld.getDefaultValue();
+                fail("Could obtain a default value that was not set.");
+            }
+            catch (ParameterException pe)
+            {
+                // should fail
+            }
+        }
+
+        // value set
+        if (clazz.equals(ParameterType.class))
+        {
+            ld =
+                clazz.getDeclaredConstructor(String.class, String.class, Class.class, DoubleScalar.Rel.class).newInstance(
+                    "v", "vcong", getClass(defaultValue), defaultValue);
+        }
+        else
+        {
+            ld =
+                clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue)).newInstance("v", "vcong",
+                    defaultValue);
+        }
+        try
+        {
+            ld.getDefaultValue();
+        }
+        catch (ParameterException pe)
+        {
+            fail("Could not obtain a default value that was set.");
+        }
+        // value set, including default check
+        if (!clazz.equals(ParameterTypeBoolean.class)) // boolean has no checks
+        {
+            if (clazz.equals(ParameterType.class))
+            {
+                ld =
+                    clazz.getDeclaredConstructor(String.class, String.class, Class.class, DoubleScalar.Rel.class,
+                        Check.class).newInstance("v", "vcong", getClass(defaultValue), defaultValue, POSITIVE);
+            }
+            else
+            {
+                ld =
+                    clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue), Check.class)
+                        .newInstance("v", "vcong", defaultValue, POSITIVE);
+            }
+            try
+            {
+                ld.getDefaultValue();
+            }
+            catch (ParameterException pe)
+            {
+                fail("Could not obtain a default value that was set.");
+            }
+        }
+
+    }
+
+    /**
+     * Returns the class of given default value for reflection.
+     * @param defaultValue Default value.
+     * @return Class of given default value for reflection.
+     */
+    private Class<? extends Object> getClass(final Object defaultValue)
+    {
+        if (defaultValue instanceof Boolean)
+        {
+            return Boolean.TYPE;
+        }
+        else if (defaultValue instanceof Double)
+        {
+            return Double.TYPE;
+        }
+        else if (defaultValue instanceof Integer)
+        {
+            return Integer.TYPE;
+        }
+        return defaultValue.getClass();
     }
 
 }

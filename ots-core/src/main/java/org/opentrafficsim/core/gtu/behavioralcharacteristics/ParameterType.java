@@ -33,7 +33,7 @@ public class ParameterType<U extends Unit<U>, T extends DoubleScalar.Rel<U>> ext
      */
     public ParameterType(final String id, final String description, final Class<T> valueClass)
     {
-        super(id, description, valueClass, null, null);
+        this(id, description, valueClass, null, null, false);
     }
 
     /**
@@ -45,19 +45,7 @@ public class ParameterType<U extends Unit<U>, T extends DoubleScalar.Rel<U>> ext
      */
     public ParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue)
     {
-        super(id, description, valueClass, defaultValue, null);
-        try
-        {
-            // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of
-            // other parameter types.
-            check(defaultValue, new BehavioralCharacteristics());
-        }
-        catch (ParameterException pe)
-        {
-            throw new RuntimeException("Default value of parameter '" + getId() + "' does not comply with custom constraints.",
-                    pe);
-        }
-
+        this(id, description, valueClass, defaultValue, null, true);
     }
 
     /**
@@ -69,7 +57,7 @@ public class ParameterType<U extends Unit<U>, T extends DoubleScalar.Rel<U>> ext
      */
     public ParameterType(final String id, final String description, final Class<T> valueClass, final Check check)
     {
-        super(id, description, valueClass, null, check);
+        this(id, description, valueClass, null, check, false);
     }
 
     /**
@@ -83,7 +71,33 @@ public class ParameterType<U extends Unit<U>, T extends DoubleScalar.Rel<U>> ext
     public ParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue,
             final Check check)
     {
-        super(id, description, valueClass, defaultValue, check);
+        this(id, description, valueClass, defaultValue, check, true);
+    }
+    
+    /**
+     * Private constructor with default value and check, which may check the default value.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     * @param valueClass Class of the value.
+     * @param defaultValue Default value.
+     * @param check Check for parameter values.
+     * @param hasDefaultValue Whether to check the default value for null.
+     */
+    private ParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue,
+            final Check check, final boolean hasDefaultValue)
+    {
+        super(id, description, valueClass, defaultValue, check, hasDefaultValue);
+        try
+        {
+            // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of
+            // other parameter types.
+            check(defaultValue, new BehavioralCharacteristics());
+        }
+        catch (ParameterException pe)
+        {
+            throw new RuntimeException("Default value of parameter '" + getId() + "' does not comply with custom constraints.",
+                    pe);
+        }
     }
 
     /**
@@ -115,7 +129,7 @@ public class ParameterType<U extends Unit<U>, T extends DoubleScalar.Rel<U>> ext
     @SuppressWarnings("checkstyle:designforextension")
     public T getDefaultValue() throws ParameterException
     {
-        ParameterException.throwIf(null == this.defaultValue, "No default value was set for " + getId());
+        ParameterException.throwIf(null == this.defaultValue, "No default value was set for '%s'.", getId());
         return this.defaultValue;
     }
 
