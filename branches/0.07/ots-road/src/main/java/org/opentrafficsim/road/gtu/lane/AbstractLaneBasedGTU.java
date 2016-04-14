@@ -295,8 +295,16 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         }
 
         // generate the next operational plan and carry it out
-        super.move(fromLocation);
-
+        try
+        {
+            super.move(fromLocation);
+        }
+        catch (GTUException ge)
+        {
+            System.err.println("GTU DESTROYED IN MOVE OPERATION - ERROR " + ge.getMessage());
+            destroy();
+            return;
+        }
         // update the positions on the lanes we are registered on
         this.fractionalLinkPositions = newLinkPositions;
 
