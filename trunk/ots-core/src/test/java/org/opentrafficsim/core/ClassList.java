@@ -2,6 +2,7 @@ package org.opentrafficsim.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -236,6 +237,28 @@ public final class ClassList
             }
         }
         return false;
+    }
+
+    /**
+     * Report if a class has non-static fields.
+     * @param c Class&lt;?&gt;; the class
+     * @return boolean; true if the class has non-static fields
+     */
+    public static boolean hasNonStaticFields(final Class<?> c)
+    {
+        for (Field f : c.getDeclaredFields())
+        {
+            //System.out.println("field " + f.getName() + ": " + Modifier.toString(f.getModifiers()));
+            if (!Modifier.isStatic(f.getModifiers()))
+            {
+                return true;
+            }
+        }
+        if (c.equals(Object.class))
+        {
+            return false;
+        }
+        return hasNonStaticFields(c.getSuperclass());
     }
 
     /**
