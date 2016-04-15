@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.gtu.plan.tactical;
 
-import java.io.Serializable;
-
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Time;
@@ -36,7 +34,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface TacticalPlanner extends Serializable
+public interface TacticalPlanner
 {
     /**
      * generate an operational plan, for now or for in the future.

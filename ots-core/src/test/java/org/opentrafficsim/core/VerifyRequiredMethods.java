@@ -13,18 +13,17 @@ import org.junit.Test;
  * Verify that all classes have a toString method (unless the class in non-instantiable, or an enum, or abstract. <br>
  * Verify that no class overrides equals without overriding hashCode. <br>
  * Verify that classes that can be instantiated are Serializable for those classes that this makes sense.
- * 
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 11, 2016 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 public class VerifyRequiredMethods
 {
-
     /**
      * Check that all classes have a toString method.
      */
@@ -43,7 +42,6 @@ public class VerifyRequiredMethods
                 continue;
             }
             Method toStringMethod = null;
-            boolean allStatic = c.getConstructors().length == 0;
             boolean isAbstract = false;
             for (String modifierString : Modifier.toString(c.getModifiers()).split(" "))
             {
@@ -58,22 +56,6 @@ public class VerifyRequiredMethods
                 if (m.getName().equals("toString") && m.getParameterCount() == 0)
                 {
                     toStringMethod = m;
-                }
-                if (allStatic)
-                {
-                    boolean isStatic = false;
-                    for (String modifierString : Modifier.toString(m.getModifiers()).split(" "))
-                    {
-                        if ("static".equals(modifierString))
-                        {
-                            isStatic = true;
-                            break;
-                        }
-                    }
-                    if (!isStatic)
-                    {
-                        allStatic = false;
-                    }
                 }
             }
             if (null == toStringMethod)
@@ -102,11 +84,11 @@ public class VerifyRequiredMethods
                     System.out.println("Class " + c.getName() + " can not override the toString method because a super "
                             + "class implements a final toString method");
                 }
-                else if (allStatic)
+                else if (!ClassList.hasNonStaticFields(c))
 
                 {
-                    System.out.println("Class " + c.getName() + " does not have override the toString method because all "
-                            + "methods are static");
+                    System.out.println("Class " + c.getName()
+                            + " does not have to override the toString method because it does not have non-static fields");
                 }
                 else if (isAbstract)
                 {
@@ -135,67 +117,70 @@ public class VerifyRequiredMethods
         Collection<Class<?>> classList = ClassList.classList("org.opentrafficsim", true);
         for (Class<?> c : classList)
         {
-//            if (c.getName().contains("OTSLine3D"))
-//            {
-//                System.out.println("let op");
-//            }
-            if (Exception.class.isAssignableFrom(c))
-            {
-                continue;
-            }
-            boolean allStatic = c.getConstructors().length == 0;
-            for (Method m : c.getDeclaredMethods())
-            {
-                if (allStatic)
-                {
-                    boolean isStatic = false;
-                    for (String modifierString : Modifier.toString(m.getModifiers()).split(" "))
-                    {
-                        if ("static".equals(modifierString))
-                        {
-                            isStatic = true;
-                            break;
-                        }
-                    }
-                    if (!isStatic)
-                    {
-                        allStatic = false;
-                    }
-                }
-            }
-            boolean isThread = Thread.class.isAssignableFrom(c);
-            if (allStatic)
+            // if (c.getName().endsWith("AccelerationContourPlot"))
+            // {
+            // System.out.println("Let op");
+            // }
+            if (Serializable.class.isAssignableFrom(c))
             {
                 if (c.isEnum())
                 {
-                    System.out.println("Class " + c.getName() + " is an enum (should preferably not implement Serializable)");
+                    // System.out.println("Class " + c.getName() + " is an enum and (by inheritance) implements Serializable");
                 }
-                else if (Serializable.class.isAssignableFrom(c))
+                else if (!ClassList.hasNonStaticFields(c))
                 {
-                    System.err.println("Class " + c.getName() + " contains only static methods and should therefore NOT "
-                            + "be Serializable");
+                    System.err.println("Class " + c.getName()
+                            + " does not contain non-static fields and should NOT implement Serializable");
                 }
-                // else
-                // {
-                // System.out.println("Class " + c.getName() + " contains only static methods and (correctly) does not "
-                // + "implement Serializable");
-                // }
-            }
-            else if (Serializable.class.isAssignableFrom(c) && !allStatic && !ClassList.isAnonymousInnerClass(c))
-            {
-                if (isThread)
+                else if (Thread.class.isAssignableFrom(c))
                 {
                     System.err.println("Class " + c.getName() + " is a thread and should NOT implement Serializable");
                 }
-                // System.out.println("Class " + c.getName() + " implements Serializable");
-            }
-            else if (isThread)
-            {
-                System.out.println("Class " + c.getName() + " is a Thread and (correctly) does not implement Serializable");
+                else if (ClassList.isAnonymousInnerClass(c))
+                {
+                    System.err.println("Class " + c.getName()
+                            + " is an anonymous inner class and should NOT implement Serializable");
+                }
+                else if (Exception.class.isAssignableFrom(c))
+                {
+                    System.out.println("Class " + c.getName() + " is an Exception and (correctly) implements Serializable");
+                }
+                else
+                {
+                    // System.out.println("Class " + c.getName() + " should (and does) implement Serializable");
+                }
             }
             else
             {
-                System.err.println("Class " + c.getName() + " does not implement Serializable");
+                if (c.isEnum())
+                {
+                    System.err.println("Class " + c.getName()
+                            + " is an enum and should (by inheritence) implement Serializable");
+                }
+                else if (!ClassList.hasNonStaticFields(c))
+                {
+                    // System.out.println("Class " + c.getName()
+                    // + " does not contain non-static fields and (correctly does not implement Serializable");
+                }
+                else if (Thread.class.isAssignableFrom(c))
+                {
+                    // System.out.println("Class " + c.getName() +
+                    // " is a thread and (correctly) does not implement Serializable");
+                }
+                else if (ClassList.isAnonymousInnerClass(c))
+                {
+                    // System.out.println("Class " + c.getName()
+                    // + " is an anonymous inner class and (correctly) does not implement Serializable");
+                }
+                else if (Exception.class.isAssignableFrom(c))
+                {
+                    System.err.println("Class " + c.getName()
+                            + " is an Exception and should (but does NOT) implement Serializable");
+                }
+                else
+                {
+                    System.err.println("Class " + c.getName() + " should (but does NOT) implement Serializable");
+                }
             }
         }
     }
