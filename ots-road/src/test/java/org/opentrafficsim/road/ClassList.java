@@ -240,25 +240,16 @@ public final class ClassList
     }
 
     /**
-     * Report if a class has (non-static) fields.
+     * Report if a class has non-static fields.
      * @param c Class&lt;?&gt;; the class
-     * @return boolean; true if the class has (non-static) fields
+     * @return boolean; true if the class has non-static fields
      */
     public static boolean hasNonStaticFields(final Class<?> c)
     {
         for (Field f : c.getDeclaredFields())
         {
-            // System.out.println("field " + f.getName() + ": " + Modifier.toString(f.getModifiers()));
-            boolean isStatic = false;
-            for (String modifierString : Modifier.toString(f.getModifiers()).split(" "))
-            {
-                if ("static".equals(modifierString))
-                {
-                    isStatic = true;
-                    break;
-                }
-            }
-            if (!isStatic)
+            //System.out.println("field " + f.getName() + ": " + Modifier.toString(f.getModifiers()));
+            if (!Modifier.isStatic(f.getModifiers()))
             {
                 return true;
             }
