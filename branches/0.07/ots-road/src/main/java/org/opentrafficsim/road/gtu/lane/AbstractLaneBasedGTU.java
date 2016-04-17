@@ -295,6 +295,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         }
 
         // generate the next operational plan and carry it out
+        // VERSION 0.07.01 START
         try
         {
             super.move(fromLocation);
@@ -305,6 +306,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             destroy();
             return;
         }
+        // VERSION 0.07.01 END
+
         // update the positions on the lanes we are registered on
         this.fractionalLinkPositions = newLinkPositions;
 

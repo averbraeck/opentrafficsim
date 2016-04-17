@@ -140,7 +140,8 @@ public class TestNetwork2 extends AbstractWrappableAnimation
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
-            URL url = URLResource.getResource("/Testnetwork2.x.xml");
+            // URL url = URLResource.getResource("/Testnetwork2.x.xml");
+            URL url = URLResource.getResource("/networkv7.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
             {

@@ -457,7 +457,10 @@ final class Links
         List<CrossSectionElement> cseList = new ArrayList<>();
         List<Lane> lanes = new ArrayList<>();
         // TODO Map<GTUType, LongitudinalDirectionality> linkDirections = new HashMap<>();
-        LongitudinalDirectionality linkDirection = LongitudinalDirectionality.DIR_NONE;
+        /** START PATCH V0.07.02 */
+        LongitudinalDirectionality linkDirection = LongitudinalDirectionality.DIR_BOTH;
+        csl.addDirectionality(GTUType.ALL, linkDirection);
+        /** END PATCH V0.07.02 */
         for (CrossSectionElementTag cseTag : linkTag.roadTypeTag.cseTags.values())
         {
             LaneOverrideTag laneOverrideTag = null;
