@@ -99,6 +99,7 @@ public abstract class AbstractHeadway implements Headway
 
     /**
      * Construct a new Headway information object, for an object in front, behind, or in parallel with us.
+     * TODO fix this javadoc; there are obvious inconsistencies between this javadoc and the code below.
      * @param objectType the perceived object type, can be null if object type unknown.
      * @param id the id of the object for comparison purposes, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
@@ -127,6 +128,7 @@ public abstract class AbstractHeadway implements Headway
 
         GTUException.throwIf(distance == null && (overlap == null || overlapFront == null || overlapRear == null),
                 "overlap parameter cannot be null for parallel headway with id = %s", id);
+        GTUException.throwIf(overlap != null && overlap.si < 0, "overlap cannot be negative; id = %s", id);
         this.overlap = overlap;
         this.overlapFront = overlapFront;
         this.overlapRear = overlapRear;
@@ -174,7 +176,7 @@ public abstract class AbstractHeadway implements Headway
             final Length.Rel overlap, final Length.Rel overlapRear, final Speed speed, final Acceleration acceleration)
             throws GTUException
     {
-        this(objectType, id, null, speed, acceleration, overlap, overlapFront, overlapRear);
+        this(objectType, id, null, speed, acceleration, overlapFront, overlap, overlapRear);
     }
 
     /**

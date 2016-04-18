@@ -85,9 +85,9 @@ public class HeadwayGTU extends AbstractHeadway
 
     /**
      * Construct a new Headway information object, for a non-moving GTU ahead of us or behind us.
-     * @param id the id of the GTU for comparison purposes, can not be null.
-     * @param gtuType the perceived GTU Type, or null if unknown.
-     * @param distance the distance to the other GTU; if this constructor is used, distance cannot be null.
+     * @param id String; the id of the GTU for comparison purposes, can not be null.
+     * @param gtuType GTUType; the perceived GTU Type, or null if unknown.
+     * @param distance Length.Rel; the distance to the other GTU; if this constructor is used, distance cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public HeadwayGTU(final String id, final GTUType gtuType, final Length.Rel distance) throws GTUException
