@@ -6,11 +6,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.junit.Test;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -55,8 +56,36 @@ public class HeadwayGTUTest
         Length.Rel overlap = new Length.Rel(3, LengthUnit.METER);
         Length.Rel overlapRear = new Length.Rel(4, LengthUnit.METER);
         hg2 = new HeadwayGTU(id2, gtuType2, overlapFront, overlap, overlapRear);
-        verifyFields(hg2, null, null, gtuType2, id2, Headway.ObjectType.GTU, overlap, overlapFront, overlapRear, null,
-                false, false, false, false, false, false, false, true);
+        verifyFields(hg2, null, null, gtuType2, id2, Headway.ObjectType.GTU, overlap, overlapFront, overlapRear, null, false,
+                false, false, false, false, false, false, true);
+        Speed speed2 = new Speed(50, SpeedUnit.KM_PER_HOUR);
+        Acceleration acceleration2 = new Acceleration(1.234, AccelerationUnit.METER_PER_SECOND_2);
+        hg2 = new HeadwayGTU(id2, gtuType2, overlapFront, overlap, overlapRear, speed2, acceleration2);
+        verifyFields(hg2, acceleration2, null, gtuType2, id2, Headway.ObjectType.GTU, overlap, overlapFront, overlapRear,
+                speed2, false, false, false, false, false, false, false, true);
+        // Test all combinations of two GTUStatus values.
+        for (HeadwayGTU.GTUStatus gtuStatus1 : HeadwayGTU.GTUStatus.values())
+        {
+            for (HeadwayGTU.GTUStatus gtuStatus2 : HeadwayGTU.GTUStatus.values())
+            {
+                hg2 = new HeadwayGTU(id2, gtuType2, distance2, speed2, acceleration2, gtuStatus1, gtuStatus2);
+                boolean honking = HeadwayGTU.GTUStatus.HONK == gtuStatus1 || HeadwayGTU.GTUStatus.HONK == gtuStatus2;
+                boolean braking =
+                        HeadwayGTU.GTUStatus.BRAKING_LIGHTS == gtuStatus1 || HeadwayGTU.GTUStatus.BRAKING_LIGHTS == gtuStatus2;
+                boolean leftIndicator =
+                        HeadwayGTU.GTUStatus.LEFT_TURNINDICATOR == gtuStatus1
+                                || HeadwayGTU.GTUStatus.LEFT_TURNINDICATOR == gtuStatus2;
+                boolean rightIndicator =
+                        HeadwayGTU.GTUStatus.RIGHT_TURNINDICATOR == gtuStatus1
+                                || HeadwayGTU.GTUStatus.RIGHT_TURNINDICATOR == gtuStatus2;
+                boolean hazardLights =
+                        HeadwayGTU.GTUStatus.EMERGENCY_LIGHTS == gtuStatus1
+                                || HeadwayGTU.GTUStatus.EMERGENCY_LIGHTS == gtuStatus2;
+                verifyFields(hg2, acceleration2, distance2, gtuType2, id2, Headway.ObjectType.GTU, null, null, null, speed2,
+                        true, false, braking, hazardLights, honking, leftIndicator, rightIndicator, false);
+
+            }
+        }
     }
 
     /**
