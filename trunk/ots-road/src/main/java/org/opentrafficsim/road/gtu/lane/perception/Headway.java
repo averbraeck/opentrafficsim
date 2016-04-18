@@ -73,12 +73,12 @@ public interface Headway extends Serializable
     }
 
     /**
-     * @return the id of the other object for comparison purposes, cannot be null.
+     * @return String; the id of the other object for comparison purposes, cannot be null.
      */
     String getId();
 
     /**
-     * @return the (perceived) speed of the other object; can be null if unknown.
+     * @return Speed; the (perceived) speed of the other object; can be null if unknown.
      */
     Speed getSpeed();
 
@@ -90,12 +90,12 @@ public interface Headway extends Serializable
     Length.Rel getDistance();
 
     /**
-     * @return the (perceived) object Type, can be null if no object type unknown.
+     * @return Length.Rel; the (perceived) object Type, can be null if no object type unknown.
      */
     ObjectType getObjectType();
 
     /**
-     * @return acceleration the (perceived) acceleration of the other object; can be null if unknown.
+     * @return Acceleration; acceleration the (perceived) acceleration of the other object; can be null if unknown.
      */
     Acceleration getAcceleration();
 
@@ -112,7 +112,7 @@ public interface Headway extends Serializable
      *      ---------------
      * | a  | b |     c   |
      * </pre>
-     * @return the (perceived) front overlap to the other object or null if there is no overlap.
+     * @return Length.Rel; the (perceived) front overlap to the other object or null if there is no overlap.
      */
     Length.Rel getOverlapFront();
 
@@ -129,7 +129,7 @@ public interface Headway extends Serializable
      *      ---------------
      * | a  | b |     c   |
      * </pre>
-     * @return the (perceived) rear overlap to the other object or null if there is no overlap.
+     * @return Length.Rel; the (perceived) rear overlap to the other object or null if there is no overlap.
      */
     Length.Rel getOverlapRear();
 
@@ -146,7 +146,7 @@ public interface Headway extends Serializable
      *      ---------------
      * | a  | b |     c   |
      * </pre>
-     * @return the (perceived) overlap with the other object or null if there is no overlap.
+     * @return Length.Rel, the (perceived) overlap with the other object or null if there is no overlap.
      */
     Length.Rel getOverlap();
 
