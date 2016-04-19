@@ -37,7 +37,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 public interface LanePerception extends Perception
 {
     /**
-     * sets the GTU -- call this method before any call to the perceive() method!
+     * Sets the GTU -- call this method before any call to the perceive() method!
      * @param gtu the GTU for which this is the perception module
      */
     void setGTU(LaneBasedGTU gtu);
