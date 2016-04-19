@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
@@ -19,7 +20,7 @@ import org.opentrafficsim.road.gtu.lane.perception.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.HeadwayGTU;
 
 /**
- * Test the HeadwayGTU class.
+ * Test the HeadwayGTU class and the EnumType in the Headway interface.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -86,6 +87,31 @@ public class HeadwayGTUTest
 
             }
         }
+        // Verify that toString returns something
+        assertTrue("toString returns something", hg1.toString().length() > 10);
+        assertTrue("toString returns something", hg2.toString().length() > 10);
+        try
+        {
+            new HeadwayGTU(null, gtuType1, distance1);
+            fail("null for id should have thrown a GTUException");
+        }
+        catch (GTUException e)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            new HeadwayGTU(id1, gtuType1, null);
+            fail("null for distance should have thrown a GTUException");
+        }
+        catch (GTUException e)
+        {
+            // Ignore expected exception
+        }
+        assertTrue("ObjectType is a GTU", hg1.getObjectType().isGtu());
+        assertFalse("ObjectType is traffic light", hg1.getObjectType().isTrafficLight());
+        assertFalse("ObjectType is some other object", hg1.getObjectType().isObject());
+        assertFalse("ObjectType is distance only", hg1.getObjectType().isDistanceOnly());
     }
 
     /**

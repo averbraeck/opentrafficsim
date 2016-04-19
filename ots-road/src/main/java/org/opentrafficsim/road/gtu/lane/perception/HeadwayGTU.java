@@ -37,10 +37,10 @@ public class HeadwayGTU extends AbstractHeadway
     /** */
     private static final long serialVersionUID = 20160410L;
 
-    /** the perceived GTU Type, or null if unknown. */
+    /** The perceived GTU Type, or null if unknown. */
     private final GTUType gtuType;
 
-    /** observable characteristics of a GTU. */
+    /** Observable characteristics of a GTU. */
     public enum GTUStatus
     {
         /** Braking lights are on when observing the headway. */
@@ -59,7 +59,7 @@ public class HeadwayGTU extends AbstractHeadway
         HONK;
     }
 
-    /** the observable characteristics of the GTU. */
+    /** The observable characteristics of the GTU. */
     private final EnumSet<GTUStatus> gtuStatus = EnumSet.noneOf(GTUStatus.class);
 
     /**
