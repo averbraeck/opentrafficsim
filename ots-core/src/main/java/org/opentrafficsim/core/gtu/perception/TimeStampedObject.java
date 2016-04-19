@@ -14,7 +14,7 @@ import org.djunits.value.vdouble.scalar.Time;
  * initial version Jan 29, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <C> the timestamped object class. 
+ * @param <C> the time stamped object class. 
  */
 public class TimeStampedObject<C> implements Serializable
 {
@@ -28,8 +28,9 @@ public class TimeStampedObject<C> implements Serializable
     private final Time.Abs timestamp;
     
     /**
-     * @param object the object.
-     * @param timestamp the time stamp.
+     * Construct a new TimeStampedObject.
+     * @param object C; the object.
+     * @param timestamp Time.Abs; the time stamp.
      */
     public TimeStampedObject(final C object, final Time.Abs timestamp)
     {
@@ -38,7 +39,8 @@ public class TimeStampedObject<C> implements Serializable
     }
 
     /**
-     * @return object
+     * Retrieve the object.
+     * @return C; the object
      */
     public final C getObject()
     {
@@ -46,7 +48,8 @@ public class TimeStampedObject<C> implements Serializable
     }
 
     /**
-     * @return time stamp
+     * Retrieve the time stamp.
+     * @return Time.Abs; the time stamp
      */
     public final Time.Abs getTimestamp()
     {
