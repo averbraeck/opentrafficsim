@@ -43,7 +43,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
     private static final long serialVersionUID = 20151125L;
 
     /**
-     * Instantiated a tactical planner with just GTU following behavior and no lane changes.
+     * Instantiate a tactical planner with just GTU following behavior and no lane changes.
      * @param carFollowingModel Car-following model.
      */
     public LaneBasedGTUFollowingTacticalPlanner(final GTUFollowingModelOld carFollowingModel)
