@@ -784,8 +784,15 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                 behavioralCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, new Length.Rel(450.0, LengthUnit.METER));
                 //drivingCharacteristics.setForwardHeadwayDistance(new Length.Rel(450.0, LengthUnit.METER));
 
-                return new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, tacticalPlanner,
-                        XMLNetworkModel.this.routeGenerator.draw());
+                try
+                {
+                    return new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, tacticalPlanner,
+                            XMLNetworkModel.this.routeGenerator.draw());
+                }
+                catch (GTUException exception)
+                {
+                    throw new ParameterException(exception);
+                }
             }
         }, new Generator<LanePerceptionFull>()
         {
