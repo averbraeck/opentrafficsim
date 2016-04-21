@@ -121,7 +121,7 @@ public class HeadwayGTUTest
      * @param distance Length.Rel; the expected return value for getDistance
      * @param gtuType GTUType; the expected return value for getGTUType
      * @param id String; the expected return value for getId
-     * @param objectType {@link ObjectType}; the expected return value for getObjectType
+     * @param objectType Headway.ObjectType; the expected return value for getObjectType
      * @param overlap Length.Rel; the expected return value for getOverlap
      * @param overlapFront Length.Rel; the expected return value for getOverlapFront
      * @param overlapRear Length.Rel; the expected return value for getOverlapRear
