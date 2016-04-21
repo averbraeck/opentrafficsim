@@ -224,8 +224,15 @@ public class TestGMParser extends AbstractWrappableAnimation
             //LaneBasedBehavioralCharacteristics drivingCharacteristics =
             //    new LaneBasedBehavioralCharacteristics(gtuFollowingModel, null);
             TacticalPlanner fixedTacticalPlanner = new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel);
-            LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, fixedTacticalPlanner);
+            LaneBasedStrategicalPlanner strategicalPlanner;
+            try
+            {
+                strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, fixedTacticalPlanner);
+            }
+            catch (GTUException exception)
+            {
+                throw new SimRuntimeException(exception);
+            }
             Class<LanePerceptionFull> perceptionClass = LanePerceptionFull.class;
 
             CrossSectionLink L2a = (CrossSectionLink) network.getLink("L2a");

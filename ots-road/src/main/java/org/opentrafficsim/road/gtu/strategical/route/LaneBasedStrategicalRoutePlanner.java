@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
@@ -49,9 +50,10 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     /**
      * @param behavioralCharacteristics the personal driving characteristics, which contain settings for the tactical planner
      * @param fixedTacticalPlanner the tactical planner to use for the GTU
+     * @throws GTUException if fixed tactical planner == null
      */
     public LaneBasedStrategicalRoutePlanner(final BehavioralCharacteristics behavioralCharacteristics,
-            final TacticalPlanner fixedTacticalPlanner)
+            final TacticalPlanner fixedTacticalPlanner) throws GTUException
     {
         this(behavioralCharacteristics, fixedTacticalPlanner, null);
     }
@@ -60,13 +62,15 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * @param behavioralCharacteristics the personal driving characteristics, which contain settings for the tactical planner
      * @param fixedTacticalPlanner the tactical planner to use for the GTU
      * @param route the route to drive
+     * @throws GTUException if fixed tactical planner == null
      */
     public LaneBasedStrategicalRoutePlanner(final BehavioralCharacteristics behavioralCharacteristics,
-            final TacticalPlanner fixedTacticalPlanner, final Route route)
+            final TacticalPlanner fixedTacticalPlanner, final Route route) throws GTUException
     {
         super(behavioralCharacteristics);
         this.route = route;
         this.fixedTacticalPlanner = fixedTacticalPlanner;
+        GTUException.throwIf(fixedTacticalPlanner == null, "Fixed Tactical Planner for a Strategical planner is null");
     }
 
     /** {@inheritDoc} */

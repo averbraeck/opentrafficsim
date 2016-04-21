@@ -274,9 +274,16 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                                 BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
                                 //LaneBasedBehavioralCharacteristics drivingCharacteristics =
                                 //    new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
-                                LaneBasedStrategicalPlanner strategicalPlanner =
-                                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
-                                        new LaneBasedGTUFollowingLaneChangeTacticalPlanner(new IDMPlusOld()));
+                                try
+                                {
+                                    LaneBasedStrategicalPlanner strategicalPlanner =
+                                        new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                                            new LaneBasedGTUFollowingLaneChangeTacticalPlanner(new IDMPlusOld()));
+                                }
+                                catch (GTUException exception1)
+                                {
+                                    throw new SimRuntimeException(exception1);
+                                }
                                 LanePerceptionFull perception = new LanePerceptionFull();
                                 // new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
                                 // initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
@@ -327,9 +334,16 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                                 BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
                                 //LaneBasedBehavioralCharacteristics drivingCharacteristics =
                                 //    new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
-                                LaneBasedStrategicalPlanner strategicalPlanner =
-                                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
-                                        new LaneBasedGTUFollowingLaneChangeTacticalPlanner(new IDMPlusOld()));
+                                try
+                                {
+                                    LaneBasedStrategicalPlanner strategicalPlanner =
+                                        new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                                            new LaneBasedGTUFollowingLaneChangeTacticalPlanner(new IDMPlusOld()));
+                                }
+                                catch (GTUException exception1)
+                                {
+                                    throw new SimRuntimeException(exception1);
+                                }
                                 LanePerceptionFull perception = new LanePerceptionFull();
                                 // new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
                                 // initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
@@ -482,9 +496,16 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                 BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
                 //LaneBasedBehavioralCharacteristics drivingCharacteristics =
                 //    new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
-                LaneBasedStrategicalPlanner sPlanner =
-                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                LaneBasedStrategicalPlanner sPlanner;
+                try
+                {
+                    sPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
                         new LaneBasedGTUFollowingTacticalPlanner(new IDMPlusOld())); // , cr);
+                }
+                catch (GTUException exception2)
+                {
+                    throw new SimRuntimeException(exception2);
+                } 
 
                 System.out.println("Car " + i + " - generated on lane " + lane + " with sn="
                     + lane.getParentLink().getStartNode() + " and en=" + lane.getParentLink().getEndNode()

@@ -109,7 +109,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                     TestOpenDriveParserNASA xmlModel = new TestOpenDriveParserNASA();
                     // 1 hour simulation run for testing
                     xmlModel.buildAnimator(new Time.Abs(0.0, TimeUnit.SECOND), new Time.Rel(0.0, TimeUnit.SECOND),
-                        new Time.Rel(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
+                            new Time.Rel(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException exception)
                 {
@@ -192,9 +192,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public final
-            void
-            constructModel(
+        public final void constructModel(
                 final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
                 throws SimRuntimeException
         {
@@ -212,7 +210,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                 network = nlp.build(url);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
-                | GTUException | OTSGeometryException exception)
+                    | GTUException | OTSGeometryException exception)
             {
                 exception.printStackTrace();
             }
@@ -240,19 +238,18 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
 
             // distributions
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist =
-                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 0.0), SpeedUnit.SI);
+                    new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 0.0), SpeedUnit.SI);
             ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> iatDist =
-                new ContinuousDistDoubleScalar.Rel<>(new DistExponential(stream, 30.0), TimeUnit.SECOND);
+                    new ContinuousDistDoubleScalar.Rel<>(new DistExponential(stream, 30.0), TimeUnit.SECOND);
             ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> lengthDist =
-                new ContinuousDistDoubleScalar.Rel<>(new DistUniform(stream, 4.0, 5.0), LengthUnit.METER);
+                    new ContinuousDistDoubleScalar.Rel<>(new DistUniform(stream, 4.0, 5.0), LengthUnit.METER);
             ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDist =
-                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 2.0), LengthUnit.METER);
+                    new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 2.0), LengthUnit.METER);
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maxSpeedDist =
-                new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(stream, 30.0, 35.0, 40.0),
-                    SpeedUnit.MILE_PER_HOUR);
+                    new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(stream, 30.0, 35.0, 40.0), SpeedUnit.MILE_PER_HOUR);
 
             ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> initialPosDist =
-                new ContinuousDistDoubleScalar.Rel<>(new DistUniform(stream, 0.0, 1.0), LengthUnit.METER);
+                    new ContinuousDistDoubleScalar.Rel<>(new DistUniform(stream, 0.0, 1.0), LengthUnit.METER);
 
             // default colorer
 
@@ -277,11 +274,18 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                                 Length.Rel position = lane.getLength().lt(M25) ? M0 : M25;
                                 String id = lane.getParentLink().getId() + "." + lane.getId();
                                 BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
-                                //LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                                //    new LaneBasedBehavioralCharacteristics(new IDMPlus(), new Altruistic());
-                                LaneBasedStrategicalPlanner strategicalPlanner =
-                                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
-                                        new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), new Altruistic()));
+                                // LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                                // new LaneBasedBehavioralCharacteristics(new IDMPlus(), new Altruistic());
+                                try
+                                {
+                                    LaneBasedStrategicalPlanner strategicalPlanner =
+                                            new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                                                    new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), new Altruistic()));
+                                }
+                                catch (GTUException exception1)
+                                {
+                                    throw new SimRuntimeException(exception1);
+                                }
                                 LanePerceptionFull perception = new LanePerceptionFull();
                                 // new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
                                 // initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
@@ -326,15 +330,21 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                                 // make a generator
                                 Time.Abs startTime = Time.Abs.ZERO;
                                 Time.Abs endTime = new Time.Abs(Double.MAX_VALUE, TimeUnit.SI);
-                                Length.Rel position =
-                                    lane.getLength().lt(M25) ? lane.getLength() : lane.getLength().minus(M25);
+                                Length.Rel position = lane.getLength().lt(M25) ? lane.getLength() : lane.getLength().minus(M25);
                                 String id = lane.getParentLink().getId() + "." + lane.getId();
                                 BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
-                                //LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                                //    new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
-                                LaneBasedStrategicalPlanner strategicalPlanner =
-                                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
-                                        new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), new Altruistic()));
+                                // LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                                // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
+                                try
+                                {
+                                    LaneBasedStrategicalPlanner strategicalPlanner =
+                                            new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                                                    new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), new Altruistic()));
+                                }
+                                catch (GTUException exception1)
+                                {
+                                    throw new SimRuntimeException(exception1);
+                                }
                                 LanePerceptionFull perception = new LanePerceptionFull();
                                 // new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
                                 // initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
@@ -352,8 +362,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                             else
                             {
                                 // make a sink
-                                Length.Rel position =
-                                    lane.getLength().lt(M25) ? lane.getLength() : lane.getLength().minus(M25);
+                                Length.Rel position = lane.getLength().lt(M25) ? lane.getLength() : lane.getLength().minus(M25);
                                 Sensor sensor = new SinkSensor(lane, position, this.simulator);
                                 try
                                 {
@@ -386,11 +395,9 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
             // nodesVia1.add(link8.getStartNode());
             try
             {
-                cr1 =
-                    network.getShortestRouteBetween(GTUType.ALL, link2.getStartNode(), link2.getStartNode(), nodesVia1);
+                cr1 = network.getShortestRouteBetween(GTUType.ALL, link2.getStartNode(), link2.getStartNode(), nodesVia1);
                 Collections.reverse(nodesVia1);
-                cr2 =
-                    network.getShortestRouteBetween(GTUType.ALL, link2.getStartNode(), link2.getStartNode(), nodesVia1);
+                cr2 = network.getShortestRouteBetween(GTUType.ALL, link2.getStartNode(), link2.getStartNode(), nodesVia1);
             }
             catch (NetworkException exception)
             {
@@ -402,11 +409,9 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
             nodesVia2.add(link6.getEndNode());
             try
             {
-                cr3 =
-                    network.getShortestRouteBetween(GTUType.ALL, link3.getStartNode(), link3.getStartNode(), nodesVia2);
+                cr3 = network.getShortestRouteBetween(GTUType.ALL, link3.getStartNode(), link3.getStartNode(), nodesVia2);
                 Collections.reverse(nodesVia2);
-                cr4 =
-                    network.getShortestRouteBetween(GTUType.ALL, link3.getStartNode(), link3.getStartNode(), nodesVia2);
+                cr4 = network.getShortestRouteBetween(GTUType.ALL, link3.getStartNode(), link3.getStartNode(), nodesVia2);
             }
             catch (NetworkException exception)
             {
@@ -418,11 +423,9 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
             nodesVia3.add(link8.getEndNode());
             try
             {
-                cr5 =
-                    network.getShortestRouteBetween(GTUType.ALL, link6.getStartNode(), link6.getStartNode(), nodesVia3);
+                cr5 = network.getShortestRouteBetween(GTUType.ALL, link6.getStartNode(), link6.getStartNode(), nodesVia3);
                 Collections.reverse(nodesVia3);
-                cr6 =
-                    network.getShortestRouteBetween(GTUType.ALL, link6.getStartNode(), link6.getStartNode(), nodesVia3);
+                cr6 = network.getShortestRouteBetween(GTUType.ALL, link6.getStartNode(), link6.getStartNode(), nodesVia3);
             }
             catch (NetworkException exception)
             {
@@ -466,8 +469,8 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                 while (true)
                 {
                     CrossSectionElement cse =
-                        link.getCrossSectionElementList().get(
-                            routeRandom.nextInt(link.getCrossSectionElementList().size()));
+                            link.getCrossSectionElementList()
+                                    .get(routeRandom.nextInt(link.getCrossSectionElementList().size()));
                     if (cse instanceof Lane && !(cse instanceof NoTrafficLane))
                     {
                         lane = (Lane) cse;
@@ -482,18 +485,27 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                 }
 
                 BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
-                //LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                //    new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
-                LaneBasedStrategicalPlanner sPlanner =
-                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), new Altruistic()));
+                // LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
+                LaneBasedStrategicalPlanner sPlanner;
+                try
+                {
+                    sPlanner =
+                            new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
+                                    new IDMPlusOld(), new Altruistic()));
+                }
+                catch (GTUException exception2)
+                {
+                    throw new SimRuntimeException(exception2);
+                }
                 LanePerceptionFull perception = new LanePerceptionFull();
 
                 DirectedLanePosition directedLanePosition = null;
                 try
                 {
                     directedLanePosition =
-                        new DirectedLanePosition(lane, initialPosDist.draw().multiplyBy(
-                            lane.getCenterLine().getLengthSI()), dir);
+                            new DirectedLanePosition(lane,
+                                    initialPosDist.draw().multiplyBy(lane.getCenterLine().getLengthSI()), dir);
                 }
                 catch (GTUException exception1)
                 {
@@ -531,7 +543,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                         exception.printStackTrace();
                     }
                     if ((frontNew >= rearGTU && frontNew <= frontGTU) || (rearNew >= rearGTU && rearNew <= frontGTU)
-                        || (frontGTU >= rearNew && frontGTU <= frontNew) || (rearGTU >= rearNew && rearGTU <= frontNew))
+                            || (frontGTU >= rearNew && frontGTU <= frontNew) || (rearGTU >= rearNew && rearGTU <= frontNew))
                         isEnoughSpace = false;
                 }
 
@@ -540,9 +552,9 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                     try
                     {
                         LaneBasedIndividualGTU car =
-                            new LaneBasedIndividualGTU(String.valueOf(i), carType, lanepositionSet, new Speed(0.0,
-                                SpeedUnit.METER_PER_SECOND), carLength, widthDist.draw(), maxSpeedDist.draw(),
-                                this.simulator, sPlanner, perception, network);
+                                new LaneBasedIndividualGTU(String.valueOf(i), carType, lanepositionSet, new Speed(0.0,
+                                        SpeedUnit.METER_PER_SECOND), carLength, widthDist.draw(), maxSpeedDist.draw(),
+                                        this.simulator, sPlanner, perception, network);
                         this.rtiCars.add(car);
 
                     }
@@ -571,8 +583,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
-            getSimulator()
+        public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
 
         {
             return this.simulator;
@@ -584,11 +595,11 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
         private GTUColorer makeSwitchableGTUColorer()
         {
             GTUColorer[] gtuColorers =
-                new GTUColorer[]{
-                    new IDGTUColorer(),
-                    new VelocityGTUColorer(new Speed(100.0, SpeedUnit.KM_PER_HOUR)),
-                    new AccelerationGTUColorer(new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2),
-                        new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2))};
+                    new GTUColorer[] {
+                            new IDGTUColorer(),
+                            new VelocityGTUColorer(new Speed(100.0, SpeedUnit.KM_PER_HOUR)),
+                            new AccelerationGTUColorer(new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2),
+                                    new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2)) };
             return new SwitchableGTUColorer(0, gtuColorers);
         }
 
