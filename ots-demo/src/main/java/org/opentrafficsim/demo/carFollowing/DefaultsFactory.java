@@ -47,8 +47,6 @@ public final class DefaultsFactory
     {
         
         BehavioralCharacteristics bc = new BehavioralCharacteristics();
-//        bc.setParameter(ParameterTypes.LOOKAHEAD, ParameterTypes.LOOKAHEAD.getDefaultValue());
-//        bc.setParameter(ParameterTypes.B, ParameterTypes.B.getDefaultValue());
 
         // set all default values using reflection
         Set<Field> fields = ClassUtil.getAllFields(ParameterTypes.class);
@@ -67,7 +65,7 @@ public final class DefaultsFactory
                     }
                     catch (ParameterException pe)
                     {
-                        // do not sat parameter without default value
+                        // do not set parameter without default value
                     }
                 }
                 else if (ParameterTypeBoolean.class.equals(field.getType()))
@@ -127,7 +125,7 @@ public final class DefaultsFactory
         }
         catch (ParameterException pe)
         {
-            throw new RuntimeException("Parameter type 'LOOKBACKOLD' could not be set.", pe);
+            throw new RuntimeException("Parameter type 'LOOKAHEAD' could not be set.", pe);
         }
 
         return bc;

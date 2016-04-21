@@ -91,11 +91,7 @@ public class ParameterTypeDouble extends AbstractParameterType<DimensionlessUnit
         }
     }
 
-    /**
-     * Default double value.
-     * @return Default double value.
-     * @throws ParameterException If no default value was given.
-     */
+    /** {@inheritDoc} */
     public final Double getDefaultValue() throws ParameterException
     {
         ParameterException.throwIf(null == this.defaultValue, "No default value was set for '%s'.", getId());

@@ -89,45 +89,8 @@ public class ParameterTypeInteger extends AbstractParameterType<DimensionlessUni
             throw new RuntimeException("Default value does not comply with constraints.", exception);
         }
     }
-    
-//    /**
-//     * Constructor without check.
-//     * @param id Short name of parameter.
-//     * @param description Parameter description or full name.
-//     * @param defaultValue Default value.
-//     */
-//    public ParameterTypeInteger(final String id, final String description, final int defaultValue)
-//    {
-//        this(id, description, defaultValue, null);
-//    }
-//
-//    /**
-//     * Constructor with check.
-//     * @param id Short name of parameter.
-//     * @param description Parameter description or full name.
-//     * @param defaultValue Default value.
-//     * @param check Check for parameter values.
-//     */
-//    public ParameterTypeInteger(final String id, final String description, final int defaultValue, final Check check)
-//    {
-//        super(id, description, Dimensionless.class, new Dimensionless(defaultValue, DimensionlessUnit.SI), check);
-//        try
-//        {
-//            // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of
-//            // other parameter types.
-//            check(defaultValue, new BehavioralCharacteristics());
-//        }
-//        catch (ParameterException exception)
-//        {
-//            throw new RuntimeException("Default value does not comply with constraints.", exception);
-//        }
-//    }
 
-    /**
-     * Default integer value.
-     * @return Default integer value.
-     * @throws ParameterException If no default value was given.
-     */
+    /** {@inheritDoc} */
     public final Integer getDefaultValue() throws ParameterException
     {
         ParameterException.throwIf(null == this.defaultValue, "No default value was set for '%s'.", getId());
