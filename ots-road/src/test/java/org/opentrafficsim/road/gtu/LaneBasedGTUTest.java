@@ -33,6 +33,7 @@ import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.perception.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
@@ -130,7 +131,8 @@ public class LaneBasedGTUTest implements UNITS
         LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
         Speed maximumVelocity = new Speed(120, KM_PER_HOUR);
         GTUFollowingModelOld gtuFollowingModel = new IDMPlusOld();
-        BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+        BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create(); // new
+                                                                                              // BehavioralCharacteristics();
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =
@@ -206,7 +208,7 @@ public class LaneBasedGTUTest implements UNITS
                 Length.Rel carPosition = new Length.Rel(step, METER);
                 Set<DirectedLanePosition> carPositions =
                         buildPositionsSet(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
-                behavioralCharacteristics = new BehavioralCharacteristics();
+                behavioralCharacteristics = DefaultTestParameters.create(); // new BehavioralCharacteristics();
                 // drivingCharacteristics = new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
                 strategicalPlanner =
                         new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
@@ -390,7 +392,8 @@ public class LaneBasedGTUTest implements UNITS
             FixedAccelerationModel fam = new FixedAccelerationModel(acceleration, new Time.Rel(10, SECOND));
             LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
             Speed maximumVelocity = new Speed(200, KM_PER_HOUR);
-            BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+            BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create(); // new
+                                                                                                  // BehavioralCharacteristics();
             // LaneBasedBehavioralCharacteristics drivingCharacteristics = new LaneBasedBehavioralCharacteristics(fam,
             // laneChangeModel);
             LaneBasedStrategicalPlanner strategicalPlanner =

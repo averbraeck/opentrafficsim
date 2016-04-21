@@ -32,6 +32,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
@@ -142,7 +143,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         GTUFollowingModelOld gtuFollowingModel =
             new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(1000, SECOND));
         // Construct a car
-        BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+        BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create(); //new BehavioralCharacteristics();
         //LaneBasedBehavioralCharacteristics drivingCharacteristics =
         //    new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =
@@ -231,7 +232,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         }
         // Check that harmonic mean speed is computed
         speed = new Speed(10, KM_PER_HOUR);
-        behavioralCharacteristics = new BehavioralCharacteristics();
+        behavioralCharacteristics = DefaultTestParameters.create();//new BehavioralCharacteristics();
         //drivingCharacteristics = new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, 
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel));

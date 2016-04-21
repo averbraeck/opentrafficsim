@@ -37,6 +37,7 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
@@ -157,7 +158,7 @@ public class CarTest implements UNITS
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
-        BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+        BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create();//new BehavioralCharacteristics();
         //LaneBasedBehavioralCharacteristics drivingCharacteristics =
         //    new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =
