@@ -241,6 +241,6 @@ public class StripeAnimation extends Renderable2D implements Serializable
     @Override
     public final String toString()
     {
-        return "StripeAnimation [type=" + this.type + ", line=" + this.line + "]";
+        return "StripeAnimation [source = " + getSource().toString() + ", type=" + this.type + ", line=" + this.line + "]";
     }
 }

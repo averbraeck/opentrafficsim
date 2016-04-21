@@ -5,7 +5,7 @@ import java.util.Map;
 
 import javax.media.j3d.Bounds;
 
-import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -39,7 +39,7 @@ import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface GTU extends LocatableInterface, Serializable
+public interface GTU extends Locatable, Serializable
 {
     /** @return the id of the GTU */
     String getId();

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import javax.media.j3d.Bounds;
 
-import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -24,7 +24,7 @@ import org.opentrafficsim.core.gtu.GTUType;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class OTSLink implements Link, Serializable, LocatableInterface
+public class OTSLink implements Link, Serializable, Locatable
 {
     /** */
     private static final long serialVersionUID = 20150101L;

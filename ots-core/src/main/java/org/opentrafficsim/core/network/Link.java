@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.media.j3d.Bounds;
 
-import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -22,7 +22,7 @@ import org.opentrafficsim.core.gtu.GTUType;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface Link extends LocatableInterface, Serializable
+public interface Link extends Locatable, Serializable
 {
     /** @return id. */
     String getId();

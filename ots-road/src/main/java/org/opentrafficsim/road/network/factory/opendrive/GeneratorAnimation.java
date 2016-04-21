@@ -10,7 +10,7 @@ import java.rmi.RemoteException;
 import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -74,7 +74,7 @@ public class GeneratorAnimation extends Renderable2D implements Serializable
     }
 
     /** Generator position. */
-    private static class GenPos implements LocatableInterface, Serializable
+    private static class GenPos implements Locatable, Serializable
     {
         /** */
         private static final long serialVersionUID = 20150000L;

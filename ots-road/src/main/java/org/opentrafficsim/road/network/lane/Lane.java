@@ -307,6 +307,8 @@ public class Lane extends CrossSectionElement implements Serializable
         this.speedLimitMap.put(GTUType.ALL, speedLimit);
         this.overtakingConditions = overtakingConditions;
     }
+    
+    // TODO constructor calls with this(...)
 
     /**
      * Retrieve one of the sets of neighboring Lanes that is accessible for the given type of GTU. A defensive copy of the
@@ -1200,6 +1202,8 @@ public class Lane extends CrossSectionElement implements Serializable
         return String.format("Lane %s of %s", getId(), link.getId());
     }
 
+    
+    
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
