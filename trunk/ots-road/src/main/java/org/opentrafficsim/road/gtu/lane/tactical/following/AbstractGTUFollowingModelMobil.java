@@ -10,6 +10,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
@@ -63,6 +64,12 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
         }
         AccelerationStep followerAccelerationStep = null;
         AccelerationStep referenceGTUAccelerationStep = null;
+        TacticalPlanner tp = referenceGTU.getTacticalPlanner();
+        if (null == tp)
+        {
+            referenceGTU.getTacticalPlanner();
+            System.err.println ("tactical planner is null");
+        }
         GTUFollowingModelOld gfm =
                 (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) referenceGTU.getTacticalPlanner())
                         .getCarFollowingModel();

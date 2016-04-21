@@ -23,15 +23,18 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.perception.Headway;
@@ -121,8 +124,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
-        BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
-        behavioralCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, ParameterTypes.LOOKAHEAD.getDefaultValue());
+        BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create();//new BehavioralCharacteristics();
         maxHeadway = behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD);
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
@@ -232,12 +234,14 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
                 expectedValidUntil);
         // Add an overlapping GTU. Immediate collision situation should return TOODANGEROUS
         Map<Lane, Length.Rel> initialLongitudinalPositionsOverlapping = new HashMap<>();
-        initialLongitudinalPositionsOverlapping.put(lane, initialPosition.plus(new Length.Rel(1, METER)));
+        Length.Rel ahead = new Length.Rel(1, METER);
+        initialLongitudinalPositionsOverlapping.put(lane, initialPosition.plus(ahead));
         LaneBasedIndividualGTU gtu1m =
                 new LaneBasedIndividualGTU("100100" + this.gtuIdGenerator.nextId(), carType, initialLongitudinalPositions50,
                         speed, length, width, maxSpeed, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
+        Length.Rel overlap = new Length.Rel(length.minus(ahead));
         HeadwayGTU hwgtu1m =
-                new HeadwayGTU(gtu1m.getId(), gtu1m.getGTUType(), new Length.Rel(Double.NaN, LengthUnit.SI),
+                new HeadwayGTU(gtu1m.getId(), gtu1m.getGTUType(), ahead, overlap, Length.Rel.ZERO.minus(overlap),
                         gtu1m.getVelocity(), null);
         otherGTUs.add(hwgtu1m);
         DualAccelerationStep as1m = gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);

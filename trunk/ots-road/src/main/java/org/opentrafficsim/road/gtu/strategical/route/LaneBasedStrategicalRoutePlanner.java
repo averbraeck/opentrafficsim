@@ -93,8 +93,8 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     public LinkDirection nextLinkDirection(final Link link, final GTUDirectionality direction, final GTUType gtuType)
             throws NetworkException
     {
-        Node lastNode = direction.equals(GTUDirectionality.DIR_PLUS) ? link.getEndNode() : link.getStartNode();
-        return nextLinkDirection(lastNode, link, gtuType);
+        Node nextNode = direction.equals(GTUDirectionality.DIR_PLUS) ? link.getEndNode() : link.getStartNode();
+        return nextLinkDirection(nextNode, link, gtuType);
     }
 
     /** {@inheritDoc} */

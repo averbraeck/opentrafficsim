@@ -188,14 +188,14 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
                 new SimpleSimulator(new Time.Abs(0, SECOND), new Time.Rel(0, SECOND), new Time.Rel(3600, SECOND), this);
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
         BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
-//        behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
-//        behavioralCharacteristics.setParameter(ParameterTypes.B, new Acceleration(1.5, METER_PER_SECOND_2));
-//        behavioralCharacteristics.setParameter(ParameterTypes.S0, new Length.Rel(2, METER));
-//        behavioralCharacteristics.setParameter(ParameterTypes.T, new Time.Rel(1, SECOND));
-//        behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
-//        behavioralCharacteristics.setParameter(AbstractIDM.DELTA, 1d);
-//        behavioralCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, ParameterTypes.LOOKAHEAD.getDefaultValue());
-//        behavioralCharacteristics.setParameter(ParameterTypes.LOOKBACKOLD, ParameterTypes.LOOKBACKOLD.getDefaultValue());
+        // behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
+        // behavioralCharacteristics.setParameter(ParameterTypes.B, new Acceleration(1.5, METER_PER_SECOND_2));
+        // behavioralCharacteristics.setParameter(ParameterTypes.S0, new Length.Rel(2, METER));
+        // behavioralCharacteristics.setParameter(ParameterTypes.T, new Time.Rel(1, SECOND));
+        // behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
+        // behavioralCharacteristics.setParameter(AbstractIDM.DELTA, 1d);
+        // behavioralCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, ParameterTypes.LOOKAHEAD.getDefaultValue());
+        // behavioralCharacteristics.setParameter(ParameterTypes.LOOKBACKOLD, ParameterTypes.LOOKBACKOLD.getDefaultValue());
         behavioralCharacteristics = DefaultTestParameters.create();
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(
@@ -234,13 +234,14 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             otherLongitudinalPositions.add(new DirectedLanePosition(lanes[1], new Length.Rel(pos, METER),
                     GTUDirectionality.DIR_PLUS));
 
-            behavioralCharacteristics = new BehavioralCharacteristics();
-            behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
-            behavioralCharacteristics.setParameter(ParameterTypes.B, new Acceleration(1.5, METER_PER_SECOND_2));
-            behavioralCharacteristics.setParameter(ParameterTypes.S0, new Length.Rel(2, METER));
-            behavioralCharacteristics.setParameter(ParameterTypes.T, new Time.Rel(1, SECOND));
-            behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
-            behavioralCharacteristics.setParameter(AbstractIDM.DELTA, 1d);
+            behavioralCharacteristics = DefaultTestParameters.create();
+            // behavioralCharacteristics = new BehavioralCharacteristics();
+            // behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
+            // behavioralCharacteristics.setParameter(ParameterTypes.B, new Acceleration(1.5, METER_PER_SECOND_2));
+            // behavioralCharacteristics.setParameter(ParameterTypes.S0, new Length.Rel(2, METER));
+            // behavioralCharacteristics.setParameter(ParameterTypes.T, new Time.Rel(1, SECOND));
+            // behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
+            // behavioralCharacteristics.setParameter(AbstractIDM.DELTA, 1d);
             // drivingCharacteristics =
             // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
             // new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d),

@@ -35,6 +35,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
@@ -130,7 +131,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         // Route of the Car
         CompleteRoute route = new CompleteRoute("Route", gtuType, nodeList);
         // Now we can make a GTU
-        BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+        BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create(); //new BehavioralCharacteristics();
         //LaneBasedBehavioralCharacteristics drivingCharacteristics =
         //    new LaneBasedBehavioralCharacteristics(gfm, laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =

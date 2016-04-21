@@ -148,18 +148,18 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
         Length.Rel startPosition = position;
         Lane lastLane = lane;
         laneListForward.add(new LaneDirection(lastLane, lastGtuDir));
-        Length.Rel lengthForward;
+        Length.Rel distanceToEndOfLane;
         OTSLine3D path;
         try
         {
             if (lastGtuDir.equals(GTUDirectionality.DIR_PLUS))
             {
-                lengthForward = lane.getLength().minus(position);
+                distanceToEndOfLane = lane.getLength().minus(position);
                 path = lane.getCenterLine().extract(position, lane.getLength());
             }
             else
             {
-                lengthForward = position;
+                distanceToEndOfLane = position;
                 path = lane.getCenterLine().extract(Length.Rel.ZERO, position).reverse();
             }
         }
@@ -171,33 +171,33 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             throw new GTUException(exception);
         }
 
-        while (lengthForward.lt(maxHeadway))
+        while (distanceToEndOfLane.lt(maxHeadway))
         {
             Map<Lane, GTUDirectionality> lanes =
                     lastGtuDir.equals(GTUDirectionality.DIR_PLUS) ? lane.nextLanes(gtu.getGTUType()) : lane.prevLanes(gtu
                             .getGTUType());
             if (lanes.size() == 0)
             {
-                // dead end. return with the list as is.
+                // Dead end. Return with the list as is.
                 return new LanePathInfo(path, laneListForward, startPosition);
             }
-            if (lanes.size() == 1)
+            else if (lanes.size() == 1)
             {
-                // ask the strategical planner what the next link should be (if known), because the strategical planner knows
+                // Ask the strategical planner what the next link should be (if known), because the strategical planner knows
                 // best!
                 LinkDirection ld = null;
                 ld = gtu.getStrategicalPlanner().nextLinkDirection(lane.getParentLink(), lastGtuDir, gtu.getGTUType());
                 lane = lanes.keySet().iterator().next();
                 if (ld != null && !lane.getParentLink().equals(ld.getLink()))
                 {
-                    // lane not on route anymore. return with the list as is.
+                    // Lane not on route anymore. return with the list as is.
                     return new LanePathInfo(path, laneListForward, startPosition);
                 }
             }
             else
             {
-                // multiple next lanes; ask the strategical planner where to go
-                // note: this is not necessarily a split; it could e.g. be a bike path on a road
+                // Multiple next lanes; ask the strategical planner where to go.
+                // Note: this is not necessarily a split; it could e.g. be a bike path on a road
                 LinkDirection ld;
                 try
                 {
@@ -271,7 +271,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             }
 
             laneListForward.add(new LaneDirection(lastLane, lastGtuDir));
-            lengthForward = lengthForward.plus(lastLane.getLength());
+            distanceToEndOfLane = distanceToEndOfLane.plus(lastLane.getLength());
 
         }
         return new LanePathInfo(path, laneListForward, startPosition);
