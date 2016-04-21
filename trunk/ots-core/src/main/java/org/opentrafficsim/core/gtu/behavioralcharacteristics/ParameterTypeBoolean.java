@@ -55,11 +55,7 @@ public class ParameterTypeBoolean extends AbstractParameterType<DimensionlessUni
             DimensionlessUnit.SI) : null, null, hasDefaultValue);
     }
 
-    /**
-     * Default boolean value.
-     * @return Default boolean value.
-     * @throws ParameterException If no default value was given.
-     */
+    /** {@inheritDoc} */
     public final Boolean getDefaultValue() throws ParameterException
     {
         ParameterException.throwIf(null == this.defaultValue, "No default value was set for '%s'.", getId());

@@ -120,12 +120,8 @@ public class ParameterType<U extends Unit<U>, T extends DoubleScalar.Rel<U>> ext
     {
         //
     }
-
-    /**
-     * Returns the default value.
-     * @return defaultValue Default value.
-     * @throws ParameterException If no default value was set.
-     */
+    
+    /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     public T getDefaultValue() throws ParameterException
     {

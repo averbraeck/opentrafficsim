@@ -148,12 +148,14 @@ public class BehavioralCharacteristics implements Serializable
      * @return Parameter of given type.
      * @throws ParameterException If parameter was never set.
      */
-    @SuppressWarnings({"unchecked", "checkstyle:designforextension"})
+    @SuppressWarnings("checkstyle:designforextension")
     public <U extends Unit<U>, T extends DoubleScalar.Rel<U>> T getParameter(final ParameterType<U, T> parameterType)
         throws ParameterException
     {
         checkContains(parameterType);
-        return (T) this.parameters.get(parameterType);
+        @SuppressWarnings("unchecked") // set methods guarantee matching of parameter type and value
+        T result = (T) this.parameters.get(parameterType);
+        return result;
     }
 
     /**

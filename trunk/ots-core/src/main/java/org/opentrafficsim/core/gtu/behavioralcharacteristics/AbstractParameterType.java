@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.io.Serializable;
+import java.util.IllegalFormatException;
 import java.util.UUID;
 
 import org.djunits.unit.Unit;
@@ -47,23 +48,110 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
     /** List of default checks for ParameterTypes. */
     public enum Check
     {
+
         /** Checks for &gt;0. */
-        POSITIVE,
+        POSITIVE("Value of parameter '%s' must be above zero.")
+        {
+            /** {@inheritDoc} */
+            boolean fails(final double value)
+            {
+                return value <= 0.0;
+            }
+        },
 
         /** Checks for &lt;0. */
-        NEGATIVE,
+        NEGATIVE("Value of parameter '%s' must be below zero.")
+        {
+            /** {@inheritDoc} */
+            boolean fails(final double value)
+            {
+                return value >= 0.0;
+            }
+        },
 
         /** Checks for &ge;0. */
-        POSITIVEZERO,
+        POSITIVEZERO("Value of parameter '%s' may not be below zero.")
+        {
+            /** {@inheritDoc} */
+            boolean fails(final double value)
+            {
+                return value < 0.0;
+            }
+        },
 
         /** Checks for &le;0. */
-        NEGATIVEZERO,
+        NEGATIVEZERO("Value of parameter '%s' may not be above zero.")
+        {
+            /** {@inheritDoc} */
+            boolean fails(final double value)
+            {
+                return value > 0.0;
+            }
+        },
 
         /** Checks for &ne;0. */
-        NONZERO,
+        NONZERO("Value of parameter '%s' may not be zero.")
+        {
+            /** {@inheritDoc} */
+            boolean fails(final double value)
+            {
+                return value == 0.0;
+            }
+        },
 
         /** Checks for range [0...1]. */
-        UNITINTERVAL;
+        UNITINTERVAL("Value of parameter '%s' must be in range [0...1]")
+        {
+            /** {@inheritDoc} */
+            boolean fails(final double value)
+            {
+                return value < 0.0 || value > 1.0;
+            }
+        };
+
+        /** Message for value failure, pointing to a parameter using '%s'. */
+        private final String failMessage;
+
+        /**
+         * Constructor with message for value failure, pointing to a parameter using '%s'.
+         * @param failMessage Message for value failure, pointing to a parameter using '%s'.
+         */
+        Check(final String failMessage)
+        {
+            if (failMessage == null)
+            {
+                throw new RuntimeException("Default parameter check " + this.toString()
+                    + " has null as fail message as given to the constructor, which is not allowed.");
+            }
+            try
+            {
+                String.format(failMessage, "dummy");
+            }
+            catch (IllegalFormatException ife)
+            {
+                throw new RuntimeException("Default parameter check " + this.toString()
+                    + " has an illegal formatting of the fail message as given to the constructor."
+                    + " It should contain a single '%s'.", ife);
+            }
+            this.failMessage = failMessage;
+        }
+
+        /**
+         * Returns a message for value failure, pointing to a parameter using '%s'.
+         * @return Message for value failure, pointing to a parameter using '%s'.
+         */
+        String failMessage()
+        {
+            return this.failMessage;
+        }
+
+        /**
+         * Checks whether the value fails to comply with constraints.
+         * @param value Value to check.
+         * @return Whether the value fails to comply with constraints.
+         */
+        abstract boolean fails(double value);
+
     }
 
     /**
@@ -124,8 +212,8 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
      * @param check Check for parameter values.
      * @param hasDefaultValue Whether to check the default value for null.
      */
-    protected AbstractParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue,
-        final Check check, final boolean hasDefaultValue)
+    protected AbstractParameterType(final String id, final String description, final Class<T> valueClass,
+        final T defaultValue, final Check check, final boolean hasDefaultValue)
     {
         if (hasDefaultValue && defaultValue == null)
         {
@@ -170,6 +258,15 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
     }
 
     /**
+     * Returns whether this parameter type has a default value.
+     * @return Whether this parameter type has a default value.
+     */
+    public final boolean hasDefaultValue()
+    {
+        return this.defaultValue != null;
+    }
+
+    /**
      * Returns the default value.
      * @return defaultValue Default value.
      * @throws ParameterException If no default value was set.
@@ -187,39 +284,7 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
         {
             return;
         }
-        ParameterException.throwIf(value == null, "Value null of parameter '%s' could not be checked with default check.",
-            this.id);
-        switch (this.check)
-        {
-            case POSITIVE:
-                ParameterException.throwIf(value.si <= 0.0, "Value of parameter '%s' must be above zero.", this.id);
-                break;
-
-            case NEGATIVE:
-                ParameterException.throwIf(value.si >= 0.0, "Value of parameter '%s' must be below zero.", this.id);
-                break;
-
-            case POSITIVEZERO:
-                ParameterException.throwIf(value.si < 0.0, "Value of parameter '%s' may not be below zero.", this.id);
-                break;
-
-            case NEGATIVEZERO:
-                ParameterException.throwIf(value.si > 0.0, "Value of parameter '%s' may not be above zero.", this.id);
-                break;
-
-            case NONZERO:
-                ParameterException.throwIf(value.si == 0.0, "Value of parameter '%s' may not be zero.", this.id);
-                break;
-
-            case UNITINTERVAL:
-                ParameterException.throwIf(value.si < 0.0 || value.si > 1.0,
-                    "Value of parameter '%s' must be in range [0...1]", this.id);
-                break;
-
-            default:
-                throw new ParameterException("Unknown parameter check value.");
-
-        }
+        ParameterException.throwIf(this.check.fails(value.si), this.check.failMessage(), this.id);
     }
 
     /**
@@ -230,9 +295,7 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
      */
     public abstract String printValue(BehavioralCharacteristics behavioralCharacteristics) throws ParameterException;
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
     public int hashCode()
