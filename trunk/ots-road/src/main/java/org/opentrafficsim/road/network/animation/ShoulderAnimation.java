@@ -57,6 +57,6 @@ public class ShoulderAnimation extends Renderable2D implements Serializable
     @Override
     public final String toString()
     {
-        return "ShoulderAnimation [color=" + this.color + "]";
+        return "ShoulderAnimation [source = " + getSource().toString() + ", color=" + this.color + "]";
     }
 }

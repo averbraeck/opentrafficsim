@@ -7,7 +7,7 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
-import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.language.d3.CartesianPoint;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -30,7 +30,7 @@ import com.vividsolutions.jts.geom.Point;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class OTSPoint3D implements LocatableInterface, Serializable
+public class OTSPoint3D implements Locatable, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150722L;

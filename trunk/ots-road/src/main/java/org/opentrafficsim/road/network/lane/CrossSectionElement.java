@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.media.j3d.Bounds;
 
-import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -29,7 +29,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public abstract class CrossSectionElement implements LocatableInterface, Serializable
+public abstract class CrossSectionElement implements Locatable, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150826L;
@@ -147,6 +147,8 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
         // }
     }
 
+    // TODO use throwIf
+    
     /**
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
      * the StartNode towards the EndNode as the longitudinal direction.
