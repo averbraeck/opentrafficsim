@@ -241,6 +241,7 @@ public abstract class AbstractGTU implements GTU
         }
 
         // Do we have an operational plan?
+        // TODO discuss when a new tactical planner may be needed
         if (this.tacticalPlanner == null)
         {
             // Tell the strategical planner to provide a tactical planner
@@ -319,6 +320,11 @@ public abstract class AbstractGTU implements GTU
      */
     public final TacticalPlanner getTacticalPlanner()
     {
+        // TODO discuss when a new tactical planner may be needed
+        if (null == this.tacticalPlanner)
+        {
+            this.tacticalPlanner = this.strategicalPlanner.generateTacticalPlanner(this);
+        }
         return this.tacticalPlanner;
     }
 
