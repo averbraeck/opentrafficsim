@@ -21,8 +21,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version Apr 2016 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 2016 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 public abstract class AbstractCarFollowingModel implements CarFollowingModel
@@ -30,19 +29,19 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
 
     /** {@inheritDoc} */
     public final Acceleration freeAcceleration(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed,
-        final Speed speedLimit, final boolean enforcement, final Speed maximumVehicleSpeed) throws ParameterException
+        final SpeedInfo speedInfo) throws ParameterException
     {
         // Fill map with a single leader at infinite headway and the same speed.
         SortedMap<Length.Rel, Speed> leaders = new TreeMap<Length.Rel, Speed>();
         leaders.put(new Length.Rel(Double.POSITIVE_INFINITY, LengthUnit.SI), speed);
-        return followingAcceleration(behavioralCharacteristics, speed, desiredSpeed(behavioralCharacteristics, speedLimit,
-            enforcement, maximumVehicleSpeed), desiredHeadway(behavioralCharacteristics, speed), leaders);
+        return followingAcceleration(behavioralCharacteristics, speed, desiredSpeed(behavioralCharacteristics, speedInfo),
+            desiredHeadway(behavioralCharacteristics, speed), leaders);
     }
 
     /** {@inheritDoc} */
     public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
-        final Speed speed, final Speed speedLimit, final boolean enforcement, final Speed maximumVehicleSpeed,
-        final Length.Rel headway, final Speed leaderSpeed) throws ParameterException
+        final Speed speed, final SpeedInfo speedInfo, final Length.Rel headway, final Speed leaderSpeed)
+        throws ParameterException
     {
         // Catch negative headway
         if (headway.si <= 0)
@@ -55,14 +54,13 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
         // Fill map with the single leader.
         SortedMap<Length.Rel, Speed> leaders = new TreeMap<Length.Rel, Speed>();
         leaders.put(headway, leaderSpeed);
-        return followingAcceleration(behavioralCharacteristics, speed, desiredSpeed(behavioralCharacteristics, speedLimit,
-            enforcement, maximumVehicleSpeed), desiredHeadway(behavioralCharacteristics, speed), leaders);
+        return followingAcceleration(behavioralCharacteristics, speed, desiredSpeed(behavioralCharacteristics, speedInfo),
+            desiredHeadway(behavioralCharacteristics, speed), leaders);
     }
 
     /** {@inheritDoc} */
     public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
-        final Speed speed, final Speed speedLimit, final boolean enforcement, final Speed maximumVehicleSpeed,
-        final SortedMap<Length.Rel, Speed> leaders) throws ParameterException
+        final Speed speed, final SpeedInfo speedInfo, final SortedMap<Length.Rel, Speed> leaders) throws ParameterException
     {
         // Catch negative headway
         if (leaders.firstKey().si <= 0)
@@ -73,8 +71,8 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
             return new Acceleration(Double.NEGATIVE_INFINITY, AccelerationUnit.SI);
         }
         // Forward to method with desired speed and headway predetermined by this car-following model.
-        return followingAcceleration(behavioralCharacteristics, speed, desiredSpeed(behavioralCharacteristics, speedLimit,
-            enforcement, maximumVehicleSpeed), desiredHeadway(behavioralCharacteristics, speed), leaders);
+        return followingAcceleration(behavioralCharacteristics, speed, desiredSpeed(behavioralCharacteristics, speedInfo),
+            desiredHeadway(behavioralCharacteristics, speed), leaders);
     }
 
     /**

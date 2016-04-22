@@ -25,20 +25,20 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
         "Acceleration flattening exponent towards desired speed.", 4.0, POSITIVE);
 
     /** {@inheritDoc} */
-    public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final Speed speedLimit, 
-        final boolean enforcement, final Speed maximumVehicleSpeed) throws ParameterException
+    public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedInfo speedInfo)
+        throws ParameterException
     {
-        Speed consideredSpeed = speedLimit;
-        if (!enforcement)
+        Speed consideredSpeed = speedInfo.getSpeedLimit();
+        if (!speedInfo.isEnforcement())
         {
-            consideredSpeed = speedLimit.multiplyBy(behavioralCharacteristics.getParameter(ParameterTypes.FSPEED));
+            consideredSpeed = consideredSpeed.multiplyBy(behavioralCharacteristics.getParameter(ParameterTypes.FSPEED));
         }
-        return consideredSpeed.le(maximumVehicleSpeed) ? consideredSpeed : maximumVehicleSpeed;
+        return consideredSpeed.le(speedInfo.getMaximumVehicleSpeed()) ? consideredSpeed : speedInfo.getMaximumVehicleSpeed();
     }
 
     /** {@inheritDoc} */
-    public final Rel desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed) 
-            throws ParameterException
+    public final Rel desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
+        throws ParameterException
     {
         return behavioralCharacteristics.getParameter(ParameterTypes.S0).plus(
             speed.multiplyBy(behavioralCharacteristics.getParameter(ParameterTypes.T)));
@@ -53,7 +53,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
      * @return Dynamic desired headway.
      * @throws ParameterException In case of parameter exception.
      */
-    protected final Length.Rel dynamicDesiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, 
+    protected final Length.Rel dynamicDesiredHeadway(final BehavioralCharacteristics behavioralCharacteristics,
         final Speed speed, final Rel desiredHeadway, final Speed leaderSpeed) throws ParameterException
     {
         double sStar = desiredHeadway.si + dynamicHeadwayTerm(behavioralCharacteristics, speed, leaderSpeed).si;
@@ -75,7 +75,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
      * @return Dynamic headway term.
      * @throws ParameterException In case of parameter exception.
      */
-    protected final Length.Rel dynamicHeadwayTerm(final BehavioralCharacteristics behavioralCharacteristics, 
+    protected final Length.Rel dynamicHeadwayTerm(final BehavioralCharacteristics behavioralCharacteristics,
         final Speed speed, final Speed leaderSpeed) throws ParameterException
     {
         Acceleration a = behavioralCharacteristics.getParameter(ParameterTypes.A);
