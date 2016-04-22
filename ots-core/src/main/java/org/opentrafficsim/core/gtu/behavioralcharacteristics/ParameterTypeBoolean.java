@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.djunits.unit.DimensionlessUnit;
 import org.djunits.value.vdouble.scalar.Dimensionless;
+import org.opentrafficsim.core.Throw;
 
 /**
  * Wrapper class for boolean parameters.
@@ -49,16 +50,16 @@ public class ParameterTypeBoolean extends AbstractParameterType<DimensionlessUni
      * @param hasDefaultValue Whether to check the default value for null.
      */
     public ParameterTypeBoolean(final String id, final String description, final boolean defaultValue,
-        final boolean hasDefaultValue)
+            final boolean hasDefaultValue)
     {
         super(id, description, Dimensionless.class, hasDefaultValue ? new Dimensionless(defaultValue ? 1.0 : 0.0,
-            DimensionlessUnit.SI) : null, null, hasDefaultValue);
+                DimensionlessUnit.SI) : null, null, hasDefaultValue);
     }
 
     /** {@inheritDoc} */
     public final Boolean getDefaultValue() throws ParameterException
     {
-        ParameterException.throwIf(null == this.defaultValue, "No default value was set for '%s'.", getId());
+        Throw.when(null == this.defaultValue, ParameterException.class, "No default value was set for '%s'.", getId());
         return super.defaultValue.si != 0.0;
     }
 

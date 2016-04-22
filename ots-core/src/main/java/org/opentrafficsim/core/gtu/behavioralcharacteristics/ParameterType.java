@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.Throw;
 
 /**
  * Wrapper class for parameters of any quantity in JUnits.
@@ -11,8 +12,7 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, 
- *          initial version Apr 13, 2016 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <U> Unit of the value.
@@ -73,7 +73,7 @@ public class ParameterType<U extends Unit<U>, T extends DoubleScalar.Rel<U>> ext
     {
         this(id, description, valueClass, defaultValue, check, true);
     }
-    
+
     /**
      * Private constructor with default value and check, which may check the default value.
      * @param id Short name of parameter.
@@ -120,12 +120,12 @@ public class ParameterType<U extends Unit<U>, T extends DoubleScalar.Rel<U>> ext
     {
         //
     }
-    
+
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     public T getDefaultValue() throws ParameterException
     {
-        ParameterException.throwIf(null == this.defaultValue, "No default value was set for '%s'.", getId());
+        Throw.when(null == this.defaultValue, ParameterException.class, "No default value was set for '%s'.", getId());
         return this.defaultValue;
     }
 

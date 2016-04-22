@@ -209,7 +209,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
                         strategicalPlanner, new LanePerceptionFull(), this.network);
         car.getPerception().perceive();
         Collection<Headway> sameLaneGTUs = new LinkedHashSet<Headway>();
-        sameLaneGTUs.add(new HeadwayGTU(car.getId(), car.getGTUType(), Length.Rel.ZERO, car.getVelocity(), null));
+        sameLaneGTUs.add(new HeadwayGTU(car.getId(), car.getGTUType(), Length.Rel.ZERO, car.getSpeed(), null));
         Collection<Headway> preferredLaneGTUs = new LinkedHashSet<Headway>();
         Collection<Headway> nonPreferredLaneGTUs = new LinkedHashSet<Headway>();
         LaneMovementStep laneChangeModelResult =
@@ -256,7 +256,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             preferredLaneGTUs.clear();
             HeadwayGTU collisionHWGTU =
                     new HeadwayGTU(collisionCar.getId(), collisionCar.getGTUType(), new Length.Rel(pos - reference.getSI(),
-                            LengthUnit.SI), collisionCar.getVelocity(), null);
+                            LengthUnit.SI), collisionCar.getSpeed(), null);
             preferredLaneGTUs.add(collisionHWGTU);
             laneChangeModelResult =
                     new Egoistic().computeLaneChangeAndAcceleration(car, sameLaneGTUs, preferredLaneGTUs, nonPreferredLaneGTUs,
@@ -293,7 +293,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             preferredLaneGTUs.clear();
             HeadwayGTU collisionHWGTU =
                     new HeadwayGTU(otherCar.getId(), otherCar.getGTUType(), new Length.Rel(pos
-                            - car.position(lanes[0], car.getReference()).getSI(), LengthUnit.SI), otherCar.getVelocity(), null);
+                            - car.position(lanes[0], car.getReference()).getSI(), LengthUnit.SI), otherCar.getSpeed(), null);
             preferredLaneGTUs.add(collisionHWGTU);
             laneChangeModelResult =
                     new Egoistic().computeLaneChangeAndAcceleration(car, sameLaneGTUs, preferredLaneGTUs, nonPreferredLaneGTUs,

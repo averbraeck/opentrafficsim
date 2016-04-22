@@ -273,7 +273,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
             double meanSpeed = 0.0;
             for (LaneBasedGTU gtu : this.lane.getGtuList())
             {
-                meanSpeed += 1 / gtu.getVelocity().si;
+                meanSpeed += 1 / gtu.getSpeed().si;
             }
             meanSpeed = n / meanSpeed;
             this.samples.add(new Sample(meanSpeed, density, this.flow / this.aggregationTime.si));

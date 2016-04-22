@@ -12,6 +12,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
@@ -58,11 +59,13 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements Serializab
         {
             if (bc.contains(DSYNC))
             {
-                ParameterException.throwIf(value >= bc.getParameter(DSYNC), "Value of dFree is above or equal to dSync.");
+                Throw.when(value >= bc.getParameter(DSYNC), ParameterException.class,
+                        "Value of dFree is above or equal to dSync.");
             }
             if (bc.contains(DCOOP))
             {
-                ParameterException.throwIf(value >= bc.getParameter(DCOOP), "Value of dFree is above or equal to dCoop.");
+                Throw.when(value >= bc.getParameter(DCOOP), ParameterException.class,
+                        "Value of dFree is above or equal to dCoop.");
             }
         }
     };
@@ -78,11 +81,13 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements Serializab
         {
             if (bc.contains(DFREE))
             {
-                ParameterException.throwIf(value <= bc.getParameter(DFREE), "Value of dSync is below or equal to dFree.");
+                Throw.when(value <= bc.getParameter(DFREE), ParameterException.class,
+                        "Value of dSync is below or equal to dFree.");
             }
             if (bc.contains(DCOOP))
             {
-                ParameterException.throwIf(value >= bc.getParameter(DCOOP), "Value of dSync is above or equal to dCoop.");
+                Throw.when(value >= bc.getParameter(DCOOP), ParameterException.class,
+                        "Value of dSync is above or equal to dCoop.");
             }
         }
     };
@@ -98,11 +103,13 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements Serializab
         {
             if (bc.contains(DFREE))
             {
-                ParameterException.throwIf(value <= bc.getParameter(DFREE), "Value of dCoop is below or equal to dFree.");
+                Throw.when(value <= bc.getParameter(DFREE), ParameterException.class,
+                        "Value of dCoop is below or equal to dFree.");
             }
             if (bc.contains(DSYNC))
             {
-                ParameterException.throwIf(value <= bc.getParameter(DSYNC), "Value of dCoop is below or equal to dSync.");
+                Throw.when(value <= bc.getParameter(DSYNC), ParameterException.class,
+                        "Value of dCoop is below or equal to dSync.");
             }
         }
     };

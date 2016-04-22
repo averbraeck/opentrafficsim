@@ -5,6 +5,7 @@ import java.io.Serializable;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 
@@ -42,9 +43,9 @@ public class DirectedLanePosition implements Serializable
         throws GTUException
     {
         super();
-        GTUException.throwIf(lane == null, "lane is null");
-        GTUException.throwIf(position == null, "position is null");
-        GTUException.throwIf(gtuDirection == null, "gtuDirection is null");
+        Throw.when(lane == null, GTUException.class, "lane is null");
+        Throw.when(position == null, GTUException.class, "position is null");
+        Throw.when(gtuDirection == null, GTUException.class, "gtuDirection is null");
         this.lane = lane;
         this.position = position;
         this.gtuDirection = gtuDirection;

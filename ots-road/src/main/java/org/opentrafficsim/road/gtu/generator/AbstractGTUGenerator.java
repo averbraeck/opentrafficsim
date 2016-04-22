@@ -321,7 +321,7 @@ public abstract class AbstractGTUGenerator implements Serializable
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
                 return new HeadwayGTU(otherGTU.getId(), otherGTU.getGTUType(), new Length.Rel(distanceM, LengthUnit.SI),
-                        otherGTU.getVelocity(), null);
+                        otherGTU.getSpeed(), null);
             }
             return new HeadwayDistance(Double.MAX_VALUE);
         }
@@ -382,7 +382,7 @@ public abstract class AbstractGTUGenerator implements Serializable
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
                 return new HeadwayGTU(otherGTU.getId(), otherGTU.getGTUType(), new Length.Rel(distanceM, LengthUnit.SI),
-                        otherGTU.getVelocity(), null);
+                        otherGTU.getSpeed(), null);
             }
             return new HeadwayDistance(Double.MAX_VALUE);
         }

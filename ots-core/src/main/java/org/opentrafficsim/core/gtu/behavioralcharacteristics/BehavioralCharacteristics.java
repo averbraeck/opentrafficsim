@@ -8,6 +8,7 @@ import org.djunits.unit.DimensionlessUnit;
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.Throw;
 
 /**
  * In this class a set of behavioral characteristics in the form of parameters can be stored for use in behavioral models.
@@ -44,10 +45,10 @@ public class BehavioralCharacteristics implements Serializable
      * @param <T> Class of value.
      * @throws ParameterException If the value does not comply with value type constraints.
      */
-    public final <U extends Unit<U>, T extends DoubleScalar.Rel<U>> void setParameter(
-        final ParameterType<U, T> parameterType, final T value) throws ParameterException
+    public final <U extends Unit<U>, T extends DoubleScalar.Rel<U>> void setParameter(final ParameterType<U, T> parameterType,
+            final T value) throws ParameterException
     {
-        ParameterException.throwIf(value == null,
+        Throw.when(value == null, ParameterException.class,
                 "Parameter of type '%s' was assigned a null value, this is not allowed.", parameterType.getId());
         parameterType.check(value, this);
         saveSetParameter(parameterType, value);
@@ -104,7 +105,7 @@ public class BehavioralCharacteristics implements Serializable
      * @throws ParameterException If the value does not comply with constraints.
      */
     private <U extends Unit<U>, T extends DoubleScalar.Rel<U>> void saveSetParameter(
-        final AbstractParameterType<U, T> parameterType, final T value) throws ParameterException
+            final AbstractParameterType<U, T> parameterType, final T value) throws ParameterException
     {
         parameterType.checkCheck(value);
         if (this.parameters.containsKey(parameterType))
@@ -126,8 +127,8 @@ public class BehavioralCharacteristics implements Serializable
      */
     public final void resetParameter(final AbstractParameterType<?, ?> parameterType) throws ParameterException
     {
-        ParameterException.throwIf(!this.previous.containsKey(parameterType),
-            "Reset on parameter of type '%s' could not be performed, it was not set.", parameterType.getId());
+        Throw.when(!this.previous.containsKey(parameterType), ParameterException.class,
+                "Reset on parameter of type '%s' could not be performed, it was not set.", parameterType.getId());
         if (this.previous.get(parameterType) instanceof Empty)
         {
             // no value was set before last set, so make parameter type not set
@@ -150,10 +151,11 @@ public class BehavioralCharacteristics implements Serializable
      */
     @SuppressWarnings("checkstyle:designforextension")
     public <U extends Unit<U>, T extends DoubleScalar.Rel<U>> T getParameter(final ParameterType<U, T> parameterType)
-        throws ParameterException
+            throws ParameterException
     {
         checkContains(parameterType);
-        @SuppressWarnings("unchecked") // set methods guarantee matching of parameter type and value
+        @SuppressWarnings("unchecked")
+        // set methods guarantee matching of parameter type and value
         T result = (T) this.parameters.get(parameterType);
         return result;
     }
@@ -201,8 +203,8 @@ public class BehavioralCharacteristics implements Serializable
      */
     private void checkContains(final AbstractParameterType<?, ?> parameterType) throws ParameterException
     {
-        ParameterException.throwIf(!contains(parameterType), "Could not get parameter of type '%s' as it was not set.",
-            parameterType.getId());
+        Throw.when(!contains(parameterType), ParameterException.class,
+                "Could not get parameter of type '%s' as it was not set.", parameterType.getId());
     }
 
     /**

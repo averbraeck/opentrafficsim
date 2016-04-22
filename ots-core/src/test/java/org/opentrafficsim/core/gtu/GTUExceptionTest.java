@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
+import org.opentrafficsim.core.Throw;
 
 /**
  * Test the GTUException class.
@@ -54,16 +55,16 @@ public class GTUExceptionTest
     }
     
     /**
-     * Test the failIf method.
+     * Test the throwIf method.
      * @throws GTUException should not happen (this test has failed if it does)
      */
     @Test
-    public final void failIfTest() throws GTUException
+    public final void throwIfTest() throws GTUException
     {
         String message = "message";
         try
         {
-            GTUException.throwIf(true, message);
+            Throw.when(true, GTUException.class, message);
             fail("Previous statement should have thrown a GTUException");
         }
         catch (GTUException e)
@@ -71,6 +72,6 @@ public class GTUExceptionTest
             assertTrue(e.getMessage().endsWith(message));
         }
         
-        GTUException.throwIf(false, message);
+        Throw.when(false, GTUException.class, message);
     }
 }

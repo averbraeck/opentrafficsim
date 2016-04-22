@@ -21,6 +21,7 @@ import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check;
 
 /**
@@ -55,7 +56,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         // Check ParameterType construction (id, description, class, defaultValue)
         Length.Rel defaultValue = new Length.Rel(1.0, LengthUnit.SI);
         ParameterType<LengthUnit, Length.Rel> a =
-            new ParameterType<LengthUnit, Length.Rel>("a", "along", Length.Rel.class, defaultValue);
+                new ParameterType<LengthUnit, Length.Rel>("a", "along", Length.Rel.class, defaultValue);
         assertEquals("Parameter type id not properly set.", "a", a.getId());
         assertEquals("Parameter type description not properly set.", "along", a.getDescription());
         try
@@ -250,8 +251,8 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         @Override
         public void check(final Speed v, final BehavioralCharacteristics bca) throws ParameterException
         {
-            ParameterException.throwIf(bca.contains(v2) && v.si > bca.getParameter(v2).si,
-                "Value of v1 is larger than value of v2.");
+            Throw.when(bca.contains(v2) && v.si > bca.getParameter(v2).si, ParameterException.class,
+                    "Value of v1 is larger than value of v2.");
         }
     };
 
@@ -265,8 +266,8 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         @Override
         public void check(final Speed v, final BehavioralCharacteristics bca) throws ParameterException
         {
-            ParameterException.throwIf(bca.contains(v1) && v.si < bca.getParameter(v1).si,
-                "Value of v2 is smaller than value of v1.");
+            Throw.when(bca.contains(v1) && v.si < bca.getParameter(v1).si, ParameterException.class,
+                    "Value of v2 is smaller than value of v1.");
         }
     };
 
@@ -406,8 +407,8 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         BehavioralCharacteristics bc2 = new BehavioralCharacteristics();
         bc1.setParameter(a1, 4.0);
         bc2.setParameter(a2, 4.0);
-        assertEquals("Equal double values from different parameter types should be equal.", bc1.getParameter(a1), bc2
-            .getParameter(a2), 0.0);
+        assertEquals("Equal double values from different parameter types should be equal.", bc1.getParameter(a1),
+                bc2.getParameter(a2), 0.0);
 
         // equal DoubleScalar.Rel values should be equal from different characteristic sets
         ParameterTypeLinearDensity b1 = new ParameterTypeLinearDensity("b", "blong");
@@ -415,20 +416,20 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         bc1.setParameter(b1, new LinearDensity(4.0, LinearDensityUnit.SI));
         bc2.setParameter(b2, new LinearDensity(4.0, LinearDensityUnit.SI));
         assertEquals(
-            "Equal DoubleScalar.Rel values from different parameter types and different characteristics should be equal.",
-            bc1.getParameter(b1), bc2.getParameter(b2));
+                "Equal DoubleScalar.Rel values from different parameter types and different characteristics should be equal.",
+                bc1.getParameter(b1), bc2.getParameter(b2));
 
         // equal DoubleScalar.Rel values should be equal from the same characteristic set
         bc1.setParameter(b2, new LinearDensity(4.0, LinearDensityUnit.SI));
         assertEquals(
-            "Equal DoubleScalar.Rel values from different parameter types and the same characteristics should be equal.",
-            bc1.getParameter(b1), bc1.getParameter(b2));
+                "Equal DoubleScalar.Rel values from different parameter types and the same characteristics should be equal.",
+                bc1.getParameter(b1), bc1.getParameter(b2));
 
         // values of parameter types with different value classes are not equal
         bc1.setParameter(a1, 4.0);
         bc1.setParameter(b1, new LinearDensity(4.0, LinearDensityUnit.SI));
-        assertNotEquals("Values of different parameter type value classes should not be equal.", bc1.getParameter(a1), bc1
-            .getParameter(b1));
+        assertNotEquals("Values of different parameter type value classes should not be equal.", bc1.getParameter(a1),
+                bc1.getParameter(b1));
 
     }
 
@@ -484,7 +485,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
      */
     @Test
     public final void checkDefaultValues() throws InstantiationException, IllegalAccessException, IllegalArgumentException,
-        InvocationTargetException, NoSuchMethodException, SecurityException
+            InvocationTargetException, NoSuchMethodException, SecurityException
     {
         // @formatter:off
         checkDefaultValuesPerClass(ParameterType.class,              new Speed(3, SpeedUnit.SI));
@@ -512,8 +513,8 @@ public class BehavioralCharacteristicsTest implements CheckInterface
      * @throws InstantiationException Reflection.
      */
     private <R extends AbstractParameterType<?, ?>> void checkDefaultValuesPerClass(final Class<R> clazz,
-        final Object defaultValue) throws InstantiationException, IllegalAccessException, IllegalArgumentException,
-        InvocationTargetException, NoSuchMethodException, SecurityException
+            final Object defaultValue) throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+            InvocationTargetException, NoSuchMethodException, SecurityException
     {
 
         // none set
@@ -521,8 +522,8 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         if (clazz.equals(ParameterType.class))
         {
             ld =
-                clazz.getDeclaredConstructor(String.class, String.class, Class.class).newInstance("v", "vcong",
-                    getClass(defaultValue));
+                    clazz.getDeclaredConstructor(String.class, String.class, Class.class).newInstance("v", "vcong",
+                            getClass(defaultValue));
         }
         else
         {
@@ -543,14 +544,12 @@ public class BehavioralCharacteristicsTest implements CheckInterface
             if (clazz.equals(ParameterType.class))
             {
                 ld =
-                    clazz.getDeclaredConstructor(String.class, String.class, Class.class, Check.class).newInstance("v",
-                        "vcong", getClass(defaultValue), POSITIVE);
+                        clazz.getDeclaredConstructor(String.class, String.class, Class.class, Check.class).newInstance("v",
+                                "vcong", getClass(defaultValue), POSITIVE);
             }
             else
             {
-                ld =
-                    clazz.getDeclaredConstructor(String.class, String.class, Check.class)
-                        .newInstance("v", "vcong", POSITIVE);
+                ld = clazz.getDeclaredConstructor(String.class, String.class, Check.class).newInstance("v", "vcong", POSITIVE);
             }
             try
             {
@@ -567,14 +566,14 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         if (clazz.equals(ParameterType.class))
         {
             ld =
-                clazz.getDeclaredConstructor(String.class, String.class, Class.class, DoubleScalar.Rel.class).newInstance(
-                    "v", "vcong", getClass(defaultValue), defaultValue);
+                    clazz.getDeclaredConstructor(String.class, String.class, Class.class, DoubleScalar.Rel.class).newInstance(
+                            "v", "vcong", getClass(defaultValue), defaultValue);
         }
         else
         {
             ld =
-                clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue)).newInstance("v", "vcong",
-                    defaultValue);
+                    clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue)).newInstance("v", "vcong",
+                            defaultValue);
         }
         try
         {
@@ -590,14 +589,14 @@ public class BehavioralCharacteristicsTest implements CheckInterface
             if (clazz.equals(ParameterType.class))
             {
                 ld =
-                    clazz.getDeclaredConstructor(String.class, String.class, Class.class, DoubleScalar.Rel.class,
-                        Check.class).newInstance("v", "vcong", getClass(defaultValue), defaultValue, POSITIVE);
+                        clazz.getDeclaredConstructor(String.class, String.class, Class.class, DoubleScalar.Rel.class,
+                                Check.class).newInstance("v", "vcong", getClass(defaultValue), defaultValue, POSITIVE);
             }
             else
             {
                 ld =
-                    clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue), Check.class)
-                        .newInstance("v", "vcong", defaultValue, POSITIVE);
+                        clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue), Check.class)
+                                .newInstance("v", "vcong", defaultValue, POSITIVE);
             }
             try
             {

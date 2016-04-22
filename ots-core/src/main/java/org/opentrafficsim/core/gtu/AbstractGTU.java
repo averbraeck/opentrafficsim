@@ -9,6 +9,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -103,22 +104,24 @@ public abstract class AbstractGTU implements GTU
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractGTU(final String id, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
-        final StrategicalPlanner strategicalPlanner, final Perception perception, final DirectedPoint initialLocation,
-        final Speed initialSpeed, final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
+            final StrategicalPlanner strategicalPlanner, final Perception perception, final DirectedPoint initialLocation,
+            final Speed initialSpeed, final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
     {
-        GTUException.throwIf(id == null, "id is null");
-        GTUException.throwIf(gtuType == null, "gtuType is null");
-        GTUException.throwIf(gtuType.equals(GTUType.NONE), "gtuType of an actual GTU cannot be GTUType.NONE");
-        GTUException.throwIf(gtuType.equals(GTUType.ALL), "gtuType of an actual GTU cannot be GTUType.ALL");
-        GTUException.throwIf(perceivableContext == null, "perceivableContext is null for GTU with id " + id);
-        GTUException.throwIf(perceivableContext.containsGtuId(id), "GTU with id " + id
-            + " already registered in perceivableContext " + perceivableContext.getId());
-        GTUException.throwIf(simulator == null, "simulator is null for GTU with id " + id);
-        GTUException.throwIf(strategicalPlanner == null, "strategicalPlanner is null for GTU with id " + id);
-        GTUException.throwIf(perception == null, "perception is null for GTU with id " + id);
-        GTUException.throwIf(initialLocation == null | Double.isNaN(initialLocation.x) | Double.isNaN(initialLocation.y)
-            | Double.isNaN(initialLocation.z), "initialLocation " + initialLocation + " invalid for GTU with id " + id);
-        GTUException.throwIf(initialSpeed == null, "initialSpeed is null for GTU with id " + id);
+        Throw.when(id == null, GTUException.class, "id is null");
+        Throw.when(gtuType == null, GTUException.class, "gtuType is null");
+        Throw.when(gtuType.equals(GTUType.NONE), GTUException.class, "gtuType of an actual GTU cannot be GTUType.NONE");
+        Throw.when(gtuType.equals(GTUType.ALL), GTUException.class, "gtuType of an actual GTU cannot be GTUType.ALL");
+        Throw.when(perceivableContext == null, GTUException.class, "perceivableContext is null for GTU with id %s", id);
+        Throw.when(perceivableContext.containsGtuId(id), GTUException.class,
+                "GTU with id %s already registered in perceivableContext %s", id, perceivableContext.getId());
+        Throw.when(simulator == null, GTUException.class, "simulator is null for GTU with id %s", id);
+        Throw.when(strategicalPlanner == null, GTUException.class, "strategicalPlanner is null for GTU with id %s", id);
+        Throw.when(perception == null, GTUException.class, "perception is null for GTU with id %s", id);
+        Throw.when(
+                initialLocation == null | Double.isNaN(initialLocation.x) | Double.isNaN(initialLocation.y)
+                        | Double.isNaN(initialLocation.z), GTUException.class, "initialLocation %s invalid for GTU with id %s",
+                initialLocation, id);
+        Throw.when(initialSpeed == null, GTUException.class, "initialSpeed is null for GTU with id %s", id);
 
         this.id = id;
         this.gtuType = gtuType;
@@ -135,7 +138,7 @@ public abstract class AbstractGTU implements GTU
             // Schedule the first move now; scheduling so super constructors can still finish.
             // Store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
             this.nextMoveEvent =
-                new SimEvent<>(new OTSSimTimeDouble(now), this, this, "move", new Object[]{initialLocation});
+                    new SimEvent<>(new OTSSimTimeDouble(now), this, this, "move", new Object[] { initialLocation });
             this.simulator.scheduleEvent(this.nextMoveEvent);
         }
 
@@ -149,8 +152,7 @@ public abstract class AbstractGTU implements GTU
             }
             else
             {
-                OTSPoint3D p2 =
-                    new OTSPoint3D(p.x + 1E-6 * Math.cos(p.getRotZ()), p.y + 1E-6 * Math.sin(p.getRotZ()), p.z);
+                OTSPoint3D p2 = new OTSPoint3D(p.x + 1E-6 * Math.cos(p.getRotZ()), p.y + 1E-6 * Math.sin(p.getRotZ()), p.z);
                 OTSLine3D path = new OTSLine3D(new OTSPoint3D(p), p2);
                 this.operationalPlan = OperationalPlanBuilder.buildConstantSpeedPlan(this, path, now, initialSpeed);
             }
@@ -177,11 +179,11 @@ public abstract class AbstractGTU implements GTU
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractGTU(final IdGenerator idGenerator, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
-        final StrategicalPlanner strategicalPlanner, final Perception perception, final DirectedPoint initialLocation,
-        final Speed initialSpeed, final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
+            final StrategicalPlanner strategicalPlanner, final Perception perception, final DirectedPoint initialLocation,
+            final Speed initialSpeed, final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
     {
-        this(generateId(idGenerator), gtuType, simulator, strategicalPlanner, perception, initialLocation,
-            initialSpeed, perceivableContext);
+        this(generateId(idGenerator), gtuType, simulator, strategicalPlanner, perception, initialLocation, initialSpeed,
+                perceivableContext);
     }
 
     /**
@@ -192,7 +194,7 @@ public abstract class AbstractGTU implements GTU
      */
     private static String generateId(final IdGenerator idGenerator) throws GTUException
     {
-        GTUException.throwIf(idGenerator == null, "AbstractGTU.<init>: idGenerator is null");
+        Throw.when(idGenerator == null, GTUException.class, "AbstractGTU.<init>: idGenerator is null");
         return idGenerator.nextId();
     }
 
@@ -228,8 +230,8 @@ public abstract class AbstractGTU implements GTU
      * @throws ParameterException in there is a parameter problem
      */
     @SuppressWarnings("checkstyle:designforextension")
-    protected void move(final DirectedPoint fromLocation) throws SimRuntimeException, OperationalPlanException,
-        GTUException, NetworkException, ParameterException
+    protected void move(final DirectedPoint fromLocation) throws SimRuntimeException, OperationalPlanException, GTUException,
+            NetworkException, ParameterException
     {
         Time.Abs now = this.simulator.getSimulatorTime().getTime();
 
@@ -252,8 +254,8 @@ public abstract class AbstractGTU implements GTU
         // schedule the next move at the end of the current operational plan
         // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
         this.nextMoveEvent =
-            new SimEvent<>(new OTSSimTimeDouble(now.plus(this.operationalPlan.getTotalDuration())), this, this, "move",
-                new Object[]{this.operationalPlan.getEndLocation()});
+                new SimEvent<>(new OTSSimTimeDouble(now.plus(this.operationalPlan.getTotalDuration())), this, this, "move",
+                        new Object[] { this.operationalPlan.getEndLocation() });
         this.simulator.scheduleEvent(this.nextMoveEvent);
     }
 
@@ -269,7 +271,7 @@ public abstract class AbstractGTU implements GTU
      */
     @SuppressWarnings("checkstyle:designforextension")
     protected void interruptMove() throws SimRuntimeException, OperationalPlanException, GTUException, NetworkException,
-        ParameterException
+            ParameterException
     {
         this.simulator.cancelEvent(this.nextMoveEvent);
         move(this.operationalPlan.getLocation(this.simulator.getSimulatorTime().getTime()));
@@ -354,8 +356,7 @@ public abstract class AbstractGTU implements GTU
         }
         try
         {
-            return this.odometer.plus(this.operationalPlan.getTraveledDistance(this.simulator.getSimulatorTime()
-                .getTime()));
+            return this.odometer.plus(this.operationalPlan.getTraveledDistance(this.simulator.getSimulatorTime().getTime()));
         }
         catch (OperationalPlanException ope)
         {
@@ -365,7 +366,7 @@ public abstract class AbstractGTU implements GTU
 
     /** {@inheritDoc} */
     @Override
-    public final Speed getVelocity(final Time.Abs time)
+    public final Speed getSpeed(final Time.Abs time)
     {
         if (this.operationalPlan == null)
         {
@@ -385,17 +386,17 @@ public abstract class AbstractGTU implements GTU
             catch (OperationalPlanException ope2)
             {
                 // this should not happen at all...
-                throw new RuntimeException(
-                    "getVelocity() could not derive a valid velocity for the current operationalPlan", ope2);
+                throw new RuntimeException("getVelocity() could not derive a valid velocity for the current operationalPlan",
+                        ope2);
             }
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Speed getVelocity()
+    public final Speed getSpeed()
     {
-        return getVelocity(this.simulator.getSimulatorTime().getTime());
+        return getSpeed(this.simulator.getSimulatorTime().getTime());
     }
 
     /** {@inheritDoc} */
@@ -421,7 +422,7 @@ public abstract class AbstractGTU implements GTU
             {
                 // this should not happen at all...
                 throw new RuntimeException(
-                    "getAcceleration() could not derive a valid acceleration for the current operationalPlan", ope2);
+                        "getAcceleration() could not derive a valid acceleration for the current operationalPlan", ope2);
             }
         }
     }
@@ -511,7 +512,7 @@ public abstract class AbstractGTU implements GTU
         if (!getGTUType().hasTurnIndicator())
         {
             throw new GTUException("trying to set the TurnIndicatorStatus on GTU: " + getId() + ", but GTUType "
-                + getGTUType().getId() + " has no TurnIndicator");
+                    + getGTUType().getId() + " has no TurnIndicator");
         }
         this.turnIndicatorStatus = turnIndicatorStatus;
     }

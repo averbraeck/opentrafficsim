@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.Throw;
 
 /**
  * Defines meta-information of a parameter, defining the parameter uniquely.
@@ -284,7 +285,7 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
         {
             return;
         }
-        ParameterException.throwIf(this.check.fails(value.si), this.check.failMessage(), this.id);
+        Throw.when(this.check.fails(value.si), ParameterException.class, this.check.failMessage(), this.id);
     }
 
     /**

@@ -130,9 +130,9 @@ public class IDMPlusTest implements UNITS
         HeadwayGTU leader =
                 new HeadwayGTU(leaderCar11.getId(), leaderCar11.getGTUType(), new Length.Rel(leaderPosition.getSI()
                         - referenceCar10.getLength().getSI() - initialPosition.getSI(), LengthUnit.SI),
-                        leaderCar11.getVelocity(), null);
+                        leaderCar11.getSpeed(), null);
         cfmr =
-                carFollowingModel.computeAccelerationStep(referenceCar10, leaderCar11.getVelocity(), leader.getDistance(),
+                carFollowingModel.computeAccelerationStep(referenceCar10, leaderCar11.getSpeed(), leader.getDistance(),
                         lookAhead, speedLimit);
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
         leaderPosition =
@@ -155,7 +155,7 @@ public class IDMPlusTest implements UNITS
         HeadwayGTU leader2 =
                 new HeadwayGTU(leaderCar12.getId(), leaderCar12.getGTUType(), new Length.Rel(leaderPosition.getSI()
                         - referenceCar10.getLength().getSI() - initialPosition.getSI(), LengthUnit.SI),
-                        leaderCar12.getVelocity(), null);
+                        leaderCar12.getSpeed(), null);
         leaders.add(leader2); // Put the 2nd leader in first place
         leaders.add(leader);
         cfmr =
@@ -191,7 +191,7 @@ public class IDMPlusTest implements UNITS
         leader =
                 new HeadwayGTU(leaderCar21.getId(), leaderCar21.getGTUType(), new Length.Rel(leaderPosition.getSI()
                         - referenceCar20.getLength().getSI() - initialPosition.getSI(), LengthUnit.SI),
-                        leaderCar21.getVelocity(), null);
+                        leaderCar21.getSpeed(), null);
         leaders.add(leader);
         cfmr =
                 carFollowingModel.computeDualAccelerationStep(referenceCar20, leaders, lookAhead, speedLimit)
@@ -217,7 +217,7 @@ public class IDMPlusTest implements UNITS
             leader =
                     new HeadwayGTU(leaderCar22.getId(), leaderCar22.getGTUType(), new Length.Rel(leaderPosition.getSI()
                             - referenceCar20.getLength().getSI() - initialPosition.getSI(), LengthUnit.SI),
-                            leaderCar22.getVelocity(), null);
+                            leaderCar22.getSpeed(), null);
             leaders.add(leader);
             cfmr =
                     carFollowingModel.computeDualAccelerationStep(referenceCar20, leaders, lookAhead, speedLimit)
@@ -273,7 +273,7 @@ public class IDMPlusTest implements UNITS
             leader =
                     new HeadwayGTU(leaderCar31.getId(), leaderCar31.getGTUType(), new Length.Rel(leaderPosition.getSI()
                             - referenceCar30.getLength().getSI() - initialPosition.getSI(), LengthUnit.SI),
-                            leaderCar31.getVelocity(), null);
+                            leaderCar31.getSpeed(), null);
             leaders.add(leader);
             // System.out.println("referenceCar: " + referenceCar);
             // System.out.println("leaderCar   : " + leaderCar);
@@ -343,7 +343,7 @@ public class IDMPlusTest implements UNITS
                         + " before the rear of the leader",
                         leaderCar41.position(lane, referenceCar40.getRear()).getSI() - s0.getSI(), position, 0.2);
                 assertEquals("After 20 seconds the speed of the referenceCar should be almost 0", 0, referenceCar40
-                        .getVelocity().getSI(), 0.2);
+                        .getSpeed().getSI(), 0.2);
             }
         }
         referenceCar40.destroy();

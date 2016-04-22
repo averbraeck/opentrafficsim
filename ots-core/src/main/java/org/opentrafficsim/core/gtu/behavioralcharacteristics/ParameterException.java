@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
-import java.util.Arrays;
-import java.util.IllegalFormatException;
 
 /**
  * Throwable for exceptions regarding parameters.
@@ -9,8 +7,7 @@ import java.util.IllegalFormatException;
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, 
- *          initial version Apr 13, 2016 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
@@ -67,30 +64,4 @@ public class ParameterException extends Exception
     {
         super(message, cause, enableSuppression, writableStackTrace);
     }
-
-    /**
-     * Throw an Exception if a condition is met, e.g. for pre- and postcondition checking. Use e.g. as follows:<br>
-     * <code>ParameterException.throwIf(value == null, "value cannot be null for id = %s", id);</code>
-     * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
-     * @param message the message to use in the exception, with potential formatting identifiers
-     * @param args potential values to use for the formatting identifiers
-     * @throws ParameterException the exception to throw on true condition
-     */
-    public static void throwIf(final boolean condition, final String message, final Object... args) throws ParameterException
-    {
-        if (condition)
-        {
-            StackTraceElement[] ste = new Exception().getStackTrace();
-            String where = ste[1].getClassName() + "." + ste[1].getMethodName() + " (" + ste[1].getLineNumber() + "): ";
-            try
-            {
-                throw new ParameterException(where + String.format(message, args));
-            }
-            catch (IllegalFormatException exception)
-            {
-                throw new ParameterException(where + message + "[FormatException; args=" + Arrays.asList(args) + "]");
-            }
-        }
-    }
-
 }

@@ -256,6 +256,13 @@ class TestGTU extends AbstractGTU
 
     /** {@inheritDoc} */
     @Override
+    public RelativePosition getCenter()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Map<TYPE, RelativePosition> getRelativePositions()
     {
         return null;

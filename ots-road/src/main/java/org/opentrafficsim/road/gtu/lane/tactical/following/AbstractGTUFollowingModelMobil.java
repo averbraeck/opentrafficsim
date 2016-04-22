@@ -84,7 +84,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
             {
                 // This one is behind; assume our CFM holds also for the GTU behind us
                 AccelerationStep as =
-                        gfm.computeAccelerationStep(headway.getSpeed(), referenceGTU.getVelocity(), new Length.Rel(
+                        gfm.computeAccelerationStep(headway.getSpeed(), referenceGTU.getSpeed(), new Length.Rel(
                                 -headway.getDistance().si, LengthUnit.SI), speedLimit, referenceGTU.getSimulator()
                                 .getSimulatorTime().getTime(), stepSize);
                 if (null == followerAccelerationStep || as.getAcceleration().lt(followerAccelerationStep.getAcceleration()))
@@ -147,7 +147,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
             distance = headway;
             leaderOrBlockSpeed = leaderSpeed;
         }
-        final Speed followerSpeed = gtu.getVelocity();
+        final Speed followerSpeed = gtu.getSpeed();
         final Speed followerMaximumSpeed = gtu.getMaximumVelocity();
         Acceleration newAcceleration =
                 computeAcceleration(followerSpeed, followerMaximumSpeed, leaderOrBlockSpeed, distance, speedLimit, stepSize);
@@ -191,7 +191,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
         Length.Rel stopDistance =
                 new Length.Rel(gtu.getMaximumVelocity().si * gtu.getMaximumVelocity().si
                         / (2.0 * getMaximumSafeDeceleration().si), LengthUnit.SI);
-        return computeAccelerationStep(gtu, gtu.getVelocity(), stopDistance, maxDistance, speedLimit, stepSize);
+        return computeAccelerationStep(gtu, gtu.getSpeed(), stopDistance, maxDistance, speedLimit, stepSize);
         /*-
         return computeAcceleration(gtu, gtu.getVelocity(), Calc.speedSquaredDividedByDoubleAcceleration(gtu
             .getMaximumVelocity(), maximumSafeDeceleration()), speedLimit);

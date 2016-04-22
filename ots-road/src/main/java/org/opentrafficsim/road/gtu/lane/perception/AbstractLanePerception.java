@@ -14,6 +14,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -356,7 +357,7 @@ public abstract class AbstractLanePerception implements LanePerception
      */
     private Headway forwardHeadway(final LanePathInfo lpi, final Length.Rel maxDistance) throws GTUException, NetworkException
     {
-        GTUException.throwIf(maxDistance.le(Length.Rel.ZERO), "forwardHeadway: maxDistance should be positive");
+        Throw.when(maxDistance.le(Length.Rel.ZERO), GTUException.class, "forwardHeadway: maxDistance should be positive");
 
         int ldIndex = 0;
         LaneDirection ld = lpi.getReferenceLaneDirection();
@@ -457,7 +458,7 @@ public abstract class AbstractLanePerception implements LanePerception
         }
         double distanceSI = Math.abs(laneBasedGTU.position(lane, laneBasedGTU.getRear()).si - startPosSI);
         return new HeadwayGTU(laneBasedGTU.getId(), laneBasedGTU.getGTUType(), new Length.Rel(cumDistSI + distanceSI,
-                LengthUnit.SI), laneBasedGTU.getVelocity(), laneBasedGTU.getAcceleration());
+                LengthUnit.SI), laneBasedGTU.getSpeed(), laneBasedGTU.getAcceleration());
     }
 
     /**
@@ -476,7 +477,7 @@ public abstract class AbstractLanePerception implements LanePerception
      */
     private Headway backwardHeadway(final Length.Rel maxDistance) throws GTUException, NetworkException
     {
-        GTUException.throwIf(maxDistance.ge(Length.Rel.ZERO), "backwardHeadway: maxDistance should be negative");
+        Throw.when(maxDistance.ge(Length.Rel.ZERO), GTUException.class, "backwardHeadway: maxDistance should be negative");
         Time.Abs time = this.gtu.getSimulator().getSimulatorTime().getTime();
         double maxDistanceSI = maxDistance.si;
         Headway foundHeadway = new HeadwayDistance(-maxDistanceSI);
@@ -530,7 +531,7 @@ public abstract class AbstractLanePerception implements LanePerception
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
                 return new HeadwayGTU(otherGTU.getId(), otherGTU.getGTUType(), new Length.Rel(distanceM, LengthUnit.SI),
-                        otherGTU.getVelocity(), null);
+                        otherGTU.getSpeed(), null);
             }
             return new HeadwayDistance(Double.MAX_VALUE);
         }
@@ -617,7 +618,7 @@ public abstract class AbstractLanePerception implements LanePerception
                                 || (posMin >= gtuMin && posMin <= gtuMax) || (posMax >= gtuMin && posMax <= gtuMax))
                         {
                             headwayCollection.add(new HeadwayGTU(otherGTU.getId(), otherGTU.getGTUType(), overlapFront,
-                                    overlap, overlapRear, otherGTU.getVelocity(), otherGTU.getAcceleration()));
+                                    overlap, overlapRear, otherGTU.getSpeed(), otherGTU.getAcceleration()));
                         }
                     }
                 }

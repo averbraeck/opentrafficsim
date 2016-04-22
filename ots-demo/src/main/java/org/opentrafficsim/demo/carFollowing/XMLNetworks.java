@@ -23,7 +23,6 @@ import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
-import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -76,15 +75,12 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingChange0TacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.LaneFactory;
@@ -115,6 +111,9 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  */
 public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
 {
+    /** */
+    private static final long serialVersionUID = 20160422L;
+    
     /** The model. */
     private XMLNetworkModel model;
 
@@ -129,6 +128,9 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
         this.properties.add(new SelectionProperty("Tactical planner",
                 "<html>The tactical planner determines if a lane change is desired and possible.</html>", new String[] {
                         "MOBIL", "Verbraeck", "Verbraeck0" }, 0, false, 600));
+        this.properties.add(new SelectionProperty("Lane changing",
+                "<html>The lane change friendliness (if used -- eg just for MOBIL.</html>", new String[] {
+                        "Egoistic", "Altruistic" }, 0, false, 600));
         this.properties.add(new ContinuousProperty("Flow per input lane", "Traffic flow per input lane", 500d, 0d, 3000d,
                 "%.0f veh/h", false, 1));
     }

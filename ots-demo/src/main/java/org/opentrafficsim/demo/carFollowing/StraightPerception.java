@@ -880,7 +880,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
 
             // see if we have to continue standing still. In that case, generate a stand still plan
             if (accelerationStep.getAcceleration().si < 1E-6
-                    && laneBasedGTU.getVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
+                    && laneBasedGTU.getSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
             {
                 return new OperationalPlan(laneBasedGTU, locationAtStartTime, startTime, accelerationStep.getDuration());
             }
@@ -899,7 +899,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                 operationalPlanSegmentList.add(segment);
             }
             OperationalPlan op =
-                    new OperationalPlan(laneBasedGTU, lanePathInfo.getPath(), startTime, gtu.getVelocity(),
+                    new OperationalPlan(laneBasedGTU, lanePathInfo.getPath(), startTime, gtu.getSpeed(),
                             operationalPlanSegmentList);
             return op;
         }

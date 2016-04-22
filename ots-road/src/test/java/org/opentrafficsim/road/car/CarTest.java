@@ -97,7 +97,7 @@ public class CarTest implements UNITS
         assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(),
             referenceCar.position(lane, referenceCar.getReference(), initialTime).getSI(), 0.0001);
         assertEquals("The car should store it's initial speed", initialSpeed.getSI(),
-            referenceCar.getVelocity(initialTime).getSI(), 0.00001);
+            referenceCar.getSpeed(initialTime).getSI(), 0.00001);
         assertEquals("The car should have an initial acceleration equal to 0", 0,
             referenceCar.getAcceleration(initialTime).getSI(), 0.0001);
         // TODO check with following model as part of tactical planner

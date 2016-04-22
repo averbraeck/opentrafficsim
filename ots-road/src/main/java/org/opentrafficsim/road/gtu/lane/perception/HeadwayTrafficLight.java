@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.object.TrafficLight;
 
@@ -44,7 +45,7 @@ public class HeadwayTrafficLight extends AbstractHeadway
      */
     private static String id(final TrafficLight trafficLight) throws GTUException
     {
-        GTUException.throwIf(trafficLight == null, "Headway constructor: trafficLight == null");
+        Throw.when(trafficLight == null, GTUException.class, "Headway constructor: trafficLight == null");
         return trafficLight.toString();
     }
 

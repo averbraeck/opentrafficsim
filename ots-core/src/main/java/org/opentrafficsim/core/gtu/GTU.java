@@ -74,35 +74,33 @@ public interface GTU extends Locatable, Serializable
     /** @return the rear position of the GTU, relative to its reference point. */
     RelativePosition getRear();
 
-    /**
-     * @param time the time for which the velocity needs to be calculated.
-     * @return the acceleration of the GTU at the given time, combining longitudinal, lateral and vertical acceleration
-     *         components.
-     * @throws GTUException when the time is outside the current operational plan's interval
-     */
-    Speed getVelocity(final Time.Abs time) throws GTUException;
-
-    /**
-     * @return the current velocity of the GTU, combining longitudinal, lateral and vertical speed components.
-     */
-    Speed getVelocity();
+    /** @return the center position of the GTU, relative to its reference point. */
+    RelativePosition getCenter();
 
     /** @return the positions for this GTU. */
     Map<RelativePosition.TYPE, RelativePosition> getRelativePositions();
 
-    /** Destroy the GTU from the simulation and animation. */
-    void destroy();
+    /**
+     * @param time the time for which the speed needs to be calculated.
+     * @return the speed of the GTU at the given time, along the direction of movement.
+     * @throws GTUException when the time is outside the current operational plan's interval
+     */
+    Speed getSpeed(final Time.Abs time) throws GTUException;
+
+    /**
+     * @return the current speed of the GTU, along the direction of movement.
+     */
+    Speed getSpeed();
 
     /**
      * @param time the time for which the acceleration needs to be calculated.
-     * @return the acceleration of the GTU at the given time, combining longitudinal, lateral and vertical acceleration
-     *         components.
+     * @return the acceleration of the GTU at the given time, along the direction of movement.
      * @throws GTUException when the time is outside the current operational plan's interval
      */
     Acceleration getAcceleration(final Time.Abs time) throws GTUException;
 
     /**
-     * @return the current acceleration of the GTU, combining longitudinal, lateral and vertical acceleration components.
+     * @return the current acceleration of the GTU, along the direction of movement.
      */
     Acceleration getAcceleration();
 
@@ -111,7 +109,7 @@ public interface GTU extends Locatable, Serializable
 
     /** @return Behavioral characteristics. */
     BehavioralCharacteristics getBehavioralCharacteristics();
-    
+
     /**
      * @return strategicalPlanner the planner responsible for the overall 'mission' of the GTU, usually indicating where it
      *         needs to go. It operates by instantiating tactical planners to do the work.
@@ -126,17 +124,20 @@ public interface GTU extends Locatable, Serializable
 
     /** @return the perception module of this GTU */
     Perception getPerception();
-    
+
     /** @return the status of the turn indicator. */
     TurnIndicatorStatus getTurnIndicatorStatus();
-    
-    /** 
+
+    /**
      * Set the status of the turn indicator.
-     * @param turnIndicatorStatus the new status of the turn indicator. 
+     * @param turnIndicatorStatus the new status of the turn indicator.
      * @throws GTUException when GTUType does not have a turn indicator
      */
     void setTurnIndicatorStatus(TurnIndicatorStatus turnIndicatorStatus) throws GTUException;
-    
+
+    /** Destroy the GTU from the simulation and animation. */
+    void destroy();
+
     /** {@inheritDoc} */
     @Override
     DirectedPoint getLocation();
