@@ -101,7 +101,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     {
         return computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, headway, speedLimit, this.stepSize);
     }
-    
+
     /** {@inheritDoc} */
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
         final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit, final Time.Rel stepSize)
@@ -120,10 +120,9 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
         double s = headway.si > 0.0 ? headway.si : 1E-99;
         Acceleration aInteraction = new Acceleration(this.a.si * (sStar / s) * (sStar / s), AccelerationUnit.SI);
         Acceleration aFree =
-            new Acceleration(this.a.si
-                * (1.0 - Math.pow(followerSpeed.si / vDes(speedLimit, followerMaximumSpeed).si, 4)),
+            new Acceleration(this.a.si * (1.0 - Math.pow(followerSpeed.si / vDes(speedLimit, followerMaximumSpeed).si, 4)),
                 AccelerationUnit.SI);
-        // limit deceleration for free term  (= aFree)
+        // limit deceleration for free term (= aFree)
         if (aFree.si < -0.5)
         {
             aFree = new Acceleration(-0.5, AccelerationUnit.SI);
@@ -161,16 +160,15 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     @Override
     public final String getLongName()
     {
-        return String.format("%s (a=%.1fm/s\u00b2, b=%.1fm/s\u00b2, s0=%.1fm, tSafe=%.1fs, delta=%.2f)", getName(),
-            this.a.getSI(), this.b.getSI(), this.s0.getSI(), this.tSafe.getSI(), this.delta);
+        return String.format("%s (a=%.1fm/s\u00b2, b=%.1fm/s\u00b2, s0=%.1fm, tSafe=%.1fs, delta=%.2f)", getName(), this.a
+            .getSI(), this.b.getSI(), this.s0.getSI(), this.tSafe.getSI(), this.delta);
     }
 
     // The following is inherited from CarFollowingModel
-    
+
     /** {@inheritDoc} */
     @Override
-    public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final Speed speedLimit, 
-        final boolean enforcement, final Speed maximumVehicleSpeed)
+    public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedInfo speedInfo)
         throws ParameterException
     {
         return null;
@@ -178,34 +176,32 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
 
     /** {@inheritDoc} */
     @Override
-    public final Rel desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed) 
-            throws ParameterException
+    public final Rel desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
+        throws ParameterException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration freeAcceleration(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, 
-        final Speed speedLimit, final boolean enforcement, final Speed maximumVehicleSpeed) throws ParameterException
+    public final Acceleration freeAcceleration(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed,
+        final SpeedInfo speedInfo) throws ParameterException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics, 
-        final Speed speed, final Speed speedLimit, final boolean enforcement, final Speed maximumVehicleSpeed, 
-        final Rel headway, final Speed leaderSpeed) throws ParameterException
+    public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
+        final Speed speed, final SpeedInfo speedInfo, final Rel headway, final Speed leaderSpeed) throws ParameterException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics, 
-        final Speed speed, final Speed speedLimit, final boolean enforcement, final Speed maximumVehicleSpeed, 
-        final SortedMap<Rel, Speed> leaders) throws ParameterException
+    public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
+        final Speed speed, final SpeedInfo speedInfo, final SortedMap<Rel, Speed> leaders) throws ParameterException
     {
         return null;
     }
@@ -215,7 +211,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     public final String toString()
     {
         return "IDMOld [s0=" + this.s0 + ", a=" + this.a + ", b=" + this.b + ", tSafe=" + this.tSafe + ", stepSize="
-                + this.stepSize + ", delta=" + this.delta + "]";
+            + this.stepSize + ", delta=" + this.delta + "]";
     }
 
 }

@@ -108,7 +108,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     {
         return computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, headway, speedLimit, this.stepSize);
     }
-    
+
     /** {@inheritDoc} */
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
         final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit, final Time.Rel stepSize)
@@ -119,7 +119,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
         {
             leftComponent = 0;
         }
-        // limit deceleration for free term  (= leftComponent)
+        // limit deceleration for free term (= leftComponent)
         if (leftComponent * this.a.si < -0.5)
         {
             leftComponent = -0.5 / this.a.si;
@@ -178,16 +178,15 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     @Override
     public final String getLongName()
     {
-        return String.format("%s (a=%.1fm/s\u00b2, b=%.1fm/s\u00b2, s0=%.1fm, tSafe=%.1fs, delta=%.2f)", getName(),
-            this.a.getSI(), this.b.getSI(), this.s0.getSI(), this.tSafe.getSI(), this.delta);
+        return String.format("%s (a=%.1fm/s\u00b2, b=%.1fm/s\u00b2, s0=%.1fm, tSafe=%.1fs, delta=%.2f)", getName(), this.a
+            .getSI(), this.b.getSI(), this.s0.getSI(), this.tSafe.getSI(), this.delta);
     }
-    
-// The following is inherited from CarFollowingModel
-    
+
+    // The following is inherited from CarFollowingModel
+
     /** {@inheritDoc} */
     @Override
-    public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final Speed speedLimit, 
-        final boolean enforcement, final Speed maximumVehicleSpeed)
+    public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedInfo speedInfo)
         throws ParameterException
     {
         return null;
@@ -195,34 +194,32 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
 
     /** {@inheritDoc} */
     @Override
-    public final Rel desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed) 
-            throws ParameterException
+    public final Rel desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
+        throws ParameterException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration freeAcceleration(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, 
-        final Speed speedLimit, final boolean enforcement, final Speed maximumVehicleSpeed) throws ParameterException
+    public final Acceleration freeAcceleration(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed,
+        final SpeedInfo speedInfo) throws ParameterException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics, 
-        final Speed speed, final Speed speedLimit, final boolean enforcement, final Speed maximumVehicleSpeed, 
-        final Rel headway, final Speed leaderSpeed) throws ParameterException
+    public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
+        final Speed speed, final SpeedInfo speedInfo, final Rel headway, final Speed leaderSpeed) throws ParameterException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics, 
-        final Speed speed, final Speed speedLimit, final boolean enforcement, final Speed maximumVehicleSpeed, 
-        final SortedMap<Rel, Speed> leaders) throws ParameterException
+    public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
+        final Speed speed, final SpeedInfo speedInfo, final SortedMap<Rel, Speed> leaders) throws ParameterException
     {
         return null;
     }
@@ -232,7 +229,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     public final String toString()
     {
         return "IDMPlusOld [s0=" + this.s0 + ", a=" + this.a + ", b=" + this.b + ", tSafe=" + this.tSafe + ", delta="
-                + this.delta + ", stepSize=" + this.stepSize + "]";
+            + this.delta + ", stepSize=" + this.stepSize + "]";
     }
 
 }

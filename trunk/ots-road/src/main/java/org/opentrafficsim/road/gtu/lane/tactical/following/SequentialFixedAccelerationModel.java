@@ -183,12 +183,11 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
         return "Fixed sequential acceleration model";
     }
 
-// The following is inherited from CarFollowingModel
-    
+    // The following is inherited from CarFollowingModel
+
     /** {@inheritDoc} */
     @Override
-    public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final Speed speedLimit, 
-        final boolean enforcement, final Speed maximumVehicleSpeed)
+    public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedInfo speedInfo)
         throws ParameterException
     {
         return null;
@@ -196,34 +195,32 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
 
     /** {@inheritDoc} */
     @Override
-    public final Rel desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed) 
-            throws ParameterException
+    public final Rel desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
+        throws ParameterException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration freeAcceleration(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, 
-        final Speed speedLimit, final boolean enforcement, final Speed maximumVehicleSpeed) throws ParameterException
+    public final Acceleration freeAcceleration(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed,
+        final SpeedInfo speedInfo) throws ParameterException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics, 
-        final Speed speed, final Speed speedLimit, final boolean enforcement, final Speed maximumVehicleSpeed, 
-        final Rel headway, final Speed leaderSpeed) throws ParameterException
+    public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
+        final Speed speed, final SpeedInfo speedInfo, final Rel headway, final Speed leaderSpeed) throws ParameterException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics, 
-        final Speed speed, final Speed speedLimit, final boolean enforcement, final Speed maximumVehicleSpeed, 
-        final SortedMap<Rel, Speed> leaders) throws ParameterException
+    public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
+        final Speed speed, final SpeedInfo speedInfo, final SortedMap<Rel, Speed> leaders) throws ParameterException
     {
         return null;
     }
@@ -233,7 +230,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
     public final String toString()
     {
         return "SequentialFixedAccelerationModel [steps=" + this.steps + ", maximumSafeDeceleration="
-                + this.maximumSafeDeceleration + "]";
+            + this.maximumSafeDeceleration + "]";
     }
-    
+
 }
