@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.djunits.unit.DimensionlessUnit;
 import org.djunits.value.vdouble.scalar.Dimensionless;
+import org.opentrafficsim.core.Throw;
 
 /**
  * Wrapper class for int parameters.
@@ -11,8 +12,7 @@ import org.djunits.value.vdouble.scalar.Dimensionless;
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, 
- *          initial version Apr 13, 2016 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
@@ -74,10 +74,10 @@ public class ParameterTypeInteger extends AbstractParameterType<DimensionlessUni
      * @param hasDefaultValue Whether to check the default value for null.
      */
     private ParameterTypeInteger(final String id, final String description, final int defaultValue, final Check check,
-        final boolean hasDefaultValue)
+            final boolean hasDefaultValue)
     {
         super(id, description, Dimensionless.class, hasDefaultValue ? new Dimensionless(defaultValue, DimensionlessUnit.SI)
-            : null, check, hasDefaultValue);
+                : null, check, hasDefaultValue);
         try
         {
             // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of
@@ -93,7 +93,7 @@ public class ParameterTypeInteger extends AbstractParameterType<DimensionlessUni
     /** {@inheritDoc} */
     public final Integer getDefaultValue() throws ParameterException
     {
-        ParameterException.throwIf(null == this.defaultValue, "No default value was set for '%s'.", getId());
+        Throw.when(null == this.defaultValue, ParameterException.class, "No default value was set for '%s'.", getId());
         return (int) super.defaultValue.si;
     }
 

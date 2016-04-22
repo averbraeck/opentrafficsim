@@ -7,6 +7,8 @@ import java.util.List;
 import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
+import org.opentrafficsim.core.Throw;
+
 /**
  * Generic implementation of a set of objects that have a draw method with corresponding probabilities / frequencies.
  * <p>
@@ -37,11 +39,10 @@ public class Distribution<O> implements Generator<O>, Serializable
      * @param stream StreamInterface; source for randomness
      * @throws ProbabilityException when a frequency (or probability) is negative, or when generators is null or stream is null
      */
-    public Distribution(final List<FrequencyAndObject<O>> generators, final StreamInterface stream)
-        throws ProbabilityException
+    public Distribution(final List<FrequencyAndObject<O>> generators, final StreamInterface stream) throws ProbabilityException
     {
         this(stream);
-        ProbabilityException.throwIf(null == generators, "generators may not be null");
+        Throw.when(null == generators, ProbabilityException.class, "generators may not be null");
         // Store a defensive copy of the generator list (the generators are immutable; a list of them is not) and make sure it
         // is a List that supports add, remove, etc.
         this.generators.addAll(generators);
@@ -55,7 +56,7 @@ public class Distribution<O> implements Generator<O>, Serializable
      */
     public Distribution(final StreamInterface stream) throws ProbabilityException
     {
-        ProbabilityException.throwIf(null == stream, "random stream may not be null");
+        Throw.when(null == stream, ProbabilityException.class, "random stream may not be null");
         this.random = new DistUniform(stream, 0, 1);
     }
 
@@ -73,8 +74,8 @@ public class Distribution<O> implements Generator<O>, Serializable
         for (FrequencyAndObject<O> generator : this.generators)
         {
             double frequency = generator.getFrequency();
-            ProbabilityException.throwIf(frequency < 0, "Negative frequency or probability is not allowed (got "
-                + frequency + ")");
+            Throw.when(frequency < 0, ProbabilityException.class, "Negative frequency or probability is not allowed (got "
+                    + frequency + ")");
             this.cumulativeTotal += frequency;
         }
     }
@@ -82,8 +83,8 @@ public class Distribution<O> implements Generator<O>, Serializable
     /** {@inheritDoc} */
     public final O draw() throws ProbabilityException
     {
-        ProbabilityException.throwIf(0 == this.generators.size(), "Cannot draw from empty collection");
-        ProbabilityException.throwIf(0 == this.cumulativeTotal, "Sum of frequencies or probabilities must be > 0");
+        Throw.when(0 == this.generators.size(), ProbabilityException.class, "Cannot draw from empty collection");
+        Throw.when(0 == this.cumulativeTotal, ProbabilityException.class, "Sum of frequencies or probabilities must be > 0");
 
         double randomValue = this.random.draw() * this.cumulativeTotal;
         for (FrequencyAndObject<O> fAndO : this.generators)
@@ -126,11 +127,10 @@ public class Distribution<O> implements Generator<O>, Serializable
      * @return Distribution&lt;O&gt;; this
      * @throws ProbabilityException when frequency less than zero
      */
-    public final Distribution<O> add(final int index, final FrequencyAndObject<O> generator)
-        throws ProbabilityException
+    public final Distribution<O> add(final int index, final FrequencyAndObject<O> generator) throws ProbabilityException
     {
-        ProbabilityException.throwIf(generator.getFrequency() < 0, "frequency (or probability) must be >= 0 (got "
-            + generator.getFrequency() + ")");
+        Throw.when(generator.getFrequency() < 0, ProbabilityException.class, "frequency (or probability) must be >= 0 (got "
+                + generator.getFrequency() + ")");
         this.generators.add(index, generator);
         fixProbabilities();
         return this;
@@ -157,11 +157,10 @@ public class Distribution<O> implements Generator<O>, Serializable
      * @return this
      * @throws ProbabilityException when the frequency (or probability) &lt; 0, or when index is &lt; 0 or &gt;= size
      */
-    public final Distribution<O> set(final int index, final FrequencyAndObject<O> generator)
-        throws ProbabilityException
+    public final Distribution<O> set(final int index, final FrequencyAndObject<O> generator) throws ProbabilityException
     {
-        ProbabilityException.throwIf(generator.getFrequency() < 0, "frequency (or probability) must be >= 0 (got "
-            + generator.getFrequency() + ")");
+        Throw.when(generator.getFrequency() < 0, ProbabilityException.class, "frequency (or probability) must be >= 0 (got "
+                + generator.getFrequency() + ")");
         try
         {
             this.generators.set(index, generator);

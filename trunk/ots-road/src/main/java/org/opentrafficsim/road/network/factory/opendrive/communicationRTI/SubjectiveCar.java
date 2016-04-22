@@ -132,6 +132,13 @@ public class SubjectiveCar extends AbstractGTU
         return null;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public RelativePosition getCenter()
+    {
+        return null;
+    }
+
     /**
      * {@inheritDoc}
      */

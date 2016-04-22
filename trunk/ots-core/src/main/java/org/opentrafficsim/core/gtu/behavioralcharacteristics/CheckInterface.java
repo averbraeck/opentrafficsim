@@ -39,8 +39,8 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterTy
  * {
  *     public void check(Length.Rel value, BehavioralCharacteristics bc) throws ParameterException
  *     {
- *         ParameterException.throwIf(value.si &lt;= 2, &quot;Value of X is not above 2.&quot;);
- *         ParameterException.throwIf(bc.contains(Y) &amp;&amp; value.si &gt; bc.getParameter(Y).si,
+ *         Throw.when(value.si &lt;= 2, ParameterException.class, &quot;Value of X is not above 2.&quot;);
+ *         Throw.when(bc.contains(Y) &amp;&amp; value.si &gt; bc.getParameter(Y).si, ParameterException.class, 
  *             &quot;Value of X is larger than value of Y.&quot;);
  *     }
  * };

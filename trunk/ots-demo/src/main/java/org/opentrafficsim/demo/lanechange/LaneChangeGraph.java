@@ -314,7 +314,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
                         strategicalPlanner, new LanePerceptionFull(), this.network);
         Collection<Headway> sameLaneGTUs = new LinkedHashSet<>();
         sameLaneGTUs.add(new HeadwayGTU(referenceCar.getId(), referenceCar.getGTUType(), Length.Rel.ZERO, referenceCar
-                .getVelocity(), null));
+                .getSpeed(), null));
         // TODO play with the speed limit
         // TODO play with the preferredLaneRouteIncentive
         LaneMovementStep lowResult =
@@ -391,7 +391,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
                         this.carFollowingModel, laneChangeModel));
         LaneBasedIndividualGTU otherCar =
                 new LaneBasedIndividualGTU("otherCar", referenceCar.getGTUType(), initialLongitudinalPositions, referenceCar
-                        .getVelocity().plus(deltaV), new Length.Rel(4, METER), new Length.Rel(2, METER), new Speed(150,
+                        .getSpeed().plus(deltaV), new Length.Rel(4, METER), new Length.Rel(2, METER), new Speed(150,
                         KM_PER_HOUR), referenceCar.getSimulator(), strategicalPlanner, new LanePerceptionFull(), this.network);
         Collection<Headway> preferredLaneGTUs = new LinkedHashSet<>();
         Collection<Headway> nonPreferredLaneGTUs = new LinkedHashSet<>();
@@ -400,7 +400,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
                         referenceCar.getReference());
         Headway otherHeadwayGTU =
                 new HeadwayGTU(otherCar.getId(), otherCar.getGTUType(), otherCarPosition.minus(referenceCarPosition),
-                        otherCar.getVelocity(), null);
+                        otherCar.getSpeed(), null);
         if (mergeRight)
         {
             preferredLaneGTUs.add(otherHeadwayGTU);

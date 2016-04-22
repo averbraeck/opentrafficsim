@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -70,7 +71,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         super(behavioralCharacteristics);
         this.route = route;
         this.fixedTacticalPlanner = fixedTacticalPlanner;
-        GTUException.throwIf(fixedTacticalPlanner == null, "Fixed Tactical Planner for a Strategical planner is null");
+        Throw.when(fixedTacticalPlanner == null, GTUException.class, "Fixed Tactical Planner for a Strategical planner is null");
     }
 
     /** {@inheritDoc} */

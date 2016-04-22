@@ -75,14 +75,13 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualGTU(final String id, final GTUType gtuType,
-        final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
-        final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
-        final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
-        final LanePerceptionFull perception, final OTSNetwork network) throws NamingException, NetworkException,
-        SimRuntimeException, GTUException, OTSGeometryException
+            final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed, final Length.Rel length,
+            final Length.Rel width, final Speed maximumVelocity, final OTSDEVSSimulatorInterface simulator,
+            final LaneBasedStrategicalPlanner strategicalPlanner, final LanePerceptionFull perception, final OTSNetwork network)
+            throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
     {
         this(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumVelocity, simulator,
-            strategicalPlanner, perception, DefaultCarAnimation.class, null, network);
+                strategicalPlanner, perception, DefaultCarAnimation.class, null, network);
     }
 
     /**
@@ -109,25 +108,25 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualGTU(final String id, final GTUType gtuType,
-        final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
-        final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
-        final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
-        final LanePerceptionFull perception, final Class<? extends Renderable2D> animationClass,
-        final GTUColorer gtuColorer, final OTSNetwork network) throws NamingException, NetworkException,
-        SimRuntimeException, GTUException, OTSGeometryException
+            final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed, final Length.Rel length,
+            final Length.Rel width, final Speed maximumVelocity, final OTSDEVSSimulatorInterface simulator,
+            final LaneBasedStrategicalPlanner strategicalPlanner, final LanePerceptionFull perception,
+            final Class<? extends Renderable2D> animationClass, final GTUColorer gtuColorer, final OTSNetwork network)
+            throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
     {
         super(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumVelocity, simulator,
-            strategicalPlanner, perception, network);
+                strategicalPlanner, perception, network);
 
         // sensor positions.
         // We take the rear position of the Car to be the reference point. So the front is the length
         // of the Car away from the reference point in the positive (driving) X-direction.
         Length.Rel dx2 = new Length.Rel(getLength().getSI() / 2.0, LengthUnit.METER);
         this.relativePositions.put(RelativePosition.FRONT, new RelativePosition(dx2, Length.Rel.ZERO, Length.Rel.ZERO,
-            RelativePosition.FRONT));
+                RelativePosition.FRONT));
         this.relativePositions.put(RelativePosition.REAR, new RelativePosition(dx2.multiplyBy(-1.0), Length.Rel.ZERO,
-            Length.Rel.ZERO, RelativePosition.REAR));
+                Length.Rel.ZERO, RelativePosition.REAR));
         this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
+        this.relativePositions.put(RelativePosition.CENTER, RelativePosition.REFERENCE_POSITION);
 
         setMaximumAcceleration(new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2));
         setMaximumDeceleration(new Acceleration(-1.0, AccelerationUnit.METER_PER_SECOND_2));
@@ -141,39 +140,42 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
 
                 if (null == gtuColorer)
                 {
-                    constructor = ClassUtil.resolveConstructor(animationClass, new Object[]{this, simulator});
+                    constructor = ClassUtil.resolveConstructor(animationClass, new Object[] { this, simulator });
                     this.animation = (Renderable2D) constructor.newInstance(this, simulator);
                 }
                 else
                 {
-                    constructor =
-                        ClassUtil.resolveConstructor(animationClass, new Object[]{this, simulator, gtuColorer});
+                    constructor = ClassUtil.resolveConstructor(animationClass, new Object[] { this, simulator, gtuColorer });
                     this.animation = (Renderable2D) constructor.newInstance(this, simulator, gtuColorer);
                 }
             }
             catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
-                | IllegalArgumentException | InvocationTargetException exception)
+                    | IllegalArgumentException | InvocationTargetException exception)
             {
-                throw new NetworkException("Could not instantiate car animation of type " + animationClass.getName(),
-                    exception);
+                throw new NetworkException("Could not instantiate car animation of type " + animationClass.getName(), exception);
             }
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public RelativePosition getFront()
+    public final RelativePosition getFront()
     {
         return this.relativePositions.get(RelativePosition.FRONT);
     }
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public RelativePosition getRear()
+    public final RelativePosition getRear()
     {
         return this.relativePositions.get(RelativePosition.REAR);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final RelativePosition getCenter()
+    {
+        return this.relativePositions.get(RelativePosition.CENTER);
     }
 
     /** {@inheritDoc} */
@@ -305,7 +307,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
          * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder setInitialLongitudinalPositions(
-            final Set<DirectedLanePosition> initialLongitudinalPositions)
+                final Set<DirectedLanePosition> initialLongitudinalPositions)
         {
             this.initialLongitudinalPositions = initialLongitudinalPositions;
             return this;
@@ -365,8 +367,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
          * @param strategicalPlanner set strategicalPlanner
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder
-            setStrategicalPlanner(LaneBasedStrategicalPlanner strategicalPlanner)
+        public final LaneBasedIndividualCarBuilder setStrategicalPlanner(LaneBasedStrategicalPlanner strategicalPlanner)
         {
             this.strategicalPlanner = strategicalPlanner;
             return this;
@@ -386,8 +387,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
          * @param animationClass set animation class
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder
-            setAnimationClass(final Class<? extends Renderable2D> animationClass)
+        public final LaneBasedIndividualCarBuilder setAnimationClass(final Class<? extends Renderable2D> animationClass)
         {
             this.animationClass = animationClass;
             return this;
@@ -525,17 +525,17 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         public final LaneBasedIndividualGTU build() throws Exception
         {
             if (null == this.id || null == this.gtuType || null == this.strategicalPlanner || null == this.perception
-                || null == this.initialLongitudinalPositions || null == this.initialSpeed || null == this.length
-                || null == this.width || null == this.maximumVelocity || null == this.simulator || null == this.network)
+                    || null == this.initialLongitudinalPositions || null == this.initialSpeed || null == this.length
+                    || null == this.width || null == this.maximumVelocity || null == this.simulator || null == this.network)
             {
                 // TODO Should throw a more specific Exception type
                 throw new GTUException("factory settings incomplete");
             }
 
             LaneBasedIndividualGTU gtu =
-                new LaneBasedIndividualGTU(this.id, this.gtuType, this.initialLongitudinalPositions, this.initialSpeed,
-                    this.length, this.width, this.maximumVelocity, this.simulator, this.strategicalPlanner,
-                    this.perception, this.animationClass, this.gtuColorer, this.network);
+                    new LaneBasedIndividualGTU(this.id, this.gtuType, this.initialLongitudinalPositions, this.initialSpeed,
+                            this.length, this.width, this.maximumVelocity, this.simulator, this.strategicalPlanner,
+                            this.perception, this.animationClass, this.gtuColorer, this.network);
             return gtu;
 
         }

@@ -177,7 +177,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
         {
             leftLanes.retainAll(nextSplitInfo.getCorrectCurrentLanes());
         }
-        if (!leftLanes.isEmpty() && laneBasedGTU.getVelocity().si > 4.0) // XXX we are driving...
+        if (!leftLanes.isEmpty() && laneBasedGTU.getSpeed().si > 4.0) // XXX we are driving...
         {
             perception.updateBackwardHeadway();
             perception.updateParallelHeadwaysLeft();
@@ -220,7 +220,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
         {
             rightLanes.retainAll(nextSplitInfo.getCorrectCurrentLanes());
         }
-        if (!rightLanes.isEmpty() && laneBasedGTU.getVelocity().si > 4.0) // XXX we are driving...
+        if (!rightLanes.isEmpty() && laneBasedGTU.getSpeed().si > 4.0) // XXX we are driving...
         {
             perception.updateBackwardHeadway();
             perception.updateParallelHeadwaysRight();
@@ -285,7 +285,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
                         maxDistance, perception.getSpeedLimit());
 
         // see if we have to continue standing still. In that case, generate a stand still plan
-        if (accelerationStep.getAcceleration().si < 1E-6 && laneBasedGTU.getVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
+        if (accelerationStep.getAcceleration().si < 1E-6 && laneBasedGTU.getSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
         {
             return new OperationalPlan(laneBasedGTU, locationAtStartTime, startTime, accelerationStep.getDuration());
         }
@@ -304,7 +304,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
             operationalPlanSegmentList.add(segment);
         }
         OperationalPlan op =
-                new OperationalPlan(laneBasedGTU, lanePathInfo.getPath(), startTime, laneBasedGTU.getVelocity(),
+                new OperationalPlan(laneBasedGTU, lanePathInfo.getPath(), startTime, laneBasedGTU.getSpeed(),
                         operationalPlanSegmentList);
         return op;
     }
@@ -417,7 +417,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
 
         // interpolate the path for the most conservative one
         AccelerationStep accelerationStep = dlms.getGfmr();
-        Speed v0 = gtu.getVelocity();
+        Speed v0 = gtu.getSpeed();
         double t = accelerationStep.getDuration().si;
         double distanceSI = v0.si * t + 0.5 * accelerationStep.getAcceleration().si * t * t;
         Speed vt = v0.plus(accelerationStep.getAcceleration().multiplyBy(accelerationStep.getDuration()));

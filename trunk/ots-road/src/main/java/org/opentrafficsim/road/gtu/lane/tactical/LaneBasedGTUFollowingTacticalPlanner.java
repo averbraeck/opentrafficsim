@@ -92,7 +92,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         }
 
         // see if we have to continue standing still. In that case, generate a stand still plan
-        if (accelerationStep.getAcceleration().si < 1E-6 && laneBasedGTU.getVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
+        if (accelerationStep.getAcceleration().si < 1E-6 && laneBasedGTU.getSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
         {
             return new OperationalPlan(gtu, locationAtStartTime, startTime, accelerationStep.getDuration());
         }
@@ -110,7 +110,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
             operationalPlanSegmentList.add(segment);
         }
         OperationalPlan op =
-                new OperationalPlan(gtu, lanePathInfo.getPath(), startTime, gtu.getVelocity(), operationalPlanSegmentList);
+                new OperationalPlan(gtu, lanePathInfo.getPath(), startTime, gtu.getSpeed(), operationalPlanSegmentList);
         return op;
     }
 

@@ -54,7 +54,7 @@ public class VelocityGTUColorer implements GTUColorer, Serializable
     @Override
     public final Color getColor(final GTU gtu)
     {
-        Speed speed = gtu.getVelocity();
+        Speed speed = gtu.getSpeed();
         double ratio = speed.getSI() / this.maximumSpeed.getSI() * (this.legend.size() - 1);
         if (ratio <= 0)
         {

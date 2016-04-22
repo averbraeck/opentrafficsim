@@ -202,7 +202,7 @@ public interface OvertakingConditions
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
             final LaneBasedGTU predecessorGTU)
         {
-            return gtu.getVelocity().lt(this.rightOvertakingSpeedMax) ? OvertakingDirection.BOTH
+            return gtu.getSpeed().lt(this.rightOvertakingSpeedMax) ? OvertakingDirection.BOTH
                 : OvertakingDirection.LEFT;
         }
 
@@ -245,7 +245,7 @@ public interface OvertakingConditions
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
             final LaneBasedGTU predecessorGTU)
         {
-            return gtu.getVelocity().lt(this.leftOvertakingSpeedMax) ? OvertakingDirection.BOTH
+            return gtu.getSpeed().lt(this.leftOvertakingSpeedMax) ? OvertakingDirection.BOTH
                 : OvertakingDirection.RIGHT;
         }
 
@@ -440,7 +440,7 @@ public interface OvertakingConditions
                 ((this.overtakingGTUs.contains(GTUType.ALL) || this.overtakingGTUs.contains(gtu.getGTUType())
                     && (this.overtakenGTUs.contains(GTUType.ALL) || this.overtakenGTUs.contains(predecessorGTU
                         .getGTUType()))));
-            boolean right = gtu.getVelocity().lt(this.rightOvertakingSpeedMax);
+            boolean right = gtu.getSpeed().lt(this.rightOvertakingSpeedMax);
             if (left)
             {
                 return right ? OvertakingDirection.BOTH : OvertakingDirection.LEFT;
@@ -514,7 +514,7 @@ public interface OvertakingConditions
                 ((this.overtakingGTUs.contains(GTUType.ALL) || this.overtakingGTUs.contains(gtu.getGTUType())
                     && (this.overtakenGTUs.contains(GTUType.ALL) || this.overtakenGTUs.contains(predecessorGTU
                         .getGTUType()))));
-            boolean left = gtu.getVelocity().lt(this.leftOvertakingSpeedMax);
+            boolean left = gtu.getSpeed().lt(this.leftOvertakingSpeedMax);
             if (right)
             {
                 return left ? OvertakingDirection.BOTH : OvertakingDirection.RIGHT;

@@ -239,7 +239,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                 // System.out.println("lane incentives: " + laneIncentives);
                 // build a list of lanes forward, with a maximum headway.
                 if (lcmr.getGfmr().getAcceleration().si < 1E-6
-                        && laneBasedGTU.getVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
+                        && laneBasedGTU.getSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
                 {
                     // TODO Make a 100% lateral move from standing still...
                     return new OperationalPlan(gtu, locationAtStartTime, startTime, duration);
@@ -258,7 +258,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     Segment segment = new OperationalPlan.AccelerationSegment(duration, lcmr.getGfmr().getAcceleration());
                     operationalPlanSegmentList.add(segment);
                 }
-                OperationalPlan op = new OperationalPlan(gtu, path, startTime, gtu.getVelocity(), operationalPlanSegmentList);
+                OperationalPlan op = new OperationalPlan(gtu, path, startTime, gtu.getSpeed(), operationalPlanSegmentList);
                 return op;
             }
             else
@@ -266,7 +266,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             {
                 // see if we have to continue standing still. In that case, generate a stand still plan
                 if (lcmr.getGfmr().getAcceleration().si < 1E-6
-                        && laneBasedGTU.getVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
+                        && laneBasedGTU.getSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
                 {
                     return new OperationalPlan(gtu, locationAtStartTime, startTime, duration);
                 }
@@ -283,7 +283,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     Segment segment = new OperationalPlan.AccelerationSegment(duration, lcmr.getGfmr().getAcceleration());
                     operationalPlanSegmentList.add(segment);
                 }
-                OperationalPlan op = new OperationalPlan(gtu, path, startTime, gtu.getVelocity(), operationalPlanSegmentList);
+                OperationalPlan op = new OperationalPlan(gtu, path, startTime, gtu.getSpeed(), operationalPlanSegmentList);
                 return op;
             }
         }
@@ -559,7 +559,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
     {
         // What is the deceleration that will bring this GTU to a stop at exactly the suitability distance?
         // Answer: a = -v^2 / 2 / suitabilityDistance
-        double v = gtu.getVelocity().getSI();
+        double v = gtu.getSpeed().getSI();
         double a = -v * v / 2 / stopDistance.getSI();
         return a;
     }

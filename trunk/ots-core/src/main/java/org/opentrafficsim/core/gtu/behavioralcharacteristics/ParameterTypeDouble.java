@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.djunits.unit.DimensionlessUnit;
 import org.djunits.value.formatter.EngineeringFormatter;
 import org.djunits.value.vdouble.scalar.Dimensionless;
+import org.opentrafficsim.core.Throw;
 
 /**
  * Wrapper class for double parameters.
@@ -75,10 +76,10 @@ public class ParameterTypeDouble extends AbstractParameterType<DimensionlessUnit
      * @param hasDefaultValue Whether to check the default value for null.
      */
     private ParameterTypeDouble(final String id, final String description, final double defaultValue, final Check check,
-        final boolean hasDefaultValue)
+            final boolean hasDefaultValue)
     {
         super(id, description, Dimensionless.class, hasDefaultValue ? new Dimensionless(defaultValue, DimensionlessUnit.SI)
-            : null, check, hasDefaultValue);
+                : null, check, hasDefaultValue);
         try
         {
             // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of
@@ -94,7 +95,7 @@ public class ParameterTypeDouble extends AbstractParameterType<DimensionlessUnit
     /** {@inheritDoc} */
     public final Double getDefaultValue() throws ParameterException
     {
-        ParameterException.throwIf(null == this.defaultValue, "No default value was set for '%s'.", getId());
+        Throw.when(null == this.defaultValue, ParameterException.class, "No default value was set for '%s'.", getId());
         return super.defaultValue.si;
     }
 

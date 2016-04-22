@@ -644,7 +644,7 @@ public class Lane extends CrossSectionElement implements Serializable
                             System.err.println("Time=" + gtu.getSimulator().getSimulatorTime().getTime().getSI()
                                     + " - Scheduling trigger at " + triggerTime.getSI() + "s. > " + oPlan.getEndTime().getSI()
                                     + "s. (nextEvalTime) for sensor " + sensor + " , gtu " + gtu);
-                            System.err.println("  v=" + gtu.getVelocity() + ", a=" + gtu.getAcceleration() + ", lane="
+                            System.err.println("  v=" + gtu.getSpeed() + ", a=" + gtu.getAcceleration() + ", lane="
                                     + toString() + ", refStartSI=" + referenceStartSI + ", moveSI=" + referenceMoveSI);
                             triggerTime =
                                     new Time.Abs(oPlan.getEndTime().getSI() - Math.ulp(oPlan.getEndTime().getSI()), TimeUnit.SI);

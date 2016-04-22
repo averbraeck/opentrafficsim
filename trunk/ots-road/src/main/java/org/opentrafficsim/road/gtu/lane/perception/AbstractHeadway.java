@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.perception;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTUException;
 
 /**
@@ -98,8 +99,8 @@ public abstract class AbstractHeadway implements Headway
     private final ObjectType objectType;
 
     /**
-     * Construct a new Headway information object, for an object in front, behind, or in parallel with us.
-     * TODO fix this javadoc; there are obvious inconsistencies between this javadoc and the code below.
+     * Construct a new Headway information object, for an object in front, behind, or in parallel with us. TODO fix this
+     * javadoc; there are obvious inconsistencies between this javadoc and the code below.
      * @param objectType the perceived object type, can be null if object type unknown.
      * @param id the id of the object for comparison purposes, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
@@ -115,20 +116,20 @@ public abstract class AbstractHeadway implements Headway
             final Acceleration acceleration, final Length.Rel overlapFront, final Length.Rel overlap,
             final Length.Rel overlapRear) throws GTUException
     {
-        GTUException.throwIf(id == null, "Object id of a headway cannot be null");
+        Throw.when(id == null, GTUException.class, "Object id of a headway cannot be null");
         this.id = id;
 
         this.objectType = objectType;
         this.speed = speed;
         this.acceleration = acceleration;
 
-        GTUException.throwIf(distance != null && (overlap != null || overlapFront != null || overlapRear != null),
+        Throw.when(distance != null && (overlap != null || overlapFront != null || overlapRear != null), GTUException.class,
                 "overlap parameter cannot be null for front / rear headway with id = %s", id);
         this.distance = distance;
 
-        GTUException.throwIf(distance == null && (overlap == null || overlapFront == null || overlapRear == null),
+        Throw.when(distance == null && (overlap == null || overlapFront == null || overlapRear == null), GTUException.class,
                 "overlap parameter cannot be null for parallel headway with id = %s", id);
-        GTUException.throwIf(overlap != null && overlap.si < 0, "overlap cannot be negative; id = %s", id);
+        Throw.when(overlap != null && overlap.si < 0, GTUException.class, "overlap cannot be negative; id = %s", id);
         this.overlap = overlap;
         this.overlapFront = overlapFront;
         this.overlapRear = overlapRear;

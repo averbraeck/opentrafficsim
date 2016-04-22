@@ -88,6 +88,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
         RELATIVE_POSITIONS.put(RelativePosition.REAR, new RelativePosition(Length.Rel.ZERO, Length.Rel.ZERO,
             Length.Rel.ZERO, RelativePosition.REAR));
         RELATIVE_POSITIONS.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
+        RELATIVE_POSITIONS.put(RelativePosition.CENTER, RelativePosition.REFERENCE_POSITION);
     }
 
     /**
@@ -191,6 +192,13 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
     public RelativePosition getRear()
     {
         return RELATIVE_POSITIONS.get(RelativePosition.REAR);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public RelativePosition getCenter()
+    {
+        return RELATIVE_POSITIONS.get(RelativePosition.CENTER);
     }
 
     /** {@inheritDoc} */

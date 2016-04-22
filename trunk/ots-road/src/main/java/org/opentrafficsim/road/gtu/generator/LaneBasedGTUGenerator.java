@@ -198,7 +198,7 @@ public class LaneBasedGTUGenerator implements Serializable
                 if (shortestHeadway.gt(headway))
                 {
                     shortestHeadway = headway;
-                    leaderSpeed = leader.getVelocity();
+                    leaderSpeed = leader.getSpeed();
                 }
             }
         }

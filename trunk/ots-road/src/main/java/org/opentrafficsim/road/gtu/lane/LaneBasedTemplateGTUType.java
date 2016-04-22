@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -74,10 +75,10 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
             final OTSNetwork network) throws GTUException
     {
         super(typeId, idGenerator, lengthGenerator, widthGenerator, maximumSpeedGenerator, simulator, network);
-        GTUException.throwIf(null == strategicalPlannerGenerator, "strategicalPlannerGenerator is null");
-        GTUException.throwIf(null == perceptionGenerator, "perceptionGenerator is null");
-        GTUException.throwIf(null == initialLongitudinalPositions, "initialLongitudinalPositions is null");
-        GTUException.throwIf(null == initialSpeedGenerator, "initialSpeedGenerator is null");
+        Throw.when(null == strategicalPlannerGenerator, GTUException.class, "strategicalPlannerGenerator is null");
+        Throw.when(null == perceptionGenerator, GTUException.class, "perceptionGenerator is null");
+        Throw.when(null == initialLongitudinalPositions, GTUException.class, "initialLongitudinalPositions is null");
+        Throw.when(null == initialSpeedGenerator, GTUException.class, "initialSpeedGenerator is null");
         this.strategicalPlannerGenerator = strategicalPlannerGenerator;
         this.perceptionGenerator = perceptionGenerator;
         this.initialLongitudinalPositions = initialLongitudinalPositions;

@@ -285,7 +285,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
             this.samples.add(new Sample());
         }
         Sample sample = this.samples.get(timeBin);
-        sample.addData(gtu.getVelocity(detectionTime));
+        sample.addData(gtu.getSpeed(detectionTime));
     }
 
     /**
