@@ -1,10 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
 import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -12,11 +10,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacter
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 
 /**
- * Implements free, single-leader and multi-anticipative methods as forwards to a new multi-anticipative method with desired
- * headway and desired speed pre-calculated. The information forwarded to the new method implies a leader at infinite headway
- * for free acceleration, and a single vehicle in the set for single-leader acceleration. As a result, implementations of this
- * class only need to implement a single, and simpler, method covering different calls to the car-following model. The headway
- * towards the first vehicle being followed is guaranteed to be positive.
+ * Default implementation where desired speed and headway are pre-calculated for car-following.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -27,47 +21,26 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 public abstract class AbstractCarFollowingModel implements CarFollowingModel
 {
 
-    /** {@inheritDoc} */
-    public final Acceleration freeAcceleration(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed,
-        final SpeedInfo speedInfo) throws ParameterException
-    {
-        // Fill map with a single leader at infinite headway and the same speed.
-        SortedMap<Length.Rel, Speed> leaders = new TreeMap<Length.Rel, Speed>();
-        leaders.put(new Length.Rel(Double.POSITIVE_INFINITY, LengthUnit.SI), speed);
-        return followingAcceleration(behavioralCharacteristics, speed, desiredSpeed(behavioralCharacteristics, speedInfo),
-            desiredHeadway(behavioralCharacteristics, speed), leaders);
-    }
-
-    /** {@inheritDoc} */
-    public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
-        final Speed speed, final SpeedInfo speedInfo, final Length.Rel headway, final Speed leaderSpeed)
-        throws ParameterException
-    {
-        // Catch negative headway
-        if (headway.si <= 0)
-        {
-            // The car-following model is undefined for this case, return 'inappropriate' acceleration. Whatever uses
-            // the car-following model has to figure out what to do in this situation. E.g. limit deceleration to an
-            // extent depending on the circumstances, or divert from a certain behavior.
-            return new Acceleration(Double.NEGATIVE_INFINITY, AccelerationUnit.SI);
-        }
-        // Fill map with the single leader.
-        SortedMap<Length.Rel, Speed> leaders = new TreeMap<Length.Rel, Speed>();
-        leaders.put(headway, leaderSpeed);
-        return followingAcceleration(behavioralCharacteristics, speed, desiredSpeed(behavioralCharacteristics, speedInfo),
-            desiredHeadway(behavioralCharacteristics, speed), leaders);
-    }
-
-    /** {@inheritDoc} */
+    /**
+     * Forwards the calculation to a similar method with desired speed and desired (equilibrium) headway pre-calculated.
+     * Additionally, if the headway to the (first) leader is negative, <tt>Double.NEGATIVE_INFINITY</tt> is returned as an
+     * 'inappropriate' acceleration, since car-following models are then undefined. This may for example occur when checking a
+     * gap in an adjacent lane for lane changing. It is then up to the client to decide what to do. E.g. limit deceleration to
+     * an extent depending on the circumstances, or divert from a certain behavior.
+     * @param behavioralCharacteristics Behavioral characteristics.
+     * @param speed Current speed.
+     * @param speedInfo Info regarding the desired speed for car-following.
+     * @param leaders Set of leader headways and speeds, ordered by headway (closest first).
+     * @throws ParameterException If parameter exception occurs.
+     * @return Car-following acceleration.
+     */
+    @Override
     public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
         final Speed speed, final SpeedInfo speedInfo, final SortedMap<Length.Rel, Speed> leaders) throws ParameterException
     {
         // Catch negative headway
         if (leaders.firstKey().si <= 0)
         {
-            // The car-following model is undefined for this case, return 'inappropriate' acceleration. Whatever uses
-            // the car-following model has to figure out what to do in this situation. E.g. limit deceleration to an
-            // extent depending on the circumstances, or divert from a certain behavior.
             return new Acceleration(Double.NEGATIVE_INFINITY, AccelerationUnit.SI);
         }
         // Forward to method with desired speed and headway predetermined by this car-following model.
@@ -76,10 +49,7 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
     }
 
     /**
-     * Multi-anticipative determination of car-following acceleration. The implementation should be able to deal with the
-     * current speed being higher than the desired speed. The tactical planner determines whether multi-anticipative
-     * car-following is applied, including to how many leaders and within what distance, by including these vehicles in the set.
-     * The car-following model itself may however only respond to the first vehicle.
+     * Determination of car-following acceleration, possibly based on multiple leaders.
      * @param behavioralCharacteristics Behavioral characteristics.
      * @param speed Current speed.
      * @param desiredSpeed Desired speed.

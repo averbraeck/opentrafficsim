@@ -203,22 +203,6 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration freeAcceleration(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed,
-        final SpeedInfo speedInfo) throws ParameterException
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
-        final Speed speed, final SpeedInfo speedInfo, final Rel headway, final Speed leaderSpeed) throws ParameterException
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
         final Speed speed, final SpeedInfo speedInfo, final SortedMap<Rel, Speed> leaders) throws ParameterException
     {
