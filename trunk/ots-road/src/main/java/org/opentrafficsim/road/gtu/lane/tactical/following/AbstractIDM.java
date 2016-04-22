@@ -2,11 +2,14 @@ package org.opentrafficsim.road.gtu.lane.tactical.following;
 
 import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.POSITIVE;
 
+import java.util.SortedMap;
+
+import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
@@ -15,7 +18,14 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 /**
  * Implementation of the IDM. See <a
  * href=https://en.wikipedia.org/wiki/Intelligent_driver_model>https://en.wikipedia.org/wiki/Intelligent_driver_model</a>
- * @author Wouter Schakel
+ * <p>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * <p>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 22, 2016 <br>
+ * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 public abstract class AbstractIDM extends AbstractCarFollowingModel
 {
@@ -25,6 +35,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
         "Acceleration flattening exponent towards desired speed.", 4.0, POSITIVE);
 
     /** {@inheritDoc} */
+    @Override
     public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedInfo speedInfo)
         throws ParameterException
     {
@@ -37,24 +48,62 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
     }
 
     /** {@inheritDoc} */
-    public final Rel desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
+    @Override
+    public final Length.Rel desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
         throws ParameterException
     {
         return behavioralCharacteristics.getParameter(ParameterTypes.S0).plus(
             speed.multiplyBy(behavioralCharacteristics.getParameter(ParameterTypes.T)));
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
+        final Speed speed, final Speed desiredSpeed, final Rel desiredHeadway, final SortedMap<Rel, Speed> leaders)
+        throws ParameterException
+    {
+        Acceleration a = behavioralCharacteristics.getParameter(ParameterTypes.A);
+        Acceleration b0 = behavioralCharacteristics.getParameter(ParameterTypes.B0);
+        double delta = behavioralCharacteristics.getParameter(DELTA);
+        double aFree = a.si * (1 - Math.pow(speed.si / desiredSpeed.si, delta));
+        // limit deceleration in free term (occurs if speed > desired speed)
+        aFree = aFree > -b0.si ? aFree : -b0.si;
+        // return free term if there are no leaders
+        if (leaders.isEmpty())
+        {
+            return new Acceleration(aFree, AccelerationUnit.SI);
+        }
+        // return combined acceleration
+        return combineInteractionTerm(new Acceleration(aFree, AccelerationUnit.SI), behavioralCharacteristics, speed,
+            desiredSpeed, desiredHeadway, leaders);
+    }
+
+    /**
+     * Combines an interaction term with the free term. There should be at least 1 leader for this method.
+     * @param aFree Free term of acceleration.
+     * @param behavioralCharacteristics Behavioral characteristics.
+     * @param speed Current speed.
+     * @param desiredSpeed Desired speed.
+     * @param desiredHeadway Desired headway.
+     * @param leaders Set of leader headways (guaranteed positive) and speeds, ordered by headway (closest first).
+     * @return Combination of terms into a single acceleration.
+     * @throws ParameterException In case of parameter exception.
+     */
+    protected abstract Acceleration combineInteractionTerm(Acceleration aFree,
+        BehavioralCharacteristics behavioralCharacteristics, Speed speed, Speed desiredSpeed, Length.Rel desiredHeadway,
+        SortedMap<Rel, Speed> leaders) throws ParameterException;
+
     /**
      * Determines the dynamic desired headway, which is non-negative.
      * @param behavioralCharacteristics Behavioral characteristics.
      * @param speed Current speed.
-     * @param desiredHeadway Desired speed.
+     * @param desiredHeadway Desired headway.
      * @param leaderSpeed Speed of the leading vehicle.
      * @return Dynamic desired headway.
      * @throws ParameterException In case of parameter exception.
      */
     protected final Length.Rel dynamicDesiredHeadway(final BehavioralCharacteristics behavioralCharacteristics,
-        final Speed speed, final Rel desiredHeadway, final Speed leaderSpeed) throws ParameterException
+        final Speed speed, final Length.Rel desiredHeadway, final Speed leaderSpeed) throws ParameterException
     {
         double sStar = desiredHeadway.si + dynamicHeadwayTerm(behavioralCharacteristics, speed, leaderSpeed).si;
         /*
