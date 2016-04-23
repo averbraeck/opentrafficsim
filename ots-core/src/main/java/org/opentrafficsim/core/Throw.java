@@ -44,50 +44,165 @@ public final class Throw
     }
 
     /**
-     * Throw an Exception if a condition is met, e.g. for pre- and postcondition checking. Use e.g. as follows:<br>
-     * <code>Throw.when(value == null, GTUException.class, "value cannot be null for GTU with id = %s", id);</code>
+     * Throw an Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
+     * as follows: <br>
+     * <code>Throw.when(value == null, GTUException.class, "value cannot be null");</code>
      * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
-     * @param exceptionClass the exception type to throw
-     * @param message the message to use in the exception, with potential formatting identifiers
-     * @param args potential values to use for the formatting identifiers
-     * @throws Exception the exception to throw on true condition
-     * @param <E> the Exception type
+     * @param throwableClass the Throwable type to throw
+     * @param message the message to use in the exception
+     * @throws Throwable the throwable to throw on true condition
+     * @param <T> the Throwable type
      */
-    public static <E extends Exception> void when(final boolean condition, final Class<E> exceptionClass, final String message,
-            final Object... args) throws E
+    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass, final String message)
+            throws T
     {
         if (condition)
         {
-            List<StackTraceElement> steList = new ArrayList<StackTraceElement>(Arrays.asList(new Exception().getStackTrace()));
-            steList.remove(0);
-            StackTraceElement[] ste = steList.toArray(new StackTraceElement[steList.size()]);
-            String where = ste[0].getClassName() + "." + ste[0].getMethodName() + " (" + ste[0].getLineNumber() + "): ";
+            throwMessage(throwableClass, message, new ArrayList<Object>());
+        }
+    }
+
+    /**
+     * Throw an Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
+     * as follows: <br>
+     * <code>Throw.when(value == null, GTUException.class, "value cannot be null for GTU with id = %s", id);</code>
+     * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
+     * @param throwableClass the Throwable type to throw
+     * @param message the message to use in the exception
+     * @param arg1 value to use for the formatting identifiers
+     * @throws Throwable the throwable to throw on true condition
+     * @param <T> the Throwable type
+     */
+    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass, final String message,
+            final Object arg1) throws T
+    {
+        if (condition)
+        {
+            List<Object> argList = new ArrayList<>();
+            argList.add(arg1);
+            throwMessage(throwableClass, message, argList);
+        }
+    }
+
+    /**
+     * Throw an Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
+     * as follows: <br>
+     * <code>Throw.when(value == null, GTUException.class, "value cannot be null for GTU %s with id %s", name, id);</code>
+     * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
+     * @param throwableClass the Throwable type to throw
+     * @param message the message to use in the exception
+     * @param arg1 1st value to use for the formatting identifiers
+     * @param arg2 2nd value to use for the formatting identifiers
+     * @throws Throwable the throwable to throw on true condition
+     * @param <T> the Throwable type
+     */
+    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass, final String message,
+            final Object arg1, final Object arg2) throws T
+    {
+        if (condition)
+        {
+            List<Object> argList = new ArrayList<>();
+            argList.add(arg1);
+            argList.add(arg2);
+            throwMessage(throwableClass, message, argList);
+        }
+    }
+
+    /**
+     * Throw an Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
+     * as follows: <br>
+     * <code>Throw.when(value == null, GTUException.class, "value cannot be null for GTU %s with id %s", name, id);</code>
+     * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
+     * @param throwableClass the Throwable type to throw
+     * @param message the message to use in the exception
+     * @param arg1 1st value to use for the formatting identifiers
+     * @param arg2 2nd value to use for the formatting identifiers
+     * @param arg3 3rd value to use for the formatting identifiers
+     * @throws Throwable the throwable to throw on true condition
+     * @param <T> the Throwable type
+     */
+    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass, final String message,
+            final Object arg1, final Object arg2, final Object arg3) throws T
+    {
+        if (condition)
+        {
+            List<Object> argList = new ArrayList<>();
+            argList.add(arg1);
+            argList.add(arg2);
+            argList.add(arg3);
+            throwMessage(throwableClass, message, argList);
+        }
+    }
+
+    /**
+     * Throw an Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
+     * as follows: <br>
+     * <code>Throw.when(value == null, GTUException.class, "value cannot be null for GTU with id = %s", id);</code>
+     * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
+     * @param throwableClass the Throwable type to throw
+     * @param message the message to use in the exception, with potential formatting identifiers
+     * @param arg1 1st value to use for the formatting identifiers
+     * @param arg2 2nd value to use for the formatting identifiers
+     * @param arg3 3rd value to use for the formatting identifiers
+     * @param args potential 4th and further values to use for the formatting identifiers
+     * @throws Throwable the throwable to throw on true condition
+     * @param <T> the Throwable type
+     */
+    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass, final String message,
+            final Object arg1, final Object arg2, final Object arg3, final Object... args) throws T
+    {
+        if (condition)
+        {
+            List<Object> argList = new ArrayList<>();
+            argList.add(arg1);
+            argList.add(arg2);
+            argList.add(arg3);
+            argList.addAll(Arrays.asList(args));
+            throwMessage(throwableClass, message, argList);
+        }
+    }
+
+    /**
+     * Private method to handle the throwing an Exception, Throwable or Error.
+     * @param throwableClass the Throwable type to throw
+     * @param message the message to use in the exception, with potential formatting identifiers
+     * @param argList List with potential values to use for the formatting identifiers
+     * @throws Throwable the throwable to throw
+     * @param <T> the Throwable type
+     */
+    private static <T extends Throwable> void throwMessage(final Class<T> throwableClass, final String message,
+            final List<Object> argList) throws T
+    {
+        List<StackTraceElement> steList = new ArrayList<StackTraceElement>(Arrays.asList(new Throwable().getStackTrace()));
+        steList.remove(0); // remove the throwMessage(...) call
+        steList.remove(0); // remove the when(...) call
+        StackTraceElement[] ste = steList.toArray(new StackTraceElement[steList.size()]);
+        String where = ste[0].getClassName() + "." + ste[0].getMethodName() + " (" + ste[0].getLineNumber() + "): ";
+        Object[] args = argList.toArray();
+        try
+        {
+            @SuppressWarnings("unchecked")
+            Constructor<T> constructor =
+                    (Constructor<T>) ClassUtil.resolveConstructor(throwableClass, new Class<?>[] { String.class });
             try
             {
-                @SuppressWarnings("unchecked")
-                Constructor<E> constructor =
-                        (Constructor<E>) ClassUtil.resolveConstructor(exceptionClass, new Class<?>[] { String.class });
-                try
-                {
-                    E exception = constructor.newInstance(where + String.format(message, args));
-                    exception.setStackTrace(ste);
-                    throw exception;
-                }
-                catch (IllegalFormatException exception)
-                {
-                    E exception2 =
-                            constructor.newInstance(where + message + "[FormatException; args=" + Arrays.asList(args) + "]");
-                    exception2.setStackTrace(ste);
-                    throw exception2;
-                }
+                T exception = constructor.newInstance(where + String.format(message, args));
+                exception.setStackTrace(ste);
+                throw exception;
             }
-            catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
-                    | InvocationTargetException exception3)
+            catch (IllegalFormatException exception)
             {
-                RuntimeException rte = new RuntimeException(where + message + "[Exception; args=" + Arrays.asList(args) + "]");
-                rte.setStackTrace(ste);
-                throw rte;
+                T exception2 = constructor.newInstance(where + message + " [FormatException; args=" + argList + "]");
+                exception2.setStackTrace(ste);
+                throw exception2;
             }
+        }
+        catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException exception3)
+        {
+            RuntimeException rte = new RuntimeException(where + message + " [Exception; args=" + argList + "]");
+            rte.setStackTrace(ste);
+            throw rte;
         }
     }
 }
