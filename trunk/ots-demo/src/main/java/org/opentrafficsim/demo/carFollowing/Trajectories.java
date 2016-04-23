@@ -21,6 +21,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -77,6 +78,9 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  */
 public class Trajectories extends AbstractWrappableAnimation implements UNITS
 {
+    /** */
+    private static final long serialVersionUID = 1L;
+    
     /** The model. */
     private TrajectoriesModel model;
 
@@ -125,7 +129,7 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
                 try
                 {
                     Trajectories trajectories = new Trajectories();
-                    trajectories.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(
+                    trajectories.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(
                         3600.0, SECOND), trajectories.getProperties(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException exception)
@@ -156,7 +160,7 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
     protected final JPanel makeCharts() throws OTSSimulationException
     {
         TablePanel charts = new TablePanel(1, 1);
-        Time.Rel sampleInterval = new Time.Rel(0.5, SECOND);
+        Duration sampleInterval = new Duration(0.5, SECOND);
         List<Lane> path = new ArrayList<Lane>();
         path.add(this.model.getLane());
         TrajectoryPlot tp = new TrajectoryPlot("Trajectory Plot", sampleInterval, path);
@@ -215,7 +219,7 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
     private OTSNetwork network = new OTSNetwork("network");
 
     /** The headway (inter-vehicle time). */
-    private Time.Rel headway;
+    private Duration headway;
 
     /** Number of cars created. */
     private int carsCreated = 0;
@@ -239,10 +243,10 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
     private LaneBasedIndividualGTU block = null;
 
     /** Minimum distance. */
-    private Length.Rel minimumDistance = new Length.Rel(0, METER);
+    private Length minimumDistance = new Length(0, METER);
 
     /** Maximum distance. */
-    private Length.Rel maximumDistance = new Length.Rel(5000, METER);
+    private Length maximumDistance = new Length(5000, METER);
 
     /** The Lane containing the simulated Cars. */
     private Lane lane;
@@ -298,7 +302,7 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
                 new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
                     this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0),
                     laneType, LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.None());
-            Sensor sensor = new SinkSensor(sinkLane, new Length.Rel(10.0, METER), this.simulator);
+            Sensor sensor = new SinkSensor(sinkLane, new Length(10.0, METER), this.simulator);
             sinkLane.addSensor(sensor, GTUType.ALL);
         }
         catch (NamingException | NetworkException | OTSGeometryException exception1)
@@ -318,20 +322,20 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
                     {
                         this.carFollowingModelCars =
                             new IDMOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
-                                new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
+                                new Length(2, METER), new Duration(1, SECOND), 1d);
                         this.carFollowingModelTrucks =
                             new IDMOld(new Acceleration(0.5, METER_PER_SECOND_2),
-                                new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1,
+                                new Acceleration(1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1,
                                     SECOND), 1d);
                     }
                     else if (modelName.equals("IDM+"))
                     {
                         this.carFollowingModelCars =
                             new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5,
-                                METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
+                                METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d);
                         this.carFollowingModelTrucks =
                             new IDMPlusOld(new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.5,
-                                METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
+                                METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d);
                     }
                     else
                     {
@@ -363,7 +367,7 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
         }
 
         // 1500 [vehicles / hour] == 2.4s headway
-        this.headway = new Time.Rel(3600.0 / 1500.0, SECOND);
+        this.headway = new Duration(3600.0 / 1500.0, SECOND);
 
         try
         {
@@ -400,7 +404,7 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
     protected final void createBlock() throws NamingException, SimRuntimeException, NetworkException, GTUException,
         OTSGeometryException
     {
-        Length.Rel initialPosition = new Length.Rel(4000, METER);
+        Length initialPosition = new Length(4000, METER);
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(this.getLane(), initialPosition, GTUDirectionality.DIR_PLUS));
         BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
@@ -411,7 +415,7 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
                 new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars));
         this.block =
             new LaneBasedIndividualGTU("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
-                new Length.Rel(4, METER), new Length.Rel(1.8, METER), new Speed(0.0, KM_PER_HOUR), this.simulator,
+                new Length(4, METER), new Length(1.8, METER), new Speed(0.0, KM_PER_HOUR), this.simulator,
                 strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
     }
 
@@ -430,13 +434,13 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
     protected final void generateCar()
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
-        Length.Rel initialPosition = new Length.Rel(0, METER);
+        Length initialPosition = new Length(0, METER);
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         try
         {
             initialPositions.add(new DirectedLanePosition(this.getLane(), initialPosition, GTUDirectionality.DIR_PLUS));
             Speed initialSpeed = new Speed(100, KM_PER_HOUR);
-            Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
+            Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
             GTUFollowingModelOld gtuFollowingModel =
                 generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
             if (null == gtuFollowingModel)
@@ -450,7 +454,7 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
                 new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, 
                     new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel));
             new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
-                vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator,
+                vehicleLength, new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator,
                 strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
             // Re-schedule this method after headway seconds
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
@@ -480,7 +484,7 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
     /**
      * @return minimum distance of the simulation
      */
-    public final Length.Rel getMinimumDistance()
+    public final Length getMinimumDistance()
     {
         return this.minimumDistance;
     }
@@ -488,7 +492,7 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
     /**
      * @return maximum distance of the simulation
      */
-    public final Length.Rel getMaximumDistance()
+    public final Length getMaximumDistance()
     {
         return this.maximumDistance;
     }

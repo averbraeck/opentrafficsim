@@ -27,15 +27,15 @@ class HeightTag implements Serializable
 
     /** The sOffst. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel sOffst = null;
+    Length sOffst = null;
 
     /** Inner. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel inner = null;
+    Length inner = null;
 
     /** Outer. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel outer = null;
+    Length outer = null;
 
     /**
      * Parse the attributes of the road.type tag. The sub-elements are parsed in separate classes.
@@ -58,15 +58,15 @@ class HeightTag implements Serializable
 
             Node sOffst = attributes.getNamedItem("sOffst");
             if (sOffst != null)
-                heightTag.sOffst = new Length.Rel(Double.parseDouble(sOffst.getNodeValue().trim()), LengthUnit.METER);
+                heightTag.sOffst = new Length(Double.parseDouble(sOffst.getNodeValue().trim()), LengthUnit.METER);
 
             Node inner = attributes.getNamedItem("inner");
             if (inner != null)
-                heightTag.inner = new Length.Rel(Double.parseDouble(inner.getNodeValue().trim()), LengthUnit.METER);
+                heightTag.inner = new Length(Double.parseDouble(inner.getNodeValue().trim()), LengthUnit.METER);
 
             Node outer = attributes.getNamedItem("outer");
             if (outer != null)
-                heightTag.outer = new Length.Rel(Double.parseDouble(outer.getNodeValue().trim()), LengthUnit.METER);
+                heightTag.outer = new Length(Double.parseDouble(outer.getNodeValue().trim()), LengthUnit.METER);
 
             laneTag.heightTag = heightTag;
         }

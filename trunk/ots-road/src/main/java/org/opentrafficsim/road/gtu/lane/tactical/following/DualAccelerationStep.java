@@ -79,7 +79,7 @@ public class DualAccelerationStep implements Serializable
      * Return the time up to which the result of the leader is valid.
      * @return DoubleScalar&lt;TimeUnit&gt;; the time up to which the result of the leader is valid
      */
-    public final Time.Abs getLeaderValidUntil()
+    public final Time getLeaderValidUntil()
     {
         return getLeaderAccelerationStep().getValidUntil();
     }
@@ -88,7 +88,7 @@ public class DualAccelerationStep implements Serializable
      * Return the time up to which the result of the follower is valid.
      * @return DoubleScalar&lt;TimeUnit&gt;; the time up to which the result of the follower is valid
      */
-    public final Time.Abs getFollowerValidUntil()
+    public final Time getFollowerValidUntil()
     {
         return getFollowerAccelerationStep().getValidUntil();
     }

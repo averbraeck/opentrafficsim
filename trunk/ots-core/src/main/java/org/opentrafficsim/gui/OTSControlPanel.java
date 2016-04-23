@@ -136,7 +136,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
         buttonPanel.add(makeButton("resetButton", "/Undo.png", "Reset", "Reset the simulation", false));
         this.clockPanel = new ClockPanel();
         buttonPanel.add(this.clockPanel);
-        this.timeEdit = new TimeEdit(new Time.Abs(0, TimeUnit.SECOND));
+        this.timeEdit = new TimeEdit(new Time(0, TimeUnit.SECOND));
         this.timeEdit.addPropertyChangeListener("value", this);
         buttonPanel.add(this.timeEdit);
         this.add(buttonPanel);
@@ -169,8 +169,8 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
     }
 
     /**
-     * Construct and schedule a SimEvent using a Time.Abs to specify the execution time.
-     * @param executionTime Time.Abs; the time at which the event must happen
+     * Construct and schedule a SimEvent using a Time to specify the execution time.
+     * @param executionTime Time; the time at which the event must happen
      * @param priority short; should be between <cite>SimEventInterface.MAX_PRIORITY</cite> and
      *            <cite>SimEventInterface.MIN_PRIORITY</cite>; most normal events should use
      *            <cite>SimEventInterface.NORMAL_PRIORITY</cite>
@@ -182,11 +182,11 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
      *         the event may arise later)
      * @throws SimRuntimeException when the <code>executionTime</code> is in the past
      */
-    private SimEvent<OTSSimTimeDouble> scheduleEvent(final Time.Abs executionTime, final short priority, final Object source,
+    private SimEvent<OTSSimTimeDouble> scheduleEvent(final Time executionTime, final short priority, final Object source,
             final Object eventTarget, final String method, final Object[] args) throws SimRuntimeException
     {
         SimEvent<OTSSimTimeDouble> simEvent =
-                new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time.Abs(executionTime.getSI(), TimeUnit.SECOND)),
+                new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time(executionTime.getSI(), TimeUnit.SECOND)),
                         priority, source, eventTarget, method, args);
         this.simulator.scheduleEvent(simEvent);
         return simEvent;
@@ -296,7 +296,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                 try
                 {
                     this.stopAtEvent =
-                            scheduleEvent(new Time.Abs(now, TimeUnit.SI), SimEventInterface.MIN_PRIORITY, this, this,
+                            scheduleEvent(new Time(now, TimeUnit.SI), SimEventInterface.MIN_PRIORITY, this, this,
                                     "autoPauseSimulator", null);
                 }
                 catch (SimRuntimeException exception)
@@ -451,7 +451,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                 try
                 {
                     this.stopAtEvent =
-                            scheduleEvent(new Time.Abs(nextTick, TimeUnit.SI), SimEventInterface.MAX_PRIORITY, this, this,
+                            scheduleEvent(new Time(nextTick, TimeUnit.SI), SimEventInterface.MAX_PRIORITY, this, this,
                                     "autoPauseSimulator", null);
                     getSimulator().start();
                 }
@@ -528,7 +528,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             try
             {
                 this.stopAtEvent =
-                        scheduleEvent(new Time.Abs(stopTime, TimeUnit.SECOND), SimEventInterface.MAX_PRIORITY, this, this,
+                        scheduleEvent(new Time(stopTime, TimeUnit.SECOND), SimEventInterface.MAX_PRIORITY, this, this,
                                 "autoPauseSimulator", null);
             }
             catch (SimRuntimeException exception)
@@ -890,9 +890,9 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
 
         /**
          * Construct a new TimeEdit.
-         * @param initialValue Time.Abs; the initial value for the TimeEdit
+         * @param initialValue Time; the initial value for the TimeEdit
          */
-        TimeEdit(final Time.Abs initialValue)
+        TimeEdit(final Time initialValue)
         {
             super(new RegexFormatter("\\d\\d\\d\\d:[0-5]\\d:[0-5]\\d\\.\\d\\d\\d"));
             MaskFormatter mf = null;
@@ -915,9 +915,9 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
 
         /**
          * Set or update the time shown in this TimeEdit.
-         * @param newValue Time.Abs; the (new) value to set/show in this TimeEdit
+         * @param newValue Time; the (new) value to set/show in this TimeEdit
          */
-        public void setTime(final Time.Abs newValue)
+        public void setTime(final Time newValue)
         {
             double v = newValue.getSI();
             int integerPart = (int) Math.floor(v);

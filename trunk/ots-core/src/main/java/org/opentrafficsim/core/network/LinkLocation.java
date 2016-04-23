@@ -42,7 +42,7 @@ public class LinkLocation implements Serializable
      * @param link The link of the location of a point relative to the GTU.
      * @param position The position as a length of the reference point on the link.
      */
-    public LinkLocation(final Link link, final Length.Rel position)
+    public LinkLocation(final Link link, final Length position)
     {
         super();
         this.link = link;
@@ -68,9 +68,9 @@ public class LinkLocation implements Serializable
     /**
      * @return position as a length as a traveled length on this link.
      */
-    public final Length.Rel getLongitudinalPosition()
+    public final Length getLongitudinalPosition()
     {
-        return new Length.Rel(this.link.getLength().getSI() * getFractionalLongitudinalPosition(), LengthUnit.METER);
+        return new Length(this.link.getLength().getSI() * getFractionalLongitudinalPosition(), LengthUnit.METER);
     }
 
     /**
@@ -79,7 +79,7 @@ public class LinkLocation implements Serializable
      * @param loc the link location to find the distance to.
      * @return the distance to another LinkLocation.
      */
-    public final Length.Rel distance(final LinkLocation loc)
+    public final Length distance(final LinkLocation loc)
     {
         if (this.link.equals(loc.getLink()))
         {

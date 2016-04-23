@@ -14,6 +14,7 @@ import javax.swing.WindowConstants;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.gtu.animation.DefaultSwitchableGTUColorer;
@@ -55,18 +56,18 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     protected OTSAnimationPanel panel;
 
     /** Save the startTime for restarting the simulation. */
-    private Time.Abs savedStartTime;
+    private Time savedStartTime;
 
     /** Save the startTime for restarting the simulation. */
-    private Time.Rel savedWarmupPeriod;
+    private Duration savedWarmupPeriod;
 
     /** Save the runLength for restarting the simulation. */
-    private Time.Rel savedRunLength;
+    private Duration savedRunLength;
 
     /** {@inheritDoc} */
     @Override
-    public final SimpleAnimator buildAnimator(final Time.Abs startTime, final Time.Rel warmupPeriod,
-        final Time.Rel runLength, final ArrayList<AbstractProperty<?>> userModifiedProperties, final Rectangle rect,
+    public final SimpleAnimator buildAnimator(final Time startTime, final Duration warmupPeriod,
+        final Duration runLength, final ArrayList<AbstractProperty<?>> userModifiedProperties, final Rectangle rect,
         final boolean eoc) throws SimRuntimeException, NamingException, OTSSimulationException
     {
         this.savedUserModifiedProperties = userModifiedProperties;

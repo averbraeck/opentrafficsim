@@ -22,7 +22,7 @@ import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 import org.djunits.unit.AngleUnit;
 import org.djunits.value.AngleUtil;
-import org.djunits.value.vdouble.scalar.Angle;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -231,12 +231,12 @@ final class Links
                     Math.atan2(linkTag.nodeEndTag.node.getLocation().y - linkTag.nodeStartTag.node.getLocation().y,
                         linkTag.nodeEndTag.node.getLocation().x - linkTag.nodeStartTag.node.getLocation().x);
                 // TODO test for over-specification (i.e. node direction was already specified)
-                linkTag.nodeStartTag.angle = new Angle.Abs(angle, AngleUnit.SI);
-                linkTag.nodeEndTag.angle = new Angle.Abs(angle, AngleUnit.SI);
+                linkTag.nodeStartTag.angle = new Direction(angle, AngleUnit.SI);
+                linkTag.nodeEndTag.angle = new Direction(angle, AngleUnit.SI);
                 double slope = linkTag.nodeStartTag.node.getSlope().getSI();
-                linkTag.nodeStartTag.slope = new Angle.Abs(slope, AngleUnit.SI);
+                linkTag.nodeStartTag.slope = new Direction(slope, AngleUnit.SI);
                 slope = linkTag.nodeEndTag.node.getSlope().getSI();
-                linkTag.nodeEndTag.slope = new Angle.Abs(slope, AngleUnit.SI);
+                linkTag.nodeEndTag.slope = new Direction(slope, AngleUnit.SI);
             }
         }
 
@@ -260,9 +260,9 @@ final class Links
                 coordinate.y += lengthSI * Math.sin(angle);
                 coordinate.z += lengthSI * Math.sin(slope);
                 NodeTag nodeTag = linkTag.nodeEndTag;
-                nodeTag.angle = new Angle.Abs(angle, AngleUnit.SI);
+                nodeTag.angle = new Direction(angle, AngleUnit.SI);
                 nodeTag.coordinate = new OTSPoint3D(coordinate.x, coordinate.y, coordinate.z);
-                nodeTag.slope = new Angle.Abs(slope, AngleUnit.SI);
+                nodeTag.slope = new Direction(slope, AngleUnit.SI);
                 linkTag.nodeEndTag.node = NodeTag.makeOTSNode(nodeTag, parser);
             }
             else if (linkTag.nodeStartTag.node == null)
@@ -276,9 +276,9 @@ final class Links
                 coordinate.y -= lengthSI * Math.sin(angle);
                 coordinate.z -= lengthSI * Math.sin(slope);
                 NodeTag nodeTag = linkTag.nodeStartTag;
-                nodeTag.angle = new Angle.Abs(angle, AngleUnit.SI);
+                nodeTag.angle = new Direction(angle, AngleUnit.SI);
                 nodeTag.coordinate = new OTSPoint3D(coordinate.x, coordinate.y, coordinate.z);
-                nodeTag.slope = new Angle.Abs(slope, AngleUnit.SI);
+                nodeTag.slope = new Direction(slope, AngleUnit.SI);
                 linkTag.nodeStartTag.node = NodeTag.makeOTSNode(nodeTag, parser);
             }
         }
@@ -304,7 +304,7 @@ final class Links
                     linkTag.arcTag.startAngle = startAngle - Math.PI / 2.0;
                     coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle + angle);
                     coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle + angle);
-                    nodeTag.angle = new Angle.Abs(AngleUtil.normalize(startAngle + angle), AngleUnit.SI);
+                    nodeTag.angle = new Direction(AngleUtil.normalize(startAngle + angle), AngleUnit.SI);
                 }
                 else
                 {
@@ -315,10 +315,10 @@ final class Links
                     linkTag.arcTag.startAngle = startAngle + Math.PI / 2.0;
                     coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle - angle);
                     coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle - angle);
-                    nodeTag.angle = new Angle.Abs(AngleUtil.normalize(startAngle - angle), AngleUnit.SI);
+                    nodeTag.angle = new Direction(AngleUtil.normalize(startAngle - angle), AngleUnit.SI);
                 }
                 coordinate.z = linkTag.nodeStartTag.node.getLocation().getZ() + lengthSI * Math.sin(slope);
-                nodeTag.slope = new Angle.Abs(slope, AngleUnit.SI);
+                nodeTag.slope = new Direction(slope, AngleUnit.SI);
                 nodeTag.coordinate = new OTSPoint3D(coordinate.x, coordinate.y, coordinate.z);
                 linkTag.nodeEndTag.node = NodeTag.makeOTSNode(nodeTag, parser);
             }
@@ -341,7 +341,7 @@ final class Links
                     coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle);
                     coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle);
                     nodeTag.angle =
-                        new Angle.Abs(AngleUtil.normalize(linkTag.arcTag.startAngle + Math.PI / 2.0), AngleUnit.SI);
+                        new Direction(AngleUtil.normalize(linkTag.arcTag.startAngle + Math.PI / 2.0), AngleUnit.SI);
                 }
                 else
                 {
@@ -352,11 +352,11 @@ final class Links
                     coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle);
                     coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle);
                     nodeTag.angle =
-                        new Angle.Abs(AngleUtil.normalize(linkTag.arcTag.startAngle - Math.PI / 2.0), AngleUnit.SI);
+                        new Direction(AngleUtil.normalize(linkTag.arcTag.startAngle - Math.PI / 2.0), AngleUnit.SI);
                 }
                 coordinate.z -= lengthSI * Math.sin(slope);
                 nodeTag.coordinate = new OTSPoint3D(coordinate.x, coordinate.y, coordinate.z);
-                nodeTag.slope = new Angle.Abs(slope, AngleUnit.SI);
+                nodeTag.slope = new Direction(slope, AngleUnit.SI);
                 linkTag.nodeStartTag.node = NodeTag.makeOTSNode(nodeTag, parser);
             }
         }
@@ -668,7 +668,7 @@ final class Links
                     if (linkTag.sinkTags.keySet().contains(cseTag.name))
                     {
                         SinkTag sinkTag = linkTag.sinkTags.get(cseTag.name);
-                        Length.Rel position = LinkTag.parseBeginEndPosition(sinkTag.positionStr, lane);
+                        Length position = LinkTag.parseBeginEndPosition(sinkTag.positionStr, lane);
                         Sensor sensor = new SinkSensor(lane, position, simulator);
                         lane.addSensor(sensor, GTUType.ALL);
                     }
@@ -677,7 +677,7 @@ final class Links
                     if (linkTag.blockTags.containsKey(cseTag.name))
                     {
                         BlockTag blockTag = linkTag.blockTags.get(cseTag.name);
-                        Length.Rel position = LinkTag.parseBeginEndPosition(blockTag.positionStr, lane);
+                        Length position = LinkTag.parseBeginEndPosition(blockTag.positionStr, lane);
                         new LaneBlock(lane, position, simulator, null, parser.network);
                     }
 
@@ -691,8 +691,8 @@ final class Links
                                 Class<?> clazz = Class.forName(trafficLightTag.className);
                                 Constructor<?> trafficLightConstructor =
                                     ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class,
-                                        Length.Rel.class, OTSDEVSSimulatorInterface.class, OTSNetwork.class});
-                                Length.Rel position = LinkTag.parseBeginEndPosition(trafficLightTag.positionStr, lane);
+                                        Length.class, OTSDEVSSimulatorInterface.class, OTSNetwork.class});
+                                Length position = LinkTag.parseBeginEndPosition(trafficLightTag.positionStr, lane);
                                 AbstractTrafficLight trafficLight =
                                     (AbstractTrafficLight) trafficLightConstructor.newInstance(new Object[]{
                                         trafficLightTag.name, lane, position, simulator, parser.network});
@@ -726,9 +726,9 @@ final class Links
                             {
                                 Class<?> clazz = Class.forName(sensorTag.className);
                                 Constructor<?> sensorConstructor =
-                                    ClassUtil.resolveConstructor(clazz, new Class[]{Lane.class, Length.Rel.class,
+                                    ClassUtil.resolveConstructor(clazz, new Class[]{Lane.class, Length.class,
                                         RelativePosition.TYPE.class, String.class, OTSDEVSSimulatorInterface.class});
-                                Length.Rel position = LinkTag.parseBeginEndPosition(sensorTag.positionStr, lane);
+                                Length position = LinkTag.parseBeginEndPosition(sensorTag.positionStr, lane);
                                 AbstractSensor sensor =
                                     (AbstractSensor) sensorConstructor.newInstance(new Object[]{lane, position,
                                         sensorTag.triggerPosition, sensorTag.name, simulator});

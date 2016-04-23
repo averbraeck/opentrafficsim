@@ -77,7 +77,7 @@ public class LaneStructure implements Serializable
     private static final long serialVersionUID = 20160400L;
 
     /** The length of this structure, to see if it needs updating. */
-    private Length.Rel length;
+    private Length length;
 
     /** The lanes from which we observe the situation. */
     private LaneStructureRecord rootLSR;
@@ -110,7 +110,7 @@ public class LaneStructure implements Serializable
     /**
      * @return length
      */
-    public final Length.Rel getLength()
+    public final Length getLength()
     {
         return this.length;
     }

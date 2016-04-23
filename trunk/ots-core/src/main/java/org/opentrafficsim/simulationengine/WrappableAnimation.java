@@ -7,6 +7,7 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
@@ -25,10 +26,10 @@ public interface WrappableAnimation
 {
     /**
      * Build the animation.
-     * @param startTime Time.Abs; the start time of the simulation
-     * @param warmupPeriod Time.Rel; the warm up period of the simulation (use new Time.Rel(0, SECOND) if you don't know what
+     * @param startTime Time; the start time of the simulation
+     * @param warmupPeriod Duration; the warm up period of the simulation (use new Duration(0, SECOND) if you don't know what
      *            this is)
-     * @param runLength Time.Rel; the duration of the simulation
+     * @param runLength Duration; the duration of the simulation
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user-modified) properties. This list must
      *            contain all the properties returned by getProperties(); any additional properties may be ignored
      * @param rect the x, y, width and height for the window to rebuild. Use null for maximized screen.
@@ -40,8 +41,8 @@ public interface WrappableAnimation
      * @throws OTSSimulationException when the construction of the simulation, the control panel, the animation, or the charts
      *             fails
      */
-    SimpleSimulatorInterface buildAnimator(final Time.Abs startTime, final Time.Rel warmupPeriod,
-        final Time.Rel runLength, ArrayList<AbstractProperty<?>> properties, Rectangle rect, boolean exitOnClose)
+    SimpleSimulatorInterface buildAnimator(final Time startTime, final Duration warmupPeriod,
+        final Duration runLength, ArrayList<AbstractProperty<?>> properties, Rectangle rect, boolean exitOnClose)
         throws SimRuntimeException, NetworkException, NamingException, OTSSimulationException;
 
     /**

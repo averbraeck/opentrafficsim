@@ -23,13 +23,13 @@ public class RelativePosition implements Serializable
     private static final long serialVersionUID = 20141231L;
 
     /** Positive x is in the normal direction of movement. */
-    private final Length.Rel dx;
+    private final Length dx;
 
     /** Positive y is left compared to the normal direction of movement (seen from the top). */
-    private final Length.Rel dy;
+    private final Length dy;
 
     /** Positive z is up. */
-    private final Length.Rel dz;
+    private final Length dz;
 
     /** Type of relative position (FRONT, BACK, etc.). */
     private final TYPE type;
@@ -50,8 +50,8 @@ public class RelativePosition implements Serializable
     public static final TYPE DRIVER = new TYPE("DRIVER");
 
     /** The reference position (always 0, 0, 0). */
-    public static final RelativePosition REFERENCE_POSITION = new RelativePosition(new Length.Rel(0.0d, LengthUnit.SI),
-        new Length.Rel(0.0d, LengthUnit.SI), new Length.Rel(0.0d, LengthUnit.SI), RelativePosition.REFERENCE);
+    public static final RelativePosition REFERENCE_POSITION = new RelativePosition(new Length(0.0d, LengthUnit.SI),
+        new Length(0.0d, LengthUnit.SI), new Length(0.0d, LengthUnit.SI), RelativePosition.REFERENCE);
 
     /**
      * @param dx positive x is in the normal direction of movement.
@@ -59,7 +59,7 @@ public class RelativePosition implements Serializable
      * @param dz positive z is up.
      * @param type type of relative position (FRONT, BACK, etc.).
      */
-    public RelativePosition(final Length.Rel dx, final Length.Rel dy, final Length.Rel dz, final TYPE type)
+    public RelativePosition(final Length dx, final Length dy, final Length dz, final TYPE type)
     {
         super();
         this.dx = dx;
@@ -83,7 +83,7 @@ public class RelativePosition implements Serializable
     /**
      * @return dx.
      */
-    public final Length.Rel getDx()
+    public final Length getDx()
     {
         return this.dx;
     }
@@ -91,7 +91,7 @@ public class RelativePosition implements Serializable
     /**
      * @return dy.
      */
-    public final Length.Rel getDy()
+    public final Length getDy()
     {
         return this.dy;
     }
@@ -99,7 +99,7 @@ public class RelativePosition implements Serializable
     /**
      * @return dz.
      */
-    public final Length.Rel getDz()
+    public final Length getDz()
     {
         return this.dz;
     }

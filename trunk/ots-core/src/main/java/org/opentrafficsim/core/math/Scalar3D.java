@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.math;
 
 import org.djunits.unit.AngleUnit;
-import org.djunits.value.vdouble.scalar.Angle;
+import org.djunits.value.vdouble.scalar.Direction;
 
 /**
  * Calculate between Polar (spherical) and Cartesian (xyz) coordinates.
@@ -59,10 +59,10 @@ public final class Scalar3D
      * @param z the z-coordinate
      * @return the radius, which is the distance from (0,0,0)
      */
-    public static Angle.Abs cartesianToTheta(final double x, final double y, final double z)
+    public static Direction cartesianToTheta(final double x, final double y, final double z)
     {
         double r = Math.sqrt(x * x + y * y + z * z);
-        return new Angle.Abs(Math.acos(z / r), AngleUnit.SI);
+        return new Direction(Math.acos(z / r), AngleUnit.SI);
     }
 
     /**
@@ -71,9 +71,9 @@ public final class Scalar3D
      * @param y the y-coordinate
      * @return the projected angle of direction in the xy-plane
      */
-    public static Angle.Abs cartesianToPhi(final double x, final double y)
+    public static Direction cartesianToPhi(final double x, final double y)
     {
-        return new Angle.Abs(Math.atan2(y, x), AngleUnit.SI);
+        return new Direction(Math.atan2(y, x), AngleUnit.SI);
     }
 
 }

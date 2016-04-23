@@ -98,14 +98,14 @@ class SensorTag implements Serializable
 
             try
             {
-                ClassUtil.resolveConstructor(clazz, new Class[]{Lane.class, Length.Rel.class,
+                ClassUtil.resolveConstructor(clazz, new Class[]{Lane.class, Length.class,
                     RelativePosition.TYPE.class, String.class, OTSDEVSSimulatorInterface.class});
             }
             catch (NoSuchMethodException nsme)
             {
                 throw new SAXException("SENSOR: CLASS NAME " + sensorTag.className + " for sensor " + sensorTag.name
                     + " on lane " + laneName
-                    + " -- no constructor with arguments (Lane, Length.Rel, RelativePosition.TYPE,"
+                    + " -- no constructor with arguments (Lane, Length, RelativePosition.TYPE,"
                     + " String, OTSSimulatorInterface)");
             }
         }

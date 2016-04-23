@@ -28,6 +28,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -92,8 +93,8 @@ public class TestGMParser extends AbstractWrappableAnimation
                 {
                     TestGMParser xmlModel = new TestGMParser();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(new Time.Abs(0.0, TimeUnit.SECOND), new Time.Rel(0.0, TimeUnit.SECOND),
-                        new Time.Rel(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
+                    xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                        new Duration(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException exception)
                 {
@@ -204,17 +205,17 @@ public class TestGMParser extends AbstractWrappableAnimation
             StreamInterface stream = new MersenneTwister(1);
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 0.0), SpeedUnit.METER_PER_SECOND);
-            ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> interarrivelTimeDist =
+            ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> interarrivelTimeDist =
                 new ContinuousDistDoubleScalar.Rel<>(new DistExponential(stream, 7.0), TimeUnit.SECOND);
-            ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> lengthDist =
+            ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 4.5), LengthUnit.METER);
-            ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDist =
+            ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDist =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 2.0), LengthUnit.METER);
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 140.0), SpeedUnit.KM_PER_HOUR);
             int maxGTUs = Integer.MAX_VALUE;
-            Time.Abs startTime = Time.Abs.ZERO;
-            Time.Abs endTime = new Time.Abs(1E24, TimeUnit.HOUR);
+            Time startTime = Time.ZERO;
+            Time endTime = new Time(1E24, TimeUnit.HOUR);
             GTUColorer gtuColorer =
                 new SwitchableGTUColorer(0, new IDGTUColorer(), new VelocityGTUColorer(new Speed(100.0,
                     SpeedUnit.KM_PER_HOUR)), new AccelerationGTUColorer(new Acceleration(-1.0,
@@ -240,11 +241,11 @@ public class TestGMParser extends AbstractWrappableAnimation
             Lane L2a_A3 = (Lane) L2a.getCrossSectionElement("A3");
             new GTUGeneratorIndividual("L2a_A2", this.simulator, carType, LaneBasedIndividualGTU.class,
                 initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
-                endTime, L2a_A2, new Length.Rel(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
+                endTime, L2a_A2, new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
                 strategicalPlanner, perceptionClass, network);
             new GTUGeneratorIndividual("L2a_A3", this.simulator, carType, LaneBasedIndividualGTU.class,
                 initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
-                endTime, L2a_A3, new Length.Rel(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
+                endTime, L2a_A3, new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
                 strategicalPlanner, perceptionClass, network);
 
             CrossSectionLink L49b = (CrossSectionLink) network.getLink("L49b");
@@ -252,11 +253,11 @@ public class TestGMParser extends AbstractWrappableAnimation
             Lane L49b_A2 = (Lane) L49b.getCrossSectionElement("A2");
             new GTUGeneratorIndividual("L49b_A1", this.simulator, carType, LaneBasedIndividualGTU.class,
                 initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
-                endTime, L49b_A1, new Length.Rel(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
+                endTime, L49b_A1, new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
                 strategicalPlanner, perceptionClass, network);
             new GTUGeneratorIndividual("L49b_A2", this.simulator, carType, LaneBasedIndividualGTU.class,
                 initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
-                endTime, L49b_A2, new Length.Rel(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
+                endTime, L49b_A2, new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
                 strategicalPlanner, perceptionClass, network);
         }
 

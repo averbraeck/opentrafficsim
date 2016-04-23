@@ -15,11 +15,11 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check;
@@ -54,9 +54,9 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         }
 
         // Check ParameterType construction (id, description, class, defaultValue)
-        Length.Rel defaultValue = new Length.Rel(1.0, LengthUnit.SI);
-        ParameterType<LengthUnit, Length.Rel> a =
-                new ParameterType<LengthUnit, Length.Rel>("a", "along", Length.Rel.class, defaultValue);
+        Length defaultValue = new Length(1.0, LengthUnit.SI);
+        ParameterType<LengthUnit, Length> a =
+                new ParameterType<LengthUnit, Length>("a", "along", Length.class, defaultValue);
         assertEquals("Parameter type id not properly set.", "a", a.getId());
         assertEquals("Parameter type description not properly set.", "along", a.getDescription());
         try
@@ -69,7 +69,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         }
 
         // Check ParameterType construction (id, description, class)
-        ParameterType<LengthUnit, Length.Rel> b = new ParameterType<LengthUnit, Length.Rel>("b", "blong", Length.Rel.class);
+        ParameterType<LengthUnit, Length> b = new ParameterType<LengthUnit, Length>("b", "blong", Length.class);
         assertEquals("Parameter type id not properly set.", "b", b.getId());
         assertEquals("Parameter type description not properly set.", "blong", b.getDescription());
         try
@@ -491,9 +491,9 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         checkDefaultValuesPerClass(ParameterType.class,              new Speed(3, SpeedUnit.SI));
         checkDefaultValuesPerClass(ParameterTypeSpeed.class,         new Speed(3, SpeedUnit.SI));
         checkDefaultValuesPerClass(ParameterTypeAcceleration.class,  new Acceleration(3, AccelerationUnit.SI));
-        checkDefaultValuesPerClass(ParameterTypeLength.class,        new Length.Rel(3, LengthUnit.SI));
+        checkDefaultValuesPerClass(ParameterTypeLength.class,        new Length(3, LengthUnit.SI));
         checkDefaultValuesPerClass(ParameterTypeFrequency.class,     new Frequency(3, FrequencyUnit.SI));
-        checkDefaultValuesPerClass(ParameterTypeTime.class,          new Time.Rel(3, TimeUnit.SI));
+        checkDefaultValuesPerClass(ParameterTypeTime.class,          new Duration(3, TimeUnit.SI));
         checkDefaultValuesPerClass(ParameterTypeLinearDensity.class, new LinearDensity(3, LinearDensityUnit.SI));
         checkDefaultValuesPerClass(ParameterTypeBoolean.class,       new Boolean(false));
         checkDefaultValuesPerClass(ParameterTypeDouble.class,        new Double(3));

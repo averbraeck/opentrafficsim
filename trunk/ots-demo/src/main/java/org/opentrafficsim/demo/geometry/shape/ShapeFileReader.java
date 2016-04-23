@@ -223,7 +223,7 @@ public final class ShapeFileReader implements UNITS
                 // the reason to use String.valueOf(...) is that the .dbf files sometimes use double,
                 // but also represent LENGTH by a string ....
                 double lengthIn = Double.parseDouble(String.valueOf(feature.getAttribute("LENGTH")));
-                Length.Rel length = new Length.Rel(lengthIn, KILOMETER);
+                Length length = new Length(lengthIn, KILOMETER);
                 short direction = (short) Long.parseLong(String.valueOf(feature.getAttribute("DIRECTION")));
                 String lNodeA = String.valueOf(feature.getAttribute("ANODE"));
                 String lNodeB = String.valueOf(feature.getAttribute("BNODE"));
@@ -424,15 +424,15 @@ public final class ShapeFileReader implements UNITS
     {
         // 2 x n lanes, grass underneath, lines between lanes, barrier in center
         // lane is 3.5 meters wide. gap in middle is one meter. outside 0.5 meters on both sides
-        Length.Rel m05 = new Length.Rel(0.5, METER);
-        Length.Rel m10 = new Length.Rel(1.0, METER);
-        Length.Rel m35 = new Length.Rel(3.5, METER);
+        Length m05 = new Length(0.5, METER);
+        Length m10 = new Length(1.0, METER);
+        Length m35 = new Length(3.5, METER);
         Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
         try
         {
             // middenberm
-            Shoulder sM = new Shoulder(link, "sM", new Length.Rel(0.0, METER), m10);
+            Shoulder sM = new Shoulder(link, "sM", new Length(0.0, METER), m10);
             new ShoulderAnimation(sM, simulator, Color.GREEN);
             for (int i = -1; i <= 1; i += 2)
             {
@@ -441,7 +441,7 @@ public final class ShapeFileReader implements UNITS
                 String lr = i < 0 ? "L" : "R";
                 //
                 Lane laneEM =
-                    new NoTrafficLane(link, lr + "." + "EM", new Length.Rel(i * 0.75, METER), new Length.Rel(i * 0.75,
+                    new NoTrafficLane(link, lr + "." + "EM", new Length(i * 0.75, METER), new Length(i * 0.75,
                         METER), m05, m05);
                 new LaneAnimation(laneEM, simulator, Color.LIGHT_GRAY, false);
                 double lat = 1;
@@ -449,7 +449,7 @@ public final class ShapeFileReader implements UNITS
                 {
                     lat += i * 1.75;
                     Lane lane =
-                        new Lane(link, "lane." + lr + "." + j, new Length.Rel(lat, METER), new Length.Rel(lat, METER),
+                        new Lane(link, "lane." + lr + "." + j, new Length(lat, METER), new Length(lat, METER),
                             m35, m35, null, dir, speedLimit, new OvertakingConditions.LeftAndRight());
                     new LaneAnimation(lane, simulator, Color.GRAY, false);
                     lat += i * 1.75;
@@ -459,17 +459,17 @@ public final class ShapeFileReader implements UNITS
                 {
                     lat += i * 1.75;
                     Lane lane =
-                        new NoTrafficLane(link, "extra." + lr + "." + j, new Length.Rel(lat, METER), new Length.Rel(
+                        new NoTrafficLane(link, "extra." + lr + "." + j, new Length(lat, METER), new Length(
                             lat, METER), m35, m35);
                     new LaneAnimation(lane, simulator, Color.LIGHT_GRAY, false);
                     lat += i * 1.75;
                 }
                 Lane laneEO =
-                    new NoTrafficLane(link, lr + "." + "EO", new Length.Rel(lat + i * 0.25, METER), new Length.Rel(lat
+                    new NoTrafficLane(link, lr + "." + "EO", new Length(lat + i * 0.25, METER), new Length(lat
                         + i * 0.25, METER), m05, m05);
                 new LaneAnimation(laneEO, simulator, Color.LIGHT_GRAY, false);
                 lat += i * 0.5;
-                Shoulder sO = new Shoulder(link, lr + "." + "sO", new Length.Rel(lat, METER), m10);
+                Shoulder sO = new Shoulder(link, lr + "." + "sO", new Length(lat, METER), m10);
                 new ShoulderAnimation(sO, simulator, Color.GREEN);
             }
         }
@@ -491,15 +491,15 @@ public final class ShapeFileReader implements UNITS
     {
         // 2 x n lanes, grass underneath, lines between lanes, barrier in center
         // lane is 3.0 meters wide. gap in middle is one meter. outside 0.5 meters on both sides
-        Length.Rel m10 = new Length.Rel(1.0, METER);
-        Length.Rel m30 = new Length.Rel(3.0, METER);
+        Length m10 = new Length(1.0, METER);
+        Length m30 = new Length(3.0, METER);
         Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
         try
         {
             if (middenberm)
             {
-                Shoulder sM = new Shoulder(link, "sM", new Length.Rel(0.0, METER), m10);
+                Shoulder sM = new Shoulder(link, "sM", new Length(0.0, METER), m10);
                 new ShoulderAnimation(sM, simulator, Color.GREEN);
             }
             for (int i = -1; i <= 1; i += 2)
@@ -512,7 +512,7 @@ public final class ShapeFileReader implements UNITS
                     lat += i * 1.5;
                     String lr = i < 0 ? "L" : "R";
                     Lane lane =
-                        new Lane(link, "lane." + lr + "." + j, new Length.Rel(lat, METER), new Length.Rel(lat, METER),
+                        new Lane(link, "lane." + lr + "." + j, new Length(lat, METER), new Length(lat, METER),
                             m30, m30, null, dir, speedLimit, new OvertakingConditions.LeftAndRight());
                     new LaneAnimation(lane, simulator, Color.DARK_GRAY, false);
                     lat += i * 1.5;
@@ -533,13 +533,13 @@ public final class ShapeFileReader implements UNITS
     private static void addCityStreet(final CrossSectionLink link, final OTSSimulatorInterface simulator)
         throws NetworkException
     {
-        Length.Rel m60 = new Length.Rel(6.0, METER);
+        Length m60 = new Length(6.0, METER);
         Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
         try
         {
             Lane lane =
-                new Lane(link, "lane", new Length.Rel(0.0, METER), new Length.Rel(0.0, METER), m60, m60, null,
+                new Lane(link, "lane", new Length(0.0, METER), new Length(0.0, METER), m60, m60, null,
                     LongitudinalDirectionality.DIR_PLUS, speedLimit, new OvertakingConditions.LeftAndRight());
             new LaneAnimation(lane, simulator, Color.DARK_GRAY, false);
         }

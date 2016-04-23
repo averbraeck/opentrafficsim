@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.gtu;
 
-import java.util.Arrays;
-import java.util.IllegalFormatException;
 
 /**
  * Exception thrown when GTU encounters a problem.

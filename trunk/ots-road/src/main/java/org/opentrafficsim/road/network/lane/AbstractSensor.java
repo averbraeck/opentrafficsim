@@ -50,14 +50,14 @@ public abstract class AbstractSensor implements Sensor
 
     /**
      * @param lane The lane for which this is a sensor.
-     * @param longitudinalPosition Length.Rel; the position (between 0.0 and the length of the Lane) of the sensor on the design
+     * @param longitudinalPosition Length; the position (between 0.0 and the length of the Lane) of the sensor on the design
      *            line of the lane.
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the sensor.
      * @param name the name of the sensor.
      * @param simulator the simulator for being able to generate the animation.
      */
-    public AbstractSensor(final Lane lane, final Length.Rel longitudinalPosition,
+    public AbstractSensor(final Lane lane, final Length longitudinalPosition,
         final RelativePosition.TYPE positionType, final String name, final OTSDEVSSimulatorInterface simulator)
     {
         this.lane = lane;
@@ -76,9 +76,9 @@ public abstract class AbstractSensor implements Sensor
 
     /** {@inheritDoc} */
     @Override
-    public final Length.Rel getLongitudinalPosition()
+    public final Length getLongitudinalPosition()
     {
-        return new Length.Rel(this.longitudinalPositionSI, LengthUnit.METER);
+        return new Length(this.longitudinalPositionSI, LengthUnit.METER);
     }
 
     /** {@inheritDoc} */

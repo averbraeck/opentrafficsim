@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -75,16 +74,16 @@ class PlanViewTag implements Serializable
 
             lastGeometryTag.id = roadTag.id + "." + String.valueOf(geometryCount);
 
-            lastGeometryTag.length = new Length.Rel(0.0, LengthUnit.METER);
+            lastGeometryTag.length = new Length(0.0, LengthUnit.METER);
             // lastGeometryTag.length = roadTag.length.minus(previousTag.s);
 
             lastGeometryTag.s = roadTag.length;
 
-            lastGeometryTag.x = new Length.Rel(0.0, LengthUnit.METER);
+            lastGeometryTag.x = new Length(0.0, LengthUnit.METER);
 
             lastGeometryTag.x = previousTag.x.plus(previousTag.length.multiplyBy(Math.cos(previousTag.hdg.si)));
 
-            lastGeometryTag.y = new Length.Rel(0.0, LengthUnit.METER);
+            lastGeometryTag.y = new Length(0.0, LengthUnit.METER);
 
             lastGeometryTag.y = previousTag.y.plus(previousTag.length.multiplyBy(Math.sin(previousTag.hdg.si)));
 
@@ -115,7 +114,7 @@ class PlanViewTag implements Serializable
      * @param elevationTags
      * @return elevation
      */
-    private static Length.Rel assignHeight(GeometryTag geometryTag, NavigableMap<Double, ElevationTag> elevationTags)
+    private static Length assignHeight(GeometryTag geometryTag, NavigableMap<Double, ElevationTag> elevationTags)
     {
         Double key = geometryTag.s.si;
         if (elevationTags.containsKey(key))
@@ -130,8 +129,8 @@ class PlanViewTag implements Serializable
 
             Double factor = (key - before) / (after - before);
 
-            Length.Rel beHeight = elevationTags.get(before).elevation;
-            Length.Rel afHeight = elevationTags.get(after).elevation;
+            Length beHeight = elevationTags.get(before).elevation;
+            Length afHeight = elevationTags.get(after).elevation;
 
             return afHeight.minus(beHeight).multiplyBy(factor).plus(beHeight);
         }
@@ -150,24 +149,24 @@ class PlanViewTag implements Serializable
         double startCurvature = geometryTag.spiralTag.curvStart.doubleValue();
         double endCurvature = geometryTag.spiralTag.curvEnd.doubleValue();
         OTSPoint3D start = geometryTag.node.getPoint();
-        Length.Rel length = geometryTag.length;
+        Length length = geometryTag.length;
 
         /*
          * int numSegments = 100;// (int) (length.doubleValue()/1); OTSLine3D line = Clothoid.clothoid(start,
-         * AngleUtil.normalize(new Angle.Abs(geometryTag.hdg.si, AngleUnit.RADIAN)), startCurvature, endCurvature, length, new
-         * Length.Rel(0, LengthUnit.SI), numSegments);
+         * AngleUtil.normalize(new Direction(geometryTag.hdg.si, AngleUnit.RADIAN)), startCurvature, endCurvature, length, new
+         * Length(0, LengthUnit.SI), numSegments);
          */
 
         List<OTSPoint3D> pOutPut = new ArrayList<OTSPoint3D>();
 
-        Rel x1 = geometryTag.x.plus(geometryTag.length.multiplyBy(Math.cos(geometryTag.hdg.si)).multiplyBy(0.5));
-        Rel y1 = geometryTag.y.plus(geometryTag.length.multiplyBy(Math.sin(geometryTag.hdg.si)).multiplyBy(0.5));
+        Length x1 = geometryTag.x.plus(geometryTag.length.multiplyBy(Math.cos(geometryTag.hdg.si)).multiplyBy(0.5));
+        Length y1 = geometryTag.y.plus(geometryTag.length.multiplyBy(Math.sin(geometryTag.hdg.si)).multiplyBy(0.5));
 
         OTSPoint3D p = new OTSPoint3D(x1.si, y1.si, 0);
         pOutPut.add(p);
 
-        Rel x2 = geometryTag.x.plus(geometryTag.length.multiplyBy(Math.cos(geometryTag.hdg.si)).multiplyBy(0.66));
-        Rel y2 = geometryTag.y.plus(geometryTag.length.multiplyBy(Math.sin(geometryTag.hdg.si)).multiplyBy(0.66));
+        Length x2 = geometryTag.x.plus(geometryTag.length.multiplyBy(Math.cos(geometryTag.hdg.si)).multiplyBy(0.66));
+        Length y2 = geometryTag.y.plus(geometryTag.length.multiplyBy(Math.sin(geometryTag.hdg.si)).multiplyBy(0.66));
 
         OTSPoint3D q = new OTSPoint3D(x2.si, y2.si, 0);
         pOutPut.add(q);
@@ -192,7 +191,7 @@ class PlanViewTag implements Serializable
         OTSPoint3D start = geometryTag.node.getPoint();
         OTSPoint3D end = planViewTag.geometryTags.get(geometryCount + 1).node.getPoint();
 
-        Length.Rel length = geometryTag.length;
+        Length length = geometryTag.length;
 
         double radius = 1 / curvature;
         boolean side = false;

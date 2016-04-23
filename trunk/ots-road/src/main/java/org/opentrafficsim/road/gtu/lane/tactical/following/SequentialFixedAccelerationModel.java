@@ -8,8 +8,8 @@ import java.util.SortedMap;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -100,11 +100,11 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
     /**
      * Retrieve the simulation time at the end of the Nth step of this SequentialFixedAccelerationModel.
      * @param index int; the step
-     * @return Time.Abs
+     * @return Time
      */
-    public final Time.Abs timeAfterCompletionOfStep(final int index)
+    public final Time timeAfterCompletionOfStep(final int index)
     {
-        Time.Abs sum = new Time.Abs(0, TimeUnit.SI);
+        Time sum = new Time(0, TimeUnit.SI);
         for (int i = 0; i <= index; i++)
         {
             sum = sum.plus(this.steps.get(i).getDuration());
@@ -121,7 +121,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
      */
     private FixedAccelerationModel getAccelerationModel()
     {
-        Time.Abs when = this.simulator.getSimulatorTime().getTime();
+        Time when = this.simulator.getSimulatorTime().getTime();
         double remainingTime = when.getSI();
         for (FixedAccelerationModel step : this.steps)
         {
@@ -141,7 +141,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
     /** {@inheritDoc} */
     @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
-        final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit)
+        final Speed leaderSpeed, final Length headway, final Speed speedLimit)
     {
         return getAccelerationModel().getAcceleration();
     }
@@ -149,7 +149,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
     /** {@inheritDoc} */
     @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
-        final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit, final Time.Rel stepSize)
+        final Speed leaderSpeed, final Length headway, final Speed speedLimit, final Duration stepSize)
     {
         // TODO incorporate stepSize
         return getAccelerationModel().getAcceleration();
@@ -164,7 +164,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
 
     /** {@inheritDoc} */
     @Override
-    public final Time.Rel getStepSize()
+    public final Duration getStepSize()
     {
         return getAccelerationModel().getStepSize();
     }
@@ -195,7 +195,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
 
     /** {@inheritDoc} */
     @Override
-    public final Rel desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
+    public final Length desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
         throws ParameterException
     {
         return null;
@@ -204,7 +204,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
     /** {@inheritDoc} */
     @Override
     public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
-        final Speed speed, final SpeedInfo speedInfo, final SortedMap<Rel, Speed> leaders) throws ParameterException
+        final Speed speed, final SpeedInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
         return null;
     }

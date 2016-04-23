@@ -72,7 +72,7 @@ public class HeadwayGTU extends AbstractHeadway
      * @param gtuStatus the observable characteristics of the GTU.
      * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
      */
-    public HeadwayGTU(final String id, final GTUType gtuType, final Length.Rel distance, final Speed speed,
+    public HeadwayGTU(final String id, final GTUType gtuType, final Length distance, final Speed speed,
             final Acceleration acceleration, final GTUStatus... gtuStatus) throws GTUException
     {
         super(ObjectType.GTU, id, distance, speed, acceleration);
@@ -87,10 +87,10 @@ public class HeadwayGTU extends AbstractHeadway
      * Construct a new Headway information object, for a non-moving GTU ahead of us or behind us.
      * @param id String; the id of the GTU for comparison purposes, can not be null.
      * @param gtuType GTUType; the perceived GTU Type, or null if unknown.
-     * @param distance Length.Rel; the distance to the other GTU; if this constructor is used, distance cannot be null.
+     * @param distance Length; the distance to the other GTU; if this constructor is used, distance cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public HeadwayGTU(final String id, final GTUType gtuType, final Length.Rel distance) throws GTUException
+    public HeadwayGTU(final String id, final GTUType gtuType, final Length distance) throws GTUException
     {
         super(ObjectType.GTU, id, distance);
         this.gtuType = gtuType;
@@ -107,8 +107,8 @@ public class HeadwayGTU extends AbstractHeadway
      * @param acceleration the (perceived) acceleration of the other GTU; can be null if unknown.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public HeadwayGTU(final String id, final GTUType gtuType, final Length.Rel overlapFront, final Length.Rel overlap,
-            final Length.Rel overlapRear, final Speed speed, final Acceleration acceleration) throws GTUException
+    public HeadwayGTU(final String id, final GTUType gtuType, final Length overlapFront, final Length overlap,
+            final Length overlapRear, final Speed speed, final Acceleration acceleration) throws GTUException
     {
         super(ObjectType.GTU, id, overlapFront, overlap, overlapRear, speed, acceleration);
         this.gtuType = gtuType;
@@ -123,8 +123,8 @@ public class HeadwayGTU extends AbstractHeadway
      * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public HeadwayGTU(final String id, final GTUType gtuType, final Length.Rel overlapFront, final Length.Rel overlap,
-            final Length.Rel overlapRear) throws GTUException
+    public HeadwayGTU(final String id, final GTUType gtuType, final Length overlapFront, final Length overlap,
+            final Length overlapRear) throws GTUException
     {
         super(ObjectType.GTU, id, overlapFront, overlap, overlapRear);
         this.gtuType = gtuType;

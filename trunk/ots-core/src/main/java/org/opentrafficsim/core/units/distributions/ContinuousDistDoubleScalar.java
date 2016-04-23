@@ -31,13 +31,16 @@ import org.djunits.unit.Unit;
 import org.djunits.unit.VolumeUnit;
 import org.djunits.value.Absolute;
 import org.djunits.value.Relative;
+import org.djunits.value.vdouble.scalar.AbsoluteTemperature;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.AngleSolid;
 import org.djunits.value.vdouble.scalar.Area;
 import org.djunits.value.vdouble.scalar.Density;
 import org.djunits.value.vdouble.scalar.Dimensionless;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.ElectricalCharge;
 import org.djunits.value.vdouble.scalar.ElectricalCurrent;
 import org.djunits.value.vdouble.scalar.ElectricalPotential;
@@ -50,6 +53,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Mass;
+import org.djunits.value.vdouble.scalar.Position;
 import org.djunits.value.vdouble.scalar.Power;
 import org.djunits.value.vdouble.scalar.Pressure;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -74,8 +78,8 @@ public interface ContinuousDistDoubleScalar
      * @param <T> The absolute DoubleScalar type
      * @param <U> The unit type used
      */
-    class Abs<T extends DoubleScalar.Abs<U>, U extends Unit<U>> extends AbstractContinuousDistScalar
-        implements Absolute, Serializable
+    class Abs<T extends DoubleScalar.Abs<U>, U extends Unit<U>> extends AbstractContinuousDistScalar implements Absolute,
+            Serializable
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -101,22 +105,22 @@ public interface ContinuousDistDoubleScalar
         /**
          * @return a drawn number from the distribution in the given unit.
          */
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         public final T draw()
         {
             switch (getUnit().getClass().getSimpleName())
             {
                 case "AngleUnit":
-                    return (T) new Angle.Abs(getDistribution().draw(), (AngleUnit) getUnit());
+                    return (T) new Direction(getDistribution().draw(), (AngleUnit) getUnit());
 
                 case "LengthUnit":
-                    return (T) new Length.Abs(getDistribution().draw(), (LengthUnit) getUnit());
+                    return (T) new Position(getDistribution().draw(), (LengthUnit) getUnit());
 
                 case "TemperatureUnit":
-                    return (T) new Temperature.Abs(getDistribution().draw(), (TemperatureUnit) getUnit());
+                    return (T) new AbsoluteTemperature(getDistribution().draw(), (TemperatureUnit) getUnit());
 
                 case "TimeUnit":
-                    return (T) new Time.Abs(getDistribution().draw(), (TimeUnit) getUnit());
+                    return (T) new Time(getDistribution().draw(), (TimeUnit) getUnit());
 
                 default:
                     return (T) new DoubleScalar.Abs(getDistribution().draw(), getUnit());
@@ -129,7 +133,7 @@ public interface ContinuousDistDoubleScalar
         {
             return "ContinuousDistDoubleScalar.Abs [T=" + getUnit().getClass().getSimpleName() + "]";
         }
-        
+
     }
 
     /**
@@ -137,8 +141,8 @@ public interface ContinuousDistDoubleScalar
      * @param <T> The absolute DoubleScalar type
      * @param <U> The unit type used
      */
-    class Rel<T extends DoubleScalar.Rel<U>, U extends Unit<U>> extends AbstractContinuousDistScalar
-        implements Relative, Serializable
+    class Rel<T extends DoubleScalar.Rel<U>, U extends Unit<U>> extends AbstractContinuousDistScalar implements Relative,
+            Serializable
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -164,7 +168,7 @@ public interface ContinuousDistDoubleScalar
         /**
          * @return a drawn number from the distribution in the given unit.
          */
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         public final T draw()
         {
             switch (getUnit().getClass().getSimpleName())
@@ -173,7 +177,7 @@ public interface ContinuousDistDoubleScalar
                     return (T) new Acceleration(getDistribution().draw(), (AccelerationUnit) getUnit());
 
                 case "AngleUnit":
-                    return (T) new Angle.Rel(getDistribution().draw(), (AngleUnit) getUnit());
+                    return (T) new Angle(getDistribution().draw(), (AngleUnit) getUnit());
 
                 case "AngleSolidUnit":
                     return (T) new AngleSolid(getDistribution().draw(), (AngleSolidUnit) getUnit());
@@ -215,7 +219,7 @@ public interface ContinuousDistDoubleScalar
                     return (T) new Frequency(getDistribution().draw(), (FrequencyUnit) getUnit());
 
                 case "LengthUnit":
-                    return (T) new Length.Rel(getDistribution().draw(), (LengthUnit) getUnit());
+                    return (T) new Length(getDistribution().draw(), (LengthUnit) getUnit());
 
                 case "LinearDensityUnit":
                     return (T) new LinearDensity(getDistribution().draw(), (LinearDensityUnit) getUnit());
@@ -233,10 +237,10 @@ public interface ContinuousDistDoubleScalar
                     return (T) new Speed(getDistribution().draw(), (SpeedUnit) getUnit());
 
                 case "TemperatureUnit":
-                    return (T) new Temperature.Rel(getDistribution().draw(), (TemperatureUnit) getUnit());
+                    return (T) new Temperature(getDistribution().draw(), (TemperatureUnit) getUnit());
 
                 case "TimeUnit":
-                    return (T) new Time.Rel(getDistribution().draw(), (TimeUnit) getUnit());
+                    return (T) new Duration(getDistribution().draw(), (TimeUnit) getUnit());
 
                 case "TorqueUnit":
                     return (T) new Torque(getDistribution().draw(), (TorqueUnit) getUnit());
@@ -255,7 +259,7 @@ public interface ContinuousDistDoubleScalar
         {
             return "ContinuousDistDoubleScalar.Rel [T=" + getUnit().getClass().getSimpleName() + "]";
         }
-        
+
     }
 
 }

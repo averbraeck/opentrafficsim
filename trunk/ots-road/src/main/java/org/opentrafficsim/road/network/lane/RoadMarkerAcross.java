@@ -23,13 +23,13 @@ public abstract class RoadMarkerAcross implements Serializable
     private final CrossSectionElement crossSectionElement;
 
     /** Longitudinal position on the cross section element. */
-    private final Length.Rel longitudinalPosition;
+    private final Length longitudinalPosition;
 
     /**
      * @param crossSectionElement Cross section element for which this is a road marker. Usually this will be a Lane.
      * @param longitudinalPosition Longitudinal position on the cross section element.
      */
-    public RoadMarkerAcross(final CrossSectionElement crossSectionElement, final Length.Rel longitudinalPosition)
+    public RoadMarkerAcross(final CrossSectionElement crossSectionElement, final Length longitudinalPosition)
     {
         super();
         this.crossSectionElement = crossSectionElement;
@@ -47,7 +47,7 @@ public abstract class RoadMarkerAcross implements Serializable
     /**
      * @return longitudinalPosition.
      */
-    public final Length.Rel getLongitudinalPosition()
+    public final Length getLongitudinalPosition()
     {
         return this.longitudinalPosition;
     }

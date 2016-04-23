@@ -24,6 +24,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -367,23 +368,23 @@ public class ContourPlotTest implements UNITS
         cp.actionPerformed(new ActionEvent(cp, 0, "setDistanceGranularity " + useDistanceGranularity));
         cp.reGraph();
         bins = cp.getItemCount(0);
-        Time.Abs initialTime = new Time.Abs(0, SECOND);
-        Length.Rel initialPosition = new Length.Rel(100, METER);
+        Time initialTime = new Time(0, SECOND);
+        Length initialPosition = new Length(100, METER);
         Speed initialSpeed = new Speed(50, KM_PER_HOUR);
         ContourPlotModel model = new ContourPlotModel();
         SimpleSimulator simulator =
-            new SimpleSimulator(initialTime, new Time.Rel(0, SECOND), new Time.Rel(1800, SECOND), model);
+            new SimpleSimulator(initialTime, new Duration(0, SECOND), new Duration(1800, SECOND), model);
         // Create a car running 50 km.h
         SequentialFixedAccelerationModel gtuFollowingModel =
             new SequentialFixedAccelerationModel(simulator, new Acceleration(2.0, AccelerationUnit.METER_PER_SECOND_2));
         // Make the car run at constant speed for one minute
-        gtuFollowingModel.addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(60,
+        gtuFollowingModel.addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(60,
             SECOND)));
         // Make the car run at constant speed for another minute
-        gtuFollowingModel.addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(600,
+        gtuFollowingModel.addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(600,
             SECOND)));
         // Make the car run at constant speed for five more minutes
-        gtuFollowingModel.addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(300,
+        gtuFollowingModel.addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(300,
             SECOND)));
         LaneChangeModel laneChangeModel = new Egoistic();
         OTSNetwork network = new OTSNetwork("network");
@@ -391,7 +392,7 @@ public class ContourPlotTest implements UNITS
             CarTest.makeReferenceCar("0", gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
                 laneChangeModel, network);
         car.getStrategicalPlanner().getBehavioralCharacteristics().setParameter(
-            ParameterTypes.LOOKAHEAD, new Length.Rel(10, LengthUnit.KILOMETER));
+            ParameterTypes.LOOKAHEAD, new Length(10, LengthUnit.KILOMETER));
         // Check that the initial data in the graph contains no trace of any car.
         for (int item = 0; item < bins; item++)
         {
@@ -430,7 +431,7 @@ public class ContourPlotTest implements UNITS
         // System.out.println("Running simulator from " + simulator.getSimulatorTime().get() + " to "
         // + gtuFollowingModel.timeAfterCompletionOfStep(0));
         double stopTime = gtuFollowingModel.timeAfterCompletionOfStep(0).si;
-        simulator.runUpToAndIncluding(new Time.Abs(stopTime, TimeUnit.SI));
+        simulator.runUpToAndIncluding(new Time(stopTime, TimeUnit.SI));
         while (simulator.isRunning())
         {
             try
@@ -471,10 +472,10 @@ public class ContourPlotTest implements UNITS
                 && x < 60)// car.getOperationalPlan().getEndTime().getSI())
             {
                 // the car MAY have contributed to this cell
-                Time.Abs cellStartTime =
-                    new Time.Abs(Math.max(car.getOperationalPlan().getStartTime().getSI(), x), SECOND);
-                Time.Abs cellEndTime =
-                    new Time.Abs(Math.min(car.getOperationalPlan().getEndTime().getSI(), x + useTimeGranularity),
+                Time cellStartTime =
+                    new Time(Math.max(car.getOperationalPlan().getStartTime().getSI(), x), SECOND);
+                Time cellEndTime =
+                    new Time(Math.min(car.getOperationalPlan().getEndTime().getSI(), x + useTimeGranularity),
                         SECOND);
                 // System.out.println("cellStartTime=" + cellStartTime + ", cellEndTime=" + cellEndTime);
                 // The next if statement is the problem
@@ -522,9 +523,9 @@ public class ContourPlotTest implements UNITS
                     // if (!Double.isNaN(z))
                     // {
                     // System.out.println("Oops");
-                    // Time.Abs cellStartTime = new Time.Abs(x, SECOND);
-                    // Time.Abs cellEndTime =
-                    // new Time.Abs(Math.min(car.getOperationalPlan().getEndTime().getSI(), x + useTimeGranularity),
+                    // Time cellStartTime = new Time(x, SECOND);
+                    // Time cellEndTime =
+                    // new Time(Math.min(car.getOperationalPlan().getEndTime().getSI(), x + useTimeGranularity),
                     // SECOND);
                     // double xAtCellStartTime = initialPosition.si + initialSpeed.si * cellStartTime.si;
                     // double xAtCellEndTime = initialPosition.si + initialSpeed.si * cellEndTime.si;
@@ -557,7 +558,7 @@ public class ContourPlotTest implements UNITS
         // System.out.println("Running simulator from " + simulator.getSimulatorTime().get() + " to "
         // + gtuFollowingModel.timeAfterCompletionOfStep(1));
         stopTime = gtuFollowingModel.timeAfterCompletionOfStep(1).si;
-        simulator.runUpToAndIncluding(new Time.Abs(stopTime, TimeUnit.SI));
+        simulator.runUpToAndIncluding(new Time(stopTime, TimeUnit.SI));
         while (simulator.isRunning())
         {
             try

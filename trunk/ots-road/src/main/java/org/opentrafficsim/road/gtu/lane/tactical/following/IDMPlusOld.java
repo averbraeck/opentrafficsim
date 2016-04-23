@@ -8,10 +8,9 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 
@@ -34,7 +33,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     private static final long serialVersionUID = 20140704L;
 
     /** Preferred net longitudinal distance when stopped [m]. */
-    private final Length.Rel s0;
+    private final Length s0;
 
     /** Longitudinal acceleration [m/s^2]. */
     private final Acceleration a;
@@ -43,7 +42,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     private final Acceleration b;
 
     /** Safe time headway. */
-    private final Time.Rel tSafe;
+    private final Duration tSafe;
 
     /**
      * Mean speed limit adherence (1.0: mean free speed equals the speed limit; 1.1: mean free speed equals 110% of the speed
@@ -55,7 +54,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
      * Time slot size used by IDMPlus by (not defined in the paper, but 0.5s is a reasonable trade-off between computational
      * speed and accuracy).
      */
-    private final Time.Rel stepSize = new Time.Rel(0.5, TimeUnit.SECOND);
+    private final Duration stepSize = new Duration(0.5, TimeUnit.SECOND);
 
     /**
      * Construct a new IDM+ car following model with reasonable values (reasonable for passenger cars). <br>
@@ -67,8 +66,8 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     {
         this.a = new Acceleration(1.56, AccelerationUnit.METER_PER_SECOND_2);
         this.b = new Acceleration(2.09, AccelerationUnit.METER_PER_SECOND_2);
-        this.s0 = new Length.Rel(3, LengthUnit.METER);
-        this.tSafe = new Time.Rel(1.2, TimeUnit.SECOND);
+        this.s0 = new Length(3, LengthUnit.METER);
+        this.tSafe = new Duration(1.2, TimeUnit.SECOND);
         this.delta = 1d;
     }
 
@@ -76,12 +75,12 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
      * Construct a new IDMPlus car following model.
      * @param a Acceleration; the maximum acceleration of a stationary vehicle (normal value is 1 m/s/s)
      * @param b Acceleration; the maximum deemed-safe deceleration (this is a positive value)
-     * @param s0 Length.Rel; the minimum stationary headway
-     * @param tSafe Time.Rel; the minimum time-headway
+     * @param s0 Length; the minimum stationary headway
+     * @param tSafe Duration; the minimum time-headway
      * @param delta double; the speed limit adherence (1.0; mean free speed equals the speed limit; 1.1: mean free speed equals
      *            110% of the speed limit; etc.)
      */
-    public IDMPlusOld(final Acceleration a, final Acceleration b, final Length.Rel s0, final Time.Rel tSafe,
+    public IDMPlusOld(final Acceleration a, final Acceleration b, final Length s0, final Duration tSafe,
         final double delta)
     {
         this.a = a;
@@ -104,14 +103,14 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
 
     /** {@inheritDoc} */
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
-        final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit)
+        final Speed leaderSpeed, final Length headway, final Speed speedLimit)
     {
         return computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, headway, speedLimit, this.stepSize);
     }
 
     /** {@inheritDoc} */
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
-        final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit, final Time.Rel stepSize)
+        final Speed leaderSpeed, final Length headway, final Speed speedLimit, final Duration stepSize)
     {
         // TODO maxDistance
         double leftComponent = 1 - Math.pow(followerSpeed.getSI() / vDes(speedLimit, followerMaximumSpeed).getSI(), 4);
@@ -129,7 +128,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
         // don't forget the times 2
 
         Speed dV = followerSpeed.minus(leaderSpeed);
-        Length.Rel sStar =
+        Length sStar =
             this.s0.plus(followerSpeed.multiplyBy(this.tSafe)).plus(
                 dV.multiplyBy(followerSpeed.divideBy(logWeightedAccelerationTimes2)));
 
@@ -141,7 +140,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
         {
             // Negative value should be treated as 0? This is NOT in the LMRS paper
             // Without this "fix" a higher speed of the leader may cause a lower acceleration (which is crazy)
-            sStar = new Length.Rel(0, LengthUnit.SI);
+            sStar = new Length(0, LengthUnit.SI);
         }
 
         double rightComponent = 1 - Math.pow(sStar.getSI() / headway.getSI(), 2);
@@ -155,7 +154,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
 
     /** {@inheritDoc} */
     @Override
-    public final Time.Rel getStepSize()
+    public final Duration getStepSize()
     {
         return this.stepSize;
     }
@@ -194,7 +193,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
 
     /** {@inheritDoc} */
     @Override
-    public final Rel desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
+    public final Length desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
         throws ParameterException
     {
         return null;
@@ -203,7 +202,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     /** {@inheritDoc} */
     @Override
     public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
-        final Speed speed, final SpeedInfo speedInfo, final SortedMap<Rel, Speed> leaders) throws ParameterException
+        final Speed speed, final SpeedInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
         return null;
     }

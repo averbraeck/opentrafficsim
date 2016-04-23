@@ -93,7 +93,7 @@ public class ListGTUGenerator implements Serializable
      * @param gtuType GTUType&lt;ID&gt;; the GTUType of the generated GTUs
      * @param initialSpeed Speed; the initial speed of the generated GTUs
      * @param lane Lane; the lane on which the generated GTUs are placed
-     * @param position Length.Rel; the position on the lane where the generated GTUs are placed
+     * @param position Length; the position on the lane where the generated GTUs are placed
      * @param direction the direction on the lane in which the GTU has to be generated (DIR_PLUS, or DIR_MINUS)
      * @param gtuColorer GTUColorere; the GTUColorer of the generated GTUs
      * @param strategicalPlanner the lane-based strategical planner to use
@@ -104,7 +104,7 @@ public class ListGTUGenerator implements Serializable
      * @throws NetworkException on
      */
     public ListGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
-        final Speed initialSpeed, final Lane lane, final Length.Rel position, final GTUDirectionality direction,
+        final Speed initialSpeed, final Lane lane, final Length position, final GTUDirectionality direction,
         final GTUColorer gtuColorer, final LaneBasedStrategicalPlanner strategicalPlanner,
         final LanePerceptionFull perception, final OTSNetwork network, final String fileName)
         throws SimRuntimeException, NetworkException
@@ -151,7 +151,7 @@ public class ListGTUGenerator implements Serializable
             }
             while (line.equals("")); // ignore blank lines
             double when = Double.parseDouble(line);
-            this.simulator.scheduleEventAbs(new Time.Abs(when, TimeUnit.SI), this, this, "generateCar", null);
+            this.simulator.scheduleEventAbs(new Time(when, TimeUnit.SI), this, this, "generateCar", null);
         }
         catch (NumberFormatException exception)
         {
@@ -174,15 +174,15 @@ public class ListGTUGenerator implements Serializable
     protected final void generateCar()
     {
         // TODO use given position in the constructor?
-        Length.Rel initialPosition = new Length.Rel(0, LengthUnit.METER);
+        Length initialPosition = new Length(0, LengthUnit.METER);
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>();
         // TODO use given directionality in the constructor?
         try
         {
             initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
-            Length.Rel vehicleLength = new Length.Rel(4, LengthUnit.METER);
+            Length vehicleLength = new Length(4, LengthUnit.METER);
             new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, initialPositions, this.initialSpeed,
-                vehicleLength, new Length.Rel(1.8, LengthUnit.METER), new Speed(200, SpeedUnit.KM_PER_HOUR),
+                vehicleLength, new Length(1.8, LengthUnit.METER), new Speed(200, SpeedUnit.KM_PER_HOUR),
                 this.simulator, this.strategicalPlanner, this.perception, DefaultCarAnimation.class, this.gtuColorer,
                 this.network);
             scheduleNextVehicle();

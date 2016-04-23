@@ -7,7 +7,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.vector.MutableLengthVector;
+import org.djunits.value.vdouble.vector.MutablePositionVector;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 
@@ -40,7 +40,7 @@ public class FlowContourPlot extends ContourPlot
     }
 
     /** Storage for the total length traveled in each cell. */
-    private ArrayList<MutableLengthVector.Abs> cumulativeLengths;
+    private ArrayList<MutablePositionVector> cumulativeLengths;
 
     /** {@inheritDoc} */
     @Override
@@ -55,7 +55,7 @@ public class FlowContourPlot extends ContourPlot
     {
         if (null == this.cumulativeLengths)
         {
-            this.cumulativeLengths = new ArrayList<MutableLengthVector.Abs>();
+            this.cumulativeLengths = new ArrayList<MutablePositionVector>();
         }
         final int highestBinNeeded =
             (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit) * this.getXAxis().getCurrentGranularity()
@@ -64,7 +64,7 @@ public class FlowContourPlot extends ContourPlot
         {
             try
             {
-                this.cumulativeLengths.add(new MutableLengthVector.Abs(new double[this.getYAxis().getBinCount()],
+                this.cumulativeLengths.add(new MutablePositionVector(new double[this.getYAxis().getBinCount()],
                     LengthUnit.METER, StorageType.DENSE));
             }
             catch (ValueException exception)
@@ -87,7 +87,7 @@ public class FlowContourPlot extends ContourPlot
         {
             try
             {
-                this.cumulativeLengths.add(new MutableLengthVector.Abs(new double[this.getYAxis().getBinCount()],
+                this.cumulativeLengths.add(new MutablePositionVector(new double[this.getYAxis().getBinCount()],
                     LengthUnit.METER, StorageType.DENSE));
             }
             catch (ValueException exception)
@@ -95,7 +95,7 @@ public class FlowContourPlot extends ContourPlot
                 exception.printStackTrace();
             }
         }
-        MutableLengthVector.Abs values = this.cumulativeLengths.get(timeBin);
+        MutablePositionVector values = this.cumulativeLengths.get(timeBin);
         try
         {
             values.setSI(distanceBin, values.getSI(distanceBin) + distanceCovered);
@@ -125,7 +125,7 @@ public class FlowContourPlot extends ContourPlot
                 {
                     break;
                 }
-                MutableLengthVector.Abs values = this.cumulativeLengths.get(timeBinIndex);
+                MutablePositionVector values = this.cumulativeLengths.get(timeBinIndex);
                 for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
                 {
                     cumulativeLengthInSI += values.getSI(distanceBinIndex);

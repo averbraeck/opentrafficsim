@@ -14,6 +14,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -52,17 +53,17 @@ public class GTUCharacteristicsTest implements OTSModelInterface
         GTUType gtuTypeB = GTUType.makeGTUType("Type B");
         IdGenerator idGeneratorA = new IdGenerator("A");
         IdGenerator idGeneratorB = new IdGenerator("B");
-        Length.Rel lengthA = new Length.Rel(5, LengthUnit.METER);
-        Length.Rel lengthB = new Length.Rel(10, LengthUnit.METER);
-        Length.Rel widthA = new Length.Rel(2, LengthUnit.METER);
-        Length.Rel widthB = new Length.Rel(2.5, LengthUnit.METER);
+        Length lengthA = new Length(5, LengthUnit.METER);
+        Length lengthB = new Length(10, LengthUnit.METER);
+        Length widthA = new Length(2, LengthUnit.METER);
+        Length widthB = new Length(2.5, LengthUnit.METER);
         Speed maximumSpeedA = new Speed(180, SpeedUnit.KM_PER_HOUR);
         Speed maximumSpeedB = new Speed(130, SpeedUnit.KM_PER_HOUR);
         OTSDEVSSimulatorInterface simulatorA =
-                new SimpleSimulator(new Time.Abs(0, TimeUnit.SI), new Time.Rel(0, TimeUnit.SI), new Time.Rel(1000,
+                new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI), new Duration(1000,
                         TimeUnit.SECOND), this);
         OTSDEVSSimulatorInterface simulatorB =
-                new SimpleSimulator(new Time.Abs(0, TimeUnit.SI), new Time.Rel(0, TimeUnit.SI), new Time.Rel(1000,
+                new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI), new Duration(1000,
                         TimeUnit.SECOND), this);
         OTSNetwork networkA = new OTSNetwork("testGTUCharacteristics A");
         OTSNetwork networkB = new OTSNetwork("testGTUCharacteristics B");

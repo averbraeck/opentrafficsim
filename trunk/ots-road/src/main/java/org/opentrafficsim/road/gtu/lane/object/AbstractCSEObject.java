@@ -25,7 +25,7 @@ public abstract class AbstractCSEObject extends StaticObject
      * @param geometry the geometry of the object
      * @param height the height of the object
      */
-    public AbstractCSEObject(final OTSLine3D geometry, final Length.Rel height)
+    public AbstractCSEObject(final OTSLine3D geometry, final Length height)
     {
         super(geometry, height);
     }
@@ -40,8 +40,8 @@ public abstract class AbstractCSEObject extends StaticObject
      * @return a new Geometry on the right position on the cse
      * @throws OTSGeometryException in case of degenerate line or position beyond the center line
      */
-    protected static OTSLine3D createRectangleOnCSE(final CrossSectionElement cse, final Length.Rel position,
-        final Length.Rel length, final Length.Rel width, final Length.Rel height) throws OTSGeometryException
+    protected static OTSLine3D createRectangleOnCSE(final CrossSectionElement cse, final Length position,
+        final Length length, final Length width, final Length height) throws OTSGeometryException
     {
         // TODO: REPAIR
         double fraction = position.si / cse.getParentLink().getLength().si;
@@ -71,8 +71,8 @@ public abstract class AbstractCSEObject extends StaticObject
      * @return a new Geometry on the right position on the cse
      * @throws OTSGeometryException in case of degenerate line or position beyond the center line
      */
-    protected static OTSLine3D createRectangleNextToCSE(final CrossSectionElement cse, final Length.Rel position,
-        final Length.Rel length, final Length.Rel width, final Length.Rel height, final Length.Rel distance)
+    protected static OTSLine3D createRectangleNextToCSE(final CrossSectionElement cse, final Length position,
+        final Length length, final Length width, final Length height, final Length distance)
         throws OTSGeometryException
     {
         double fraction = position.si / cse.getParentLink().getLength().si;

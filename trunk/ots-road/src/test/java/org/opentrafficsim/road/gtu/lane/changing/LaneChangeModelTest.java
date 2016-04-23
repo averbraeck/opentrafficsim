@@ -18,6 +18,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -83,11 +84,11 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
      * @param name String; name of the new Link
      * @param from Node; start node of the new Link
      * @param to Node; end node of the new Link
-     * @param width Length.Rel; the width of the new Link
+     * @param width Length; the width of the new Link
      * @return Link
      * @throws OTSGeometryException
      */
-    private static CrossSectionLink makeLink(final String name, final OTSNode from, final OTSNode to, final Length.Rel width)
+    private static CrossSectionLink makeLink(final String name, final OTSNode from, final OTSNode to, final Length width)
             throws OTSGeometryException
     {
         // TODO create a LinkAnimation if the simulator is compatible with that.
@@ -107,15 +108,15 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
      * @param link Link; the link that owns the new Lane
      * @param id String; the id of the lane, has to be unique within the link
      * @param laneType LaneType&lt;String&gt;; the type of the new Lane
-     * @param latPos Length.Rel; the lateral position of the new Lane with respect to the design line of the link
-     * @param width Length.Rel; the width of the new Lane
+     * @param latPos Length; the lateral position of the new Lane with respect to the design line of the link
+     * @param width Length; the width of the new Lane
      * @return Lane
      * @throws NamingException on ???
      * @throws NetworkException on ??
      * @throws OTSGeometryException when center line or contour of a link or lane cannot be generated
      */
     private static Lane makeLane(final CrossSectionLink link, final String id, final LaneType laneType,
-            final Length.Rel latPos, final Length.Rel width) throws NamingException, NetworkException, OTSGeometryException
+            final Length latPos, final Length width) throws NamingException, NetworkException, OTSGeometryException
     {
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
         directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
@@ -141,14 +142,14 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
     public static Lane[] makeMultiLane(final String name, final OTSNode from, final OTSNode to, final LaneType laneType,
             final int laneCount) throws Exception
     {
-        Length.Rel width = new Length.Rel(laneCount * 4.0, METER);
+        Length width = new Length(laneCount * 4.0, METER);
         final CrossSectionLink link = makeLink(name, from, to, width);
         Lane[] result = new Lane[laneCount];
-        width = new Length.Rel(4.0, METER);
+        width = new Length(4.0, METER);
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
         {
             // successive lanes have a more negative offset => more to the RIGHT
-            Length.Rel latPos = new Length.Rel((-0.5 - laneIndex) * width.getSI(), METER);
+            Length latPos = new Length((-0.5 - laneIndex) * width.getSI(), METER);
             result[laneIndex] = makeLane(link, "lane." + laneIndex, laneType, latPos, width);
         }
         return result;
@@ -182,16 +183,16 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
                 .accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType).size());
 
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
-        initialLongitudinalPositions.add(new DirectedLanePosition(lanes[0], new Length.Rel(100, METER),
+        initialLongitudinalPositions.add(new DirectedLanePosition(lanes[0], new Length(100, METER),
                 GTUDirectionality.DIR_PLUS));
         SimpleSimulator simpleSimulator =
-                new SimpleSimulator(new Time.Abs(0, SECOND), new Time.Rel(0, SECOND), new Time.Rel(3600, SECOND), this);
+                new SimpleSimulator(new Time(0, SECOND), new Duration(0, SECOND), new Duration(3600, SECOND), this);
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
         BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
         // behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
         // behavioralCharacteristics.setParameter(ParameterTypes.B, new Acceleration(1.5, METER_PER_SECOND_2));
-        // behavioralCharacteristics.setParameter(ParameterTypes.S0, new Length.Rel(2, METER));
-        // behavioralCharacteristics.setParameter(ParameterTypes.T, new Time.Rel(1, SECOND));
+        // behavioralCharacteristics.setParameter(ParameterTypes.S0, new Length(2, METER));
+        // behavioralCharacteristics.setParameter(ParameterTypes.T, new Duration(1, SECOND));
         // behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
         // behavioralCharacteristics.setParameter(AbstractIDM.DELTA, 1d);
         // behavioralCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, ParameterTypes.LOOKAHEAD.getDefaultValue());
@@ -199,17 +200,17 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         behavioralCharacteristics = DefaultTestParameters.create();
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(
-        // 1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d), laneChangeModel);
+        // 1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d), laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
                         new IDMPlusOld(), laneChangeModel));
         LaneBasedIndividualGTU car =
                 new LaneBasedIndividualGTU("ReferenceCar", gtuType, initialLongitudinalPositions, new Speed(100, KM_PER_HOUR),
-                        new Length.Rel(4, METER), new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR), simpleSimulator,
+                        new Length(4, METER), new Length(2, METER), new Speed(150, KM_PER_HOUR), simpleSimulator,
                         strategicalPlanner, new LanePerceptionFull(), this.network);
         car.getPerception().perceive();
         Collection<Headway> sameLaneGTUs = new LinkedHashSet<Headway>();
-        sameLaneGTUs.add(new HeadwayGTU(car.getId(), car.getGTUType(), Length.Rel.ZERO, car.getSpeed(), null));
+        sameLaneGTUs.add(new HeadwayGTU(car.getId(), car.getGTUType(), Length.ZERO, car.getSpeed(), null));
         Collection<Headway> preferredLaneGTUs = new LinkedHashSet<Headway>();
         Collection<Headway> nonPreferredLaneGTUs = new LinkedHashSet<Headway>();
         LaneMovementStep laneChangeModelResult =
@@ -219,43 +220,43 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         // System.out.println(laneChangeModelResult.toString());
         assertEquals("Vehicle want to change to the right lane", LateralDirectionality.RIGHT,
                 laneChangeModelResult.getLaneChange());
-        Length.Rel rear = car.position(lanes[0], car.getRear());
-        Length.Rel front = car.position(lanes[0], car.getFront());
-        Length.Rel reference = car.position(lanes[0], RelativePosition.REFERENCE_POSITION);
+        Length rear = car.position(lanes[0], car.getRear());
+        Length front = car.position(lanes[0], car.getFront());
+        Length reference = car.position(lanes[0], RelativePosition.REFERENCE_POSITION);
         // System.out.println("rear:      " + rear);
         // System.out.println("front:     " + front);
         // System.out.println("reference: " + reference);
-        Length.Rel vehicleLength = front.minus(rear);
-        Length.Rel collisionStart = reference.minus(vehicleLength);
-        Length.Rel collisionEnd = reference.plus(vehicleLength);
+        Length vehicleLength = front.minus(rear);
+        Length collisionStart = reference.minus(vehicleLength);
+        Length collisionEnd = reference.plus(vehicleLength);
         for (double pos = collisionStart.getSI() + 0.01; pos < collisionEnd.getSI() - 0.01; pos += 0.1)
         {
             Set<DirectedLanePosition> otherLongitudinalPositions = new LinkedHashSet<>(1);
-            otherLongitudinalPositions.add(new DirectedLanePosition(lanes[1], new Length.Rel(pos, METER),
+            otherLongitudinalPositions.add(new DirectedLanePosition(lanes[1], new Length(pos, METER),
                     GTUDirectionality.DIR_PLUS));
 
             behavioralCharacteristics = DefaultTestParameters.create();
             // behavioralCharacteristics = new BehavioralCharacteristics();
             // behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
             // behavioralCharacteristics.setParameter(ParameterTypes.B, new Acceleration(1.5, METER_PER_SECOND_2));
-            // behavioralCharacteristics.setParameter(ParameterTypes.S0, new Length.Rel(2, METER));
-            // behavioralCharacteristics.setParameter(ParameterTypes.T, new Time.Rel(1, SECOND));
+            // behavioralCharacteristics.setParameter(ParameterTypes.S0, new Length(2, METER));
+            // behavioralCharacteristics.setParameter(ParameterTypes.T, new Duration(1, SECOND));
             // behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
             // behavioralCharacteristics.setParameter(AbstractIDM.DELTA, 1d);
             // drivingCharacteristics =
             // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
-            // new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d),
+            // new Acceleration(1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d),
             // laneChangeModel);
             strategicalPlanner =
                     new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
                             new IDMPlusOld(), laneChangeModel));
             LaneBasedIndividualGTU collisionCar =
                     new LaneBasedIndividualGTU("LaneChangeBlockingCarAt" + pos, gtuType, otherLongitudinalPositions, new Speed(
-                            100, KM_PER_HOUR), vehicleLength, new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR),
+                            100, KM_PER_HOUR), vehicleLength, new Length(2, METER), new Speed(150, KM_PER_HOUR),
                             simpleSimulator, strategicalPlanner, new LanePerceptionFull(), this.network);
             preferredLaneGTUs.clear();
             HeadwayGTU collisionHWGTU =
-                    new HeadwayGTU(collisionCar.getId(), collisionCar.getGTUType(), new Length.Rel(pos - reference.getSI(),
+                    new HeadwayGTU(collisionCar.getId(), collisionCar.getGTUType(), new Length(pos - reference.getSI(),
                             LengthUnit.SI), collisionCar.getSpeed(), null);
             preferredLaneGTUs.add(collisionHWGTU);
             laneChangeModelResult =
@@ -269,30 +270,30 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         for (double pos = 0; pos < 200; pos += 5)
         {
             Set<DirectedLanePosition> otherLongitudinalPositions = new LinkedHashSet<>(1);
-            otherLongitudinalPositions.add(new DirectedLanePosition(lanes[1], new Length.Rel(pos, METER),
+            otherLongitudinalPositions.add(new DirectedLanePosition(lanes[1], new Length(pos, METER),
                     GTUDirectionality.DIR_PLUS));
 
             behavioralCharacteristics = new BehavioralCharacteristics();
             behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
             behavioralCharacteristics.setParameter(ParameterTypes.B, new Acceleration(1.5, METER_PER_SECOND_2));
-            behavioralCharacteristics.setParameter(ParameterTypes.S0, new Length.Rel(2, METER));
-            behavioralCharacteristics.setParameter(ParameterTypes.T, new Time.Rel(1, SECOND));
+            behavioralCharacteristics.setParameter(ParameterTypes.S0, new Length(2, METER));
+            behavioralCharacteristics.setParameter(ParameterTypes.T, new Duration(1, SECOND));
             behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
             behavioralCharacteristics.setParameter(AbstractIDM.DELTA, 1d);
             // drivingCharacteristics =
             // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
-            // new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d),
+            // new Acceleration(1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d),
             // laneChangeModel);
             strategicalPlanner =
                     new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
                             new IDMPlusOld(), laneChangeModel));
             LaneBasedIndividualGTU otherCar =
                     new LaneBasedIndividualGTU("OtherCarAt" + pos, gtuType, otherLongitudinalPositions, new Speed(100,
-                            KM_PER_HOUR), vehicleLength, new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR),
+                            KM_PER_HOUR), vehicleLength, new Length(2, METER), new Speed(150, KM_PER_HOUR),
                             simpleSimulator, strategicalPlanner, new LanePerceptionFull(), this.network);
             preferredLaneGTUs.clear();
             HeadwayGTU collisionHWGTU =
-                    new HeadwayGTU(otherCar.getId(), otherCar.getGTUType(), new Length.Rel(pos
+                    new HeadwayGTU(otherCar.getId(), otherCar.getGTUType(), new Length(pos
                             - car.position(lanes[0], car.getReference()).getSI(), LengthUnit.SI), otherCar.getSpeed(), null);
             preferredLaneGTUs.add(collisionHWGTU);
             laneChangeModelResult =

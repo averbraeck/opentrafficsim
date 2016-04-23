@@ -25,6 +25,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -53,7 +54,6 @@ import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
-import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingChange0TacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlanner;
@@ -93,6 +93,9 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  */
 public class CircularRoad extends AbstractWrappableAnimation implements UNITS
 {
+    /** */
+    private static final long serialVersionUID = 1L;
+    
     /** The model. */
     private RoadSimulationModel model;
 
@@ -168,12 +171,12 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                             new String[] { "IDM", "IDM+" }, 1, false, 1));
                     propertyList.add(IDMPropertySet
                             .makeIDMPropertySet("Car", new Acceleration(1.0, METER_PER_SECOND_2), new Acceleration(1.5,
-                                    METER_PER_SECOND_2), new Length.Rel(2.0, METER), new Time.Rel(1.0, SECOND), 2));
+                                    METER_PER_SECOND_2), new Length(2.0, METER), new Duration(1.0, SECOND), 2));
                     propertyList.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration(0.5, METER_PER_SECOND_2),
-                            new Acceleration(1.25, METER_PER_SECOND_2), new Length.Rel(2.0, METER), new Time.Rel(1.0, SECOND),
+                            new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER), new Duration(1.0, SECOND),
                             3));
 
-                    circularRoad.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0,
+                    circularRoad.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0,
                             SECOND), propertyList, null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException exception)
@@ -254,7 +257,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
 
             if (graphName.contains("Trajectories"))
             {
-                TrajectoryPlot tp = new TrajectoryPlot(graphName, new Time.Rel(0.5, SECOND), this.model.getPath(lane));
+                TrajectoryPlot tp = new TrajectoryPlot(graphName, new Duration(0.5, SECOND), this.model.getPath(lane));
                 tp.setTitle("Trajectory Graph");
                 tp.setExtendedState(Frame.MAXIMIZED_BOTH);
                 graph = tp;
@@ -354,7 +357,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
     private AbstractLaneChangeModel laneChangeModel;
 
     /** Minimum distance. */
-    private Length.Rel minimumDistance = new Length.Rel(0, METER);
+    private Length minimumDistance = new Length(0, METER);
 
     /** The speed limit. */
     private Speed speedLimit = new Speed(100, KM_PER_HOUR);
@@ -447,8 +450,8 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
                         // System.out.println("Car following model name appears to be " + ap.getShortName());
                         Acceleration a = IDMPropertySet.getA(cp);
                         Acceleration b = IDMPropertySet.getB(cp);
-                        Length.Rel s0 = IDMPropertySet.getS0(cp);
-                        Time.Rel tSafe = IDMPropertySet.getTSafe(cp);
+                        Length s0 = IDMPropertySet.getS0(cp);
+                        Duration tSafe = IDMPropertySet.getTSafe(cp);
                         GTUFollowingModelOld gtuFollowingModel = null;
                         if (carFollowingModelName.equals("IDM"))
                         {
@@ -624,7 +627,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
                     double laneRelativePos = pos > lane1Length ? pos - lane1Length : pos;
                     double actualHeadway = headway + (random.nextDouble() * 2 - 1) * variability;
                     // System.out.println(lane + ", len=" + lane.getLength() + ", pos=" + laneRelativePos);
-                    generateCar(new Length.Rel(laneRelativePos, METER), lane, gtuType);
+                    generateCar(new Length(laneRelativePos, METER), lane, gtuType);
                     pos += actualHeadway;
                 }
             }
@@ -649,7 +652,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
         // Re schedule this method
         try
         {
-            this.simulator.scheduleEventAbs(new Time.Abs(this.simulator.getSimulatorTime().get().getSI() + 10, SECOND), this,
+            this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().get().getSI() + 10, SECOND), this,
                     this, "drawGraphs", null);
         }
         catch (SimRuntimeException exception)
@@ -661,7 +664,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
 
     /**
      * Generate cars at a fixed rate (implemented by re-scheduling this method).
-     * @param initialPosition Length.Rel; the initial position of the new cars
+     * @param initialPosition Length; the initial position of the new cars
      * @param lane Lane; the lane on which the new cars are placed
      * @param gtuType GTUType&lt;String&gt;; the type of the new cars
      * @throws NamingException on ???
@@ -670,14 +673,14 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
      * @throws GTUException when something goes wrong during construction of the car
      * @throws OTSGeometryException when the initial position is outside the center line of the lane
      */
-    protected final void generateCar(final Length.Rel initialPosition, final Lane lane, final GTUType gtuType)
+    protected final void generateCar(final Length initialPosition, final Lane lane, final GTUType gtuType)
             throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         Speed initialSpeed = new Speed(0, KM_PER_HOUR);
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
-        Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
+        Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
         BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
         //LaneBasedBehavioralCharacteristics drivingCharacteristics =
         //        new LaneBasedBehavioralCharacteristics(generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars,
@@ -685,7 +688,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
             generateTruck ? this.tacticalPlannerTrucks : this.tacticalPlannerCars);
         new LaneBasedIndividualGTU("" + (++this.carsCreated), gtuType, initialPositions, initialSpeed, vehicleLength,
-                new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, strategicalPlanner,
+                new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, strategicalPlanner,
                 new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
     }
 
@@ -707,7 +710,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
     /**
      * @return minimumDistance
      */
-    public final Length.Rel getMinimumDistance()
+    public final Length getMinimumDistance()
     {
         return this.minimumDistance;
     }

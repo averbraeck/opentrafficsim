@@ -451,13 +451,13 @@ public class OTSLine3D implements Locatable, Serializable
 
     /**
      * Create a new OTSLine3D that covers a sub-section of this OTSLine3D.
-     * @param start Length.Rel; the length along this OTSLine3D where the sub-section starts, valid range [0..<cite>end</cite>)
-     * @param end Length.Rel; length along this OTSLine3D where the sub-section ends, valid range
+     * @param start Length; the length along this OTSLine3D where the sub-section starts, valid range [0..<cite>end</cite>)
+     * @param end Length; length along this OTSLine3D where the sub-section ends, valid range
      *            (<cite>start</cite>..<cite>length</cite> (length is the length of this OTSLine3D)
      * @return OTSLine3D; the selected sub-section
      * @throws OTSGeometryException when start &gt;= end, or start &lt; 0, or end &gt; length
      */
-    public final OTSLine3D extract(final Length.Rel start, final Length.Rel end) throws OTSGeometryException
+    public final OTSLine3D extract(final Length start, final Length end) throws OTSGeometryException
     {
         return extract(start.si, end.si);
     }
@@ -769,9 +769,9 @@ public class OTSLine3D implements Locatable, Serializable
      * expressed in meters.)
      * @return the length of the line
      */
-    public final Length.Rel getLength()
+    public final Length getLength()
     {
-        return new Length.Rel(getLengthSI(), LengthUnit.SI);
+        return new Length(getLengthSI(), LengthUnit.SI);
     }
 
     /**
@@ -806,7 +806,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @param position the position on the line for which to calculate the point on, before, of after the line
      * @return a directed point
      */
-    public final DirectedPoint getLocationExtended(final Length.Rel position)
+    public final DirectedPoint getLocationExtended(final Length position)
     {
         return getLocationExtendedSI(position.getSI());
     }
@@ -905,7 +905,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @return a directed point
      * @throws OTSGeometryException when position less than 0.0 or more than line length.
      */
-    public final DirectedPoint getLocation(final Length.Rel position) throws OTSGeometryException
+    public final DirectedPoint getLocation(final Length position) throws OTSGeometryException
     {
         return getLocationSI(position.getSI());
     }

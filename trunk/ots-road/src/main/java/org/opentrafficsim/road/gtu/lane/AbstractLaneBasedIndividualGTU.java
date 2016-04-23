@@ -34,10 +34,10 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
     private static final long serialVersionUID = 20140822L;
 
     /** The maximum length of the GTU (parallel with driving direction). */
-    private final Length.Rel length;
+    private final Length length;
 
     /** The maximum width of the GTU (perpendicular to driving direction). */
-    private final Length.Rel width;
+    private final Length width;
 
     /** The maximum speed of the GTU (in the driving direction). */
     private final Speed maximumVelocity;
@@ -63,7 +63,7 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractLaneBasedIndividualGTU(final String id, final GTUType gtuType,
         final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
-        final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
+        final Length length, final Length width, final Speed maximumVelocity,
         final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
         final LanePerceptionFull perception, final OTSNetwork network) throws NetworkException, SimRuntimeException,
         GTUException, OTSGeometryException
@@ -81,14 +81,14 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
 
     /** {@inheritDoc} */
     @Override
-    public final Length.Rel getLength()
+    public final Length getLength()
     {
         return this.length;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Length.Rel getWidth()
+    public final Length getWidth()
     {
         return this.width;
     }

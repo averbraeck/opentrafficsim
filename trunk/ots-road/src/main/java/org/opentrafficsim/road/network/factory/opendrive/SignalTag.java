@@ -25,11 +25,11 @@ class SignalTag implements Serializable
 
     /** Parameter s. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel s = null;
+    Length s = null;
 
     /** Parameter t. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel t = null;
+    Length t = null;
 
     /** Id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -49,7 +49,7 @@ class SignalTag implements Serializable
 
     /** The zOffset. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel zOffset = null;
+    Length zOffset = null;
 
     /** Country. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -84,11 +84,11 @@ class SignalTag implements Serializable
 
         Node s = attributes.getNamedItem("s");
         if (s != null)
-            signalTag.s = new Length.Rel(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
+            signalTag.s = new Length(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
 
         Node t = attributes.getNamedItem("t");
         if (t != null)
-            signalTag.t = new Length.Rel(Double.parseDouble(t.getNodeValue().trim()), LengthUnit.METER);
+            signalTag.t = new Length(Double.parseDouble(t.getNodeValue().trim()), LengthUnit.METER);
 
         Node id = attributes.getNamedItem("id");
         if (id != null)
@@ -108,7 +108,7 @@ class SignalTag implements Serializable
 
         Node zOffset = attributes.getNamedItem("zOffset");
         if (zOffset != null)
-            signalTag.zOffset = new Length.Rel(Double.parseDouble(zOffset.getNodeValue().trim()), LengthUnit.METER);
+            signalTag.zOffset = new Length(Double.parseDouble(zOffset.getNodeValue().trim()), LengthUnit.METER);
 
         Node country = attributes.getNamedItem("country");
         if (country != null)

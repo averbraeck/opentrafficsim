@@ -8,7 +8,6 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 
 import org.junit.Test;
-import org.opentrafficsim.road.ClassList;
 
 /**
  * Verify that all classes have a toString method (unless the class in non-instantiable, or an enum, or abstract. <br>

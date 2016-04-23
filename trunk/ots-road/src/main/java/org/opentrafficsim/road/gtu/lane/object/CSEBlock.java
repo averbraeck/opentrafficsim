@@ -23,7 +23,7 @@ public class CSEBlock extends AbstractCSEObject
      * @param geometry the geometry of the object
      * @param height the height of the object
      */
-    public CSEBlock(final OTSLine3D geometry, final Length.Rel height)
+    public CSEBlock(final OTSLine3D geometry, final Length height)
     {
         super(geometry, height);
     }
@@ -34,11 +34,11 @@ public class CSEBlock extends AbstractCSEObject
      * @return a new CrossSectionElementBlock on the right position on the cse
      * @throws OTSGeometryException in case the position is outside the CSE
      */
-    public static CSEBlock createCrossSectionElementBlock(final CrossSectionElement cse, final Length.Rel position)
+    public static CSEBlock createCrossSectionElementBlock(final CrossSectionElement cse, final Length position)
         throws OTSGeometryException
     {
         return new CSEBlock(AbstractCSEObject.createRectangleOnCSE(cse, position,
-            new Length.Rel(0.5, LengthUnit.METER), cse.getWidth(position).multiplyBy(0.8), new Length.Rel(0.5,
-                LengthUnit.METER)), new Length.Rel(1.0, LengthUnit.METER));
+            new Length(0.5, LengthUnit.METER), cse.getWidth(position).multiplyBy(0.8), new Length(0.5,
+                LengthUnit.METER)), new Length(1.0, LengthUnit.METER));
     }
 }

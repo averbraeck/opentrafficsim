@@ -16,7 +16,7 @@ import org.djunits.value.vdouble.scalar.Length;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeLength extends ParameterType<LengthUnit, Length.Rel> implements Serializable
+public class ParameterTypeLength extends ParameterType<LengthUnit, Length> implements Serializable
 {
 
     /** */
@@ -29,7 +29,7 @@ public class ParameterTypeLength extends ParameterType<LengthUnit, Length.Rel> i
      */
     public ParameterTypeLength(final String id, final String description)
     {
-        super(id, description, Length.Rel.class);
+        super(id, description, Length.class);
     }
 
     /**
@@ -38,9 +38,9 @@ public class ParameterTypeLength extends ParameterType<LengthUnit, Length.Rel> i
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
      */
-    public ParameterTypeLength(final String id, final String description, final Length.Rel defaultValue)
+    public ParameterTypeLength(final String id, final String description, final Length defaultValue)
     {
-        super(id, description, Length.Rel.class, defaultValue);
+        super(id, description, Length.class, defaultValue);
     }
 
     /**
@@ -51,7 +51,7 @@ public class ParameterTypeLength extends ParameterType<LengthUnit, Length.Rel> i
      */
     public ParameterTypeLength(final String id, final String description, final Check check)
     {
-        super(id, description, Length.Rel.class, check);
+        super(id, description, Length.class, check);
     }
 
     /**
@@ -61,10 +61,10 @@ public class ParameterTypeLength extends ParameterType<LengthUnit, Length.Rel> i
      * @param defaultValue Default value.
      * @param check Check for parameter values.
      */
-    public ParameterTypeLength(final String id, final String description, final Length.Rel defaultValue,
+    public ParameterTypeLength(final String id, final String description, final Length defaultValue,
         final Check check)
     {
-        super(id, description, Length.Rel.class, defaultValue, check);
+        super(id, description, Length.class, defaultValue, check);
     }
 
     /** {@inheritDoc} */

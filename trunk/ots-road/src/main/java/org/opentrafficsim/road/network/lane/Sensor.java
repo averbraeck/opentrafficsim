@@ -27,7 +27,7 @@ public interface Sensor extends Serializable, Comparable<Sensor>, Locatable
     Lane getLane();
 
     /** @return the position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane. */
-    Length.Rel getLongitudinalPosition();
+    Length getLongitudinalPosition();
 
     /** @return the position as a double in SI units for quick sorting and sensor triggering. */
     double getLongitudinalPositionSI();

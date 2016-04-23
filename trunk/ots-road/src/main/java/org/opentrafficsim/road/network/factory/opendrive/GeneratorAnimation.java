@@ -49,7 +49,7 @@ public class GeneratorAnimation extends Renderable2D implements Serializable
      * @throws RemoteException in case of remote registration failure of the animation
      * @throws OTSGeometryException if position out of bounds
      */
-    public GeneratorAnimation(final Lane lane, final Length.Rel position, final OTSSimulatorInterface simulator)
+    public GeneratorAnimation(final Lane lane, final Length position, final OTSSimulatorInterface simulator)
         throws NamingException, RemoteException, OTSGeometryException
     {
         super(new GenPos(lane, position), simulator);
@@ -90,7 +90,7 @@ public class GeneratorAnimation extends Renderable2D implements Serializable
          * @param position the position on the lane
          * @throws OTSGeometryException on position out of bounds
          */
-        public GenPos(final Lane lane, final Length.Rel position) throws OTSGeometryException
+        public GenPos(final Lane lane, final Length position) throws OTSGeometryException
         {
             this.location = lane.getCenterLine().getLocation(position);
             this.width = (lane.getBeginWidth().si + lane.getEndWidth().si) / 2.0; // avg width

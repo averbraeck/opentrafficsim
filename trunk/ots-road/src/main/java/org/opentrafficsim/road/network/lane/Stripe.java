@@ -34,7 +34,7 @@ public class Stripe extends RoadMarkerAlong
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public Stripe(final CrossSectionLink parentLink, final Length.Rel lateralCenterPosition, final Length.Rel width)
+    public Stripe(final CrossSectionLink parentLink, final Length lateralCenterPosition, final Length width)
         throws OTSGeometryException, NetworkException
     {
         super(parentLink, lateralCenterPosition, width);
@@ -52,7 +52,7 @@ public class Stripe extends RoadMarkerAlong
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public Stripe(final CrossSectionLink parentLink, final Length.Rel lateralCenterPosition, final Length.Rel width,
+    public Stripe(final CrossSectionLink parentLink, final Length lateralCenterPosition, final Length width,
         final Set<GTUType> gtuTypes, final Permeable permeable) throws OTSGeometryException, NetworkException
     {
         super(parentLink, lateralCenterPosition, width);
@@ -68,7 +68,7 @@ public class Stripe extends RoadMarkerAlong
      * the StartNode towards the EndNode as the longitudinal direction.
      * @param parentLink Cross Section Link to which the element belongs
      * @param crossSectionSlices The offsets and widths at positions along the line, relative to the design line of the parent
-     *            link. If there is just one with and offset, there should just be one element in the list with Length.Rel = 0.
+     *            link. If there is just one with and offset, there should just be one element in the list with Length = 0.
      *            If there are more slices, the last one should be at the length of the design line. If not, a NetworkException
      *            is thrown.
      * @param permeable one of the enums of Stripe.Permeable to define the permeability

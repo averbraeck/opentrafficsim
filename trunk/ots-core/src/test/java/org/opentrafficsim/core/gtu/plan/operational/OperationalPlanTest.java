@@ -9,6 +9,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -38,8 +39,8 @@ public class OperationalPlanTest
     public final void testOperationalPlan() throws OperationalPlanException, OTSGeometryException
     {
         DirectedPoint waitPoint = new DirectedPoint(12, 13, 14, 15, 16, 17);
-        Time.Abs startTime = new Time.Abs(100, TimeUnit.SECOND);
-        Time.Rel duration = new Time.Rel(1, TimeUnit.MINUTE);
+        Time startTime = new Time(100, TimeUnit.SECOND);
+        Duration duration = new Duration(1, TimeUnit.MINUTE);
         OperationalPlan op = new OperationalPlan(null, waitPoint, startTime, duration);
         assertEquals("Start speed is 0", 0, op.getStartSpeed().si, 0);
         assertEquals("End speed is 0", 0, op.getEndSpeed().si, 0);
@@ -52,7 +53,7 @@ public class OperationalPlanTest
         assertEquals("End location is " + waitPoint, 0, waitPoint.distance(op.getEndLocation()), 0.0001);
         try
         {
-            op.getLocation(new Time.Rel(-0.1, TimeUnit.SI));
+            op.getLocation(new Duration(-0.1, TimeUnit.SI));
             fail("getLocation for negative relative time should have thrown an OperationalPlanException");
         }
         catch (OperationalPlanException ope)
@@ -61,18 +62,18 @@ public class OperationalPlanTest
         }
         try
         {
-            op.getLocation(new Time.Abs(99.5, TimeUnit.SECOND));
+            op.getLocation(new Time(99.5, TimeUnit.SECOND));
             fail("getLocation for absolute time before start time should have thrown an OperationalPlanException");
         }
         catch (OperationalPlanException ope)
         {
             // Ignore expected exception
         }
-        op.getLocation(new Time.Abs(100.1, TimeUnit.SECOND)); // Should NOT throw an exception
-        op.getLocation(new Time.Abs(159.9, TimeUnit.SECOND)); // Should NOT throw an exception
+        op.getLocation(new Time(100.1, TimeUnit.SECOND)); // Should NOT throw an exception
+        op.getLocation(new Time(159.9, TimeUnit.SECOND)); // Should NOT throw an exception
         try
         {
-            op.getLocation(new Time.Abs(160.1, TimeUnit.SECOND));
+            op.getLocation(new Time(160.1, TimeUnit.SECOND));
             fail("getLocation for absolute time after end time should have thrown an OperationalPlanException");
         }
         catch (OperationalPlanException ope)
@@ -81,7 +82,7 @@ public class OperationalPlanTest
         }
         for (int i = 0; i <= duration.si; i++)
         {
-            Time.Abs t = startTime.plus(new Time.Rel(i, TimeUnit.SECOND));
+            Time t = startTime.plus(new Duration(i, TimeUnit.SECOND));
             DirectedPoint locationAtT = op.getLocation(t);
             // System.out.println("Location at time " + t + " is " + locationAtT);
             // Use a tolerance that is larger than the z-offset (0.001)
@@ -122,7 +123,7 @@ public class OperationalPlanTest
         // (startSpeed + 0.5 * speedDifference) * t == pathLength
         // t == pathLength / (startSpeed + 0.5 * speedDifference)
         double t = pathLength / (startSpeed.si + 0.5 * speedDifference);
-        Time.Abs endTime = startTime.plus(new Time.Rel(t, TimeUnit.SECOND));
+        Time endTime = startTime.plus(new Duration(t, TimeUnit.SECOND));
         // System.out.println("End time is " + endTime);
         Acceleration a = new Acceleration(speedDifference / t, AccelerationUnit.SI);
         // System.out.println("required acceleration is " + a);
@@ -151,9 +152,9 @@ public class OperationalPlanTest
         for (int i = 0; i <= steps; i++)
         {
             double stepTime = startTime.si + t * i / steps * 0.9999; // sometimes fails for endTime
-            Time.Abs absTime = new Time.Abs(stepTime, TimeUnit.SI);
+            Time absTime = new Time(stepTime, TimeUnit.SI);
             double deltaT = stepTime - startTime.si;
-            Time.Rel relTime = new Time.Rel(deltaT, TimeUnit.SI);
+            Duration relTime = new Duration(deltaT, TimeUnit.SI);
             double expectedDistance = startSpeed.si * deltaT + 0.5 * a.si * deltaT * deltaT;
             double fraction = expectedDistance / path.getLength().si;
             OTSPoint3D expectedPosition = new OTSPoint3D(path.getLocationFraction(fraction));
@@ -168,8 +169,8 @@ public class OperationalPlanTest
             assertEquals("Velocity at abs time " + deltaT, expectedVelocity, actualSpeed.si, 0.0001);
             actualSpeed = op.getVelocity(relTime);
             assertEquals("Velocity at rel time " + deltaT, expectedVelocity, actualSpeed.si, 0.0001);
-            Time.Abs actualTimeAtPosition =
-                op.timeAtDistance(new Length.Rel(fraction * path.getLength().si, LengthUnit.SI));
+            Time actualTimeAtPosition =
+                op.timeAtDistance(new Length(fraction * path.getLength().si, LengthUnit.SI));
             assertEquals("TimeAtDistance matches time", startTime.si + deltaT, actualTimeAtPosition.si, 0.0001);
             double actualAcceleration = op.getAcceleration(absTime).si;
             assertEquals("acceleration at abs time", a.si, actualAcceleration, 0.00001);

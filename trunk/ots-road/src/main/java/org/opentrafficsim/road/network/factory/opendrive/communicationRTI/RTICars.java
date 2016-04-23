@@ -51,7 +51,7 @@ public class RTICars extends LaneBasedIndividualGTU
      * @throws OTSGeometryException when position cannot be determined
      */
     public RTICars(String valueOf, GTUType carType, Set<DirectedLanePosition> lanepositionSet, Speed speed,
-        Length.Rel carLength, Length.Rel width, Speed maxSpeed, OTSDEVSSimulatorInterface simulator,
+        Length carLength, Length width, Speed maxSpeed, OTSDEVSSimulatorInterface simulator,
         LaneBasedStrategicalPlanner sPlanner, LanePerceptionFull perception, final OTSNetwork network)
         throws NamingException, NetworkException, SimRuntimeException, GTUException, OperationalPlanException,
         OTSGeometryException

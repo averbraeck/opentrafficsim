@@ -176,7 +176,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements Serializab
 
     /** {@inheritDoc} */
     @Override
-    public OperationalPlan generateOperationalPlan(final GTU gtu, final Time.Abs startTime,
+    public OperationalPlan generateOperationalPlan(final GTU gtu, final Time startTime,
             final DirectedPoint locationAtStartTime) throws OperationalPlanException, GTUException, NetworkException
     {
 

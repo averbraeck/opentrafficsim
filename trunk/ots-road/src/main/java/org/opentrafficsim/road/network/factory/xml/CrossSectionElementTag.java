@@ -70,7 +70,7 @@ class CrossSectionElementTag implements Serializable
 
     /** Offset. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel offset = null;
+    Length offset = null;
 
     /** Speed limit. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -78,7 +78,7 @@ class CrossSectionElementTag implements Serializable
 
     /** Lane width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel width = null;
+    Length width = null;
 
     /** Direction. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -313,7 +313,7 @@ class CrossSectionElementTag implements Serializable
         if (attributes.getNamedItem("WIDTH") != null)
             cseTag.width = LengthUnits.parseLengthRel(attributes.getNamedItem("WIDTH").getNodeValue());
         else
-            cseTag.width = new Length.Rel(0.2, LengthUnit.METER);
+            cseTag.width = new Length(0.2, LengthUnit.METER);
 
         if (attributes.getNamedItem("COLOR") != null)
             cseTag.color = Colors.parseColor(attributes.getNamedItem("COLOR").getNodeValue());

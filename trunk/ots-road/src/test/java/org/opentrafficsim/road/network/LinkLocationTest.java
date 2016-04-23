@@ -41,9 +41,9 @@ public class LinkLocationTest implements UNITS
         CrossSectionLink link =
             new CrossSectionLink("Link", nodeFrom, nodeTo, LinkType.ALL, line, LongitudinalDirectionality.DIR_PLUS,
                 LaneKeepingPolicy.KEEP_RIGHT);
-        Length.Rel linkLength = line.getLength();
+        Length linkLength = line.getLength();
         // Now we can make a LinkLocation.
-        Length.Rel referenceLocationDistance = new Length.Rel(123, METER);
+        Length referenceLocationDistance = new Length(123, METER);
         LinkLocation referenceLocation = new LinkLocation(link, referenceLocationDistance);
         assertEquals("link should be the provided Link", link, referenceLocation.getLink());
         assertEquals("longitudinalPosition should be " + referenceLocationDistance, referenceLocationDistance.getSI(),
@@ -58,7 +58,7 @@ public class LinkLocationTest implements UNITS
             assertEquals("longitudinalPosition should be " + position, position, linkLocation.getLongitudinalPosition()
                 .getSI(), 0.0001);
             // Repeat with the other constructor
-            linkLocation = new LinkLocation(link, new Length.Rel(position, METER));
+            linkLocation = new LinkLocation(link, new Length(position, METER));
             assertEquals("link should be the provided Link", link, linkLocation.getLink());
             assertEquals("fractionalLongitudinalPosition should be " + fraction, fraction, linkLocation
                 .getFractionalLongitudinalPosition(), 0.000001);

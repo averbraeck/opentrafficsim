@@ -42,7 +42,7 @@ public class TrafficLight extends AbstractTrafficLightNew
      * @param height the height of the object
      * @param initialColor the initial color of the traffic light
      */
-    public TrafficLight(final OTSLine3D geometry, final Length.Rel height, final TrafficLightColor initialColor)
+    public TrafficLight(final OTSLine3D geometry, final Length height, final TrafficLightColor initialColor)
     {
         super(geometry, height);
         this.trafficLightColor = initialColor;
@@ -71,15 +71,15 @@ public class TrafficLight extends AbstractTrafficLightNew
      * @return a new CrossSectionElementBlock on the right position on the cse
      * @throws OTSGeometryException in case the position is outside the CSE
      */
-    public static TrafficLight createTrafficLight(final CrossSectionElement cse, final Length.Rel position,
+    public static TrafficLight createTrafficLight(final CrossSectionElement cse, final Length position,
         final TrafficLightColor initialColor) throws OTSGeometryException
     {
-        // return new TrafficLight(AbstractCSEObject.createRectangleOnCSE(cse, position, new Length.Rel(0.5,
-        // LengthUnit.METER), cse.getWidth(position).multiplyBy(0.8), new Length.Rel(0.5, LengthUnit.METER)), new
-        // Length.Rel(0.5, LengthUnit.METER),
+        // return new TrafficLight(AbstractCSEObject.createRectangleOnCSE(cse, position, new Length(0.5,
+        // LengthUnit.METER), cse.getWidth(position).multiplyBy(0.8), new Length(0.5, LengthUnit.METER)), new
+        // Length(0.5, LengthUnit.METER),
         // initialColor);
-        return new TrafficLight(AbstractCSEObject.createRectangleOnCSE(cse, position, new Length.Rel(0.5,
-            LengthUnit.METER), cse.getWidth(position).multiplyBy(0.8), new Length.Rel(0.5, LengthUnit.METER)),
-            new Length.Rel(0.5, LengthUnit.METER), initialColor);
+        return new TrafficLight(AbstractCSEObject.createRectangleOnCSE(cse, position, new Length(0.5,
+            LengthUnit.METER), cse.getWidth(position).multiplyBy(0.8), new Length(0.5, LengthUnit.METER)),
+            new Length(0.5, LengthUnit.METER), initialColor);
     }
 }

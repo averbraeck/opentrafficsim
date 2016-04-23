@@ -25,14 +25,14 @@ public class TimeStampedObject<C> implements Serializable
     private final C object;
     
     /** The time stamp. */
-    private final Time.Abs timestamp;
+    private final Time timestamp;
     
     /**
      * Construct a new TimeStampedObject.
      * @param object C; the object.
-     * @param timestamp Time.Abs; the time stamp.
+     * @param timestamp Time; the time stamp.
      */
-    public TimeStampedObject(final C object, final Time.Abs timestamp)
+    public TimeStampedObject(final C object, final Time timestamp)
     {
         this.object = object;
         this.timestamp = timestamp;
@@ -49,9 +49,9 @@ public class TimeStampedObject<C> implements Serializable
 
     /**
      * Retrieve the time stamp.
-     * @return Time.Abs; the time stamp
+     * @return Time; the time stamp
      */
-    public final Time.Abs getTimestamp()
+    public final Time getTimestamp()
     {
         return this.timestamp;
     }

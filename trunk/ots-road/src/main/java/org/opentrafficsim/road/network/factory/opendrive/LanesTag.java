@@ -63,7 +63,7 @@ class LanesTag implements Serializable
      * @param s progression on the lane in the design direction
      * @return laneSection the section belonging to 's' progression
      */
-    public LaneSectionTag findDrivingLaneSec(Length.Rel s)
+    public LaneSectionTag findDrivingLaneSec(Length s)
     {
         for (int i = 0; i < this.laneSectionTags.size(); i++)
         {

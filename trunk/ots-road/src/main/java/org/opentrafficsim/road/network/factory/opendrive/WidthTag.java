@@ -27,23 +27,23 @@ class WidthTag implements Serializable
 
     /** The sOffst. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel sOffst = null;
+    Length sOffst = null;
 
     /** Parameter a. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel a = null;
+    Length a = null;
 
     /** Parameter b. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel b = null;
+    Length b = null;
 
     /** Parameter c. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel c = null;
+    Length c = null;
 
     /** Parameter d. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel d = null;
+    Length d = null;
 
     /**
      * Parse the attributes of the road.type tag. The sub-elements are parsed in separate classes.
@@ -66,23 +66,23 @@ class WidthTag implements Serializable
 
             Node sOffst = attributes.getNamedItem("sOffset");
             if (sOffst != null)
-                widthTag.sOffst = new Length.Rel(Double.parseDouble(sOffst.getNodeValue().trim()), LengthUnit.METER);
+                widthTag.sOffst = new Length(Double.parseDouble(sOffst.getNodeValue().trim()), LengthUnit.METER);
 
             Node a = attributes.getNamedItem("a");
             if (a != null)
-                widthTag.a = new Length.Rel(Double.parseDouble(a.getNodeValue().trim()), LengthUnit.METER);
+                widthTag.a = new Length(Double.parseDouble(a.getNodeValue().trim()), LengthUnit.METER);
 
             Node b = attributes.getNamedItem("b");
             if (b != null)
-                widthTag.b = new Length.Rel(Double.parseDouble(b.getNodeValue().trim()), LengthUnit.METER);
+                widthTag.b = new Length(Double.parseDouble(b.getNodeValue().trim()), LengthUnit.METER);
 
             Node c = attributes.getNamedItem("c");
             if (c != null)
-                widthTag.c = new Length.Rel(Double.parseDouble(c.getNodeValue().trim()), LengthUnit.METER);
+                widthTag.c = new Length(Double.parseDouble(c.getNodeValue().trim()), LengthUnit.METER);
 
             Node d = attributes.getNamedItem("d");
             if (d != null)
-                widthTag.d = new Length.Rel(Double.parseDouble(d.getNodeValue().trim()), LengthUnit.METER);
+                widthTag.d = new Length(Double.parseDouble(d.getNodeValue().trim()), LengthUnit.METER);
 
             laneTag.widthTags.add(widthTag);
         }

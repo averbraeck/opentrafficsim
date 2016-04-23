@@ -3,7 +3,7 @@ package org.opentrafficsim.core.geometry;
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
-import org.djunits.value.vdouble.scalar.Angle;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 
@@ -345,16 +345,16 @@ public final class Clothoid
     /**
      * Approximate a clothoid with curvature 0 at start.
      * @param start OTSPoint3D; starting point of the clothoid
-     * @param startDirection Angle.Abs; start direction of the clothoid
+     * @param startDirection Direction; start direction of the clothoid
      * @param endCurvature double; curvature at the end of the clothoid [1/m]
-     * @param length Length.Rel; length of the clothoid
-     * @param endElevation Length.Rel; elevation at end of the clothoid
+     * @param length Length; length of the clothoid
+     * @param endElevation Length; elevation at end of the clothoid
      * @param numSegments int; number of segments used to approximate (the number of points is one higher than this)
      * @return OTSLine3D; the clothoid
      * @throws OTSGeometryException if the number of segments is too low
      */
-    public static OTSLine3D clothoid(final OTSPoint3D start, final Angle.Abs startDirection, final double endCurvature,
-        final Length.Rel length, final Length.Rel endElevation, final int numSegments) throws OTSGeometryException
+    public static OTSLine3D clothoid(final OTSPoint3D start, final Direction startDirection, final double endCurvature,
+        final Length length, final Length endElevation, final int numSegments) throws OTSGeometryException
     {
         return clothoid(start.x, start.y, start.z, startDirection.si, 0, endCurvature, length.si, endElevation.si,
             numSegments);
@@ -363,17 +363,17 @@ public final class Clothoid
     /**
      * Approximate a clothoid.
      * @param start OTSPoint3D; starting point of the clothoid
-     * @param startDirection Angle.Abs; start direction of the clothoid
+     * @param startDirection Direction; start direction of the clothoid
      * @param startCurvature double; curvature at the start of the clothoid [1/m]
      * @param endCurvature double; curvature at the end of the clothoid [1/m]
-     * @param length Length.Rel; length of the clothoid
-     * @param endElevation Length.Rel; elevation at end of the clothoid
+     * @param length Length; length of the clothoid
+     * @param endElevation Length; elevation at end of the clothoid
      * @param numSegments int; number of segments used to approximate (the number of points is one higher than this)
      * @return OTSLine3D; the clothoid
      * @throws OTSGeometryException if the number of segments is too low
      */
-    public static OTSLine3D clothoid(final OTSPoint3D start, final Angle.Abs startDirection,
-        final double startCurvature, final double endCurvature, final Length.Rel length, final Length.Rel endElevation,
+    public static OTSLine3D clothoid(final OTSPoint3D start, final Direction startDirection,
+        final double startCurvature, final double endCurvature, final Length length, final Length endElevation,
         final int numSegments) throws OTSGeometryException
     {
         return clothoid(start.x, start.y, start.x, startDirection.si, startCurvature, endCurvature, length.si,
@@ -383,17 +383,17 @@ public final class Clothoid
     /**
      * Approximate a clothoid with curvature 0 at start.
      * @param start OTSPoint3D; starting point of the clothoid
-     * @param startDirection Angle.Abs; start direction of the clothoid
+     * @param startDirection Direction; start direction of the clothoid
      * @param endCurvature LinearDensity; curvature at the end of the clothoid
-     * @param length Length.Rel; length of the clothoid
-     * @param endElevation Length.Rel; elevation at end of the clothoid
+     * @param length Length; length of the clothoid
+     * @param endElevation Length; elevation at end of the clothoid
      * @param numSegments int; number of segments used to approximate (the number of points is one higher than this)
      * @return OTSLine3D; the clothoid
      * @throws OTSGeometryException if the number of segments is too low
      */
     public static OTSLine3D
-        clothoid(final OTSPoint3D start, final Angle.Abs startDirection, final LinearDensity endCurvature,
-            final Length.Rel length, final Length.Rel endElevation, final int numSegments) throws OTSGeometryException
+        clothoid(final OTSPoint3D start, final Direction startDirection, final LinearDensity endCurvature,
+            final Length length, final Length endElevation, final int numSegments) throws OTSGeometryException
     {
         return clothoid(start, startDirection, 0, endCurvature.si, length, endElevation, numSegments);
     }
@@ -401,18 +401,18 @@ public final class Clothoid
     /**
      * Approximate a clothoid.
      * @param start OTSPoint3D; starting point of the clothoid
-     * @param startDirection Angle.Abs; start direction of the clothoid
+     * @param startDirection Direction; start direction of the clothoid
      * @param startCurvature double; curvature at the start of the clothoid [1/m]
      * @param endCurvature double; curvature at the end of the clothoid [1/m]
-     * @param length Length.Rel; length of the clothoid
-     * @param endElevation Length.Rel; elevation at end of the clothoid
+     * @param length Length; length of the clothoid
+     * @param endElevation Length; elevation at end of the clothoid
      * @param numSegments int; number of segments used to approximate (the number of points is one higher than this)
      * @return OTSLine3D; the clothoid
      * @throws OTSGeometryException if the number of segments is too low
      */
-    public static OTSLine3D clothoid(final OTSPoint3D start, final Angle.Abs startDirection,
-        final LinearDensity startCurvature, final LinearDensity endCurvature, final Length.Rel length,
-        final Length.Rel endElevation, final int numSegments) throws OTSGeometryException
+    public static OTSLine3D clothoid(final OTSPoint3D start, final Direction startDirection,
+        final LinearDensity startCurvature, final LinearDensity endCurvature, final Length length,
+        final Length endElevation, final int numSegments) throws OTSGeometryException
     {
         return clothoid(start, startDirection, startCurvature.si, endCurvature.si, length, endElevation, numSegments);
     }
@@ -429,9 +429,9 @@ public final class Clothoid
         // System.out.println(line.toPlotterFormat());
         // line = clothoid(10, 10, 5, Math.PI / 8, 0 * -0.03, 0.04, 100, 15, 100);
         line =
-            clothoid(new OTSPoint3D(10, 10, 5), new Angle.Abs(Math.PI / 8, AngleUnit.RADIAN), new LinearDensity(
+            clothoid(new OTSPoint3D(10, 10, 5), new Direction(Math.PI / 8, AngleUnit.RADIAN), new LinearDensity(
                 0 * -0.03, LinearDensityUnit.PER_METER), new LinearDensity(0.04, LinearDensityUnit.PER_METER),
-                new Length.Rel(100, LengthUnit.METER), new Length.Rel(15, LengthUnit.METER), 100);
+                new Length(100, LengthUnit.METER), new Length(15, LengthUnit.METER), 100);
         System.out.println(OTSGeometryUtil.printCoordinates("#", line, "\n"));
     }
 

@@ -31,7 +31,7 @@ public class HeadwayTrafficLight extends AbstractHeadway
      * @param distance the distance to the traffic light, distance cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public HeadwayTrafficLight(final TrafficLight trafficLight, final Length.Rel distance) throws GTUException
+    public HeadwayTrafficLight(final TrafficLight trafficLight, final Length distance) throws GTUException
     {
         super(ObjectType.TRAFFICLIGHT, id(trafficLight), distance);
         this.trafficLight = trafficLight;

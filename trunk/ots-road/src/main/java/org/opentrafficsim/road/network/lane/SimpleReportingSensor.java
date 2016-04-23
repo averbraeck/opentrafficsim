@@ -35,7 +35,7 @@ public class SimpleReportingSensor extends AbstractSensor
      * @param name the name of the sensor.
      * @param simulator the simulator to enable animation.
      */
-    public SimpleReportingSensor(final Lane lane, final Length.Rel position,
+    public SimpleReportingSensor(final Lane lane, final Length position,
         final RelativePosition.TYPE triggerPosition, final String name, final OTSDEVSSimulatorInterface simulator)
     {
         super(lane, position, triggerPosition, name, simulator);

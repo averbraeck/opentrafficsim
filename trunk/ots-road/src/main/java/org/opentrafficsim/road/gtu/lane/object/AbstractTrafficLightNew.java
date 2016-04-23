@@ -19,7 +19,7 @@ public class AbstractTrafficLightNew extends AbstractCSEObject
      * @param geometry the geometry of the traffic light
      * @param height the height of the "barrier"
      */
-    public AbstractTrafficLightNew(final OTSLine3D geometry, final Length.Rel height)
+    public AbstractTrafficLightNew(final OTSLine3D geometry, final Length height)
     {
         super(geometry, height);
     }

@@ -3,9 +3,9 @@ package org.opentrafficsim.road.gtu.lane.tactical.directedlanechange;
 import java.util.Collection;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -30,8 +30,8 @@ public class DirectedFixedLaneChangeModel implements DirectedLaneChangeModel
     @Override
     public final DirectedLaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
             final LateralDirectionality direction, final Collection<Headway> sameLaneTraffic,
-            final Collection<Headway> otherLaneTraffic, final Length.Rel maxDistance, final Speed speedLimit,
-            final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold, final Time.Rel laneChangeTime)
+            final Collection<Headway> otherLaneTraffic, final Length maxDistance, final Speed speedLimit,
+            final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold, final Duration laneChangeTime)
             throws GTUException
     {
         GTUFollowingModelOld gtuFollowingModel =

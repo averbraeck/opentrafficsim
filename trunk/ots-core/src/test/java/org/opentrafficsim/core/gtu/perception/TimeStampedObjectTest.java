@@ -26,10 +26,10 @@ public class TimeStampedObjectTest
     public final void testAll()
     {
         String string1 = "string 1";
-        Time.Abs time1 = new Time.Abs(1234, TimeUnit.SECOND);
+        Time time1 = new Time(1234, TimeUnit.SECOND);
         TimeStampedObject<String> tso1 = new TimeStampedObject<String>(string1, time1);
         String string2 = "string 2";
-        Time.Abs time2 = new Time.Abs(2345, TimeUnit.SECOND);
+        Time time2 = new Time(2345, TimeUnit.SECOND);
         TimeStampedObject<String> tso2 = new TimeStampedObject<String>(string2, time2);
         verifyFields(tso1, string1, time1);
         verifyFields(tso2, string2, time2);
@@ -40,9 +40,9 @@ public class TimeStampedObjectTest
      * Verify all fields in a TimeStampedObject.
      * @param tso TimeStampedObject&lt;String&gt;; the TimeStampedObject
      * @param string String; the object that should be returned by the getObject method of the TimeStampedObject
-     * @param time Time.Abs; the time that should be returned by the getTimeStamp method of the TimeStampedObject
+     * @param time Time; the time that should be returned by the getTimeStamp method of the TimeStampedObject
      */
-    private void verifyFields(final TimeStampedObject<String> tso, final String string, final Time.Abs time)
+    private void verifyFields(final TimeStampedObject<String> tso, final String string, final Time time)
     {
         assertEquals("object must be " + string, string, tso.getObject());
         assertEquals("time must be " + time, time.si, tso.getTimestamp().si, time.si / 99999);

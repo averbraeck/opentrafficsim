@@ -27,7 +27,7 @@ class RoadMarkTag implements Serializable
 
     /** The sOffst. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel sOffst = null;
+    Length sOffst = null;
 
     /** Type */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -43,7 +43,7 @@ class RoadMarkTag implements Serializable
 
     /** Width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel width = null;
+    Length width = null;
 
     /** Lane change */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -70,7 +70,7 @@ class RoadMarkTag implements Serializable
 
             Node sOffst = attributes.getNamedItem("sOffst");
             if (sOffst != null)
-                roadMarkTag.sOffst = new Length.Rel(Double.parseDouble(sOffst.getNodeValue().trim()), LengthUnit.METER);
+                roadMarkTag.sOffst = new Length(Double.parseDouble(sOffst.getNodeValue().trim()), LengthUnit.METER);
 
             Node type = attributes.getNamedItem("type");
             if (type != null)
@@ -86,7 +86,7 @@ class RoadMarkTag implements Serializable
 
             Node width = attributes.getNamedItem("width");
             if (width != null)
-                roadMarkTag.width = new Length.Rel(Double.parseDouble(width.getNodeValue().trim()), LengthUnit.METER);
+                roadMarkTag.width = new Length(Double.parseDouble(width.getNodeValue().trim()), LengthUnit.METER);
 
             Node laneChange = attributes.getNamedItem("laneChange");
             if (laneChange != null)

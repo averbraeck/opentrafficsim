@@ -53,7 +53,7 @@ class FillTag implements Serializable
 
     /** Inter-vehicle distance. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> distanceDist = null;
+    ContinuousDistDoubleScalar.Rel<Length, LengthUnit> distanceDist = null;
 
     /** Initial speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

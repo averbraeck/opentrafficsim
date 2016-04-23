@@ -58,10 +58,10 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
     /**
      * @param id ID; the id of the GTU
      * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
-     * @param initialLongitudinalPositions Map&lt;Lane, Length.Rel&gt;; the initial positions of the car on one or more lanes
+     * @param initialLongitudinalPositions Map&lt;Lane, Length&gt;; the initial positions of the car on one or more lanes
      * @param initialSpeed Speed; the initial speed of the car on the lane
-     * @param length Length.Rel; the maximum length of the GTU (parallel with driving direction)
-     * @param width Length.Rel; the maximum width of the GTU (perpendicular to driving direction)
+     * @param length Length; the maximum length of the GTU (parallel with driving direction)
+     * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
      * @param maximumVelocity Speed;the maximum speed of the GTU (in the driving direction)
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @param strategicalPlanner the strategical planner (e.g., route determination) to use
@@ -75,8 +75,8 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualGTU(final String id, final GTUType gtuType,
-            final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed, final Length.Rel length,
-            final Length.Rel width, final Speed maximumVelocity, final OTSDEVSSimulatorInterface simulator,
+            final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed, final Length length,
+            final Length width, final Speed maximumVelocity, final OTSDEVSSimulatorInterface simulator,
             final LaneBasedStrategicalPlanner strategicalPlanner, final LanePerceptionFull perception, final OTSNetwork network)
             throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
     {
@@ -88,10 +88,10 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      * Construct a new LaneBasedIndividualCar.
      * @param id ID; the id of the GTU
      * @param gtuType GTUTYpe; the type of GTU, e.g. TruckType, CarType, BusType
-     * @param initialLongitudinalPositions Map&lt;Lane, Length.Rel&gt;; the initial positions of the car on one or more lanes
+     * @param initialLongitudinalPositions Map&lt;Lane, Length&gt;; the initial positions of the car on one or more lanes
      * @param initialSpeed Speed; the initial speed of the car on the lane
-     * @param length Length.Rel; the maximum length of the GTU (parallel with driving direction)
-     * @param width Length.Rel; the maximum width of the GTU (perpendicular to driving direction)
+     * @param length Length; the maximum length of the GTU (parallel with driving direction)
+     * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
      * @param maximumVelocity Speed;the maximum speed of the GTU (in the driving direction)
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @param strategicalPlanner the strategical planner (e.g., route determination) to use
@@ -108,8 +108,8 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualGTU(final String id, final GTUType gtuType,
-            final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed, final Length.Rel length,
-            final Length.Rel width, final Speed maximumVelocity, final OTSDEVSSimulatorInterface simulator,
+            final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed, final Length length,
+            final Length width, final Speed maximumVelocity, final OTSDEVSSimulatorInterface simulator,
             final LaneBasedStrategicalPlanner strategicalPlanner, final LanePerceptionFull perception,
             final Class<? extends Renderable2D> animationClass, final GTUColorer gtuColorer, final OTSNetwork network)
             throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
@@ -120,11 +120,11 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         // sensor positions.
         // We take the rear position of the Car to be the reference point. So the front is the length
         // of the Car away from the reference point in the positive (driving) X-direction.
-        Length.Rel dx2 = new Length.Rel(getLength().getSI() / 2.0, LengthUnit.METER);
-        this.relativePositions.put(RelativePosition.FRONT, new RelativePosition(dx2, Length.Rel.ZERO, Length.Rel.ZERO,
+        Length dx2 = new Length(getLength().getSI() / 2.0, LengthUnit.METER);
+        this.relativePositions.put(RelativePosition.FRONT, new RelativePosition(dx2, Length.ZERO, Length.ZERO,
                 RelativePosition.FRONT));
-        this.relativePositions.put(RelativePosition.REAR, new RelativePosition(dx2.multiplyBy(-1.0), Length.Rel.ZERO,
-                Length.Rel.ZERO, RelativePosition.REAR));
+        this.relativePositions.put(RelativePosition.REAR, new RelativePosition(dx2.multiplyBy(-1.0), Length.ZERO,
+                Length.ZERO, RelativePosition.REAR));
         this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
         this.relativePositions.put(RelativePosition.CENTER, RelativePosition.REFERENCE_POSITION);
 
@@ -217,14 +217,14 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      * 
      * <pre>
      * LaneBasedIndividualCar&lt;String&gt; car = new LaneBasedIndividualCarBuilder&lt;String&gt;().setId("Car:"+nr)
-     *    .setLength(new Length.Rel(4.0, METER))....build(); 
+     *    .setLength(new Length(4.0, METER))....build(); 
      *    
      * or
      * 
      * LaneBasedIndividualCarBuilder&lt;String&gt; carBuilder = new LaneBasedIndividualCarBuilder&lt;String&gt;();
      * carBuilder.setId("Car:"+nr);
-     * carBuilder.setLength(new Length.Rel(4.0, METER));
-     * carBuilder.setWidth(new Length.Rel(1.8, METER));
+     * carBuilder.setLength(new Length(4.0, METER));
+     * carBuilder.setWidth(new Length(1.8, METER));
      * ...
      * LaneBasedIndividualCar&lt;String&gt; car = carBuilder.build();
      * </pre>
@@ -256,10 +256,10 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         private Speed initialSpeed = null;
 
         /** The length of the GTU (parallel with driving direction). */
-        private Length.Rel length = null;
+        private Length length = null;
 
         /** The width of the GTU (perpendicular to driving direction). */
-        private Length.Rel width = null;
+        private Length width = null;
 
         /** The maximum speed of the GTU (in the driving direction). */
         private Speed maximumVelocity = null;
@@ -327,7 +327,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
          * @param length set length
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder setLength(final Length.Rel length)
+        public final LaneBasedIndividualCarBuilder setLength(final Length length)
         {
             this.length = length;
             return this;
@@ -337,7 +337,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
          * @param width set width
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder setWidth(final Length.Rel width)
+        public final LaneBasedIndividualCarBuilder setWidth(final Length width)
         {
             this.width = width;
             return this;
@@ -448,7 +448,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         /**
          * @return length.
          */
-        public final Length.Rel getLength()
+        public final Length getLength()
         {
             return this.length;
         }
@@ -456,7 +456,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         /**
          * @return width.
          */
-        public final Length.Rel getWidth()
+        public final Length getWidth()
         {
             return this.width;
         }

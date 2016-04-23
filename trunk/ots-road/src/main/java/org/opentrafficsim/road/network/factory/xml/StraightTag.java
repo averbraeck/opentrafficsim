@@ -25,7 +25,7 @@ class StraightTag implements Serializable
     
     /** Length. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel length = null;
+    Length length = null;
 
     /**
      * Parse the LINK.STRAIGHT tag.

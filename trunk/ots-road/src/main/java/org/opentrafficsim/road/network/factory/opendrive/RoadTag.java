@@ -77,7 +77,7 @@ class RoadTag implements Serializable
 
     /** Total length of the reference line in the xy-plane, as indicated in the XML document. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel length = null;
+    Length length = null;
 
     /** Id of the junction to which the road belongs as a connecting road (= -1 for none). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -173,7 +173,7 @@ class RoadTag implements Serializable
         Node length = attributes.getNamedItem("length");
         if (length == null)
             throw new SAXException("ROAD: missing attribute LENGTH");
-        roadTag.length = new Length.Rel(Double.parseDouble(length.getNodeValue().trim()), LengthUnit.METER);
+        roadTag.length = new Length(Double.parseDouble(length.getNodeValue().trim()), LengthUnit.METER);
 
         Node junctionId = attributes.getNamedItem("junction");
         if (junctionId == null)
@@ -234,7 +234,7 @@ class RoadTag implements Serializable
             for (Integer laneSecIndex = 1; laneSecIndex < roadTag.lanesTag.laneSectionTags.size(); laneSecIndex++)
             {
                 LaneSectionTag laneSec = roadTag.lanesTag.laneSectionTags.get(laneSecIndex);
-                Length.Rel laneSecLength = laneSec.s;
+                Length laneSecLength = laneSec.s;
 
                 List<OTSPoint3D> points = new ArrayList<OTSPoint3D>();
 
@@ -426,7 +426,7 @@ class RoadTag implements Serializable
 
             CrossSectionLink currentLink = roadTag.subLinks.get(laneSecIndex);
 
-            Length.Rel ds = new Length.Rel(0.0, LengthUnit.METER);
+            Length ds = new Length(0.0, LengthUnit.METER);
             LaneSectionTag nextLaneSec;
             if (laneSecIndex != roadTag.lanesTag.laneSectionTags.size() - 1)
             {
@@ -444,10 +444,10 @@ class RoadTag implements Serializable
             int centerLaneSize = currentLaneSec.centerLaneTags.size();
             if (centerLaneSize != 1)
                 System.err.println("Sth is wrong in center lane");
-            Length.Rel centerOffset = new Length.Rel(0.0, LengthUnit.METER);
+            Length centerOffset = new Length(0.0, LengthUnit.METER);
 
             LaneTag centerLane = currentLaneSec.centerLaneTags.get(0);
-            Length.Rel laneWidth = new Length.Rel(0.0, LengthUnit.METER);
+            Length laneWidth = new Length(0.0, LengthUnit.METER);
             if (centerLane.widthTags.size() != 0)
                 System.err.println("error in show center stripe!");
 
@@ -466,8 +466,8 @@ class RoadTag implements Serializable
 
             // show left lanes
             int leftLaneSize = currentLaneSec.leftLaneTags.size();
-            // Length.Rel leftOffset_start = lastLane.getDesignLineOffsetAtBegin();
-            // Length.Rel leftOffset_end = lastLane.getDesignLineOffsetAtEnd();
+            // Length leftOffset_start = lastLane.getDesignLineOffsetAtBegin();
+            // Length leftOffset_end = lastLane.getDesignLineOffsetAtEnd();
 
             for (int leftLaneIndex = 1; leftLaneIndex <= leftLaneSize; leftLaneIndex++)
             {
@@ -481,20 +481,20 @@ class RoadTag implements Serializable
                             .plus(leftLane.widthTags.get(0).c.multiplyBy(Math.pow(ds.doubleValue(), 2)))
                             .plus(leftLane.widthTags.get(0).d.multiplyBy(Math.pow(ds.doubleValue(), 3)));
 
-                    Length.Rel laneWidth_start = leftLane.widthTags.get(0).a;
-                    Length.Rel laneWidth_end = leftLane.widthTags.get(0).sOffst;
+                    Length laneWidth_start = leftLane.widthTags.get(0).a;
+                    Length laneWidth_end = leftLane.widthTags.get(0).sOffst;
 
-                    Length.Rel leftOffset_start =
+                    Length leftOffset_start =
                         lastLane.getDesignLineOffsetAtBegin().plus(lastLane.getBeginWidth().multiplyBy(0.5))
                             .plus(laneWidth_start.multiplyBy(0.5));
-                    Length.Rel leftOffset_end =
+                    Length leftOffset_end =
                         lastLane.getDesignLineOffsetAtEnd().plus(lastLane.getEndWidth().multiplyBy(0.5))
                             .plus(laneWidth_end.multiplyBy(0.5));
 
-                    Length.Rel length = currentLink.getLength();
+                    Length length = currentLink.getLength();
 
                     CrossSectionSlice startSlice =
-                        new CrossSectionSlice(new Length.Rel(0.0, LengthUnit.METER), leftOffset_start, laneWidth_start);
+                        new CrossSectionSlice(new Length(0.0, LengthUnit.METER), leftOffset_start, laneWidth_start);
                     CrossSectionSlice endSlice = new CrossSectionSlice(length, leftOffset_end, laneWidth_end);
                     crossSectionSlices.add(startSlice);
                     crossSectionSlices.add(endSlice);
@@ -504,20 +504,20 @@ class RoadTag implements Serializable
                 {
                     // if(roadTag.id.equals("54048"))
                     // System.out.println();
-                    Length.Rel lengthofLane = leftLane.widthTags.get(leftLane.widthTags.size() - 1).sOffst;
+                    Length lengthofLane = leftLane.widthTags.get(leftLane.widthTags.size() - 1).sOffst;
                     for (WidthTag widthTag : leftLane.widthTags)
                     {
-                        Length.Rel relativeLength = widthTag.sOffst;
+                        Length relativeLength = widthTag.sOffst;
                         double factor = relativeLength.divideBy(lengthofLane).doubleValue();
 
                         if (factor < 0.98)
                         {
-                            Length.Rel width =
+                            Length width =
                                 widthTag.a.plus(widthTag.b.multiplyBy(relativeLength.doubleValue()))
                                     .plus(widthTag.c.multiplyBy(Math.pow(relativeLength.doubleValue(), 2)))
                                     .plus(widthTag.d.multiplyBy(Math.pow(relativeLength.doubleValue(), 3)));
 
-                            Length.Rel offSet =
+                            Length offSet =
                                 lastLane.getLateralCenterPosition(factor)
                                     .plus(lastLane.getWidth(factor).multiplyBy(0.5)).plus(width.multiplyBy(0.5));
 
@@ -529,8 +529,8 @@ class RoadTag implements Serializable
                         else
                         {
                             CrossSectionSlice lastSlice = crossSectionSlices.get(crossSectionSlices.size() - 1);
-                            Length.Rel width = lastSlice.getWidth();
-                            Length.Rel offSet = lastSlice.getDesignLineOffset();
+                            Length width = lastSlice.getWidth();
+                            Length offSet = lastSlice.getDesignLineOffset();
                             relativeLength = currentLink.getLength();
 
                             CrossSectionSlice slice = new CrossSectionSlice(relativeLength, offSet, width);
@@ -675,8 +675,8 @@ class RoadTag implements Serializable
 
             // show right lanes
             int rightLaneSize = currentLaneSec.rightLaneTags.size();
-            // Length.Rel rightOffset_start = new Length.Rel(0.0, LengthUnit.METER);
-            // Length.Rel rightOffset_end = new Length.Rel(0.0, LengthUnit.METER);
+            // Length rightOffset_start = new Length(0.0, LengthUnit.METER);
+            // Length rightOffset_end = new Length(0.0, LengthUnit.METER);
 
             for (int rightLaneIndex = 1; rightLaneIndex <= rightLaneSize; rightLaneIndex++)
             {
@@ -690,20 +690,20 @@ class RoadTag implements Serializable
                             .plus(rightLane.widthTags.get(0).c.multiplyBy(Math.pow(ds.doubleValue(), 2)))
                             .plus(rightLane.widthTags.get(0).d.multiplyBy(Math.pow(ds.doubleValue(), 3)));
 
-                    Length.Rel laneWidth_start = rightLane.widthTags.get(0).a;
-                    Length.Rel laneWidth_end = rightLane.widthTags.get(0).sOffst;
+                    Length laneWidth_start = rightLane.widthTags.get(0).a;
+                    Length laneWidth_end = rightLane.widthTags.get(0).sOffst;
 
-                    Length.Rel leftOffset_start =
+                    Length leftOffset_start =
                         lastLane.getDesignLineOffsetAtBegin().minus(lastLane.getBeginWidth().multiplyBy(0.5))
                             .minus(laneWidth_start.multiplyBy(0.5));
-                    Length.Rel leftOffset_end =
+                    Length leftOffset_end =
                         lastLane.getDesignLineOffsetAtEnd().minus(lastLane.getEndWidth().multiplyBy(0.5))
                             .minus(laneWidth_end.multiplyBy(0.5));
 
-                    Length.Rel length = currentLink.getLength();
+                    Length length = currentLink.getLength();
 
                     CrossSectionSlice startSlice =
-                        new CrossSectionSlice(new Length.Rel(0.0, LengthUnit.METER), leftOffset_start, laneWidth_start);
+                        new CrossSectionSlice(new Length(0.0, LengthUnit.METER), leftOffset_start, laneWidth_start);
                     CrossSectionSlice endSlice = new CrossSectionSlice(length, leftOffset_end, laneWidth_end);
                     crossSectionSlices.add(startSlice);
                     crossSectionSlices.add(endSlice);
@@ -713,20 +713,20 @@ class RoadTag implements Serializable
                 {
                     // if(roadTag.id.equals("54072"))
                     // System.out.println();
-                    Length.Rel lengthofLane = rightLane.widthTags.get(rightLane.widthTags.size() - 1).sOffst;
+                    Length lengthofLane = rightLane.widthTags.get(rightLane.widthTags.size() - 1).sOffst;
                     for (WidthTag widthTag : rightLane.widthTags)
                     {
-                        Length.Rel relativeLength = widthTag.sOffst;
+                        Length relativeLength = widthTag.sOffst;
                         double factor = relativeLength.divideBy(lengthofLane).doubleValue();
 
                         if (factor < 0.98)
                         {
-                            Length.Rel width =
+                            Length width =
                                 widthTag.a.plus(widthTag.b.multiplyBy(relativeLength.doubleValue()))
                                     .plus(widthTag.c.multiplyBy(Math.pow(relativeLength.doubleValue(), 2)))
                                     .plus(widthTag.d.multiplyBy(Math.pow(relativeLength.doubleValue(), 3)));
 
-                            Length.Rel offSet =
+                            Length offSet =
                                 lastLane.getLateralCenterPosition(factor)
                                     .minus(lastLane.getWidth(factor).multiplyBy(0.5)).minus(width.multiplyBy(0.5));
 
@@ -738,8 +738,8 @@ class RoadTag implements Serializable
                         else
                         {
                             CrossSectionSlice lastSlice = crossSectionSlices.get(crossSectionSlices.size() - 1);
-                            Length.Rel width = lastSlice.getWidth();
-                            Length.Rel offSet = lastSlice.getDesignLineOffset();
+                            Length width = lastSlice.getWidth();
+                            Length offSet = lastSlice.getDesignLineOffset();
                             relativeLength = currentLink.getLength();
 
                             CrossSectionSlice slice = new CrossSectionSlice(relativeLength, offSet, width);
@@ -938,8 +938,8 @@ class RoadTag implements Serializable
     {
         for (SignalTag signalTag : roadTag.signalsTag.signalTags)
         {
-            // Length.Rel sOffset = signalTag.s;
-            // Length.Rel tOffset = signalTag.t;
+            // Length sOffset = signalTag.s;
+            // Length tOffset = signalTag.t;
             // String id = signalTag.id;
 
             LaneSectionTag laneSec = roadTag.lanesTag.findDrivingLaneSec(signalTag.s);
@@ -950,16 +950,16 @@ class RoadTag implements Serializable
                 try
                 {
 
-                    Length.Rel sOffset = null;
+                    Length sOffset = null;
 
                     if (!openDriveNetworkLaneParser.trafficLightsByLanes.containsKey(roadTag.id))
                         sOffset = signalTag.s.minus(laneSec.s);
                     else
-                        sOffset = signalTag.s.minus(laneSec.s).plus(new Length.Rel(0.5, LengthUnit.METER));
+                        sOffset = signalTag.s.minus(laneSec.s).plus(new Length(0.5, LengthUnit.METER));
 
                     Class<?> clazz = Class.forName(OldTrafficLight.class.getName());
                     Constructor<?> trafficLightConstructor =
-                        ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class, Length.Rel.class,
+                        ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class, Length.class,
                             OTSDEVSSimulatorInterface.class});
 
                     AbstractTrafficLightNew trafficLight =
@@ -1019,16 +1019,16 @@ class RoadTag implements Serializable
             {
                 try
                 {
-                    Length.Rel sOffset = null;
+                    Length sOffset = null;
 
                     if (!openDriveNetworkLaneParser.trafficLightsByLanes.containsKey(roadTag.id))
                         sOffset = signalReferenceTag.s.minus(laneSec.s);
                     else
-                        sOffset = signalReferenceTag.s.minus(laneSec.s).plus(new Length.Rel(0.5, LengthUnit.METER));
+                        sOffset = signalReferenceTag.s.minus(laneSec.s).plus(new Length(0.5, LengthUnit.METER));
 
                     Class<?> clazz = Class.forName(OldTrafficLight.class.getName());
                     Constructor<?> trafficLightConstructor =
-                        ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class, Length.Rel.class,
+                        ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class, Length.class,
                             OTSDEVSSimulatorInterface.class});
 
                     AbstractTrafficLightNew trafficLight =

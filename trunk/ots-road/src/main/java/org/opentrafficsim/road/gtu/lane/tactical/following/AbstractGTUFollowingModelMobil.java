@@ -6,6 +6,7 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -33,7 +34,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
 
     /** Prohibitive deceleration used to construct the TOODANGEROUS result below. */
     private static final AccelerationStep PROHIBITIVEACCELERATIONSTEP = new AccelerationStep(new Acceleration(
-            Double.NEGATIVE_INFINITY, AccelerationUnit.SI), new Time.Abs(Double.NaN, TimeUnit.SI), new Time.Rel(Double.NaN,
+            Double.NEGATIVE_INFINITY, AccelerationUnit.SI), new Time(Double.NaN, TimeUnit.SI), new Duration(Double.NaN,
             TimeUnit.SI));
 
     /** Return value if lane change causes immediate collision. */
@@ -43,7 +44,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
     /** {@inheritDoc} */
     @Override
     public final DualAccelerationStep computeDualAccelerationStep(final LaneBasedGTU referenceGTU,
-            final Collection<Headway> otherGTUs, final Length.Rel maxDistance, final Speed speedLimit) throws GTUException
+            final Collection<Headway> otherGTUs, final Length maxDistance, final Speed speedLimit) throws GTUException
     {
         return computeDualAccelerationStep(referenceGTU, otherGTUs, maxDistance, speedLimit, getStepSize());
     }
@@ -51,8 +52,8 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
     /** {@inheritDoc} */
     @Override
     public final DualAccelerationStep computeDualAccelerationStep(final LaneBasedGTU referenceGTU,
-            final Collection<Headway> otherHeadways, final Length.Rel maxDistance, final Speed speedLimit,
-            final Time.Rel stepSize) throws GTUException
+            final Collection<Headway> otherHeadways, final Length maxDistance, final Speed speedLimit,
+            final Duration stepSize) throws GTUException
     {
         // Find out if there is an immediate collision
         for (Headway headway : otherHeadways)
@@ -84,7 +85,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
             {
                 // This one is behind; assume our CFM holds also for the GTU behind us
                 AccelerationStep as =
-                        gfm.computeAccelerationStep(headway.getSpeed(), referenceGTU.getSpeed(), new Length.Rel(
+                        gfm.computeAccelerationStep(headway.getSpeed(), referenceGTU.getSpeed(), new Length(
                                 -headway.getDistance().si, LengthUnit.SI), speedLimit, referenceGTU.getSimulator()
                                 .getSimulatorTime().getTime(), stepSize);
                 if (null == followerAccelerationStep || as.getAcceleration().lt(followerAccelerationStep.getAcceleration()))
@@ -124,7 +125,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
     /** {@inheritDoc} */
     @Override
     public final AccelerationStep computeAccelerationStep(final LaneBasedGTU gtu, final Speed leaderSpeed,
-            final Length.Rel headway, final Length.Rel maxDistance, final Speed speedLimit) throws GTUException
+            final Length headway, final Length maxDistance, final Speed speedLimit) throws GTUException
     {
         return computeAccelerationStep(gtu, leaderSpeed, headway, maxDistance, speedLimit, getStepSize());
     }
@@ -132,10 +133,10 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
     /** {@inheritDoc} */
     @Override
     public final AccelerationStep computeAccelerationStep(final LaneBasedGTU gtu, final Speed leaderSpeed,
-            final Length.Rel headway, final Length.Rel maxDistance, final Speed speedLimit, final Time.Rel stepSize)
+            final Length headway, final Length maxDistance, final Speed speedLimit, final Duration stepSize)
             throws GTUException
     {
-        Length.Rel distance;
+        Length distance;
         Speed leaderOrBlockSpeed;
         if (maxDistance.lt(headway) || headway == null)
         {
@@ -151,14 +152,14 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
         final Speed followerMaximumSpeed = gtu.getMaximumVelocity();
         Acceleration newAcceleration =
                 computeAcceleration(followerSpeed, followerMaximumSpeed, leaderOrBlockSpeed, distance, speedLimit, stepSize);
-        Time.Abs nextEvaluationTime = gtu.getSimulator().getSimulatorTime().getTime().plus(stepSize);
+        Time nextEvaluationTime = gtu.getSimulator().getSimulatorTime().getTime().plus(stepSize);
         return new AccelerationStep(newAcceleration, nextEvaluationTime, stepSize);
     }
 
     /** {@inheritDoc} */
     @Override
     public final AccelerationStep computeAccelerationStep(final Speed followerSpeed, final Speed leaderSpeed,
-            final Length.Rel headway, final Speed speedLimit, final Time.Abs currentTime)
+            final Length headway, final Speed speedLimit, final Time currentTime)
     {
         return computeAccelerationStep(followerSpeed, leaderSpeed, headway, speedLimit, currentTime, getStepSize());
     }
@@ -166,18 +167,18 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
     /** {@inheritDoc} */
     @Override
     public final AccelerationStep computeAccelerationStep(final Speed followerSpeed, final Speed leaderSpeed,
-            final Length.Rel headway, final Speed speedLimit, final Time.Abs currentTime, final Time.Rel stepSize)
+            final Length headway, final Speed speedLimit, final Time currentTime, final Duration stepSize)
     {
         final Speed followerMaximumSpeed = speedLimit; // the best approximation we can do...
         Acceleration newAcceleration =
                 computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, headway, speedLimit, stepSize);
-        Time.Abs nextEvaluationTime = currentTime.plus(stepSize);
+        Time nextEvaluationTime = currentTime.plus(stepSize);
         return new AccelerationStep(newAcceleration, nextEvaluationTime, stepSize);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final AccelerationStep computeAccelerationStepWithNoLeader(final LaneBasedGTU gtu, final Length.Rel maxDistance,
+    public final AccelerationStep computeAccelerationStepWithNoLeader(final LaneBasedGTU gtu, final Length maxDistance,
             final Speed speedLimit) throws GTUException
     {
         return computeAccelerationStepWithNoLeader(gtu, maxDistance, speedLimit, getStepSize());
@@ -185,11 +186,11 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
 
     /** {@inheritDoc} */
     @Override
-    public final AccelerationStep computeAccelerationStepWithNoLeader(final LaneBasedGTU gtu, final Length.Rel maxDistance,
-            final Speed speedLimit, final Time.Rel stepSize) throws GTUException
+    public final AccelerationStep computeAccelerationStepWithNoLeader(final LaneBasedGTU gtu, final Length maxDistance,
+            final Speed speedLimit, final Duration stepSize) throws GTUException
     {
-        Length.Rel stopDistance =
-                new Length.Rel(gtu.getMaximumVelocity().si * gtu.getMaximumVelocity().si
+        Length stopDistance =
+                new Length(gtu.getMaximumVelocity().si * gtu.getMaximumVelocity().si
                         / (2.0 * getMaximumSafeDeceleration().si), LengthUnit.SI);
         return computeAccelerationStep(gtu, gtu.getSpeed(), stopDistance, maxDistance, speedLimit, stepSize);
         /*-
@@ -200,8 +201,8 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
 
     /** {@inheritDoc} */
     @Override
-    public final Length.Rel minimumHeadway(final Speed followerSpeed, final Speed leaderSpeed, final Length.Rel precision,
-            final Length.Rel maxDistance, final Speed speedLimit, final Speed followerMaximumSpeed)
+    public final Length minimumHeadway(final Speed followerSpeed, final Speed leaderSpeed, final Length precision,
+            final Length maxDistance, final Speed speedLimit, final Speed followerMaximumSpeed)
     {
         if (precision.getSI() <= 0)
         {
@@ -211,12 +212,12 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
         // Find a decent interval to bisect
         double minimumSI = 0;
         double minimumSIDeceleration =
-                computeAcceleration(followerSpeed, followerSpeed, leaderSpeed, new Length.Rel(minimumSI, LengthUnit.SI),
+                computeAcceleration(followerSpeed, followerSpeed, leaderSpeed, new Length(minimumSI, LengthUnit.SI),
                         speedLimit).getSI();
         if (minimumSIDeceleration >= maximumDeceleration)
         {
             // Weird... The GTU following model allows zero headway
-            return Length.Rel.ZERO;
+            return Length.ZERO;
         }
         double maximumSI = 1; // this is - deliberately - way too small
         double maximumSIDeceleration = Double.NaN;
@@ -225,7 +226,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
         {
             maximumSIDeceleration =
                     computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed,
-                            new Length.Rel(maximumSI, LengthUnit.SI), speedLimit).getSI();
+                            new Length(maximumSI, LengthUnit.SI), speedLimit).getSI();
             if (maximumSIDeceleration > maximumDeceleration)
             {
                 break;
@@ -237,7 +238,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
             System.out.println();
             maximumSIDeceleration =
                     computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed,
-                            new Length.Rel(maximumSI, LengthUnit.SI), speedLimit).getSI();
+                            new Length(maximumSI, LengthUnit.SI), speedLimit).getSI();
             throw new Error("Cannot find headway that results in an acceptable deceleration");
         }
         // Now bisect until the error is less than the requested precision
@@ -246,7 +247,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
         {
             double midSI = (minimumSI + maximumSI) / 2;
             double midSIAcceleration =
-                    computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, new Length.Rel(midSI, LengthUnit.SI),
+                    computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, new Length(midSI, LengthUnit.SI),
                             speedLimit).getSI();
             if (midSIAcceleration < maximumDeceleration)
             {
@@ -257,7 +258,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
                 maximumSI = midSI;
             }
         }
-        Length.Rel result = new Length.Rel(Math.min((minimumSI + maximumSI) / 2, maxDistance.si), LengthUnit.SI);
+        Length result = new Length(Math.min((minimumSI + maximumSI) / 2, maxDistance.si), LengthUnit.SI);
         return result;
     }
 }

@@ -43,19 +43,19 @@ public class HeadwayGTUTest
         // Make two headway GTUs with different values to prove that HeadwayGTUs do not share static fields.
         String id1 = "id1";
         GTUType gtuType1 = GTUType.makeGTUType("type1");
-        Length.Rel distance1 = new Length.Rel(123, LengthUnit.METER);
+        Length distance1 = new Length(123, LengthUnit.METER);
         String id2 = "id2";
         GTUType gtuType2 = GTUType.makeGTUType("type2");
-        Length.Rel distance2 = new Length.Rel(234, LengthUnit.METER);
+        Length distance2 = new Length(234, LengthUnit.METER);
         HeadwayGTU hg1 = new HeadwayGTU(id1, gtuType1, distance1);
         HeadwayGTU hg2 = new HeadwayGTU(id2, gtuType2, distance2);
         verifyFields(hg1, null, distance1, gtuType1, id1, Headway.ObjectType.GTU, null, null, null, null, true, false, false,
                 false, false, false, false, false);
         verifyFields(hg2, null, distance2, gtuType2, id2, Headway.ObjectType.GTU, null, null, null, null, true, false, false,
                 false, false, false, false, false);
-        Length.Rel overlapFront = new Length.Rel(2, LengthUnit.METER);
-        Length.Rel overlap = new Length.Rel(3, LengthUnit.METER);
-        Length.Rel overlapRear = new Length.Rel(4, LengthUnit.METER);
+        Length overlapFront = new Length(2, LengthUnit.METER);
+        Length overlap = new Length(3, LengthUnit.METER);
+        Length overlapRear = new Length(4, LengthUnit.METER);
         hg2 = new HeadwayGTU(id2, gtuType2, overlapFront, overlap, overlapRear);
         verifyFields(hg2, null, null, gtuType2, id2, Headway.ObjectType.GTU, overlap, overlapFront, overlapRear, null, false,
                 false, false, false, false, false, false, true);
@@ -118,13 +118,13 @@ public class HeadwayGTUTest
      * Verify all fields in a HeadwayGTU.
      * @param headwayGTU HeadwayGTU; the HeadwayGTU to check
      * @param acceleration Acceleration; the expected return value for getAcceleration
-     * @param distance Length.Rel; the expected return value for getDistance
+     * @param distance Length; the expected return value for getDistance
      * @param gtuType GTUType; the expected return value for getGTUType
      * @param id String; the expected return value for getId
      * @param objectType Headway.ObjectType; the expected return value for getObjectType
-     * @param overlap Length.Rel; the expected return value for getOverlap
-     * @param overlapFront Length.Rel; the expected return value for getOverlapFront
-     * @param overlapRear Length.Rel; the expected return value for getOverlapRear
+     * @param overlap Length; the expected return value for getOverlap
+     * @param overlapFront Length; the expected return value for getOverlapFront
+     * @param overlapRear Length; the expected return value for getOverlapRear
      * @param speed Speed; the expected return value for getSpeed
      * @param ahead boolean; the expected return value for isAhead
      * @param behind boolean; the expected return value for isBehind
@@ -135,9 +135,9 @@ public class HeadwayGTUTest
      * @param rightIndicator boolean; the expected return value for isRightTurnIndicatorOn
      * @param parallel boolean; the expected return value for isParallel
      */
-    private void verifyFields(final HeadwayGTU headwayGTU, final Acceleration acceleration, final Length.Rel distance,
-            final GTUType gtuType, final String id, final Headway.ObjectType objectType, final Length.Rel overlap,
-            final Length.Rel overlapFront, final Length.Rel overlapRear, final Speed speed, final boolean ahead,
+    private void verifyFields(final HeadwayGTU headwayGTU, final Acceleration acceleration, final Length distance,
+            final GTUType gtuType, final String id, final Headway.ObjectType objectType, final Length overlap,
+            final Length overlapFront, final Length overlapRear, final Speed speed, final boolean ahead,
             final boolean behind, final boolean breakingLights, final boolean hazardLights, final boolean honk,
             final boolean leftIndicator, final boolean rightIndicator, final boolean parallel)
     {

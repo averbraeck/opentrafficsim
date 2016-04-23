@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Angle;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -36,27 +37,27 @@ class GeometryTag implements Serializable
 
     /** Start position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel s = null;
+    Length s = null;
 
     /** The x position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel x = null;
+    Length x = null;
 
     /** The y position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel y = null;
+    Length y = null;
 
     /** The z position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel z = null;
+    Length z = null;
 
     /** The hdg position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Angle.Rel hdg = null;
+    Angle hdg = null;
 
     /** Total length of the reference line in the xy-plane, as indicated in the XML document. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel length = null;
+    Length length = null;
 
     /** SpiralTag */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -88,27 +89,27 @@ class GeometryTag implements Serializable
         Node s = attributes.getNamedItem("s");
         if (s == null)
             throw new SAXException("Geometry: missing attribute s");
-        geometryTag.s = new Length.Rel(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
+        geometryTag.s = new Length(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
 
         Node x = attributes.getNamedItem("x");
         if (x == null)
             throw new SAXException("Geometry: missing attribute x");
-        geometryTag.x = new Length.Rel(Double.parseDouble(x.getNodeValue().trim()), LengthUnit.METER);
+        geometryTag.x = new Length(Double.parseDouble(x.getNodeValue().trim()), LengthUnit.METER);
 
         Node y = attributes.getNamedItem("y");
         if (y == null)
             throw new SAXException("Geometry: missing attribute y");
-        geometryTag.y = new Length.Rel(Double.parseDouble(y.getNodeValue().trim()), LengthUnit.METER);
+        geometryTag.y = new Length(Double.parseDouble(y.getNodeValue().trim()), LengthUnit.METER);
 
         Node hdg = attributes.getNamedItem("hdg");
         if (hdg == null)
             throw new SAXException("Geometry: missing attribute hdg");
-        geometryTag.hdg = new Angle.Rel(Double.parseDouble(hdg.getNodeValue().trim()), AngleUnit.RADIAN);
+        geometryTag.hdg = new Angle(Double.parseDouble(hdg.getNodeValue().trim()), AngleUnit.RADIAN);
 
         Node length = attributes.getNamedItem("length");
         if (length == null)
             throw new SAXException("Geometry: missing attribute length");
-        geometryTag.length = new Length.Rel(Double.parseDouble(length.getNodeValue().trim()), LengthUnit.METER);
+        geometryTag.length = new Length(Double.parseDouble(length.getNodeValue().trim()), LengthUnit.METER);
 
         SpiralTag.parseSpiral(node.getChildNodes(), parser, geometryTag);
 
@@ -123,8 +124,8 @@ class GeometryTag implements Serializable
      */
     static OTSNode makeOTSNode(final GeometryTag geometryTag)
     {
-        Angle.Abs angle = Angle.Abs.ZERO;
-        Angle.Abs slope = Angle.Abs.ZERO;
+        Direction angle = Direction.ZERO;
+        Direction slope = Direction.ZERO;
         OTSPoint3D coordinate =
             new OTSPoint3D(geometryTag.x.doubleValue(), geometryTag.y.doubleValue(), geometryTag.z.doubleValue());
 

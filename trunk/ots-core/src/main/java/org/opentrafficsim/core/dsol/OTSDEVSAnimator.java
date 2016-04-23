@@ -9,6 +9,7 @@ import nl.tudelft.simulation.dsol.simulators.DEVSAnimator;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 
 /**
@@ -52,7 +53,7 @@ public class OTSDEVSAnimator extends DEVSAnimator<DoubleScalar.Abs<TimeUnit>, Do
 
     /** {@inheritDoc} */
     @Override
-    public final void scheduleEventRel(final Time.Rel relativeDelay, final short priority, final Object source,
+    public final void scheduleEventRel(final Duration relativeDelay, final short priority, final Object source,
             final Object target, final String method, final Object[] args) throws SimRuntimeException
     {
         super.scheduleEventRel(relativeDelay, priority, source, target, method, args);
@@ -60,7 +61,7 @@ public class OTSDEVSAnimator extends DEVSAnimator<DoubleScalar.Abs<TimeUnit>, Do
 
     /** {@inheritDoc} */
     @Override
-    public final void scheduleEventRel(final Time.Rel relativeDelay, final Object source, final Object target,
+    public final void scheduleEventRel(final Duration relativeDelay, final Object source, final Object target,
             final String method, final Object[] args) throws SimRuntimeException
     {
         super.scheduleEventRel(relativeDelay, source, target, method, args);
@@ -68,7 +69,7 @@ public class OTSDEVSAnimator extends DEVSAnimator<DoubleScalar.Abs<TimeUnit>, Do
 
     /** {@inheritDoc} */
     @Override
-    public final void scheduleEventAbs(final Time.Abs absoluteTime, final Object source, final Object target,
+    public final void scheduleEventAbs(final Time absoluteTime, final Object source, final Object target,
             final String method, final Object[] args) throws SimRuntimeException
     {
         super.scheduleEventAbs(absoluteTime, source, target, method, args);
@@ -76,7 +77,7 @@ public class OTSDEVSAnimator extends DEVSAnimator<DoubleScalar.Abs<TimeUnit>, Do
 
     /** {@inheritDoc} */
     @Override
-    public final void scheduleEventAbs(final Time.Abs absoluteTime, final short priority, final Object source,
+    public final void scheduleEventAbs(final Time absoluteTime, final short priority, final Object source,
             final Object target, final String method, final Object[] args) throws SimRuntimeException
     {
         super.scheduleEventAbs(absoluteTime, priority, source, target, method, args);
@@ -84,7 +85,7 @@ public class OTSDEVSAnimator extends DEVSAnimator<DoubleScalar.Abs<TimeUnit>, Do
 
     /** {@inheritDoc} */
     @Override
-    public final void runUpTo(final Time.Abs when) throws SimRuntimeException
+    public final void runUpTo(final Time when) throws SimRuntimeException
     {
         super.runUpTo(when);
     }

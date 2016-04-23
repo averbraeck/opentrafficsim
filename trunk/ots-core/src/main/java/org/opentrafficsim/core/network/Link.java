@@ -40,7 +40,7 @@ public interface Link extends Locatable, Serializable
     OTSLine3D getDesignLine();
 
     /** @return length of the link. */
-    Length.Rel getLength();
+    Length getLength();
 
     /**
      * This method returns the directionality of the link for a GTU type. It might be that the link is FORWARD (from start node

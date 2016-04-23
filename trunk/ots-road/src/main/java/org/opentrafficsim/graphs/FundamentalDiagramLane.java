@@ -20,10 +20,10 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -71,7 +71,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
     private final JLabel statusLabel;
 
     /** Sample duration of the detector that generates this Fundamental Diagram. */
-    private final Time.Rel aggregationTime;
+    private final Duration aggregationTime;
 
     /** Storage for the Samples. */
     private ArrayList<Sample> samples = new ArrayList<Sample>();
@@ -162,7 +162,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
      * @throws NetworkException on network inconsistency
      * @throws SimRuntimeException in case scheduling of the sampler fails
      */
-    public FundamentalDiagramLane(final String caption, final Time.Rel aggregationTime, final Lane lane,
+    public FundamentalDiagramLane(final String caption, final Duration aggregationTime, final Lane lane,
             final OTSDEVSSimulatorInterface simulator) throws NetworkException, SimRuntimeException
     {
         if (aggregationTime.getSI() <= 0)
@@ -231,7 +231,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
     /**
      * @return aggregationTime
      */
-    public final Time.Rel getAggregationTime()
+    public final Duration getAggregationTime()
     {
         return this.aggregationTime;
     }

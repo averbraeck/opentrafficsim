@@ -18,6 +18,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -78,17 +79,17 @@ public class CarTest implements UNITS
     public final void carTest() throws NetworkException, SimRuntimeException, NamingException, GTUException,
         OTSGeometryException
     {
-        Time.Abs initialTime = new Time.Abs(0, SECOND);
+        Time initialTime = new Time(0, SECOND);
         GTUType gtuType = GTUType.makeGTUType("Car");
         LaneType laneType = new LaneType("CarLane");
         laneType.addCompatibility(gtuType);
         OTSNetwork network = new OTSNetwork("network");
         Lane lane = makeLane(laneType);
-        Length.Rel initialPosition = new Length.Rel(12, METER);
+        Length initialPosition = new Length(12, METER);
         Speed initialSpeed = new Speed(34, KM_PER_HOUR);
         OTSDEVSSimulator simulator = makeSimulator();
         GTUFollowingModelOld gtuFollowingModel =
-            new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(10, SECOND));
+            new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(10, SECOND));
         LaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualGTU referenceCar =
             makeReferenceCar("12345", gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
@@ -119,8 +120,8 @@ public class CarTest implements UNITS
         Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> exp =
             new Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>();
         Treatment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> tr =
-            new Treatment<>(exp, "tr1", new OTSSimTimeDouble(new Time.Abs(0, SECOND)), new Time.Rel(0, SECOND),
-                new Time.Rel(3600.0, SECOND));
+            new Treatment<>(exp, "tr1", new OTSSimTimeDouble(new Time(0, SECOND)), new Duration(0, SECOND),
+                new Duration(3600.0, SECOND));
         exp.setTreatment(tr);
         exp.setModel(model);
         Replication<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> rep =
@@ -134,7 +135,7 @@ public class CarTest implements UNITS
      * @param id String; the name (number) of the Car
      * @param gtuType GTUType; the type of the new car
      * @param lane Lane; the lane on which the new Car is positioned
-     * @param initialPosition Length.Rel; the initial longitudinal position of the new Car
+     * @param initialPosition Length; the initial longitudinal position of the new Car
      * @param initialSpeed Speed; the initial speed
      * @param simulator OTSDEVVSimulator; the simulator that controls the new Car (and supplies the initial value for
      *            getLastEvalutionTime())
@@ -149,12 +150,12 @@ public class CarTest implements UNITS
      * @throws OTSGeometryException when the initial path is wrong
      */
     public static LaneBasedIndividualGTU makeReferenceCar(final String id, final GTUType gtuType, final Lane lane,
-        final Length.Rel initialPosition, final Speed initialSpeed, final OTSDEVSSimulator simulator,
+        final Length initialPosition, final Speed initialSpeed, final OTSDEVSSimulator simulator,
         final GTUFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSNetwork network)
         throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
     {
-        Length.Rel length = new Length.Rel(5.0, METER);
-        Length.Rel width = new Length.Rel(2.0, METER);
+        Length length = new Length(5.0, METER);
+        Length width = new Length(2.0, METER);
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
@@ -181,8 +182,8 @@ public class CarTest implements UNITS
         CrossSectionLink link12 =
             new CrossSectionLink("link12", n1, n2, LinkType.ALL, new OTSLine3D(coordinates),
                 LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
-        Length.Rel latPos = new Length.Rel(0.0, METER);
-        Length.Rel width = new Length.Rel(4.0, METER);
+        Length latPos = new Length(0.0, METER);
+        Length width = new Length(4.0, METER);
         return new Lane(link12, "lane.1", latPos, latPos, width, width, laneType, LongitudinalDirectionality.DIR_PLUS,
             new Speed(100, KM_PER_HOUR), new OvertakingConditions.LeftAndRight());
     }

@@ -159,38 +159,38 @@ public class TestModel implements OTSModelInterface, UNITS
     {
         // four lanes, grass underneath, lines between lane1-2 and lane 2-3, barrier between lane 2-3
         // lane is 3.5 meters wide. gap between 3-4 is one meter. outside 0.5 meters on both sides
-        Length.Rel m05 = new Length.Rel(0.5, METER);
-        Length.Rel m10 = new Length.Rel(1.0, METER);
-        Length.Rel m35 = new Length.Rel(3.5, METER);
+        Length m05 = new Length(0.5, METER);
+        Length m10 = new Length(1.0, METER);
+        Length m35 = new Length(3.5, METER);
         Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
-        Shoulder sL = new Shoulder(link, "sL", new Length.Rel(9.0, METER), m10);
+        Shoulder sL = new Shoulder(link, "sL", new Length(9.0, METER), m10);
 
         Lane laneELL =
-            new NoTrafficLane(link, "ELL", new Length.Rel(8.25, METER), new Length.Rel(8.25, METER), m05, m05);
+            new NoTrafficLane(link, "ELL", new Length(8.25, METER), new Length(8.25, METER), m05, m05);
         Lane laneL1 =
-            new Lane(link, "L1", new Length.Rel(6.25, METER), new Length.Rel(6.25, METER), m35, m35, null,
+            new Lane(link, "L1", new Length(6.25, METER), new Length(6.25, METER), m35, m35, null,
                 LongitudinalDirectionality.DIR_MINUS, speedLimit, new OvertakingConditions.LeftAndRight());
         Lane laneL2 =
-            new Lane(link, "L2", new Length.Rel(2.75, METER), new Length.Rel(2.75, METER), m35, m35, null,
+            new Lane(link, "L2", new Length(2.75, METER), new Length(2.75, METER), m35, m35, null,
                 LongitudinalDirectionality.DIR_MINUS, speedLimit, new OvertakingConditions.LeftAndRight());
         Lane laneELM =
-            new NoTrafficLane(link, "ELM", new Length.Rel(0.75, METER), new Length.Rel(0.75, METER), m05, m05);
+            new NoTrafficLane(link, "ELM", new Length(0.75, METER), new Length(0.75, METER), m05, m05);
 
-        Shoulder sM = new Shoulder(link, "sM", new Length.Rel(0.0, METER), m10);
+        Shoulder sM = new Shoulder(link, "sM", new Length(0.0, METER), m10);
 
         Lane laneERM =
-            new NoTrafficLane(link, "ERM", new Length.Rel(-0.75, METER), new Length.Rel(-0.75, METER), m05, m05);
+            new NoTrafficLane(link, "ERM", new Length(-0.75, METER), new Length(-0.75, METER), m05, m05);
         Lane laneR2 =
-            new Lane(link, "R2", new Length.Rel(-2.75, METER), new Length.Rel(-2.75, METER), m35, m35, null,
+            new Lane(link, "R2", new Length(-2.75, METER), new Length(-2.75, METER), m35, m35, null,
                 LongitudinalDirectionality.DIR_PLUS, speedLimit, new OvertakingConditions.LeftAndRight());
         Lane laneR1 =
-            new Lane(link, "R1", new Length.Rel(-6.25, METER), new Length.Rel(-6.25, METER), m35, m35, null,
+            new Lane(link, "R1", new Length(-6.25, METER), new Length(-6.25, METER), m35, m35, null,
                 LongitudinalDirectionality.DIR_PLUS, speedLimit, new OvertakingConditions.LeftAndRight());
         Lane laneERR =
-            new NoTrafficLane(link, "ERR", new Length.Rel(-8.25, METER), new Length.Rel(-8.25, METER), m05, m05);
+            new NoTrafficLane(link, "ERR", new Length(-8.25, METER), new Length(-8.25, METER), m05, m05);
 
-        Shoulder sR = new Shoulder(link, "sR", new Length.Rel(-9.0, METER), m10);
+        Shoulder sR = new Shoulder(link, "sR", new Length(-9.0, METER), m10);
 
         try
         {

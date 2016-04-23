@@ -54,19 +54,19 @@ final class LinkTag implements Serializable
 
     /** Offset for the link at the start node. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel offsetStart = null;
+    Length offsetStart = null;
 
     /** Offset for the link at the end node. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel offsetEnd = null;
+    Length offsetEnd = null;
 
     /** Extra rotation for the link at the start node. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Angle.Rel rotationStart = null;
+    Angle rotationStart = null;
 
     /** Extra rotation for the link at the end node. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Angle.Rel rotationEnd = null;
+    Angle rotationEnd = null;
 
     /** Straight. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -278,18 +278,18 @@ final class LinkTag implements Serializable
      * @return the corresponding position as a length on the center line
      * @throws NetworkException when parsing fails
      */
-    static Length.Rel parseBeginEndPosition(final String posStr, final CrossSectionElement cse) throws NetworkException
+    static Length parseBeginEndPosition(final String posStr, final CrossSectionElement cse) throws NetworkException
     {
         if (posStr.trim().equals("BEGIN"))
         {
-            return new Length.Rel(0.0, LengthUnit.METER);
+            return new Length(0.0, LengthUnit.METER);
         }
 
         double length = cse.getCenterLine().getLengthSI();
 
         if (posStr.trim().equals("END"))
         {
-            return new Length.Rel(length, LengthUnit.METER);
+            return new Length(length, LengthUnit.METER);
         }
 
         if (posStr.endsWith("%"))
@@ -303,7 +303,7 @@ final class LinkTag implements Serializable
                     throw new NetworkException("parseBeginEndPosition: attribute POSITION with value " + posStr
                         + " invalid for lane " + cse.toString() + ", should be a percentage between 0 and 100%");
                 }
-                return new Length.Rel(length * fraction, LengthUnit.METER);
+                return new Length(length * fraction, LengthUnit.METER);
             }
             catch (NumberFormatException nfe)
             {
@@ -322,10 +322,10 @@ final class LinkTag implements Serializable
                     + " invalid for lane " + cse.toString()
                     + ": provided negative offset greater than than link length");
             }
-            return new Length.Rel(length - offset, LengthUnit.METER);
+            return new Length(length - offset, LengthUnit.METER);
         }
 
-        Length.Rel offset = LengthUnits.parseLengthRel(posStr);
+        Length offset = LengthUnits.parseLengthRel(posStr);
         if (offset.getSI() > length)
         {
             throw new NetworkException("parseBeginEndPosition - attribute POSITION with value " + posStr

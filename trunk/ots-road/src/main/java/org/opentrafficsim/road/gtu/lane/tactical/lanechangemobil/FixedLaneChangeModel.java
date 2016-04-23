@@ -52,7 +52,7 @@ public class FixedLaneChangeModel implements LaneChangeModel, Serializable
         final Acceleration preferredLaneRouteIncentive, final Acceleration laneChangeThreshold,
         final Acceleration nonPreferredLaneRouteIncentive) throws GTUException, ParameterException
     {
-        Length.Rel headway = gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
+        Length headway = gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
         GTUFollowingModelOld gtuFollowingModel = (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) gtu
                 .getTacticalPlanner()).getCarFollowingModel();
         if (null == this.laneChange)

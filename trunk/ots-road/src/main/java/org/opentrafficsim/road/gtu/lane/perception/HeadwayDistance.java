@@ -3,7 +3,6 @@ package org.opentrafficsim.road.gtu.lane.perception;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
 
 /**
@@ -26,7 +25,7 @@ public class HeadwayDistance implements Headway
     private static final long serialVersionUID = 20160410L;
 
     /** the distance of the headway. */
-    private final Length.Rel distance;
+    private final Length distance;
 
     /**
      * Construct a new Headway information object with just a distance, without any further information about the object; it
@@ -35,7 +34,7 @@ public class HeadwayDistance implements Headway
      */
     public HeadwayDistance(final double distance)
     {
-        this(new Length.Rel(distance, LengthUnit.SI));
+        this(new Length(distance, LengthUnit.SI));
     }
 
     /**
@@ -43,7 +42,7 @@ public class HeadwayDistance implements Headway
      * assumes a speed of 0 at the headway, so it also good to store information about a lane drop.
      * @param distance the distance that needs to be stored.
      */
-    public HeadwayDistance(final Length.Rel distance)
+    public HeadwayDistance(final Length distance)
     {
         this.distance = distance;
     }
@@ -64,7 +63,7 @@ public class HeadwayDistance implements Headway
 
     /** {@inheritDoc} */
     @Override
-    public final Length.Rel getDistance()
+    public final Length getDistance()
     {
         return this.distance;
     }
@@ -85,21 +84,21 @@ public class HeadwayDistance implements Headway
 
     /** {@inheritDoc} */
     @Override
-    public final Rel getOverlapFront()
+    public final Length getOverlapFront()
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Rel getOverlapRear()
+    public final Length getOverlapRear()
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Rel getOverlap()
+    public final Length getOverlap()
     {
         return null;
     }
@@ -108,14 +107,14 @@ public class HeadwayDistance implements Headway
     @Override
     public final boolean isAhead()
     {
-        return this.distance.ge(Length.Rel.ZERO);
+        return this.distance.ge(Length.ZERO);
     }
 
     /** {@inheritDoc} */
     @Override
     public final boolean isBehind()
     {
-        return this.distance.lt(Length.Rel.ZERO);
+        return this.distance.lt(Length.ZERO);
     }
 
     /** {@inheritDoc} */

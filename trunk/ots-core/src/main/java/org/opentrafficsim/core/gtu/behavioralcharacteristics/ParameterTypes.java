@@ -8,9 +8,9 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.Throw;
 
 /**
@@ -34,7 +34,7 @@ public class ParameterTypes
 
     /** Car-following stopping distance. */
     public static final ParameterTypeLength S0 = new ParameterTypeLength("s0", "Car-following stopping distance.",
-            new Length.Rel(3.0, LengthUnit.SI), POSITIVE);
+            new Length(3.0, LengthUnit.SI), POSITIVE);
 
     /** Maximum (desired) car-following acceleration. */
     public static final ParameterTypeAcceleration A = new ParameterTypeAcceleration("a",
@@ -55,18 +55,18 @@ public class ParameterTypes
             POSITIVE);
 
     /** Current car-following headway. */
-    public static final ParameterTypeTime T = new ParameterTypeTime("T", "Current car-following headway.", new Time.Rel(1.2,
+    public static final ParameterTypeTime T = new ParameterTypeTime("T", "Current car-following headway.", new Duration(1.2,
             TimeUnit.SI), POSITIVE);
 
     /** Minimum car-following headway. */
-    public static final ParameterTypeTime TMIN = new ParameterTypeTime("Tmin", "Minimum car-following headway.", new Time.Rel(
+    public static final ParameterTypeTime TMIN = new ParameterTypeTime("Tmin", "Minimum car-following headway.", new Duration(
             0.56, TimeUnit.SI), POSITIVE)
     {
         /** */
         private static final long serialVersionUID = 20160400L;
 
         @Override
-        public void check(final Time.Rel value, final BehavioralCharacteristics bc) throws ParameterException
+        public void check(final Duration value, final BehavioralCharacteristics bc) throws ParameterException
         {
             Throw.when(bc.contains(ParameterTypes.TMAX) && value.si >= bc.getParameter(ParameterTypes.TMAX).si,
                     ParameterException.class, "Value of Tmin is above or equal to Tmax.");
@@ -74,14 +74,14 @@ public class ParameterTypes
     };
 
     /** Maximum car-following headway. */
-    public static final ParameterTypeTime TMAX = new ParameterTypeTime("Tmax", "Minimum car-following headway.", new Time.Rel(
+    public static final ParameterTypeTime TMAX = new ParameterTypeTime("Tmax", "Minimum car-following headway.", new Duration(
             1.2, TimeUnit.SI), POSITIVE)
     {
         /** */
         private static final long serialVersionUID = 20160400L;
 
         @Override
-        public void check(final Time.Rel value, final BehavioralCharacteristics bc) throws ParameterException
+        public void check(final Duration value, final BehavioralCharacteristics bc) throws ParameterException
         {
             Throw.when(bc.contains(ParameterTypes.TMIN) && value.si <= bc.getParameter(ParameterTypes.TMIN).si,
                     ParameterException.class, "Value of Tmax is below or equal to Tmin.");
@@ -89,25 +89,25 @@ public class ParameterTypes
     };
 
     /** Headway relaxation time. */
-    public static final ParameterTypeTime TAU = new ParameterTypeTime("tau", "Headway relaxation time.", new Time.Rel(25.0,
+    public static final ParameterTypeTime TAU = new ParameterTypeTime("tau", "Headway relaxation time.", new Duration(25.0,
             TimeUnit.SI), POSITIVE);
 
     /** Look-ahead time for mandatory lane changes. */
     public static final ParameterTypeTime T0 = new ParameterTypeTime("t0", "Look-ahead time for mandatory lane changes.",
-            new Time.Rel(43.0, TimeUnit.SI), POSITIVE);
+            new Duration(43.0, TimeUnit.SI), POSITIVE);
 
     /** Look-ahead distance. */
     public static final ParameterTypeLength LOOKAHEAD = new ParameterTypeLength("Look-ahead", "Look-ahead distance.",
-            new Length.Rel(295.0, LengthUnit.SI), POSITIVE);
+            new Length(295.0, LengthUnit.SI), POSITIVE);
 
     /** Look-back distance. */
     public static final ParameterTypeLength LOOKBACK = new ParameterTypeLength("Look-back", "Look-back distance.",
-            new Length.Rel(100, LengthUnit.SI), POSITIVE);
+            new Length(100, LengthUnit.SI), POSITIVE);
 
     // TODO: remove LOOKBACKOLD
     /** Look-back distance, for old MOBIL code only. */
     public static final ParameterTypeLength LOOKBACKOLD = new ParameterTypeLength("Look-back old",
-            "Look-back distance (old version for MOBIL code).", new Length.Rel(-100, LengthUnit.SI), NEGATIVE);
+            "Look-back distance (old version for MOBIL code).", new Length(-100, LengthUnit.SI), NEGATIVE);
 
     /** Speed limit adherence factor. */
     public static final ParameterTypeDouble FSPEED = new ParameterTypeDouble("fSpeed", "Speed limit adherence factor.", 1.0,
@@ -118,7 +118,7 @@ public class ParameterTypes
             "Speed threshold below which traffic is considered congested.", new Speed(60, SpeedUnit.KM_PER_HOUR), POSITIVE);
 
     /** Regular lane change duration. */
-    public static final ParameterTypeTime LCDUR = new ParameterTypeTime("lcDur", "Regular lane change duration.", new Time.Rel(
+    public static final ParameterTypeTime LCDUR = new ParameterTypeTime("lcDur", "Regular lane change duration.", new Duration(
             3, TimeUnit.SI), POSITIVE);
 
 }

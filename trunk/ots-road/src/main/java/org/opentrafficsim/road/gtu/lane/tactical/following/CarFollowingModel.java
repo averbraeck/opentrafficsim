@@ -45,7 +45,7 @@ public interface CarFollowingModel
      * @throws ParameterException If parameter exception occurs.
      * @return Desired headway.
      */
-    Length.Rel desiredHeadway(BehavioralCharacteristics behavioralCharacteristics, Speed speed) throws ParameterException;
+    Length desiredHeadway(BehavioralCharacteristics behavioralCharacteristics, Speed speed) throws ParameterException;
 
     /**
      * Determination of car-following acceleration, possibly based on multiple leaders. The implementation should be able to
@@ -62,7 +62,7 @@ public interface CarFollowingModel
      * @return Car-following acceleration.
      */
     Acceleration followingAcceleration(BehavioralCharacteristics behavioralCharacteristics, Speed speed,
-        SpeedInfo speedInfo, SortedMap<Length.Rel, Speed> leaders) throws ParameterException;
+        SpeedInfo speedInfo, SortedMap<Length, Speed> leaders) throws ParameterException;
 
     /**
      * Return the name of the car-following model.

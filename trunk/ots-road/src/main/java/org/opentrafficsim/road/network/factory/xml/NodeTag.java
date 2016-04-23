@@ -7,7 +7,7 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import org.djunits.unit.AngleUnit;
-import org.djunits.value.vdouble.scalar.Angle;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
@@ -43,11 +43,11 @@ class NodeTag implements Serializable
 
     /** Absolute angle of the node. 0 is "East", pi/2 = "North". */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Angle.Abs angle = null;
+    Direction angle = null;
 
     /** TODO slope as an angle. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Angle.Abs slope = null;
+    Direction slope = null;
 
     /** The calculated Node, either through a coordinate or after calculation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -136,8 +136,8 @@ class NodeTag implements Serializable
         NamingException
     {
         String id = nodeTag.name;
-        Angle.Abs angle = nodeTag.angle == null ? new Angle.Abs(0.0, AngleUnit.SI) : nodeTag.angle;
-        Angle.Abs slope = nodeTag.slope == null ? new Angle.Abs(0.0, AngleUnit.SI) : nodeTag.slope;
+        Direction angle = nodeTag.angle == null ? new Direction(0.0, AngleUnit.SI) : nodeTag.angle;
+        Direction slope = nodeTag.slope == null ? new Direction(0.0, AngleUnit.SI) : nodeTag.slope;
         OTSNode node = new OTSNode(id, nodeTag.coordinate, angle, slope);
         nodeTag.node = node;
         return node;

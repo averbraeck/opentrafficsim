@@ -20,6 +20,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Assert;
@@ -70,7 +71,7 @@ public class XMLNetworkGeneratorTest implements UNITS
         {
             TestXMLModel model = new TestXMLModel();
             final SimpleAnimator simulator =
-                new SimpleAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(120.0, SECOND), model);
+                new SimpleAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(120.0, SECOND), model);
 
             // get nodes, links, and the lanes.
             Node n1 = model.getNetwork().getNodeMap().get("N1");
@@ -96,7 +97,7 @@ public class XMLNetworkGeneratorTest implements UNITS
             assertNotNull(lane23);
 
             // add a sensor to check the time the vehicles pass
-            lane23.addSensor(new ReportingSensor(lane23, new Length.Rel(1E-4, LengthUnit.SI), RelativePosition.REFERENCE,
+            lane23.addSensor(new ReportingSensor(lane23, new Length(1E-4, LengthUnit.SI), RelativePosition.REFERENCE,
                 "LANE23.START", simulator), GTUType.ALL);
 
             simulator.setSpeedFactor(1000);
@@ -125,7 +126,7 @@ public class XMLNetworkGeneratorTest implements UNITS
                             System.err.println("Velocity of GTU " + gtu + "<> 10 m/s: " + gtu.getSpeed() + ", headway = "
                                 + gtu.getPerception().getForwardHeadway().getDistance());
                             // fail("Velocity of GTU " + gtu + "<> 10 m/s: " + gtu.getVelocity() + ", headway = "
-                            // + gtu.headway(new Length.Rel(250.0, METER)));
+                            // + gtu.headway(new Length(250.0, METER)));
                         }
                     }
                 }
@@ -165,7 +166,7 @@ public class XMLNetworkGeneratorTest implements UNITS
          * @param id the sensor id
          * @param simulator the simulator
          */
-        public ReportingSensor(final Lane lane, final Length.Rel longitudinalPosition, final TYPE positionType,
+        public ReportingSensor(final Lane lane, final Length longitudinalPosition, final TYPE positionType,
             final String id, final OTSDEVSSimulatorInterface simulator)
         {
             super(lane, longitudinalPosition, positionType, "REPORT@" + lane.toString(), simulator);

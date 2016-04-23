@@ -17,6 +17,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -94,7 +95,7 @@ public class LaneBasedGTUTest implements UNITS
         }
         OTSModelInterface model = new Model();
         SimpleSimulator simulator =
-                new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND), model);
+                new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND), model);
         GTUType carType = GTUType.makeGTUType("car");
         GTUType truckType = GTUType.makeGTUType("truck");
         LaneType laneType = new LaneType("CarLane");
@@ -121,13 +122,13 @@ public class LaneBasedGTUTest implements UNITS
             links.add(lanes[0].getParentLink());
         }
         // Create a long truck with its front (reference) one meter in the last link on the 3rd lane
-        Length.Rel truckPosition = new Length.Rel(99.5, METER);
-        Length.Rel truckLength = new Length.Rel(15, METER);
+        Length truckPosition = new Length(99.5, METER);
+        Length truckLength = new Length(15, METER);
 
         Set<DirectedLanePosition> truckPositions =
                 buildPositionsSet(truckPosition, truckLength, links, truckFromLane, truckUpToLane);
         Speed truckSpeed = new Speed(0, KM_PER_HOUR);
-        Length.Rel truckWidth = new Length.Rel(2.5, METER);
+        Length truckWidth = new Length(2.5, METER);
         LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
         Speed maximumVelocity = new Speed(120, KM_PER_HOUR);
         GTUFollowingModelOld gtuFollowingModel = new IDMPlusOld();
@@ -176,7 +177,7 @@ public class LaneBasedGTUTest implements UNITS
         assertEquals("lanesChecked should equals the number of Links times the number of lanes on each Link",
                 laneCount * links.size(), lanesChecked);
         assertEquals("Truck should be registered in " + truckPositions.size() + " lanes", truckPositions.size(), found);
-        Length.Rel forwardMaxDistance = truck.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
+        Length forwardMaxDistance = truck.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
         // TODO see how we can ask the vehicle to look this far ahead
         truck.getPerception().perceive();
         Headway leader = truck.getPerception().getForwardHeadway();
@@ -185,14 +186,14 @@ public class LaneBasedGTUTest implements UNITS
                 forwardMaxDistance.getSI() >= leader.getDistance().si && leader.getDistance().si > 0);
         assertEquals("With one vehicle in the network forward headwayGTU should return null", null, leader.getId());
         // TODO see how we can ask the vehicle to look this far behind
-        Length.Rel reverseMaxDistance = truck.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACKOLD);
+        Length reverseMaxDistance = truck.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACKOLD);
         Headway follower = truck.getPerception().getBackwardHeadway();
         assertTrue(
                 "With one vehicle in the network reverse headway should return a value less than zero, and smaller than |maxDistance|",
                 Math.abs(reverseMaxDistance.getSI()) >= Math.abs(follower.getDistance().si) && follower.getDistance().si < 0);
         assertEquals("With one vehicle in the network reverse headwayGTU should return null", null, follower.getId());
-        Length.Rel carLength = new Length.Rel(4, METER);
-        Length.Rel carWidth = new Length.Rel(1.8, METER);
+        Length carLength = new Length(4, METER);
+        Length carWidth = new Length(1.8, METER);
         Speed carSpeed = new Speed(0, KM_PER_HOUR);
         int maxStep = linkBoundaries[linkBoundaries.length - 1];
         for (int laneRank = 0; laneRank < laneCount + 1 - carLanesCovered; laneRank++)
@@ -205,7 +206,7 @@ public class LaneBasedGTUTest implements UNITS
                 {
                     continue; // Truck and car would overlap; the result of that placement is not defined :-)
                 }
-                Length.Rel carPosition = new Length.Rel(step, METER);
+                Length carPosition = new Length(step, METER);
                 Set<DirectedLanePosition> carPositions =
                         buildPositionsSet(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
                 behavioralCharacteristics = DefaultTestParameters.create(); // new BehavioralCharacteristics();
@@ -360,10 +361,10 @@ public class LaneBasedGTUTest implements UNITS
             // Create a car with constant acceleration
             OTSModelInterface model = new Model();
             SimpleSimulator simulator =
-                    new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND),
+                    new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND),
                             model);
             // Run the simulator clock to some non-zero value
-            simulator.runUpTo(new Time.Abs(60, SECOND));
+            simulator.runUpTo(new Time(60, SECOND));
             while (simulator.isRunning())
             {
                 try
@@ -384,12 +385,12 @@ public class LaneBasedGTUTest implements UNITS
             Lane lane =
                     LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, 1, laneType, new Speed(200, KM_PER_HOUR),
                             simulator, LongitudinalDirectionality.DIR_PLUS)[0];
-            Length.Rel carPosition = new Length.Rel(100, METER);
+            Length carPosition = new Length(100, METER);
             Set<DirectedLanePosition> carPositions = new LinkedHashSet<>(1);
             carPositions.add(new DirectedLanePosition(lane, carPosition, GTUDirectionality.DIR_PLUS));
             Speed carSpeed = new Speed(10, METER_PER_SECOND);
             Acceleration acceleration = new Acceleration(a, METER_PER_SECOND_2);
-            FixedAccelerationModel fam = new FixedAccelerationModel(acceleration, new Time.Rel(10, SECOND));
+            FixedAccelerationModel fam = new FixedAccelerationModel(acceleration, new Duration(10, SECOND));
             LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
             Speed maximumVelocity = new Speed(200, KM_PER_HOUR);
             BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create(); // new
@@ -401,10 +402,10 @@ public class LaneBasedGTUTest implements UNITS
                             laneChangeModel));
             LaneBasedIndividualGTU car =
                     new LaneBasedIndividualGTU("Car" + this.idGenerator.nextId(), carType, carPositions, carSpeed,
-                            new Length.Rel(4, METER), new Length.Rel(1.8, METER), maximumVelocity, simulator,
+                            new Length(4, METER), new Length(1.8, METER), maximumVelocity, simulator,
                             strategicalPlanner, new LanePerceptionFull(), this.network);
             // Let the simulator execute the move method of the car
-            simulator.runUpTo(new Time.Abs(61, SECOND));
+            simulator.runUpTo(new Time(61, SECOND));
             while (simulator.isRunning())
             {
                 try
@@ -428,9 +429,9 @@ public class LaneBasedGTUTest implements UNITS
                 // System.out.println("Expected differential distance " + distanceAtTime);
                 /*-
                 assertEquals("It should take " + deltaTime + " seconds to cover distance " + distanceAtTime, deltaTime, car
-                        .deltaTimeForDistance(new Length.Rel(distanceAtTime, METER)).getSI(), 0.0001);
+                        .deltaTimeForDistance(new Length(distanceAtTime, METER)).getSI(), 0.0001);
                 assertEquals("Car should reach distance " + distanceAtTime + " at " + (deltaTime + 60), deltaTime + 60, car
-                        .timeAtDistance(new Length.Rel(distanceAtTime, METER)).getSI(), 0.0001);
+                        .timeAtDistance(new Length(distanceAtTime, METER)).getSI(), 0.0001);
                  */
             }
         }
@@ -446,14 +447,14 @@ public class LaneBasedGTUTest implements UNITS
 
     /**
      * Create the Map that records in which lane a GTU is registered.
-     * @param totalLongitudinalPosition Length.Rel; the front position of the GTU from the start of the chain of Links
-     * @param gtuLength Length.Rel; the length of the GTU
+     * @param totalLongitudinalPosition Length; the front position of the GTU from the start of the chain of Links
+     * @param gtuLength Length; the length of the GTU
      * @param links ArrayList&lt;CrossSectionLink&lt;?,?&gt;&gt;; the list of Links
      * @param fromLaneRank int; lowest rank of lanes that the GTU must be registered on (0-based)
      * @param uptoLaneRank int; highest rank of lanes that the GTU must be registered on (0-based)
      * @return the Set of the LanePositions that the GTU is registered on
      */
-    private Set<DirectedLanePosition> buildPositionsSet(Length.Rel totalLongitudinalPosition, Length.Rel gtuLength,
+    private Set<DirectedLanePosition> buildPositionsSet(Length totalLongitudinalPosition, Length gtuLength,
             ArrayList<CrossSectionLink> links, int fromLaneRank, int uptoLaneRank)
     {
         Set<DirectedLanePosition> result = new LinkedHashSet<>(1);
@@ -478,7 +479,7 @@ public class LaneBasedGTUTest implements UNITS
                     }
                     try
                     {
-                        result.add(new DirectedLanePosition(lane, new Length.Rel(rearPositionInLink, METER),
+                        result.add(new DirectedLanePosition(lane, new Length(rearPositionInLink, METER),
                                 GTUDirectionality.DIR_PLUS));
                     }
                     catch (GTUException exception)

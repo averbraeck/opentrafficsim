@@ -5,6 +5,7 @@ import java.util.List;
 
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -48,7 +49,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
      * @param referenceLaneList the list of lanes that are part of this plan
      * @throws OperationalPlanException when the path is too short for the operation
      */
-    public LaneBasedOperationalPlan(final LaneBasedGTU gtu, final OTSLine3D path, final Time.Abs startTime, final Speed startSpeed,
+    public LaneBasedOperationalPlan(final LaneBasedGTU gtu, final OTSLine3D path, final Time startTime, final Speed startSpeed,
         List<Segment> operationalPlanSegmentList, final List<Lane> referenceLaneList) throws OperationalPlanException
     {
         super(gtu, path, startTime, startSpeed, operationalPlanSegmentList);
@@ -65,7 +66,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
      * @param referenceLane the reference lane where the halting takes place
      * @throws OperationalPlanException when construction of a waiting path fails
      */
-    public LaneBasedOperationalPlan(final LaneBasedGTU gtu, final DirectedPoint waitPoint, final Time.Abs startTime, final Time.Rel duration,
+    public LaneBasedOperationalPlan(final LaneBasedGTU gtu, final DirectedPoint waitPoint, final Time startTime, final Duration duration,
         final Lane referenceLane) throws OperationalPlanException
     {
         super(gtu, waitPoint, startTime, duration);

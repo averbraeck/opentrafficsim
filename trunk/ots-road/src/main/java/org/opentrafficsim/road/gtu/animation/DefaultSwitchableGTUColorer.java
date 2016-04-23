@@ -37,7 +37,7 @@ public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer
                 AccelerationUnit.METER_PER_SECOND_2));
         // TODO LaneChangeUrgeGTUColorer
         // COLORERS[3] =
-        // new LaneChangeUrgeGTUColorer(new Length.Rel(10, LengthUnit.METER), new Length.Rel(1000, LengthUnit.METER));
+        // new LaneChangeUrgeGTUColorer(new Length(10, LengthUnit.METER), new Length(1000, LengthUnit.METER));
     }
 
     /**

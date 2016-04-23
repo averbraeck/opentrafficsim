@@ -8,6 +8,7 @@ import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Position;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -89,7 +90,7 @@ public final class LengthUnits implements UNITS
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Length.Abs parseLengthAbs(final String s) throws NetworkException
+    public static Position parseLengthAbs(final String s) throws NetworkException
     {
         String us = parseLengthUnit(s);
         LengthUnit u = LENGTH_UNITS.get(us);
@@ -97,7 +98,7 @@ public final class LengthUnits implements UNITS
         try
         {
             double value = Double.parseDouble(sv);
-            return new Length.Abs(value, u);
+            return new Position(value, u);
         }
         catch (NumberFormatException nfe)
         {
@@ -110,7 +111,7 @@ public final class LengthUnits implements UNITS
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Length.Rel parseLengthRel(final String s) throws NetworkException
+    public static Length parseLengthRel(final String s) throws NetworkException
     {
         String us = parseLengthUnit(s);
         LengthUnit u = LENGTH_UNITS.get(us);
@@ -118,7 +119,7 @@ public final class LengthUnits implements UNITS
         try
         {
             double value = Double.parseDouble(sv);
-            return new Length.Rel(value, u);
+            return new Length(value, u);
         }
         catch (NumberFormatException nfe)
         {

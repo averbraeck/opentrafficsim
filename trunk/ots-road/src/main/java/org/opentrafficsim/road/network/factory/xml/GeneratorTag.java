@@ -8,6 +8,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -69,7 +70,7 @@ class GeneratorTag implements Serializable
 
     /** Interarrival time. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> iatDist = null;
+    ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> iatDist = null;
 
     /** Initial speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -81,11 +82,11 @@ class GeneratorTag implements Serializable
 
     /** Start time of generation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Time.Abs startTime = null;
+    Time startTime = null;
 
     /** End time of generation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Time.Abs endTime = null;
+    Time endTime = null;
 
     /** Route tag. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -294,9 +295,9 @@ class GeneratorTag implements Serializable
         {
             nodeList.add(parser.nodeTags.get(nodeTag.name).node);
         }
-        Time.Abs startTime = generatorTag.startTime != null ? generatorTag.startTime : Time.Abs.ZERO;
-        Time.Abs endTime = generatorTag.endTime != null ? generatorTag.endTime : new Time.Abs(Double.MAX_VALUE, TimeUnit.SI);
-        Length.Rel position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, lane);
+        Time startTime = generatorTag.startTime != null ? generatorTag.startTime : Time.ZERO;
+        Time endTime = generatorTag.endTime != null ? generatorTag.endTime : new Time(Double.MAX_VALUE, TimeUnit.SI);
+        Length position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, lane);
         BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());

@@ -27,11 +27,11 @@ class ObjectTag implements Serializable
 
     /** Parameter s. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel s = null;
+    Length s = null;
 
     /** Parameter t. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel t = null;
+    Length t = null;
 
     /** Id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -47,7 +47,7 @@ class ObjectTag implements Serializable
 
     /** The zOffset. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel zOffset = null;
+    Length zOffset = null;
 
     /** Type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -55,31 +55,31 @@ class ObjectTag implements Serializable
 
     /** Valid length. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel validLength = null;
+    Length validLength = null;
 
     /** Length. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel length = null;
+    Length length = null;
 
     /** Width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel width = null;
+    Length width = null;
 
     /** Height. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel height = null;
+    Length height = null;
 
     /** The hdg. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Angle.Rel hdg = null;
+    Angle hdg = null;
 
     /** Pitch. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Angle.Rel pitch = null;
+    Angle pitch = null;
 
     /** Roll. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Angle.Rel roll = null;
+    Angle roll = null;
 
     /**
      * Parse the attributes of the road.type tag. The sub-elements are parsed in separate classes.
@@ -98,11 +98,11 @@ class ObjectTag implements Serializable
 
         Node s = attributes.getNamedItem("s");
         if (s != null)
-            objectTag.s = new Length.Rel(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
+            objectTag.s = new Length(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
 
         Node t = attributes.getNamedItem("t");
         if (t != null)
-            objectTag.t = new Length.Rel(Double.parseDouble(t.getNodeValue().trim()), LengthUnit.METER);
+            objectTag.t = new Length(Double.parseDouble(t.getNodeValue().trim()), LengthUnit.METER);
 
         Node id = attributes.getNamedItem("id");
         if (id != null)
@@ -118,7 +118,7 @@ class ObjectTag implements Serializable
 
         Node zOffset = attributes.getNamedItem("zOffset");
         if (zOffset != null)
-            objectTag.zOffset = new Length.Rel(Double.parseDouble(zOffset.getNodeValue().trim()), LengthUnit.METER);
+            objectTag.zOffset = new Length(Double.parseDouble(zOffset.getNodeValue().trim()), LengthUnit.METER);
 
         Node type = attributes.getNamedItem("type");
         if (type != null)
@@ -127,31 +127,31 @@ class ObjectTag implements Serializable
         Node validLength = attributes.getNamedItem("validLength");
         if (validLength != null)
             objectTag.validLength =
-                new Length.Rel(Double.parseDouble(validLength.getNodeValue().trim()), LengthUnit.METER);
+                new Length(Double.parseDouble(validLength.getNodeValue().trim()), LengthUnit.METER);
 
         Node length = attributes.getNamedItem("length");
         if (length != null)
-            objectTag.length = new Length.Rel(Double.parseDouble(length.getNodeValue().trim()), LengthUnit.METER);
+            objectTag.length = new Length(Double.parseDouble(length.getNodeValue().trim()), LengthUnit.METER);
 
         Node width = attributes.getNamedItem("width");
         if (width != null)
-            objectTag.width = new Length.Rel(Double.parseDouble(width.getNodeValue().trim()), LengthUnit.METER);
+            objectTag.width = new Length(Double.parseDouble(width.getNodeValue().trim()), LengthUnit.METER);
 
         Node height = attributes.getNamedItem("height");
         if (height != null)
-            objectTag.height = new Length.Rel(Double.parseDouble(height.getNodeValue().trim()), LengthUnit.METER);
+            objectTag.height = new Length(Double.parseDouble(height.getNodeValue().trim()), LengthUnit.METER);
 
         Node hdg = attributes.getNamedItem("hdg");
         if (hdg != null)
-            objectTag.hdg = new Angle.Rel(Double.parseDouble(hdg.getNodeValue().trim()), AngleUnit.RADIAN);
+            objectTag.hdg = new Angle(Double.parseDouble(hdg.getNodeValue().trim()), AngleUnit.RADIAN);
 
         Node pitch = attributes.getNamedItem("pitch");
         if (pitch != null)
-            objectTag.pitch = new Angle.Rel(Double.parseDouble(pitch.getNodeValue().trim()), AngleUnit.RADIAN);
+            objectTag.pitch = new Angle(Double.parseDouble(pitch.getNodeValue().trim()), AngleUnit.RADIAN);
 
         Node roll = attributes.getNamedItem("roll");
         if (roll != null)
-            objectTag.roll = new Angle.Rel(Double.parseDouble(roll.getNodeValue().trim()), AngleUnit.RADIAN);
+            objectTag.roll = new Angle(Double.parseDouble(roll.getNodeValue().trim()), AngleUnit.RADIAN);
 
         return objectTag;
 

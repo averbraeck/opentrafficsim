@@ -17,7 +17,7 @@ import nl.tudelft.simulation.event.Event;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.dsol.OTSDEVSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSReplication;
@@ -58,8 +58,8 @@ public class TestGeometry extends DSOLApplication implements UNITS
         OTSModelInterface model = new TestModel();
         OTSDEVSAnimator simulator = new OTSDEVSAnimator();
         OTSReplication replication =
-            new OTSReplication("rep1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, SECOND)), new Time.Rel(
-                0.0, SECOND), new Time.Rel(1800.0, SECOND), model);
+            new OTSReplication("rep1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, SECOND)), new Duration(
+                0.0, SECOND), new Duration(1800.0, SECOND), model);
         simulator.initialize(replication, ReplicationMode.TERMINATING);
         DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel =
             new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model, simulator);

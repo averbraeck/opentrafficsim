@@ -84,13 +84,13 @@ public interface Headway extends Serializable
 
     /**
      * Retrieve the strongly typed distance to the other object.
-     * @return Length.Rel; the distance to the object, return value null indicates that the other object is parallel to the
+     * @return Length; the distance to the object, return value null indicates that the other object is parallel to the
      *         reference object
      */
-    Length.Rel getDistance();
+    Length getDistance();
 
     /**
-     * @return Length.Rel; the (perceived) object Type, can be null if no object type unknown.
+     * @return Length; the (perceived) object Type, can be null if no object type unknown.
      */
     ObjectType getObjectType();
 
@@ -112,9 +112,9 @@ public interface Headway extends Serializable
      *      ---------------
      * | a  | b |     c   |
      * </pre>
-     * @return Length.Rel; the (perceived) front overlap to the other object or null if there is no overlap.
+     * @return Length; the (perceived) front overlap to the other object or null if there is no overlap.
      */
-    Length.Rel getOverlapFront();
+    Length getOverlapFront();
 
     /**
      * Return the (perceived) rear overlap to the other object. This value should be null if there is no overlap.In the figure
@@ -129,9 +129,9 @@ public interface Headway extends Serializable
      *      ---------------
      * | a  | b |     c   |
      * </pre>
-     * @return Length.Rel; the (perceived) rear overlap to the other object or null if there is no overlap.
+     * @return Length; the (perceived) rear overlap to the other object or null if there is no overlap.
      */
-    Length.Rel getOverlapRear();
+    Length getOverlapRear();
 
     /**
      * Return the (perceived) overlap with the other object. This value should be null if there is no overlap. In the figure
@@ -146,9 +146,9 @@ public interface Headway extends Serializable
      *      ---------------
      * | a  | b |     c   |
      * </pre>
-     * @return Length.Rel, the (perceived) overlap with the other object or null if there is no overlap.
+     * @return Length, the (perceived) overlap with the other object or null if there is no overlap.
      */
-    Length.Rel getOverlap();
+    Length getOverlap();
 
     /**
      * @return whether the other object is in front of the reference object.

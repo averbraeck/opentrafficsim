@@ -7,6 +7,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -56,10 +57,10 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildConstantSpeedPlan(final GTU gtu, final OTSLine3D path, final Time.Abs startTime,
-        final Speed speed) throws OperationalPlanException
+    public static OperationalPlan buildConstantSpeedPlan(final GTU gtu, final OTSLine3D path, final Time startTime,
+            final Speed speed) throws OperationalPlanException
     {
-        Length.Rel length = path.getLength();
+        Length length = path.getLength();
         OperationalPlan.Segment segment;
         segment = new SpeedSegment(length.divideBy(speed));
         ArrayList<OperationalPlan.Segment> segmentList = new ArrayList<>();
@@ -82,11 +83,11 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildGradualAccelerationPlan(final GTU gtu, final OTSLine3D path, final Time.Abs startTime,
-        final Speed startSpeed, final Speed endSpeed, final Acceleration maxAcceleration,
-        final Acceleration maxDeceleration) throws OperationalPlanException
+    public static OperationalPlan buildGradualAccelerationPlan(final GTU gtu, final OTSLine3D path, final Time startTime,
+            final Speed startSpeed, final Speed endSpeed, final Acceleration maxAcceleration, final Acceleration maxDeceleration)
+            throws OperationalPlanException
     {
-        Length.Rel length = path.getLength();
+        Length length = path.getLength();
         OperationalPlan.Segment segment;
         if (startSpeed.eq(endSpeed))
         {
@@ -95,25 +96,25 @@ public final class OperationalPlanBuilder
         else
         {
             // t = 2x / (vt + v0); a = (vt - v0) / t
-            Time.Rel duration = length.multiplyBy(2.0).divideBy(endSpeed.plus(startSpeed));
+            Duration duration = length.multiplyBy(2.0).divideBy(endSpeed.plus(startSpeed));
             Acceleration acceleration = endSpeed.minus(startSpeed).divideBy(duration);
             try
             {
                 if (acceleration.si < 0.0 && acceleration.lt(maxDeceleration))
                 {
                     acceleration = maxDeceleration;
-                    // duration = new Time.Rel(abc(acceleration.si / 2, startSpeed.si, -length.si), TimeUnit.SI);
+                    // duration = new Duration(abc(acceleration.si / 2, startSpeed.si, -length.si), TimeUnit.SI);
                     duration =
-                        new Time.Rel(Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -length.si),
-                            TimeUnit.SI);
+                            new Duration(Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -length.si),
+                                    TimeUnit.SI);
                 }
                 if (acceleration.si > 0.0 && acceleration.gt(maxAcceleration))
                 {
                     acceleration = maxAcceleration;
-                    // duration = new Time.Rel(abc(acceleration.si / 2, startSpeed.si, -length.si), TimeUnit.SI);
+                    // duration = new Duration(abc(acceleration.si / 2, startSpeed.si, -length.si), TimeUnit.SI);
                     duration =
-                        new Time.Rel(Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -length.si),
-                            TimeUnit.SI);
+                            new Duration(Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -length.si),
+                                    TimeUnit.SI);
                 }
             }
             catch (ValueException exception)
@@ -140,8 +141,8 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildGradualAccelerationPlan(final GTU gtu, final OTSLine3D path, final Time.Abs startTime,
-        final Speed startSpeed, final Speed endSpeed) throws OperationalPlanException
+    public static OperationalPlan buildGradualAccelerationPlan(final GTU gtu, final OTSLine3D path, final Time startTime,
+            final Speed startSpeed, final Speed endSpeed) throws OperationalPlanException
     {
         return buildGradualAccelerationPlan(gtu, path, startTime, startSpeed, endSpeed, MAX_ACCELERATION, MAX_DECELERATION);
     }
@@ -162,11 +163,11 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildMaximumAccelerationPlan(final GTU gtu, final OTSLine3D path, final Time.Abs startTime,
-        final Speed startSpeed, final Speed endSpeed, final Acceleration acceleration, final Acceleration deceleration)
-        throws OperationalPlanException
+    public static OperationalPlan buildMaximumAccelerationPlan(final GTU gtu, final OTSLine3D path, final Time startTime,
+            final Speed startSpeed, final Speed endSpeed, final Acceleration acceleration, final Acceleration deceleration)
+            throws OperationalPlanException
     {
-        Length.Rel length = path.getLength();
+        Length length = path.getLength();
         ArrayList<OperationalPlan.Segment> segmentList = new ArrayList<>();
         if (startSpeed.eq(endSpeed))
         {
@@ -178,38 +179,36 @@ public final class OperationalPlanBuilder
             {
                 if (endSpeed.gt(startSpeed))
                 {
-                    Time.Rel t = endSpeed.minus(startSpeed).divideBy(acceleration);
-                    Length.Rel x =
-                        startSpeed.multiplyBy(t).plus(acceleration.multiplyBy(0.5).multiplyBy(t).multiplyBy(t));
+                    Duration t = endSpeed.minus(startSpeed).divideBy(acceleration);
+                    Length x = startSpeed.multiplyBy(t).plus(acceleration.multiplyBy(0.5).multiplyBy(t).multiplyBy(t));
                     if (x.ge(length))
                     {
                         // we cannot reach the end speed in the given distance with the given acceleration
-                        // Time.Rel duration = new Time.Rel(abc(acceleration.si / 2, startSpeed.si, -length.si), TimeUnit.SI);
-                        Time.Rel duration =
-                            new Time.Rel(Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -length.si),
-                                TimeUnit.SI);
+                        // Duration duration = new Duration(abc(acceleration.si / 2, startSpeed.si, -length.si), TimeUnit.SI);
+                        Duration duration =
+                                new Duration(Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -length.si),
+                                        TimeUnit.SI);
                         segmentList.add(new OperationalPlan.AccelerationSegment(duration, acceleration));
                     }
                     else
                     {
                         // we reach the (higher) end speed before the end of the segment. Make two segments.
                         segmentList.add(new OperationalPlan.AccelerationSegment(t, acceleration));
-                        Time.Rel duration = length.minus(x).divideBy(endSpeed);
+                        Duration duration = length.minus(x).divideBy(endSpeed);
                         segmentList.add(new OperationalPlan.SpeedSegment(duration));
                     }
                 }
                 else
                 {
-                    Time.Rel t = endSpeed.minus(startSpeed).divideBy(deceleration);
-                    Length.Rel x =
-                        startSpeed.multiplyBy(t).plus(deceleration.multiplyBy(0.5).multiplyBy(t).multiplyBy(t));
+                    Duration t = endSpeed.minus(startSpeed).divideBy(deceleration);
+                    Length x = startSpeed.multiplyBy(t).plus(deceleration.multiplyBy(0.5).multiplyBy(t).multiplyBy(t));
                     if (x.ge(length))
                     {
                         // we cannot reach the end speed in the given distance with the given deceleration
-                        // Time.Rel duration = new Time.Rel(abc(deceleration.si / 2, startSpeed.si, -length.si), TimeUnit.SI);
-                        Time.Rel duration =
-                            new Time.Rel(Solver.firstSolutionAfter(0, deceleration.si / 2, startSpeed.si, -length.si),
-                                TimeUnit.SI);
+                        // Duration duration = new Duration(abc(deceleration.si / 2, startSpeed.si, -length.si), TimeUnit.SI);
+                        Duration duration =
+                                new Duration(Solver.firstSolutionAfter(0, deceleration.si / 2, startSpeed.si, -length.si),
+                                        TimeUnit.SI);
                         segmentList.add(new OperationalPlan.AccelerationSegment(duration, deceleration));
                     }
                     else
@@ -223,7 +222,7 @@ public final class OperationalPlanBuilder
                         }
                         // we reach the (lower) end speed, larger than zero, before the end of the segment. Make two segments.
                         segmentList.add(new OperationalPlan.AccelerationSegment(t, deceleration));
-                        Time.Rel duration = length.minus(x).divideBy(endSpeed);
+                        Duration duration = length.minus(x).divideBy(endSpeed);
                         segmentList.add(new OperationalPlan.SpeedSegment(duration));
                     }
                 }
@@ -249,11 +248,11 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildStopPlan(final GTU gtu, final OTSLine3D path, final Time.Abs startTime, final Speed startSpeed,
-        final Acceleration deceleration) throws OperationalPlanException
+    public static OperationalPlan buildStopPlan(final GTU gtu, final OTSLine3D path, final Time startTime,
+            final Speed startSpeed, final Acceleration deceleration) throws OperationalPlanException
     {
-        return buildMaximumAccelerationPlan(gtu, path, startTime, startSpeed, new Speed(0.0, SpeedUnit.SI),
-            new Acceleration(1.0, AccelerationUnit.SI), deceleration);
+        return buildMaximumAccelerationPlan(gtu, path, startTime, startSpeed, new Speed(0.0, SpeedUnit.SI), new Acceleration(
+                1.0, AccelerationUnit.SI), deceleration);
     }
 
     /**
@@ -264,45 +263,43 @@ public final class OperationalPlanBuilder
      */
     public static void main(final String[] args) throws OperationalPlanException, OTSGeometryException
     {
-        OTSLine3D path1 = new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100.0, 0.0)});
+        OTSLine3D path1 = new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100.0, 0.0) });
 
         // go from 0 to 10 m/s over entire distance. This should take 20 sec with a=0.5 m/s2.
         OperationalPlan plan1 =
-            buildGradualAccelerationPlan(null, path1, new Time.Abs(0.0, TimeUnit.SI), new Speed(0.0, SpeedUnit.SI),
-                new Speed(10.0, SpeedUnit.METER_PER_SECOND));
+                buildGradualAccelerationPlan(null, path1, new Time(0.0, TimeUnit.SI), new Speed(0.0, SpeedUnit.SI), new Speed(
+                        10.0, SpeedUnit.METER_PER_SECOND));
         System.out.println(plan1);
 
         // go from 0 to 10 m/s over entire distance, but limit a to 0.1 m/s2.
         // This should take 44.72 sec with a=0.1 m/s2, and an end speed of 4.472 m/s.
         OperationalPlan plan2 =
-            buildGradualAccelerationPlan(null, path1, new Time.Abs(0.0, TimeUnit.SI), new Speed(0.0, SpeedUnit.SI),
-                new Speed(10.0, SpeedUnit.METER_PER_SECOND),
-                new Acceleration(0.1, AccelerationUnit.METER_PER_SECOND_2), new Acceleration(-0.1,
-                    AccelerationUnit.METER_PER_SECOND_2));
+                buildGradualAccelerationPlan(null, path1, new Time(0.0, TimeUnit.SI), new Speed(0.0, SpeedUnit.SI), new Speed(
+                        10.0, SpeedUnit.METER_PER_SECOND), new Acceleration(0.1, AccelerationUnit.METER_PER_SECOND_2),
+                        new Acceleration(-0.1, AccelerationUnit.METER_PER_SECOND_2));
         System.out.println(plan2);
 
         // go from 0 to 10 m/s with a = 1 m/s2, followed by a constant speed of 10 m/s.
         // This should take 10 sec with a = 1 m/s2, reaching 50 m. After that, 50 m with 10 m/s in 5 sec.
         OperationalPlan plan3 =
-            buildMaximumAccelerationPlan(null, path1, new Time.Abs(0.0, TimeUnit.SI), new Speed(0.0, SpeedUnit.SI),
-                new Speed(10.0, SpeedUnit.METER_PER_SECOND),
-                new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2), new Acceleration(-1.0,
-                    AccelerationUnit.METER_PER_SECOND_2));
+                buildMaximumAccelerationPlan(null, path1, new Time(0.0, TimeUnit.SI), new Speed(0.0, SpeedUnit.SI), new Speed(
+                        10.0, SpeedUnit.METER_PER_SECOND), new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2),
+                        new Acceleration(-1.0, AccelerationUnit.METER_PER_SECOND_2));
         System.out.println(plan3);
 
         // go from 10 to 0 m/s with a = -1 m/s2, which should truncate the path at 50 m.
         // This should take 10 sec with a = -1 m/s2, reaching 50 m. After that, the plan should stop.
         OperationalPlan plan4 =
-            buildMaximumAccelerationPlan(null, path1, new Time.Abs(0.0, TimeUnit.SI), new Speed(10.0, SpeedUnit.SI),
-                new Speed(0.0, SpeedUnit.METER_PER_SECOND), new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2),
-                new Acceleration(-1.0, AccelerationUnit.METER_PER_SECOND_2));
+                buildMaximumAccelerationPlan(null, path1, new Time(0.0, TimeUnit.SI), new Speed(10.0, SpeedUnit.SI), new Speed(
+                        0.0, SpeedUnit.METER_PER_SECOND), new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2),
+                        new Acceleration(-1.0, AccelerationUnit.METER_PER_SECOND_2));
         System.out.println(plan4);
 
         // try to stop with a = -2 m/s2, which should truncate the path at 25 m.
         // This should take 5 sec with a = -2 m/s2, reaching 25 m. After that, the plan should stop.
         OperationalPlan plan5 =
-            buildStopPlan(null, path1, new Time.Abs(0.0, TimeUnit.SI), new Speed(10.0, SpeedUnit.SI), new Acceleration(-2.0,
-                AccelerationUnit.METER_PER_SECOND_2));
+                buildStopPlan(null, path1, new Time(0.0, TimeUnit.SI), new Speed(10.0, SpeedUnit.SI), new Acceleration(-2.0,
+                        AccelerationUnit.METER_PER_SECOND_2));
         System.out.println(plan5);
 
     }

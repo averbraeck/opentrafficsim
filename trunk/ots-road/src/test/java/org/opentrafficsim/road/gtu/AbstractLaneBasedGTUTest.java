@@ -18,6 +18,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -87,7 +88,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModel();
         final SimpleSimulatorInterface simulator =
-            new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND),
+            new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND),
                 model);
 
         Lane[] lanesGroupA =
@@ -101,15 +102,15 @@ public class AbstractLaneBasedGTUTest implements UNITS
                 simulator, LongitudinalDirectionality.DIR_PLUS);
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(2);
 
-        Length.Rel positionA = new Length.Rel(100, METER);
+        Length positionA = new Length(100, METER);
         initialLongitudinalPositions
             .add(new DirectedLanePosition(lanesGroupA[1], positionA, GTUDirectionality.DIR_PLUS));
-        Length.Rel positionB = new Length.Rel(90, METER);
+        Length positionB = new Length(90, METER);
         initialLongitudinalPositions
             .add(new DirectedLanePosition(lanesGroupB[1], positionB, GTUDirectionality.DIR_PLUS));
         // A Car needs a CarFollowingModel
         Acceleration acceleration = new Acceleration(2, METER_PER_SECOND_2);
-        Time.Rel validFor = new Time.Rel(10, SECOND);
+        Duration validFor = new Duration(10, SECOND);
         GTUFollowingModelOld gfm = new FixedAccelerationModel(acceleration, validFor);
         // A Car needs a lane change model
         // AbstractLaneChangeModel laneChangeModel = new Egoistic();
@@ -117,9 +118,9 @@ public class AbstractLaneBasedGTUTest implements UNITS
         // A Car needs an initial speed
         Speed initialSpeed = new Speed(50, KM_PER_HOUR);
         // Length of the Car
-        Length.Rel carLength = new Length.Rel(4, METER);
+        Length carLength = new Length(4, METER);
         // Width of the Car
-        Length.Rel carWidth = new Length.Rel(1.8, METER);
+        Length carWidth = new Length(1.8, METER);
         // Maximum velocity of the Car
         Speed maximumVelocity = new Speed(200, KM_PER_HOUR);
         // ID of the Car
@@ -178,7 +179,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
                     // + ", relativePostion: " + relativePosition);
                     try
                     {
-                        Length.Rel position = car.position(lane, relativePosition);
+                        Length position = car.position(lane, relativePosition);
                         if (expectException)
                         {
                             // System.out.println("position: " + position);
@@ -186,7 +187,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
                         }
                         else
                         {
-                            Length.Rel expectedPosition = laneGroup.equals(lanesGroupA) ? positionA : positionB;
+                            Length expectedPosition = laneGroup.equals(lanesGroupA) ? positionA : positionB;
                             expectedPosition = expectedPosition.plus(relativePosition.getDx());
                             // System.out.println("reported position: " + position);
                             // System.out.println("expected position: " + expectedPosition);
@@ -213,7 +214,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         double step = 0.01d;
         for (int i = 0;; i++)
         {
-            Time.Abs stepTime = new Time.Abs(i * step, SECOND);
+            Time stepTime = new Time(i * step, SECOND);
             if (stepTime.getSI() > validFor.getSI())
             {
                 break;
@@ -274,7 +275,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
                         // + ", relativePostion: " + relativePosition);
                         try
                         {
-                            Length.Rel position = car.position(lane, relativePosition);
+                            Length position = car.position(lane, relativePosition);
                             if (expectException)
                             {
                                 // System.out.println("position: " + position);
@@ -283,12 +284,12 @@ public class AbstractLaneBasedGTUTest implements UNITS
                             }
                             else
                             {
-                                Length.Rel expectedPosition = laneGroup == lanesGroupA ? positionA : positionB;
+                                Length expectedPosition = laneGroup == lanesGroupA ? positionA : positionB;
                                 expectedPosition =
-                                    expectedPosition.plus(new Length.Rel(stepTime.getSI() * initialSpeed.getSI(),
+                                    expectedPosition.plus(new Length(stepTime.getSI() * initialSpeed.getSI(),
                                         LengthUnit.SI));
                                 expectedPosition =
-                                    expectedPosition.plus(new Length.Rel(0.5 * acceleration.getSI() * stepTime.getSI()
+                                    expectedPosition.plus(new Length(0.5 * acceleration.getSI() * stepTime.getSI()
                                         * stepTime.getSI(), LengthUnit.SI));
                                 expectedPosition = expectedPosition.plus(relativePosition.getDx());
                                 // System.out.println("reported position: " + position);
@@ -315,12 +316,12 @@ public class AbstractLaneBasedGTUTest implements UNITS
                             }
                             else
                             {
-                                Length.Rel expectedPosition = laneGroup == lanesGroupA ? positionA : positionB;
+                                Length expectedPosition = laneGroup == lanesGroupA ? positionA : positionB;
                                 expectedPosition =
-                                    expectedPosition.plus(new Length.Rel(stepTime.getSI() * initialSpeed.getSI(),
+                                    expectedPosition.plus(new Length(stepTime.getSI() * initialSpeed.getSI(),
                                         LengthUnit.SI));
                                 expectedPosition =
-                                    expectedPosition.plus(new Length.Rel(0.5 * acceleration.getSI() * stepTime.getSI()
+                                    expectedPosition.plus(new Length(0.5 * acceleration.getSI() * stepTime.getSI()
                                         * stepTime.getSI(), LengthUnit.SI));
                                 expectedPosition = expectedPosition.plus(relativePosition.getDx());
                                 // System.out.println("reported position: " + position);
@@ -349,7 +350,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         Lane[] lanesGroupC =
             LaneFactory.makeMultiLane("C", nodeCFrom, nodeCTo, null, 3, laneType, new Speed(100, KM_PER_HOUR),
                 simulator, LongitudinalDirectionality.DIR_PLUS);
-        car.enterLane(lanesGroupC[0], new Length.Rel(0.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS);
+        car.enterLane(lanesGroupC[0], new Length(0.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS);
         for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
         {
             Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
@@ -412,7 +413,7 @@ class DummyModel implements OTSModelInterface
 
     /**
      * Register the simulator.
-     * @param simulator SimulatorInterface&lt;Time.Abs, Time.Rel, OTSSimTimeDouble&gt;; the simulator
+     * @param simulator SimulatorInterface&lt;Time, Duration, OTSSimTimeDouble&gt;; the simulator
      */
     public void setSimulator(
         SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)

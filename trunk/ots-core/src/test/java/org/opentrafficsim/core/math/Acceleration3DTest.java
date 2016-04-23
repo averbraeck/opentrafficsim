@@ -3,12 +3,12 @@ package org.opentrafficsim.core.math;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import org.djunits.unit.AngleUnit;
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.AngleUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
-import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.vector.AccelerationVector;
 import org.junit.Test;
 
@@ -94,8 +94,8 @@ public class Acceleration3DTest
         double phi = Math.PI * 0.3;
         double length = 10;
         s3d =
-                new Acceleration3D(new Acceleration(length, AccelerationUnit.SI), new Angle.Abs(theta, AngleUnit.RADIAN),
-                        new Angle.Abs(phi, AngleUnit.RADIAN));
+                new Acceleration3D(new Acceleration(length, AccelerationUnit.SI), new Direction(theta, AngleUnit.RADIAN),
+                        new Direction(phi, AngleUnit.RADIAN));
         checkAcceleration(s3d, length * Math.cos(phi) * Math.sin(theta), length * Math.sin(phi) * Math.sin(theta), length
                 * Math.cos(theta));
     }
