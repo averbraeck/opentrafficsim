@@ -42,7 +42,7 @@ public class HeadwayObject extends AbstractHeadway
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
      * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
      */
-    public HeadwayObject(final String id, final Length.Rel distance, final Speed speed, final Acceleration acceleration)
+    public HeadwayObject(final String id, final Length distance, final Speed speed, final Acceleration acceleration)
             throws GTUException
     {
         super(ObjectType.OBJECT, id, distance, speed, acceleration);
@@ -54,7 +54,7 @@ public class HeadwayObject extends AbstractHeadway
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public HeadwayObject(final String id, final Length.Rel distance) throws GTUException
+    public HeadwayObject(final String id, final Length distance) throws GTUException
     {
         super(ObjectType.OBJECT, id, distance);
     }
@@ -69,8 +69,8 @@ public class HeadwayObject extends AbstractHeadway
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public HeadwayObject(final String id, final Length.Rel overlapFront, final Length.Rel overlap,
-            final Length.Rel overlapRear, final Speed speed, final Acceleration acceleration) throws GTUException
+    public HeadwayObject(final String id, final Length overlapFront, final Length overlap,
+            final Length overlapRear, final Speed speed, final Acceleration acceleration) throws GTUException
     {
         super(ObjectType.OBJECT, id, overlapFront, overlap, overlapRear, speed, acceleration);
     }
@@ -83,7 +83,7 @@ public class HeadwayObject extends AbstractHeadway
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public HeadwayObject(final String id, final Length.Rel overlapFront, final Length.Rel overlap, final Length.Rel overlapRear)
+    public HeadwayObject(final String id, final Length overlapFront, final Length overlap, final Length overlapRear)
             throws GTUException
     {
         super(ObjectType.OBJECT, id, overlapFront, overlap, overlapRear);

@@ -121,7 +121,7 @@ public final class DefaultsFactory
         // demos use different value from default LMRS value
         try
         {
-            bc.setParameter(ParameterTypes.LOOKAHEAD, new Length.Rel(250, LengthUnit.SI));
+            bc.setParameter(ParameterTypes.LOOKAHEAD, new Length(250, LengthUnit.SI));
         }
         catch (ParameterException pe)
         {

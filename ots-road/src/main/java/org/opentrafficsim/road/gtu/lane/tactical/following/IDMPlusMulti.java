@@ -40,13 +40,13 @@ public class IDMPlusMulti extends AbstractIDM
     @Override
     protected final Acceleration combineInteractionTerm(final Acceleration aFree,
         final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final Speed desiredSpeed,
-        final Length.Rel desiredHeadway, final SortedMap<Length.Rel, Speed> leaders) throws ParameterException
+        final Length desiredHeadway, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
         Acceleration a = behavioralCharacteristics.getParameter(ParameterTypes.A);
         double aIntMulti = Double.POSITIVE_INFINITY;
         int i = 1;
         double cumulVehicleLengths = 0;
-        for (Length.Rel headway : leaders.keySet())
+        for (Length headway : leaders.keySet())
         {
             // desired headway is scaled to the i'th leader
             // current headway is the sum of net headways (i.e. vehicle lengths of vehicles in between are subtracted)

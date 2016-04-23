@@ -42,7 +42,7 @@ class RoadTypeTag implements Serializable
 
     /** Default lane width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel width = null;
+    Length width = null;
 
     /** CrossSectionElementTags, order is important, so a LinkedHashMap. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

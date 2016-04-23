@@ -8,7 +8,7 @@ import org.djunits.unit.AngleUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Angle;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.vector.AccelerationVector;
 
 /**
@@ -84,11 +84,11 @@ public class Acceleration3D implements Serializable
     /**
      * Construct a new Acceleration3D from a strongly typed acceleration and polar coordinates.
      * @param acceleration Acceleration; the acceleration in the direction of the angle along the vector
-     * @param theta Angle.Abs; the angle from the z direction
-     * @param phi Angle.Abs; the projected angle in the xy-plane from the x direction
+     * @param theta Direction; the angle from the z direction
+     * @param phi Direction; the projected angle in the xy-plane from the x direction
      * @throws ValueException in case the vector does not have exactly three elements
      */
-    public Acceleration3D(final Acceleration acceleration, final Angle.Abs theta, final Angle.Abs phi)
+    public Acceleration3D(final Acceleration acceleration, final Direction theta, final Direction phi)
         throws ValueException
     {
         super();
@@ -154,7 +154,7 @@ public class Acceleration3D implements Serializable
      * Retrieve the theta of this Acceleration3D.
      * @return the angle of direction perpendicular to the xy-plane
      */
-    public final Angle.Abs getTheta()
+    public final Direction getTheta()
     {
         return Scalar3D.cartesianToTheta(getX().si, getY().si, getZ().si);
     }
@@ -163,7 +163,7 @@ public class Acceleration3D implements Serializable
      * Retrieve the phi of this Acceleration3D.
      * @return the projected angle of direction in the xy-plane
      */
-    public final Angle.Abs getPhi()
+    public final Direction getPhi()
     {
         return Scalar3D.cartesianToPhi(getX().si, getY().si);
     }
@@ -181,7 +181,7 @@ public class Acceleration3D implements Serializable
     public final String toString()
     {
         return String.format(Locale.US, "Acceleration3D %s (%s, theta %s, phi %s)", this.acceleration,
-            getAcceleration(), new Angle.Abs(getTheta().getInUnit(AngleUnit.DEGREE), AngleUnit.DEGREE), new Angle.Abs(
+            getAcceleration(), new Direction(getTheta().getInUnit(AngleUnit.DEGREE), AngleUnit.DEGREE), new Direction(
                 getPhi().getInUnit(AngleUnit.DEGREE), AngleUnit.DEGREE));
     }
 

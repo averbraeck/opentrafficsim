@@ -164,7 +164,7 @@ public class OTSLink implements Link, Serializable, Locatable
 
     /** {@inheritDoc} */
     @Override
-    public final Length.Rel getLength()
+    public final Length getLength()
     {
         return this.designLine.getLength();
     }

@@ -8,7 +8,7 @@ import javax.media.j3d.Bounds;
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
-import org.djunits.value.vdouble.scalar.Angle;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 
@@ -33,10 +33,10 @@ public interface Node extends Locatable, Serializable
     OTSPoint3D getPoint();
 
     /** @return the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians). */
-    Angle.Abs getDirection();
+    Direction getDirection();
 
     /** @return the slope as an angle. Horizontal is 0 degrees. */
-    Angle.Abs getSlope();
+    Direction getSlope();
 
     /**
      * Add a link to this Node.

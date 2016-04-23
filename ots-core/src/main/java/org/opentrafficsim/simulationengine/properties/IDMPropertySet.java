@@ -6,8 +6,8 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 
 /**
  * Compound property for IDM or IDMPlus parameters
@@ -34,13 +34,13 @@ public final class IDMPropertySet
      * @param carType String; the type of the car
      * @param a Acceleration; the maximum acceleration of the car
      * @param b Acceleration; the maximum comfortable deceleration of the car
-     * @param s0 Length.Rel; the stationary distance headway
-     * @param tSafe Time.Rel; the time headway
+     * @param s0 Length; the stationary distance headway
+     * @param tSafe Duration; the time headway
      * @param displayPriority int; the display priority of the returned CompoundProperty
      * @return CompoundProperty
      */
     public static CompoundProperty makeIDMPropertySet(final String carType, final Acceleration a, final Acceleration b,
-        final Length.Rel s0, final Time.Rel tSafe, final int displayPriority)
+        final Length s0, final Duration tSafe, final int displayPriority)
     {
         ArrayList<AbstractProperty<?>> subProperties = new ArrayList<AbstractProperty<?>>();
         subProperties.add(new ContinuousProperty("a", "maximum acceleration [m/s/s]", a.doubleValue(), 0.5, 5.0,
@@ -78,21 +78,21 @@ public final class IDMPropertySet
     /**
      * Return the static headway.
      * @param set CompoundProperty (should have been created with makeIDMPropertySet)
-     * @return Length.Rel
+     * @return Length
      */
-    public static Length.Rel getS0(final CompoundProperty set)
+    public static Length getS0(final CompoundProperty set)
     {
-        return new Length.Rel(findSubProperty("s0", set), LengthUnit.METER);
+        return new Length(findSubProperty("s0", set), LengthUnit.METER);
     }
 
     /**
      * Return the time headway.
      * @param set CompoundProperty (should have been created with makeIDMPropertySet)
-     * @return Time.Abs
+     * @return Time
      */
-    public static Time.Rel getTSafe(final CompoundProperty set)
+    public static Duration getTSafe(final CompoundProperty set)
     {
-        return new Time.Rel(findSubProperty("tSafe", set), TimeUnit.SECOND);
+        return new Duration(findSubProperty("tSafe", set), TimeUnit.SECOND);
     }
 
     /**

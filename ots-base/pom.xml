@@ -44,7 +44,7 @@
     <sonar.scm.disabled>true</sonar.scm.disabled>
 
     <ots.version>${project.version}</ots.version>
-    <djunits.version>1.02.06</djunits.version>
+    <djunits.version>1.03.00</djunits.version>
     <dsol.version>3.00.20</dsol.version>
     <junit.version>4.11</junit.version>
     <java3d.version>1.5.1</java3d.version>
@@ -959,10 +959,10 @@
     </developer>
 
     <developer>
-      <id>yyuan</id>
-      <name>Yufei Yuan</name>
-      <email>y.yuan@tudelft.nl</email>
-      <url>http://www.citg.tudelft.nl/en/about-faculty/departments/transport-and-planning/staff-information/dr-yufei-yuan/</url>
+      <id>wschakel</id>
+      <name>Wouter Schakel</name>
+      <email>w.schakel@tudelft.nl</email>
+      <url>http://www.citg.tudelft.nl/en/about-faculty/departments/transport-and-planning/</url>
       <organization>Delft University of Technology, the Netherlands</organization>
       <organizationUrl>http://www.citg.tudelft.nl</organizationUrl>
       <timezone>1</timezone>

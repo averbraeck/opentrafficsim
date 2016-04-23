@@ -14,7 +14,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.AngleUnit;
-import org.djunits.value.vdouble.scalar.Angle;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 
@@ -42,10 +42,10 @@ public class OTSNode implements Node, Locatable, Serializable
     private final OTSPoint3D point;
 
     /** The 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians). */
-    private final Angle.Abs direction;
+    private final Direction direction;
 
     /** The slope as an angle. Horizontal is 0 degrees. */
-    private final Angle.Abs slope;
+    private final Direction slope;
 
     /** The links connected to the Node. */
     private final Set<Link> links = new HashSet<Link>();
@@ -65,7 +65,7 @@ public class OTSNode implements Node, Locatable, Serializable
      * @param direction the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians).
      * @param slope the slope as an angle. Horizontal is 0 degrees.
      */
-    public OTSNode(final String id, final OTSPoint3D point, final Angle.Abs direction, final Angle.Abs slope)
+    public OTSNode(final String id, final OTSPoint3D point, final Direction direction, final Direction slope)
     {
         this.id = id;
         this.point = point;
@@ -80,7 +80,7 @@ public class OTSNode implements Node, Locatable, Serializable
      */
     public OTSNode(final String id, final OTSPoint3D point)
     {
-        this(id, point, new Angle.Abs(0.0, AngleUnit.SI), new Angle.Abs(0.0, AngleUnit.SI));
+        this(id, point, new Direction(0.0, AngleUnit.SI), new Direction(0.0, AngleUnit.SI));
     }
 
     /**
@@ -316,14 +316,14 @@ public class OTSNode implements Node, Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final Angle.Abs getDirection()
+    public final Direction getDirection()
     {
         return this.direction;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Angle.Abs getSlope()
+    public final Direction getSlope()
     {
         return this.slope;
     }

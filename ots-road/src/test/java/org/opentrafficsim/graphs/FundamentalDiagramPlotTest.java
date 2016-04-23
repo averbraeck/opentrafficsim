@@ -21,6 +21,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -74,9 +75,9 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
     @Test
     public final void fundamentalDiagramTest() throws Exception
     {
-        Time.Rel aggregationTime = new Time.Rel(30, SECOND);
-        Length.Rel position = new Length.Rel(123, METER);
-        Length.Rel carPosition = new Length.Rel(122.5, METER);
+        Duration aggregationTime = new Duration(30, SECOND);
+        Length position = new Length(123, METER);
+        Length carPosition = new Length(122.5, METER);
         LaneType laneType = new LaneType("CarLane");
         GTUType gtuType = GTUType.makeGTUType("Car");
         laneType.addCompatibility(gtuType);
@@ -113,18 +114,17 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         ActionEvent setXToSpeed = new ActionEvent(fd, 0, "Speed/Speed");
         ActionEvent resetAxis = new ActionEvent(fd, 0, "Flow/Density");
         Speed speed = new Speed(100, KM_PER_HOUR);
-        Time.Abs time = new Time.Abs(123, SECOND);
-        Length.Rel length = new Length.Rel(5.0, METER);
-        Length.Rel width = new Length.Rel(2.0, METER);
+        Time time = new Time(123, SECOND);
+        Length length = new Length(5.0, METER);
+        Length width = new Length(2.0, METER);
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions.add(new DirectedLanePosition(lane, carPosition, GTUDirectionality.DIR_PLUS));
         SimpleSimulator simulator =
-            new SimpleSimulator(new Time.Abs(0, SECOND), new Time.Rel(0, SECOND), new Time.Rel(1800, SECOND), this);
+                new SimpleSimulator(new Time(0, SECOND), new Duration(0, SECOND), new Duration(1800, SECOND), this);
 
         // add a sink 100 meter before the end of the lane.
-        lane.addSensor(new SinkSensor(lane, new Length.Rel(lane.getLength().getSI() - 100, METER), simulator),
-            GTUType.ALL);
+        lane.addSensor(new SinkSensor(lane, new Length(lane.getLength().getSI() - 100, METER), simulator), GTUType.ALL);
 
         simulator.runUpTo(time);
         while (simulator.isRunning())
@@ -141,16 +141,15 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         int bucket = (int) Math.floor(time.getSI() / aggregationTime.getSI());
         LaneChangeModel laneChangeModel = new Egoistic();
         GTUFollowingModelOld gtuFollowingModel =
-            new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(1000, SECOND));
+                new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(1000, SECOND));
         // Construct a car
-        BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create(); //new BehavioralCharacteristics();
-        //LaneBasedBehavioralCharacteristics drivingCharacteristics =
-        //    new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
+        BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create();
         LaneBasedStrategicalPlanner strategicalPlanner =
-            new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel));
-        new LaneBasedIndividualGTU("1", gtuType, initialLongitudinalPositions, speed, length, width, maxSpeed,
-            simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
-        simulator.runUpTo(new Time.Abs(124, SECOND));
+                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
+                        gtuFollowingModel, laneChangeModel));
+        new LaneBasedIndividualGTU("1", gtuType, initialLongitudinalPositions, speed, length, width, maxSpeed, simulator,
+                strategicalPlanner, new LanePerceptionFull(), this.network);
+        simulator.runUpTo(new Time(124, SECOND));
         while (simulator.isRunning())
         {
             try
@@ -166,7 +165,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         {
             boolean shouldHaveData = sample == bucket;
             value = fd.getXValue(0, sample);
-            // System.out.println("value " + value);
+            System.out.println("value " + value);
             if (shouldHaveData)
             {
                 double expectedDensity = 3600 / aggregationTime.getSI() / speed.getSI();
@@ -232,13 +231,13 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         }
         // Check that harmonic mean speed is computed
         speed = new Speed(10, KM_PER_HOUR);
-        behavioralCharacteristics = DefaultTestParameters.create();//new BehavioralCharacteristics();
-        //drivingCharacteristics = new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
-        strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, 
-                new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel));
-        new LaneBasedIndividualGTU("1234", gtuType, initialLongitudinalPositions, speed, length, width, maxSpeed,
-            simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
-        simulator.runUpTo(new Time.Abs(125, SECOND));
+        behavioralCharacteristics = DefaultTestParameters.create();
+        strategicalPlanner =
+                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
+                        gtuFollowingModel, laneChangeModel));
+        new LaneBasedIndividualGTU("1234", gtuType, initialLongitudinalPositions, speed, length, width, maxSpeed, simulator,
+                strategicalPlanner, new LanePerceptionFull(), this.network);
+        simulator.runUpTo(new Time(125, SECOND));
         while (simulator.isRunning())
         {
             try
@@ -329,11 +328,11 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
     @Test
     public final void testHints() throws Exception
     {
-        Time.Rel aggregationTime = new Time.Rel(30, SECOND);
-        Length.Rel position = new Length.Rel(123, METER);
+        Duration aggregationTime = new Duration(30, SECOND);
+        Length position = new Length(123, METER);
         LaneType laneType = new LaneType("CarLane");
         FundamentalDiagram fd =
-            new FundamentalDiagram("Fundamental Diagram", aggregationTime, CarTest.makeLane(laneType), position);
+                new FundamentalDiagram("Fundamental Diagram", aggregationTime, CarTest.makeLane(laneType), position);
         // First get the panel that stores the result of updateHint (this is ugly)
         JLabel hintPanel = null;
         ChartPanel chartPanel = null;
@@ -416,9 +415,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(
-        SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> arg0)
-        throws SimRuntimeException
+    public void constructModel(SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> arg0)
+            throws SimRuntimeException
     {
         // Do nothing
     }

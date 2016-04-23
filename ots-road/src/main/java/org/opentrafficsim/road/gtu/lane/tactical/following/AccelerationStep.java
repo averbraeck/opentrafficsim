@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.following;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 
 /**
@@ -26,18 +27,18 @@ public class AccelerationStep implements Serializable
     private final Acceleration acceleration;
 
     /** Time when the current time slot ends. */
-    private final Time.Abs validUntil;
+    private final Time validUntil;
     
     /** Duration of the time step. */
-    final Time.Rel duration;
+    final Duration duration;
 
     /**
      * Create a new GTUFollowingModelResult.
      * @param acceleration DoubleScalarAbs&lt;AccelerationUnit&gt;; computed acceleration
-     * @param validUntil Time.Abs; time when this result expires
-     * @param duration Time.Rel; duration of the time step
+     * @param validUntil Time; time when this result expires
+     * @param duration Duration; duration of the time step
      */
-    public AccelerationStep(final Acceleration acceleration, final Time.Abs validUntil, final Time.Rel duration)
+    public AccelerationStep(final Acceleration acceleration, final Time validUntil, final Duration duration)
     {
         this.acceleration = acceleration;
         this.validUntil = validUntil;
@@ -55,7 +56,7 @@ public class AccelerationStep implements Serializable
     /**
      * @return validUntil.
      */
-    public final Time.Abs getValidUntil()
+    public final Time getValidUntil()
     {
         return this.validUntil;
     }
@@ -63,7 +64,7 @@ public class AccelerationStep implements Serializable
     /**
      * @return duration.
      */
-    public final Time.Rel getDuration()
+    public final Duration getDuration()
     {
         return this.duration;
     }

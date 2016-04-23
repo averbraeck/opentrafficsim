@@ -26,11 +26,11 @@ class SpiralTag implements Serializable
 
     /** Degree of the curve at the start(s-coordinate?). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel curvStart = null;
+    Length curvStart = null;
 
     /** Degree of the curve at the end(s-coordinate?). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel curvEnd = null;
+    Length curvEnd = null;
 
     /**
      * Parse the attributes of the road.type tag. The sub-elements are parsed in separate classes.
@@ -54,11 +54,11 @@ class SpiralTag implements Serializable
             Node curvStart = attributes.getNamedItem("curvStart");
             if (curvStart != null)
                 spiralTag.curvStart =
-                    new Length.Rel(Double.parseDouble(curvStart.getNodeValue().trim()), LengthUnit.SI);
+                    new Length(Double.parseDouble(curvStart.getNodeValue().trim()), LengthUnit.SI);
 
             Node curvEnd = attributes.getNamedItem("curvEnd");
             if (curvEnd != null)
-                spiralTag.curvEnd = new Length.Rel(Double.parseDouble(curvEnd.getNodeValue().trim()), LengthUnit.SI);
+                spiralTag.curvEnd = new Length(Double.parseDouble(curvEnd.getNodeValue().trim()), LengthUnit.SI);
 
             geometryTag.spiralTag = spiralTag;
         }

@@ -11,6 +11,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -57,13 +58,13 @@ public class LaneBasedGTUGenerator implements Serializable
     private final String id;
 
     /** Time distribution that determines the interval times between GTUs. */
-    private final Generator<Time.Rel> interarrivelTimeGenerator;
+    private final Generator<Duration> interarrivelTimeGenerator;
 
     /** Generates most properties of the GTUs. */
     private final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator;
 
     /** End time of this generator. */
-    private final Time.Abs endTime;
+    private final Time endTime;
 
     /** Maximum number of GTUs to generate. */
     private final long maxGTUs;
@@ -72,7 +73,7 @@ public class LaneBasedGTUGenerator implements Serializable
     private long generatedGTUs = 0;
 
     /** Retry interval for checking if a GTU can be placed. */
-    Time.Rel reTryInterval = new Time.Rel(0.1, TimeUnit.SI);
+    Duration reTryInterval = new Duration(0.1, TimeUnit.SI);
 
     /** The location and initial direction of the generated GTUs. */
     final Set<DirectedLanePosition> initialLongitudinalPositions;
@@ -86,10 +87,10 @@ public class LaneBasedGTUGenerator implements Serializable
     /**
      * Construct a new lane base GTU generator.
      * @param id String; name of the new GTU generator
-     * @param interarrivelTimeGenerator Generator&lt;Time.Rel&gt;; generator for the interval times between GTUs
+     * @param interarrivelTimeGenerator Generator&lt;Duration&gt;; generator for the interval times between GTUs
      * @param maxGTUs long; maximum number of GTUs to generate
-     * @param startTime Time.Abs; time at which the first GTU will be generated
-     * @param endTime Time.Abs; time after which no more GTUs will be generated
+     * @param startTime Time; time at which the first GTU will be generated
+     * @param endTime Time; time after which no more GTUs will be generated
      * @param gtuColorer GTUColorer; the GTU colorer that will be used by all generated GTUs
      * @param laneBasedGTUCharacteristicsGenerator LaneBasedGTUCharacteristicsGenerator; generator of the characteristics of
      *            each GTU
@@ -101,8 +102,8 @@ public class LaneBasedGTUGenerator implements Serializable
      * @throws SimRuntimeException when <cite>startTime</cite> lies before the current simulation time
      * @throws ProbabilityException pe
      */
-    public LaneBasedGTUGenerator(String id, final Generator<Time.Rel> interarrivelTimeGenerator, final long maxGTUs,
-            final Time.Abs startTime, final Time.Abs endTime, final GTUColorer gtuColorer,
+    public LaneBasedGTUGenerator(String id, final Generator<Duration> interarrivelTimeGenerator, final long maxGTUs,
+            final Time startTime, final Time endTime, final GTUColorer gtuColorer,
             final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator,
             final Set<DirectedLanePosition> initialLongitudinalPositions, final OTSNetwork network, RoomChecker roomChecker)
             throws SimRuntimeException, ProbabilityException
@@ -178,7 +179,7 @@ public class LaneBasedGTUGenerator implements Serializable
         {
             return; // Do not re-schedule this method
         }
-        Length.Rel shortestHeadway = new Length.Rel(Double.MAX_VALUE, LengthUnit.SI);
+        Length shortestHeadway = new Length(Double.MAX_VALUE, LengthUnit.SI);
         Speed leaderSpeed = null;
         for (DirectedLanePosition dlp : this.initialLongitudinalPositions)
         {
@@ -189,12 +190,12 @@ public class LaneBasedGTUGenerator implements Serializable
                             .getSimulatorTime().getTime());
             if (null != leader)
             {
-                Length.Rel headway = leader.position(lane, leader.getRear()).minus(dlp.getPosition());
+                Length headway = leader.position(lane, leader.getRear()).minus(dlp.getPosition());
                 if (headway.si < 0)
                 {
-                    headway = new Length.Rel(Math.abs(headway.si), headway.getUnit());
+                    headway = new Length(Math.abs(headway.si), headway.getUnit());
                 }
-                headway = new Length.Rel(headway.si - characteristics.getLength().si / 2, LengthUnit.SI);
+                headway = new Length(headway.si - characteristics.getLength().si / 2, LengthUnit.SI);
                 if (shortestHeadway.gt(headway))
                 {
                     shortestHeadway = headway;
@@ -276,9 +277,9 @@ public class LaneBasedGTUGenerator implements Serializable
 
     /**
      * Retrieve the end time of this LaneBasedGTUGenerator.
-     * @return Time.Abs; the time after which this LaneBasedGTUGenerator will not generate any more GTUs
+     * @return Time; the time after which this LaneBasedGTUGenerator will not generate any more GTUs
      */
-    public Time.Abs getEndTime()
+    public Time getEndTime()
     {
         return this.endTime;
     }
@@ -312,13 +313,13 @@ public class LaneBasedGTUGenerator implements Serializable
          * speed. This method will never be called if the newly proposed GTU overlaps with the leader. Nor will this method be
          * called if there is no leader.
          * @param leaderSpeed Speed; velocity of the nearest leader
-         * @param headway Length.Rel; net distance to the nearest leader (always &gt; 0)
+         * @param headway Length; net distance to the nearest leader (always &gt; 0)
          * @param laneBasedGTUCharacteristics LaneBasedGTUCharacteristics; characteristics of the proposed new GTU
          * @return Speed; maximum safe speed, or null if a GTU with the specified characteristics cannot be placed at the
          *         current time
          * @throws NetworkException this method may throw a NetworkException if it encounters an error in the network structure
          */
-        public Speed canPlace(final Speed leaderSpeed, final Length.Rel headway,
+        public Speed canPlace(final Speed leaderSpeed, final Length headway,
                 final LaneBasedGTUCharacteristics laneBasedGTUCharacteristics) throws NetworkException;
     }
 

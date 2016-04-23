@@ -37,6 +37,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -113,8 +114,8 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                 {
                     TestOpenDriveParserNoRTINew xmlModel = new TestOpenDriveParserNoRTINew();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(new Time.Abs(0.0, TimeUnit.SECOND), new Time.Rel(0.0, TimeUnit.SECOND),
-                            new Time.Rel(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
+                    xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException exception)
                 {
@@ -199,19 +200,19 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
         private ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist;
 
         /** */
-        private ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> iatDist;
+        private ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> iatDist;
 
         /** */
-        private ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> lengthDist;
+        private ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist;
 
         /** */
-        private ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDist;
+        private ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDist;
 
         /** */
         private ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maxSpeedDist;
 
         /** */
-        private ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> initialPosDist;
+        private ContinuousDistDoubleScalar.Rel<Length, LengthUnit> initialPosDist;
 
         /** */
         private GTUType carType;
@@ -511,7 +512,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                         initialPosDist.draw().multiplyBy(lane.getCenterLine().getLengthSI()), dir);
                 Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition>();
                 lanepositionSet.add(directedLanePosition);
-                Length.Rel carLength = lengthDist.draw();
+                Length carLength = lengthDist.draw();
 
                 try
                 {
@@ -603,7 +604,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                 Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition>();
                 lanepositionSet.add(directedLanePosition);
 
-                Length.Rel carLength = lengthDist.draw();
+                Length carLength = lengthDist.draw();
                 double genPosSI = directedLanePosition.getPosition().getSI();
                 double lengthSI = lane.getLength().getSI();
                 double frontNew = (genPosSI + carLength.getSI()) / lengthSI;
@@ -714,7 +715,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                             dir);
             Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition>();
             lanepositionSet.add(directedLanePosition);
-            Length.Rel carLength = this.lengthDist.draw();
+            Length carLength = this.lengthDist.draw();
             LaneBasedIndividualGTU car =
                     new LaneBasedIndividualGTU("" + (++this.lastId), this.carType, lanepositionSet, new Speed(0.0,
                             SpeedUnit.METER_PER_SECOND), carLength, this.widthDist.draw(), this.maxSpeedDist.draw(),
@@ -794,7 +795,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
             OTSNode eNode = (OTSNode) network.getNode(eNodeStr);
             Lane eLane = (Lane) eLink.getCrossSectionElement(eLaneStr);
             DirectedPoint sp, ep;
-            Length.Rel beginWidth, endWidth;
+            Length beginWidth, endWidth;
             if (sLink.getStartNode().equals(sNode))
             {
                 OTSPoint3D p1 = sLane.getCenterLine().get(1);
@@ -827,7 +828,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
             CrossSectionLink newLink = new CrossSectionLink(linkId, sNode, eNode, linkType, designLine, laneKeepingPolicy);
             newLink.addDirectionality(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
             Lane newLane =
-                    new Lane(newLink, laneId, Length.Rel.ZERO, Length.Rel.ZERO, beginWidth, endWidth, sLane.getLaneType(),
+                    new Lane(newLink, laneId, Length.ZERO, Length.ZERO, beginWidth, endWidth, sLane.getLaneType(),
                             LongitudinalDirectionality.DIR_PLUS, sLane.getSpeedLimit(GTUType.ALL),
                             sLane.getOvertakingConditions());
             network.addLink(newLink);

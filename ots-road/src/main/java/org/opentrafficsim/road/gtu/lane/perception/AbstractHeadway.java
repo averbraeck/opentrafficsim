@@ -45,7 +45,7 @@ public abstract class AbstractHeadway implements Headway
     private final Acceleration acceleration;
 
     /** The (perceived) distance to the other object. When objects are parallel, the distance is null. */
-    private final Length.Rel distance;
+    private final Length distance;
 
     /**
      * The (perceived) front overlap to the other object. This value should be null if there is no overlap. In the figure below
@@ -61,7 +61,7 @@ public abstract class AbstractHeadway implements Headway
      * | a  | b |     c   |
      * </pre>
      */
-    private final Length.Rel overlapFront;
+    private final Length overlapFront;
 
     /**
      * The (perceived) rear overlap to the other object. This value should be null if there is no overlap. In the figure below
@@ -77,7 +77,7 @@ public abstract class AbstractHeadway implements Headway
      * | a  | b |     c   |
      * </pre>
      */
-    private final Length.Rel overlapRear;
+    private final Length overlapRear;
 
     /**
      * The (perceived) overlap with the other object. This value should be null if there is no overlap. In the figure below for
@@ -93,7 +93,7 @@ public abstract class AbstractHeadway implements Headway
      * | a  | b |     c   |
      * </pre>
      */
-    private final Length.Rel overlap;
+    private final Length overlap;
 
     /** The object type. */
     private final ObjectType objectType;
@@ -112,9 +112,9 @@ public abstract class AbstractHeadway implements Headway
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    private AbstractHeadway(final ObjectType objectType, final String id, final Length.Rel distance, final Speed speed,
-            final Acceleration acceleration, final Length.Rel overlapFront, final Length.Rel overlap,
-            final Length.Rel overlapRear) throws GTUException
+    private AbstractHeadway(final ObjectType objectType, final String id, final Length distance, final Speed speed,
+            final Acceleration acceleration, final Length overlapFront, final Length overlap,
+            final Length overlapRear) throws GTUException
     {
         Throw.when(id == null, GTUException.class, "Object id of a headway cannot be null");
         this.id = id;
@@ -144,7 +144,7 @@ public abstract class AbstractHeadway implements Headway
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public AbstractHeadway(final ObjectType objectType, final String id, final Length.Rel distance, final Speed speed,
+    public AbstractHeadway(final ObjectType objectType, final String id, final Length distance, final Speed speed,
             final Acceleration acceleration) throws GTUException
     {
         this(objectType, id, distance, speed, acceleration, null, null, null);
@@ -157,7 +157,7 @@ public abstract class AbstractHeadway implements Headway
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public AbstractHeadway(final ObjectType objectType, final String id, final Length.Rel distance) throws GTUException
+    public AbstractHeadway(final ObjectType objectType, final String id, final Length distance) throws GTUException
     {
         this(objectType, id, distance, null, null, null, null, null);
     }
@@ -173,8 +173,8 @@ public abstract class AbstractHeadway implements Headway
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public AbstractHeadway(final ObjectType objectType, final String id, final Length.Rel overlapFront,
-            final Length.Rel overlap, final Length.Rel overlapRear, final Speed speed, final Acceleration acceleration)
+    public AbstractHeadway(final ObjectType objectType, final String id, final Length overlapFront,
+            final Length overlap, final Length overlapRear, final Speed speed, final Acceleration acceleration)
             throws GTUException
     {
         this(objectType, id, null, speed, acceleration, overlapFront, overlap, overlapRear);
@@ -189,8 +189,8 @@ public abstract class AbstractHeadway implements Headway
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public AbstractHeadway(final ObjectType objectType, final String id, final Length.Rel overlapFront,
-            final Length.Rel overlap, final Length.Rel overlapRear) throws GTUException
+    public AbstractHeadway(final ObjectType objectType, final String id, final Length overlapFront,
+            final Length overlap, final Length overlapRear) throws GTUException
     {
         this(objectType, id, overlapFront, overlap, overlapRear, null, null);
     }
@@ -211,7 +211,7 @@ public abstract class AbstractHeadway implements Headway
 
     /** {@inheritDoc} */
     @Override
-    public final Length.Rel getDistance()
+    public final Length getDistance()
     {
         return this.distance;
     }
@@ -232,21 +232,21 @@ public abstract class AbstractHeadway implements Headway
 
     /** {@inheritDoc} */
     @Override
-    public final Length.Rel getOverlapFront()
+    public final Length getOverlapFront()
     {
         return this.overlapFront;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Length.Rel getOverlapRear()
+    public final Length getOverlapRear()
     {
         return this.overlapRear;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Length.Rel getOverlap()
+    public final Length getOverlap()
     {
         return this.overlap;
     }

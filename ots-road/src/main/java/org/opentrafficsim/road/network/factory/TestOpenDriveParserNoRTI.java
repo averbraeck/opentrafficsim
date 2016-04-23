@@ -34,6 +34,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -106,8 +107,8 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                 {
                     TestOpenDriveParserNoRTI xmlModel = new TestOpenDriveParserNoRTI();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(new Time.Abs(0.0, TimeUnit.SECOND), new Time.Rel(0.0, TimeUnit.SECOND),
-                        new Time.Rel(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
+                    xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                        new Duration(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException exception)
                 {
@@ -230,23 +231,23 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
 
             // stream
             StreamInterface stream = new MersenneTwister(1);
-            Length.Rel M25 = new Length.Rel(25.0, LengthUnit.METER);
-            Length.Rel M0 = new Length.Rel(0.0, LengthUnit.METER);
+            Length M25 = new Length(25.0, LengthUnit.METER);
+            Length M0 = new Length(0.0, LengthUnit.METER);
 
             // distributions
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 0.0), SpeedUnit.SI);
-            ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> iatDist =
+            ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> iatDist =
                 new ContinuousDistDoubleScalar.Rel<>(new DistExponential(stream, 30.0), TimeUnit.SECOND);
-            ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> lengthDist =
+            ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist =
                 new ContinuousDistDoubleScalar.Rel<>(new DistUniform(stream, 4.0, 5.0), LengthUnit.METER);
-            ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDist =
+            ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDist =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 2.0), LengthUnit.METER);
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maxSpeedDist =
                 new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(stream, 30.0, 35.0, 40.0),
                     SpeedUnit.MILE_PER_HOUR);
 
-            ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> initialPosDist =
+            ContinuousDistDoubleScalar.Rel<Length, LengthUnit> initialPosDist =
                 new ContinuousDistDoubleScalar.Rel<>(new DistUniform(stream, 0.0, 1.0), LengthUnit.METER);
 
             // default colorer
@@ -267,9 +268,9 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                             if (Integer.parseInt(lane.getId()) < 0)
                             {
                                 // make a generator
-                                Time.Abs startTime = Time.Abs.ZERO;
-                                Time.Abs endTime = new Time.Abs(Double.MAX_VALUE, TimeUnit.SI);
-                                Length.Rel position = lane.getLength().lt(M25) ? M0 : M25;
+                                Time startTime = Time.ZERO;
+                                Time endTime = new Time(Double.MAX_VALUE, TimeUnit.SI);
+                                Length position = lane.getLength().lt(M25) ? M0 : M25;
                                 String id = lane.getParentLink().getId() + "." + lane.getId();
                                 BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
                                 //LaneBasedBehavioralCharacteristics drivingCharacteristics =
@@ -301,7 +302,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                             else
                             {
                                 // make a sink
-                                Length.Rel position = lane.getLength().lt(M25) ? M0 : M25;
+                                Length position = lane.getLength().lt(M25) ? M0 : M25;
                                 Sensor sensor = new SinkSensor(lane, position, this.simulator);
                                 try
                                 {
@@ -326,9 +327,9 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                             if (Integer.parseInt(lane.getId()) > 0)
                             {
                                 // make a generator
-                                Time.Abs startTime = Time.Abs.ZERO;
-                                Time.Abs endTime = new Time.Abs(Double.MAX_VALUE, TimeUnit.SI);
-                                Length.Rel position =
+                                Time startTime = Time.ZERO;
+                                Time endTime = new Time(Double.MAX_VALUE, TimeUnit.SI);
+                                Length position =
                                     lane.getLength().lt(M25) ? lane.getLength() : lane.getLength().minus(M25);
                                 String id = lane.getParentLink().getId() + "." + lane.getId();
                                 BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
@@ -361,7 +362,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                             else
                             {
                                 // make a sink
-                                Length.Rel position =
+                                Length position =
                                     lane.getLength().lt(M25) ? lane.getLength() : lane.getLength().minus(M25);
                                 Sensor sensor = new SinkSensor(lane, position, this.simulator);
                                 try
@@ -527,7 +528,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                 Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition>();
                 lanepositionSet.add(directedLanePosition);
 
-                Length.Rel carLength = lengthDist.draw();
+                Length carLength = lengthDist.draw();
                 double genPosSI = directedLanePosition.getPosition().getSI();
                 double lengthSI = lane.getLength().getSI();
                 double frontNew = (genPosSI + carLength.getSI()) / lengthSI;

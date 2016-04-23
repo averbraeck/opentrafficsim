@@ -6,6 +6,7 @@ import java.util.Map;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.network.NetworkException;
@@ -89,7 +90,7 @@ public final class TimeUnits implements UNITS
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Time.Abs parseTimeAbs(final String s) throws NetworkException
+    public static Time parseTimeAbs(final String s) throws NetworkException
     {
         String us = parseTimeUnit(s);
         TimeUnit u = TIME_UNITS.get(us);
@@ -97,7 +98,7 @@ public final class TimeUnits implements UNITS
         try
         {
             double value = Double.parseDouble(sv);
-            return new Time.Abs(value, u);
+            return new Time(value, u);
         }
         catch (NumberFormatException nfe)
         {
@@ -110,7 +111,7 @@ public final class TimeUnits implements UNITS
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Time.Rel parseTimeRel(final String s) throws NetworkException
+    public static Duration parseTimeRel(final String s) throws NetworkException
     {
         String us = parseTimeUnit(s);
         TimeUnit u = TIME_UNITS.get(us);
@@ -118,7 +119,7 @@ public final class TimeUnits implements UNITS
         try
         {
             double value = Double.parseDouble(sv);
-            return new Time.Rel(value, u);
+            return new Duration(value, u);
         }
         catch (NumberFormatException nfe)
         {

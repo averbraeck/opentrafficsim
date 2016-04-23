@@ -49,9 +49,9 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
      * @param typeId The id of the GTUType to make it identifiable.
      * @param idGenerator IdGenerator; the id generator used to generate names for GTUs constructed using this TemplateGTUType.
      *            Provide null to use the default id generator of AbstractGTU.
-     * @param lengthGenerator Generator&lt;Length.Rel&gt; generator for the length of the GTU type (parallel with driving
+     * @param lengthGenerator Generator&lt;Length&gt; generator for the length of the GTU type (parallel with driving
      *            direction).
-     * @param widthGenerator Generator&lt;Length.Rel&gt;; generator for the width of the GTU type (perpendicular to driving
+     * @param widthGenerator Generator&lt;Length&gt;; generator for the width of the GTU type (perpendicular to driving
      *            direction).
      * @param maximumSpeedGenerator Generator&lt;Speed&gt;; generator for the maximum speed of the GTU type (in the driving
      *            direction).
@@ -67,7 +67,7 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
      * @throws GTUException when GTUType defined more than once
      */
     public LaneBasedTemplateGTUType(final String typeId, final IdGenerator idGenerator,
-            final Generator<Length.Rel> lengthGenerator, final Generator<Length.Rel> widthGenerator,
+            final Generator<Length> lengthGenerator, final Generator<Length> widthGenerator,
             final Generator<Speed> maximumSpeedGenerator, final OTSDEVSSimulatorInterface simulator,
             final Generator<LaneBasedStrategicalPlanner> strategicalPlannerGenerator,
             final Generator<LanePerceptionFull> perceptionGenerator,

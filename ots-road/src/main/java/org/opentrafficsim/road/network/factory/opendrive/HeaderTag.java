@@ -47,19 +47,19 @@ public class HeaderTag implements Serializable
 
     /** Range of the map in the north */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel north = null;
+    Length north = null;
 
     /** Range of the map in the south */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel south = null;
+    Length south = null;
 
     /** Range of the map in the east */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel east = null;
+    Length east = null;
 
     /** Range of the map in the west */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel west = null;
+    Length west = null;
 
     /** Vendor of the map. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -67,15 +67,15 @@ public class HeaderTag implements Serializable
 
     /** Origin latitude of the map */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel originLat = null;
+    Length originLat = null;
 
     /** Origin longitude of the map */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel originLong = null;
+    Length originLong = null;
 
     /** Origin Hdg of the map */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Angle.Rel originHdg = null;
+    Angle originHdg = null;
 
     /**
      * Parse the attributes of the junction tag. The sub-elements are parsed in separate classes.
@@ -124,37 +124,37 @@ public class HeaderTag implements Serializable
         Node north = attributes.getNamedItem("north");
         if (north == null)
             throw new SAXException("Header: missing attribute north");
-        headerTag.north = new Length.Rel(Double.parseDouble(north.getNodeValue().trim()), LengthUnit.METER);
+        headerTag.north = new Length(Double.parseDouble(north.getNodeValue().trim()), LengthUnit.METER);
 
         Node south = attributes.getNamedItem("south");
         if (south == null)
             throw new SAXException("Header: missing attribute south");
-        headerTag.south = new Length.Rel(Double.parseDouble(south.getNodeValue().trim()), LengthUnit.METER);
+        headerTag.south = new Length(Double.parseDouble(south.getNodeValue().trim()), LengthUnit.METER);
 
         Node east = attributes.getNamedItem("east");
         if (east == null)
             throw new SAXException("Header: missing attribute east");
-        headerTag.east = new Length.Rel(Double.parseDouble(east.getNodeValue().trim()), LengthUnit.METER);
+        headerTag.east = new Length(Double.parseDouble(east.getNodeValue().trim()), LengthUnit.METER);
 
         Node west = attributes.getNamedItem("west");
         if (west == null)
             throw new SAXException("Header: missing attribute west");
-        headerTag.west = new Length.Rel(Double.parseDouble(west.getNodeValue().trim()), LengthUnit.METER);
+        headerTag.west = new Length(Double.parseDouble(west.getNodeValue().trim()), LengthUnit.METER);
 
         Node originLat = attributes.getNamedItem("originLat");
         if (originLat == null)
             throw new SAXException("Header: missing attribute originLat");
-        headerTag.originLat = new Length.Rel(Double.parseDouble(originLat.getNodeValue().trim()), LengthUnit.METER);
+        headerTag.originLat = new Length(Double.parseDouble(originLat.getNodeValue().trim()), LengthUnit.METER);
 
         Node originLong = attributes.getNamedItem("originLong");
         if (originLong == null)
             throw new SAXException("Header: missing attribute originLong");
-        headerTag.originLong = new Length.Rel(Double.parseDouble(originLong.getNodeValue().trim()), LengthUnit.METER);
+        headerTag.originLong = new Length(Double.parseDouble(originLong.getNodeValue().trim()), LengthUnit.METER);
 
         Node originHdg = attributes.getNamedItem("originHdg");
         if (originHdg == null)
             throw new SAXException("Header: missing attribute originHdg");
-        headerTag.originHdg = new Angle.Rel(Double.parseDouble(originHdg.getNodeValue().trim()), AngleUnit.DEGREE);
+        headerTag.originHdg = new Angle(Double.parseDouble(originHdg.getNodeValue().trim()), AngleUnit.DEGREE);
 
         parser.headerTag = headerTag;
     }
@@ -162,7 +162,7 @@ public class HeaderTag implements Serializable
     /**
      * @return originLat
      */
-    public Length.Rel getOriginLat()
+    public Length getOriginLat()
     {
         return this.originLat;
     }
@@ -170,7 +170,7 @@ public class HeaderTag implements Serializable
     /**
      * @return originLong
      */
-    public Length.Rel getOriginLong()
+    public Length getOriginLong()
     {
         return this.originLong;
     }

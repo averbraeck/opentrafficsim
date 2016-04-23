@@ -13,6 +13,7 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -83,7 +84,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
     private static final double LANECHANGETIME = 2.0;
 
     /** Earliest next lane change time. */
-    private Time.Abs earliestNexLaneChangeTime = Time.Abs.ZERO;
+    private Time earliestNexLaneChangeTime = Time.ZERO;
 
     /** Bezier curve points for gradual lane change. */
     private static final double[] SCURVE;
@@ -114,7 +115,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
 
     /** {@inheritDoc} */
     @Override
-    public OperationalPlan generateOperationalPlan(final GTU gtu, final Time.Abs startTime,
+    public OperationalPlan generateOperationalPlan(final GTU gtu, final Time startTime,
             final DirectedPoint locationAtStartTime) throws OperationalPlanException, NetworkException, GTUException,
             ParameterException
     {
@@ -130,7 +131,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
         // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
         if (laneBasedGTU.getMaximumVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
         {
-            return new OperationalPlan(gtu, locationAtStartTime, startTime, new Time.Rel(1.0, TimeUnit.SECOND));
+            return new OperationalPlan(gtu, locationAtStartTime, startTime, new Duration(1.0, TimeUnit.SECOND));
         }
 
         // perceive the forward headway, accessible lanes and speed limit.
@@ -140,7 +141,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
         perception.updateSpeedLimit();
 
         // find out where we are going
-        Length.Rel forwardHeadway = behaviorCharacteristics.getParameter(ParameterTypes.LOOKAHEAD);
+        Length forwardHeadway = behaviorCharacteristics.getParameter(ParameterTypes.LOOKAHEAD);
         LanePathInfo lanePathInfo = buildLanePathInfo(laneBasedGTU, forwardHeadway);
         NextSplitInfo nextSplitInfo = determineNextSplit(laneBasedGTU, forwardHeadway);
         Set<Lane> correctLanes = laneBasedGTU.getLanes().keySet();
@@ -200,7 +201,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
                                 perception.getNeighboringHeadwaysLeft(),
                                 behaviorCharacteristics.getParameter(ParameterTypes.LOOKAHEAD), perception.getSpeedLimit(),
                                 new Acceleration(1.0, AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI),
-                                new Time.Rel(LANECHANGETIME, TimeUnit.SECOND));
+                                new Duration(LANECHANGETIME, TimeUnit.SECOND));
                 if (dlms.getLaneChange() != null)
                 {
                     gtu.setTurnIndicatorStatus(TurnIndicatorStatus.LEFT);
@@ -243,7 +244,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
                                 perception.getNeighboringHeadwaysRight(),
                                 behaviorCharacteristics.getParameter(ParameterTypes.LOOKAHEAD), perception.getSpeedLimit(),
                                 new Acceleration(1.0, AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI),
-                                new Time.Rel(LANECHANGETIME, TimeUnit.SECOND));
+                                new Duration(LANECHANGETIME, TimeUnit.SECOND));
                 if (dlms.getLaneChange() != null)
                 {
                     gtu.setTurnIndicatorStatus(TurnIndicatorStatus.RIGHT);
@@ -270,7 +271,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
      * @throws OperationalPlanException when there is a problem planning a path in the network
      * @throws GTUException when there is a problem with the state of the GTU when planning a path
      */
-    private OperationalPlan currentLanePlan(final LaneBasedGTU laneBasedGTU, final Time.Abs startTime,
+    private OperationalPlan currentLanePlan(final LaneBasedGTU laneBasedGTU, final Time startTime,
             final DirectedPoint locationAtStartTime, final LanePathInfo lanePathInfo) throws OperationalPlanException,
             GTUException
     {
@@ -279,7 +280,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
         // No lane change. Continue on current lane.
         AccelerationStep accelerationStep;
         Headway headway = perception.getForwardHeadway();
-        Length.Rel maxDistance = lanePathInfo.getPath().getLength().minus(laneBasedGTU.getLength().multiplyBy(2.0));
+        Length maxDistance = lanePathInfo.getPath().getLength().minus(laneBasedGTU.getLength().multiplyBy(2.0));
         accelerationStep =
                 this.carFollowingModel.computeAccelerationStep(laneBasedGTU, headway.getSpeed(), headway.getDistance(),
                         maxDistance, perception.getSpeedLimit());
@@ -387,7 +388,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
             sameLaneTraffic.add(perception.getBackwardHeadway());
         }
         // XXX do not understamd why this is added...
-        // Length.Rel maxDistance = lanePathInfo.getPath().getLength().minus(gtu.getLength().multiplyBy(2.0));
+        // Length maxDistance = lanePathInfo.getPath().getLength().minus(gtu.getLength().multiplyBy(2.0));
         // sameLaneTraffic.add(new HeadwayGTU("ENDPATH", Speed.ZERO, maxDistance, GTUType.NONE));
         // otherLaneTraffic.add(new HeadwayGTU("ENDPATH", Speed.ZERO, maxDistance, GTUType.NONE));
 
@@ -398,7 +399,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
         DirectedLaneMovementStep dlms =
                 dlcm.computeLaneChangeAndAcceleration(gtu, direction, sameLaneTraffic, otherLaneTraffic, gtu
                         .getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD), perception.getSpeedLimit(),
-                        new Acceleration(2.0, AccelerationUnit.SI), new Acceleration(0.1, AccelerationUnit.SI), new Time.Rel(
+                        new Acceleration(2.0, AccelerationUnit.SI), new Acceleration(0.1, AccelerationUnit.SI), new Duration(
                                 LANECHANGETIME, TimeUnit.SECOND));
         if (dlms.getLaneChange() == null)
         {
@@ -409,7 +410,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
         Set<Lane> adjacentLanes = startLane.accessibleAdjacentLanes(direction, gtu.getGTUType());
         // TODO take the widest (now a random one)
         Lane adjacentLane = adjacentLanes.iterator().next();
-        Length.Rel startPosition = gtu.position(startLane, gtu.getReference());
+        Length startPosition = gtu.position(startLane, gtu.getReference());
         double fraction2 = startLane.fraction(startPosition);
         LanePathInfo lanePathInfo2 =
                 buildLanePathInfo(gtu, gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD), adjacentLane,
@@ -465,7 +466,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
             // schedule leaving the current lane(s) that do not overlap with the target lane(s)
             for (Lane lane : gtu.getLanes().keySet())
             {
-                gtu.getSimulator().scheduleEventRel(new Time.Rel(LANECHANGETIME - 0.001, TimeUnit.SI), this, gtu, "leaveLane",
+                gtu.getSimulator().scheduleEventRel(new Duration(LANECHANGETIME - 0.001, TimeUnit.SI), this, gtu, "leaveLane",
                         new Object[] { lane });
             }
 
@@ -474,7 +475,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
             {
                 if (!gtu.getLanes().keySet().contains(laneDirection.getLane()))
                 {
-                    gtu.getSimulator().scheduleEventRel(new Time.Rel(LANECHANGETIME - 0.001, TimeUnit.SI), this, gtu,
+                    gtu.getSimulator().scheduleEventRel(new Duration(LANECHANGETIME - 0.001, TimeUnit.SI), this, gtu,
                             "leaveLane", new Object[] { laneDirection.getLane() });
                 }
             }
@@ -486,13 +487,13 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
             List<Segment> operationalPlanSegmentList = new ArrayList<>();
             if (a == 0.0)
             {
-                Segment segment = new OperationalPlan.SpeedSegment(new Time.Rel(LANECHANGETIME, TimeUnit.SI));
+                Segment segment = new OperationalPlan.SpeedSegment(new Duration(LANECHANGETIME, TimeUnit.SI));
                 operationalPlanSegmentList.add(segment);
             }
             else
             {
                 Segment segment =
-                        new OperationalPlan.AccelerationSegment(new Time.Rel(LANECHANGETIME, TimeUnit.SI), new Acceleration(a,
+                        new OperationalPlan.AccelerationSegment(new Duration(LANECHANGETIME, TimeUnit.SI), new Acceleration(a,
                                 AccelerationUnit.SI));
                 operationalPlanSegmentList.add(segment);
             }
@@ -500,7 +501,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
                     new OperationalPlan(gtu, path, gtu.getSimulator().getSimulatorTime().getTime(), v0,
                             operationalPlanSegmentList);
             this.earliestNexLaneChangeTime =
-                    gtu.getSimulator().getSimulatorTime().getTime().plus(new Time.Rel(17, TimeUnit.SECOND));
+                    gtu.getSimulator().getSimulatorTime().getTime().plus(new Duration(17, TimeUnit.SECOND));
 
             // make sure out turn indicator is on!
             gtu.setTurnIndicatorStatus(direction.isLeft() ? TurnIndicatorStatus.LEFT : TurnIndicatorStatus.RIGHT);

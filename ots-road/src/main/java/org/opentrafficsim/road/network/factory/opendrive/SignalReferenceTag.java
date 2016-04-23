@@ -25,11 +25,11 @@ class SignalReferenceTag implements Serializable
 
     /** Parameter s. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel s = null;
+    Length s = null;
 
     /** Parameter t. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel t = null;
+    Length t = null;
 
     /** Id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -56,11 +56,11 @@ class SignalReferenceTag implements Serializable
 
         Node s = attributes.getNamedItem("s");
         if (s != null)
-            signaReferencelTag.s = new Length.Rel(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
+            signaReferencelTag.s = new Length(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
 
         Node t = attributes.getNamedItem("t");
         if (t != null)
-            signaReferencelTag.t = new Length.Rel(Double.parseDouble(t.getNodeValue().trim()), LengthUnit.METER);
+            signaReferencelTag.t = new Length(Double.parseDouble(t.getNodeValue().trim()), LengthUnit.METER);
 
         Node id = attributes.getNamedItem("id");
         if (id != null)

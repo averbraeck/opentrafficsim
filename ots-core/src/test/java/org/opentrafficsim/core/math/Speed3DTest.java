@@ -7,7 +7,7 @@ import org.djunits.unit.AngleUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
-import org.djunits.value.vdouble.scalar.Angle;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.SpeedVector;
 import org.junit.Test;
@@ -93,7 +93,7 @@ public class Speed3DTest
         double phi = Math.PI * 0.3;
         double length = 10;
         s3d =
-                new Speed3D(new Speed(length, SpeedUnit.SI), new Angle.Abs(theta, AngleUnit.RADIAN), new Angle.Abs(phi,
+                new Speed3D(new Speed(length, SpeedUnit.SI), new Direction(theta, AngleUnit.RADIAN), new Direction(phi,
                         AngleUnit.RADIAN));
         checkSpeed(s3d, length * Math.cos(phi) * Math.sin(theta), length * Math.sin(phi) * Math.sin(theta),
                 length * Math.cos(theta));

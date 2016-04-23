@@ -29,7 +29,7 @@ class TypeTag implements Serializable
 
     /** Start position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel s = null;
+    Length s = null;
 
     /** Road type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -61,7 +61,7 @@ class TypeTag implements Serializable
             Node s = attributes.getNamedItem("s");
             if (s == null)
                 throw new SAXException("ROAD.TYPE: missing attribute s for ROAD.ID=" + roadTag.id);
-            typeTag.s = new Length.Rel(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
+            typeTag.s = new Length(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
 
             Node type = attributes.getNamedItem("type");
             if (type == null)

@@ -37,7 +37,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterTy
  * <pre>
  * public static final ParameterTypeLength X = new ParameterTypeLength(&quot;x&quot;, &quot;My x parameter.&quot;)
  * {
- *     public void check(Length.Rel value, BehavioralCharacteristics bc) throws ParameterException
+ *     public void check(Length value, BehavioralCharacteristics bc) throws ParameterException
  *     {
  *         Throw.when(value.si &lt;= 2, ParameterException.class, &quot;Value of X is not above 2.&quot;);
  *         Throw.when(bc.contains(Y) &amp;&amp; value.si &gt; bc.getParameter(Y).si, ParameterException.class, 
@@ -59,7 +59,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterTy
  * <li><tt>int</tt> for <tt>ParameterTypeInteger</tt></li>
  * <li>
  * <tt>Speed</tt> for <tt>ParameterTypeSpeed</tt></li>
- * <li><tt>Length.Rel</tt> for <tt>ParameterTypeLength</tt></li>
+ * <li><tt>Length</tt> for <tt>ParameterTypeLength</tt></li>
  * <li>
  * <tt>T</tt> for <tt>ParameterType&lt;T&gt;</tt></li>
  * </ul>

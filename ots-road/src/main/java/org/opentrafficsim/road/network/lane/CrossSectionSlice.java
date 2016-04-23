@@ -21,20 +21,20 @@ public class CrossSectionSlice implements Serializable
     private static final long serialVersionUID = 20151126L;
 
     /** The relative position from the start, measured along the design line of the parent link. */
-    private final Length.Rel relativeLength;
+    private final Length relativeLength;
 
     /** The lateral offset from the design line of the parentLink at the relative length. */
-    private final Length.Rel designLineOffset;
+    private final Length designLineOffset;
 
     /** The width, positioned <i>symmetrically around</i> the position at the relative length. */
-    private final Length.Rel width;
+    private final Length width;
 
     /**
      * @param relativeLength the relative position from the start, measured along the design line of the parent link
      * @param designLineOffset the lateral offset from the design line of the parentLink at the relative length
      * @param width the width, positioned <i>symmetrically around</i> the position at the relative length
      */
-    public CrossSectionSlice(final Length.Rel relativeLength, final Length.Rel designLineOffset, final Length.Rel width)
+    public CrossSectionSlice(final Length relativeLength, final Length designLineOffset, final Length width)
     {
         super();
         this.relativeLength = relativeLength;
@@ -45,7 +45,7 @@ public class CrossSectionSlice implements Serializable
     /**
      * @return relativeLength
      */
-    public final Length.Rel getRelativeLength()
+    public final Length getRelativeLength()
     {
         return this.relativeLength;
     }
@@ -53,7 +53,7 @@ public class CrossSectionSlice implements Serializable
     /**
      * @return designLineOffset
      */
-    public final Length.Rel getDesignLineOffset()
+    public final Length getDesignLineOffset()
     {
         return this.designLineOffset;
     }
@@ -61,7 +61,7 @@ public class CrossSectionSlice implements Serializable
     /**
      * @return width
      */
-    public final Length.Rel getWidth()
+    public final Length getWidth()
     {
         return this.width;
     }

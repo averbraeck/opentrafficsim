@@ -16,6 +16,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -61,40 +62,40 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         String typeNameB = "type name B";
         IdGenerator idGeneratorA = new IdGenerator("A");
         IdGenerator idGeneratorB = new IdGenerator("B");
-        Generator<Length.Rel> lengthGeneratorA = new Generator<Length.Rel>()
+        Generator<Length> lengthGeneratorA = new Generator<Length>()
         {
 
             @Override
-            public Length.Rel draw() throws ProbabilityException
+            public Length draw() throws ProbabilityException
             {
-                return new Length.Rel(123, LengthUnit.DECIMETER);
+                return new Length(123, LengthUnit.DECIMETER);
             }
         };
-        Generator<Length.Rel> lengthGeneratorB = new Generator<Length.Rel>()
+        Generator<Length> lengthGeneratorB = new Generator<Length>()
         {
 
             @Override
-            public Length.Rel draw() throws ProbabilityException
+            public Length draw() throws ProbabilityException
             {
-                return new Length.Rel(234, LengthUnit.DECIMETER);
+                return new Length(234, LengthUnit.DECIMETER);
             }
         };
-        Generator<Length.Rel> widthGeneratorA = new Generator<Length.Rel>()
+        Generator<Length> widthGeneratorA = new Generator<Length>()
         {
 
             @Override
-            public Length.Rel draw() throws ProbabilityException
+            public Length draw() throws ProbabilityException
             {
-                return new Length.Rel(123, LengthUnit.CENTIMETER);
+                return new Length(123, LengthUnit.CENTIMETER);
             }
         };
-        Generator<Length.Rel> widthGeneratorB = new Generator<Length.Rel>()
+        Generator<Length> widthGeneratorB = new Generator<Length>()
         {
 
             @Override
-            public Length.Rel draw() throws ProbabilityException
+            public Length draw() throws ProbabilityException
             {
-                return new Length.Rel(139, LengthUnit.CENTIMETER);
+                return new Length(139, LengthUnit.CENTIMETER);
             }
         };
         Generator<Speed> maximumVelocityGeneratorA = new Generator<Speed>()
@@ -116,10 +117,10 @@ public class TemplateGTUTypeTest implements OTSModelInterface
             }
         };
         OTSDEVSSimulatorInterface simulatorA =
-            new SimpleSimulator(new Time.Abs(0, TimeUnit.SI), new Time.Rel(0, TimeUnit.SI), new Time.Rel(1000,
+            new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI), new Duration(1000,
                 TimeUnit.SECOND), this);
         OTSDEVSSimulatorInterface simulatorB =
-            new SimpleSimulator(new Time.Abs(0, TimeUnit.SI), new Time.Rel(0, TimeUnit.SI), new Time.Rel(1000,
+            new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI), new Duration(1000,
                 TimeUnit.SECOND), this);
         OTSNetwork networkA = new OTSNetwork("testGTUCharacteristics A");
         OTSNetwork networkB = new OTSNetwork("testGTUCharacteristics B");

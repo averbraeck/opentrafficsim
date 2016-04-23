@@ -6,9 +6,9 @@ import java.util.Map;
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
@@ -42,13 +42,13 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
     @Override
     public final DirectedLaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
             final LateralDirectionality direction, final Collection<Headway> sameLaneGTUs,
-            final Collection<Headway> otherLaneGTUs, final Length.Rel maxDistance, final Speed speedLimit,
-            final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold, final Time.Rel laneChangeTime)
+            final Collection<Headway> otherLaneGTUs, final Length maxDistance, final Speed speedLimit,
+            final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold, final Duration laneChangeTime)
             throws GTUException, ParameterException
     {
-        Map<Lane, Length.Rel> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
+        Map<Lane, Length> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
         Lane lane = positions.keySet().iterator().next();
-        Length.Rel longitudinalPosition = positions.get(lane);
+        Length longitudinalPosition = positions.get(lane);
         Lane otherLane = gtu.getPerception().bestAccessibleAdjacentLane(lane, direction, longitudinalPosition);
         GTUFollowingModelOld gtuFollowingModel =
                 (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner()).getCarFollowingModel();

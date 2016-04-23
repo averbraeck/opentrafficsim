@@ -42,7 +42,7 @@ public class IDM extends AbstractIDM
     @Override
     protected final Acceleration combineInteractionTerm(final Acceleration aFree,
         final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final Speed desiredSpeed,
-        final Length.Rel desiredHeadway, final SortedMap<Length.Rel, Speed> leaders) throws ParameterException
+        final Length desiredHeadway, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
         Acceleration a = behavioralCharacteristics.getParameter(ParameterTypes.A);
         double sRatio =

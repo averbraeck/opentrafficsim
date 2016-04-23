@@ -52,7 +52,7 @@ public interface LaneBasedGTU extends GTU
      * @param position the position on the lane.
      * @throws GTUException when positioning the GTU on the lane causes a problem
      */
-    void enterLane(Lane lane, Length.Rel position, GTUDirectionality gtuDirection) throws GTUException;
+    void enterLane(Lane lane, Length position, GTUDirectionality gtuDirection) throws GTUException;
 
     /**
      * Unregister the GTU from a lane.
@@ -71,7 +71,7 @@ public interface LaneBasedGTU extends GTU
      * @return the lanes and the position on the lanes where the GTU is currently registered, for the given position of the GTU.
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered.
      */
-    Map<Lane, Length.Rel> positions(RelativePosition relativePosition) throws GTUException;
+    Map<Lane, Length> positions(RelativePosition relativePosition) throws GTUException;
 
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
@@ -82,7 +82,7 @@ public interface LaneBasedGTU extends GTU
      *         the GTU.
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered.
      */
-    Map<Lane, Length.Rel> positions(RelativePosition relativePosition, Time.Abs when) throws GTUException;
+    Map<Lane, Length> positions(RelativePosition relativePosition, Time when) throws GTUException;
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane at the current
@@ -92,7 +92,7 @@ public interface LaneBasedGTU extends GTU
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position, relative to the center line of the Lane.
      * @throws GTUException when the vehicle is not on the given lane.
      */
-    Length.Rel position(Lane lane, RelativePosition relativePosition) throws GTUException;
+    Length position(Lane lane, RelativePosition relativePosition) throws GTUException;
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane.
@@ -102,7 +102,7 @@ public interface LaneBasedGTU extends GTU
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position, relative to the center line of the Lane.
      * @throws GTUException when the vehicle is not on the given lane.
      */
-    Length.Rel position(Lane lane, RelativePosition relativePosition, Time.Abs when) throws GTUException;
+    Length position(Lane lane, RelativePosition relativePosition, Time when) throws GTUException;
 
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
@@ -124,7 +124,7 @@ public interface LaneBasedGTU extends GTU
      *         the GTU.
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered.
      */
-    Map<Lane, Double> fractionalPositions(RelativePosition relativePosition, Time.Abs when) throws GTUException;
+    Map<Lane, Double> fractionalPositions(RelativePosition relativePosition, Time when) throws GTUException;
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane, as a fraction
@@ -136,7 +136,7 @@ public interface LaneBasedGTU extends GTU
      * @return the fractional relative position on the lane at the given time.
      * @throws GTUException when the vehicle is not on the given lane.
      */
-    double fractionalPosition(Lane lane, RelativePosition relativePosition, Time.Abs when) throws GTUException;
+    double fractionalPosition(Lane lane, RelativePosition relativePosition, Time when) throws GTUException;
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane, as a fraction
@@ -154,11 +154,11 @@ public interface LaneBasedGTU extends GTU
      * CrossSectionLink.
      * @param projectionLane Lane; the lane onto which the position of this GTU must be projected
      * @param relativePosition RelativePosition; the point on this GTU that must be projected
-     * @param when Time.Abs; the time for which to project the position of this GTU
-     * @return Length.Rel; the position of this GTU in the projectionLane
+     * @param when Time; the time for which to project the position of this GTU
+     * @return Length; the position of this GTU in the projectionLane
      * @throws GTUException when projectionLane it not in any of the CrossSectionLink that the GTU is on
      */
-    Length.Rel projectedPosition(Lane projectionLane, RelativePosition relativePosition, Time.Abs when)
+    Length projectedPosition(Lane projectionLane, RelativePosition relativePosition, Time when)
         throws GTUException;
 
     /**

@@ -49,10 +49,10 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
     {
         try
         {
-            Length.Rel headway = gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
-            Map<Lane, Length.Rel> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
+            Length headway = gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
+            Map<Lane, Length> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
             Lane lane = positions.keySet().iterator().next();
-            Length.Rel longitudinalPosition = positions.get(lane);
+            Length longitudinalPosition = positions.get(lane);
             // TODO make this driving side dependent; i.e. implement a general way to figure out on which side of the
             // road cars are supposed to drive
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;

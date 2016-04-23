@@ -31,12 +31,15 @@ import org.djunits.unit.Unit;
 import org.djunits.unit.VolumeUnit;
 import org.djunits.value.Absolute;
 import org.djunits.value.Relative;
+import org.djunits.value.vfloat.scalar.FloatAbsoluteTemperature;
 import org.djunits.value.vfloat.scalar.FloatAcceleration;
 import org.djunits.value.vfloat.scalar.FloatAngle;
 import org.djunits.value.vfloat.scalar.FloatAngleSolid;
 import org.djunits.value.vfloat.scalar.FloatArea;
 import org.djunits.value.vfloat.scalar.FloatDensity;
 import org.djunits.value.vfloat.scalar.FloatDimensionless;
+import org.djunits.value.vfloat.scalar.FloatDirection;
+import org.djunits.value.vfloat.scalar.FloatDuration;
 import org.djunits.value.vfloat.scalar.FloatElectricalCharge;
 import org.djunits.value.vfloat.scalar.FloatElectricalCurrent;
 import org.djunits.value.vfloat.scalar.FloatElectricalPotential;
@@ -49,6 +52,7 @@ import org.djunits.value.vfloat.scalar.FloatFrequency;
 import org.djunits.value.vfloat.scalar.FloatLength;
 import org.djunits.value.vfloat.scalar.FloatLinearDensity;
 import org.djunits.value.vfloat.scalar.FloatMass;
+import org.djunits.value.vfloat.scalar.FloatPosition;
 import org.djunits.value.vfloat.scalar.FloatPower;
 import org.djunits.value.vfloat.scalar.FloatPressure;
 import org.djunits.value.vfloat.scalar.FloatScalar;
@@ -107,16 +111,16 @@ public interface ContinuousDistFloatScalar
             switch (getUnit().getClass().getSimpleName())
             {
                 case "AngleUnit":
-                    return (T) new FloatAngle.Abs((float) getDistribution().draw(), (AngleUnit) getUnit());
+                    return (T) new FloatDirection((float) getDistribution().draw(), (AngleUnit) getUnit());
 
                 case "LengthUnit":
-                    return (T) new FloatLength.Abs((float) getDistribution().draw(), (LengthUnit) getUnit());
+                    return (T) new FloatPosition((float) getDistribution().draw(), (LengthUnit) getUnit());
 
                 case "TemperatureUnit":
-                    return (T) new FloatTemperature.Abs((float) getDistribution().draw(), (TemperatureUnit) getUnit());
+                    return (T) new FloatAbsoluteTemperature((float) getDistribution().draw(), (TemperatureUnit) getUnit());
 
                 case "TimeUnit":
-                    return (T) new FloatTime.Abs((float) getDistribution().draw(), (TimeUnit) getUnit());
+                    return (T) new FloatTime((float) getDistribution().draw(), (TimeUnit) getUnit());
 
                 default:
                     return (T) new FloatScalar.Abs((float) getDistribution().draw(), getUnit());
@@ -173,7 +177,7 @@ public interface ContinuousDistFloatScalar
                     return (T) new FloatAcceleration((float) getDistribution().draw(), (AccelerationUnit) getUnit());
 
                 case "AngleUnit":
-                    return (T) new FloatAngle.Rel((float) getDistribution().draw(), (AngleUnit) getUnit());
+                    return (T) new FloatAngle((float) getDistribution().draw(), (AngleUnit) getUnit());
 
                 case "AngleSolidUnit":
                     return (T) new FloatAngleSolid((float) getDistribution().draw(), (AngleSolidUnit) getUnit());
@@ -219,7 +223,7 @@ public interface ContinuousDistFloatScalar
                     return (T) new FloatFrequency((float) getDistribution().draw(), (FrequencyUnit) getUnit());
 
                 case "LengthUnit":
-                    return (T) new FloatLength.Rel((float) getDistribution().draw(), (LengthUnit) getUnit());
+                    return (T) new FloatLength((float) getDistribution().draw(), (LengthUnit) getUnit());
 
                 case "LinearDensityUnit":
                     return (T) new FloatLinearDensity((float) getDistribution().draw(), (LinearDensityUnit) getUnit());
@@ -237,10 +241,10 @@ public interface ContinuousDistFloatScalar
                     return (T) new FloatSpeed((float) getDistribution().draw(), (SpeedUnit) getUnit());
 
                 case "TemperatureUnit":
-                    return (T) new FloatTemperature.Rel((float) getDistribution().draw(), (TemperatureUnit) getUnit());
+                    return (T) new FloatTemperature((float) getDistribution().draw(), (TemperatureUnit) getUnit());
 
                 case "TimeUnit":
-                    return (T) new FloatTime.Rel((float) getDistribution().draw(), (TimeUnit) getUnit());
+                    return (T) new FloatDuration((float) getDistribution().draw(), (TimeUnit) getUnit());
 
                 case "TorqueUnit":
                     return (T) new FloatTorque((float) getDistribution().draw(), (TorqueUnit) getUnit());

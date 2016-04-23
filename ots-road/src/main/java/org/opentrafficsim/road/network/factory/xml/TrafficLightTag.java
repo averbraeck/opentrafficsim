@@ -94,7 +94,7 @@ class TrafficLightTag implements Serializable
 
             try
             {
-                ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class, Length.Rel.class,
+                ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class, Length.class,
                     OTSDEVSSimulatorInterface.class, OTSNetwork.class});
             }
             catch (NoSuchMethodException nsme)
@@ -106,7 +106,7 @@ class TrafficLightTag implements Serializable
                         + trafficLightTag.name
                         + " on lane "
                         + laneName
-                        + " -- no constructor with arguments (String, Lane, Length.Rel, OTSDEVSSimulatorInterface, OTSNetwork)");
+                        + " -- no constructor with arguments (String, Lane, Length, OTSDEVSSimulatorInterface, OTSNetwork)");
             }
         }
         catch (ClassNotFoundException cnfe)

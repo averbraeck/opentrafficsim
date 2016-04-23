@@ -28,7 +28,7 @@ public class DirectedLanePosition implements Serializable
     private final Lane lane;
 
     /** The position on the lane, relative to the cross section link (design line). */
-    private final Length.Rel position;
+    private final Length position;
 
     /** The direction the vehicle is driving to -- either in the direction of the design line, or against it. */
     private final GTUDirectionality gtuDirection;
@@ -39,7 +39,7 @@ public class DirectedLanePosition implements Serializable
      * @param gtuDirection the direction the vehicle is driving to -- either in the direction of the design line, or against it
      * @throws GTUException when preconditions fail
      */
-    public DirectedLanePosition(final Lane lane, final Length.Rel position, final GTUDirectionality gtuDirection)
+    public DirectedLanePosition(final Lane lane, final Length position, final GTUDirectionality gtuDirection)
         throws GTUException
     {
         super();
@@ -62,7 +62,7 @@ public class DirectedLanePosition implements Serializable
     /**
      * @return position the position on the lane, relative to the cross section link (design line)
      */
-    public final Length.Rel getPosition()
+    public final Length getPosition()
     {
         return this.position;
     }

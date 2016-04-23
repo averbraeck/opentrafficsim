@@ -8,6 +8,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -69,7 +70,7 @@ public final class LaneOperationalPlanBuilder
      *             first lane
      */
     public static LaneBasedOperationalPlan buildGradualAccelerationPlan(final LaneBasedGTU gtu, final List<Lane> lanes,
-        final Length.Rel firstLanePosition, final Length.Rel distance, final Time.Abs startTime,
+        final Length firstLanePosition, final Length distance, final Time startTime,
         final Speed startSpeed, final Speed endSpeed, final Acceleration maxAcceleration,
         final Acceleration maxDeceleration) throws OperationalPlanException, OTSGeometryException
     {
@@ -84,20 +85,20 @@ public final class LaneOperationalPlanBuilder
             try
             {
                 // t = 2x / (vt + v0); a = (vt - v0) / t
-                Time.Rel duration = distance.multiplyBy(2.0).divideBy(endSpeed.plus(startSpeed));
+                Duration duration = distance.multiplyBy(2.0).divideBy(endSpeed.plus(startSpeed));
                 Acceleration acceleration = endSpeed.minus(startSpeed).divideBy(duration);
                 if (acceleration.si < 0.0 && acceleration.lt(maxDeceleration))
                 {
                     acceleration = maxDeceleration;
                     duration =
-                        new Time.Rel(Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -distance.si),
+                        new Duration(Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -distance.si),
                             TimeUnit.SI);
                 }
                 if (acceleration.si > 0.0 && acceleration.gt(maxAcceleration))
                 {
                     acceleration = maxAcceleration;
                     duration =
-                        new Time.Rel(Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -distance.si),
+                        new Duration(Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -distance.si),
                             TimeUnit.SI);
                 }
                 segment = new OperationalPlan.AccelerationSegment(duration, acceleration);
@@ -126,7 +127,7 @@ public final class LaneOperationalPlanBuilder
      *             first lane
      */
     public static OTSLine3D makePath(final List<Lane> lanes,
-        final Length.Rel firstLanePosition, final Length.Rel distance) throws OperationalPlanException,
+        final Length firstLanePosition, final Length distance) throws OperationalPlanException,
         OTSGeometryException
     {
         if (lanes.size() == 0)
@@ -159,7 +160,7 @@ public final class LaneOperationalPlanBuilder
      *             first lane
      */
     public static LaneBasedOperationalPlan buildGradualAccelerationPlan(final LaneBasedGTU gtu, final List<Lane> lanes,
-        final Length.Rel firstLanePosition, final Length.Rel distance, final Time.Abs startTime,
+        final Length firstLanePosition, final Length distance, final Time startTime,
         final Speed startSpeed, final Speed endSpeed) throws OperationalPlanException, OTSGeometryException
     {
         return buildGradualAccelerationPlan(gtu, lanes, firstLanePosition, distance, startTime, startSpeed, endSpeed,
@@ -186,7 +187,7 @@ public final class LaneOperationalPlanBuilder
      *             first lane
      */
     public static LaneBasedOperationalPlan buildMaximumAccelerationPlan(final LaneBasedGTU gtu, final List<Lane> lanes,
-        final Length.Rel firstLanePosition, final Length.Rel distance, final Time.Abs startTime,
+        final Length firstLanePosition, final Length distance, final Time startTime,
         final Speed startSpeed, final Speed endSpeed, final Acceleration acceleration, final Acceleration deceleration)
         throws OperationalPlanException, OTSGeometryException
     {
@@ -202,14 +203,14 @@ public final class LaneOperationalPlanBuilder
             {
                 if (endSpeed.gt(startSpeed))
                 {
-                    Time.Rel t = endSpeed.minus(startSpeed).divideBy(acceleration);
-                    Length.Rel x =
+                    Duration t = endSpeed.minus(startSpeed).divideBy(acceleration);
+                    Length x =
                         startSpeed.multiplyBy(t).plus(acceleration.multiplyBy(0.5).multiplyBy(t).multiplyBy(t));
                     if (x.ge(distance))
                     {
                         // we cannot reach the end speed in the given distance with the given acceleration
-                        Time.Rel duration =
-                            new Time.Rel(
+                        Duration duration =
+                            new Duration(
                                 Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -distance.si),
                                 TimeUnit.SI);
                         segmentList.add(new OperationalPlan.AccelerationSegment(duration, acceleration));
@@ -218,20 +219,20 @@ public final class LaneOperationalPlanBuilder
                     {
                         // we reach the (higher) end speed before the end of the segment. Make two segments.
                         segmentList.add(new OperationalPlan.AccelerationSegment(t, acceleration));
-                        Time.Rel duration = distance.minus(x).divideBy(endSpeed);
+                        Duration duration = distance.minus(x).divideBy(endSpeed);
                         segmentList.add(new OperationalPlan.SpeedSegment(duration));
                     }
                 }
                 else
                 {
-                    Time.Rel t = endSpeed.minus(startSpeed).divideBy(deceleration);
-                    Length.Rel x =
+                    Duration t = endSpeed.minus(startSpeed).divideBy(deceleration);
+                    Length x =
                         startSpeed.multiplyBy(t).plus(deceleration.multiplyBy(0.5).multiplyBy(t).multiplyBy(t));
                     if (x.ge(distance))
                     {
                         // we cannot reach the end speed in the given distance with the given deceleration
-                        Time.Rel duration =
-                            new Time.Rel(
+                        Duration duration =
+                            new Duration(
                                 Solver.firstSolutionAfter(0, deceleration.si / 2, startSpeed.si, -distance.si),
                                 TimeUnit.SI);
                         segmentList.add(new OperationalPlan.AccelerationSegment(duration, deceleration));
@@ -248,7 +249,7 @@ public final class LaneOperationalPlanBuilder
                         }
                         // we reach the (lower) end speed, larger than zero, before the end of the segment. Make two segments.
                         segmentList.add(new OperationalPlan.AccelerationSegment(t, deceleration));
-                        Time.Rel duration = distance.minus(x).divideBy(endSpeed);
+                        Duration duration = distance.minus(x).divideBy(endSpeed);
                         segmentList.add(new OperationalPlan.SpeedSegment(duration));
                     }
                 }
@@ -279,7 +280,7 @@ public final class LaneOperationalPlanBuilder
      *             first lane
      */
     public static LaneBasedOperationalPlan buildStopPlan(final LaneBasedGTU gtu, final List<Lane> lanes,
-        final Length.Rel firstLanePosition, final Length.Rel distance, final Time.Abs startTime,
+        final Length firstLanePosition, final Length distance, final Time startTime,
         final Speed startSpeed, final Acceleration deceleration) throws OperationalPlanException, OTSGeometryException
     {
         return buildMaximumAccelerationPlan(gtu, lanes, firstLanePosition, distance, startTime, startSpeed, new Speed(

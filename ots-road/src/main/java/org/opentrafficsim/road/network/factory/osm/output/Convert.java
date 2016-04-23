@@ -618,7 +618,7 @@ public final class Convert
             }
             Color color = Color.LIGHT_GRAY;
             LaneType laneType = laneAttributes.getLaneType();
-            Length.Rel latPos = new Length.Rel(offset, LengthUnit.METER);
+            Length latPos = new Length(offset, LengthUnit.METER);
             Map<GTUType, LongitudinalDirectionality> directionality = new HashMap<>();
             directionality.put(GTUType.ALL, laneAttributes.getDirectionality());
             Map<GTUType, Speed> speedLimit = new HashMap<>();
@@ -633,7 +633,7 @@ public final class Convert
                         new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
                                 laneAttributes.getWidth(), laneType, directionality, speedLimit,
                                 new OvertakingConditions.LeftAndRight());
-                SinkSensor sensor = new SinkSensor(newLane, new Length.Rel(0.25, LengthUnit.METER), simulator);
+                SinkSensor sensor = new SinkSensor(newLane, new Length(0.25, LengthUnit.METER), simulator);
                 newLane.addSensor(sensor, GTUType.ALL);
             }
             else if (osmlink.hasTag("hasPreceding") && offset < 0 || osmlink.hasTag("hasFollowing") && offset >= 0)
@@ -823,7 +823,7 @@ class LaneAttributes implements Serializable
     private final LongitudinalDirectionality directionality;
 
     /** Width of the lane. */
-    private Length.Rel width;
+    private Length width;
 
     /**
      * @param lt - LaneType
@@ -893,7 +893,7 @@ class LaneAttributes implements Serializable
     /**
      * @return width.
      */
-    public Length.Rel getWidth()
+    public Length getWidth()
     {
         return this.width;
     }
@@ -903,7 +903,7 @@ class LaneAttributes implements Serializable
      */
     public void setWidth(final Double width)
     {
-        Length.Rel w = new Length.Rel(width, LengthUnit.METER);
+        Length w = new Length(width, LengthUnit.METER);
         this.width = w;
     }
 

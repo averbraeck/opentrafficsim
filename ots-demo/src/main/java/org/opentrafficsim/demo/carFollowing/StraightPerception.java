@@ -35,6 +35,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -110,6 +111,9 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  */
 public class StraightPerception extends AbstractWrappableAnimation implements UNITS
 {
+    /** */
+    private static final long serialVersionUID = 1L;
+    
     /** The model. */
     private StraightPerceptionModel model;
 
@@ -167,11 +171,11 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
                                     + "of the driver.</html>", new String[] { "IDM", "IDM+" }, 1, false, 1));
                     localProperties.add(IDMPropertySet
                             .makeIDMPropertySet("Car", new Acceleration(1.0, METER_PER_SECOND_2), new Acceleration(1.5,
-                                    METER_PER_SECOND_2), new Length.Rel(2.0, METER), new Time.Rel(1.0, SECOND), 2));
+                                    METER_PER_SECOND_2), new Length(2.0, METER), new Duration(1.0, SECOND), 2));
                     localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration(0.5, METER_PER_SECOND_2),
-                            new Acceleration(1.25, METER_PER_SECOND_2), new Length.Rel(2.0, METER), new Time.Rel(1.0, SECOND),
+                            new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER), new Duration(1.0, SECOND),
                             3));
-                    straight.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND),
+                    straight.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND),
                             localProperties, null, true);
                     straight.panel.getTabbedPane().addTab("info", straight.makeInfoPane());
                 }
@@ -266,7 +270,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
             {
                 List<Lane> path = new ArrayList<Lane>();
                 path.add(this.model.getLane());
-                TrajectoryPlot tp = new TrajectoryPlot("TrajectoryPlot", new Time.Rel(0.5, SECOND), path);
+                TrajectoryPlot tp = new TrajectoryPlot("TrajectoryPlot", new Duration(0.5, SECOND), path);
                 tp.setTitle("Trajectory Graph");
                 tp.setExtendedState(Frame.MAXIMIZED_BOTH);
                 graph = tp;
@@ -363,7 +367,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
     private OTSNetwork network = new OTSNetwork("network");
 
     /** The headway (inter-vehicle time). */
-    private Time.Rel headway;
+    private Duration headway;
 
     /** Number of cars created. */
     private int carsCreated = 0;
@@ -387,10 +391,10 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
     private LaneBasedIndividualGTU block = null;
 
     /** Minimum distance. */
-    private Length.Rel minimumDistance = new Length.Rel(0, METER);
+    private Length minimumDistance = new Length(0, METER);
 
     /** Maximum distance. */
-    private Length.Rel maximumDistance = new Length.Rel(5000, METER);
+    private Length maximumDistance = new Length(5000, METER);
 
     /** The Lane that contains the simulated Cars. */
     private Lane lane;
@@ -463,7 +467,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                     new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
                             this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0),
                             laneType, LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.None());
-            Sensor sensor = new SinkSensor(sinkLane, new Length.Rel(10.0, METER), this.simulator);
+            Sensor sensor = new SinkSensor(sinkLane, new Length(10.0, METER), this.simulator);
             sinkLane.addSensor(sensor, GTUType.ALL);
             String carFollowingModelName = null;
             CompoundProperty propertyContainer = new CompoundProperty("", "", this.properties, false, 0);
@@ -513,8 +517,8 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                     {
                         Acceleration a = IDMPropertySet.getA(cp);
                         Acceleration b = IDMPropertySet.getB(cp);
-                        Length.Rel s0 = IDMPropertySet.getS0(cp);
-                        Time.Rel tSafe = IDMPropertySet.getTSafe(cp);
+                        Length s0 = IDMPropertySet.getS0(cp);
+                        Duration tSafe = IDMPropertySet.getTSafe(cp);
                         GTUFollowingModelOld gtuFollowingModel = null;
                         if (carFollowingModelName.equals("IDM"))
                         {
@@ -550,7 +554,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             }
 
             // 1500 [veh / hour] == 2.4s headway
-            this.headway = new Time.Rel(3600.0 / 1500.0, SECOND);
+            this.headway = new Duration(3600.0 / 1500.0, SECOND);
             // Schedule creation of the first car (it will re-schedule itself one headway later, etc.).
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, SECOND), this, this, "generateCar", null);
             // Create a block at t = 5 minutes
@@ -586,7 +590,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
      */
     protected final void createBlock()
     {
-        Length.Rel initialPosition = new Length.Rel(4000, METER);
+        Length initialPosition = new Length(4000, METER);
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         try
         {
@@ -599,7 +603,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                             this.carFollowingModelCars));
             this.block =
                     new LaneBasedIndividualGTU("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
-                            new Length.Rel(4, METER), new Length.Rel(1.8, METER), new Speed(0.0, KM_PER_HOUR), this.simulator,
+                            new Length(4, METER), new Length(1.8, METER), new Speed(0.0, KM_PER_HOUR), this.simulator,
                             strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer,
                             this.network);
         }
@@ -625,28 +629,28 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
     protected final void generateCar() throws ParameterException
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
-        Length.Rel initialPosition = new Length.Rel(0, METER);
+        Length initialPosition = new Length(0, METER);
         Speed initialSpeed = new Speed(100, KM_PER_HOUR);
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         try
         {
             initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
-            Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
+            Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
             GTUFollowingModelOld gtuFollowingModel;
             if (generateTruck)
             {
                 Acceleration a = new Acceleration(0.5, AccelerationUnit.METER_PER_SECOND_2); // max acceleration
                 Acceleration b = new Acceleration(1.25, AccelerationUnit.METER_PER_SECOND_2); // max xomfortable deceleration
-                Length.Rel s0 = new Length.Rel(4, LengthUnit.METER); // headway distance
-                Time.Rel tSafe = new Time.Rel(2.0, TimeUnit.SECOND); // time headway
+                Length s0 = new Length(4, LengthUnit.METER); // headway distance
+                Duration tSafe = new Duration(2.0, TimeUnit.SECOND); // time headway
                 gtuFollowingModel = new IDMPlusOld(a, b, s0, tSafe, 1.0);
             }
             else
             {
                 Acceleration a = new Acceleration(2.0, AccelerationUnit.METER_PER_SECOND_2); // max acceleration
                 Acceleration b = new Acceleration(3, AccelerationUnit.METER_PER_SECOND_2); // max xomfortable deceleration
-                Length.Rel s0 = new Length.Rel(2.0, LengthUnit.METER); // headway distance
-                Time.Rel tSafe = new Time.Rel(1.0, TimeUnit.SECOND); // time headway
+                Length s0 = new Length(2.0, LengthUnit.METER); // headway distance
+                Duration tSafe = new Duration(1.0, TimeUnit.SECOND); // time headway
                 gtuFollowingModel = new IDMPlusOld(a, b, s0, tSafe, 1.0);
             }
             BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
@@ -657,14 +661,14 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                             gtuFollowingModel));
             LaneBasedPerceivingCar car =
                     new LaneBasedPerceivingCar("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
-                            vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator,
+                            vehicleLength, new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator,
                             strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer,
                             this.network);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
-            car.setPerceptionInterval(new Time.Rel(this.perceptionIntervalDist.draw(), TimeUnit.SECOND));
+            car.setPerceptionInterval(new Duration(this.perceptionIntervalDist.draw(), TimeUnit.SECOND));
             car.getStrategicalPlanner().getBehavioralCharacteristics()
-                    .setParameter(ParameterTypes.LOOKAHEAD, new Length.Rel(this.forwardHeadwayDist.draw(), LengthUnit.METER));
-            // .setForwardHeadwayDistance(new Length.Rel(this.forwardHeadwayDist.draw(), LengthUnit.METER));
+                    .setParameter(ParameterTypes.LOOKAHEAD, new Length(this.forwardHeadwayDist.draw(), LengthUnit.METER));
+            // .setForwardHeadwayDistance(new Length(this.forwardHeadwayDist.draw(), LengthUnit.METER));
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
         {
@@ -691,7 +695,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
     /**
      * @return minimumDistance
      */
-    public final Length.Rel getMinimumDistance()
+    public final Length getMinimumDistance()
     {
         return this.minimumDistance;
     }
@@ -699,7 +703,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
     /**
      * @return maximumDistance
      */
-    public final Length.Rel getMaximumDistance()
+    public final Length getMaximumDistance()
     {
         return this.maximumDistance;
     }
@@ -721,16 +725,16 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
         private static final long serialVersionUID = 1L;
 
         /** */
-        private Time.Rel perceptionInterval = new Time.Rel(0.5, TimeUnit.SECOND);
+        private Duration perceptionInterval = new Duration(0.5, TimeUnit.SECOND);
 
         /**
          * @param id ID; the id of the GTU
          * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
-         * @param initialLongitudinalPositions Map&lt;Lane, Length.Rel&gt;; the initial positions of the car on one or more
+         * @param initialLongitudinalPositions Map&lt;Lane, Length&gt;; the initial positions of the car on one or more
          *            lanes
          * @param initialSpeed Speed; the initial speed of the car on the lane
-         * @param length Length.Rel; the maximum length of the GTU (parallel with driving direction)
-         * @param width Length.Rel; the maximum width of the GTU (perpendicular to driving direction)
+         * @param length Length; the maximum length of the GTU (parallel with driving direction)
+         * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
          * @param maximumVelocity Speed;the maximum speed of the GTU (in the driving direction)
          * @param simulator OTSDEVSSimulatorInterface; the simulator
          * @param strategicalPlanner the strategical planner (e.g., route determination) to use
@@ -746,7 +750,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
         @SuppressWarnings("checkstyle:parameternumber")
         LaneBasedPerceivingCar(final String id, final GTUType gtuType,
                 final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
-                final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
+                final Length length, final Length width, final Speed maximumVelocity,
                 final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
                 final LanePerceptionFull perception, final OTSNetwork network) throws NamingException, NetworkException,
                 SimRuntimeException, GTUException, OTSGeometryException, ParameterException
@@ -760,11 +764,11 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
          * Construct a new LaneBasedIndividualCar.
          * @param id ID; the id of the GTU
          * @param gtuType GTUTYpe; the type of GTU, e.g. TruckType, CarType, BusType
-         * @param initialLongitudinalPositions Map&lt;Lane, Length.Rel&gt;; the initial positions of the car on one or more
+         * @param initialLongitudinalPositions Map&lt;Lane, Length&gt;; the initial positions of the car on one or more
          *            lanes
          * @param initialSpeed Speed; the initial speed of the car on the lane
-         * @param length Length.Rel; the maximum length of the GTU (parallel with driving direction)
-         * @param width Length.Rel; the maximum width of the GTU (perpendicular to driving direction)
+         * @param length Length; the maximum length of the GTU (parallel with driving direction)
+         * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
          * @param maximumVelocity Speed;the maximum speed of the GTU (in the driving direction)
          * @param simulator OTSDEVSSimulatorInterface; the simulator
          * @param strategicalPlanner the strategical planner (e.g., route determination) to use
@@ -783,7 +787,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
         @SuppressWarnings("checkstyle:parameternumber")
         LaneBasedPerceivingCar(final String id, final GTUType gtuType,
                 final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
-                final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
+                final Length length, final Length width, final Speed maximumVelocity,
                 final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
                 final LanePerceptionFull perception, final Class<? extends Renderable2D> animationClass,
                 final GTUColorer gtuColorer, final OTSNetwork network) throws NamingException, NetworkException,
@@ -797,7 +801,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
         /**
          * @param perceptionInterval the interval for perceiving.
          */
-        public void setPerceptionInterval(final Time.Rel perceptionInterval)
+        public void setPerceptionInterval(final Duration perceptionInterval)
         {
             this.perceptionInterval = perceptionInterval;
         }
@@ -835,7 +839,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
 
         /** {@inheritDoc} */
         @Override
-        public OperationalPlan generateOperationalPlan(final GTU gtu, final Time.Abs startTime,
+        public OperationalPlan generateOperationalPlan(final GTU gtu, final Time startTime,
                 final DirectedPoint locationAtStartTime) throws OperationalPlanException, NetworkException, GTUException,
                 ParameterException
         {
@@ -847,7 +851,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             if (laneBasedGTU.getMaximumVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
             {
                 // time equal to fastest reaction time of GTU
-                return new OperationalPlan(laneBasedGTU, locationAtStartTime, startTime, new Time.Rel(
+                return new OperationalPlan(laneBasedGTU, locationAtStartTime, startTime, new Duration(
                         perceptionIntervalDist.draw(), TimeUnit.SECOND));
             }
 
@@ -859,7 +863,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             LanePathInfo lanePathInfo =
                     buildLanePathInfo(laneBasedGTU,
                             laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD));
-            Length.Rel maxDistance = lanePathInfo.getPath().getLength();
+            Length maxDistance = lanePathInfo.getPath().getLength();
 
             // look at the conditions for headway
             Headway headway = perception.getForwardHeadway();

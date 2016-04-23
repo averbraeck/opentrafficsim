@@ -44,8 +44,8 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public RoadMarkerAlong(final CrossSectionLink parentLink, final Length.Rel startCenterPosition,
-        final Length.Rel endCenterPosition, final Length.Rel beginWidth, final Length.Rel endWidth)
+    public RoadMarkerAlong(final CrossSectionLink parentLink, final Length startCenterPosition,
+        final Length endCenterPosition, final Length beginWidth, final Length endWidth)
         throws OTSGeometryException, NetworkException
     {
         super(parentLink, UUID.randomUUID().toString(), startCenterPosition, endCenterPosition, beginWidth, endWidth);
@@ -60,8 +60,8 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public RoadMarkerAlong(final CrossSectionLink parentLink, final Length.Rel lateralCenterPosition,
-        final Length.Rel width) throws OTSGeometryException, NetworkException
+    public RoadMarkerAlong(final CrossSectionLink parentLink, final Length lateralCenterPosition,
+        final Length width) throws OTSGeometryException, NetworkException
     {
         super(parentLink, UUID.randomUUID().toString(), lateralCenterPosition, width);
     }
@@ -71,7 +71,7 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
      * the StartNode towards the EndNode as the longitudinal direction.
      * @param parentLink Cross Section Link to which the element belongs.
      * @param crossSectionSlices The offsets and widths at positions along the line, relative to the design line of the parent
-     *            link. If there is just one with and offset, there should just be one element in the list with Length.Rel = 0.
+     *            link. If there is just one with and offset, there should just be one element in the list with Length = 0.
      *            If there are more slices, the last one should be at the length of the design line. If not, a NetworkException
      *            is thrown.
      * @throws OTSGeometryException when creation of the center line or contour geometry fails

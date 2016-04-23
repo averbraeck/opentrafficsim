@@ -15,8 +15,8 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -65,7 +65,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
     final Lane laneTL;
 
     /** The position of the block on the lane. */
-    final Length.Rel positionTL;
+    final Length positionTL;
 
     /** Light blocked or not? */
     private boolean blocked = true;
@@ -83,10 +83,10 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
     {
         BLOCK_GTU = GTUType.makeGTUType("BLOCK");
         dummyStrategicalPlanner = new DummyStrategicalPlanner();
-        RELATIVE_POSITIONS.put(RelativePosition.FRONT, new RelativePosition(Length.Rel.ZERO, Length.Rel.ZERO,
-            Length.Rel.ZERO, RelativePosition.FRONT));
-        RELATIVE_POSITIONS.put(RelativePosition.REAR, new RelativePosition(Length.Rel.ZERO, Length.Rel.ZERO,
-            Length.Rel.ZERO, RelativePosition.REAR));
+        RELATIVE_POSITIONS.put(RelativePosition.FRONT, new RelativePosition(Length.ZERO, Length.ZERO,
+            Length.ZERO, RelativePosition.FRONT));
+        RELATIVE_POSITIONS.put(RelativePosition.REAR, new RelativePosition(Length.ZERO, Length.ZERO,
+            Length.ZERO, RelativePosition.REAR));
         RELATIVE_POSITIONS.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
         RELATIVE_POSITIONS.put(RelativePosition.CENTER, RelativePosition.REFERENCE_POSITION);
     }
@@ -103,7 +103,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
      * @throws OTSGeometryException x
      * @throws SimRuntimeException x
      */
-    public AbstractTrafficLight(final String name, final Lane lane, final Length.Rel position,
+    public AbstractTrafficLight(final String name, final Lane lane, final Length position,
         final OTSDEVSSimulatorInterface simulator, final OTSNetwork network) throws GTUException, NetworkException,
         NamingException, SimRuntimeException, OTSGeometryException
     {
@@ -161,16 +161,16 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public Length.Rel getLength()
+    public Length getLength()
     {
-        return Length.Rel.ZERO;
+        return Length.ZERO;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Length.Rel getWidth()
+    public Length getWidth()
     {
-        return Length.Rel.ZERO;
+        return Length.ZERO;
     }
 
     /** {@inheritDoc} */
@@ -233,7 +233,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public void enterLane(final Lane lane, final Rel position, final GTUDirectionality gtuDirection)
+    public void enterLane(final Lane lane, final Length position, final GTUDirectionality gtuDirection)
         throws GTUException
     {
         // do nothing
@@ -248,16 +248,16 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public Map<Lane, Length.Rel> positions(final RelativePosition relativePosition) throws GTUException
+    public Map<Lane, Length> positions(final RelativePosition relativePosition) throws GTUException
     {
-        Map<Lane, Length.Rel> map = new HashMap<Lane, Length.Rel>();
+        Map<Lane, Length> map = new HashMap<Lane, Length>();
         map.put(this.laneTL, this.positionTL);
         return map;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Map<Lane, Length.Rel> positions(final RelativePosition relativePosition, final Time.Abs when)
+    public Map<Lane, Length> positions(final RelativePosition relativePosition, final Time when)
         throws GTUException
     {
         return positions(relativePosition);
@@ -265,7 +265,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public Rel position(final Lane lane, final RelativePosition relativePosition) throws GTUException
+    public Length position(final Lane lane, final RelativePosition relativePosition) throws GTUException
     {
         if (this.laneTL.equals(lane))
         {
@@ -276,7 +276,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public Rel position(final Lane lane, final RelativePosition relativePosition, final Time.Abs when)
+    public Length position(final Lane lane, final RelativePosition relativePosition, final Time when)
         throws GTUException
     {
         return position(lane, relativePosition);
@@ -293,7 +293,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public Map<Lane, Double> fractionalPositions(final RelativePosition relativePosition, final Time.Abs when)
+    public Map<Lane, Double> fractionalPositions(final RelativePosition relativePosition, final Time when)
         throws GTUException
     {
         return fractionalPositions(relativePosition);
@@ -312,7 +312,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public double fractionalPosition(final Lane lane, final RelativePosition relativePosition, final Time.Abs when)
+    public double fractionalPosition(final Lane lane, final RelativePosition relativePosition, final Time when)
         throws GTUException
     {
         return fractionalPosition(lane, relativePosition);
@@ -320,8 +320,8 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public Length.Rel projectedPosition(final Lane projectionLane, final RelativePosition relativePosition,
-        final Time.Abs when) throws GTUException
+    public Length projectedPosition(final Lane projectionLane, final RelativePosition relativePosition,
+        final Time when) throws GTUException
     {
         CrossSectionLink link = projectionLane.getParentLink();
         for (CrossSectionElement cse : link.getCrossSectionElementList())
@@ -332,7 +332,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
                 if (cseLane.equals(projectionLane))
                 {
                     double fractionalPosition = fractionalPosition(cseLane, relativePosition, when);
-                    return new Length.Rel(projectionLane.getLength().getSI() * fractionalPosition, LengthUnit.SI);
+                    return new Length(projectionLane.getLength().getSI() * fractionalPosition, LengthUnit.SI);
                 }
             }
         }
@@ -445,10 +445,10 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
     {
         /** {@inheritDoc} */
         @Override
-        public OperationalPlan generateOperationalPlan(final GTU gtu, final Time.Abs startTime,
+        public OperationalPlan generateOperationalPlan(final GTU gtu, final Time startTime,
             final DirectedPoint locationAtStartTime) throws OperationalPlanException, GTUException, NetworkException
         {
-            return new OperationalPlan(gtu, locationAtStartTime, startTime, new Time.Rel(1.0, TimeUnit.MINUTE));
+            return new OperationalPlan(gtu, locationAtStartTime, startTime, new Duration(1.0, TimeUnit.MINUTE));
         }
 
         /** {@inheritDoc} */

@@ -3,6 +3,7 @@ package org.opentrafficsim.graphs;
 import static org.junit.Assert.assertEquals;
 
 import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
@@ -22,7 +23,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 public class TrajectoryPlotTest implements UNITS
 {
     /** Sample interval for the TrajectoryPlot. */
-    Time.Rel sampleInterval = new Time.Rel(0.25, SECOND);
+    Duration sampleInterval = new Duration(0.25, SECOND);
 
     /**
      * Test the TrajectoryPlot.
@@ -31,8 +32,8 @@ public class TrajectoryPlotTest implements UNITS
     @Test
     public final void trajectoryTest() throws Exception
     {
-        Length.Rel minimumDistance = new Length.Rel(1234, METER);
-        Length.Rel maximumDistance = new Length.Rel(12345, METER);
+        Length minimumDistance = new Length(1234, METER);
+        Length maximumDistance = new Length(12345, METER);
 
         // TODO adapt to new path (List<Lane>) concept
         /*-
@@ -45,31 +46,31 @@ public class TrajectoryPlotTest implements UNITS
         }
         assertEquals("Domain order should be ASCENDING", DomainOrder.ASCENDING, tp.getDomainOrder());
         // Create a car running 50 km.h
-        Length.Rel initialPosition = new Length.Rel(2000, METER);
+        Length initialPosition = new Length(2000, METER);
         Speed initialSpeed = new Speed(50, KM_PER_HOUR);
         GTUType carType = new GTUType("Car");
-        Length.Rel length = new Length.Rel(5.0, METER);
-        Length.Rel width = new Length.Rel(2.0, METER);
-        Map<Lane, Length.Rel> initialLongitudinalPositions = new HashMap<>();
+        Length length = new Length(5.0, METER);
+        Length width = new Length(2.0, METER);
+        Map<Lane, Length> initialLongitudinalPositions = new HashMap<>();
         Lane lane = CarTest.makeLane();
         initialLongitudinalPositions.put(lane, initialPosition);
         OTSDEVSSimulator simulator = CarTest.makeSimulator();
         // We want to start the car simulation at t=100s; therefore we have to advance the simulator up to that time.
-        simulateUntil(new Time.Abs(100, SECOND), simulator);
+        simulateUntil(new Time(100, SECOND), simulator);
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         Car car =
             new Car(12345, carType, null, initialLongitudinalPositions, initialSpeed, length, width, maxSpeed,
                 simulator);
         // Make the car accelerate with constant acceleration of 0.05 m/s/s for 400 seconds
-        Time.Rel duration = new Time.Rel(400, SECOND);
-        Time.Abs endTime = DoubleScalar.plus(simulator.getSimulatorTime().getTime(), duration);
+        Duration duration = new Duration(400, SECOND);
+        Time endTime = DoubleScalar.plus(simulator.getSimulatorTime().getTime(), duration);
         car.setState(new GTUFollowingModelResult(new Acceleration(0.05,
             METER_PER_SECOND_2), endTime));
         // System.out.println("Car end position " + car.getPosition(car.getNextEvaluationTime()));
         tp.addData(car);
         assertEquals("Number of trajectories should now be 1", 1, tp.getSeriesCount());
         verifyTrajectory(car, 0, tp);
-        simulateUntil(new Time.Abs(150, SECOND), simulator);
+        simulateUntil(new Time(150, SECOND), simulator);
         Car secondCar =
             new Car(2, carType, null, initialLongitudinalPositions, initialSpeed, length, width, maxSpeed,
                 simulator);
@@ -175,20 +176,20 @@ public class TrajectoryPlotTest implements UNITS
     {
         // XXX we take the first (and only) lane on which the vehicle is registered.
         Lane lane = car.positions(car.getFront()).keySet().iterator().next();
-        Time.Abs initialTime = car.getOperationalPlan().getStartTime();
-        Time.Rel duration = car.getOperationalPlan().getTotalDuration();
+        Time initialTime = car.getOperationalPlan().getStartTime();
+        Duration duration = car.getOperationalPlan().getTotalDuration();
         int expectedNumberOfSamples = (int) (duration.getSI() / this.sampleInterval.getSI());
         assertEquals("Number of samples in trajectory should be ", expectedNumberOfSamples, tp.getItemCount(series));
         // Check that the stored trajectory accurately matches the trajectory of the car at all sampling times
         for (int sample = 0; sample < expectedNumberOfSamples; sample++)
         {
-            Time.Rel deltaTime = new Time.Rel(this.sampleInterval.getSI() * sample, SECOND);
-            Time.Abs sampleTime = initialTime.plus(deltaTime);
+            Duration deltaTime = new Duration(this.sampleInterval.getSI() * sample, SECOND);
+            Time sampleTime = initialTime.plus(deltaTime);
             double sampledTime = tp.getXValue(series, sample);
             assertEquals("Sample should have been taken at " + sampleTime, sampleTime.getSI(), sampledTime, 0.0001);
             sampledTime = tp.getX(series, sample).doubleValue();
             assertEquals("Sample should have been taken at " + sampleTime, sampleTime.getSI(), sampledTime, 0.0001);
-            Length.Rel actualPosition = car.position(lane, car.getFront(), sampleTime);
+            Length actualPosition = car.position(lane, car.getFront(), sampleTime);
             double sampledPosition = tp.getYValue(series, sample);
             assertEquals("Sample position should have been " + actualPosition, actualPosition.getSI(), sampledPosition,
                 0.0001);

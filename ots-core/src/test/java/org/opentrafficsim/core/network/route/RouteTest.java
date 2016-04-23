@@ -146,11 +146,11 @@ public class RouteTest
         assertEquals("Route element 3 is n3", n3, route.getNode(3));
         assertEquals("OriginNode should be n0", n0, route.originNode());
         CrossSectionLink l01 =
-                new CrossSectionLink("name", n0, n1, new Length.Rel(200,
+                new CrossSectionLink("name", n0, n1, new Length(200,
                         METER));
         assertTrue("Route contains Link l01", route.containsLink(l01));
         CrossSectionLink l10 =
-                new CrossSectionLink("name", n1, n0, new Length.Rel(200,
+                new CrossSectionLink("name", n1, n0, new Length(200,
                         METER));
         assertFalse("Route contains Link l10", route.containsLink(l10));
         Node removedNode = route.removeNode(2);

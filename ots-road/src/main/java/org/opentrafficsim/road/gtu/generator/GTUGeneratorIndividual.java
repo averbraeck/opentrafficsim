@@ -7,6 +7,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -40,10 +41,10 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
     private final OTSDEVSSimulatorInterface simulator;
 
     /** Distribution of the length of the GTU. */
-    private final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> lengthDist;
+    private final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist;
 
     /** Distribution of the width of the GTU. */
-    private final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDist;
+    private final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDist;
 
     /** Distribution of the maximum speed of the GTU. */
     private final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist;
@@ -73,11 +74,11 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
     @SuppressWarnings("checkstyle:parameternumber")
     public GTUGeneratorIndividual(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
         final Class<?> gtuClass, final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
-        final ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> interarrivelTimeDist,
-        final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> lengthDist,
-        final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDist,
+        final ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> interarrivelTimeDist,
+        final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist,
+        final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDist,
         final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist, final long maxGTUs,
-        final Time.Abs startTime, final Time.Abs endTime, final Lane lane, final Length.Rel position,
+        final Time startTime, final Time endTime, final Lane lane, final Length position,
         final GTUDirectionality direction, final GTUColorer gtuColorer,
         final LaneBasedStrategicalPlanner strategicalPlanner, final Class<LanePerceptionFull> perceptionClass,
         final OTSNetwork network) throws SimRuntimeException
@@ -100,7 +101,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
     /**
      * @return lengthDist.
      */
-    public final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> getLengthDist()
+    public final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> getLengthDist()
     {
         return this.lengthDist;
     }
@@ -108,7 +109,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
     /**
      * @return widthDist.
      */
-    public final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> getWidthDist()
+    public final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> getWidthDist()
     {
         return this.widthDist;
     }

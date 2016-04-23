@@ -4,7 +4,7 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
-import org.djunits.value.vdouble.scalar.Length.Rel;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -39,7 +39,7 @@ public class SimpleTrafficLight extends AbstractTrafficLight
      * @throws OTSGeometryException x
      * @throws SimRuntimeException x
      */
-    public SimpleTrafficLight(String name, Lane lane, Rel position, OTSDEVSSimulatorInterface simulator,
+    public SimpleTrafficLight(String name, Lane lane, Length position, OTSDEVSSimulatorInterface simulator,
         OTSNetwork network) throws GTUException, NetworkException, NamingException, SimRuntimeException,
         OTSGeometryException
     {

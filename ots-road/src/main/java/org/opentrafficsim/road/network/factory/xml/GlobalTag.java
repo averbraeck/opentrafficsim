@@ -37,7 +37,7 @@ class GlobalTag implements Serializable
 
     /** Default lane width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel defaultLaneWidth = null;
+    Length defaultLaneWidth = null;
 
     /** Default VelocityGTUColorer.maxSpeed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

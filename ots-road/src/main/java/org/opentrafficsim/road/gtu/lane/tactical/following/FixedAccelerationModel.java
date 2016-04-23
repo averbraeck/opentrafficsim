@@ -5,10 +5,9 @@ import java.util.SortedMap;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 
@@ -34,14 +33,14 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil imple
     private Acceleration acceleration;
 
     /** Valid until time that will be returned in GTUFollowingModelResult by computeAcceleration. */
-    private Time.Rel duration;
+    private Duration duration;
 
     /**
      * Create a new FixedAccelerationModel.
      * @param acceleration Acceleration; the acceleration that will be returned by the computeAcceleration methods
-     * @param duration Time.Rel; the duration that the acceleration will be maintained
+     * @param duration Duration; the duration that the acceleration will be maintained
      */
-    public FixedAccelerationModel(final Acceleration acceleration, final Time.Rel duration)
+    public FixedAccelerationModel(final Acceleration acceleration, final Duration duration)
     {
         this.acceleration = acceleration;
         this.duration = duration;
@@ -49,9 +48,9 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil imple
 
     /**
      * Retrieve the duration of this FixedAccelerationModel.
-     * @return Time.Rel; the duration of this FixedAccelerationModel
+     * @return Duration; the duration of this FixedAccelerationModel
      */
-    public final Time.Rel getDuration()
+    public final Duration getDuration()
     {
         return this.duration;
     }
@@ -68,7 +67,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil imple
     /** {@inheritDoc} */
     @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
-        final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit, final Time.Rel stepSize)
+        final Speed leaderSpeed, final Length headway, final Speed speedLimit, final Duration stepSize)
     {
         return this.acceleration;
     }
@@ -76,7 +75,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil imple
     /** {@inheritDoc} */
     @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
-        final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit)
+        final Speed leaderSpeed, final Length headway, final Speed speedLimit)
     {
         return this.acceleration;
     }
@@ -91,7 +90,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil imple
 
     /** {@inheritDoc} */
     @Override
-    public final Time.Rel getStepSize()
+    public final Duration getStepSize()
     {
         return this.duration;
     }
@@ -128,7 +127,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil imple
 
     /** {@inheritDoc} */
     @Override
-    public final Rel desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
+    public final Length desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
         throws ParameterException
     {
         return null;
@@ -137,7 +136,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil imple
     /** {@inheritDoc} */
     @Override
     public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
-        final Speed speed, final SpeedInfo speedInfo, final SortedMap<Rel, Speed> leaders) throws ParameterException
+        final Speed speed, final SpeedInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
         return null;
     }

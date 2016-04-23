@@ -29,7 +29,7 @@ class SpeedTag implements Serializable
 
     /** The s offst. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel sOffst = null;
+    Length sOffst = null;
 
     /** Maximum speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -55,7 +55,7 @@ class SpeedTag implements Serializable
 
             Node sOffst = attributes.getNamedItem("sOffst");
             if (sOffst != null)
-                speedTag.sOffst = new Length.Rel(Double.parseDouble(sOffst.getNodeValue().trim()), LengthUnit.METER);
+                speedTag.sOffst = new Length(Double.parseDouble(sOffst.getNodeValue().trim()), LengthUnit.METER);
 
             Node max = attributes.getNamedItem("max");
             if (max != null)

@@ -47,6 +47,6 @@ public interface TacticalPlanner
      * @throws NetworkException when there is a problem with the network on which the GTU is driving
      * @throws ParameterException when there is a problem with a parameter
      */
-    OperationalPlan generateOperationalPlan(GTU gtu, Time.Abs startTime, DirectedPoint locationAtStartTime)
+    OperationalPlan generateOperationalPlan(GTU gtu, Time startTime, DirectedPoint locationAtStartTime)
         throws OperationalPlanException, GTUException, NetworkException, ParameterException;
 }

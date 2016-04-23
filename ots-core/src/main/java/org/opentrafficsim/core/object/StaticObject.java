@@ -30,13 +30,13 @@ public class StaticObject implements ObjectInterface, Serializable
     private final OTSLine3D geometry;
 
     /** The height of the object. */
-    private final Length.Rel height;
+    private final Length height;
 
     /**
      * @param geometry the top-level 2D outline of the object
      * @param height the height of the object
      */
-    public StaticObject(final OTSLine3D geometry, final Length.Rel height)
+    public StaticObject(final OTSLine3D geometry, final Length height)
     {
         super();
         this.geometry = geometry;
@@ -54,7 +54,7 @@ public class StaticObject implements ObjectInterface, Serializable
     /**
      * @return height
      */
-    public final Length.Rel getHeight()
+    public final Length getHeight()
     {
         return this.height;
     }

@@ -31,11 +31,11 @@ public class OldTrafficLight extends TrafficLight
      * @param simulator simulator on which to schedule color changes
      * @throws OTSGeometryException on failure to place the object
      */
-    public OldTrafficLight(final String id, final Lane lane, final Length.Rel position,
+    public OldTrafficLight(final String id, final Lane lane, final Length position,
         final OTSDEVSSimulatorInterface simulator) throws OTSGeometryException
     {
-        super(AbstractCSEObject.createRectangleOnCSE(lane, position, new Length.Rel(0.5, LengthUnit.METER), lane
-            .getWidth(position).multiplyBy(0.8), new Length.Rel(0.5, LengthUnit.METER)), new Length.Rel(0.5,
+        super(AbstractCSEObject.createRectangleOnCSE(lane, position, new Length(0.5, LengthUnit.METER), lane
+            .getWidth(position).multiplyBy(0.8), new Length(0.5, LengthUnit.METER)), new Length(0.5,
             LengthUnit.METER), TrafficLightColor.RED);
 
         try

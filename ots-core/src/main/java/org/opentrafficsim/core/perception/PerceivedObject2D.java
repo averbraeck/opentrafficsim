@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.perception;
 
-import org.djunits.value.vdouble.scalar.Length.Rel;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.math.Rotation3D;
@@ -38,7 +38,7 @@ public class PerceivedObject2D implements PerceivedObject
 
     /** {@inheritDoc} */
     @Override
-    public final Rel getPerceivedDistance()
+    public final Length getPerceivedDistance()
     {
         return null;
     }

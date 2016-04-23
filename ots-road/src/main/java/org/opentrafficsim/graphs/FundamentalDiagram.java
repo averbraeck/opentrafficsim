@@ -18,6 +18,7 @@ import javax.swing.event.EventListenerList;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
@@ -70,18 +71,18 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     private final String caption;
 
     /** Position of this Fundamental Diagram sensor. */
-    private final Length.Rel position;
+    private final Length position;
 
     /** Area to show status information. */
     private final JLabel statusLabel;
 
     /** Sample duration of the detector that generates this Fundamental Diagram. */
-    private final Time.Rel aggregationTime;
+    private final Duration aggregationTime;
 
     /**
      * @return aggregationTime
      */
-    public final Time.Rel getAggregationTime()
+    public final Duration getAggregationTime()
     {
         return this.aggregationTime;
     }
@@ -164,7 +165,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @param position DoubleScalarRel&lt;LengthUnit&gt;; longitudinal position of the detector on the Lane
      * @throws NetworkException on network inconsistency
      */
-    public FundamentalDiagram(final String caption, final Time.Rel aggregationTime, final Lane lane, final Length.Rel position)
+    public FundamentalDiagram(final String caption, final Duration aggregationTime, final Lane lane, final Length position)
             throws NetworkException
     {
         if (aggregationTime.getSI() <= 0)
@@ -239,9 +240,9 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
     /**
      * Retrieve the position of the detector.
-     * @return Length.Rel; the position of the detector
+     * @return Length; the position of the detector
      */
-    public final Length.Rel getPosition()
+    public final Length getPosition()
     {
         return this.position;
     }
@@ -276,7 +277,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      */
     public final void addData(final LaneBasedGTU gtu) throws GTUException
     {
-        Time.Abs detectionTime = gtu.getSimulator().getSimulatorTime().getTime();
+        Time detectionTime = gtu.getSimulator().getSimulatorTime().getTime();
         // Figure out the time bin
         final int timeBin = (int) Math.floor(detectionTime.getSI() / this.aggregationTime.getSI());
         // Extend storage if needed
@@ -589,11 +590,11 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         /**
          * Construct a FundamentalDiagramSensor.
          * @param lane Lane; the Lane on which the new FundamentalDiagramSensor is to be added
-         * @param longitudinalPosition Length.Rel; longitudinal position on the Lane of the new FundamentalDiagramSensor
+         * @param longitudinalPosition Length; longitudinal position on the Lane of the new FundamentalDiagramSensor
          * @param simulator simulator to allow animation
          * @throws NetworkException on network inconsistency
          */
-        public FundamentalDiagramSensor(final Lane lane, final Length.Rel longitudinalPosition,
+        public FundamentalDiagramSensor(final Lane lane, final Length longitudinalPosition,
                 final OTSDEVSSimulatorInterface simulator) throws NetworkException
         {
             super(lane, longitudinalPosition, RelativePosition.REFERENCE, "FUNDAMENTAL_DIAGRAM_SENSOR@" + lane.toString(),

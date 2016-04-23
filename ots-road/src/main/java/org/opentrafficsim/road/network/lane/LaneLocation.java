@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Position;
 
 /**
  * "1D" implementation.
@@ -42,7 +43,7 @@ public class LaneLocation implements Serializable
      * @param lane The lane of the location of a point relative to the GTU.
      * @param position The position as a length of the reference point on the lane.
      */
-    public LaneLocation(final Lane lane, final Length.Rel position)
+    public LaneLocation(final Lane lane, final Length position)
     {
         super();
         this.lane = lane;
@@ -68,9 +69,9 @@ public class LaneLocation implements Serializable
     /**
      * @return position as a traveled length on this lane.
      */
-    public final Length.Abs getLongitudinalPosition()
+    public final Position getLongitudinalPosition()
     {
-        return new Length.Abs(this.lane.getLength().getSI() * this.fractionalLongitudinalPosition, LengthUnit.METER);
+        return new Position(this.lane.getLength().getSI() * this.fractionalLongitudinalPosition, LengthUnit.METER);
     }
 
     /** {@inheritDoc} */

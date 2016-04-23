@@ -30,23 +30,23 @@ class SuperElevationTag implements Serializable
 
     /** Start position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel s = null;
+    Length s = null;
 
     /** The a position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel a = null;
+    Length a = null;
 
     /** The b position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel b = null;
+    Length b = null;
 
     /** The c position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel c = null;
+    Length c = null;
 
     /** The d position (s-coordinate) */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel d = null;
+    Length d = null;
 
     /**
      * Parse the attributes of the road tag. The sub-elements are parsed in separate classes.
@@ -66,27 +66,27 @@ class SuperElevationTag implements Serializable
         Node s = attributes.getNamedItem("s");
         if (s == null)
             throw new SAXException("Geometry: missing attribute s");
-        elevationTag.s = new Length.Rel(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
+        elevationTag.s = new Length(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
 
         Node a = attributes.getNamedItem("a");
         if (a == null)
             throw new SAXException("Geometry: missing attribute a");
-        elevationTag.a = new Length.Rel(Double.parseDouble(a.getNodeValue().trim()), LengthUnit.METER);
+        elevationTag.a = new Length(Double.parseDouble(a.getNodeValue().trim()), LengthUnit.METER);
 
         Node b = attributes.getNamedItem("b");
         if (b == null)
             throw new SAXException("Geometry: missing attribute b");
-        elevationTag.b = new Length.Rel(Double.parseDouble(b.getNodeValue().trim()), LengthUnit.METER);
+        elevationTag.b = new Length(Double.parseDouble(b.getNodeValue().trim()), LengthUnit.METER);
 
         Node c = attributes.getNamedItem("c");
         if (c == null)
             throw new SAXException("Geometry: missing attribute c");
-        elevationTag.c = new Length.Rel(Double.parseDouble(c.getNodeValue().trim()), LengthUnit.METER);
+        elevationTag.c = new Length(Double.parseDouble(c.getNodeValue().trim()), LengthUnit.METER);
 
         Node d = attributes.getNamedItem("d");
         if (d == null)
             throw new SAXException("Geometry: missing attribute d");
-        elevationTag.d = new Length.Rel(Double.parseDouble(d.getNodeValue().trim()), LengthUnit.METER);
+        elevationTag.d = new Length(Double.parseDouble(d.getNodeValue().trim()), LengthUnit.METER);
 
         return elevationTag;
     }

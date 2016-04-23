@@ -9,6 +9,7 @@ import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSRealTimeClock;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -35,15 +36,15 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
 
     /**
      * Create a simulation engine with animation; the easy way. PauseOnError is set to true;
-     * @param startTime Time.Abs; the start time of the simulation
-     * @param warmupPeriod Time.Rel; the warm up period of the simulation (use new Time.Rel(0, SECOND) if you don't know what
+     * @param startTime Time; the start time of the simulation
+     * @param warmupPeriod Duration; the warm up period of the simulation (use new Duration(0, SECOND) if you don't know what
      *            this is)
-     * @param runLength Time.Rel; the duration of the simulation
+     * @param runLength Duration; the duration of the simulation
      * @param model OTSModelInterface; the simulation to execute
      * @throws SimRuntimeException on ???
      * @throws NamingException when context for the animation cannot be created
      */
-    public SimpleAnimator(final Time.Abs startTime, final Time.Rel warmupPeriod, final Time.Rel runLength,
+    public SimpleAnimator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
         final OTSModelInterface model) throws SimRuntimeException, NamingException
     {
         setPauseOnError(true);
@@ -55,11 +56,11 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
     /**
      * {@inheritDoc}
      */
-    public final SimEvent<OTSSimTimeDouble> scheduleEvent(final Time.Abs executionTime, final short priority,
+    public final SimEvent<OTSSimTimeDouble> scheduleEvent(final Time executionTime, final short priority,
         final Object source, final Object target, final String method, final Object[] args) throws SimRuntimeException
     {
         SimEvent<OTSSimTimeDouble> result =
-            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time.Abs(executionTime.getSI(), TimeUnit.SECOND)),
+            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time(executionTime.getSI(), TimeUnit.SECOND)),
                 priority, source, target, method, args);
         scheduleEvent(result);
         return result;

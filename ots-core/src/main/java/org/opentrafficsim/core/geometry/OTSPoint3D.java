@@ -294,18 +294,18 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param point the point to which the distance has to be calculated.
      * @return the distance in 3D according to Pythagoras
      */
-    public final Length.Rel horizontalDistance(final OTSPoint3D point)
+    public final Length horizontalDistance(final OTSPoint3D point)
     {
-        return new Length.Rel(horizontalDistanceSI(point), LengthUnit.SI);
+        return new Length(horizontalDistanceSI(point), LengthUnit.SI);
     }
 
     /**
      * @param point the point to which the distance has to be calculated.
      * @return the distance in 3D according to Pythagoras
      */
-    public final Length.Rel distance(final OTSPoint3D point)
+    public final Length distance(final OTSPoint3D point)
     {
-        return new Length.Rel(distanceSI(point), LengthUnit.SI);
+        return new Length(distanceSI(point), LengthUnit.SI);
     }
 
     /**

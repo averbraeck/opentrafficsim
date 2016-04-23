@@ -252,7 +252,7 @@ public class OTSLine3DTest
     {
         double length = line.getLengthSI();
         checkDirectedPoint(line.getLocationExtendedSI(fraction * length), expectedPoint, expectedZRotation);
-        Length.Rel typedLength = new Length.Rel(fraction * length, LengthUnit.METER);
+        Length typedLength = new Length(fraction * length, LengthUnit.METER);
         checkDirectedPoint(line.getLocationExtended(typedLength), expectedPoint, expectedZRotation);
         if (fraction < 0 || fraction > 1)
         {
@@ -605,7 +605,7 @@ public class OTSLine3DTest
                 double end = j * l.getLengthSI() / 10;
                 // System.err.println("i=" + i + ", j=" + j);
                 for (OTSLine3D extractedLine : new OTSLine3D[] { l.extract(start, end),
-                        l.extract(new Length.Rel(start, LengthUnit.SI), new Length.Rel(end, LengthUnit.SI)),
+                        l.extract(new Length(start, LengthUnit.SI), new Length(end, LengthUnit.SI)),
                         l.extractFractional(1.0 * i / 10, 1.0 * j / 10) })
                 {
                     assertEquals("size of extract is 2", 2, extractedLine.size());
@@ -639,7 +639,7 @@ public class OTSLine3DTest
                     // System.err.println("second length is " + line.getLengthSI());
                     // System.err.println("i=" + i + ", j=" + j);
                     for (OTSLine3D extractedLine : new OTSLine3D[] { line.extract(start, end),
-                            line.extract(new Length.Rel(start, LengthUnit.SI), new Length.Rel(end, LengthUnit.SI)),
+                            line.extract(new Length(start, LengthUnit.SI), new Length(end, LengthUnit.SI)),
                             line.extractFractional(1.0 * i / 110, 1.0 * j / 110) })
                     {
                         int expectedSize = i < 10 && j > 10 ? line.size() : 2;

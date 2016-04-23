@@ -89,9 +89,9 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
     /**
      * @return the time as a strongly typed time.
      */
-    public final Time.Abs getTime()
+    public final Time getTime()
     {
-        return new Time.Abs(this.time.si, TimeUnit.SI);
+        return new Time(this.time.si, TimeUnit.SI);
     }
 
     /** {@inheritDoc} */

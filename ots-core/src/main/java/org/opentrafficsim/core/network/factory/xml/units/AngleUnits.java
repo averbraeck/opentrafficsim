@@ -7,6 +7,7 @@ import org.djunits.unit.AngleUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.AngleUtil;
 import org.djunits.value.vdouble.scalar.Angle;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -66,7 +67,7 @@ public final class AngleUnits implements UNITS
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Angle.Abs parseAngleAbs(final String s) throws NetworkException
+    public static Direction parseAngleAbs(final String s) throws NetworkException
     {
         String us = parseAngleUnit(s);
         AngleUnit u = ANGLE_UNITS.get(us);
@@ -74,8 +75,8 @@ public final class AngleUnits implements UNITS
         try
         {
             double value = Double.parseDouble(sv);
-            Angle.Abs angle = new Angle.Abs(value, u);
-            return new Angle.Abs(AngleUtil.normalize(angle).si, AngleUnit.SI);
+            Direction angle = new Direction(value, u);
+            return new Direction(AngleUtil.normalize(angle).si, AngleUnit.SI);
         }
         catch (NumberFormatException nfe)
         {
@@ -88,7 +89,7 @@ public final class AngleUnits implements UNITS
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Angle.Rel parseAngleRel(final String s) throws NetworkException
+    public static Angle parseAngleRel(final String s) throws NetworkException
     {
         String us = parseAngleUnit(s);
         AngleUnit u = ANGLE_UNITS.get(us);
@@ -96,8 +97,8 @@ public final class AngleUnits implements UNITS
         try
         {
             double value = Double.parseDouble(sv);
-            Angle.Rel angle = new Angle.Rel(value, u);
-            return new Angle.Rel(AngleUtil.normalize(angle).si, AngleUnit.SI);
+            Angle angle = new Angle(value, u);
+            return new Angle(AngleUtil.normalize(angle).si, AngleUnit.SI);
         }
         catch (NumberFormatException nfe)
         {

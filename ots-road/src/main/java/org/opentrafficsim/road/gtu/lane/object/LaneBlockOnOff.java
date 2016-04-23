@@ -7,8 +7,8 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -45,7 +45,7 @@ public class LaneBlockOnOff extends AbstractTrafficLight
      * @throws OTSGeometryException x
      * @throws SimRuntimeException x
      */
-    public LaneBlockOnOff(final String name, final Lane lane, final Length.Rel position,
+    public LaneBlockOnOff(final String name, final Lane lane, final Length position,
         final OTSDEVSSimulatorInterface simulator, final OTSNetwork network) throws GTUException, NetworkException,
         NamingException, SimRuntimeException, OTSGeometryException
     {
@@ -59,7 +59,7 @@ public class LaneBlockOnOff extends AbstractTrafficLight
             {
                 // TODO
             }
-            getSimulator().scheduleEventRel(new Time.Rel(30.0, TimeUnit.SECOND), this, this, "changeColorTime", null);
+            getSimulator().scheduleEventRel(new Duration(30.0, TimeUnit.SECOND), this, this, "changeColorTime", null);
         }
         catch (RemoteException exception)
         {
@@ -76,7 +76,7 @@ public class LaneBlockOnOff extends AbstractTrafficLight
 
         try
         {
-            getSimulator().scheduleEventRel(new Time.Rel(30.0, TimeUnit.SECOND), this, this, "changeColorTime", null);
+            getSimulator().scheduleEventRel(new Duration(30.0, TimeUnit.SECOND), this, this, "changeColorTime", null);
         }
         catch (SimRuntimeException exception)
         {

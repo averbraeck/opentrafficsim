@@ -47,11 +47,11 @@ class GTUTag implements Serializable
 
     /** GTU length. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> lengthDist = null;
+    ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist = null;
 
     /** GTU width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDist = null;
+    ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDist = null;
 
     /** GTU following model. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

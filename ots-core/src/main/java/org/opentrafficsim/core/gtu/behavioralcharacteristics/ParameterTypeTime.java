@@ -3,7 +3,7 @@ package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 import java.io.Serializable;
 
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 
 /**
  * Wrapper class for Time parameters.
@@ -16,7 +16,7 @@ import org.djunits.value.vdouble.scalar.Time;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeTime extends ParameterType<TimeUnit, Time.Rel> implements Serializable
+public class ParameterTypeTime extends ParameterType<TimeUnit, Duration> implements Serializable
 {
 
     /** */
@@ -29,7 +29,7 @@ public class ParameterTypeTime extends ParameterType<TimeUnit, Time.Rel> impleme
      */
     public ParameterTypeTime(final String id, final String description)
     {
-        super(id, description, Time.Rel.class);
+        super(id, description, Duration.class);
     }
 
     /**
@@ -38,9 +38,9 @@ public class ParameterTypeTime extends ParameterType<TimeUnit, Time.Rel> impleme
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
      */
-    public ParameterTypeTime(final String id, final String description, final Time.Rel defaultValue)
+    public ParameterTypeTime(final String id, final String description, final Duration defaultValue)
     {
-        super(id, description, Time.Rel.class, defaultValue);
+        super(id, description, Duration.class, defaultValue);
     }
 
     /**
@@ -51,7 +51,7 @@ public class ParameterTypeTime extends ParameterType<TimeUnit, Time.Rel> impleme
      */
     public ParameterTypeTime(final String id, final String description, final Check check)
     {
-        super(id, description, Time.Rel.class, check);
+        super(id, description, Duration.class, check);
     }
 
     /**
@@ -61,9 +61,9 @@ public class ParameterTypeTime extends ParameterType<TimeUnit, Time.Rel> impleme
      * @param defaultValue Default value.
      * @param check Check for parameter values.
      */
-    public ParameterTypeTime(final String id, final String description, final Time.Rel defaultValue, final Check check)
+    public ParameterTypeTime(final String id, final String description, final Duration defaultValue, final Check check)
     {
-        super(id, description, Time.Rel.class, defaultValue, check);
+        super(id, description, Duration.class, defaultValue, check);
     }
 
     /** {@inheritDoc} */

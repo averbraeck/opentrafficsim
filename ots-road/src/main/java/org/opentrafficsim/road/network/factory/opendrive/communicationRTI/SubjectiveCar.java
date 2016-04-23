@@ -13,7 +13,6 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGTU;
@@ -40,10 +39,10 @@ public class SubjectiveCar extends AbstractGTU
     private DirectedPoint position = null;
 
     /** */
-    private Length.Rel length;
+    private Length length;
 
     /** */
-    private Length.Rel width;
+    private Length width;
 
     /**
      * @param id car id
@@ -57,14 +56,15 @@ public class SubjectiveCar extends AbstractGTU
      * @throws RemoteException when animation context or simulator cannot be reached
      */
     public SubjectiveCar(String id, GTUType type, OTSDEVSSimulatorInterface simulator, DirectedPoint initialLocation,
-        final OTSNetwork network) throws SimRuntimeException, GTUException, RemoteException, NamingException
+            final OTSNetwork network) throws SimRuntimeException, GTUException, RemoteException, NamingException
     {
-        super(id, type, simulator, new LaneBasedStrategicalPlannerNone(), new LanePerceptionNone(), initialLocation, Speed.ZERO, network);
+        super(id, type, simulator, new LaneBasedStrategicalPlannerNone(), new LanePerceptionNone(), initialLocation,
+                Speed.ZERO, network);
         this.position = initialLocation;
         System.out.println("Subjective car created at position " + this.position);
 
-        this.length = new Length.Rel(4.0, LengthUnit.METER);
-        this.width = new Length.Rel(2.0, LengthUnit.METER);
+        this.length = new Length(4.0, LengthUnit.METER);
+        this.width = new Length(2.0, LengthUnit.METER);
 
         new SubjectiveCarAnimation(this, simulator);
     }
@@ -81,8 +81,8 @@ public class SubjectiveCar extends AbstractGTU
      * @throws NetworkException on inconsistency of the network
      */
     public SubjectiveCar(String id, GTUType gtuType, OTSDEVSSimulatorInterface simulator,
-        StrategicalPlanner strategicalPlanner, Perception perception, DirectedPoint initialLocation)
-        throws SimRuntimeException, NetworkException, GTUException
+            StrategicalPlanner strategicalPlanner, Perception perception, DirectedPoint initialLocation)
+            throws SimRuntimeException, NetworkException, GTUException
     {
         super(id, gtuType, simulator, strategicalPlanner, perception, initialLocation, Speed.ZERO, null);
     }
@@ -91,7 +91,7 @@ public class SubjectiveCar extends AbstractGTU
      * {@inheritDoc}
      */
     @Override
-    public Rel getLength()
+    public Length getLength()
     {
         return this.length;
     }
@@ -100,7 +100,7 @@ public class SubjectiveCar extends AbstractGTU
      * {@inheritDoc}
      */
     @Override
-    public Rel getWidth()
+    public Length getWidth()
     {
         return this.width;
     }

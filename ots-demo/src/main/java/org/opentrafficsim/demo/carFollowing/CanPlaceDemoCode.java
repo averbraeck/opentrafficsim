@@ -23,14 +23,14 @@ import org.opentrafficsim.road.network.lane.Lane;
 public class CanPlaceDemoCode implements LaneBasedGTUGenerator.RoomChecker
 {
     /** Maximum distance supplied to the minimumHeadway method of the GTUFollowingModel. */
-    private static Length.Rel maxDistance = new Length.Rel(Double.MAX_VALUE, LengthUnit.SI);
+    private static Length maxDistance = new Length(Double.MAX_VALUE, LengthUnit.SI);
 
     /** Precision requested of the minimumHeadway method of the GTUFollowingModel. */
-    private static Length.Rel precision = new Length.Rel(0.1, LengthUnit.METER);
+    private static Length precision = new Length(0.1, LengthUnit.METER);
 
     /** {@inheritDoc} */
     @Override
-    public Speed canPlace(Speed leaderSpeed, org.djunits.value.vdouble.scalar.Length.Rel headway,
+    public Speed canPlace(Speed leaderSpeed, org.djunits.value.vdouble.scalar.Length headway,
             LaneBasedGTUCharacteristics laneBasedGTUCharacteristics) throws NetworkException
     {
         // This simple minded implementation returns null if the headway is less than the headway wanted for driving at

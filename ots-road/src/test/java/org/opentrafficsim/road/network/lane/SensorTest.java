@@ -11,6 +11,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -68,7 +69,7 @@ public class SensorTest implements UNITS
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModelForSensorTest();
         final SimpleSimulator simulator =
-            new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND),
+            new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND),
                 model);
         Lane[] lanesA =
             LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new Speed(100, KM_PER_HOUR),
@@ -80,14 +81,14 @@ public class SensorTest implements UNITS
         // put a sensor on each of the lanes at the end of LaneA
         for (Lane lane : lanesA)
         {
-            Length.Rel longitudinalPosition = new Length.Rel(999.9999, METER);
+            Length longitudinalPosition = new Length(999.9999, METER);
             TriggerSensor sensor =
                 new TriggerSensor(lane, longitudinalPosition, RelativePosition.REFERENCE, "Trigger@" + lane.toString(),
                     simulator);
             lane.addSensor(sensor, GTUType.ALL);
         }
 
-        Length.Rel positionA = new Length.Rel(100, METER);
+        Length positionA = new Length(100, METER);
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions.add(new DirectedLanePosition(lanesA[1], positionA, GTUDirectionality.DIR_PLUS));
 
@@ -96,16 +97,16 @@ public class SensorTest implements UNITS
         // A Car needs an initial speed
         Speed initialSpeed = new Speed(50, KM_PER_HOUR);
         // Length of the Car
-        Length.Rel carLength = new Length.Rel(4, METER);
+        Length carLength = new Length(4, METER);
         // Width of the Car
-        Length.Rel carWidth = new Length.Rel(1.8, METER);
+        Length carWidth = new Length(1.8, METER);
         // Maximum velocity of the Car
         Speed maximumVelocity = new Speed(100, KM_PER_HOUR);
         // ID of the Car
         String carID = "theCar";
         // Create an acceleration profile for the car
         FixedAccelerationModel fas =
-            new FixedAccelerationModel(new Acceleration(0.5, METER_PER_SECOND_2), new Time.Rel(100, SECOND));
+            new FixedAccelerationModel(new Acceleration(0.5, METER_PER_SECOND_2), new Duration(100, SECOND));
         // Now we can make a car (GTU) (and we don't even have to hold a pointer to it)
         BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create(); //new BehavioralCharacteristics();
         //LaneBasedBehavioralCharacteristics drivingCharacteristics =
@@ -115,7 +116,7 @@ public class SensorTest implements UNITS
                 new LaneBasedGTUFollowingTacticalPlanner(fas));
         LaneBasedIndividualGTU car = new LaneBasedIndividualGTU(carID, gtuType, initialLongitudinalPositions, initialSpeed, carLength, carWidth,
             maximumVelocity, simulator, strategicalPlanner, new LanePerceptionFull(), network);
-        simulator.runUpTo(new Time.Abs(1, SECOND));
+        simulator.runUpTo(new Time(1, SECOND));
         if (!simulator.isRunning())
         {
             simulator.start();
@@ -167,7 +168,7 @@ class TriggerSensor extends AbstractSensor
      * @param name
      * @param simulator
      */
-    public TriggerSensor(final Lane lane, final Length.Rel longitudinalPosition,
+    public TriggerSensor(final Lane lane, final Length longitudinalPosition,
         final RelativePosition.TYPE positionType, final String name, OTSDEVSSimulatorInterface simulator)
     {
         super(lane, longitudinalPosition, positionType, name, simulator);
@@ -202,7 +203,7 @@ class DummyModelForSensorTest implements OTSModelInterface
 
     /**
      * Register the simulator.
-     * @param simulator SimulatorInterface&lt;Time.Abs, Time.Rel, OTSSimTimeDouble&gt;; the simulator
+     * @param simulator SimulatorInterface&lt;Time, Duration, OTSSimTimeDouble&gt;; the simulator
      */
     public final void setSimulator(
         SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)

@@ -36,7 +36,7 @@ class LaneSectionTag implements Serializable
 
     /** Start position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel s = null;
+    Length s = null;
 
     /** Left lanes */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -72,7 +72,7 @@ class LaneSectionTag implements Serializable
         Node s = attributes.getNamedItem("s");
         if (s == null)
             throw new SAXException("LaneSection: missing attribute s");
-        laneSectionTag.s = new Length.Rel(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
+        laneSectionTag.s = new Length(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
 
         for (Node leftNode : XMLParser.getNodes(node.getChildNodes(), "left"))
             for (Node laneNode : XMLParser.getNodes(leftNode.getChildNodes(), "lane"))

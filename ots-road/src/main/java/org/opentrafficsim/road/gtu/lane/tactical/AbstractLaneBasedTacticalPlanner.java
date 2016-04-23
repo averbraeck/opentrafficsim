@@ -92,17 +92,17 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
     /**
      * Build a list of lanes forward, with a maximum headway relative to the reference point of the GTU.
      * @param gtu LaneBasedGTU; the GTU for which to calculate the lane list
-     * @param maxHeadway Length.Rel; the maximum length for which lanes should be returned
+     * @param maxHeadway Length; the maximum length for which lanes should be returned
      * @return LanePathInfo; an instance that provides the following information for an operational plan: the lanes to follow,
      *         and the path to follow when staying on the same lane.
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    public static LanePathInfo buildLanePathInfo(final LaneBasedGTU gtu, final Length.Rel maxHeadway) throws GTUException,
+    public static LanePathInfo buildLanePathInfo(final LaneBasedGTU gtu, final Length maxHeadway) throws GTUException,
             NetworkException
     {
         Lane startLane = getReferenceLane(gtu);
-        Length.Rel startPosition = gtu.position(startLane, gtu.getReference());
+        Length startPosition = gtu.position(startLane, gtu.getReference());
         return buildLanePathInfo(gtu, startLane, startPosition, maxHeadway);
     }
 
@@ -110,15 +110,15 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
      * Build a list of lanes forward, with a maximum headway relative to the reference point of the GTU.
      * @param gtu LaneBasedGTU; the GTU for which to calculate the lane list
      * @param startLane Lane; the lane in which the path starts
-     * @param startPosition Length.Rel; the start position on the start lane with the Vehicle's reference point
-     * @param maxHeadway Length.Rel; the maximum length for which lanes should be returned
+     * @param startPosition Length; the start position on the start lane with the Vehicle's reference point
+     * @param maxHeadway Length; the maximum length for which lanes should be returned
      * @return LanePathInfo; an instance that provides the following information for an operational plan: the lanes to follow,
      *         and the path to follow when staying on the same lane.
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    public static LanePathInfo buildLanePathInfo(final LaneBasedGTU gtu, final Lane startLane, final Length.Rel startPosition,
-            final Length.Rel maxHeadway) throws GTUException, NetworkException
+    public static LanePathInfo buildLanePathInfo(final LaneBasedGTU gtu, final Lane startLane, final Length startPosition,
+            final Length maxHeadway) throws GTUException, NetworkException
     {
         return buildLanePathInfo(gtu, maxHeadway, startLane, startLane.fraction(startPosition), gtu.getLanes().get(startLane));
     }
@@ -126,7 +126,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
     /**
      * Build a list of lanes forward, with a maximum headway relative to the reference point of the GTU.
      * @param gtu LaneBasedGTU; the GTU for which to calculate the lane list
-     * @param maxHeadway Length.Rel; the maximum length for which lanes should be returned
+     * @param maxHeadway Length; the maximum length for which lanes should be returned
      * @param startLane Lane; the lane in which the path starts
      * @param startLaneFractionalPosition double; the fractional position on the start lane
      * @param startDirectionality GTUDirectionality; the driving direction on the start lane
@@ -137,18 +137,18 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    public static LanePathInfo buildLanePathInfo(final LaneBasedGTU gtu, final Length.Rel maxHeadway, final Lane startLane,
+    public static LanePathInfo buildLanePathInfo(final LaneBasedGTU gtu, final Length maxHeadway, final Lane startLane,
             final double startLaneFractionalPosition, final GTUDirectionality startDirectionality) throws GTUException,
             NetworkException
     {
         List<LaneDirection> laneListForward = new ArrayList<>();
         Lane lane = startLane;
         GTUDirectionality lastGtuDir = startDirectionality;
-        Length.Rel position = lane.position(startLaneFractionalPosition);
-        Length.Rel startPosition = position;
+        Length position = lane.position(startLaneFractionalPosition);
+        Length startPosition = position;
         Lane lastLane = lane;
         laneListForward.add(new LaneDirection(lastLane, lastGtuDir));
-        Length.Rel distanceToEndOfLane;
+        Length distanceToEndOfLane;
         OTSLine3D path;
         try
         {
@@ -160,7 +160,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             else
             {
                 distanceToEndOfLane = position;
-                path = lane.getCenterLine().extract(Length.Rel.ZERO, position).reverse();
+                path = lane.getCenterLine().extract(Length.ZERO, position).reverse();
             }
         }
         catch (OTSGeometryException exception)
@@ -280,7 +280,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
     /**
      * Build a list of lanes forward, with a maximum headway.
      * @param gtu LaneBasedGTU; the GTU for which to calculate the lane list
-     * @param maxHeadway Length.Rel; the maximum length for which lanes should be returned
+     * @param maxHeadway Length; the maximum length for which lanes should be returned
      * @param startLane Lane; the first lane in the list
      * @param startLaneFractionalPosition double; the fractional position on the start lane
      * @param startDirectionality GTUDirectionality; the driving direction on the start lane
@@ -289,7 +289,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
     // TODO this method can probably disappear (lots of duplicated code)
-    protected static List<Lane> buildLaneListForwardXXX(final LaneBasedGTU gtu, final Length.Rel maxHeadway,
+    protected static List<Lane> buildLaneListForwardXXX(final LaneBasedGTU gtu, final Length maxHeadway,
             final Lane startLane, final double startLaneFractionalPosition, final GTUDirectionality startDirectionality)
             throws GTUException, NetworkException
     {
@@ -298,8 +298,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
         Lane lastLane = startLane;
         GTUDirectionality lastGtuDir = startDirectionality;
         laneListForward.add(lane);
-        Length.Rel position = lane.position(startLaneFractionalPosition);
-        Length.Rel lengthForward = lastGtuDir.equals(GTUDirectionality.DIR_PLUS) ? lane.getLength().minus(position) : position;
+        Length position = lane.position(startLaneFractionalPosition);
+        Length lengthForward = lastGtuDir.equals(GTUDirectionality.DIR_PLUS) ? lane.getLength().minus(position) : position;
 
         while (lengthForward.lt(maxHeadway))
         {
@@ -371,13 +371,13 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
      * Calculate the next location where the network splits, with a maximum headway relative to the reference point of the GTU.
      * Note: a lane drop is also considered a split (!).
      * @param gtu LaneBasedGTU; the GTU for which to calculate the lane list
-     * @param maxHeadway Length.Rel; the maximum length for which lanes should be returned
+     * @param maxHeadway Length; the maximum length for which lanes should be returned
      * @return NextSplitInfo; an instance that provides the following information for an operational plan: whether the network
      *         splits, the node where it splits, and the current lanes that lead to the right node after the split node.
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    public static NextSplitInfo determineNextSplit(final LaneBasedGTU gtu, final Length.Rel maxHeadway) throws GTUException,
+    public static NextSplitInfo determineNextSplit(final LaneBasedGTU gtu, final Length maxHeadway) throws GTUException,
             NetworkException
     {
         OTSNode nextSplitNode = null;
@@ -386,8 +386,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
         Link lastLink = referenceLane.getParentLink();
         GTUDirectionality lastGtuDir = gtu.getLanes().get(referenceLane);
         GTUDirectionality referenceLaneDirectionality = lastGtuDir;
-        Length.Rel lengthForward;
-        Length.Rel position = gtu.position(referenceLane, gtu.getReference());
+        Length lengthForward;
+        Length position = gtu.position(referenceLane, gtu.getReference());
         OTSNode lastNode;
         if (lastGtuDir.equals(GTUDirectionality.DIR_PLUS))
         {
@@ -534,7 +534,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
      * Determine whether the lane is directly connected to our route, in other words: if we would (continue to) drive on the
      * given lane, can we take the right branch at the nextSplitNode without switching lanes?
      * @param gtu LaneBasedGTU; the GTU for which we have to determine the lane suitability
-     * @param maxHeadway Length.Rel; the maximum length for use in the calculation
+     * @param maxHeadway Length; the maximum length for use in the calculation
      * @param startLane Lane; the first lane in the list
      * @param startLaneFractionalPosition double; the fractional position on the start lane
      * @param startDirectionality GTUDirectionality; the driving direction on the start lane
@@ -543,7 +543,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    protected static boolean connectsToPath(final LaneBasedGTU gtu, final Length.Rel maxHeadway, final Lane startLane,
+    protected static boolean connectsToPath(final LaneBasedGTU gtu, final Length maxHeadway, final Lane startLane,
             final double startLaneFractionalPosition, final GTUDirectionality startDirectionality, final Link linkAfterSplit)
             throws GTUException, NetworkException
     {
@@ -564,7 +564,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
      * Determine whether the lane does not drop, in other words: if we would (continue to) drive on the given lane, can we
      * continue to drive at the nextSplitNode without switching lanes?
      * @param gtu LaneBasedGTU; the GTU for which we have to determine the lane suitability
-     * @param maxHeadway Length.Rel; the maximum length for use in the calculation
+     * @param maxHeadway Length; the maximum length for use in the calculation
      * @param startLane Lane; the first lane in the list
      * @param startLaneFractionalPosition double; the fractional position on the start lane
      * @param startDirectionality GTUDirectionality; the driving direction on the start lane
@@ -572,7 +572,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    protected static boolean noLaneDrop(final LaneBasedGTU gtu, final Length.Rel maxHeadway, final Lane startLane,
+    protected static boolean noLaneDrop(final LaneBasedGTU gtu, final Length maxHeadway, final Lane startLane,
             final double startLaneFractionalPosition, final GTUDirectionality startDirectionality) throws GTUException,
             NetworkException
     {
@@ -587,12 +587,12 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
     /**
      * Make a list of links on which to drive next, with a maximum headway relative to the reference point of the GTU.
      * @param gtu LaneBasedGTU; the GTU for which to calculate the link list
-     * @param maxHeadway Length.Rel; the maximum length for which links should be returned
+     * @param maxHeadway Length; the maximum length for which links should be returned
      * @return List&lt;LinkDirection&gt;; a list of links on which to drive next
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    protected static List<LinkDirection> buildLinkListForward(final LaneBasedGTU gtu, final Length.Rel maxHeadway)
+    protected static List<LinkDirection> buildLinkListForward(final LaneBasedGTU gtu, final Length maxHeadway)
             throws GTUException, NetworkException
     {
         List<LinkDirection> linkList = new ArrayList<>();
@@ -600,8 +600,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
         Link lastLink = referenceLane.getParentLink();
         GTUDirectionality lastGtuDir = gtu.getLanes().get(referenceLane);
         linkList.add(new LinkDirection(lastLink, lastGtuDir));
-        Length.Rel lengthForward;
-        Length.Rel position = gtu.position(referenceLane, gtu.getReference());
+        Length lengthForward;
+        Length position = gtu.position(referenceLane, gtu.getReference());
         OTSNode lastNode;
         if (lastGtuDir.equals(GTUDirectionality.DIR_PLUS))
         {

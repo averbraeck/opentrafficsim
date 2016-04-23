@@ -7,7 +7,7 @@ import org.djunits.unit.AngleUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
-import org.djunits.value.vdouble.scalar.Angle;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.SpeedVector;
 
@@ -82,11 +82,11 @@ public class Speed3D implements Serializable
     /**
      * Construct a new Speed3D from a strongly typed speed and polar coordinates.
      * @param speed Speed; the speed in the direction of the angle along the vector
-     * @param theta Angle.Abs; the angle from the z direction
-     * @param phi Angle.Abs; the projected angle in the xy-plane from the x direction
+     * @param theta Direction; the angle from the z direction
+     * @param phi Direction; the projected angle in the xy-plane from the x direction
      * @throws ValueException in case the vector does not have exactly three elements
      */
-    public Speed3D(final Speed speed, final Angle.Abs theta, final Angle.Abs phi) throws ValueException
+    public Speed3D(final Speed speed, final Direction theta, final Direction phi) throws ValueException
     {
         super();
         double[] xyz = Scalar3D.polarToCartesian(speed.getInUnit(), theta.si, phi.si);
@@ -151,7 +151,7 @@ public class Speed3D implements Serializable
      * Retrieve the theta of this Speed3D.
      * @return the angle of direction perpendicular to the xy-plane
      */
-    public final Angle.Abs getTheta()
+    public final Direction getTheta()
     {
         return Scalar3D.cartesianToTheta(getX().si, getY().si, getZ().si);
     }
@@ -160,7 +160,7 @@ public class Speed3D implements Serializable
      * Retrieve the phi of this Speed3D.
      * @return the projected angle of direction in the xy-plane
      */
-    public final Angle.Abs getPhi()
+    public final Direction getPhi()
     {
         return Scalar3D.cartesianToPhi(getX().si, getY().si);
     }
@@ -177,9 +177,9 @@ public class Speed3D implements Serializable
     /** {@inheritDoc} */
     public final String toString()
     {
-        return String.format(Locale.US, "Speed3D %s (%s, theta %s, phi %s)", this.speed, getSpeed(), new Angle.Abs(
+        return String.format(Locale.US, "Speed3D %s (%s, theta %s, phi %s)", this.speed, getSpeed(), new Direction(
             getTheta().getInUnit(AngleUnit.DEGREE), AngleUnit.DEGREE),
-            new Angle.Abs(getPhi().getInUnit(AngleUnit.DEGREE), AngleUnit.DEGREE));
+            new Direction(getPhi().getInUnit(AngleUnit.DEGREE), AngleUnit.DEGREE));
     }
 
 }

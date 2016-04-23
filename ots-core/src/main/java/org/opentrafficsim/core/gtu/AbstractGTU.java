@@ -6,6 +6,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -62,7 +63,7 @@ public abstract class AbstractGTU implements GTU
      * plan. In order to get a complete odometer reading, the progress of the current plan execution has to be added to this
      * value.
      */
-    private Length.Rel odometer;
+    private Length odometer;
 
     /** The strategical planner that can instantiate tactical planners to determine mid-term decisions. */
     private StrategicalPlanner strategicalPlanner;
@@ -128,10 +129,10 @@ public abstract class AbstractGTU implements GTU
         this.simulator = simulator;
         this.strategicalPlanner = strategicalPlanner;
         this.perception = perception;
-        this.odometer = Length.Rel.ZERO;
+        this.odometer = Length.ZERO;
         this.perceivableContext = perceivableContext;
         this.perceivableContext.addGTU(this);
-        Time.Abs now = this.simulator.getSimulatorTime().getTime();
+        Time now = this.simulator.getSimulatorTime().getTime();
 
         if (initialLocation != null)
         {
@@ -148,7 +149,7 @@ public abstract class AbstractGTU implements GTU
         {
             if (initialSpeed.si < OperationalPlan.DRIFTING_SPEED_SI)
             {
-                this.operationalPlan = new OperationalPlan(this, p, now, new Time.Rel(1.0e-6, TimeUnit.SECOND));
+                this.operationalPlan = new OperationalPlan(this, p, now, new Duration(1.0e-6, TimeUnit.SECOND));
             }
             else
             {
@@ -233,7 +234,7 @@ public abstract class AbstractGTU implements GTU
     protected void move(final DirectedPoint fromLocation) throws SimRuntimeException, OperationalPlanException, GTUException,
             NetworkException, ParameterException
     {
-        Time.Abs now = this.simulator.getSimulatorTime().getTime();
+        Time now = this.simulator.getSimulatorTime().getTime();
 
         // Add the odometer distance from the currently running operational plan.
         // Because a plan can be interrupted, we explicitly calculate the covered distance till 'now'
@@ -348,7 +349,7 @@ public abstract class AbstractGTU implements GTU
 
     /** {@inheritDoc} */
     @Override
-    public final Length.Rel getOdometer()
+    public final Length getOdometer()
     {
         if (this.operationalPlan == null)
         {
@@ -366,7 +367,7 @@ public abstract class AbstractGTU implements GTU
 
     /** {@inheritDoc} */
     @Override
-    public final Speed getSpeed(final Time.Abs time)
+    public final Speed getSpeed(final Time time)
     {
         if (this.operationalPlan == null)
         {
@@ -401,7 +402,7 @@ public abstract class AbstractGTU implements GTU
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration getAcceleration(final Time.Abs time)
+    public final Acceleration getAcceleration(final Time time)
     {
         if (this.operationalPlan == null)
         {

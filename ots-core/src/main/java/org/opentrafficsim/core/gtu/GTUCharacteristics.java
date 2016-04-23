@@ -31,10 +31,10 @@ public class GTUCharacteristics implements Serializable
     private final IdGenerator idGenerator;
 
     /** Length of the GTU. */
-    private final Length.Rel length;
+    private final Length length;
 
     /** Width of the GTU. */
-    private final Length.Rel width;
+    private final Length width;
 
     /** Maximum velocity of the GTU. */
     private final Speed maximumVelocity;
@@ -49,14 +49,14 @@ public class GTUCharacteristics implements Serializable
      * Construct a new set of GTUCharacteristics.
      * @param gtuType GTUType; type of the (not yet constructed) GTU
      * @param idGenerator IdGenerator; the id generator for the (not yet constructed) GTU
-     * @param length Length.Rel; the length of the (non yet constructed) GTU
-     * @param width Length.Rel; the width of the (non yet constructed) GTU
-     * @param maximumVelocity Length.Rel; the maximum velocity of the (non yet constructed) GTU
+     * @param length Length; the length of the (non yet constructed) GTU
+     * @param width Length; the width of the (non yet constructed) GTU
+     * @param maximumVelocity Length; the maximum velocity of the (non yet constructed) GTU
      * @param simulator OTSDEVSSimulatorInterface; the simulator that controls the (not yet constructed) GTU
      * @param network OTSNetwork; the network that will contain the GTU
      */
-    public GTUCharacteristics(final GTUType gtuType, final IdGenerator idGenerator, final Length.Rel length,
-            final Length.Rel width, final Speed maximumVelocity, final OTSDEVSSimulatorInterface simulator,
+    public GTUCharacteristics(final GTUType gtuType, final IdGenerator idGenerator, final Length length,
+            final Length width, final Speed maximumVelocity, final OTSDEVSSimulatorInterface simulator,
             final OTSNetwork network)
     {
         this.gtuType = gtuType;
@@ -88,9 +88,9 @@ public class GTUCharacteristics implements Serializable
 
     /**
      * Retrieve the length.
-     * @return Length.Rel
+     * @return Length
      */
-    public final Length.Rel getLength()
+    public final Length getLength()
     {
         return this.length;
     }
@@ -99,7 +99,7 @@ public class GTUCharacteristics implements Serializable
      * Retrieve the width.
      * @return Width.Rel
      */
-    public final Length.Rel getWidth()
+    public final Length getWidth()
     {
         return this.width;
     }

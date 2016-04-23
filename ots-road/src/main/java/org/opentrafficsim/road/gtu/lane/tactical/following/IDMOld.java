@@ -8,10 +8,9 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 
@@ -31,7 +30,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     private static final long serialVersionUID = 20141119L;
 
     /** Preferred net longitudinal distance when stopped [m]. */
-    private final Length.Rel s0;
+    private final Length s0;
 
     /** Maximum longitudinal acceleration [m/s^2]. */
     private final Acceleration a;
@@ -40,13 +39,13 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     private final Acceleration b;
 
     /** Safe time headway. */
-    private final Time.Rel tSafe;
+    private final Duration tSafe;
 
     /**
      * Time slot size used by IDM (not defined in the paper, but 0.5s is a reasonable trade-off between computational speed and
      * accuracy).
      */
-    private final Time.Rel stepSize = new Time.Rel(0.5, TimeUnit.SECOND);
+    private final Duration stepSize = new Duration(0.5, TimeUnit.SECOND);
 
     /**
      * Mean speed limit adherence (1.0: mean free speed equals the speed limit; 1.1: mean speed limit equals 110% of the speed
@@ -61,8 +60,8 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     {
         this.a = new Acceleration(1.56, AccelerationUnit.METER_PER_SECOND_2);
         this.b = new Acceleration(2.09, AccelerationUnit.METER_PER_SECOND_2);
-        this.s0 = new Length.Rel(3, LengthUnit.METER);
-        this.tSafe = new Time.Rel(1.2, TimeUnit.SECOND);
+        this.s0 = new Length(3, LengthUnit.METER);
+        this.tSafe = new Duration(1.2, TimeUnit.SECOND);
         this.delta = 1d;
     }
 
@@ -70,12 +69,12 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
      * Construct a new IDM car following model.
      * @param a Acceleration; the maximum acceleration of a stationary vehicle (normal value is 1 m/s/s)
      * @param b Acceleration; the maximum deemed-safe deceleration (this is a positive value). Normal value is 1.5 m/s/s.
-     * @param s0 Length.Rel; the minimum stationary headway (normal value is 2 m)
-     * @param tSafe Time.Rel; the minimum time-headway (normal value is 1s)
+     * @param s0 Length; the minimum stationary headway (normal value is 2 m)
+     * @param tSafe Duration; the minimum time-headway (normal value is 1s)
      * @param delta double; the speed limit adherence (1.0; mean free speed equals the speed limit; 1.1: mean free speed equals
      *            110% of the speed limit; etc.)
      */
-    public IDMOld(final Acceleration a, final Acceleration b, final Length.Rel s0, final Time.Rel tSafe, final double delta)
+    public IDMOld(final Acceleration a, final Acceleration b, final Length s0, final Duration tSafe, final double delta)
     {
         this.a = a;
         this.b = b;
@@ -97,14 +96,14 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
 
     /** {@inheritDoc} */
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
-        final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit)
+        final Speed leaderSpeed, final Length headway, final Speed speedLimit)
     {
         return computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, headway, speedLimit, this.stepSize);
     }
 
     /** {@inheritDoc} */
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
-        final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit, final Time.Rel stepSize)
+        final Speed leaderSpeed, final Length headway, final Speed speedLimit, final Duration stepSize)
     {
         // TODO maxDistance
         // dV is the approach speed
@@ -137,7 +136,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
 
     /** {@inheritDoc} */
     @Override
-    public final Time.Rel getStepSize()
+    public final Duration getStepSize()
     {
         return this.stepSize;
     }
@@ -176,7 +175,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
 
     /** {@inheritDoc} */
     @Override
-    public final Rel desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
+    public final Length desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
         throws ParameterException
     {
         return null;
@@ -185,7 +184,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     /** {@inheritDoc} */
     @Override
     public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
-        final Speed speed, final SpeedInfo speedInfo, final SortedMap<Rel, Speed> leaders) throws ParameterException
+        final Speed speed, final SpeedInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
         return null;
     }

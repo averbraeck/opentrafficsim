@@ -9,7 +9,7 @@ import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.vector.MutableDoubleVector;
-import org.djunits.value.vdouble.vector.MutableLengthVector;
+import org.djunits.value.vdouble.vector.MutablePositionVector;
 import org.djunits.value.vdouble.vector.MutableTimeVector;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
@@ -73,7 +73,7 @@ public class SpeedContourPlot extends ContourPlot
             {
                 this.cumulativeTimes.add(new MutableTimeVector.Abs(new double[this.getYAxis().getBinCount()], TimeUnit.SECOND,
                         StorageType.DENSE));
-                this.cumulativeLengths.add(new MutableLengthVector.Abs(new double[this.getYAxis().getBinCount()],
+                this.cumulativeLengths.add(new MutablePositionVector(new double[this.getYAxis().getBinCount()],
                         LengthUnit.METER, StorageType.DENSE));
             }
             catch (ValueException exception)

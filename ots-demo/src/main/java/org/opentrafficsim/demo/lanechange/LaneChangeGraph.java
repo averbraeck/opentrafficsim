@@ -25,6 +25,7 @@ import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -99,13 +100,13 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
     private ChartPanel[][] charts;
 
     /** Start of two lane road. */
-    private static final Length.Rel LOWERBOUND = new Length.Rel(-500, METER);
+    private static final Length LOWERBOUND = new Length(-500, METER);
 
     /** Position of reference vehicle on the two lane road. */
-    private static final Length.Rel MIDPOINT = new Length.Rel(0, METER);
+    private static final Length MIDPOINT = new Length(0, METER);
 
     /** End of two lane road. */
-    private static final Length.Rel UPPERBOUND = new Length.Rel(500, METER);
+    private static final Length UPPERBOUND = new Length(500, METER);
 
     /** The JFrame with the lane change graphs. */
     private static LaneChangeGraph lcs;
@@ -179,7 +180,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
                 int endLeftKey = data.addSeries("End of no lane change to left");
                 for (double speedDifference = startSpeedDifference; speedDifference <= endSpeedDifference; speedDifference += 1)
                 {
-                    Length.Rel criticalHeadway =
+                    Length criticalHeadway =
                             lcs.findDecisionPoint(LaneChangeGraph.LOWERBOUND, MIDPOINT, speed, new Speed(speedDifference,
                                     KM_PER_HOUR), laneChangeModel, true);
                     if (null != criticalHeadway)
@@ -263,7 +264,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
      * @param speedDifference Speed; speed of the other car minus speed of the reference car
      * @param laneChangeModel LaneChangeModel; the lane change model to apply
      * @param mergeRight boolean; if true; merge right is tested; if false; merge left is tested
-     * @return Length.Rel
+     * @return Length
      * @throws NamingException on ???
      * @throws NetworkException on network inconsistency
      * @throws SimRuntimeException on ???
@@ -271,7 +272,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
      * @throws OTSGeometryException
      * @throws ParameterException in case of a parameter problem.
      */
-    private Length.Rel findDecisionPoint(Length.Rel low, Length.Rel high, final Speed referenceSpeed,
+    private Length findDecisionPoint(Length low, Length high, final Speed referenceSpeed,
             final Speed speedDifference, final LaneChangeModel laneChangeModel, final boolean mergeRight)
             throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException,
             ParameterException
@@ -288,19 +289,19 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
                         LongitudinalDirectionality.DIR_PLUS);
         // Create the reference vehicle
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
-        initialLongitudinalPositions.add(new DirectedLanePosition(lanes[mergeRight ? 0 : 1], new Length.Rel(0, METER),
+        initialLongitudinalPositions.add(new DirectedLanePosition(lanes[mergeRight ? 0 : 1], new Length(0, METER),
                 GTUDirectionality.DIR_PLUS));
 
         // The reference car only needs a simulator
         // But that needs a model (which this class implements)
         SimpleSimulator simpleSimulator =
-                new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND), this);
+                new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND), this);
         this.carFollowingModel =
                 new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
-                        new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
+                        new Length(2, METER), new Duration(1, SECOND), 1d);
         this.carFollowingModel =
-                new IDMOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(
-                        2, METER), new Time.Rel(1, SECOND), 1d);
+                new IDMOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length(
+                        2, METER), new Duration(1, SECOND), 1d);
 
         BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
@@ -310,10 +311,10 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
                         this.carFollowingModel, laneChangeModel));
         LaneBasedIndividualGTU referenceCar =
                 new LaneBasedIndividualGTU("ReferenceCar", gtuType, initialLongitudinalPositions, referenceSpeed,
-                        new Length.Rel(4, METER), new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR), simpleSimulator,
+                        new Length(4, METER), new Length(2, METER), new Speed(150, KM_PER_HOUR), simpleSimulator,
                         strategicalPlanner, new LanePerceptionFull(), this.network);
         Collection<Headway> sameLaneGTUs = new LinkedHashSet<>();
-        sameLaneGTUs.add(new HeadwayGTU(referenceCar.getId(), referenceCar.getGTUType(), Length.Rel.ZERO, referenceCar
+        sameLaneGTUs.add(new HeadwayGTU(referenceCar.getId(), referenceCar.getGTUType(), Length.ZERO, referenceCar
                 .getSpeed(), null));
         // TODO play with the speed limit
         // TODO play with the preferredLaneRouteIncentive
@@ -323,7 +324,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         LaneMovementStep highResult =
                 computeLaneChange(referenceCar, sameLaneGTUs, speedLimit, laneChangeModel, high, lanes[1], speedDifference,
                         mergeRight);
-        Length.Rel mid = null;
+        Length mid = null;
         if (lowResult.getLaneChange() != highResult.getLaneChange())
         {
             // Use bisection to home in onto the decision point
@@ -331,7 +332,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
             final int stepsNeeded = (int) Math.ceil(Math.log(DoubleScalar.minus(high, low).getSI() / delta) / Math.log(2));
             for (int step = 0; step < stepsNeeded; step++)
             {
-                Length.Rel mutableMid = low.plus(high).divideBy(2);
+                Length mutableMid = low.plus(high).divideBy(2);
                 mid = mutableMid;
                 LaneMovementStep midResult =
                         computeLaneChange(referenceCar, sameLaneGTUs, speedLimit, laneChangeModel, mid, lanes[1],
@@ -363,7 +364,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
      * @param sameLaneGTUs Collection&lt;HeadwayGTU&gt;; the set of GTUs in the same lane as the <cite>referenceCar</cite>
      * @param speedLimit Speed; the speed limit
      * @param laneChangeModel LaneChangeModel; the lane change model
-     * @param otherCarPosition Length.Rel; the position of the other car
+     * @param otherCarPosition Length; the position of the other car
      * @param otherCarLane Lane; the lane of the other car
      * @param deltaV Speed; the speed difference
      * @param mergeRight boolean; if true; merging direction is to the right; if false; merging direction is to the left
@@ -377,7 +378,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
      */
     private LaneMovementStep computeLaneChange(final LaneBasedIndividualGTU referenceCar,
             final Collection<Headway> sameLaneGTUs, final Speed speedLimit, final LaneChangeModel laneChangeModel,
-            final Length.Rel otherCarPosition, final Lane otherCarLane, final Speed deltaV, final boolean mergeRight)
+            final Length otherCarPosition, final Lane otherCarLane, final Speed deltaV, final boolean mergeRight)
             throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException,
             ParameterException
     {
@@ -391,11 +392,11 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
                         this.carFollowingModel, laneChangeModel));
         LaneBasedIndividualGTU otherCar =
                 new LaneBasedIndividualGTU("otherCar", referenceCar.getGTUType(), initialLongitudinalPositions, referenceCar
-                        .getSpeed().plus(deltaV), new Length.Rel(4, METER), new Length.Rel(2, METER), new Speed(150,
+                        .getSpeed().plus(deltaV), new Length(4, METER), new Length(2, METER), new Speed(150,
                         KM_PER_HOUR), referenceCar.getSimulator(), strategicalPlanner, new LanePerceptionFull(), this.network);
         Collection<Headway> preferredLaneGTUs = new LinkedHashSet<>();
         Collection<Headway> nonPreferredLaneGTUs = new LinkedHashSet<>();
-        Length.Rel referenceCarPosition =
+        Length referenceCarPosition =
                 referenceCar.position(referenceCar.positions(referenceCar.getReference()).keySet().iterator().next(),
                         referenceCar.getReference());
         Headway otherHeadwayGTU =

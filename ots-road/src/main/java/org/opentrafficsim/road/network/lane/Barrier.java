@@ -32,8 +32,8 @@ public abstract class Barrier extends RoadMarkerAlong
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public Barrier(final CrossSectionLink parentLink, final Length.Rel beginCenterPosition,
-        final Length.Rel endCenterPosition, final Length.Rel beginWidth, final Length.Rel endWidth)
+    public Barrier(final CrossSectionLink parentLink, final Length beginCenterPosition,
+        final Length endCenterPosition, final Length beginWidth, final Length endWidth)
         throws OTSGeometryException, NetworkException
     {
         super(parentLink, beginCenterPosition, endCenterPosition, beginWidth, endWidth);

@@ -36,7 +36,7 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
      */
     @Override
     public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
-        final Speed speed, final SpeedInfo speedInfo, final SortedMap<Length.Rel, Speed> leaders) throws ParameterException
+        final Speed speed, final SpeedInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
         // Catch negative headway
         if (leaders.firstKey().si <= 0)
@@ -59,7 +59,7 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
      * @return Car-following acceleration.
      */
     protected abstract Acceleration followingAcceleration(BehavioralCharacteristics behavioralCharacteristics, Speed speed,
-        Speed desiredSpeed, Length.Rel desiredHeadway, SortedMap<Length.Rel, Speed> leaders) throws ParameterException;
+        Speed desiredSpeed, Length desiredHeadway, SortedMap<Length, Speed> leaders) throws ParameterException;
 
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")

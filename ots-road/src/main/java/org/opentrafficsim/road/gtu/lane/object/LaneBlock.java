@@ -45,7 +45,7 @@ public class LaneBlock extends AbstractTrafficLight
      * @throws OTSGeometryException x
      * @throws SimRuntimeException x
      */
-    public LaneBlock(final Lane lane, final Length.Rel position, final OTSDEVSSimulatorInterface simulator,
+    public LaneBlock(final Lane lane, final Length position, final OTSDEVSSimulatorInterface simulator,
         final Class<? extends Renderable2D> animationClass, final OTSNetwork network)
         throws GTUException, NetworkException, NamingException, SimRuntimeException, OTSGeometryException
     {

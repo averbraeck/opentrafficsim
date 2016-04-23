@@ -33,10 +33,10 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
     private final IdGenerator idGenerator;
 
     /** Generator for the length of the GTU. */
-    private final Generator<Length.Rel> lengthGenerator;
+    private final Generator<Length> lengthGenerator;
 
     /** Generator for the width of the GTU. */
-    private final Generator<Length.Rel> widthGenerator;
+    private final Generator<Length> widthGenerator;
 
     /** Generator for the maximum speed of the GTU. */
     private final Generator<Speed> maximumVelocityGenerator;
@@ -51,9 +51,9 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
      * @param typeId String, the id of the GTUType to make it identifiable.
      * @param idGenerator IdGenerator; the id generator used to generate names for GTUs constructed using this TemplateGTUType.
      *            Provide null to use the default id generator of AbstractGTU.
-     * @param lengthGenerator Generator&lt;Length.Rel&gt;; generator for the length of the GTU type (parallel with driving
+     * @param lengthGenerator Generator&lt;Length&gt;; generator for the length of the GTU type (parallel with driving
      *            direction).
-     * @param widthGenerator Generator&lt;Length.Rel&gt;; generator for the width of the GTU type (perpendicular to driving
+     * @param widthGenerator Generator&lt;Length&gt;; generator for the width of the GTU type (perpendicular to driving
      *            direction).
      * @param maximumVelocityGenerator Generator&lt;Speed&gt;; generator for the maximum velocity of the GTU type (in the
      *            driving direction).
@@ -61,8 +61,8 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
      * @param network OTSNetwork; the network that will own the GTUs
      * @throws GTUException when one or more arguments are invalid
      */
-    public TemplateGTUType(final String typeId, final IdGenerator idGenerator, final Generator<Length.Rel> lengthGenerator,
-            final Generator<Length.Rel> widthGenerator, final Generator<Speed> maximumVelocityGenerator,
+    public TemplateGTUType(final String typeId, final IdGenerator idGenerator, final Generator<Length> lengthGenerator,
+            final Generator<Length> widthGenerator, final Generator<Speed> maximumVelocityGenerator,
             final OTSDEVSSimulatorInterface simulator, final OTSNetwork network) throws GTUException
     {
         if (null == typeId)

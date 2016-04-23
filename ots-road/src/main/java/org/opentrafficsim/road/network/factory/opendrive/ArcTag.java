@@ -26,7 +26,7 @@ class ArcTag implements Serializable
     
     /** Degree of the curve at the start(s-coordinate?). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel curvature = null;
+    Length curvature = null;
 
     /**
      * Parse the attributes of the road.type tag. The sub-elements are parsed in separate classes.
@@ -49,7 +49,7 @@ class ArcTag implements Serializable
 
             Node curvature = attributes.getNamedItem("curvature");
             if (curvature != null)
-                arcTag.curvature = new Length.Rel(Double.parseDouble(curvature.getNodeValue().trim()), LengthUnit.SI);
+                arcTag.curvature = new Length(Double.parseDouble(curvature.getNodeValue().trim()), LengthUnit.SI);
 
             geometryTag.arcTag = arcTag;
         }

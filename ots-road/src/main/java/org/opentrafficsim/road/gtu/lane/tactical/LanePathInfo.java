@@ -48,7 +48,7 @@ public class LanePathInfo implements Serializable
      * The start point on the first lane in the laneDirectionList. When this is a point that represents a GTU position, it
      * should represent the reference point of the GTU.
      */
-    private final Length.Rel referencePosition;
+    private final Length referencePosition;
 
     /**
      * @param path the path it the GTU keeps driving in the same lane, and follows the route if possible in the same lane. The
@@ -62,7 +62,7 @@ public class LanePathInfo implements Serializable
      * @param referencePosition the start point on the first lane in the laneDirectionList. When this is a point that represents
      *            a GTU position, it should represent the reference point of the GTU.
      */
-    public LanePathInfo(final OTSLine3D path, final List<LaneDirection> laneDirectionList, final Length.Rel referencePosition)
+    public LanePathInfo(final OTSLine3D path, final List<LaneDirection> laneDirectionList, final Length referencePosition)
     {
         super();
         this.path = path;
@@ -115,7 +115,7 @@ public class LanePathInfo implements Serializable
      * @return the start point on the first lane in the laneDirectionList. When this is a point that represents a GTU position,
      *         it should represent the reference point of the GTU.
      */
-    public final Length.Rel getReferencePosition()
+    public final Length getReferencePosition()
     {
         return this.referencePosition;
     }

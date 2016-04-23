@@ -45,10 +45,10 @@ public interface GTU extends Locatable, Serializable
     String getId();
 
     /** @return the maximum length of the GTU (parallel with driving direction). */
-    Length.Rel getLength();
+    Length getLength();
 
     /** @return the maximum width of the GTU (perpendicular to driving direction). */
-    Length.Rel getWidth();
+    Length getWidth();
 
     /** @return the maximum velocity of the GTU, in the linear direction. */
     Speed getMaximumVelocity();
@@ -85,7 +85,7 @@ public interface GTU extends Locatable, Serializable
      * @return the speed of the GTU at the given time, along the direction of movement.
      * @throws GTUException when the time is outside the current operational plan's interval
      */
-    Speed getSpeed(final Time.Abs time) throws GTUException;
+    Speed getSpeed(final Time time) throws GTUException;
 
     /**
      * @return the current speed of the GTU, along the direction of movement.
@@ -97,15 +97,15 @@ public interface GTU extends Locatable, Serializable
      * @return the acceleration of the GTU at the given time, along the direction of movement.
      * @throws GTUException when the time is outside the current operational plan's interval
      */
-    Acceleration getAcceleration(final Time.Abs time) throws GTUException;
+    Acceleration getAcceleration(final Time time) throws GTUException;
 
     /**
      * @return the current acceleration of the GTU, along the direction of movement.
      */
     Acceleration getAcceleration();
 
-    /** @return Length.Rel; the current odometer value. */
-    Length.Rel getOdometer();
+    /** @return Length; the current odometer value. */
+    Length getOdometer();
 
     /** @return Behavioral characteristics. */
     BehavioralCharacteristics getBehavioralCharacteristics();

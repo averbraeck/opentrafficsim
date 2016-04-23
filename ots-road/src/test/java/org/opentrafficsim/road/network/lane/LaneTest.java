@@ -63,10 +63,10 @@ public class LaneTest implements UNITS
         CrossSectionLink link =
             new CrossSectionLink("A to B", nodeFrom, nodeTo, LinkType.ALL, new OTSLine3D(coordinates),
                 LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
-        Length.Rel startLateralPos = new Length.Rel(2, METER);
-        Length.Rel endLateralPos = new Length.Rel(5, METER);
-        Length.Rel startWidth = new Length.Rel(3, METER);
-        Length.Rel endWidth = new Length.Rel(4, METER);
+        Length startLateralPos = new Length(2, METER);
+        Length endLateralPos = new Length(5, METER);
+        Length startWidth = new Length(3, METER);
+        Length endWidth = new Length(4, METER);
         GTUType gtuTypeCar = GTUType.makeGTUType("Car");
         GTUType gtuTypeTruck = GTUType.makeGTUType("Truck");
         LaneType laneType = new LaneType("Car");
@@ -100,7 +100,7 @@ public class LaneTest implements UNITS
                 startLateralPos.getSI() + (endLateralPos.getSI() - startLateralPos.getSI()) * i / 10;
             assertEquals(String.format("Lateral offset at %d%% should be %.3fm", 10 * i, expectedLateralCenterOffset),
                 expectedLateralCenterOffset, lane.getLateralCenterPosition(i / 10.0).getSI(), 0.01);
-            Length.Rel longitudinalPosition = new Length.Rel(lane.getLength().getSI() * i / 10, METER);
+            Length longitudinalPosition = new Length(lane.getLength().getSI() * i / 10, METER);
             assertEquals("Lateral offset at " + longitudinalPosition + " should be " + expectedLateralCenterOffset,
                 expectedLateralCenterOffset, lane.getLateralCenterPosition(longitudinalPosition).getSI(), 0.01);
             double expectedWidth = startWidth.getSI() + (endWidth.getSI() - startWidth.getSI()) * i / 10;
@@ -149,8 +149,8 @@ public class LaneTest implements UNITS
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane.getLaneType());
         // System.out.println("Add another Lane at the inside of the corner in the design line");
-        Length.Rel startLateralPos2 = new Length.Rel(-8, METER);
-        Length.Rel endLateralPos2 = new Length.Rel(-5, METER);
+        Length startLateralPos2 = new Length(-8, METER);
+        Length endLateralPos2 = new Length(-5, METER);
         // FIXME what overtaking conditions do we ant to test in this unit test?
         Lane lane2 =
             new Lane(link, "lane.2", startLateralPos2, endLateralPos2, startWidth, endWidth, laneType,
@@ -214,9 +214,9 @@ public class LaneTest implements UNITS
                                 // Now we can construct a Lane
                                 // FIXME what overtaking conditions do we ant to test in this unit test?
                                 Lane lane =
-                                    new Lane(link, "lane." + ++laneNum, new Length.Rel(startLateralOffset, METER),
-                                        new Length.Rel(endLateralOffset, METER), new Length.Rel(startWidth, METER),
-                                        new Length.Rel(endWidth, METER), laneType, directionalityMap, speedMap,
+                                    new Lane(link, "lane." + ++laneNum, new Length(startLateralOffset, METER),
+                                        new Length(endLateralOffset, METER), new Length(startWidth, METER),
+                                        new Length(endWidth, METER), laneType, directionalityMap, speedMap,
                                         new OvertakingConditions.LeftAndRight());
                                 final Geometry geometry = lane.getContour().getLineString();
                                 assertNotNull("geometry of the lane should not be null", geometry);

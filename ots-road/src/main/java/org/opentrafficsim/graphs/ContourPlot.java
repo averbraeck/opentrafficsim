@@ -97,16 +97,16 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     protected static final int STANDARDINITIALDISTANCEGRANULARITYINDEX = 3;
 
     /** Initial lower bound for the time scale. */
-    protected static final Time.Abs INITIALLOWERTIMEBOUND = new Time.Abs(0, TimeUnit.SECOND);
+    protected static final Time INITIALLOWERTIMEBOUND = new Time(0, TimeUnit.SECOND);
 
     /** Initial upper bound for the time scale. */
-    protected static final Time.Abs INITIALUPPERTIMEBOUND = new Time.Abs(300, TimeUnit.SECOND);
+    protected static final Time INITIALUPPERTIMEBOUND = new Time(300, TimeUnit.SECOND);
 
     /** The series of Lanes that provide the data for this TrajectoryPlot. */
     private final ArrayList<Lane> path;
 
     /** The cumulative lengths of the elements of path. */
-    private final LengthVector.Rel cumulativeLengths;
+    private final LengthVector cumulativeLengths;
 
     /**
      * Create a new ContourPlot.
@@ -129,7 +129,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         this.path = new ArrayList<Lane>(path); // make a copy
         double[] endLengths = new double[path.size()];
         double cumulativeLength = 0;
-        LengthVector.Rel lengths = null;
+        LengthVector lengths = null;
         for (int i = 0; i < path.size(); i++)
         {
             Lane lane = path.get(i);
@@ -139,7 +139,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         }
         try
         {
-            lengths = new LengthVector.Rel(endLengths, LengthUnit.SI, StorageType.DENSE);
+            lengths = new LengthVector(endLengths, LengthUnit.SI, StorageType.DENSE);
         }
         catch (ValueException exception)
         {
@@ -148,7 +148,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         this.cumulativeLengths = lengths;
         this.xAxis = xAxis;
         this.yAxis =
-                new Axis(new Length.Rel(0, LengthUnit.METER), getCumulativeLength(-1), STANDARDDISTANCEGRANULARITIES,
+                new Axis(new Length(0, LengthUnit.METER), getCumulativeLength(-1), STANDARDDISTANCEGRANULARITIES,
                         STANDARDDISTANCEGRANULARITIES[STANDARDINITIALDISTANCEGRANULARITYINDEX], "", "Distance", "%.0fm");
         this.legendStep = legendStep;
         this.legendFormat = legendFormat;
@@ -163,14 +163,14 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     /**
      * Retrieve the cumulative length of the sampled path at the end of a path element.
      * @param index int; the index of the path element; if -1, the total length of the path is returned
-     * @return Length.Rel; the cumulative length at the end of the specified path element
+     * @return Length; the cumulative length at the end of the specified path element
      */
-    public final Length.Rel getCumulativeLength(final int index)
+    public final Length getCumulativeLength(final int index)
     {
         int useIndex = -1 == index ? this.cumulativeLengths.size() - 1 : index;
         try
         {
-            return new Length.Rel(this.cumulativeLengths.get(useIndex));
+            return new Length(this.cumulativeLengths.get(useIndex));
         }
         catch (ValueException exception)
         {
@@ -590,12 +590,12 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         {
             throw new RuntimeException("Cannot happen: Lane is not in the path");
         }
-        final Time.Abs fromTime = car.getOperationalPlan().getStartTime();
+        final Time fromTime = car.getOperationalPlan().getStartTime();
         if (car.position(lane, car.getRear(), fromTime).getSI() < 0 && lengthOffset > 0)
         {
             return;
         }
-        final Time.Abs toTime = car.getOperationalPlan().getEndTime();
+        final Time toTime = car.getOperationalPlan().getEndTime();
         if (toTime.getSI() > this.getXAxis().getMaximumValue().getSI())
         {
             extendXRange(toTime);
@@ -638,12 +638,12 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
             }
             double binDistanceStart =
                     (car.position(lane, car.getRear(),
-                            new Time.Abs(relativeFromTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND)).getSI()
+                            new Time(relativeFromTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND)).getSI()
                             - this.getYAxis().getMinimumValue().getSI() + lengthOffset)
                             / this.getYAxis().getGranularities()[0];
             double binDistanceEnd =
                     (car.position(lane, car.getRear(),
-                            new Time.Abs(binEndTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND)).getSI()
+                            new Time(binEndTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND)).getSI()
                             - this.getYAxis().getMinimumValue().getSI() + lengthOffset)
                             / this.getYAxis().getGranularities()[0];
 

@@ -37,7 +37,7 @@ public interface LaneObjectInterface extends ObjectInterface
      * section element.
      * @return the longitudinal position on the center line of the cross section element
      */
-    Length.Rel getPosition();
+    Length getPosition();
 
     /**
      * Provide the lateral position relative to the center line of the cross section element to which this lane object is
@@ -45,6 +45,6 @@ public interface LaneObjectInterface extends ObjectInterface
      * to the right.
      * @return the lateral position relative to the center line of the cross section element
      */
-    Length.Rel getlateralPosition();
+    Length getlateralPosition();
 
 }

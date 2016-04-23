@@ -32,7 +32,7 @@ public interface PerceivedObject extends Serializable
      * location can be calculated.
      * @return the perceived distance to the object
      */
-    Length.Rel getPerceivedDistance();
+    Length getPerceivedDistance();
 
     /**
      * Get the perceived 3D-angle from our reference point and own direction to the object. When we combine relative distance

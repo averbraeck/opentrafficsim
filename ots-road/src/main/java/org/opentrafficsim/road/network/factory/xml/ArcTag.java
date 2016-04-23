@@ -2,7 +2,7 @@ package org.opentrafficsim.road.network.factory.xml;
 
 import java.io.Serializable;
 
-import org.djunits.value.vdouble.scalar.Angle;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
@@ -28,11 +28,11 @@ class ArcTag implements Serializable
 
     /** Angle. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Angle.Abs angle = null;
+    Direction angle = null;
 
     /** Radius. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel radius = null;
+    Length radius = null;
 
     /** Direction. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

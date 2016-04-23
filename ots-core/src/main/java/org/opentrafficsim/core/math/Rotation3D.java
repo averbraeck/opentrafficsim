@@ -7,7 +7,9 @@ import org.djunits.unit.AngleUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Angle;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.vector.AngleVector;
+import org.djunits.value.vdouble.vector.DirectionVector;
 
 /**
  * 3D-rotation, RPY coded (longitudinal roll along the x-axis, lateral pitch along the y-axis and vertical yaw along the
@@ -41,13 +43,13 @@ public interface Rotation3D
         private static final long serialVersionUID = 20160000L;
         
         /** The angles of the rotation in 3D (RPY coded). */
-        private final AngleVector.Abs rotation;
+        private final DirectionVector rotation;
 
         /**
          * @param rotation the angles in 3D (RPY coded)
          * @throws ValueException in case the vector does not have exactly three elements
          */
-        public Abs(final AngleVector.Abs rotation) throws ValueException
+        public Abs(final DirectionVector rotation) throws ValueException
         {
             super();
             if (rotation.size() != 3)
@@ -63,10 +65,10 @@ public interface Rotation3D
          * @param yaw (psi) the rotation around the z-axis
          * @throws ValueException in case the units are incorrect
          */
-        public Abs(final Angle.Abs roll, final Angle.Abs pitch, final Angle.Abs yaw) throws ValueException
+        public Abs(final Direction roll, final Direction pitch, final Direction yaw) throws ValueException
         {
             super();
-            this.rotation = new AngleVector.Abs(new Angle.Abs[]{roll, pitch, yaw}, StorageType.DENSE);
+            this.rotation = new DirectionVector(new Direction[]{roll, pitch, yaw}, StorageType.DENSE);
         }
 
         /**
@@ -79,13 +81,13 @@ public interface Rotation3D
         public Abs(final double roll, final double pitch, final double yaw, final AngleUnit unit) throws ValueException
         {
             super();
-            this.rotation = new AngleVector.Abs(new double[]{roll, pitch, yaw}, unit, StorageType.DENSE);
+            this.rotation = new DirectionVector(new double[]{roll, pitch, yaw}, unit, StorageType.DENSE);
         }
 
         /**
          * @return the roll.
          */
-        public final Angle.Abs getRoll()
+        public final Direction getRoll()
         {
             try
             {
@@ -102,7 +104,7 @@ public interface Rotation3D
         /**
          * @return the pitch.
          */
-        public final Angle.Abs getPitch()
+        public final Direction getPitch()
         {
             try
             {
@@ -119,7 +121,7 @@ public interface Rotation3D
         /**
          * @return the yaw.
          */
-        public final Angle.Abs getYaw()
+        public final Direction getYaw()
         {
             try
             {
@@ -160,13 +162,13 @@ public interface Rotation3D
         private static final long serialVersionUID = 20160000L;
         
         /** The rotations of the rotation in 3D (RPY coded). */
-        private final AngleVector.Rel rotation;
+        private final AngleVector rotation;
 
         /**
          * @param rotation the angles of the rotation in 3D (RPY coded)
          * @throws ValueException in case the vector does not have exactly three elements
          */
-        public Rel(final AngleVector.Rel rotation) throws ValueException
+        public Rel(final AngleVector rotation) throws ValueException
         {
             super();
             if (rotation.size() != 3)
@@ -182,10 +184,10 @@ public interface Rotation3D
          * @param yaw (psi) the rotation around the z-axis
          * @throws ValueException in case the units are incorrect
          */
-        public Rel(final Angle.Rel roll, final Angle.Rel pitch, final Angle.Rel yaw) throws ValueException
+        public Rel(final Angle roll, final Angle pitch, final Angle yaw) throws ValueException
         {
             super();
-            this.rotation = new AngleVector.Rel(new Angle.Rel[]{roll, pitch, yaw}, StorageType.DENSE);
+            this.rotation = new AngleVector(new Angle[]{roll, pitch, yaw}, StorageType.DENSE);
         }
 
         /**
@@ -198,13 +200,13 @@ public interface Rotation3D
         public Rel(final double roll, final double pitch, final double yaw, final AngleUnit unit) throws ValueException
         {
             super();
-            this.rotation = new AngleVector.Rel(new double[]{roll, pitch, yaw}, unit, StorageType.DENSE);
+            this.rotation = new AngleVector(new double[]{roll, pitch, yaw}, unit, StorageType.DENSE);
         }
 
         /**
          * @return the roll.
          */
-        public final Angle.Rel getRoll()
+        public final Angle getRoll()
         {
             try
             {
@@ -221,7 +223,7 @@ public interface Rotation3D
         /**
          * @return the pitch.
          */
-        public final Angle.Rel getPitch()
+        public final Angle getPitch()
         {
             try
             {
@@ -238,7 +240,7 @@ public interface Rotation3D
         /**
          * @return the yaw.
          */
-        public final Angle.Rel getYaw()
+        public final Angle getYaw()
         {
             try
             {

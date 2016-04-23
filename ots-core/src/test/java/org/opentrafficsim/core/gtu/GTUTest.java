@@ -19,7 +19,8 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
-import org.djunits.value.vdouble.scalar.Length.Rel;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
@@ -96,13 +97,13 @@ public class GTUTest implements OTSModelInterface
             @Override
             public TimeStampedObject<Collection<PerceivedObject>> getTimeStampedPerceivedObjects()
             {
-                return new TimeStampedObject<Collection<PerceivedObject>>(new HashSet<PerceivedObject>(), Time.Abs.ZERO);
+                return new TimeStampedObject<Collection<PerceivedObject>>(new HashSet<PerceivedObject>(), Time.ZERO);
             }
         };
         OTSNetwork perceivableContext = new OTSNetwork("network");
         OTSDEVSSimulatorInterface simulator =
-                new SimpleSimulator(new Time.Abs(0, TimeUnit.SI), new Time.Rel(0, TimeUnit.SI),
-                        new Time.Rel(9999, TimeUnit.SI), this);
+                new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI),
+                        new Duration(9999, TimeUnit.SI), this);
         StrategicalPlanner strategicalPlanner = new StrategicalPlanner()
         {
 
@@ -221,14 +222,14 @@ class TestGTU extends AbstractGTU
 
     /** {@inheritDoc} */
     @Override
-    public Rel getLength()
+    public Length getLength()
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Rel getWidth()
+    public Length getWidth()
     {
         return null;
     }

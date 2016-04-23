@@ -19,6 +19,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -78,10 +79,10 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
     private static final int[] TARGETLANES = {1, 2, -2, -1};
 
     /** Time horizon for lane changes. */
-    private Time.Rel timeHorizon = new Time.Rel(100, SECOND);
+    private Duration timeHorizon = new Duration(100, SECOND);
 
     /** Time range for graphs (also adjusts distance range). */
-    private Time.Rel timeRange = new Time.Rel(110, SECOND);
+    private Duration timeRange = new Duration(110, SECOND);
 
     /** Colors that correspond to the lanes; taken from electrical resistor color codes. */
     private static final Color[] COLORTABLE = {new Color(160, 82, 45) /* brown */, Color.RED, Color.ORANGE,
@@ -128,7 +129,7 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
         OTSGeometryException, GTUException
     {
         SimpleSimulator simulator =
-            new SimpleSimulator(new Time.Abs(0, TimeUnit.SI), new Time.Rel(0, TimeUnit.SI), new Time.Rel(99999,
+            new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI), new Duration(99999,
                 TimeUnit.SI), this);
         final int rows = SPEEDLIMITS.length;
         final int columns = TARGETLANES.length;
@@ -171,8 +172,8 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
                     Lane lane = lanes[laneIndex];
                     for (int position = 0; position <= mainLength; position += 10)
                     {
-                        Length.Rel longitudinalPosition = new Length.Rel(position, METER);
-                        // TODO Length.Rel suitability =
+                        Length longitudinalPosition = new Length(position, METER);
+                        // TODO Length suitability =
                         // navigator.suitability(lane, longitudinalPosition, null, this.timeHorizon);
                         // if (suitability.getSI() <= mainLength)
                         // {

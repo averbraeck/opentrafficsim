@@ -115,11 +115,11 @@ public final class LaneFactory
      * @param link Link; the link that owns the new Lane
      * @param id String; the id of this lane, should be unique within the link
      * @param laneType LaneType&lt;String&gt;; the type of the new Lane
-     * @param latPosAtStart Length.Rel; the lateral position of the new Lane with respect to the design line of the link at the
+     * @param latPosAtStart Length; the lateral position of the new Lane with respect to the design line of the link at the
      *            start of the link
-     * @param latPosAtEnd Length.Rel; the lateral position of the new Lane with respect to the design line of the link at the
+     * @param latPosAtEnd Length; the lateral position of the new Lane with respect to the design line of the link at the
      *            end of the link
-     * @param width Length.Rel; the width of the new Lane
+     * @param width Length; the width of the new Lane
      * @param speedLimit Speed; the speed limit on the new Lane
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @param direction the direction of the underlying link, DIR_PLUS or DIR_MINUS (or DIR_BOTH)
@@ -130,7 +130,7 @@ public final class LaneFactory
      */
     @SuppressWarnings("checkstyle:parameternumber")
     private static Lane makeLane(final CrossSectionLink link, final String id, final LaneType laneType,
-        final Length.Rel latPosAtStart, final Length.Rel latPosAtEnd, final Length.Rel width, final Speed speedLimit,
+        final Length latPosAtStart, final Length latPosAtEnd, final Length width, final Speed speedLimit,
         final OTSDEVSSimulatorInterface simulator, final LongitudinalDirectionality direction) throws NamingException,
         NetworkException, OTSGeometryException
     {
@@ -176,9 +176,9 @@ public final class LaneFactory
         final OTSDEVSSimulatorInterface simulator, final LongitudinalDirectionality direction) throws NamingException,
         NetworkException, OTSGeometryException
     {
-        Length.Rel width = new Length.Rel(4.0, LengthUnit.METER);
+        Length width = new Length(4.0, LengthUnit.METER);
         final CrossSectionLink link = makeLink(name, from, to, intermediatePoints, direction);
-        Length.Rel latPos = new Length.Rel(0.0, LengthUnit.METER);
+        Length latPos = new Length(0.0, LengthUnit.METER);
         return makeLane(link, "lane", laneType, latPos, latPos, width, speedLimit, simulator, direction);
     }
 
@@ -212,14 +212,14 @@ public final class LaneFactory
     {
         final CrossSectionLink link = makeLink(name, from, to, intermediatePoints, direction);
         Lane[] result = new Lane[laneCount];
-        Length.Rel width = new Length.Rel(4.0, LengthUnit.METER);
+        Length width = new Length(4.0, LengthUnit.METER);
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
         {
             // Be ware! LEFT is lateral positive, RIGHT is lateral negative.
-            Length.Rel latPosAtStart =
-                new Length.Rel((-0.5 - laneIndex - laneOffsetAtStart) * width.getSI(), LengthUnit.SI);
-            Length.Rel latPosAtEnd =
-                new Length.Rel((-0.5 - laneIndex - laneOffsetAtEnd) * width.getSI(), LengthUnit.SI);
+            Length latPosAtStart =
+                new Length((-0.5 - laneIndex - laneOffsetAtStart) * width.getSI(), LengthUnit.SI);
+            Length latPosAtEnd =
+                new Length((-0.5 - laneIndex - laneOffsetAtEnd) * width.getSI(), LengthUnit.SI);
             result[laneIndex] =
                 makeLane(link, "lane." + laneIndex, laneType, latPosAtStart, latPosAtEnd, width, speedLimit, simulator,
                     direction);
@@ -286,14 +286,14 @@ public final class LaneFactory
         OTSLine3D bezier = makeBezier(n1, n2, n3, n4);
         final CrossSectionLink link = makeLink(name, n2, n3, bezier.getPoints(), direction);
         Lane[] result = new Lane[laneCount];
-        Length.Rel width = new Length.Rel(4.0, LengthUnit.METER);
+        Length width = new Length(4.0, LengthUnit.METER);
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
         {
             // Be ware! LEFT is lateral positive, RIGHT is lateral negative.
-            Length.Rel latPosAtStart =
-                new Length.Rel((-0.5 - laneIndex - laneOffsetAtStart) * width.getSI(), LengthUnit.SI);
-            Length.Rel latPosAtEnd =
-                new Length.Rel((-0.5 - laneIndex - laneOffsetAtEnd) * width.getSI(), LengthUnit.SI);
+            Length latPosAtStart =
+                new Length((-0.5 - laneIndex - laneOffsetAtStart) * width.getSI(), LengthUnit.SI);
+            Length latPosAtEnd =
+                new Length((-0.5 - laneIndex - laneOffsetAtEnd) * width.getSI(), LengthUnit.SI);
             result[laneIndex] =
                 makeLane(link, "lane." + laneIndex, laneType, latPosAtStart, latPosAtEnd, width, speedLimit, simulator,
                     direction);

@@ -47,7 +47,7 @@ public abstract class CrossSectionElement implements Locatable, Serializable
 
     /** The length of the line. Calculated once at the creation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final Length.Rel length;
+    protected final Length length;
 
     /** The center line of the element. Calculated once at the creation. */
     private final OTSLine3D centerLine;
@@ -61,7 +61,7 @@ public abstract class CrossSectionElement implements Locatable, Serializable
      * @param id String; The id of the CrosssSectionElement. Should be unique within the parentLink.
      * @param parentLink CrossSectionLink; Link to which the element belongs.
      * @param crossSectionSlices The offsets and widths at positions along the line, relative to the design line of the parent
-     *            link. If there is just one with and offset, there should just be one element in the list with Length.Rel = 0.
+     *            link. If there is just one with and offset, there should just be one element in the list with Length = 0.
      *            If there are more slices, the last one should be at the length of the design line. If not, a NetworkException
      *            is thrown.
      * @throws OTSGeometryException when creation of the geometry fails
@@ -154,21 +154,21 @@ public abstract class CrossSectionElement implements Locatable, Serializable
      * the StartNode towards the EndNode as the longitudinal direction.
      * @param id String; The id of the CrosssSectionElement. Should be unique within the parentLink.
      * @param parentLink CrossSectionLink; Link to which the element belongs.
-     * @param lateralOffsetAtBegin Length.Rel; the lateral offset of the design line of the new CrossSectionLink with respect to
+     * @param lateralOffsetAtBegin Length; the lateral offset of the design line of the new CrossSectionLink with respect to
      *            the design line of the parent Link at the start of the parent Link
-     * @param lateralOffsetAtEnd Length.Rel; the lateral offset of the design line of the new CrossSectionLink with respect to
+     * @param lateralOffsetAtEnd Length; the lateral offset of the design line of the new CrossSectionLink with respect to
      *            the design line of the parent Link at the end of the parent Link
-     * @param beginWidth Length.Rel; width at start, positioned <i>symmetrically around</i> the design line
-     * @param endWidth Length.Rel; width at end, positioned <i>symmetrically around</i> the design line
+     * @param beginWidth Length; width at start, positioned <i>symmetrically around</i> the design line
+     * @param endWidth Length; width at end, positioned <i>symmetrically around</i> the design line
      * @throws OTSGeometryException when creation of the geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     public CrossSectionElement(final CrossSectionLink parentLink, final String id,
-        final Length.Rel lateralOffsetAtBegin, final Length.Rel lateralOffsetAtEnd, final Length.Rel beginWidth,
-        final Length.Rel endWidth) throws OTSGeometryException, NetworkException
+        final Length lateralOffsetAtBegin, final Length lateralOffsetAtEnd, final Length beginWidth,
+        final Length endWidth) throws OTSGeometryException, NetworkException
     {
         this(parentLink, id, Arrays.asList(new CrossSectionSlice[]{
-            new CrossSectionSlice(Length.Rel.ZERO, lateralOffsetAtBegin, beginWidth),
+            new CrossSectionSlice(Length.ZERO, lateralOffsetAtBegin, beginWidth),
             new CrossSectionSlice(parentLink.getLength(), lateralOffsetAtEnd, endWidth)}));
     }
 
@@ -177,16 +177,16 @@ public abstract class CrossSectionElement implements Locatable, Serializable
      * the StartNode towards the EndNode as the longitudinal direction.
      * @param id String; The id of the CrosssSectionElement. Should be unique within the parentLink.
      * @param parentLink CrossSectionLink; Link to which the element belongs.
-     * @param lateralOffset Length.Rel; the lateral offset of the design line of the new CrossSectionLink with respect to the
+     * @param lateralOffset Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
      *            design line of the parent Link
-     * @param width Length.Rel; width, positioned <i>symmetrically around</i> the design line
+     * @param width Length; width, positioned <i>symmetrically around</i> the design line
      * @throws OTSGeometryException when creation of the geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public CrossSectionElement(final CrossSectionLink parentLink, final String id, final Length.Rel lateralOffset,
-        final Length.Rel width) throws OTSGeometryException, NetworkException
+    public CrossSectionElement(final CrossSectionLink parentLink, final String id, final Length lateralOffset,
+        final Length width) throws OTSGeometryException, NetworkException
     {
-        this(parentLink, id, Arrays.asList(new CrossSectionSlice[]{new CrossSectionSlice(Length.Rel.ZERO,
+        this(parentLink, id, Arrays.asList(new CrossSectionSlice[]{new CrossSectionSlice(Length.ZERO,
             lateralOffset, width)}));
     }
 
@@ -220,9 +220,9 @@ public abstract class CrossSectionElement implements Locatable, Serializable
     /**
      * Retrieve the lateral offset from the Link design line at the specified longitudinal position.
      * @param fractionalPosition double; fractional longitudinal position on this Lane
-     * @return Length.Rel the lateralCenterPosition at the specified longitudinal position
+     * @return Length the lateralCenterPosition at the specified longitudinal position
      */
-    public final Length.Rel getLateralCenterPosition(final double fractionalPosition)
+    public final Length getLateralCenterPosition(final double fractionalPosition)
     {
         if (this.crossSectionSlices.size() == 1)
         {
@@ -230,21 +230,21 @@ public abstract class CrossSectionElement implements Locatable, Serializable
         }
         if (this.crossSectionSlices.size() == 2)
         {
-            return Length.Rel.interpolate(this.getDesignLineOffsetAtBegin(), this.getDesignLineOffsetAtEnd(),
+            return Length.interpolate(this.getDesignLineOffsetAtBegin(), this.getDesignLineOffsetAtEnd(),
                 fractionalPosition);
         }
         int sliceNr = calculateSliceNumber(fractionalPosition);
-        return Length.Rel.interpolate(this.crossSectionSlices.get(sliceNr).getDesignLineOffset(),
+        return Length.interpolate(this.crossSectionSlices.get(sliceNr).getDesignLineOffset(),
             this.crossSectionSlices.get(sliceNr + 1).getDesignLineOffset(), fractionalPosition
                 - this.crossSectionSlices.get(sliceNr).getRelativeLength().si / this.parentLink.getLength().si);
     }
 
     /**
      * Retrieve the lateral offset from the Link design line at the specified longitudinal position.
-     * @param longitudinalPosition Length.Rel; the longitudinal position on this Lane
-     * @return Length.Rel the lateralCenterPosition at the specified longitudinal position
+     * @param longitudinalPosition Length; the longitudinal position on this Lane
+     * @return Length the lateralCenterPosition at the specified longitudinal position
      */
-    public final Length.Rel getLateralCenterPosition(final Length.Rel longitudinalPosition)
+    public final Length getLateralCenterPosition(final Length longitudinalPosition)
     {
         return getLateralCenterPosition(longitudinalPosition.getSI() / getLength().getSI());
     }
@@ -252,9 +252,9 @@ public abstract class CrossSectionElement implements Locatable, Serializable
     /**
      * Return the width of this CrossSectionElement at a specified longitudinal position.
      * @param longitudinalPosition DoubleScalar&lt;LengthUnit&gt;; the longitudinal position
-     * @return Length.Rel; the width of this CrossSectionElement at the specified longitudinal position.
+     * @return Length; the width of this CrossSectionElement at the specified longitudinal position.
      */
-    public final Length.Rel getWidth(final Length.Rel longitudinalPosition)
+    public final Length getWidth(final Length longitudinalPosition)
     {
         return getWidth(longitudinalPosition.getSI() / getLength().getSI());
     }
@@ -262,9 +262,9 @@ public abstract class CrossSectionElement implements Locatable, Serializable
     /**
      * Return the width of this CrossSectionElement at a specified fractional longitudinal position.
      * @param fractionalPosition double; the fractional longitudinal position
-     * @return Length.Rel; the width of this CrossSectionElement at the specified fractional longitudinal position.
+     * @return Length; the width of this CrossSectionElement at the specified fractional longitudinal position.
      */
-    public final Length.Rel getWidth(final double fractionalPosition)
+    public final Length getWidth(final double fractionalPosition)
     {
         if (this.crossSectionSlices.size() == 1)
         {
@@ -272,10 +272,10 @@ public abstract class CrossSectionElement implements Locatable, Serializable
         }
         if (this.crossSectionSlices.size() == 2)
         {
-            return Length.Rel.interpolate(this.getBeginWidth(), this.getEndWidth(), fractionalPosition);
+            return Length.interpolate(this.getBeginWidth(), this.getEndWidth(), fractionalPosition);
         }
         int sliceNr = calculateSliceNumber(fractionalPosition);
-        return Length.Rel.interpolate(
+        return Length.interpolate(
             this.crossSectionSlices.get(sliceNr).getWidth(),
             this.crossSectionSlices.get(sliceNr + 1).getWidth(),
             fractionalPosition - this.crossSectionSlices.get(sliceNr).getRelativeLength().si
@@ -284,9 +284,9 @@ public abstract class CrossSectionElement implements Locatable, Serializable
 
     /**
      * Return the length of this CrossSectionElement as measured along the design line (which equals the center line).
-     * @return Length.Rel; the length of this CrossSectionElement
+     * @return Length; the length of this CrossSectionElement
      */
-    public final Length.Rel getLength()
+    public final Length getLength()
     {
         return this.length;
     }
@@ -294,7 +294,7 @@ public abstract class CrossSectionElement implements Locatable, Serializable
     /**
      * @return designLineOffsetAtBegin.
      */
-    public final Length.Rel getDesignLineOffsetAtBegin()
+    public final Length getDesignLineOffsetAtBegin()
     {
         return this.crossSectionSlices.get(0).getDesignLineOffset();
     }
@@ -302,7 +302,7 @@ public abstract class CrossSectionElement implements Locatable, Serializable
     /**
      * @return designLineOffsetAtEnd.
      */
-    public final Length.Rel getDesignLineOffsetAtEnd()
+    public final Length getDesignLineOffsetAtEnd()
     {
         return this.crossSectionSlices.get(this.crossSectionSlices.size() - 1).getDesignLineOffset();
     }
@@ -310,7 +310,7 @@ public abstract class CrossSectionElement implements Locatable, Serializable
     /**
      * @return beginWidth.
      */
-    public final Length.Rel getBeginWidth()
+    public final Length getBeginWidth()
     {
         return this.crossSectionSlices.get(0).getWidth();
     }
@@ -318,7 +318,7 @@ public abstract class CrossSectionElement implements Locatable, Serializable
     /**
      * @return endWidth.
      */
-    public final Length.Rel getEndWidth()
+    public final Length getEndWidth()
     {
         return this.crossSectionSlices.get(this.crossSectionSlices.size() - 1).getWidth();
     }
@@ -357,20 +357,20 @@ public abstract class CrossSectionElement implements Locatable, Serializable
      * CrossSectionElement at the specified fractional longitudinal position.
      * @param lateralDirection LateralDirectionality; LEFT, or RIGHT
      * @param fractionalLongitudinalPosition double; ranges from 0.0 (begin of parentLink) to 1.0 (end of parentLink)
-     * @return Length.Rel
+     * @return Length
      */
-    public final Length.Rel getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
+    public final Length getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
         final double fractionalLongitudinalPosition)
     {
-        Length.Rel designLineOffset;
-        Length.Rel halfWidth;
+        Length designLineOffset;
+        Length halfWidth;
         if (this.crossSectionSlices.size() <= 2)
         {
             designLineOffset =
-                Length.Rel.interpolate(getDesignLineOffsetAtBegin(), getDesignLineOffsetAtEnd(),
+                Length.interpolate(getDesignLineOffsetAtBegin(), getDesignLineOffsetAtEnd(),
                     fractionalLongitudinalPosition);
             halfWidth =
-                Length.Rel.interpolate(getBeginWidth(), getEndWidth(), fractionalLongitudinalPosition).multiplyBy(0.5);
+                Length.interpolate(getBeginWidth(), getEndWidth(), fractionalLongitudinalPosition).multiplyBy(0.5);
         }
         else
         {
@@ -378,11 +378,11 @@ public abstract class CrossSectionElement implements Locatable, Serializable
             double startFractionalPosition =
                 this.crossSectionSlices.get(sliceNr).getRelativeLength().si / this.parentLink.getLength().si;
             designLineOffset =
-                Length.Rel.interpolate(this.crossSectionSlices.get(sliceNr).getDesignLineOffset(),
+                Length.interpolate(this.crossSectionSlices.get(sliceNr).getDesignLineOffset(),
                     this.crossSectionSlices.get(sliceNr + 1).getDesignLineOffset(), fractionalLongitudinalPosition
                         - startFractionalPosition);
             halfWidth =
-                Length.Rel.interpolate(this.crossSectionSlices.get(sliceNr).getWidth(),
+                Length.interpolate(this.crossSectionSlices.get(sliceNr).getWidth(),
                     this.crossSectionSlices.get(sliceNr + 1).getWidth(),
                     fractionalLongitudinalPosition - startFractionalPosition).multiplyBy(0.5);
         }
@@ -402,11 +402,11 @@ public abstract class CrossSectionElement implements Locatable, Serializable
      * Return the lateral offset from the design line of the parent Link of the Left or Right boundary of this
      * CrossSectionElement at the specified longitudinal position.
      * @param lateralDirection LateralDirectionality; LEFT, or RIGHT
-     * @param longitudinalPosition Length.Rel; the position along the length of this CrossSectionElement
-     * @return Length.Rel
+     * @param longitudinalPosition Length; the position along the length of this CrossSectionElement
+     * @return Length
      */
-    public final Length.Rel getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
-        final Length.Rel longitudinalPosition)
+    public final Length getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
+        final Length longitudinalPosition)
     {
         return getLateralBoundaryPosition(lateralDirection, longitudinalPosition.getSI() / getLength().getSI());
     }

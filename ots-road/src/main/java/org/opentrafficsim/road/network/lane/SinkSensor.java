@@ -31,7 +31,7 @@ public class SinkSensor extends AbstractSensor
      * @param position the position of the sensor
      * @param simulator the simulator to enable animation.
      */
-    public SinkSensor(final Lane lane, final Length.Rel position, final OTSDEVSSimulatorInterface simulator)
+    public SinkSensor(final Lane lane, final Length position, final OTSDEVSSimulatorInterface simulator)
     {
         super(lane, position, RelativePosition.FRONT, "SINK@" + lane.toString(), simulator);
         try
