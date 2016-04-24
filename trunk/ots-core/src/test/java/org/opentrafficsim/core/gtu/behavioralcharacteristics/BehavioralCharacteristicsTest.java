@@ -493,7 +493,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         checkDefaultValuesPerClass(ParameterTypeAcceleration.class,  new Acceleration(3, AccelerationUnit.SI));
         checkDefaultValuesPerClass(ParameterTypeLength.class,        new Length(3, LengthUnit.SI));
         checkDefaultValuesPerClass(ParameterTypeFrequency.class,     new Frequency(3, FrequencyUnit.SI));
-        checkDefaultValuesPerClass(ParameterTypeTime.class,          new Duration(3, TimeUnit.SI));
+        checkDefaultValuesPerClass(ParameterTypeDuration.class,          new Duration(3, TimeUnit.SI));
         checkDefaultValuesPerClass(ParameterTypeLinearDensity.class, new LinearDensity(3, LinearDensityUnit.SI));
         checkDefaultValuesPerClass(ParameterTypeBoolean.class,       new Boolean(false));
         checkDefaultValuesPerClass(ParameterTypeDouble.class,        new Double(3));
