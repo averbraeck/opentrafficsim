@@ -16,7 +16,7 @@ import org.djunits.value.vdouble.scalar.Duration;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeTime extends ParameterType<TimeUnit, Duration> implements Serializable
+public class ParameterTypeDuration extends ParameterType<TimeUnit, Duration> implements Serializable
 {
 
     /** */
@@ -27,7 +27,7 @@ public class ParameterTypeTime extends ParameterType<TimeUnit, Duration> impleme
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      */
-    public ParameterTypeTime(final String id, final String description)
+    public ParameterTypeDuration(final String id, final String description)
     {
         super(id, description, Duration.class);
     }
@@ -38,7 +38,7 @@ public class ParameterTypeTime extends ParameterType<TimeUnit, Duration> impleme
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
      */
-    public ParameterTypeTime(final String id, final String description, final Duration defaultValue)
+    public ParameterTypeDuration(final String id, final String description, final Duration defaultValue)
     {
         super(id, description, Duration.class, defaultValue);
     }
@@ -49,7 +49,7 @@ public class ParameterTypeTime extends ParameterType<TimeUnit, Duration> impleme
      * @param description Parameter description or full name.
      * @param check Check for parameter values.
      */
-    public ParameterTypeTime(final String id, final String description, final Check check)
+    public ParameterTypeDuration(final String id, final String description, final Check check)
     {
         super(id, description, Duration.class, check);
     }
@@ -61,7 +61,7 @@ public class ParameterTypeTime extends ParameterType<TimeUnit, Duration> impleme
      * @param defaultValue Default value.
      * @param check Check for parameter values.
      */
-    public ParameterTypeTime(final String id, final String description, final Duration defaultValue, final Check check)
+    public ParameterTypeDuration(final String id, final String description, final Duration defaultValue, final Check check)
     {
         super(id, description, Duration.class, defaultValue, check);
     }

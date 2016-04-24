@@ -55,11 +55,11 @@ public class ParameterTypes
             POSITIVE);
 
     /** Current car-following headway. */
-    public static final ParameterTypeTime T = new ParameterTypeTime("T", "Current car-following headway.", new Duration(1.2,
+    public static final ParameterTypeDuration T = new ParameterTypeDuration("T", "Current car-following headway.", new Duration(1.2,
             TimeUnit.SI), POSITIVE);
 
     /** Minimum car-following headway. */
-    public static final ParameterTypeTime TMIN = new ParameterTypeTime("Tmin", "Minimum car-following headway.", new Duration(
+    public static final ParameterTypeDuration TMIN = new ParameterTypeDuration("Tmin", "Minimum car-following headway.", new Duration(
             0.56, TimeUnit.SI), POSITIVE)
     {
         /** */
@@ -74,7 +74,7 @@ public class ParameterTypes
     };
 
     /** Maximum car-following headway. */
-    public static final ParameterTypeTime TMAX = new ParameterTypeTime("Tmax", "Minimum car-following headway.", new Duration(
+    public static final ParameterTypeDuration TMAX = new ParameterTypeDuration("Tmax", "Minimum car-following headway.", new Duration(
             1.2, TimeUnit.SI), POSITIVE)
     {
         /** */
@@ -89,11 +89,11 @@ public class ParameterTypes
     };
 
     /** Headway relaxation time. */
-    public static final ParameterTypeTime TAU = new ParameterTypeTime("tau", "Headway relaxation time.", new Duration(25.0,
+    public static final ParameterTypeDuration TAU = new ParameterTypeDuration("tau", "Headway relaxation time.", new Duration(25.0,
             TimeUnit.SI), POSITIVE);
 
     /** Look-ahead time for mandatory lane changes. */
-    public static final ParameterTypeTime T0 = new ParameterTypeTime("t0", "Look-ahead time for mandatory lane changes.",
+    public static final ParameterTypeDuration T0 = new ParameterTypeDuration("t0", "Look-ahead time for mandatory lane changes.",
             new Duration(43.0, TimeUnit.SI), POSITIVE);
 
     /** Look-ahead distance. */
@@ -118,7 +118,7 @@ public class ParameterTypes
             "Speed threshold below which traffic is considered congested.", new Speed(60, SpeedUnit.KM_PER_HOUR), POSITIVE);
 
     /** Regular lane change duration. */
-    public static final ParameterTypeTime LCDUR = new ParameterTypeTime("lcDur", "Regular lane change duration.", new Duration(
+    public static final ParameterTypeDuration LCDUR = new ParameterTypeDuration("lcDur", "Regular lane change duration.", new Duration(
             3, TimeUnit.SI), POSITIVE);
 
 }
