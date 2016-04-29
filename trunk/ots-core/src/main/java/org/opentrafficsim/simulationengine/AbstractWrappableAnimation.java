@@ -23,6 +23,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.gui.OTSAnimationPanel;
 import org.opentrafficsim.gui.SimulatorFrame;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
+import org.opentrafficsim.simulationengine.properties.PropertyException;
 
 /**
  * <p>
@@ -68,7 +69,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     @Override
     public final SimpleAnimator buildAnimator(final Time startTime, final Duration warmupPeriod,
         final Duration runLength, final ArrayList<AbstractProperty<?>> userModifiedProperties, final Rectangle rect,
-        final boolean eoc) throws SimRuntimeException, NamingException, OTSSimulationException
+        final boolean eoc) throws SimRuntimeException, NamingException, OTSSimulationException, PropertyException
     {
         this.savedUserModifiedProperties = userModifiedProperties;
         this.exitOnClose = eoc;
@@ -120,8 +121,9 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
      * @return the JPanel with the charts; the result will be put in the statistics tab. May return null; this causes no
      *         statistics tab to be created.
      * @throws OTSSimulationException in case the chart, axes or legend cannot be generated
+     * @throws PropertyException when one of the user modified properties has the empty string as key
      */
-    protected abstract JPanel makeCharts() throws OTSSimulationException;
+    protected abstract JPanel makeCharts() throws OTSSimulationException, PropertyException;
 
     /**
      * @param colorer the GTU colorer to use.
@@ -145,7 +147,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     /** {@inheritDoc} */
     @Override
     public final SimpleSimulatorInterface rebuildSimulator(final Rectangle rect) throws SimRuntimeException,
-        NetworkException, NamingException, OTSSimulationException
+        NetworkException, NamingException, OTSSimulationException, PropertyException
     {
         return buildAnimator(this.savedStartTime, this.savedWarmupPeriod, this.savedRunLength,
             this.savedUserModifiedProperties, rect, this.exitOnClose);

@@ -15,82 +15,139 @@ import java.util.Iterator;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <T> type of the property
  */
-public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T>>, Serializable
+public abstract class AbstractProperty<T> implements Property<T>, Iterable<AbstractProperty<T>>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;
-    
+
+    /** Key of this property. */
+    private final String key;
+
     /** Determines sorting order when properties are displayed to the user. */
     private final int displayPriority;
 
+    /** The shortName of the property. */
+    private String shortName;
+
+    /** The description of the property. */
+    private String description;
+
+    /** The property is read-only. */
+    private Boolean readOnly = null;
+
+    /** Parent of this AbstractProperty. */
+    private CompoundProperty parentProperty = null;
+
     /**
-     * @param displayPriority sorting order when properties are displayed to the user.
+     * Construct a new AbstractProperty.
+     * @param key String; unique (within this property tree) name of the new AbstractProperty
+     * @param displayPriority sorting order when properties are displayed to the user
+     * @param shortName String; concise description of the property
+     * @param description String; long description of the property (may use HTML markup)
      */
-    public AbstractProperty(final int displayPriority)
+    public AbstractProperty(final String key, final int displayPriority, final String shortName, final String description)
     {
-        super();
+        this.key = key;
         this.displayPriority = displayPriority;
+        this.shortName = shortName;
+        this.description = description;
     }
-
+    
     /**
-     * Retrieve the current value of the property.
-     * @return T; the current value of the property
+     * Finalize the readOnly flag.
      */
-    public abstract T getValue();
-
-    /**
-     * Return a short description of the property.
-     * @return String; a short description of the property
-     */
-    public abstract String getShortName();
-
-    /**
-     * Return a description of the property (may use HTML markup).
-     * @return String; the description of the property
-     */
-    public abstract String getDescription();
-
-    /**
-     * Change the value of the property.
-     * @param newValue T; the new value for the property
-     * @throws PropertyException when this Property is read-only, or newValue is not valid
-     */
-    public abstract void setValue(T newValue) throws PropertyException;
-
-    /**
-     * Return true if the property can not be altered.
-     * @return boolean; true if this property can not be altered, false if this property can be altered
-     */
-    public abstract boolean isReadOnly();
-
-    /**
-     * Display priority determines the order in which properties should be displayed. Properties with lower values should be
-     * displayed above or before those with higher values.
-     * @return int; the display priority of this AbstractProperty
-     */
+    protected void setReadOnly(boolean readOnlyValue)
+    {
+        this.readOnly = readOnlyValue;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
     public final int getDisplayPriority()
     {
         return this.displayPriority;
     }
 
-    /**
-     * Generate a description of the state of this property in HTML (excluding the &lt;html&gt; at the start and the
-     * &lt;/html&gt; at the end. The result can be embedded in a html-table.
-     * @return String; the description of this property and the current state in HTML
-     */
+    /** {@inheritDoc} */
+    @Override
     public abstract String htmlStateDescription();
-
-    /**
-     * Construct a deep copy of this property (duplicates everything except immutable fields).
-     * @return AbstractProperty&lt;T&gt;; a deep copy of this AbstractProperty
-     */
-    public abstract AbstractProperty<T> deepCopy();
 
     /** {@inheritDoc} */
     @Override
     public final Iterator<AbstractProperty<T>> iterator()
     {
         return new PropertyIterator(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String getShortName()
+    {
+        return this.shortName;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String getDescription()
+    {
+        return this.description;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean isReadOnly()
+    {
+        return null != this.readOnly && this.readOnly;
+    }
+
+    /**
+     * Retrieve the key of this AbstractProperty.
+     * @return String; the key of this AbstractProperty
+     */
+    public final String getKey()
+    {
+        return this.key;
+    }
+    
+    /**
+     * Retrieve an AbstractProperty anywhere in this group that has the specified key.
+     * @param propertyKey String; the key
+     * @return AbstractProperty; the matching AbstractProperty, or null if no property with the specified key exists in the
+     *         group.
+     */
+    public final AbstractProperty<?> findByKey(final String propertyKey)
+    {
+        if (this.key.equals(propertyKey))
+        {
+            return this;
+        }
+        if (this instanceof CompoundProperty)
+        {
+            return ((CompoundProperty) this).getPropertyGroup().get(propertyKey);
+        }
+        if (null == getParent())
+        {
+            return null;
+        }
+        return getParent().getPropertyGroup().get(propertyKey);
+    }
+
+    /**
+     * Set the parent of this AbstractProperty.
+     * @param newParent AbstractProperty*lt;?&gt;; the new parent of this AbstractProperty
+     */
+    protected final void setParent(final CompoundProperty newParent)
+    {
+        this.parentProperty = newParent;
+    }
+    
+    /**
+     * Retrieve the parent property.
+     * @return AbstractProperty&lt;?&gt;; the CompoundProperty that is the parent of this AbstractProperty (result is null if this property is not contained in a CompoundProperty)
+     */
+    protected final CompoundProperty getParent()
+    {
+        return this.parentProperty;
     }
 
     /** {@inheritDoc} */

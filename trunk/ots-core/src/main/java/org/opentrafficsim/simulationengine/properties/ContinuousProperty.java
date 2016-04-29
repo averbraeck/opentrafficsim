@@ -20,12 +20,6 @@ public class ContinuousProperty extends AbstractProperty<Double> implements Seri
     /** The current value. */
     private Double value;
 
-    /** The shortName of the property. */
-    private String shortName;
-
-    /** The description of the property. */
-    private String description;
-
     /** Format string to display the value of the property. */
     private String format;
 
@@ -35,11 +29,9 @@ public class ContinuousProperty extends AbstractProperty<Double> implements Seri
     /** The maximum value of the property. */
     private Double maximumValue;
 
-    /** The property is read-only. */
-    private final Boolean readOnly;
-
     /**
      * Construct a ContinousProperty.
+     * @param key String; the unique key of the new property
      * @param shortName String; the short name of the new ContinuousProperty
      * @param description String; description of the new ContinuousProperty (may use HTML mark up)
      * @param initialValue Double; the initial value of the new ContinuousProperty
@@ -50,18 +42,16 @@ public class ContinuousProperty extends AbstractProperty<Double> implements Seri
      * @param displayPriority int; the displayPriority of the new ContinuousProperty
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public ContinuousProperty(final String shortName, final String description, final Double initialValue,
-        final Double minimumValue, final Double maximumValue, final String formatString, final boolean readOnly,
-        final int displayPriority)
+    public ContinuousProperty(final String key, final String shortName, final String description, final Double initialValue,
+            final Double minimumValue, final Double maximumValue, final String formatString, final boolean readOnly,
+            final int displayPriority)
     {
-        super(displayPriority);
-        this.shortName = shortName;
-        this.description = description;
+        super(key, displayPriority, shortName, description);
         this.value = initialValue;
         this.minimumValue = minimumValue;
         this.maximumValue = maximumValue;
         this.format = formatString;
-        this.readOnly = readOnly;
+        setReadOnly(readOnly);
     }
 
     /** {@inheritDoc} */
@@ -89,39 +79,18 @@ public class ContinuousProperty extends AbstractProperty<Double> implements Seri
 
     /** {@inheritDoc} */
     @Override
-    public final String getShortName()
-    {
-        return this.shortName;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String getDescription()
-    {
-        return this.description;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final void setValue(final Double newValue) throws PropertyException
     {
-        if (this.readOnly)
+        if (isReadOnly())
         {
             throw new PropertyException("This property is read-only");
         }
         if (this.minimumValue > newValue || this.maximumValue < newValue)
         {
             throw new PropertyException("new value " + newValue + " is out of valid range (" + this.minimumValue + ".."
-                + this.maximumValue + ")");
+                    + this.maximumValue + ")");
         }
         this.value = newValue;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final boolean isReadOnly()
-    {
-        return false;
     }
 
     /**
@@ -143,8 +112,8 @@ public class ContinuousProperty extends AbstractProperty<Double> implements Seri
     @Override
     public final AbstractProperty<Double> deepCopy()
     {
-        return new ContinuousProperty(this.shortName, this.description, this.value, this.minimumValue,
-            this.maximumValue, this.format, this.readOnly, getDisplayPriority());
+        return new ContinuousProperty(getKey(), getShortName(), getDescription(), this.value, this.minimumValue,
+                this.maximumValue, this.format, isReadOnly(), getDisplayPriority());
     }
 
 }

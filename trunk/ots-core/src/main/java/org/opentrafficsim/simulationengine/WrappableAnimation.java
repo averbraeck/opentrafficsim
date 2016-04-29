@@ -11,6 +11,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
+import org.opentrafficsim.simulationengine.properties.PropertyException;
 
 /**
  * Requirements for demonstration that can be shown in the SuperDemo.
@@ -40,10 +41,11 @@ public interface WrappableAnimation
      * @throws NamingException when context for the animation cannot be created
      * @throws OTSSimulationException when the construction of the simulation, the control panel, the animation, or the charts
      *             fails
+     * @throws PropertyException when one of the user modified properties has the empty string as key
      */
     SimpleSimulatorInterface buildAnimator(final Time startTime, final Duration warmupPeriod,
         final Duration runLength, ArrayList<AbstractProperty<?>> properties, Rectangle rect, boolean exitOnClose)
-        throws SimRuntimeException, NetworkException, NamingException, OTSSimulationException;
+        throws SimRuntimeException, NetworkException, NamingException, OTSSimulationException, PropertyException;
 
     /**
      * Restart (rebuild) the simulation.
@@ -53,9 +55,10 @@ public interface WrappableAnimation
      * @throws NetworkException on Network inconsistency
      * @throws NamingException when context for the animation cannot be created
      * @throws OTSSimulationException when the (re)construction of the simulation model fails
+     * @throws PropertyException when one of the user modified properties has the empty string as key
      */
     SimpleSimulatorInterface rebuildSimulator(Rectangle rect) throws SimRuntimeException, NetworkException,
-        NamingException, OTSSimulationException;
+        NamingException, OTSSimulationException, PropertyException;
 
     /**
      * Return a very short description of the simulation.

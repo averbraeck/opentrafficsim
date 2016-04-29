@@ -20,12 +20,6 @@ public class IntegerProperty extends AbstractProperty<Integer> implements Serial
     /** The current value of the property. */
     private Integer value;
 
-    /** The shortName of the property. */
-    private String shortName;
-
-    /** The description of the property. */
-    private String description;
-
     /** Format string to display the value of the property. */
     private String format;
 
@@ -35,11 +29,9 @@ public class IntegerProperty extends AbstractProperty<Integer> implements Serial
     /** The maximum value of the property. */
     private Integer maximumValue;
 
-    /** The property is read-only. */
-    private final Boolean readOnly;
-
     /**
      * Construct an IntegerProperty.
+     * @param key String; the unique key of the new property
      * @param shortName String; the short name of the new IntegerProperty
      * @param description String; description of the new IntegerProperty (may use HTML mark up)
      * @param initialValue Integer; the initial value of the new IntegerProperty
@@ -50,18 +42,16 @@ public class IntegerProperty extends AbstractProperty<Integer> implements Serial
      * @param displayPriority int; the display priority of the new IntegerProperty
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public IntegerProperty(final String shortName, final String description, final Integer initialValue,
-        final Integer minimumValue, final Integer maximumValue, final String formatString, final boolean readOnly,
-        final int displayPriority)
+    public IntegerProperty(final String key, final String shortName, final String description, final Integer initialValue,
+            final Integer minimumValue, final Integer maximumValue, final String formatString, final boolean readOnly,
+            final int displayPriority)
     {
-        super(displayPriority);
-        this.shortName = shortName;
-        this.description = description;
+        super(key, displayPriority, shortName, description);
         this.value = initialValue;
         this.minimumValue = minimumValue;
         this.maximumValue = maximumValue;
         this.format = formatString;
-        this.readOnly = readOnly;
+        setReadOnly(readOnly);
     }
 
     /** {@inheritDoc} */
@@ -91,39 +81,18 @@ public class IntegerProperty extends AbstractProperty<Integer> implements Serial
 
     /** {@inheritDoc} */
     @Override
-    public final String getShortName()
-    {
-        return this.shortName;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String getDescription()
-    {
-        return this.description;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final void setValue(final Integer newValue) throws PropertyException
     {
-        if (this.readOnly)
+        if (isReadOnly())
         {
             throw new PropertyException("This property is read-only");
         }
         if (this.minimumValue > newValue || this.maximumValue < newValue)
         {
             throw new PropertyException("new value " + newValue + " is out of valid range (" + this.minimumValue + ".."
-                + this.maximumValue + ")");
+                    + this.maximumValue + ")");
         }
         this.value = newValue;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final boolean isReadOnly()
-    {
-        return this.readOnly;
     }
 
     /**
@@ -145,8 +114,8 @@ public class IntegerProperty extends AbstractProperty<Integer> implements Serial
     @Override
     public final AbstractProperty<Integer> deepCopy()
     {
-        return new IntegerProperty(this.shortName, this.description, this.value, this.maximumValue, this.maximumValue,
-            this.format, this.readOnly, getDisplayPriority());
+        return new IntegerProperty(getKey(), getShortName(), getDescription(), this.value, this.maximumValue,
+                this.maximumValue, this.format, isReadOnly(), getDisplayPriority());
     }
 
 }

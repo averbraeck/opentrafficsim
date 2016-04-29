@@ -15,6 +15,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSRealTimeClock;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.simulationengine.properties.PropertyException;
 
 /**
  * <p>
@@ -43,9 +44,10 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
      * @param model OTSModelInterface; the simulation to execute
      * @throws SimRuntimeException on ???
      * @throws NamingException when context for the animation cannot be created
+     * @throws PropertyException when one of the user modified properties has the empty string as key
      */
     public SimpleAnimator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-        final OTSModelInterface model) throws SimRuntimeException, NamingException
+        final OTSModelInterface model) throws SimRuntimeException, NamingException, PropertyException
     {
         setPauseOnError(true);
         setAnimationDelay(20); // 50 Hz animation update

@@ -30,6 +30,7 @@ import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
+import org.opentrafficsim.simulationengine.properties.PropertyException;
 import org.xml.sax.SAXException;
 
 /**
@@ -64,7 +65,7 @@ public class LMRSTests extends AbstractWrappableAnimation
                     xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
                         new Duration(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
                     exception.printStackTrace();
                 }

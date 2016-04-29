@@ -27,6 +27,7 @@ import nl.tudelft.simulation.language.io.URLResource;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
+import org.opentrafficsim.simulationengine.properties.PropertyException;
 
 /**
  * Animation panel with various controls.
@@ -87,9 +88,10 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * @param wrappableAnimation the builder and rebuilder of the simulation, based on properties.
      * @param gtuColorer the colorer to use for the GTUs.
      * @throws RemoteException when notification of the animation panel fails
+     * @throws PropertyException when one of the user modified properties has the empty string as key
      */
     public OTSAnimationPanel(final Rectangle2D extent, final Dimension size, final SimpleAnimator simulator,
-        final WrappableAnimation wrappableAnimation, final GTUColorer gtuColorer) throws RemoteException
+        final WrappableAnimation wrappableAnimation, final GTUColorer gtuColorer) throws RemoteException, PropertyException
     {
         super(simulator, wrappableAnimation);
 

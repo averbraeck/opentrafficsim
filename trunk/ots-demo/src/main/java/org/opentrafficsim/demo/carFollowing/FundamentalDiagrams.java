@@ -88,13 +88,13 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
     {
         try
         {
-            this.properties.add(new SelectionProperty("Car following model",
+            this.properties.add(new SelectionProperty("CarFollowingModel", "Car following model",
                 "<html>The car following model determines "
                     + "the acceleration that a vehicle will make taking into account nearby vehicles, "
                     + "infrastructural restrictions (e.g. speed limit, curvature of the road) "
                     + "capabilities of the vehicle and personality of the driver.</html>", new String[]{"IDM", "IDM+"},
                 1, false, 500));
-            this.properties.add(new ProbabilityDistributionProperty("Traffic composition",
+            this.properties.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
                 "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"}, new Double[]{
                     0.8, 0.2}, false, 10));
         }
@@ -131,7 +131,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                     fundamentalDiagrams.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND),
                         new Duration(3600.0, SECOND), fundamentalDiagrams.getProperties(), null, true);
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -325,7 +325,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                 if (p instanceof SelectionProperty)
                 {
                     SelectionProperty sp = (SelectionProperty) p;
-                    if ("Car following model".equals(sp.getShortName()))
+                    if ("CarFollowingModel".equals(sp.getKey()))
                     {
                         String modelName = sp.getValue();
                         if (modelName.equals("IDM"))
@@ -353,20 +353,20 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                     }
                     else
                     {
-                        throw new Error("Unhandled SelectionProperty " + p.getShortName());
+                        throw new Error("Unhandled SelectionProperty " + p.getKey());
                     }
                 }
                 else if (p instanceof ProbabilityDistributionProperty)
                 {
                     ProbabilityDistributionProperty pdp = (ProbabilityDistributionProperty) p;
-                    String modelName = p.getShortName();
-                    if (modelName.equals("Traffic composition"))
+                    String modelName = p.getKey();
+                    if (modelName.equals("TrafficComposition"))
                     {
                         this.carProbability = pdp.getValue()[0];
                     }
                     else
                     {
-                        throw new Error("Unhandled ProbabilityDistributionProperty " + p.getShortName());
+                        throw new Error("Unhandled ProbabilityDistributionProperty " + p.getKey());
                     }
                 }
                 else

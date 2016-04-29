@@ -31,6 +31,7 @@ public final class IDMPropertySet
 
     /**
      * Create a CompoundProperty for the IDM or IDMPlus parameters for a specified car type.
+     * @param key String; the unique key of the new property
      * @param carType String; the type of the car
      * @param a Acceleration; the maximum acceleration of the car
      * @param b Acceleration; the maximum comfortable deceleration of the car
@@ -38,21 +39,22 @@ public final class IDMPropertySet
      * @param tSafe Duration; the time headway
      * @param displayPriority int; the display priority of the returned CompoundProperty
      * @return CompoundProperty
+     * @throws PropertyException when key is not unique, or one of the generated sub keys is not unique
      */
-    public static CompoundProperty makeIDMPropertySet(final String carType, final Acceleration a, final Acceleration b,
-        final Length s0, final Duration tSafe, final int displayPriority)
+    public static CompoundProperty makeIDMPropertySet(final String key, final String carType, final Acceleration a,
+            final Acceleration b, final Length s0, final Duration tSafe, final int displayPriority) throws PropertyException
     {
         ArrayList<AbstractProperty<?>> subProperties = new ArrayList<AbstractProperty<?>>();
-        subProperties.add(new ContinuousProperty("a", "maximum acceleration [m/s/s]", a.doubleValue(), 0.5, 5.0,
-            "maximum acceleration %.2fm/s\u00b2", false, 0));
-        subProperties.add(new ContinuousProperty("b", "safe deceleration [m/s/s]", b.doubleValue(), 1.0, 4.0,
-            "maximum comfortable deceleration %.2fm/s\u00b2", false, 0));
-        subProperties.add(new ContinuousProperty("s0", "stationary distance headway [m]", s0.doubleValue(), 1.0, 10.0,
-            "distance headway %.2fm", false, 2));
-        subProperties.add(new ContinuousProperty("tSafe", "time headway", tSafe.doubleValue(), 0.5, 1.5,
-            "time headway %.2fs", false, 3));
-        return new CompoundProperty("IDM/IDM+ " + carType + " params", "Parameters for the " + carType
-            + " car following parameters", subProperties, true, displayPriority);
+        subProperties.add(new ContinuousProperty(key + "a", "a", "maximum acceleration [m/s/s]", a.doubleValue(), 0.5, 5.0,
+                "maximum acceleration %.2fm/s\u00b2", false, 0));
+        subProperties.add(new ContinuousProperty(key + "b", "b", "safe deceleration [m/s/s]", b.doubleValue(), 1.0, 4.0,
+                "maximum comfortable deceleration %.2fm/s\u00b2", false, 0));
+        subProperties.add(new ContinuousProperty(key + "s0", "s0", "stationary distance headway [m]", s0.doubleValue(), 1.0,
+                10.0, "distance headway %.2fm", false, 2));
+        subProperties.add(new ContinuousProperty(key + "tSafe", "tSafe", "time headway", tSafe.doubleValue(), 0.5, 1.5,
+                "time headway %.2fs", false, 3));
+        return new CompoundProperty(key, "IDM/IDM+ " + carType + " params", "Parameters for the " + carType
+                + " car following parameters", subProperties, true, displayPriority);
     }
 
     /**
@@ -97,22 +99,22 @@ public final class IDMPropertySet
 
     /**
      * Find the Continuous sub property with the specified name.
-     * @param name String; name of the sub property
+     * @param key String; name of the sub property
      * @param set CompoundProperty; the set to search
      * @return Double; the value of the Continuous sub property with the specified name
      */
-    private static Double findSubProperty(final String name, final CompoundProperty set)
+    private static Double findSubProperty(final String key, final CompoundProperty set)
     {
-        AbstractProperty<?> pp = set.findByShortName(name);
+        AbstractProperty<?> pp = set.findSubPropertyByKey(key);
         if (null == pp)
         {
-            throw new RuntimeException("Cannot find sub property " + name);
+            throw new RuntimeException("Cannot find sub property " + key);
         }
         if (pp instanceof ContinuousProperty)
         {
             return ((ContinuousProperty) pp).getValue();
         }
-        throw new RuntimeException("Cannot find Continuous sub property " + name + " in " + set.getShortName());
+        throw new RuntimeException("Cannot find Continuous sub property " + key + " in " + set.getShortName());
     }
 
 }

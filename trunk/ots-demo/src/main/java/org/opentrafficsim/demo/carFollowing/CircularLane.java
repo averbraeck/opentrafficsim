@@ -57,8 +57,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPl
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.LaneFactory;
@@ -91,27 +89,32 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
-    
+
     /** The model. */
     private LaneSimulationModel model;
 
-    /** Create a CircularLane simulation. */
-    public CircularLane()
+    /**
+     * Create a CircularLane simulation.
+     * @throws PropertyException when one of the properties has a non-unique tag
+     */
+    public CircularLane() throws PropertyException
     {
-        this.properties.add(new IntegerProperty("Track length", "Circumference of the track", 2000, 500, 6000,
-            "Track length %dm", false, 10));
-        this.properties.add(new ContinuousProperty("Mean density", "Number of vehicles per km", 40.0, 5.0, 45.0,
-            "Density %.1f veh/km", false, 11));
-        this.properties.add(new ContinuousProperty("Density variability",
-            "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, "%.1f", false, 12));
+        this.properties.add(new IntegerProperty("TrackLength", "Track length", "Circumference of the track", 2000, 500, 6000,
+                "Track length %dm", false, 10));
+        this.properties.add(new ContinuousProperty("MeanDensity", "Mean density", "Number of vehicles per km", 40.0, 5.0, 45.0,
+                "Density %.1f veh/km", false, 11));
+        this.properties.add(new ContinuousProperty("DensityVariability", "Density variability",
+                "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, "%.1f", false, 12));
         ArrayList<AbstractProperty<?>> outputProperties = new ArrayList<AbstractProperty<?>>();
-        outputProperties.add(new BooleanProperty("Density", "Density contour plot", true, false, 0));
-        outputProperties.add(new BooleanProperty("Flow", "Flow contour plot", true, false, 1));
-        outputProperties.add(new BooleanProperty("Speed", "Speed contour plot", true, false, 2));
-        outputProperties.add(new BooleanProperty("Acceleration", "Acceleration contour plot", true, false, 3));
-        outputProperties.add(new BooleanProperty("Trajectories", "Trajectory (time/distance) diagram", true, false, 4));
-        this.properties.add(new CompoundProperty("Output graphs", "Select the graphical output", outputProperties,
-            true, 1000));
+        outputProperties.add(new BooleanProperty("DensityPlot", "Density", "Density contour plot", true, false, 0));
+        outputProperties.add(new BooleanProperty("FlowPlot", "Flow", "Flow contour plot", true, false, 1));
+        outputProperties.add(new BooleanProperty("SpeedPlot", "Speed", "Speed contour plot", true, false, 2));
+        outputProperties.add(new BooleanProperty("AccelerationPlot", "Acceleration", "Acceleration contour plot", true, false,
+                3));
+        outputProperties.add(new BooleanProperty("TrajectoryPlot", "Trajectories", "Trajectory (time/distance) diagram", true,
+                false, 4));
+        this.properties.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
+                outputProperties, true, 1000));
     }
 
     /** {@inheritDoc} */
@@ -140,30 +143,30 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
                     ArrayList<AbstractProperty<?>> propertyList = circularLane.getProperties();
                     try
                     {
-                        propertyList.add(new ProbabilityDistributionProperty("Traffic composition",
-                            "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
-                            new Double[]{0.8, 0.2}, false, 10));
+                        propertyList.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
+                                "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
+                                new Double[] { 0.8, 0.2 }, false, 10));
                     }
                     catch (PropertyException exception)
                     {
                         exception.printStackTrace();
                     }
-                    propertyList.add(new SelectionProperty("Car following model",
-                        "<html>The car following model determines "
-                            + "the acceleration that a vehicle will make taking into account "
-                            + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
-                            + "curvature of the road) capabilities of the vehicle and personality "
-                            + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
-                    propertyList.add(IDMPropertySet.makeIDMPropertySet("Car",
-                        new Acceleration(1.0, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
-                        new Length(2.0, METER), new Duration(1.0, SECOND), 2));
-                    propertyList.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration(0.5,
-                        METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER),
-                        new Duration(1.0, SECOND), 3));
-                    circularLane.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(
-                        3600.0, SECOND), propertyList, null, true);
+                    propertyList.add(new SelectionProperty("CarFollowingModel", "Car following model",
+                            "<html>The car following model determines "
+                                    + "the acceleration that a vehicle will make taking into account "
+                                    + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
+                                    + "curvature of the road) capabilities of the vehicle and personality "
+                                    + "of the driver.</html>", new String[] { "IDM", "IDM+" }, 1, false, 1));
+                    propertyList.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car", new Acceleration(1.0,
+                            METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length(2.0, METER),
+                            new Duration(1.0, SECOND), 2));
+                    propertyList.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck", new Acceleration(0.5,
+                            METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER),
+                            new Duration(1.0, SECOND), 3));
+                    circularLane.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND),
+                            propertyList, null, true);
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -188,11 +191,11 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts() throws OTSSimulationException
+    protected final JPanel makeCharts() throws OTSSimulationException, PropertyException
     {
         // Make the tab with the plots
         AbstractProperty<?> output =
-            new CompoundProperty("", "", this.properties, false, 0).findByShortName("Output graphs");
+                new CompoundProperty("", "", "", this.properties, false, 0).findSubPropertyByKey("OutputGraphs");
         if (null == output)
         {
             throw new OTSSimulationException("Cannot find output properties");
@@ -224,13 +227,12 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
 
         for (int i = 0; i < graphCount; i++)
         {
-            String graphName = graphs.get(i).getShortName();
+            String graphName = graphs.get(i).getKey();
             Container container = null;
             LaneBasedGTUSampler graph;
-            if (graphName.contains("Trajectories"))
+            if (graphName.equals("TrajectorPlot"))
             {
-                TrajectoryPlot tp =
-                    new TrajectoryPlot("TrajectoryPlot", new Duration(0.5, SECOND), this.model.getPath());
+                TrajectoryPlot tp = new TrajectoryPlot("TrajectoryPlot", new Duration(0.5, SECOND), this.model.getPath());
                 tp.setTitle("Trajectory Graph");
                 tp.setExtendedState(Frame.MAXIMIZED_BOTH);
                 graph = tp;
@@ -239,22 +241,22 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
             else
             {
                 ContourPlot cp;
-                if (graphName.contains("Density"))
+                if (graphName.equals("DensityPlot"))
                 {
                     cp = new DensityContourPlot("DensityPlot", this.model.getPath());
                     cp.setTitle("Density Contour Graph");
                 }
-                else if (graphName.contains("Speed"))
+                else if (graphName.equals("SpeedPlot"))
                 {
                     cp = new SpeedContourPlot("SpeedPlot", this.model.getPath());
                     cp.setTitle("Speed Contour Graph");
                 }
-                else if (graphName.contains("Flow"))
+                else if (graphName.equals("FlowPlot"))
                 {
                     cp = new FlowContourPlot("FlowPlot", this.model.getPath());
                     cp.setTitle("Flow Contour Graph");
                 }
-                else if (graphName.contains("Acceleration"))
+                else if (graphName.equals("AccelerationPlot"))
                 {
                     cp = new AccelerationContourPlot("AccelerationPlot", this.model.getPath());
                     cp.setTitle("Acceleration Contour Graph");
@@ -284,11 +286,10 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
     @Override
     public final String description()
     {
-        return "<html><h1>Circular Lane simulation</h1>"
-            + "Vehicles are unequally distributed over a one lane ring road.<br>"
-            + "When simulation starts, all vehicles begin driving and some shockwaves may develop (depending on "
-            + "the selected track length and car following parameters).<br>"
-            + "Selected trajectory and contour plots are generated during the simulation.</html>";
+        return "<html><h1>Circular Lane simulation</h1>" + "Vehicles are unequally distributed over a one lane ring road.<br>"
+                + "When simulation starts, all vehicles begin driving and some shockwaves may develop (depending on "
+                + "the selected track length and car following parameters).<br>"
+                + "Selected trajectory and contour plots are generated during the simulation.</html>";
     }
 
 }
@@ -328,9 +329,6 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
 
     /** The probability that the next generated GTU is a passenger car. */
     private double carProbability;
-
-    /** The lane change model. */
-    private AbstractLaneChangeModel laneChangeModel = new Egoistic();
 
     /** Minimum distance. */
     private Length minimumDistance = new Length(0, METER);
@@ -375,7 +373,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
     /** {@inheritDoc} */
     @Override
     public void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-        throws SimRuntimeException, RemoteException
+            throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         double radius = 2000 / 2 / Math.PI;
@@ -384,8 +382,8 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
         try
         {
             String carFollowingModelName = null;
-            CompoundProperty propertyContainer = new CompoundProperty("", "", this.properties, false, 0);
-            AbstractProperty<?> cfmp = propertyContainer.findByShortName("Car following model");
+            CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
+            AbstractProperty<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
             if (null == cfmp)
             {
                 throw new SimRuntimeException("Cannot find \"Car following model\" property");
@@ -398,16 +396,16 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
             {
                 throw new SimRuntimeException("\"Car following model\" property has wrong type");
             }
-            Iterator<AbstractProperty<ArrayList<AbstractProperty<?>>>> iterator =
-                new CompoundProperty("", "", this.properties, false, 0).iterator();
+            Iterator<AbstractProperty<List<AbstractProperty<?>>>> iterator =
+                    new CompoundProperty("", "", "", this.properties, false, 0).iterator();
             while (iterator.hasNext())
             {
                 AbstractProperty<?> ap = iterator.next();
-                // System.out.println("Handling property " + ap.getShortName());
+                // System.out.println("Handling property " + ap.getKey());
                 if (ap instanceof SelectionProperty)
                 {
                     SelectionProperty sp = (SelectionProperty) ap;
-                    if ("Car following model".equals(sp.getShortName()))
+                    if ("CarFollowingModel".equals(sp.getKey()))
                     {
                         carFollowingModelName = sp.getValue();
                     }
@@ -415,8 +413,8 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
                 else if (ap instanceof ProbabilityDistributionProperty)
                 {
                     ProbabilityDistributionProperty pdp = (ProbabilityDistributionProperty) ap;
-                    String modelName = ap.getShortName();
-                    if (modelName.equals("Traffic composition"))
+                    String modelName = ap.getKey();
+                    if (modelName.equals("TrafficComposition"))
                     {
                         this.carProbability = pdp.getValue()[0];
                     }
@@ -424,7 +422,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
                 else if (ap instanceof IntegerProperty)
                 {
                     IntegerProperty ip = (IntegerProperty) ap;
-                    if ("Track length".equals(ip.getShortName()))
+                    if ("Track length".equals(ip.getKey()))
                     {
                         radius = ip.getValue() / 2 / Math.PI;
                     }
@@ -432,11 +430,11 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
                 else if (ap instanceof ContinuousProperty)
                 {
                     ContinuousProperty cp = (ContinuousProperty) ap;
-                    if (cp.getShortName().equals("Mean density"))
+                    if (cp.getKey().equals("MeanDensity"))
                     {
                         headway = 1000 / cp.getValue();
                     }
-                    if (cp.getShortName().equals("Density variability"))
+                    if (cp.getKey().equals("DensityVariability"))
                     {
                         headwayVariability = cp.getValue();
                     }
@@ -444,11 +442,11 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
                 else if (ap instanceof CompoundProperty)
                 {
                     CompoundProperty cp = (CompoundProperty) ap;
-                    if (ap.getShortName().equals("Output graphs"))
+                    if (ap.getKey().equals("OutputGraphs"))
                     {
                         continue; // Output settings are handled elsewhere
                     }
-                    if (ap.getShortName().contains("IDM"))
+                    if (ap.getKey().contains("IDM"))
                     {
                         Acceleration a = IDMPropertySet.getA(cp);
                         Acceleration b = IDMPropertySet.getB(cp);
@@ -467,17 +465,17 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
                         {
                             throw new SimRuntimeException("Unknown gtu following model: " + carFollowingModelName);
                         }
-                        if (ap.getShortName().contains(" Car "))
+                        if (ap.getKey().contains("Car"))
                         {
                             this.carFollowingModelCars = gtuFollowingModel;
                         }
-                        else if (ap.getShortName().contains(" Truck "))
+                        else if (ap.getKey().contains("Truck"))
                         {
                             this.carFollowingModelTrucks = gtuFollowingModel;
                         }
                         else
                         {
-                            throw new SimRuntimeException("Cannot determine gtu type for " + ap.getShortName());
+                            throw new SimRuntimeException("Cannot determine gtu type for " + ap.getKey());
                         }
                     }
                 }
@@ -495,8 +493,8 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
                 coordsHalf1[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
             this.lane1 =
-                LaneFactory.makeMultiLane("Lane1", start, halfway, coordsHalf1, 1, laneType, this.speedLimit,
-                    this.simulator, LongitudinalDirectionality.DIR_PLUS)[0];
+                    LaneFactory.makeMultiLane("Lane1", start, halfway, coordsHalf1, 1, laneType, this.speedLimit,
+                            this.simulator, LongitudinalDirectionality.DIR_PLUS)[0];
             this.path.add(this.lane1);
 
             OTSPoint3D[] coordsHalf2 = new OTSPoint3D[127];
@@ -506,8 +504,8 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
                 coordsHalf2[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
             this.lane2 =
-                LaneFactory.makeMultiLane("Lane2", halfway, start, coordsHalf2, 1, laneType, this.speedLimit,
-                    this.simulator, LongitudinalDirectionality.DIR_PLUS)[0];
+                    LaneFactory.makeMultiLane("Lane2", halfway, start, coordsHalf2, 1, laneType, this.speedLimit,
+                            this.simulator, LongitudinalDirectionality.DIR_PLUS)[0];
             this.path.add(this.lane2);
 
             // Put the (not very evenly spaced) cars on track1
@@ -535,10 +533,10 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
                 pos += actualHeadway;
             }
             // Schedule regular updates of the graph
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.999, SECOND), this, this, "drawGraphs",
-                null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.999, SECOND), this, this, "drawGraphs", null);
         }
-        catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
+        catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException
+                | PropertyException exception)
         {
             exception.printStackTrace();
         }
@@ -568,8 +566,8 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
         // Re schedule this method
         try
         {
-            this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().get().getSI() + 1, SECOND),
-                this, this, "drawGraphs", null);
+            this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().get().getSI() + 1, SECOND), this, this,
+                    "drawGraphs", null);
         }
         catch (SimRuntimeException exception)
         {
@@ -593,20 +591,20 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
         try
         {
             Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
-            GTUFollowingModelOld gtuFollowingModel =
-                generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
+            GTUFollowingModelOld gtuFollowingModel = generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
             if (null == gtuFollowingModel)
             {
                 throw new GTUException("gtuFollowingModel is null");
             }
             BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
-            //LaneBasedBehavioralCharacteristics drivingCharacteristics =
-            //    new LaneBasedBehavioralCharacteristics(gtuFollowingModel, this.laneChangeModel);
-            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, 
-                new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel));
-            new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
-                vehicleLength, new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator,
-                strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
+            // LaneBasedBehavioralCharacteristics drivingCharacteristics =
+            // new LaneBasedBehavioralCharacteristics(gtuFollowingModel, this.laneChangeModel);
+            LaneBasedStrategicalPlanner strategicalPlanner =
+                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedGTUFollowingTacticalPlanner(
+                            gtuFollowingModel));
+            new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed, vehicleLength,
+                    new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, strategicalPlanner,
+                    new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
         }
         catch (NamingException | SimRuntimeException | NetworkException | OTSGeometryException exception)
         {
