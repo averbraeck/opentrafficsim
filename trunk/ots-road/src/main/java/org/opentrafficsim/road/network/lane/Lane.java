@@ -621,7 +621,7 @@ public class Lane extends CrossSectionElement implements Serializable
             {
                 for (RelativePosition relativePosition : gtu.getRelativePositions().values())
                 {
-                    System.out.println("GTU relative position " + relativePosition + " sensor relative position " + sensor.getPositionType());
+                    // System.out.println("GTU relative position " + relativePosition + " sensor relative position " + sensor.getPositionType());
                     if (sensor.getPositionType().equals(relativePosition.getType())
                             && referenceStartSI + relativePosition.getDx().getSI() <= sensor.getLongitudinalPositionSI()
                             && referenceStartSI + referenceMoveSI + relativePosition.getDx().getSI() > sensor
@@ -650,9 +650,9 @@ public class Lane extends CrossSectionElement implements Serializable
                             // gtu.timeAtDistance(new Length(-d, METER));
                             // System.exit(-1);
                         }
-                        System.out.println("Scheduling a trigger for relativePosition " + relativePosition);
-                        System.out.println("Time=" + gtu.getSimulator().getSimulatorTime().toString()
-                                + " - Scheduling trigger at " + triggerTime + " for sensor " + sensor + " , gtu " + gtu);
+                        // System.out.println("Scheduling a trigger for relativePosition " + relativePosition);
+                        // System.out.println("Time=" + gtu.getSimulator().getSimulatorTime().toString()
+                        // + " - Scheduling trigger at " + triggerTime + " for sensor " + sensor + " , gtu " + gtu);
                         SimEvent<OTSSimTimeDouble> event =
                                 new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(triggerTime), this, sensor, "trigger",
                                         new Object[] { gtu });

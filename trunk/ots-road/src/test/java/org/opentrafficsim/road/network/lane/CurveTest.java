@@ -84,7 +84,7 @@ public class CurveTest
         Speed speed = new Speed(10, SpeedUnit.SI);
         for (int lane = 0; lane < laneCount; lane++)
         {
-            System.out.println("Lane is " + lane);
+            // System.out.println("Lane is " + lane);
             double cumulativeLength = 0;
             for (Lane[] set : laneSets)
             {
@@ -105,6 +105,7 @@ public class CurveTest
             System.out.println("STEP");
             simulator.step();
             printEventList(simulator);
+            // TODO finish writing this test
         }
     }
 
