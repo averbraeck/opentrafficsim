@@ -136,10 +136,10 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * @param parentLink Cross Section Link to which the element belongs.
      * @param id the id of this lane within the link; should be unique within the link.
-     * @param lateralOffsetAtStart Length; the lateral offset of the design line of the new CrossSectionLink with respect to
-     *            the design line of the parent Link at the start of the parent Link
-     * @param lateralOffsetAtEnd Length; the lateral offset of the design line of the new CrossSectionLink with respect to
-     *            the design line of the parent Link at the end of the parent Link
+     * @param lateralOffsetAtStart Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
+     *            design line of the parent Link at the start of the parent Link
+     * @param lateralOffsetAtEnd Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
+     *            design line of the parent Link at the end of the parent Link
      * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the design line
      * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
      * @param laneType type of lane to deduce compatibility with GTU types
@@ -151,10 +151,9 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
-            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth,
-            final LaneType laneType, final Map<GTUType, LongitudinalDirectionality> directionalityMap,
-            final Map<GTUType, Speed> speedLimitMap, final OvertakingConditions overtakingConditions)
-            throws OTSGeometryException, NetworkException
+            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final LaneType laneType,
+            final Map<GTUType, LongitudinalDirectionality> directionalityMap, final Map<GTUType, Speed> speedLimitMap,
+            final OvertakingConditions overtakingConditions) throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
         this.laneType = laneType;
@@ -167,10 +166,10 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * @param parentLink Cross Section Link to which the element belongs.
      * @param id the id of this lane within the link; should be unique within the link.
-     * @param lateralOffsetAtStart Length; the lateral offset of the design line of the new CrossSectionLink with respect to
-     *            the design line of the parent Link at the start of the parent Link
-     * @param lateralOffsetAtEnd Length; the lateral offset of the design line of the new CrossSectionLink with respect to
-     *            the design line of the parent Link at the end of the parent Link
+     * @param lateralOffsetAtStart Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
+     *            design line of the parent Link at the start of the parent Link
+     * @param lateralOffsetAtEnd Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
+     *            design line of the parent Link at the end of the parent Link
      * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the design line
      * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
      * @param laneType type of lane to deduce compatibility with GTU types
@@ -182,8 +181,8 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
-            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth,
-            final LaneType laneType, final LongitudinalDirectionality directionality, final Speed speedLimit,
+            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final LaneType laneType,
+            final LongitudinalDirectionality directionality, final Speed speedLimit,
             final OvertakingConditions overtakingConditions) throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
@@ -199,8 +198,8 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * @param parentLink Cross Section Link to which the element belongs.
      * @param id the id of this lane within the link; should be unique within the link.
-     * @param lateralOffset Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
-     *            design line of the parent Link
+     * @param lateralOffset Length; the lateral offset of the design line of the new CrossSectionLink with respect to the design
+     *            line of the parent Link
      * @param width Length; width, positioned <i>symmetrically around</i> the design line
      * @param laneType type of lane to deduce compatibility with GTU types
      * @param directionalityMap in direction of geometry, reverse, or both, specified per GTU Type
@@ -226,8 +225,8 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * @param parentLink Cross Section Link to which the element belongs.
      * @param id the id of this lane within the link; should be unique within the link.
-     * @param lateralOffset Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
-     *            design line of the parent Link
+     * @param lateralOffset Length; the lateral offset of the design line of the new CrossSectionLink with respect to the design
+     *            line of the parent Link
      * @param width Length; width, positioned <i>symmetrically around</i> the design line
      * @param laneType type of lane to deduce compatibility with GTU types
      * @param directionality in direction of geometry, reverse, or both
@@ -255,9 +254,9 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param parentLink Cross Section Link to which the element belongs.
      * @param id the id of this lane within the link; should be unique within the link.
      * @param crossSectionSlices The offsets and widths at positions along the line, relative to the design line of the parent
-     *            link. If there is just one with and offset, there should just be one element in the list with Length = 0.
-     *            If there are more slices, the last one should be at the length of the design line. If not, a NetworkException
-     *            is thrown.
+     *            link. If there is just one with and offset, there should just be one element in the list with Length = 0. If
+     *            there are more slices, the last one should be at the length of the design line. If not, a NetworkException is
+     *            thrown.
      * @param laneType type of lane to deduce compatibility with GTU types
      * @param directionalityMap in direction of geometry, reverse, or both, specified per GTU Type
      * @param speedLimitMap speed limit on this lane, specified per GTU Type
@@ -283,9 +282,9 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param parentLink Cross Section Link to which the element belongs.
      * @param id the id of this lane within the link; should be unique within the link.
      * @param crossSectionSlices The offsets and widths at positions along the line, relative to the design line of the parent
-     *            link. If there is just one with and offset, there should just be one element in the list with Length = 0.
-     *            If there are more slices, the last one should be at the length of the design line. If not, a NetworkException
-     *            is thrown.
+     *            link. If there is just one with and offset, there should just be one element in the list with Length = 0. If
+     *            there are more slices, the last one should be at the length of the design line. If not, a NetworkException is
+     *            thrown.
      * @param laneType type of lane to deduce compatibility with GTU types
      * @param directionality in direction of geometry, reverse, or both
      * @param speedLimit speed limit on this lane
@@ -307,7 +306,7 @@ public class Lane extends CrossSectionElement implements Serializable
         this.speedLimitMap.put(GTUType.ALL, speedLimit);
         this.overtakingConditions = overtakingConditions;
     }
-    
+
     // TODO constructor calls with this(...)
 
     /**
@@ -521,8 +520,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param gtuType the GTU type to provide the sensors for
      * @return List&lt;Sensor&gt;; list of the sensor in the specified range
      */
-    public final List<Sensor> getSensors(final Length minimumPosition, final Length maximumPosition,
-            final GTUType gtuType)
+    public final List<Sensor> getSensors(final Length minimumPosition, final Length maximumPosition, final GTUType gtuType)
     {
         List<Sensor> sensorList = new ArrayList<>(1);
         for (List<GTUTypeSensor> gtsl : this.sensors.values())
@@ -623,6 +621,7 @@ public class Lane extends CrossSectionElement implements Serializable
             {
                 for (RelativePosition relativePosition : gtu.getRelativePositions().values())
                 {
+                    System.out.println("GTU relative position " + relativePosition + " sensor relative position " + sensor.getPositionType());
                     if (sensor.getPositionType().equals(relativePosition.getType())
                             && referenceStartSI + relativePosition.getDx().getSI() <= sensor.getLongitudinalPositionSI()
                             && referenceStartSI + referenceMoveSI + relativePosition.getDx().getSI() > sensor
@@ -651,8 +650,9 @@ public class Lane extends CrossSectionElement implements Serializable
                             // gtu.timeAtDistance(new Length(-d, METER));
                             // System.exit(-1);
                         }
-                        // System.out.println("Time=" + gtu.getSimulator().getSimulatorTime().toString()
-                        // + " - Scheduling trigger at " + triggerTime + " for sensor " + sensor + " , gtu " + gtu);
+                        System.out.println("Scheduling a trigger for relativePosition " + relativePosition);
+                        System.out.println("Time=" + gtu.getSimulator().getSimulatorTime().toString()
+                                + " - Scheduling trigger at " + triggerTime + " for sensor " + sensor + " , gtu " + gtu);
                         SimEvent<OTSSimTimeDouble> event =
                                 new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(triggerTime), this, sensor, "trigger",
                                         new Object[] { gtu });
@@ -1202,8 +1202,6 @@ public class Lane extends CrossSectionElement implements Serializable
         return String.format("Lane %s of %s", getId(), link.getId());
     }
 
-    
-    
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
@@ -1291,7 +1289,7 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             return "GTUTypeSensor [gtuType=" + this.gtuType + ", sensor=" + this.sensor + "]";
         }
-        
+
     }
-    
+
 }

@@ -108,7 +108,7 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
                     ArrayList<AbstractProperty<?>> localProperties = osm.getProperties();
                     try
                     {
-                        localProperties.add(new ProbabilityDistributionProperty("Traffic composition",
+                        localProperties.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
                             "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
                             new Double[]{0.8, 0.2}, false, 10));
                     }
@@ -116,16 +116,16 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
                     {
                         exception.printStackTrace();
                     }
-                    localProperties.add(new SelectionProperty("Car following model",
+                    localProperties.add(new SelectionProperty("CarFollowingModel", "Car following model",
                         "<html>The car following model determines "
                             + "the acceleration that a vehicle will make taking into account "
                             + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
                             + "curvature of the road) capabilities of the vehicle and personality "
                             + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Car", new Acceleration(1.0,
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car", new Acceleration(1.0,
                         METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length(2.0, METER),
                         new Duration(1.0, SECOND), 2));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration(0.5,
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck", new Acceleration(0.5,
                         METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER),
                         new Duration(1.0, SECOND), 3));
                     osm.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND),

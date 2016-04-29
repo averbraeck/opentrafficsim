@@ -20,31 +20,21 @@ public class StringProperty extends AbstractProperty<String> implements Serializ
     /** The current value of the property. */
     private String value;
 
-    /** The shortName of the property. */
-    private String shortName;
-
-    /** The description of the property. */
-    private String description;
-
-    /** The property is read-only. */
-    private final boolean readOnly;
-
     /**
      * Construct an StringProperty.
+     * @param key String; the unique key of the new property
      * @param shortName String; the short name of the new StringProperty
      * @param description String; description of the new StringProperty (may use HTML mark up)
      * @param initialValue Integer; the initial value of the new StringProperty
      * @param readOnly boolean; if true this StringProperty can not be altered
      * @param displayPriority int; the displayPriority of the new StringProperty
      */
-    public StringProperty(final String shortName, final String description, final String initialValue,
-        final boolean readOnly, final int displayPriority)
+    public StringProperty(final String key, final String shortName, final String description, final String initialValue,
+            final boolean readOnly, final int displayPriority)
     {
-        super(displayPriority);
-        this.shortName = shortName;
-        this.description = description;
+        super(key, displayPriority, shortName, description);
         this.value = initialValue;
-        this.readOnly = readOnly;
+        setReadOnly(readOnly);
     }
 
     /** {@inheritDoc} */
@@ -56,34 +46,13 @@ public class StringProperty extends AbstractProperty<String> implements Serializ
 
     /** {@inheritDoc} */
     @Override
-    public final String getShortName()
-    {
-        return this.shortName;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String getDescription()
-    {
-        return this.description;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final void setValue(final String newValue) throws PropertyException
     {
-        if (this.readOnly)
+        if (isReadOnly())
         {
             throw new PropertyException("This property is read-only");
         }
         this.value = newValue;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final boolean isReadOnly()
-    {
-        return this.readOnly;
     }
 
     /** {@inheritDoc} */
@@ -97,8 +66,8 @@ public class StringProperty extends AbstractProperty<String> implements Serializ
     @Override
     public final AbstractProperty<String> deepCopy()
     {
-        return new StringProperty(this.shortName, this.description, this.value, this.readOnly,
-            this.getDisplayPriority());
+        return new StringProperty(getKey(), getShortName(), getDescription(), this.value, isReadOnly(),
+                this.getDisplayPriority());
     }
 
 }

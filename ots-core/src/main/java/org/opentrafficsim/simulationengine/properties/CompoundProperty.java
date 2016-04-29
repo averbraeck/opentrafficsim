@@ -4,7 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Compound property.
@@ -16,96 +19,79 @@ import java.util.Iterator;
  * initial version 30 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CompoundProperty extends AbstractProperty<ArrayList<AbstractProperty<?>>> implements Serializable
+public class CompoundProperty extends AbstractProperty<List<AbstractProperty<?>>> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;
 
-    /** Properties contained in this one. */
-    private ArrayList<AbstractProperty<?>> value;
+    /** Properties directly contained in this one. */
+    private final List<AbstractProperty<?>> value = new ArrayList<AbstractProperty<?>>();
 
-    /** The shortName of the property. */
-    private String shortName;
-
-    /** The description of the property. */
-    private String description;
-
-    /** The property is read-only. */
-    private final Boolean readOnly;
+    /** Map of all AbstractProperties known in this property group. */
+    private Map<String, AbstractProperty<?>> propertyGroup = new HashMap<String, AbstractProperty<?>>();
 
     /**
      * Construct a CompoundProperty.
+     * @param key String; the unique key of the new property
      * @param shortName String; the short name of the new CompoundProperty
      * @param description String; description of the new CompoundProperty (may use HTML mark up)
      * @param initialValue Integer; the initial value of the new CompoundProperty
      * @param readOnly boolean; if true this CompoundProperty can not be altered
      * @param displayPriority int; the display priority of the new CompoundProperty
+     * @throws PropertyException if <cite>key</cite> is already in use
      */
-    public CompoundProperty(final String shortName, final String description,
-        final ArrayList<AbstractProperty<?>> initialValue, final boolean readOnly, final int displayPriority)
+    public CompoundProperty(final String key, final String shortName, final String description,
+            final List<AbstractProperty<?>> initialValue, final boolean readOnly, final int displayPriority)
+            throws PropertyException
     {
-        super(displayPriority);
-        this.shortName = shortName;
-        this.description = description;
-        this.value = null == initialValue ? new ArrayList<AbstractProperty<?>>() : initialValue;
-        this.readOnly = readOnly;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final ArrayList<AbstractProperty<?>> getValue()
-    {
-        return new ArrayList<AbstractProperty<?>>(this.value);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String getShortName()
-    {
-        return this.shortName;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String getDescription()
-    {
-        return this.description;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void setValue(final ArrayList<AbstractProperty<?>> newValue) throws PropertyException
-    {
-        if (this.readOnly)
+        super(key, displayPriority, shortName, description);
+        if (null != initialValue)
         {
-            throw new PropertyException("Cannot modify a read-only CompoundProperty");
+            for (AbstractProperty<?> ap : initialValue)
+            {
+                add(ap);
+            }
         }
-        this.value = newValue;
+        setReadOnly(readOnly);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final boolean isReadOnly()
+    public final List<AbstractProperty<?>> getValue()
     {
-        return this.readOnly;
+        return new ArrayList<AbstractProperty<?>>(this.value); // return a defensive copy
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void setValue(final List<AbstractProperty<?>> newValue) throws PropertyException
+    {
+        for (AbstractProperty<?> ap : getValue())
+        {
+            remove(ap); // make good use of the fact that getValue makes a defensive copy
+        }
+        for (AbstractProperty<?> ap : newValue)
+        {
+            add(ap);
+        }
     }
 
     /**
      * Find an embedded AbstractProperty that has a specified shortName. <br>
      * Return the first matching one, or null if none of the embedded AbstractProperties has the specified name.
-     * @param name String; the name of the sought embedded AbstractProperty
+     * @param key String; the key of the sought embedded AbstractProperty
      * @return AbstractProperty&lt;?&gt;; the first matching embedded AbstractProperty or null if there is no embedded
      *         AbstractProperty with the specified name
      */
-    public final AbstractProperty<?> findByShortName(final String name)
+    public final AbstractProperty<?> findSubPropertyByKey(final String key)
     {
         // System.out.println("Searching property " + name);
-        Iterator<AbstractProperty<ArrayList<AbstractProperty<?>>>> i = this.iterator();
+        Iterator<AbstractProperty<List<AbstractProperty<?>>>> i = this.iterator();
         while (i.hasNext())
         {
             AbstractProperty<?> ap = i.next();
-            // System.out.println("Inspecting " + ap.getShortName());
-            if (ap.getShortName().equals(name))
+            // System.out.println("Inspecting " + ap.getKey());
+            if (ap.getShortName().equals(key))
             {
                 return ap;
             }
@@ -121,7 +107,7 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
      */
     public final void add(final int index, final AbstractProperty<?> ap) throws PropertyException
     {
-        if (this.readOnly)
+        if (isReadOnly())
         {
             throw new PropertyException("Cannot modify a read-only CompoundProperty");
         }
@@ -129,7 +115,31 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
         {
             throw new PropertyException("index is out of range");
         }
+        if (this.propertyGroup.containsKey(ap.getKey()))
+        {
+            throw new PropertyException("AbstractProperty " + ap + " is already registered in property group of " + this);
+        }
+        // Recursively verify that there are no collisions on the key
+        for (AbstractProperty<?> subProperty : ap)
+        {
+            if (this.propertyGroup.containsKey(subProperty.getKey()))
+            {
+                throw new PropertyException("A property with key " + subProperty.getKey()
+                        + " is already known in this property group");
+            }
+        }
+        // Add all sub-properties to this property group
+        for (AbstractProperty<?> subProperty : ap)
+        {
+            this.propertyGroup.put(subProperty.getKey(), subProperty);
+            if (subProperty instanceof CompoundProperty)
+            {
+                // Make compound sub properties share our property group map
+                ((CompoundProperty) subProperty).setPropertyGroup(this.propertyGroup);
+            }
+        }
         this.value.add(index, ap);
+        ap.setParent(this);
     }
 
     /**
@@ -149,7 +159,7 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
      */
     public final void remove(final int index) throws PropertyException
     {
-        if (this.readOnly)
+        if (isReadOnly())
         {
             throw new PropertyException("Cannot modify a read-only CompoundProperty");
         }
@@ -157,7 +167,30 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
         {
             throw new PropertyException("index is out of range");
         }
-        this.value.remove(index);
+        this.propertyGroup.remove(this.value.get(index));
+        AbstractProperty<?> removed = this.value.remove(index);
+        removed.setParent(null);
+        if (removed instanceof CompoundProperty)
+        {
+            ((CompoundProperty) removed).setPropertyGroup(null); // let child CompoundProperty rebuild its property group
+        }
+    }
+
+    /**
+     * Remove a property from this CompoundProperty.
+     * @param removeMe AbstractProperty the property that must be removed
+     * @throws PropertyException when the supplied property cannot be removed (probably because it is not part of this
+     *             CompoundProperty)
+     */
+    public final void remove(final AbstractProperty<?> removeMe) throws PropertyException
+    {
+        int i = this.value.indexOf(removeMe);
+        if (i < 0)
+        {
+            throw new PropertyException("Cannot remove property " + removeMe
+                    + " because it is not part of this compound property");
+        }
+        remove(i);
     }
 
     /**
@@ -167,6 +200,33 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
     public final int size()
     {
         return this.value.size();
+    }
+
+    /**
+     * Update the property group when this CompoundProperty is added or removed from another CompoundProperty.
+     * @param newPropertyGroup Map&lt;String, AbstractProperty&lt;?&gt;&gt;; if non-null; this is the property group of the new
+     *            parent which we are now part of and we must use that in lieu of our own; if null; we are being removed from
+     *            our parent and we must rebuild our own property group
+     */
+    protected final void setPropertyGroup(final Map<String, AbstractProperty<?>> newPropertyGroup)
+    {
+        if (null == newPropertyGroup)
+        {
+            // Rebuild the property group (after removal from parent
+            this.propertyGroup = new HashMap<String, AbstractProperty<?>>();
+            for (AbstractProperty<?> ap : this.value)
+            {
+                this.propertyGroup.put(ap.getKey(), ap);
+            }
+        }
+        else
+        {
+            this.propertyGroup = newPropertyGroup;
+            for (AbstractProperty<?> ap : this)
+            {
+                this.propertyGroup.put(ap.getKey(), ap);
+            }
+        }
     }
 
     /**
@@ -188,10 +248,10 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
      * Return the sub-items in display order.
      * @return ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the sub-items in display order
      */
-    public final ArrayList<AbstractProperty<?>> displayOrderedValue()
+    public final List<AbstractProperty<?>> displayOrderedValue()
     {
-        ArrayList<AbstractProperty<?>> result = new ArrayList<AbstractProperty<?>>(this.value);
-        final ArrayList<AbstractProperty<?>> list = this.value;
+        List<AbstractProperty<?>> result = new ArrayList<AbstractProperty<?>>(this.value);
+        final List<AbstractProperty<?>> list = this.value;
         Collections.sort(result, new Comparator<AbstractProperty<?>>()
         {
 
@@ -248,30 +308,35 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
         return result.toString();
     }
 
-    /**
-     * Remove a property from this CompoundProperty.
-     * @param removeMe AbstractProperty the property that must be removed
-     * @throws PropertyException when the supplied property cannot be removed (probably because it is not part of this
-     *             CompoundProperty)
-     */
-    public final void remove(final AbstractProperty<?> removeMe) throws PropertyException
-    {
-        if (!this.value.remove(removeMe))
-        {
-            throw new PropertyException("Cannot remove property " + removeMe);
-        }
-    }
-
     /** {@inheritDoc} */
     @Override
-    public final AbstractProperty<ArrayList<AbstractProperty<?>>> deepCopy()
+    public final AbstractProperty<List<AbstractProperty<?>>> deepCopy()
     {
         ArrayList<AbstractProperty<?>> copyOfValue = new ArrayList<AbstractProperty<?>>();
         for (AbstractProperty<?> ap : this.value)
         {
             copyOfValue.add(ap.deepCopy());
         }
-        return new CompoundProperty(this.shortName, this.description, copyOfValue, this.readOnly, getDisplayPriority());
+        try
+        {
+            return new CompoundProperty(getKey(), getShortName(), getDescription(), copyOfValue, isReadOnly(),
+                    getDisplayPriority());
+        }
+        catch (PropertyException exception)
+        {
+            System.err.println("Cannot happen");
+            exception.printStackTrace();
+        }
+        return null; // NOTREACHED
+    }
+
+    /**
+     * Retrieve the property group. DO NOT MODIFY the result.
+     * @return Map&lt;String, AbstractProperty&lt;?&gt;&gt;; the property group map
+     */
+    protected final Map<String, AbstractProperty<?>> getPropertyGroup()
+    {
+        return this.propertyGroup;
     }
 
 }

@@ -93,16 +93,23 @@ public class SuperDemo implements UNITS
             @Override
             public void run()
             {
-                JFrame frame = new SimulatorFrame("Open Traffic Simulator Demonstrations", new SuperDemo().buildGUI());
-                frame.setExtendedState(frame.getExtendedState() & ~Frame.MAXIMIZED_BOTH);
-                // frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_VERT);
-                // The code above does not work; the code below does work. Code found on
-                // http://stackoverflow.com/questions/5195634/how-to-maximize-a-the-height-of-a-jframe
-                Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(frame.getGraphicsConfiguration());
-                int taskHeight = screenInsets.bottom;
-                Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-                frame.setSize(d.width / 2, d.height - taskHeight);
-                frame.setLocation(0, 0);
+                try
+                {
+                    JFrame frame = new SimulatorFrame("Open Traffic Simulator Demonstrations", new SuperDemo().buildGUI());
+                    frame.setExtendedState(frame.getExtendedState() & ~Frame.MAXIMIZED_BOTH);
+                    // frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_VERT);
+                    // The code above does not work; the code below does work. Code found on
+                    // http://stackoverflow.com/questions/5195634/how-to-maximize-a-the-height-of-a-jframe
+                    Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(frame.getGraphicsConfiguration());
+                    int taskHeight = screenInsets.bottom;
+                    Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+                    frame.setSize(d.width / 2, d.height - taskHeight);
+                    frame.setLocation(0, 0);
+                }
+                catch (PropertyException exception)
+                {
+                    exception.printStackTrace();
+                }
             }
         });
     }
@@ -110,8 +117,9 @@ public class SuperDemo implements UNITS
     /**
      * Build the GUI.
      * @return JPanel; the JPanel that holds the application
+     * @throws PropertyException when one of the demonstrations has a user modified property with the empty string as key
      */
-    public final JPanel buildGUI()
+    public final JPanel buildGUI() throws PropertyException
     {
         final JPanel mainPanel = new JPanel(new BorderLayout());
         // Ensure that the window does not shrink into (almost) nothingness when un-maximized
@@ -203,10 +211,10 @@ public class SuperDemo implements UNITS
                 try
                 {
                     System.out.println("Active properties: " + SuperDemo.this.activeProperties);
-                    simulation.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0,
-                        SECOND), SuperDemo.this.activeProperties, null, false);
+                    simulation.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND),
+                            SuperDemo.this.activeProperties, null, false);
                 }
-                catch (SimRuntimeException | NetworkException | NamingException | OTSSimulationException exception)
+                catch (SimRuntimeException | NetworkException | NamingException | OTSSimulationException | PropertyException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -240,13 +248,13 @@ public class SuperDemo implements UNITS
         try
         {
             CompoundProperty simulationSettings =
-                new CompoundProperty("Simulation settings", "Select the simulation network and traffic composition",
-                    null, false, 0);
+                    new CompoundProperty("SimulationSettings", "Simulation settings",
+                            "Select the simulation network and traffic composition", null, false, 0);
             /*
              * This is ugly, but it gets the job done... Insert a dummy property at the top and later replace the property
              * editor for the dummy property by the simulationSelection JPanel.
              */
-            BooleanProperty dummy = new BooleanProperty("Dummy", "Dummy", false, false, 0);
+            BooleanProperty dummy = new BooleanProperty("Dummy", "Dummy", "Dummy", false, false, 0);
             simulationSettings.add(dummy);
             if (properties.size() > 0)
             {
@@ -270,30 +278,31 @@ public class SuperDemo implements UNITS
                         break;
                     }
                 }
-                simulationSettings.add(new ProbabilityDistributionProperty("Traffic composition",
-                    "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
-                    new Double[]{0.8, 0.2}, false, 5));
+                simulationSettings.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
+                        "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
+                        new Double[] { 0.8, 0.2 }, false, 5));
                 CompoundProperty modelSelection =
-                    new CompoundProperty("Model selection", "Modeling specific settings", null, false, 300);
-                modelSelection.add(new SelectionProperty("Simulation scale", "Level of detail of the simulation",
-                    new String[]{"Micro", "Macro", "Meta"}, 0, true, 0));
-                modelSelection.add(new SelectionProperty("Car following model",
-                    "<html>The car following model determines "
-                        + "the acceleration that a vehicle will make taking into account "
-                        + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
-                        + "curvature of the road) capabilities of the vehicle and personality "
-                        + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
-                modelSelection.add(IDMPropertySet
-                    .makeIDMPropertySet("Car", new Acceleration(1.0, METER_PER_SECOND_2), new Acceleration(1.5,
-                        METER_PER_SECOND_2), new Length(2.0, METER), new Duration(1.0, SECOND), 2));
-                modelSelection.add(IDMPropertySet.makeIDMPropertySet("Truck",
-                    new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2),
-                    new Length(2.0, METER), new Duration(1.0, SECOND), 3));
+                        new CompoundProperty("ModelSelection", "Model selection", "Modeling specific settings", null, false,
+                                300);
+                modelSelection.add(new SelectionProperty("SimulationScale", "Simulation scale",
+                        "Level of detail of the simulation", new String[] { "Micro", "Macro", "Meta" }, 0, true, 0));
+                modelSelection.add(new SelectionProperty("CarFollowingModel", "Car following model",
+                        "<html>The car following model determines "
+                                + "the acceleration that a vehicle will make taking into account "
+                                + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
+                                + "curvature of the road) capabilities of the vehicle and personality "
+                                + "of the driver.</html>", new String[] { "IDM", "IDM+" }, 1, false, 1));
+                modelSelection.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car",
+                        new Acceleration(1.0, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length(2.0,
+                                METER), new Duration(1.0, SECOND), 2));
+                modelSelection.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck", new Acceleration(0.5,
+                        METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER), new Duration(
+                        1.0, SECOND), 3));
                 properties.add(properties.size() > 0 ? 1 : 0, modelSelection);
             }
             properties.add(0, simulationSettings);
             boolean fixedDummy = false;
-            for (AbstractProperty<?> p : new CompoundProperty("", "", properties, false, 0).displayOrderedValue())
+            for (AbstractProperty<?> p : new CompoundProperty("", "", "", properties, false, 0).displayOrderedValue())
             {
                 JPanel propertySubPanel = makePropertyEditor(p);
                 if (!fixedDummy)
@@ -376,8 +385,7 @@ public class SuperDemo implements UNITS
             result = new LabeledPanel(ap.getShortName());
             result.setLayout(new BorderLayout());
             final ProbabilityDistributionProperty pdp = (ProbabilityDistributionProperty) ap;
-            final ProbabilityDistributionEditor pdpe =
-                new ProbabilityDistributionEditor(pdp.getElementNames(), pdp.getValue());
+            final ProbabilityDistributionEditor pdpe = new ProbabilityDistributionEditor(pdp.getElementNames(), pdp.getValue());
             pdpe.addPropertyChangeListener(new PropertyChangeListener()
             {
                 @Override
@@ -395,8 +403,7 @@ public class SuperDemo implements UNITS
 
             });
             result.add(pdpe, BorderLayout.LINE_END);
-            result.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) new JLabel("ABC").getPreferredSize()
-                .getHeight()));
+            result.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) new JLabel("ABC").getPreferredSize().getHeight()));
             result.setToolTipText(pdp.getDescription());
         }
         else if (ap instanceof IntegerProperty)
@@ -410,8 +417,8 @@ public class SuperDemo implements UNITS
             slider.setValue(ip.getValue());
             slider.setPaintTicks(true);
             final JLabel currentValue =
-                new JLabel(String.format(DefaultLocale.getLocale(), ip.getFormatString(), ip.getValue()),
-                    SwingConstants.RIGHT);
+                    new JLabel(String.format(DefaultLocale.getLocale(), ip.getFormatString(), ip.getValue()),
+                            SwingConstants.RIGHT);
             slider.addChangeListener(new ChangeListener()
             {
                 @Override
@@ -448,18 +455,17 @@ public class SuperDemo implements UNITS
             slider.setMaximum(useSteps);
             slider.setMinimum(0);
             slider.setValue((int) (useSteps * (cp.getValue() - cp.getMinimumValue()) / (cp.getMaximumValue() - cp
-                .getMinimumValue())));
+                    .getMinimumValue())));
             final JLabel currentValue =
-                new JLabel(String.format(DefaultLocale.getLocale(), cp.getFormatString(), cp.getValue()),
-                    SwingConstants.RIGHT);
+                    new JLabel(String.format(DefaultLocale.getLocale(), cp.getFormatString(), cp.getValue()),
+                            SwingConstants.RIGHT);
             slider.addChangeListener(new ChangeListener()
             {
                 @Override
                 public void stateChanged(final ChangeEvent changeEvent)
                 {
                     double value =
-                        slider.getValue() * (cp.getMaximumValue() - cp.getMinimumValue()) / useSteps
-                            + cp.getMinimumValue();
+                            slider.getValue() * (cp.getMaximumValue() - cp.getMinimumValue()) / useSteps + cp.getMinimumValue();
                     currentValue.setText(String.format(DefaultLocale.getLocale(), cp.getFormatString(), value));
                     if (slider.getValueIsAdjusting())
                     {

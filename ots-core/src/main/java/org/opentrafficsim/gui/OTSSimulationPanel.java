@@ -2,7 +2,7 @@ package org.opentrafficsim.gui;
 
 import java.awt.BorderLayout;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,6 +17,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
+import org.opentrafficsim.simulationengine.properties.PropertyException;
 
 /**
  * GUI with simulator, console, control panel, status bar, etc.
@@ -54,9 +55,10 @@ public class OTSSimulationPanel extends JPanel
      * @param simulator the simulator or animator of the model.
      * @param wrappableAnimation the builder and rebuilder of the simulation, based on properties.
      * @throws RemoteException when communications to a remote machine fails
+     * @throws PropertyException when one of the user modified properties has the empty string as key
      */
     public OTSSimulationPanel(final OTSDEVSSimulatorInterface simulator, final WrappableAnimation wrappableAnimation)
-        throws RemoteException
+            throws RemoteException, PropertyException
     {
         this.simulator = simulator;
 
@@ -70,8 +72,8 @@ public class OTSSimulationPanel extends JPanel
         this.tabbedPane.addTab("console", new JScrollPane(this.console));
 
         // Let's add the properties of the simulation model as a tab
-        ArrayList<AbstractProperty<?>> propertyList =
-            new CompoundProperty("", "", wrappableAnimation.getUserModifiedProperties(), true, 0).displayOrderedValue();
+        List<AbstractProperty<?>> propertyList =
+                new CompoundProperty("", "", "", wrappableAnimation.getUserModifiedProperties(), true, 0).displayOrderedValue();
         StringBuilder html = new StringBuilder();
         html.append("<html><table border=\"1\"><tr><th colspan=\"" + propertyList.size() + "\">Settings</th></tr><tr>");
 

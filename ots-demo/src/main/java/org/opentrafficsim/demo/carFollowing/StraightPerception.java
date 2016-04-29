@@ -113,20 +113,26 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
 {
     /** */
     private static final long serialVersionUID = 1L;
-    
+
     /** The model. */
     private StraightPerceptionModel model;
 
-    /** Create a ContourPlots simulation. */
-    public StraightPerception()
+    /**
+     * Create a ContourPlots simulation.
+     * @throws PropertyException
+     */
+    public StraightPerception() throws PropertyException
     {
         ArrayList<AbstractProperty<?>> outputProperties = new ArrayList<AbstractProperty<?>>();
-        outputProperties.add(new BooleanProperty("Density", "Density contour plot", true, false, 0));
-        outputProperties.add(new BooleanProperty("Flow", "Flow contour plot", true, false, 1));
-        outputProperties.add(new BooleanProperty("Speed", "Speed contour plot", true, false, 2));
-        outputProperties.add(new BooleanProperty("Acceleration", "Acceleration contour plot", true, false, 3));
-        outputProperties.add(new BooleanProperty("Trajectories", "Trajectory (time/distance) diagram", true, false, 4));
-        this.properties.add(new CompoundProperty("Output graphs", "Select the graphical output", outputProperties, true, 1000));
+        outputProperties.add(new BooleanProperty("DensityPlot", "Density", "Density contour plot", true, false, 0));
+        outputProperties.add(new BooleanProperty("FlowPlot", "Flow", "Flow contour plot", true, false, 1));
+        outputProperties.add(new BooleanProperty("SpeedPlot", "Speed", "Speed contour plot", true, false, 2));
+        outputProperties.add(new BooleanProperty("AccelerationPlot", "Acceleration", "Acceleration contour plot", true, false,
+                3));
+        outputProperties.add(new BooleanProperty("TrajectoryPlot", "Trajectories", "Trajectory (time/distance) diagram", true,
+                false, 4));
+        this.properties.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
+                outputProperties, true, 1000));
     }
 
     /** {@inheritDoc} */
@@ -155,7 +161,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
                     ArrayList<AbstractProperty<?>> localProperties = straight.getProperties();
                     try
                     {
-                        localProperties.add(new ProbabilityDistributionProperty("Traffic composition",
+                        localProperties.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
                                 "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
                                 new Double[] { 0.8, 0.2 }, false, 10));
                     }
@@ -163,23 +169,23 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
                     {
                         exception.printStackTrace();
                     }
-                    localProperties.add(new SelectionProperty("Car following model",
+                    localProperties.add(new SelectionProperty("CarFollowingModel", "Car following model",
                             "<html>The car following model determines "
                                     + "the acceleration that a vehicle will make taking into account "
                                     + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
                                     + "curvature of the road) capabilities of the vehicle and personality "
                                     + "of the driver.</html>", new String[] { "IDM", "IDM+" }, 1, false, 1));
-                    localProperties.add(IDMPropertySet
-                            .makeIDMPropertySet("Car", new Acceleration(1.0, METER_PER_SECOND_2), new Acceleration(1.5,
-                                    METER_PER_SECOND_2), new Length(2.0, METER), new Duration(1.0, SECOND), 2));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration(0.5, METER_PER_SECOND_2),
-                            new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER), new Duration(1.0, SECOND),
-                            3));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car", new Acceleration(1.0,
+                            METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length(2.0, METER),
+                            new Duration(1.0, SECOND), 2));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck", new Acceleration(0.5,
+                            METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER),
+                            new Duration(1.0, SECOND), 3));
                     straight.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND),
                             localProperties, null, true);
                     straight.panel.getTabbedPane().addTab("info", straight.makeInfoPane());
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -227,11 +233,12 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts() throws OTSSimulationException
+    protected final JPanel makeCharts() throws OTSSimulationException, PropertyException
     {
 
         // Make the tab with the plots
-        AbstractProperty<?> output = new CompoundProperty("", "", this.properties, false, 0).findByShortName("Output graphs");
+        AbstractProperty<?> output =
+                new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
         if (null == output)
         {
             throw new Error("Cannot find output properties");
@@ -263,7 +270,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
 
         for (int i = 0; i < graphCount; i++)
         {
-            String graphName = graphs.get(i).getShortName();
+            String graphName = graphs.get(i).getKey();
             Container container = null;
             LaneBasedGTUSampler graph;
             if (graphName.contains("Trajectories"))
@@ -279,22 +286,22 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
             else
             {
                 ContourPlot cp;
-                if (graphName.contains("Density"))
+                if (graphName.contains("DensityPlot"))
                 {
                     cp = new DensityContourPlot("DensityPlot", this.model.getPath());
                     cp.setTitle("Density Contour Graph");
                 }
-                else if (graphName.contains("Speed"))
+                else if (graphName.contains("SpeedPlot"))
                 {
                     cp = new SpeedContourPlot("SpeedPlot", this.model.getPath());
                     cp.setTitle("Speed Contour Graph");
                 }
-                else if (graphName.contains("Flow"))
+                else if (graphName.contains("FlowPlot"))
                 {
                     cp = new FlowContourPlot("FlowPlot", this.model.getPath());
                     cp.setTitle("Flow Contour Graph");
                 }
-                else if (graphName.contains("Acceleration"))
+                else if (graphName.contains("AccelerationPlot"))
                 {
                     cp = new AccelerationContourPlot("AccelerationPlot", this.model.getPath());
                     cp.setTitle("Acceleration Contour Graph");
@@ -470,8 +477,8 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             Sensor sensor = new SinkSensor(sinkLane, new Length(10.0, METER), this.simulator);
             sinkLane.addSensor(sensor, GTUType.ALL);
             String carFollowingModelName = null;
-            CompoundProperty propertyContainer = new CompoundProperty("", "", this.properties, false, 0);
-            AbstractProperty<?> cfmp = propertyContainer.findByShortName("Car following model");
+            CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
+            AbstractProperty<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
             if (null == cfmp)
             {
                 throw new Error("Cannot find \"Car following model\" property");
@@ -484,15 +491,15 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             {
                 throw new Error("\"Car following model\" property has wrong type");
             }
-            Iterator<AbstractProperty<ArrayList<AbstractProperty<?>>>> iterator =
-                    new CompoundProperty("", "", this.properties, false, 0).iterator();
+            Iterator<AbstractProperty<List<AbstractProperty<?>>>> iterator =
+                    new CompoundProperty("", "", "", this.properties, false, 0).iterator();
             while (iterator.hasNext())
             {
                 AbstractProperty<?> ap = iterator.next();
                 if (ap instanceof SelectionProperty)
                 {
                     SelectionProperty sp = (SelectionProperty) ap;
-                    if ("Car following model".equals(sp.getShortName()))
+                    if ("CarFollowingModel".equals(sp.getKey()))
                     {
                         carFollowingModelName = sp.getValue();
                     }
@@ -500,8 +507,8 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                 else if (ap instanceof ProbabilityDistributionProperty)
                 {
                     ProbabilityDistributionProperty pdp = (ProbabilityDistributionProperty) ap;
-                    String modelName = ap.getShortName();
-                    if (modelName.equals("Traffic composition"))
+                    String modelName = ap.getKey();
+                    if (modelName.equals("TrafficComposition"))
                     {
                         this.carProbability = pdp.getValue()[0];
                     }
@@ -509,11 +516,11 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                 else if (ap instanceof CompoundProperty)
                 {
                     CompoundProperty cp = (CompoundProperty) ap;
-                    if (ap.getShortName().equals("Output graphs"))
+                    if (ap.getKey().equals("OutputGraphs"))
                     {
                         continue; // Output settings are handled elsewhere
                     }
-                    if (ap.getShortName().contains("IDM"))
+                    if (ap.getKey().contains("IDM"))
                     {
                         Acceleration a = IDMPropertySet.getA(cp);
                         Acceleration b = IDMPropertySet.getB(cp);
@@ -532,20 +539,20 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                         {
                             throw new Error("Unknown gtu following model: " + carFollowingModelName);
                         }
-                        if (ap.getShortName().contains(" Car "))
+                        if (ap.getKey().contains("Car"))
                         {
                             this.carFollowingModelCars = gtuFollowingModel;
                         }
-                        else if (ap.getShortName().contains(" Truck "))
+                        else if (ap.getKey().contains("Truck"))
                         {
                             this.carFollowingModelTrucks = gtuFollowingModel;
                         }
                         else
                         {
-                            throw new Error("Cannot determine gtu type for " + ap.getShortName());
+                            throw new Error("Cannot determine gtu type for " + ap.getKey());
                         }
                         /*
-                         * System.out.println("Created " + carFollowingModelName + " for " + p.getShortName());
+                         * System.out.println("Created " + carFollowingModelName + " for " + p.getKey());
                          * System.out.println("a: " + a); System.out.println("b: " + b); System.out.println("s0: " + s0);
                          * System.out.println("tSafe: " + tSafe);
                          */
@@ -568,7 +575,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                         null);
             }
         }
-        catch (SimRuntimeException | NamingException | NetworkException | OTSGeometryException exception)
+        catch (SimRuntimeException | NamingException | NetworkException | OTSGeometryException | PropertyException exception)
         {
             exception.printStackTrace();
         }
@@ -730,8 +737,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
         /**
          * @param id ID; the id of the GTU
          * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
-         * @param initialLongitudinalPositions Map&lt;Lane, Length&gt;; the initial positions of the car on one or more
-         *            lanes
+         * @param initialLongitudinalPositions Map&lt;Lane, Length&gt;; the initial positions of the car on one or more lanes
          * @param initialSpeed Speed; the initial speed of the car on the lane
          * @param length Length; the maximum length of the GTU (parallel with driving direction)
          * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
@@ -749,11 +755,11 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
          */
         @SuppressWarnings("checkstyle:parameternumber")
         LaneBasedPerceivingCar(final String id, final GTUType gtuType,
-                final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
-                final Length length, final Length width, final Speed maximumVelocity,
-                final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
-                final LanePerceptionFull perception, final OTSNetwork network) throws NamingException, NetworkException,
-                SimRuntimeException, GTUException, OTSGeometryException, ParameterException
+                final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed, final Length length,
+                final Length width, final Speed maximumVelocity, final OTSDEVSSimulatorInterface simulator,
+                final LaneBasedStrategicalPlanner strategicalPlanner, final LanePerceptionFull perception,
+                final OTSNetwork network) throws NamingException, NetworkException, SimRuntimeException, GTUException,
+                OTSGeometryException, ParameterException
         {
             super(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumVelocity, simulator,
                     strategicalPlanner, perception, network);
@@ -764,8 +770,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
          * Construct a new LaneBasedIndividualCar.
          * @param id ID; the id of the GTU
          * @param gtuType GTUTYpe; the type of GTU, e.g. TruckType, CarType, BusType
-         * @param initialLongitudinalPositions Map&lt;Lane, Length&gt;; the initial positions of the car on one or more
-         *            lanes
+         * @param initialLongitudinalPositions Map&lt;Lane, Length&gt;; the initial positions of the car on one or more lanes
          * @param initialSpeed Speed; the initial speed of the car on the lane
          * @param length Length; the maximum length of the GTU (parallel with driving direction)
          * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
@@ -786,12 +791,12 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
          */
         @SuppressWarnings("checkstyle:parameternumber")
         LaneBasedPerceivingCar(final String id, final GTUType gtuType,
-                final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
-                final Length length, final Length width, final Speed maximumVelocity,
-                final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
-                final LanePerceptionFull perception, final Class<? extends Renderable2D> animationClass,
-                final GTUColorer gtuColorer, final OTSNetwork network) throws NamingException, NetworkException,
-                SimRuntimeException, GTUException, OTSGeometryException, ParameterException
+                final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed, final Length length,
+                final Length width, final Speed maximumVelocity, final OTSDEVSSimulatorInterface simulator,
+                final LaneBasedStrategicalPlanner strategicalPlanner, final LanePerceptionFull perception,
+                final Class<? extends Renderable2D> animationClass, final GTUColorer gtuColorer, final OTSNetwork network)
+                throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException,
+                ParameterException
         {
             super(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumVelocity, simulator,
                     strategicalPlanner, perception, animationClass, gtuColorer, network);
@@ -883,8 +888,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             }
 
             // see if we have to continue standing still. In that case, generate a stand still plan
-            if (accelerationStep.getAcceleration().si < 1E-6
-                    && laneBasedGTU.getSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
+            if (accelerationStep.getAcceleration().si < 1E-6 && laneBasedGTU.getSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
             {
                 return new OperationalPlan(laneBasedGTU, locationAtStartTime, startTime, accelerationStep.getDuration());
             }

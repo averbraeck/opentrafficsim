@@ -20,31 +20,22 @@ public class BooleanProperty extends AbstractProperty<Boolean> implements Serial
     /** The current value of the property. */
     private Boolean value;
 
-    /** The shortName of the property. */
-    private String shortName;
-
-    /** The description of the property. */
-    private String description;
-
-    /** The property is read-only. */
-    private final Boolean readOnly;
-
     /**
      * Construct an BooleanProperty.
+     * @param key String; the unique key of the new property
      * @param shortName String; the short name of the new BooleanProperty
      * @param description String; description of the new BooleanProperty (may use HTML mark up)
      * @param initialValue Integer; the initial value of the new BooleanProperty
      * @param readOnly boolean; if true this BooleanProperty can not be altered
      * @param displayPriority int; the displayPriority of the new BooleanProperty
+     * @throws PropertyException if <cite>key</cite> is already in use
      */
-    public BooleanProperty(final String shortName, final String description, final Boolean initialValue,
-        final boolean readOnly, final int displayPriority)
+    public BooleanProperty(final String key, final String shortName, final String description, final Boolean initialValue,
+            final boolean readOnly, final int displayPriority) throws PropertyException
     {
-        super(displayPriority);
-        this.shortName = shortName;
-        this.description = description;
+        super(key, displayPriority, shortName, description);
         this.value = initialValue;
-        this.readOnly = readOnly;
+        setReadOnly(readOnly);
     }
 
     /** {@inheritDoc} */
@@ -56,34 +47,13 @@ public class BooleanProperty extends AbstractProperty<Boolean> implements Serial
 
     /** {@inheritDoc} */
     @Override
-    public final String getShortName()
-    {
-        return this.shortName;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String getDescription()
-    {
-        return this.description;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final void setValue(final Boolean newValue) throws PropertyException
     {
-        if (this.readOnly)
+        if (isReadOnly())
         {
             throw new PropertyException("This property is read-only");
         }
         this.value = newValue;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final boolean isReadOnly()
-    {
-        return this.readOnly;
     }
 
     /** {@inheritDoc} */
@@ -97,8 +67,17 @@ public class BooleanProperty extends AbstractProperty<Boolean> implements Serial
     @Override
     public final AbstractProperty<Boolean> deepCopy()
     {
-        return new BooleanProperty(this.shortName, this.description, this.value, this.readOnly,
-            this.getDisplayPriority());
+        try
+        {
+            return new BooleanProperty(getKey(), getShortName(), getDescription(), this.value, isReadOnly(),
+                    this.getDisplayPriority());
+        }
+        catch (PropertyException exception)
+        {
+            System.err.println("Cannot happen");
+            exception.printStackTrace();
+        }
+        return null; // NOTREACHED
     }
 
 }

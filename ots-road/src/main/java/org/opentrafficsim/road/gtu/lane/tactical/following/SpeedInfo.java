@@ -64,4 +64,12 @@ public class SpeedInfo
         return this.maximumVehicleSpeed;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "SpeedInfo [speedLimit=" + this.speedLimit + ", enforcement=" + this.enforcement + ", maximumVehicleSpeed="
+                + this.maximumVehicleSpeed + "]";
+    }
+
 }

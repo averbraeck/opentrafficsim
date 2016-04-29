@@ -17,23 +17,15 @@ public class SelectionProperty extends AbstractProperty<String> implements Seria
     /** */
     private static final long serialVersionUID = 20150000L;
 
-    /** Short description of this SelectionProperty. */
-    private String shortName;
-
-    /** Description of this SelectionProperty. */
-    private String description;
-
     /** The set of options to select from. */
     private String[] options;
 
     /** Index of the currently selected option. */
     private int currentOption;
 
-    /** Indicates if this is SelectionProperty is read-only. */
-    private final boolean readOnly;
-
     /**
      * Construct a new SelectionProperty.
+     * @param key String; the unique key of the new property
      * @param shortName String; name of the new SelectionProperty
      * @param description String; description of the new SelectionProperty (may use HTML mark up)
      * @param options String[]; the possible values of the SelectionProperty
@@ -41,12 +33,10 @@ public class SelectionProperty extends AbstractProperty<String> implements Seria
      * @param readOnly boolean; if true the selection cannot be altered.
      * @param displayPriority int; the display priority of the new SelectionProperty
      */
-    public SelectionProperty(final String shortName, final String description, final String[] options,
-        final int initialDefaultOption, final boolean readOnly, final int displayPriority)
+    public SelectionProperty(final String key, final String shortName, final String description, final String[] options,
+            final int initialDefaultOption, final boolean readOnly, final int displayPriority)
     {
-        super(displayPriority);
-        this.shortName = shortName;
-        this.description = description;
+        super(key, displayPriority, shortName, description);
         // Make a deep copy of options
         this.options = new String[options.length];
         for (int i = 0; i < options.length; i++)
@@ -54,7 +44,7 @@ public class SelectionProperty extends AbstractProperty<String> implements Seria
             this.options[i] = options[i];
         }
         this.currentOption = initialDefaultOption;
-        this.readOnly = readOnly;
+        setReadOnly(readOnly);
     }
 
     /** {@inheritDoc} */
@@ -76,23 +66,9 @@ public class SelectionProperty extends AbstractProperty<String> implements Seria
 
     /** {@inheritDoc} */
     @Override
-    public final String getShortName()
-    {
-        return this.shortName;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String getDescription()
-    {
-        return this.description;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final void setValue(final String newValue) throws PropertyException
     {
-        if (this.readOnly)
+        if (isReadOnly())
         {
             throw new PropertyException("Cannot modify a read-only SelectionProperty");
         }
@@ -118,13 +94,6 @@ public class SelectionProperty extends AbstractProperty<String> implements Seria
 
     /** {@inheritDoc} */
     @Override
-    public final boolean isReadOnly()
-    {
-        return this.readOnly;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final String htmlStateDescription()
     {
         return getShortName() + ": " + this.options[this.currentOption];
@@ -134,8 +103,8 @@ public class SelectionProperty extends AbstractProperty<String> implements Seria
     @Override
     public final AbstractProperty<String> deepCopy()
     {
-        return new SelectionProperty(this.shortName, this.description, this.options, this.currentOption, this.readOnly,
-            getDisplayPriority());
+        return new SelectionProperty(getKey(), getShortName(), getDescription(), this.options, this.currentOption,
+                isReadOnly(), getDisplayPriority());
     }
 
 }

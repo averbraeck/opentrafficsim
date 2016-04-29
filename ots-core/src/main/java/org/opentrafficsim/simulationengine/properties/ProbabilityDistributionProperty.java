@@ -23,17 +23,9 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]> 
     /** The names of the values. */
     private String[] names;
 
-    /** The shortName of the property. */
-    private String shortName;
-
-    /** The description of the property. */
-    private String description;
-
-    /** The property is read-only. */
-    private final Boolean readOnly;
-
     /**
      * Construct a new ProbabilityDistributionProperty.
+     * @param key String; the unique key of the new property
      * @param shortName String; the short name of the new ProbabilityDistributionProperty
      * @param description String; the description of the new ProbabilityDistributionProperty (may use HTML markup)
      * @param elementNames String[]; names of the elements that, together, add up to probability 1.0
@@ -43,13 +35,11 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]> 
      * @throws PropertyException when the array is empty, any value is outside the range 0.0 .. 1.0, or when the sum of the
      *             values is not equal to 1.0 within a small error margin
      */
-    public ProbabilityDistributionProperty(final String shortName, final String description,
-        final String[] elementNames, final Double[] initialValue, final boolean readOnly, final int displayPriority)
-        throws PropertyException
+    public ProbabilityDistributionProperty(final String key, final String shortName, final String description,
+            final String[] elementNames, final Double[] initialValue, final boolean readOnly, final int displayPriority)
+            throws PropertyException
     {
-        super(displayPriority);
-        this.shortName = shortName;
-        this.description = description;
+        super(key, displayPriority, shortName, description);
         this.names = new String[elementNames.length];
         for (int i = 0; i < elementNames.length; i++)
         {
@@ -57,7 +47,7 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]> 
         }
         verifyProposedValues(initialValue);
         copyValue(initialValue);
-        this.readOnly = readOnly;
+        setReadOnly(readOnly);
     }
 
     /**
@@ -120,23 +110,9 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]> 
 
     /** {@inheritDoc} */
     @Override
-    public final String getShortName()
-    {
-        return this.shortName;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String getDescription()
-    {
-        return this.description;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final void setValue(final Double[] newValue) throws PropertyException
     {
-        if (this.readOnly)
+        if (isReadOnly())
         {
             throw new PropertyException("This property is read-only");
         }
@@ -180,13 +156,6 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]> 
 
     /** {@inheritDoc} */
     @Override
-    public final boolean isReadOnly()
-    {
-        return this.readOnly;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final String htmlStateDescription()
     {
         StringBuilder result = new StringBuilder();
@@ -204,16 +173,15 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]> 
     @Override
     public final AbstractProperty<Double[]> deepCopy()
     {
-        System.out.println("copying probabilitydistribution " + this.shortName + ", " + this.getValue(0));
+        // System.out.println("copying probabilitydistribution " + getShortName() + ", " + this.getValue(0));
         try
         {
-            return new ProbabilityDistributionProperty(this.shortName, this.description, this.names, this.value,
-                this.readOnly, getDisplayPriority());
+            return new ProbabilityDistributionProperty(getKey(), getShortName(), getDescription(), this.names, this.value,
+                    isReadOnly(), getDisplayPriority());
         }
         catch (PropertyException exception)
         {
-            throw new RuntimeException(
-                "Cannot happen (the current values should ALWAYS be suitable for constructing a new "
+            throw new RuntimeException("Cannot happen (the current values should ALWAYS be suitable for constructing a new "
                     + "ProbabilityDistributionProperty)");
         }
     }

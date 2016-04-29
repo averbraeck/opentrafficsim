@@ -42,6 +42,7 @@ import org.opentrafficsim.road.network.lane.AbstractSensor;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.opentrafficsim.simulationengine.properties.PropertyException;
 import org.xml.sax.SAXException;
 
 /**
@@ -136,7 +137,7 @@ public class XMLNetworkGeneratorTest implements UNITS
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | NetworkException exception)
+        catch (SimRuntimeException | NamingException | NetworkException | PropertyException exception)
         {
             fail(exception.toString());
         }
