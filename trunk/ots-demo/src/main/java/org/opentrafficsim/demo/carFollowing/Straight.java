@@ -256,11 +256,11 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
             String graphName = graphs.get(i).getKey();
             Container container = null;
             LaneBasedGTUSampler graph;
-            if (graphName.contains("Trajectories"))
+            if (graphName.contains("TrajectoryPlot"))
             {
                 List<Lane> path = new ArrayList<Lane>();
                 path.add(this.model.getLane());
-                TrajectoryPlot tp = new TrajectoryPlot("TrajectoryPlot", new Duration(0.5, SECOND), path);
+                TrajectoryPlot tp = new TrajectoryPlot("Trajectory Graph", new Duration(0.5, SECOND), path);
                 tp.setTitle("Trajectory Graph");
                 tp.setExtendedState(Frame.MAXIMIZED_BOTH);
                 graph = tp;
@@ -269,24 +269,24 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
             else
             {
                 ContourPlot cp;
-                if (graphName.contains("Density"))
+                if (graphName.contains("DensityPlot"))
                 {
-                    cp = new DensityContourPlot("DensityPlot", this.model.getPath());
+                    cp = new DensityContourPlot("Density Graph", this.model.getPath());
                     cp.setTitle("Density Contour Graph");
                 }
-                else if (graphName.contains("Speed"))
+                else if (graphName.contains("SpeedPlot"))
                 {
-                    cp = new SpeedContourPlot("SpeedPlot", this.model.getPath());
+                    cp = new SpeedContourPlot("Speed Graph", this.model.getPath());
                     cp.setTitle("Speed Contour Graph");
                 }
                 else if (graphName.contains("Flow"))
                 {
-                    cp = new FlowContourPlot("FlowPlot", this.model.getPath());
+                    cp = new FlowContourPlot("Flow Graph", this.model.getPath());
                     cp.setTitle("Flow Contour Graph");
                 }
-                else if (graphName.contains("Acceleration"))
+                else if (graphName.contains("AccelerationPlot"))
                 {
-                    cp = new AccelerationContourPlot("AccelerationPlot", this.model.getPath());
+                    cp = new AccelerationContourPlot("Acceleration Graph", this.model.getPath());
                     cp.setTitle("Acceleration Contour Graph");
                 }
                 else
