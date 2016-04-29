@@ -55,8 +55,9 @@ public abstract class AbstractProperty<T> implements Property<T>, Iterable<Abstr
     
     /**
      * Finalize the readOnly flag.
+     * @param readOnlyValue the readonly property value to set
      */
-    protected void setReadOnly(boolean readOnlyValue)
+    protected final void setReadOnly(final boolean readOnlyValue)
     {
         this.readOnly = readOnlyValue;
     }
@@ -134,7 +135,7 @@ public abstract class AbstractProperty<T> implements Property<T>, Iterable<Abstr
 
     /**
      * Set the parent of this AbstractProperty.
-     * @param newParent AbstractProperty*lt;?&gt;; the new parent of this AbstractProperty
+     * @param newParent AbstractProperty&lt;?&gt;; the new parent of this AbstractProperty
      */
     protected final void setParent(final CompoundProperty newParent)
     {
