@@ -165,7 +165,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         {
             boolean shouldHaveData = sample == bucket;
             value = fd.getXValue(0, sample);
-            System.out.println("value of sample " + sample + " is " + value);
+            // System.out.println("value of sample " + sample + " is " + value);
             if (shouldHaveData)
             {
                 double expectedDensity = 3600 / aggregationTime.getSI() / speed.getSI();

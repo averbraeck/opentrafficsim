@@ -600,7 +600,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
             super(lane, longitudinalPosition, RelativePosition.REFERENCE, "FUNDAMENTAL_DIAGRAM_SENSOR@" + lane.toString(),
                     simulator);
             lane.addSensor(this, GTUType.ALL);
-            System.out.println("Added sensor " + this + " to lane " + lane);
+            // System.out.println("Added sensor " + this + " to lane " + lane);
         }
 
         /** {@inheritDoc} */
