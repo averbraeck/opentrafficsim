@@ -22,16 +22,16 @@ public class IncentiveRoute implements MandatoryIncentive
 
     /** {@inheritDoc} */
     @Override
-    public Desire determineDesire(final LaneBasedGTU gtu, final LanePerception perception)
+    public final Desire determineDesire(final LaneBasedGTU gtu, final LanePerception perception)
     {
-        return new Desire(0, 0);
+        return new Desire(0, 0); // XXXXX STUB
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "IncentiveRoute []";
+        return "IncentiveRoute";
     }
 
 }

@@ -50,7 +50,6 @@ public class LaneStructureRecord implements Serializable
      */
     public LaneStructureRecord(final Lane lane, final GTUDirectionality direction)
     {
-        super();
         this.lane = lane;
         this.direction = direction;
     }

@@ -22,16 +22,16 @@ public class IncentiveCourtesy implements VoluntaryIncentive
 
     /** {@inheritDoc} */
     @Override
-    public Desire determineDesire(final LaneBasedGTU gtu, final LanePerception perception, Desire mandatory)
+    public final Desire determineDesire(final LaneBasedGTU gtu, final LanePerception perception, final Desire mandatory)
     {
         return new Desire(0, 0); // XXXXX STUB
     }
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
-        return "IncentiveCourtesy []";
+        return "IncentiveCourtesy";
     }
 
 }
