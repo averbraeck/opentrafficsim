@@ -23,34 +23,6 @@ public class SpeedLimitType<T> implements Serializable
     /** Map of speed limit types by id. */
     private static Map<String, SpeedLimitType<?>> speedLimitTypeMap = new HashMap<String, SpeedLimitType<?>>();
 
-    /** Maximum vehicle speed limit type. */
-    public static final SpeedLimitTypeSpeed MAX_VEHICLE_SPEED = new SpeedLimitTypeSpeed("Maximum vehicle speed");
-
-    /** Maximum legal vehicle speed limit type. */
-    public static final SpeedLimitTypeLegal MAX_LEGAL_VEHICLE_SPEED = new SpeedLimitTypeLegal("Maximum legal vehicle speed");
-
-    /** Road class speed limit type. */
-    public static final SpeedLimitTypeLegal ROAD_CLASS = new SpeedLimitTypeLegal("Road class");
-
-    /** Fixed speed sign speed limit type. */
-    public static final SpeedLimitTypeLegal FIXED_SIGN = new SpeedLimitTypeLegal("Fixed sign");
-
-    /** Dynamic speed sign speed limit type. */
-    public static final SpeedLimitTypeLegal DYNAMIC_SIGN = new SpeedLimitTypeLegal("Dynamic sign");
-
-    /** Section control speed limit type. */
-    public static final SpeedLimitTypeLegal SECTION_CONTROL = new SpeedLimitTypeLegal("Section control");
-
-    /** Section control speed limit type. */
-    public static final SpeedLimitTypeLegal SPEED_CAMERA = new SpeedLimitTypeLegal("Speed camera");
-
-    /** Curvature speed limit type. */
-    public static final SpeedLimitType<CurvatureSpeedInfo> CURVATURE = new SpeedLimitType<CurvatureSpeedInfo>("Curvature",
-        CurvatureSpeedInfo.class);
-
-    /** Speed bump speed limit type. */
-    public static final SpeedLimitTypeSpeed SPEED_BUMP = new SpeedLimitTypeSpeed("Speed bump");
-
     /** Id of this speed limit type, which must be unique. */
     private final String id;
 

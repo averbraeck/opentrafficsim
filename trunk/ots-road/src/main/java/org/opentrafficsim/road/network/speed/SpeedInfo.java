@@ -127,7 +127,7 @@ public class SpeedInfo implements Serializable
      */
     public final Speed getMaximumVehicleSpeed()
     {
-        return getSpeedInfo(SpeedLimitType.MAX_VEHICLE_SPEED);
+        return getSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED);
     }
 
     /** Infinite speed used for initial comparison when deriving minimum. */
