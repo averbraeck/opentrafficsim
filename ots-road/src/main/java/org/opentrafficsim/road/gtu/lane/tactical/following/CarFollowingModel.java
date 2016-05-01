@@ -7,6 +7,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.road.network.speed.SpeedInfo;
 
 /**
  * Methods that a car-following model has to implement. The behavioral characteristics are supplied to obtain parameters. The

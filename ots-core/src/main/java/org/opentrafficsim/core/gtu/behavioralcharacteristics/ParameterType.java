@@ -115,8 +115,7 @@ public class ParameterType<U extends Unit<U>, T extends DoubleScalar.Rel<U>> ext
      * @param bc Set of behavioral characteristics.
      * @throws ParameterException If the value does not comply with constraints.
      */
-    @SuppressWarnings("checkstyle:designforextension")
-    protected void check(final T value, final BehavioralCharacteristics bc) throws ParameterException
+    public void check(final T value, final BehavioralCharacteristics bc) throws ParameterException
     {
         //
     }

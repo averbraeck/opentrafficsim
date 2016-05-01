@@ -15,8 +15,6 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
- * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 public class IncentiveSpeed implements VoluntaryIncentive
@@ -24,7 +22,7 @@ public class IncentiveSpeed implements VoluntaryIncentive
 
     /** {@inheritDoc} */
     @Override
-    public Desire determineDesire(final LaneBasedGTU gtu, final LanePerception perception, Desire mandatory)
+    public final Desire determineDesire(final LaneBasedGTU gtu, final LanePerception perception, final Desire mandatory)
     {
         return new Desire(0, 0);
     }

@@ -13,6 +13,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.road.network.speed.SpeedInfo;
 
 /**
  * The Intelligent Driver Model by Treiber, Hennecke and Helbing.

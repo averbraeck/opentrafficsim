@@ -36,9 +36,7 @@ public class Desire implements Serializable
     public Desire(final double left, final double right)
     {
         this.left = left <= 1 ? left : 1;
-        ;
         this.right = right <= 1 ? right : 1;
-        ;
     }
 
     /**
@@ -46,7 +44,7 @@ public class Desire implements Serializable
      * @param dir Direction for the desire to return.
      * @return Desire in the given direction.
      */
-    public double get(LateralDirectionality dir)
+    public final double get(final LateralDirectionality dir)
     {
         if (dir == LateralDirectionality.LEFT)
         {
@@ -63,7 +61,7 @@ public class Desire implements Serializable
      * Returns lane change desire to left.
      * @return Lane change desire to left.
      */
-    public double getLeft()
+    public final double getLeft()
     {
         return this.left;
     }
@@ -72,7 +70,7 @@ public class Desire implements Serializable
      * Returns lane change desire to right.
      * @return Lane change desire to right.
      */
-    public double getRight()
+    public final double getRight()
     {
         return this.right;
     }
@@ -81,7 +79,7 @@ public class Desire implements Serializable
      * Returns whether the left desire is larger than (or equal to) the right.
      * @return Returns whether the left desire is larger than (or equal to) the right.
      */
-    public boolean leftIsLargerOrEqual()
+    public final boolean leftIsLargerOrEqual()
     {
         return this.left >= this.right;
     }

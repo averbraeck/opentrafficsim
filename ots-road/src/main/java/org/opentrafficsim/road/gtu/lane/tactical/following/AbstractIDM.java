@@ -13,6 +13,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacter
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
+import org.opentrafficsim.road.network.speed.SpeedInfo;
 
 /**
  * Implementation of the IDM. See <a
@@ -31,15 +32,15 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
 
     /** Speed limit adherence factor. */
     public static final ParameterTypeDouble DELTA = new ParameterTypeDouble("delta",
-            "Acceleration flattening exponent towards desired speed.", 4.0, POSITIVE);
+        "Acceleration flattening exponent towards desired speed.", 4.0, POSITIVE);
 
     /** {@inheritDoc} */
     @Override
     public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedInfo speedInfo)
-            throws ParameterException
+        throws ParameterException
     {
-        Speed consideredSpeed = speedInfo.getSpeedLimit();
-        if (!speedInfo.isEnforcement())
+        Speed consideredSpeed = speedInfo.getLegalSpeedLimit();
+        if (!speedInfo.isEnforced())
         {
             consideredSpeed = consideredSpeed.multiplyBy(behavioralCharacteristics.getParameter(ParameterTypes.FSPEED));
         }
@@ -49,17 +50,31 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
     /** {@inheritDoc} */
     @Override
     public final Length desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
-            throws ParameterException
+        throws ParameterException
     {
         return behavioralCharacteristics.getParameter(ParameterTypes.S0).plus(
-                speed.multiplyBy(behavioralCharacteristics.getParameter(ParameterTypes.T)));
+            speed.multiplyBy(behavioralCharacteristics.getParameter(ParameterTypes.T)));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Determination of car-following acceleration, possibly based on multiple leaders. This implementation calculates the IDM
+     * free term, which is returned if there are no leaders. If there are leaders <tt>combineInteractionTerm()</tt> is invoked
+     * to combine the free term with some implementation specific interaction term. The IDM free term is limited by a 
+     * deceleration of <tt>B0</tt> for cases where the current speed is above the desired speed. This method can be overridden 
+     * if the free term needs to be redefined. 
+     * @param behavioralCharacteristics Behavioral characteristics.
+     * @param speed Current speed.
+     * @param desiredSpeed Desired speed.
+     * @param desiredHeadway Desired headway.
+     * @param leaders Set of leader headways (guaranteed positive) and speeds, ordered by headway (closest first).
+     * @throws ParameterException If parameter exception occurs.
+     * @return Car-following acceleration.
+     */
     @Override
-    protected final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
-            final Speed speed, final Speed desiredSpeed, final Length desiredHeadway, final SortedMap<Length, Speed> leaders)
-            throws ParameterException
+    @SuppressWarnings("checkstyle:designforextension")
+    protected Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
+        final Speed speed, final Speed desiredSpeed, final Length desiredHeadway, final SortedMap<Length, Speed> leaders)
+        throws ParameterException
     {
         Acceleration a = behavioralCharacteristics.getParameter(ParameterTypes.A);
         Acceleration b0 = behavioralCharacteristics.getParameter(ParameterTypes.B0);
@@ -74,7 +89,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
         }
         // return combined acceleration
         return combineInteractionTerm(new Acceleration(aFree, AccelerationUnit.SI), behavioralCharacteristics, speed,
-                desiredSpeed, desiredHeadway, leaders);
+            desiredSpeed, desiredHeadway, leaders);
     }
 
     /**
@@ -89,8 +104,8 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
      * @throws ParameterException In case of parameter exception.
      */
     protected abstract Acceleration combineInteractionTerm(Acceleration aFree,
-            BehavioralCharacteristics behavioralCharacteristics, Speed speed, Speed desiredSpeed, Length desiredHeadway,
-            SortedMap<Length, Speed> leaders) throws ParameterException;
+        BehavioralCharacteristics behavioralCharacteristics, Speed speed, Speed desiredSpeed, Length desiredHeadway,
+        SortedMap<Length, Speed> leaders) throws ParameterException;
 
     /**
      * Determines the dynamic desired headway, which is non-negative.
@@ -101,8 +116,8 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
      * @return Dynamic desired headway.
      * @throws ParameterException In case of parameter exception.
      */
-    protected final Length dynamicDesiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed,
-            final Length desiredHeadway, final Speed leaderSpeed) throws ParameterException
+    protected final Length dynamicDesiredHeadway(final BehavioralCharacteristics behavioralCharacteristics,
+        final Speed speed, final Length desiredHeadway, final Speed leaderSpeed) throws ParameterException
     {
         double sStar = desiredHeadway.si + dynamicHeadwayTerm(behavioralCharacteristics, speed, leaderSpeed).si;
         /*
@@ -124,7 +139,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
      * @throws ParameterException In case of parameter exception.
      */
     protected final Length dynamicHeadwayTerm(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed,
-            final Speed leaderSpeed) throws ParameterException
+        final Speed leaderSpeed) throws ParameterException
     {
         Acceleration a = behavioralCharacteristics.getParameter(ParameterTypes.A);
         Acceleration b = behavioralCharacteristics.getParameter(ParameterTypes.B);

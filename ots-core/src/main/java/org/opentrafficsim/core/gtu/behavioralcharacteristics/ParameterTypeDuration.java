@@ -70,7 +70,7 @@ public class ParameterTypeDuration extends ParameterType<TimeUnit, Duration> imp
     @Override
     public final String toString()
     {
-        return "ParameterTypeTime [id=" + getId() + ", description=" + getDescription() + "]";
+        return "ParameterTypeDuration [id=" + getId() + ", description=" + getDescription() + "]";
     }
 
 }

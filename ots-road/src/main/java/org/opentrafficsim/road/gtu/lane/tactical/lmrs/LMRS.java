@@ -1,23 +1,21 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.UNITINTERVAL;
-
-import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -42,86 +40,11 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class LMRS extends AbstractLaneBasedTacticalPlanner implements Serializable
+public class LMRS extends AbstractLMRS
 {
 
     /** Serialization id. */
-    private static final long serialVersionUID = 20160803L;
-
-    /** Free lane change desire threshold. */
-    public static final ParameterTypeDouble DFREE = new ParameterTypeDouble("dFree", "Free lane change desire threshold.",
-            0.365, UNITINTERVAL)
-    {
-        /** */
-        private static final long serialVersionUID = 20160400L;
-
-        public void check(final double value, final BehavioralCharacteristics bc) throws ParameterException
-        {
-            if (bc.contains(DSYNC))
-            {
-                Throw.when(value >= bc.getParameter(DSYNC), ParameterException.class,
-                        "Value of dFree is above or equal to dSync.");
-            }
-            if (bc.contains(DCOOP))
-            {
-                Throw.when(value >= bc.getParameter(DCOOP), ParameterException.class,
-                        "Value of dFree is above or equal to dCoop.");
-            }
-        }
-    };
-
-    /** Synchronized lane change desire threshold. */
-    public static final ParameterTypeDouble DSYNC = new ParameterTypeDouble("dSync",
-            "Synchronized lane change desire threshold.", 0.577, UNITINTERVAL)
-    {
-        /** */
-        private static final long serialVersionUID = 20160400L;
-
-        public void check(final double value, final BehavioralCharacteristics bc) throws ParameterException
-        {
-            if (bc.contains(DFREE))
-            {
-                Throw.when(value <= bc.getParameter(DFREE), ParameterException.class,
-                        "Value of dSync is below or equal to dFree.");
-            }
-            if (bc.contains(DCOOP))
-            {
-                Throw.when(value >= bc.getParameter(DCOOP), ParameterException.class,
-                        "Value of dSync is above or equal to dCoop.");
-            }
-        }
-    };
-
-    /** Cooperative lane change desire threshold. */
-    public static final ParameterTypeDouble DCOOP = new ParameterTypeDouble("dCoop",
-            "Cooperative lane change desire threshold.", 0.788, UNITINTERVAL)
-    {
-        /** */
-        private static final long serialVersionUID = 20160400L;
-
-        public void check(final double value, final BehavioralCharacteristics bc) throws ParameterException
-        {
-            if (bc.contains(DFREE))
-            {
-                Throw.when(value <= bc.getParameter(DFREE), ParameterException.class,
-                        "Value of dCoop is below or equal to dFree.");
-            }
-            if (bc.contains(DSYNC))
-            {
-                Throw.when(value <= bc.getParameter(DSYNC), ParameterException.class,
-                        "Value of dCoop is below or equal to dSync.");
-            }
-        }
-    };
-
-    /** Minimum acceleration for current plan. */
-    protected Acceleration minimumAcceleration;
-
-    /** List of mandatory lane change incentives. */
-    protected ArrayList<MandatoryIncentive> mandatoryIncentives;
-
-    /** List of voluntary lane change incentives. */
-    protected ArrayList<VoluntaryIncentive> voluntaryIncentives;
+    private static final long serialVersionUID = 20160300L;
 
     /**
      * Constructor setting the car-following model.
@@ -132,63 +55,35 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements Serializab
         super(carFollowingModel);
     }
 
-    /**
-     * Adds a mandatory incentive.
-     * @param incentive Incentive to add.
-     */
-    public final void addMandatoryIncentive(MandatoryIncentive incentive)
+    /** {@inheritDoc} */
+    @Override
+    public final Set<MandatoryIncentive> getDefaultMandatoryIncentives()
     {
-        this.mandatoryIncentives.add(incentive);
-    }
-
-    /**
-     * Adds a voluntary incentive.
-     * @param incentive Incentive to add.
-     */
-    public final void addVoluntaryIncentive(VoluntaryIncentive incentive)
-    {
-        this.voluntaryIncentives.add(incentive);
-    }
-
-    /**
-     * Sets the default lane change incentives. These are the mandatory route incentive, and the voluntary speed and keep
-     * incentives. Any existing incentives are removed.
-     */
-    @SuppressWarnings("checkstyle:designforextension")
-    public void setDefaultIncentives()
-    {
-        this.mandatoryIncentives.clear();
-        this.voluntaryIncentives.clear();
-        this.mandatoryIncentives.add(new IncentiveRoute());
-        this.voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
-        this.voluntaryIncentives.add(new IncentiveKeep());
-    }
-
-    /**
-     * Disables lane changes by clearing all incentives and setting a dummy incentive as mandatory incentive.
-     */
-    public final void disableLaneChanges()
-    {
-        this.mandatoryIncentives.clear();
-        this.voluntaryIncentives.clear();
-        this.mandatoryIncentives.add(new IncentiveDummy());
+        HashSet<MandatoryIncentive> set = new HashSet<MandatoryIncentive>();
+        set.add(new IncentiveRoute());
+        return set;
     }
 
     /** {@inheritDoc} */
     @Override
-    public OperationalPlan generateOperationalPlan(final GTU gtu, final Time startTime,
-            final DirectedPoint locationAtStartTime) throws OperationalPlanException, GTUException, NetworkException
+    public final Set<VoluntaryIncentive> getDefaultVoluntaryIncentives()
+    {
+        HashSet<VoluntaryIncentive> set = new HashSet<VoluntaryIncentive>();
+        set.add(new IncentiveSpeedWithCourtesy());
+        set.add(new IncentiveKeep());
+        return set;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final OperationalPlan generateOperationalPlan(final GTU gtu, final Time startTime,
+        final DirectedPoint locationAtStartTime) throws OperationalPlanException, GTUException, NetworkException,
+        ParameterException
     {
 
         // TODO: Remove this when other todo's are done, it is used as a placeholder where some acceleration needs to be
         // determined.
         Acceleration dummy = new Acceleration(0, AccelerationUnit.SI);
-
-        // Check existence of mandatory incentive
-        if (this.mandatoryIncentives.isEmpty())
-        {
-            throw new OperationalPlanException("At the least the LMRS requires 1 mandatory lane change incentive.");
-        }
 
         // Obtain objects to get info
         LaneBasedGTU gtuLane = (LaneBasedGTU) gtu;
@@ -196,24 +91,11 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements Serializab
         CarFollowingModel cfm = ((AbstractLaneBasedTacticalPlanner) gtuLane.getTacticalPlanner()).getCarFollowingModel();
 
         // TODO: Throw ParameterException
-        Acceleration b;
-        double dFree;
-        double dSync;
-        double dCoop;
-        try
-        {
-            b = gtuLane.getBehavioralCharacteristics().getParameter(ParameterTypes.B);
-            dFree = gtuLane.getBehavioralCharacteristics().getParameter(DFREE);
-            dSync = gtuLane.getBehavioralCharacteristics().getParameter(DSYNC);
-            dCoop = gtuLane.getBehavioralCharacteristics().getParameter(DCOOP);
-        }
-        catch (ParameterException pe)
-        {
-            throw new RuntimeException(pe);
-        }
-
-        // Reset stuff that is used in creating a plan
-        this.minimumAcceleration = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
+        BehavioralCharacteristics bc = gtuLane.getBehavioralCharacteristics();
+        Acceleration b = bc.getParameter(ParameterTypes.B);
+        double dFree = bc.getParameter(DFREE);
+        double dSync = bc.getParameter(DSYNC);
+        double dCoop = bc.getParameter(DCOOP);
 
         // Determine tactical plan
         if (Math.random() > .5)
@@ -222,8 +104,8 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements Serializab
             /*
              * During a lane change, both leaders are followed.
              */
-            lowerAcceleration(dummy);
-            lowerAcceleration(dummy);
+            Acceleration a = dummy;
+            a = minOf(a, dummy);
 
             /*
              * Operational plan.
@@ -234,10 +116,8 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements Serializab
 
         }
 
-        /*
-         * Relaxation
-         */
-        // TODO: relaxation
+        // Relaxation 
+        exponentialHeadwayRelaxation(bc);
 
         /*
          * Determine desire Mandatory is deduced as the maximum of a set of mandatory incentives, while voluntary desires are
@@ -249,7 +129,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements Serializab
         // Mandatory desire
         double dLeftMandatory = Double.NEGATIVE_INFINITY;
         double dRightMandatory = Double.NEGATIVE_INFINITY;
-        for (MandatoryIncentive incentive : this.mandatoryIncentives)
+        for (MandatoryIncentive incentive : getMandatoryIncentives())
         {
             Desire d = incentive.determineDesire(gtuLane, perception);
             dLeftMandatory = d.getLeft() > dLeftMandatory ? d.getLeft() : dLeftMandatory;
@@ -259,7 +139,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements Serializab
         // Voluntary desire
         double dLeftVoluntary = 0;
         double dRightVoluntary = 0;
-        for (VoluntaryIncentive incentive : this.voluntaryIncentives)
+        for (VoluntaryIncentive incentive : getVoluntaryIncentives())
         {
             Desire d = incentive.determineDesire(gtuLane, perception, mandatoryDesire);
             dLeftVoluntary += d.getLeft();
@@ -289,7 +169,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements Serializab
             thetaRight = (dCoop - Math.abs(dRightMandatory)) / (dCoop - dSync);
         }
         Desire totalDesire =
-                new Desire(dLeftMandatory + thetaLeft * dLeftVoluntary, dRightMandatory + thetaRight * dRightVoluntary);
+            new Desire(dLeftMandatory + thetaLeft * dLeftVoluntary, dRightMandatory + thetaRight * dRightVoluntary);
 
         /*
          * Gap acceptance The adjacent gap is accepted if acceleration is safe for the potential follower and for this driver.
@@ -299,14 +179,14 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements Serializab
         Acceleration aSelf = dummy;
         boolean leftAllowed = true; // TODO: get from perception / infrastructure, with relaxation
         boolean acceptLeft =
-                aSelf.getSI() >= -b.si * totalDesire.getLeft() && aFollow.getSI() >= -b.si * totalDesire.getLeft()
-                        && leftAllowed;
+            aSelf.getSI() >= -b.si * totalDesire.getLeft() && aFollow.getSI() >= -b.si * totalDesire.getLeft()
+                && leftAllowed;
         aFollow = dummy;
         aSelf = dummy;
         boolean rightAllowed = true; // TODO: get from perception / infrastructure, with relaxation
         boolean acceptRight =
-                aSelf.getSI() >= -b.si * totalDesire.getRight() && aFollow.getSI() >= -b.si * totalDesire.getRight()
-                        && rightAllowed;
+            aSelf.getSI() >= -b.si * totalDesire.getRight() && aFollow.getSI() >= -b.si * totalDesire.getRight()
+                && rightAllowed;
 
         /*
          * Lane change decision A lane change is initiated for the largest desire if this is above the threshold and the gap is
@@ -341,36 +221,37 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements Serializab
          * cooperation.
          */
         // follow leader
-        lowerAcceleration(dummy);
+        Acceleration a = dummy;
         // synchronize
         // TODO: get neighboring vehicles, use car-following model with altered headway
         if (totalDesire.leftIsLargerOrEqual() && totalDesire.getLeft() >= dSync)
         {
             // sync left
-            lowerAcceleration(safe(dummy, b));
+            a = minOf(a, limitDeceleration(dummy, b));
         }
         else if (!totalDesire.leftIsLargerOrEqual() && totalDesire.getRight() >= dSync)
         {
             // sync right
-            lowerAcceleration(safe(dummy, b));
+            a = minOf(a, limitDeceleration(dummy, b));
         }
         // cooperate
         // TODO: get neighboring vehicles, their indicators, use car-following model with altered headway
         if (Math.random() > 0)
         {
             // cooperate left
-            lowerAcceleration(safe(dummy, b));
+            a = minOf(a, limitDeceleration(dummy, b));
         }
         if (Math.random() > 0)
         {
             // cooperate right
-            lowerAcceleration(safe(dummy, b));
+            a = minOf(a, limitDeceleration(dummy, b));
         }
 
         /*
          * Operational plan.
          */
         // TODO: Build the operational plan using minimum acceleration and including a possible lane change using
+        // a
         // changeLeft/changeRight
         // LaneOperationalPlanBuilder
         return null;
@@ -394,39 +275,30 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements Serializab
         return Acceleration.ZERO;
     }
 
-    /**
-     * Remembers the lowest acceleration per tactical plan.
-     * @param a Acceleration to remember if lower than any previous acceleration.
-     */
-    protected void lowerAcceleration(final Acceleration a)
-    {
-        if (a.getSI() < this.minimumAcceleration.si)
-        {
-            this.minimumAcceleration = a;
-        }
-    }
-
-    /**
-     * Limits the supplied acceleration to safe values, i.e. above or equal to -b.
-     * @param a Acceleration to limit.
-     * @param b Deceleration to limit to.
-     * @return Limited acceleration.
-     */
-    protected Acceleration safe(final Acceleration a, final Acceleration b)
-    {
-        if (a.si >= -b.si)
-        {
-            return a;
-        }
-        return new Acceleration(-b.si, AccelerationUnit.SI);
-    }
-
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "LMRS [minimumAcceleration=" + this.minimumAcceleration + ", mandatoryIncentives=" + this.mandatoryIncentives
-                + ", voluntaryIncentives=" + this.voluntaryIncentives + "]";
+        String mandatory;
+        try
+        {
+            mandatory = "mandatoryIncentives=" + getMandatoryIncentives() + ", ";
+        }
+        catch (OperationalPlanException ope)
+        {
+            // thrown if no mandatory incentives
+            mandatory = "mandatoryIncentives=[]";
+        }
+        String voluntary;
+        if (!getVoluntaryIncentives().isEmpty())
+        {
+            voluntary = "voluntaryIncentives=" + getVoluntaryIncentives();
+        }
+        else
+        {
+            voluntary = "voluntaryIncentives=[]";
+        }
+        return "LMRS [" + mandatory + voluntary + "]";
     }
 
 }
