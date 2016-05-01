@@ -13,7 +13,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacter
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
-import org.opentrafficsim.road.network.speed.SpeedInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
  * Implementation of the IDM. See <a
@@ -36,7 +36,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedInfo speedInfo)
+    public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedInfo)
         throws ParameterException
     {
         Speed consideredSpeed = speedInfo.getLegalSpeedLimit();
