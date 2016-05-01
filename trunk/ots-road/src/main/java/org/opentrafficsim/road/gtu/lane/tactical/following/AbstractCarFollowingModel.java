@@ -8,7 +8,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.road.network.speed.SpeedInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
  * Default implementation where desired speed and headway are pre-calculated for car-following.
@@ -37,7 +37,7 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
      */
     @Override
     public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
-        final Speed speed, final SpeedInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
+        final Speed speed, final SpeedLimitInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
         // Catch negative headway
         if (leaders.firstKey().si <= 0)

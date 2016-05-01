@@ -19,7 +19,7 @@ import org.opentrafficsim.core.Throw;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class SpeedInfo implements Serializable
+public class SpeedLimitInfo implements Serializable
 {
 
     /** */
@@ -32,7 +32,7 @@ public class SpeedInfo implements Serializable
     private boolean enforced;
 
     /** Empty constructor. */
-    public SpeedInfo()
+    public SpeedLimitInfo()
     {
         //
     }
@@ -41,7 +41,7 @@ public class SpeedInfo implements Serializable
      * Constructor.
      * @param speedInfo speed info to copy into new speed info.
      */
-    public SpeedInfo(final SpeedInfo speedInfo)
+    public SpeedLimitInfo(final SpeedLimitInfo speedInfo)
     {
         for (SpeedLimitType<?> speedLimitType : speedInfo.speedInfoMap.keySet())
         {

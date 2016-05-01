@@ -15,7 +15,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.road.network.speed.SpeedInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
  * Extended version of FixedAccelerationModel. The addition is that this GTUFollowingModel stores a series of acceleration and
@@ -188,7 +188,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
 
     /** {@inheritDoc} */
     @Override
-    public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedInfo speedInfo)
+    public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedInfo)
         throws ParameterException
     {
         return null;
@@ -205,7 +205,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
     /** {@inheritDoc} */
     @Override
     public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
-        final Speed speed, final SpeedInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
+        final Speed speed, final SpeedLimitInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
         return null;
     }

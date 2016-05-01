@@ -26,7 +26,7 @@ public class SpeedLimitProspect implements Serializable
     private static final long serialVersionUID = 20160501L;
     
     /** Current speed info (at x=0). */
-    private final SpeedInfo currentSpeedInfo;
+    private final SpeedLimitInfo currentSpeedInfo;
 
     /** Spatial prospect of speed limit info. */
     private final SortedSet<SpeedLimitEntry<?>> prospect = new TreeSet<SpeedLimitEntry<?>>();
@@ -44,9 +44,9 @@ public class SpeedLimitProspect implements Serializable
      * Constructor.
      * @param currentSpeedInfo current speed info (at x=0)
      */
-    public SpeedLimitProspect(final SpeedInfo currentSpeedInfo)
+    public SpeedLimitProspect(final SpeedLimitInfo currentSpeedInfo)
     {
-        this.currentSpeedInfo = new SpeedInfo(currentSpeedInfo);
+        this.currentSpeedInfo = new SpeedLimitInfo(currentSpeedInfo);
     }
 
     /**
@@ -109,7 +109,7 @@ public class SpeedLimitProspect implements Serializable
      * @param time duration of acceleration
      * @return speed info at a given location
      */
-    public final SpeedInfo getSpeedInfoAtLocation(final Speed speed, final Acceleration acceleration, final Duration time)
+    public final SpeedLimitInfo getSpeedInfoAtLocation(final Speed speed, final Acceleration acceleration, final Duration time)
     {
         return getSpeedInfoAtLocation(new Length(speed.si * time.si + .5 * acceleration.si * time.si * time.si,
             LengthUnit.SI));
@@ -121,9 +121,9 @@ public class SpeedLimitProspect implements Serializable
      * @return speed info at a given location
      * @param <T> variable underlying speed info class
      */
-    public final <T> SpeedInfo getSpeedInfoAtLocation(final Length location)
+    public final <T> SpeedLimitInfo getSpeedInfoAtLocation(final Length location)
     {
-        SpeedInfo speedInfo = new SpeedInfo(this.currentSpeedInfo);
+        SpeedLimitInfo speedInfo = new SpeedLimitInfo(this.currentSpeedInfo);
         for (SpeedLimitEntry<?> speedLimitEntry : this.prospect)
         {
             if (speedLimitEntry.getLocation().gt(location))

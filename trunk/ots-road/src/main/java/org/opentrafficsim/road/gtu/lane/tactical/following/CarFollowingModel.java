@@ -7,7 +7,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.road.network.speed.SpeedInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
  * Methods that a car-following model has to implement. The behavioral characteristics are supplied to obtain parameters. The
@@ -37,7 +37,7 @@ public interface CarFollowingModel
      * @throws ParameterException If parameter exception occurs.
      * @return Desired speed.
      */
-    Speed desiredSpeed(BehavioralCharacteristics behavioralCharacteristics, SpeedInfo speedInfo) throws ParameterException;
+    Speed desiredSpeed(BehavioralCharacteristics behavioralCharacteristics, SpeedLimitInfo speedInfo) throws ParameterException;
 
     /**
      * Determines the desired headway in equilibrium conditions, i.e. no speed difference with the leader.
@@ -63,7 +63,7 @@ public interface CarFollowingModel
      * @return Car-following acceleration.
      */
     Acceleration followingAcceleration(BehavioralCharacteristics behavioralCharacteristics, Speed speed,
-        SpeedInfo speedInfo, SortedMap<Length, Speed> leaders) throws ParameterException;
+        SpeedLimitInfo speedInfo, SortedMap<Length, Speed> leaders) throws ParameterException;
 
     /**
      * Return the name of the car-following model.
