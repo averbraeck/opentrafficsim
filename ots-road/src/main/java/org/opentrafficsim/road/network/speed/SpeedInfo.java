@@ -63,19 +63,6 @@ public class SpeedInfo implements Serializable
     }
 
     /**
-     * Sets or overwrites the speed of the given speed limit type.
-     * @param speedLimitType Speed of the given speed limit type.
-     * @param speedInfo Info regarding the speed limit type.
-     * @param speedInfoClass Class of the speed info.
-     * @param <T> Class of speed limit type info.
-     */
-    public final <T> void setSpeedInfo(final SpeedLimitType<T> speedLimitType, final T speedInfo,
-        final Class<T> speedInfoClass)
-    {
-        this.speedInfoMap.put(speedLimitType, speedInfo);
-    }
-
-    /**
      * Clears the speed limit of given type.
      * @param speedLimitType Speed limit type to clear.
      */
