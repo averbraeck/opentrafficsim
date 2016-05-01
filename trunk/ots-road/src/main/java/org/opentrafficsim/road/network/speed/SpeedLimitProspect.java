@@ -56,7 +56,7 @@ public class SpeedLimitProspect implements Serializable
      * @param speedInfo Speed info to set.
      * @param <T> class of speed info
      */
-    public final <T> void setSpeedLimitTypeInfo(final Length location, final SpeedLimitType<T> speedLimitType,
+    public final <T> void setSpeedInfo(final Length location, final SpeedLimitType<T> speedLimitType,
         final T speedInfo)
     {
         this.prospect.add(new SpeedLimitEntry<T>(location, speedLimitType, speedInfo));
@@ -68,7 +68,7 @@ public class SpeedLimitProspect implements Serializable
      * @param speedLimitType Speed limit type to clear.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public final void clearSpeedLimitTypeInfo(final Length location, final SpeedLimitType<?> speedLimitType)
+    public final void clearSpeedInfo(final Length location, final SpeedLimitType<?> speedLimitType)
     {
         // We are putting a 'Clear' in an entry with speedLimitType<T> where T is not Clear, but info of class 'Clear' is
         // separately checked to clear a speedLimitType. I.e., no info is then returned that needs to be of T.
