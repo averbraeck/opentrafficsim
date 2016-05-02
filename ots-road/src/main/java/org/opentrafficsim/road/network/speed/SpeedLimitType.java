@@ -56,7 +56,7 @@ public class SpeedLimitType<T> implements Serializable
 
     /**
      * Returns the class of the info related to this speed limit type.
-     * @return class of the info related to this speed limit type.
+     * @return class of the info related to this speed limit type
      */
     public final Class<T> getInfoClass()
     {
@@ -65,7 +65,7 @@ public class SpeedLimitType<T> implements Serializable
 
     /**
      * Returns whether a speed limit type with given id is defined.
-     * @param id Id to check.
+     * @param id id to check
      * @return whether a speed limit type with given id is defined
      */
     public static boolean isDefined(final String id)
@@ -75,7 +75,7 @@ public class SpeedLimitType<T> implements Serializable
 
     /**
      * Obtain a speed limit type by id.
-     * @param id Id of speed limit type to obtain.
+     * @param id id of speed limit type to obtain.
      * @return speed limit type by id
      */
     public static SpeedLimitType<?> getById(final String id)

@@ -39,7 +39,7 @@ public class SpeedLimitInfo implements Serializable
 
     /**
      * Constructor.
-     * @param speedInfo speed info to copy into new speed info.
+     * @param speedInfo speed info to copy into new speed info
      */
     public SpeedLimitInfo(final SpeedLimitInfo speedInfo)
     {
@@ -52,9 +52,9 @@ public class SpeedLimitInfo implements Serializable
 
     /**
      * Sets or overwrites the speed of the given speed limit type.
-     * @param speedLimitType Speed of the given speed limit type.
-     * @param speedInfo Info regarding the speed limit type.
-     * @param <T> Class of speed limit type info.
+     * @param speedLimitType speed of the given speed limit type
+     * @param speedInfo info regarding the speed limit type
+     * @param <T> class of speed limit type info
      */
     public final <T> void setSpeedInfo(final SpeedLimitType<T> speedLimitType, final T speedInfo)
     {
@@ -64,7 +64,7 @@ public class SpeedLimitInfo implements Serializable
 
     /**
      * Clears the speed limit of given type.
-     * @param speedLimitType Speed limit type to clear.
+     * @param speedLimitType Speed limit type to clear
      */
     public final void clearSpeedInfo(final SpeedLimitType<?> speedLimitType)
     {
@@ -73,9 +73,9 @@ public class SpeedLimitInfo implements Serializable
 
     /**
      * Returns the info regarding a specific speed limit type.
-     * @param speedLimitType Speed limit type to return info for.
-     * @param <T> Class of speed limit type info.
-     * @return the speed limit type info.
+     * @param speedLimitType speed limit type to return info for
+     * @param <T> class of speed limit type info
+     * @return the speed limit type info
      */
     @SuppressWarnings("unchecked")
     public final <T> T getSpeedInfo(final SpeedLimitType<T> speedLimitType)
@@ -110,7 +110,7 @@ public class SpeedLimitInfo implements Serializable
 
     /**
      * Returns the maximum vehicle speed.
-     * @return Maximum vehicle speed.
+     * @return maximum vehicle speed
      */
     public final Speed getMaximumVehicleSpeed()
     {
@@ -142,7 +142,7 @@ public class SpeedLimitInfo implements Serializable
     @Override
     public final String toString()
     {
-        StringBuilder stringBuilder = new StringBuilder("SpeedInfo [");
+        StringBuilder stringBuilder = new StringBuilder("SpeedLimitInfo [");
         stringBuilder.append(this.enforced ? "enforced" : "not enforced");
         String sep = ", ";
         for (SpeedLimitType<?> slt : this.speedInfoMap.keySet())
