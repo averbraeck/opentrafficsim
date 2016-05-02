@@ -46,7 +46,7 @@ public class CurvatureSpeedInfo implements Serializable
 
     /**
      * Returns the speed for which the current lateral acceleration follows in the corner.
-     * @param acceleration acceleration to result from speed in corner.
+     * @param acceleration acceleration to result from speed in corner
      * @return speed for which the current lateral acceleration follows in the corner
      */
     public final Speed getSpeedForLateralAcceleration(final Acceleration acceleration)
