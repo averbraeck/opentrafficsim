@@ -170,37 +170,72 @@ public final class Throw
      * @throws Throwable the throwable to throw
      * @param <T> the Throwable type
      */
+    @SuppressWarnings("unchecked")
     private static <T extends Throwable> void throwMessage(final Class<T> throwableClass, final String message,
             final List<Object> argList) throws T
     {
+        // create a clear message
         List<StackTraceElement> steList = new ArrayList<StackTraceElement>(Arrays.asList(new Throwable().getStackTrace()));
         steList.remove(0); // remove the throwMessage(...) call
         steList.remove(0); // remove the when(...) call
         StackTraceElement[] ste = steList.toArray(new StackTraceElement[steList.size()]);
         String where = ste[0].getClassName() + "." + ste[0].getMethodName() + " (" + ste[0].getLineNumber() + "): ";
         Object[] args = argList.toArray();
+        String formattedMessage;
         try
         {
-            @SuppressWarnings("unchecked")
+            formattedMessage = where + String.format(message, args);
+        }
+        catch (IllegalFormatException exception)
+        {
+            formattedMessage = where + message + " [FormatException; args=" + argList + "]";
+        }
+
+        // throw exceptions that cannot be thrown as a result of instantiating through reflection.
+        if (throwableClass.equals(NoSuchMethodException.class))
+        {
+            T exception = (T) new NoSuchMethodException(formattedMessage);
+            exception.setStackTrace(ste);
+            throw exception;
+        }
+        if (throwableClass.equals(InstantiationException.class))
+        {
+            T exception =  (T) new InstantiationException(formattedMessage);
+            exception.setStackTrace(ste);
+            throw exception;
+        }
+        if (throwableClass.equals(IllegalAccessException.class))
+        {
+            T exception =  (T) new IllegalAccessException(formattedMessage);
+            exception.setStackTrace(ste);
+            throw exception;
+        }
+        if (throwableClass.equals(IllegalArgumentException.class))
+        {
+            T exception =  (T) new IllegalArgumentException(formattedMessage);
+            exception.setStackTrace(ste);
+            throw exception;
+        }
+        if (throwableClass.equals(InvocationTargetException.class))
+        {
+            T exception =  (T) new InvocationTargetException(new Exception(formattedMessage));
+            exception.setStackTrace(ste);
+            throw exception;
+        }
+        
+        // throw all other excheptions through reflection 
+        try
+        {
             Constructor<T> constructor =
                     (Constructor<T>) ClassUtil.resolveConstructor(throwableClass, new Class<?>[] { String.class });
-            try
-            {
-                T exception = constructor.newInstance(where + String.format(message, args));
-                exception.setStackTrace(ste);
-                throw exception;
-            }
-            catch (IllegalFormatException exception)
-            {
-                T exception2 = constructor.newInstance(where + message + " [FormatException; args=" + argList + "]");
-                exception2.setStackTrace(ste);
-                throw exception2;
-            }
+            T exception = constructor.newInstance(formattedMessage);
+            exception.setStackTrace(ste);
+            throw exception;
         }
         catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException exception3)
         {
-            RuntimeException rte = new RuntimeException(where + message + " [Exception; args=" + argList + "]");
+            RuntimeException rte = new RuntimeException(formattedMessage);
             rte.setStackTrace(ste);
             throw rte;
         }
