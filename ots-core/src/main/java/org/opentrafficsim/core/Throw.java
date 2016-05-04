@@ -1,7 +1,6 @@
 package org.opentrafficsim.core;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IllegalFormatException;
@@ -44,7 +43,7 @@ public final class Throw
     }
 
     /**
-     * Throw an Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
+     * Throw a Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
      * as follows: <br>
      * <code>Throw.when(value == null, GTUException.class, "value cannot be null");</code>
      * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
@@ -53,8 +52,8 @@ public final class Throw
      * @throws Throwable the throwable to throw on true condition
      * @param <T> the Throwable type
      */
-    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass, final String message)
-            throws T
+    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass,
+        final String message) throws T
     {
         if (condition)
         {
@@ -63,41 +62,41 @@ public final class Throw
     }
 
     /**
-     * Throw an Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
+     * Throw a Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
      * as follows: <br>
      * <code>Throw.when(value == null, GTUException.class, "value cannot be null for GTU with id = %s", id);</code>
      * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
      * @param throwableClass the Throwable type to throw
-     * @param message the message to use in the exception
-     * @param arg1 value to use for the formatting identifiers
+     * @param message the message to use in the exception, with formatting identifiers
+     * @param arg value to use for the formatting identifiers
      * @throws Throwable the throwable to throw on true condition
      * @param <T> the Throwable type
      */
-    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass, final String message,
-            final Object arg1) throws T
+    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass,
+        final String message, final Object arg) throws T
     {
         if (condition)
         {
             List<Object> argList = new ArrayList<>();
-            argList.add(arg1);
+            argList.add(arg);
             throwMessage(throwableClass, message, argList);
         }
     }
 
     /**
-     * Throw an Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
+     * Throw a Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
      * as follows: <br>
      * <code>Throw.when(value == null, GTUException.class, "value cannot be null for GTU %s with id %s", name, id);</code>
      * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
      * @param throwableClass the Throwable type to throw
-     * @param message the message to use in the exception
+     * @param message the message to use in the exception, with formatting identifiers
      * @param arg1 1st value to use for the formatting identifiers
      * @param arg2 2nd value to use for the formatting identifiers
      * @throws Throwable the throwable to throw on true condition
      * @param <T> the Throwable type
      */
-    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass, final String message,
-            final Object arg1, final Object arg2) throws T
+    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass,
+        final String message, final Object arg1, final Object arg2) throws T
     {
         if (condition)
         {
@@ -109,20 +108,20 @@ public final class Throw
     }
 
     /**
-     * Throw an Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
+     * Throw a Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
      * as follows: <br>
      * <code>Throw.when(value == null, GTUException.class, "value cannot be null for GTU %s with id %s", name, id);</code>
      * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
      * @param throwableClass the Throwable type to throw
-     * @param message the message to use in the exception
+     * @param message the message to use in the exception, with formatting identifiers
      * @param arg1 1st value to use for the formatting identifiers
      * @param arg2 2nd value to use for the formatting identifiers
      * @param arg3 3rd value to use for the formatting identifiers
      * @throws Throwable the throwable to throw on true condition
      * @param <T> the Throwable type
      */
-    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass, final String message,
-            final Object arg1, final Object arg2, final Object arg3) throws T
+    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass,
+        final String message, final Object arg1, final Object arg2, final Object arg3) throws T
     {
         if (condition)
         {
@@ -135,12 +134,12 @@ public final class Throw
     }
 
     /**
-     * Throw an Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
+     * Throw a Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
      * as follows: <br>
      * <code>Throw.when(value == null, GTUException.class, "value cannot be null for GTU with id = %s", id);</code>
      * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
      * @param throwableClass the Throwable type to throw
-     * @param message the message to use in the exception, with potential formatting identifiers
+     * @param message the message to use in the exception, with formatting identifiers
      * @param arg1 1st value to use for the formatting identifiers
      * @param arg2 2nd value to use for the formatting identifiers
      * @param arg3 3rd value to use for the formatting identifiers
@@ -148,8 +147,8 @@ public final class Throw
      * @throws Throwable the throwable to throw on true condition
      * @param <T> the Throwable type
      */
-    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass, final String message,
-            final Object arg1, final Object arg2, final Object arg3, final Object... args) throws T
+    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass,
+        final String message, final Object arg1, final Object arg2, final Object arg3, final Object... args) throws T
     {
         if (condition)
         {
@@ -172,7 +171,7 @@ public final class Throw
      */
     @SuppressWarnings("unchecked")
     private static <T extends Throwable> void throwMessage(final Class<T> throwableClass, final String message,
-            final List<Object> argList) throws T
+        final List<Object> argList) throws T
     {
         // create a clear message
         List<StackTraceElement> steList = new ArrayList<StackTraceElement>(Arrays.asList(new Throwable().getStackTrace()));
@@ -191,53 +190,124 @@ public final class Throw
             formattedMessage = where + message + " [FormatException; args=" + argList + "]";
         }
 
-        // throw exceptions that cannot be thrown as a result of instantiating through reflection.
-        if (throwableClass.equals(NoSuchMethodException.class))
-        {
-            T exception = (T) new NoSuchMethodException(formattedMessage);
-            exception.setStackTrace(ste);
-            throw exception;
-        }
-        if (throwableClass.equals(InstantiationException.class))
-        {
-            T exception =  (T) new InstantiationException(formattedMessage);
-            exception.setStackTrace(ste);
-            throw exception;
-        }
-        if (throwableClass.equals(IllegalAccessException.class))
-        {
-            T exception =  (T) new IllegalAccessException(formattedMessage);
-            exception.setStackTrace(ste);
-            throw exception;
-        }
-        if (throwableClass.equals(IllegalArgumentException.class))
-        {
-            T exception =  (T) new IllegalArgumentException(formattedMessage);
-            exception.setStackTrace(ste);
-            throw exception;
-        }
-        if (throwableClass.equals(InvocationTargetException.class))
-        {
-            T exception =  (T) new InvocationTargetException(new Exception(formattedMessage));
-            exception.setStackTrace(ste);
-            throw exception;
-        }
-        
-        // throw all other excheptions through reflection 
+        // throw all other exceptions through reflection
+        T exception;
         try
         {
             Constructor<T> constructor =
-                    (Constructor<T>) ClassUtil.resolveConstructor(throwableClass, new Class<?>[] { String.class });
-            T exception = constructor.newInstance(formattedMessage);
+                (Constructor<T>) ClassUtil.resolveConstructor(throwableClass, new Class<?>[] {String.class});
+            exception = constructor.newInstance(formattedMessage);
             exception.setStackTrace(ste);
-            throw exception;
         }
-        catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException exception3)
+        catch (Throwable t)
         {
-            RuntimeException rte = new RuntimeException(formattedMessage);
+            RuntimeException rte = new RuntimeException(t.getMessage(), new Exception(formattedMessage));
             rte.setStackTrace(ste);
             throw rte;
         }
+        throw exception;
     }
+
+    /**
+     * Throw a NullPointerException if object is null, e.g. for pre- and postcondition checking. Use as follows: <br>
+     * <code>Throw.whenNull(value, "value cannot be null");</code>
+     * @param object object to check; an exception will be thrown if this is <b>null</b>
+     * @param message the message to use in the exception
+     * @throws NullPointerException if object is null
+     */
+    public static void whenNull(final Object object, final String message) throws NullPointerException
+    {
+        if (object == null)
+        {
+            throwMessage(NullPointerException.class, message, new ArrayList<Object>());
+        }
+    }
+
+    /**
+     * Throw a NullPointerException if object is null, e.g. for pre- and postcondition checking. Use as follows: <br>
+     * <code>Throw.whenNull(value, "value cannot be null for GTU with id = %s", id);</code>
+     * @param object object to check; an exception will be thrown if this is <b>null</b>
+     * @param message the message to use in the exception, with formatting identifiers
+     * @param arg value to use for the formatting identifiers
+     * @throws NullPointerException if object is null
+     */
+    public static void whenNull(final Object object, final String message, final Object arg) throws NullPointerException
+    {
+        if (object == null)
+        {
+            List<Object> argList = new ArrayList<>();
+            argList.add(arg);
+            throwMessage(NullPointerException.class, message, argList);
+        }
+    }
+
+    /**
+     * Throw a NullPointerException if object is null, e.g. for pre- and postcondition checking. Use as follows: <br>
+     * <code>Throw.whenNull(value, "value cannot be null for GTU %s with id %s", name, id);</code>
+     * @param object object to check; an exception will be thrown if this is <b>null</b>
+     * @param message the message to use in the exception, with formatting identifiers
+     * @param arg1 1st value to use for the formatting identifiers
+     * @param arg2 2nd value to use for the formatting identifiers
+     * @throws NullPointerException if object is null
+     */
+    public static void whenNull(final Object object, final String message, final Object arg1, final Object arg2)
+        throws NullPointerException
+    {
+        if (object == null)
+        {
+            List<Object> argList = new ArrayList<>();
+            argList.add(arg1);
+            argList.add(arg2);
+            throwMessage(NullPointerException.class, message, argList);
+        }
+    }
+
+    /**
+     * Throw a NullPointerException if object is null, e.g. for pre- and postcondition checking. Use as follows: <br>
+     * <code>Throw.whenNull(value, "value cannot be null for GTU %s with id %s", name, id);</code>
+     * @param object object to check; an exception will be thrown if this is <b>null</b>
+     * @param message the message to use in the exception, with formatting identifiers
+     * @param arg1 1st value to use for the formatting identifiers
+     * @param arg2 2nd value to use for the formatting identifiers
+     * @param arg3 3rd value to use for the formatting identifiers
+     * @throws NullPointerException if object is null
+     */
+    public static void whenNull(final Object object, final String message, final Object arg1, final Object arg2,
+        final Object arg3) throws NullPointerException
+    {
+        if (object == null)
+        {
+            List<Object> argList = new ArrayList<>();
+            argList.add(arg1);
+            argList.add(arg2);
+            argList.add(arg3);
+            throwMessage(NullPointerException.class, message, argList);
+        }
+    }
+
+    /**
+     * Throw a NullPointerException if object is null, e.g. for pre- and postcondition checking. Use as follows: <br>
+     * <code>Throw.whenNull(value, "value cannot be null for GTU %s with id %s", name, id);</code>
+     * @param object object to check; an exception will be thrown if this is <b>null</b>
+     * @param message the message to use in the exception, with formatting identifiers
+     * @param arg1 1st value to use for the formatting identifiers
+     * @param arg2 2nd value to use for the formatting identifiers
+     * @param arg3 3rd value to use for the formatting identifiers
+     * @param args potential 4th and further values to use for the formatting identifiers
+     * @throws NullPointerException if object is null
+     */
+    public static void whenNull(final Object object, final String message, final Object arg1, final Object arg2,
+        final Object arg3, final Object... args) throws NullPointerException
+    {
+        if (object == null)
+        {
+            List<Object> argList = new ArrayList<>();
+            argList.add(arg1);
+            argList.add(arg2);
+            argList.add(arg3);
+            argList.addAll(Arrays.asList(args));
+            throwMessage(NullPointerException.class, message, argList);
+        }
+    }
+
 }
