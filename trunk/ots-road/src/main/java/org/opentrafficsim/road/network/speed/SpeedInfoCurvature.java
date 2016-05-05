@@ -6,6 +6,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.Throw;
 
 /**
  * Class with curvature info for curvature speed limit type.
@@ -16,8 +17,7 @@ import org.djunits.value.vdouble.scalar.Speed;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 30, 2016 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
-public class CurvatureSpeedInfo implements Serializable
+public class SpeedInfoCurvature implements Comparable<SpeedInfoCurvature>, Serializable
 {
 
     /** */
@@ -29,9 +29,11 @@ public class CurvatureSpeedInfo implements Serializable
     /**
      * Constructor with curvature radius.
      * @param radius curvature radius
+     * @throws NullPointerException if radius is null
      */
-    public CurvatureSpeedInfo(final Length radius)
+    public SpeedInfoCurvature(final Length radius)
     {
+        Throw.whenNull(radius, "Radius may not be null.");
         this.radius = radius;
     }
 
@@ -48,18 +50,64 @@ public class CurvatureSpeedInfo implements Serializable
      * Returns the speed for which the current lateral acceleration follows in the corner.
      * @param acceleration acceleration to result from speed in corner
      * @return speed for which the current lateral acceleration follows in the corner
+     * @throws NullPointerException if acceleration is null
      */
     public final Speed getSpeedForLateralAcceleration(final Acceleration acceleration)
     {
+        Throw.whenNull(acceleration, "Acceleration may not be null.");
         // a=v*v/r => v=sqrt(a*r)
         return new Speed(Math.sqrt(acceleration.si * this.radius.si), SpeedUnit.SI);
     }
 
+    
+
+    /** {@inheritDoc} */
+    @Override
+    public final int hashCode()
+    {
+        return this.radius.hashCode();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean equals(final Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        SpeedInfoCurvature other = (SpeedInfoCurvature) obj;
+        if (!this.radius.equals(other.radius))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final int compareTo(final SpeedInfoCurvature curvatureSpeedInfo)
+    {
+        if (curvatureSpeedInfo == null)
+        {
+            return 1;
+        }
+        return this.radius.compareTo(curvatureSpeedInfo.radius);
+    }
+    
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "CurvatureSpeedInfo [radius=" + this.radius + "]";
+        return "SpeedInfoCurvature [radius=" + this.radius + "]";
     }
     
 }

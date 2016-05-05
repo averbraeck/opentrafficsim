@@ -36,15 +36,14 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedInfo)
-        throws ParameterException
+    public final Speed
+        desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedInfo)
+            throws ParameterException
     {
-        Speed consideredSpeed = speedInfo.getLegalSpeedLimit();
-        if (!speedInfo.isEnforced())
-        {
-            consideredSpeed = consideredSpeed.multiplyBy(behavioralCharacteristics.getParameter(ParameterTypes.FSPEED));
-        }
-        return consideredSpeed.le(speedInfo.getMaximumVehicleSpeed()) ? consideredSpeed : speedInfo.getMaximumVehicleSpeed();
+        Speed consideredSpeed =
+            getLegalSpeedLimit(speedInfo).multiplyBy(behavioralCharacteristics.getParameter(ParameterTypes.FSPEED));
+        Speed maxVehicleSpeed = getMaximumVehicleSpeed(speedInfo);
+        return consideredSpeed.le(maxVehicleSpeed) ? consideredSpeed : maxVehicleSpeed;
     }
 
     /** {@inheritDoc} */
@@ -59,9 +58,9 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
     /**
      * Determination of car-following acceleration, possibly based on multiple leaders. This implementation calculates the IDM
      * free term, which is returned if there are no leaders. If there are leaders <tt>combineInteractionTerm()</tt> is invoked
-     * to combine the free term with some implementation specific interaction term. The IDM free term is limited by a 
-     * deceleration of <tt>B0</tt> for cases where the current speed is above the desired speed. This method can be overridden 
-     * if the free term needs to be redefined. 
+     * to combine the free term with some implementation specific interaction term. The IDM free term is limited by a
+     * deceleration of <tt>B0</tt> for cases where the current speed is above the desired speed. This method can be overridden
+     * if the free term needs to be redefined.
      * @param behavioralCharacteristics Behavioral characteristics.
      * @param speed Current speed.
      * @param desiredSpeed Desired speed.

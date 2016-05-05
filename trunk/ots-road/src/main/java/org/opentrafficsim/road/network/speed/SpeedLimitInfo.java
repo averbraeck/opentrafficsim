@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.Throw;
 
 /**
@@ -24,51 +22,41 @@ public class SpeedLimitInfo implements Serializable
 
     /** */
     private static final long serialVersionUID = 20160501L;
-    
-    /** Set of current speed limits mapped to speed limit types. */
+
+    /** Set of current speed info's mapped to speed limit types. */
     private final Map<SpeedLimitType<?>, Object> speedInfoMap = new HashMap<>();
 
-    /** Whether the legal speed limits are enforced. */
-    private boolean enforced;
-
-    /** Empty constructor. */
-    public SpeedLimitInfo()
-    {
-        //
-    }
-
     /**
-     * Constructor.
-     * @param speedInfo speed info to copy into new speed info
-     */
-    public SpeedLimitInfo(final SpeedLimitInfo speedInfo)
-    {
-        for (SpeedLimitType<?> speedLimitType : speedInfo.speedInfoMap.keySet())
-        {
-            this.speedInfoMap.put(speedLimitType, speedInfo.speedInfoMap.get(speedLimitType));
-        }
-        this.enforced = speedInfo.enforced;
-    }
-
-    /**
-     * Sets or overwrites the speed of the given speed limit type.
-     * @param speedLimitType speed of the given speed limit type
+     * Adds or overwrites the speed info of the given speed limit type.
+     * @param speedLimitType speed limit type to add info for
      * @param speedInfo info regarding the speed limit type
-     * @param <T> class of speed limit type info
+     * @param <T> class of speed info
+     * @throws NullPointerException if the speed limit type or speed info is null
      */
-    public final <T> void setSpeedInfo(final SpeedLimitType<T> speedLimitType, final T speedInfo)
+    public final <T> void addSpeedInfo(final SpeedLimitType<T> speedLimitType, final T speedInfo)
     {
         Throw.when(speedLimitType == null, NullPointerException.class, "Speed limit type may not be null.");
+        Throw.when(speedInfo == null, NullPointerException.class, "Speed info may not be null.");
         this.speedInfoMap.put(speedLimitType, speedInfo);
     }
 
     /**
-     * Clears the speed limit of given type.
-     * @param speedLimitType Speed limit type to clear
+     * Removes the speed info of given speed limit type.
+     * @param speedLimitType speed limit type of speed info to remove
      */
-    public final void clearSpeedInfo(final SpeedLimitType<?> speedLimitType)
+    public final void removeSpeedInfo(final SpeedLimitType<?> speedLimitType)
     {
         this.speedInfoMap.remove(speedLimitType);
+    }
+
+    /**
+     * Whether speed info is present for the given speed limit type.
+     * @param speedLimitType speed limit type
+     * @return whether speed info is present for the given speed limit type
+     */
+    public final boolean contains(final SpeedLimitType<?> speedLimitType)
+    {
+        return this.speedInfoMap.containsKey(speedLimitType);
     }
 
     /**
@@ -76,66 +64,16 @@ public class SpeedLimitInfo implements Serializable
      * @param speedLimitType speed limit type to return info for
      * @param <T> class of speed limit type info
      * @return the speed limit type info
+     * @throws NullPointerException if the speed limit type is null
+     * @throws IllegalStateException if the speed limit type is not present
      */
     @SuppressWarnings("unchecked")
     public final <T> T getSpeedInfo(final SpeedLimitType<T> speedLimitType)
     {
+        Throw.when(speedLimitType == null, NullPointerException.class, "Speed limit type may not be null.");
+        Throw.when(!contains(speedLimitType), IllegalStateException.class, "The speed limit type '%s' "
+            + "is not present in the speed limit info. Use SpeedLimitInfo.contains() to check.", speedLimitType.getId());
         return (T) this.speedInfoMap.get(speedLimitType);
-    }
-
-    /**
-     * Sets the legal speed limit types to enforced.
-     */
-    public final void setEnforced()
-    {
-        this.enforced = true;
-    }
-
-    /**
-     * Sets the legal speed limit types to not enforced.
-     */
-    public final void clearEnforced()
-    {
-        this.enforced = false;
-    }
-
-    /**
-     * Whether the legal speed limit types are enforced.
-     * @return whether the legal speed limit types are enforced
-     */
-    public final boolean isEnforced()
-    {
-        return this.enforced;
-    }
-
-    /**
-     * Returns the maximum vehicle speed.
-     * @return maximum vehicle speed
-     */
-    public final Speed getMaximumVehicleSpeed()
-    {
-        return getSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED);
-    }
-
-    /** Infinite speed used for initial comparison when deriving minimum. */
-    private static final Speed INF_SPEED = new Speed(Double.POSITIVE_INFINITY, SpeedUnit.SI);
-
-    /**
-     * Returns the minimum speed of all speed limit types that are categorized as legal.
-     * @return minimum speed of all speed limit types that are categorized as legal
-     */
-    public final Speed getLegalSpeedLimit()
-    {
-        Speed out = INF_SPEED;
-        for (SpeedLimitType<?> slt : this.speedInfoMap.keySet())
-        {
-            if (slt instanceof SpeedLimitTypeLegal)
-            {
-                Speed spd = (Speed) this.speedInfoMap.get(slt);
-                out = spd.lt(out) ? spd : out;
-            }
-        }
-        return out;
     }
 
     /** {@inheritDoc} */
@@ -143,14 +81,14 @@ public class SpeedLimitInfo implements Serializable
     public final String toString()
     {
         StringBuilder stringBuilder = new StringBuilder("SpeedLimitInfo [");
-        stringBuilder.append(this.enforced ? "enforced" : "not enforced");
-        String sep = ", ";
+        String sep = "";
         for (SpeedLimitType<?> slt : this.speedInfoMap.keySet())
         {
             stringBuilder.append(sep);
             stringBuilder.append(slt.getId());
             stringBuilder.append("=");
             stringBuilder.append(this.speedInfoMap.get(slt));
+            sep = ", ";
         }
         stringBuilder.append("]");
         return stringBuilder.toString();
