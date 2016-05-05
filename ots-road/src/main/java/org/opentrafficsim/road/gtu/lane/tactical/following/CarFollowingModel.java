@@ -32,19 +32,19 @@ public interface CarFollowingModel
 
     /**
      * Determines the desired speed.
-     * @param behavioralCharacteristics Behavioral characteristics.
-     * @param speedInfo Info regarding the desired speed for car-following.
-     * @throws ParameterException If parameter exception occurs.
-     * @return Desired speed.
+     * @param behavioralCharacteristics behavioral characteristics
+     * @param speedInfo info regarding the desired speed for car-following
+     * @throws ParameterException if parameter exception occurs
+     * @return desired speed
      */
     Speed desiredSpeed(BehavioralCharacteristics behavioralCharacteristics, SpeedLimitInfo speedInfo) throws ParameterException;
 
     /**
      * Determines the desired headway in equilibrium conditions, i.e. no speed difference with the leader.
-     * @param behavioralCharacteristics Behavioral characteristics.
-     * @param speed Speed to determine the desired headway at.
-     * @throws ParameterException If parameter exception occurs.
-     * @return Desired headway.
+     * @param behavioralCharacteristics behavioral characteristics
+     * @param speed speed to determine the desired headway at
+     * @throws ParameterException if parameter exception occurs
+     * @return desired headway
      */
     Length desiredHeadway(BehavioralCharacteristics behavioralCharacteristics, Speed speed) throws ParameterException;
 
@@ -55,25 +55,25 @@ public interface CarFollowingModel
      * <li>The current speed being higher than the desired speed.</li>
      * <li>The headway being negative.</li>
      * </ul>
-     * @param behavioralCharacteristics Behavioral characteristics.
-     * @param speed Current speed.
-     * @param speedInfo Info regarding the desired speed for car-following.
-     * @param leaders Set of leader headways and speeds, ordered by headway (closest first).
-     * @throws ParameterException If parameter exception occurs.
-     * @return Car-following acceleration.
+     * @param behavioralCharacteristics behavioral characteristics
+     * @param speed current speed
+     * @param speedLimitInfo info regarding the desired speed for car-following
+     * @param leaders set of leader headways and speeds, ordered by headway (closest first)
+     * @throws ParameterException if parameter exception occurs
+     * @return car-following acceleration
      */
     Acceleration followingAcceleration(BehavioralCharacteristics behavioralCharacteristics, Speed speed,
-        SpeedLimitInfo speedInfo, SortedMap<Length, Speed> leaders) throws ParameterException;
+        SpeedLimitInfo speedLimitInfo, SortedMap<Length, Speed> leaders) throws ParameterException;
 
     /**
      * Return the name of the car-following model.
-     * @return Name of the car-following model.
+     * @return name of the car-following model
      */
     String getName();
 
     /**
      * Return the complete name of the car-following model.
-     * @return Complete name of the car-following model.
+     * @return complete name of the car-following model
      */
     String getLongName();
 
