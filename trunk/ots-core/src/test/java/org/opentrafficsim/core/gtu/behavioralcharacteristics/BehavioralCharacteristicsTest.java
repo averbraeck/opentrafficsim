@@ -394,15 +394,9 @@ public class BehavioralCharacteristicsTest implements CheckInterface
     @Test
     public final void equalizeTest() throws ParameterException
     {
-        // completely similar parameters should not be equal
+        // equal double values from different parameters should be equal
         ParameterTypeDouble a1 = new ParameterTypeDouble("a", "along", 0.0);
         ParameterTypeDouble a2 = new ParameterTypeDouble("a", "along", 0.0);
-        if (a1.equals(a2))
-        {
-            fail("Equally defined parameter types should not be equal.");
-        }
-
-        // equal double values from different parameters should be equal
         BehavioralCharacteristics bc1 = new BehavioralCharacteristics();
         BehavioralCharacteristics bc2 = new BehavioralCharacteristics();
         bc1.setParameter(a1, 4.0);

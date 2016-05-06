@@ -2,11 +2,11 @@ package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.io.Serializable;
 import java.util.IllegalFormatException;
-import java.util.UUID;
 
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.Throw;
+import org.opentrafficsim.core.Type;
 
 /**
  * Defines meta-information of a parameter, defining the parameter uniquely.
@@ -20,14 +20,12 @@ import org.opentrafficsim.core.Throw;
  * @param <U> Unit of the value.
  * @param <T> Class of the value.
  */
-public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleScalar.Rel<U>> implements Serializable
+public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleScalar.Rel<U>> extends
+    Type<AbstractParameterType<?, ?>> implements Serializable
 {
 
     /** */
     private static final long serialVersionUID = 20160400L;
-
-    /** Unique identifier. */
-    private final UUID uniqueId;
 
     /** Short name of parameter. */
     private final String id;
@@ -119,11 +117,8 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
          */
         Check(final String failMessage)
         {
-            if (failMessage == null)
-            {
-                throw new RuntimeException("Default parameter check " + this.toString()
-                    + " has null as fail message as given to the constructor, which is not allowed.");
-            }
+            Throw.whenNull(failMessage, "Default parameter check '%s' has null as fail message as given to the constructor,"
+                + " which is not allowed.", this);
             try
             {
                 String.format(failMessage, "dummy");
@@ -216,15 +211,17 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
     protected AbstractParameterType(final String id, final String description, final Class<T> valueClass,
         final T defaultValue, final Check check, final boolean hasDefaultValue)
     {
-        if (hasDefaultValue && defaultValue == null)
+        Throw.whenNull(id, "Id may not be null.");
+        Throw.whenNull(description, "Description may not be null.");
+        Throw.whenNull(valueClass, "Value class may not be null.");
+        if (hasDefaultValue)
         {
-            throw new RuntimeException("Default values of parameter types may not be null.");
+            Throw.whenNull(defaultValue, "Default values of parameter types may not be null.");
         }
         this.id = id;
         this.description = description;
         this.valueClass = valueClass;
         this.defaultValue = defaultValue;
-        this.uniqueId = UUID.randomUUID();
         this.check = check;
         if (this.defaultValue != null)
         {
@@ -297,35 +294,63 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
     public abstract String printValue(BehavioralCharacteristics behavioralCharacteristics) throws ParameterException;
 
     /** {@inheritDoc} */
-    @SuppressWarnings("checkstyle:designforextension")
     @Override
-    public int hashCode()
+    public final int hashCode()
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.uniqueId == null) ? 0 : this.uniqueId.hashCode());
+        result = prime * result + ((this.check == null) ? 0 : this.check.hashCode());
+        result = prime * result + ((this.defaultValue == null) ? 0 : this.defaultValue.hashCode());
+        result = prime * result + this.description.hashCode();
+        result = prime * result + this.id.hashCode();
+        result = prime * result + this.valueClass.hashCode();
         return result;
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     @Override
-    public boolean equals(final Object obj)
+    public final boolean equals(final Object obj)
     {
         if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        AbstractParameterType<?, ?> other = (AbstractParameterType<?, ?>) obj;
-        if (this.uniqueId == null)
         {
-            if (other.uniqueId != null)
-                return false;
+            return true;
         }
-        else if (!this.uniqueId.equals(other.uniqueId))
+        if (obj == null)
+        {
             return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        AbstractParameterType<?, ?> other = (AbstractParameterType<?, ?>) obj;
+        if (!this.id.equals(other.id))
+        {
+            return false;
+        }
+        if (!this.description.equals(other.description))
+        {
+            return false;
+        }
+        if (!this.valueClass.equals(other.valueClass))
+        {
+            return false;
+        }
+        if (this.check != other.check)
+        {
+            return false;
+        }
+        if (this.defaultValue == null)
+        {
+            if (other.defaultValue != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.defaultValue.equals(other.defaultValue))
+        {
+            return false;
+        }
         return true;
     }
 
