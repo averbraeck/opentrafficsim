@@ -69,7 +69,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
         {
             throw new GTUException("typeId is null");
         }
-        this.gtuType = GTUType.makeGTUType(typeId);
+        this.gtuType = GTUType.getInstance(typeId);
         if (null == idGenerator)
         {
             throw new GTUException("idGenerator is null");

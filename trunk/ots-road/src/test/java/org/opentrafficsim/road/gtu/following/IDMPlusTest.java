@@ -78,7 +78,7 @@ public class IDMPlusTest implements UNITS
         GTUFollowingModelOld carFollowingModel =
                 new IDMPlusOld(new Acceleration(1.25, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), s0,
                         new Duration(1, SECOND), 1d);
-        GTUType gtuType = GTUType.makeGTUType("Car");
+        GTUType gtuType = GTUType.getInstance("Car");
         LaneType laneType = new LaneType("CarLane");
         laneType.addCompatibility(gtuType);
         Lane lane = CarTest.makeLane(laneType);

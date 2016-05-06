@@ -1,10 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
-import java.io.Serializable;
-
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.perception.PerceivedObject;
 
 /**
  * Interface for a reference to information about a (lane based) GTU and a headway. The Headway can store information about GTUs
@@ -30,9 +29,9 @@ import org.djunits.value.vdouble.scalar.Speed;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface Headway extends Serializable
+public interface Headway extends PerceivedObject
 {
-    /** the object types that can be distinguished for headwway. */
+    /** the object types that can be distinguished for headway. */
     enum ObjectType
     {
         /** the observed object for headway is a GTU. */

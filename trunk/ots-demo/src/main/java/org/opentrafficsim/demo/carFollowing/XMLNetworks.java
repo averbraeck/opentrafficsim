@@ -247,7 +247,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     // private int carsCreated = 0;
 
     /** Type of all GTUs (required to permit lane changing). */
-    GTUType gtuType = GTUType.makeGTUType("Car");
+    GTUType gtuType = GTUType.getInstance("Car");
 
     /** The car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModelOld carFollowingModelCars;

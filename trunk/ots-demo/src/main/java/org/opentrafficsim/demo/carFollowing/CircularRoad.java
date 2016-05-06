@@ -592,7 +592,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
                     }
                 }
             }
-            GTUType gtuType = GTUType.makeGTUType("car");
+            GTUType gtuType = GTUType.getInstance("car");
             LaneType laneType = new LaneType("CarLane");
             laneType.addCompatibility(gtuType);
             OTSNode start = new OTSNode("Start", new OTSPoint3D(radius, 0, 0));

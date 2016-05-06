@@ -143,7 +143,7 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
                 OTSNode from = new OTSNode("From", new OTSPoint3D(-mainLength, 0, 0));
                 OTSNode branchPoint = new OTSNode("From", new OTSPoint3D(0, 0, 0));
                 LaneType laneType = new LaneType("CarLane");
-                GTUType gtuType = GTUType.makeGTUType("Car");
+                GTUType gtuType = GTUType.getInstance("Car");
                 laneType.addCompatibility(gtuType);
                 Lane[] lanes =
                     LaneFactory.makeMultiLane("Test road", from, branchPoint, null, LANECOUNT, laneType, speedLimit,

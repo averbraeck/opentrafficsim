@@ -67,8 +67,8 @@ public class LaneTest implements UNITS
         Length endLateralPos = new Length(5, METER);
         Length startWidth = new Length(3, METER);
         Length endWidth = new Length(4, METER);
-        GTUType gtuTypeCar = GTUType.makeGTUType("Car");
-        GTUType gtuTypeTruck = GTUType.makeGTUType("Truck");
+        GTUType gtuTypeCar = GTUType.getInstance("Car");
+        GTUType gtuTypeTruck = GTUType.getInstance("Truck");
         LaneType laneType = new LaneType("Car");
         laneType.addCompatibility(gtuTypeCar);
         laneType.addCompatibility(gtuTypeTruck);

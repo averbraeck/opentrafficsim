@@ -95,7 +95,7 @@ public class ContourPlotTest implements UNITS
     public final void accelerationContourTest() throws Exception
     {
         LaneType laneType = new LaneType("CarLane");
-        GTUType gtuType = GTUType.makeGTUType("Car");
+        GTUType gtuType = GTUType.getInstance("Car");
         laneType.addCompatibility(gtuType);
         List<Lane> path = dummyPath(laneType, gtuType);
         AccelerationContourPlot acp = new AccelerationContourPlot("Acceleration", path);
@@ -113,7 +113,7 @@ public class ContourPlotTest implements UNITS
     public final void densityContourTest() throws Exception
     {
         LaneType laneType = new LaneType("CarLane");
-        GTUType gtuType = GTUType.makeGTUType("Car");
+        GTUType gtuType = GTUType.getInstance("Car");
         laneType.addCompatibility(gtuType);
         List<Lane> path = dummyPath(laneType, gtuType);
         DensityContourPlot dcp = new DensityContourPlot("Density", path);
@@ -171,7 +171,7 @@ public class ContourPlotTest implements UNITS
     public final void flowContourTest() throws Exception
     {
         LaneType laneType = new LaneType("CarLane");
-        GTUType gtuType = GTUType.makeGTUType("Car");
+        GTUType gtuType = GTUType.getInstance("Car");
         laneType.addCompatibility(gtuType);
         List<Lane> path = dummyPath(laneType, gtuType);
         FlowContourPlot fcp = new FlowContourPlot("Density", path);
@@ -189,7 +189,7 @@ public class ContourPlotTest implements UNITS
     public final void speedContourTest() throws Exception
     {
         LaneType laneType = new LaneType("CarLane");
-        GTUType gtuType = GTUType.makeGTUType("Car");
+        GTUType gtuType = GTUType.getInstance("Car");
         laneType.addCompatibility(gtuType);
         List<Lane> path = dummyPath(laneType, gtuType);
         SpeedContourPlot scp = new SpeedContourPlot("Density", path);

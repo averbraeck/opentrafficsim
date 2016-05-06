@@ -96,8 +96,8 @@ public class LaneBasedGTUTest implements UNITS
         OTSModelInterface model = new Model();
         SimpleSimulator simulator =
                 new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND), model);
-        GTUType carType = GTUType.makeGTUType("car");
-        GTUType truckType = GTUType.makeGTUType("truck");
+        GTUType carType = GTUType.getInstance("car");
+        GTUType truckType = GTUType.getInstance("truck");
         LaneType laneType = new LaneType("CarLane");
         laneType.addCompatibility(carType);
         laneType.addCompatibility(truckType);
@@ -376,7 +376,7 @@ public class LaneBasedGTUTest implements UNITS
                     ie = null; // ignore
                 }
             }
-            GTUType carType = GTUType.makeGTUType("car");
+            GTUType carType = GTUType.getInstance("car");
             LaneType laneType = new LaneType("CarLane");
             laneType.addCompatibility(carType);
             OTSNode fromNode = new OTSNode("Node A", new OTSPoint3D(0, 0, 0));

@@ -79,7 +79,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         Length position = new Length(123, METER);
         Length carPosition = new Length(122.5, METER);
         LaneType laneType = new LaneType("CarLane");
-        GTUType gtuType = GTUType.makeGTUType("Car");
+        GTUType gtuType = GTUType.getInstance("Car");
         laneType.addCompatibility(gtuType);
         Lane lane = CarTest.makeLane(laneType);
         FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime, lane, position);
