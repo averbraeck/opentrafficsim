@@ -64,7 +64,7 @@ public class SensorTest implements UNITS
         OTSNode nodeBTo = new OTSNode("BTo", new OTSPoint3D(20000, 0, 0)); // so car won't run off lane B in 100 s.
         LaneType laneType = new LaneType("CarLane");
         // A Car needs a type
-        GTUType gtuType = GTUType.makeGTUType("Car");
+        GTUType gtuType = GTUType.getInstance("Car");
         laneType.addCompatibility(gtuType);
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModelForSensorTest();

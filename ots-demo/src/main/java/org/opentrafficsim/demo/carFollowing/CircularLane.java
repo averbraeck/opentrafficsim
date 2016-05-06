@@ -319,7 +319,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
     private int carsCreated = 0;
 
     /** Type of all GTUs. */
-    private GTUType gtuType = GTUType.makeGTUType("Car");
+    private GTUType gtuType = GTUType.getInstance("Car");
 
     /** The car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModelOld carFollowingModelCars;

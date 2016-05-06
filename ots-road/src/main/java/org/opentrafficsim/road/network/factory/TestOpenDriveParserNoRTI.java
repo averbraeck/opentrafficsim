@@ -226,7 +226,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
             new GisRenderable2D(this.simulator, gisURL, latLonToXY);
 
             // Make a GTU Type
-            GTUType carType = GTUType.makeGTUType("Car");
+            GTUType carType = GTUType.getInstance("Car");
 
             // new ReceiverThread(this.simulator).run();
 

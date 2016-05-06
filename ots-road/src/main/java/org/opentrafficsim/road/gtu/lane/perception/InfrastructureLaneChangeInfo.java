@@ -56,4 +56,13 @@ public class InfrastructureLaneChangeInfo
         return this.remainingDistance;
     }
 
+    /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:designforextension")
+    @Override
+    public String toString()
+    {
+        return "InfrastructureLaneChangeInfo [requiredNumberOfLaneChanges=" + this.requiredNumberOfLaneChanges
+                + ", remainingDistance=" + this.remainingDistance + "]";
+    }
+
 }

@@ -278,7 +278,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
             ParameterException
     {
         // Set up the network
-        GTUType gtuType = GTUType.makeGTUType("car");
+        GTUType gtuType = GTUType.getInstance("car");
         LaneType laneType = new LaneType("CarLane");
         laneType.addCompatibility(gtuType);
         final Speed speedLimit = new Speed(120, KM_PER_HOUR);

@@ -369,7 +369,7 @@ class SequentialModel implements OTSModelInterface, UNITS
     private int carsCreated = 0;
 
     /** Type of all GTUs. */
-    private GTUType gtuType = GTUType.makeGTUType("Car");
+    private GTUType gtuType = GTUType.getInstance("Car");
 
     /** Minimum distance. */
     private Length minimumDistance = new Length(0, METER);

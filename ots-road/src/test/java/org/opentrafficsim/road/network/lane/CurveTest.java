@@ -59,7 +59,7 @@ public class CurveTest
         GTUException
     {
         final int laneCount = 1;
-        GTUType gtuType = GTUType.makeGTUType("Car");
+        GTUType gtuType = GTUType.getInstance("Car");
         LaneType laneType = new LaneType("CarLane");
         laneType.addCompatibility(gtuType);
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);

@@ -131,7 +131,7 @@ class GTUTag implements Serializable
     {
         if (!parser.gtuTypes.containsKey(typeName))
         {
-            GTUType gtuType = GTUType.makeGTUType(typeName);
+            GTUType gtuType = GTUType.getInstance(typeName);
             parser.gtuTypes.put(typeName, gtuType);
         }
         return parser.gtuTypes.get(typeName);

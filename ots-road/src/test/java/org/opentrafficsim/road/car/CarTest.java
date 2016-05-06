@@ -80,7 +80,7 @@ public class CarTest implements UNITS
         OTSGeometryException
     {
         Time initialTime = new Time(0, SECOND);
-        GTUType gtuType = GTUType.makeGTUType("Car");
+        GTUType gtuType = GTUType.getInstance("Car");
         LaneType laneType = new LaneType("CarLane");
         laneType.addCompatibility(gtuType);
         OTSNetwork network = new OTSNetwork("network");

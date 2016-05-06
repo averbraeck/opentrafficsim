@@ -19,7 +19,7 @@ import org.opentrafficsim.core.math.Speed3D;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface PerceivedObject2D extends PerceivedObject
+public interface PerceivedObject3D extends PerceivedObject
 {
     /**
      * Get the perceived distance to the object. When we combine relative distance and angle with our own location, the object's

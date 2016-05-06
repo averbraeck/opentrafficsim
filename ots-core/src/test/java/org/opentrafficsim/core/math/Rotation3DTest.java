@@ -35,19 +35,19 @@ public class Rotation3DTest
         double roll = Math.toRadians(10);
         double pitch = Math.toRadians(20);
         double yaw = Math.toRadians(30);
-        Rotation3D.Abs r3da = new Rotation3D.Abs(roll, pitch, yaw, AngleUnit.RADIAN);
+        Direction3D r3da = new Direction3D(roll, pitch, yaw, AngleUnit.RADIAN);
         checkRotation3D(r3da, roll, pitch, yaw);
-        r3da = new Rotation3D.Abs(new DirectionVector(new double[] { roll, pitch, yaw }, AngleUnit.RADIAN, StorageType.DENSE));
+        r3da = new Direction3D(new DirectionVector(new double[] { roll, pitch, yaw }, AngleUnit.RADIAN, StorageType.DENSE));
         checkRotation3D(r3da, roll, pitch, yaw);
-        r3da = new Rotation3D.Abs(new DirectionVector(new double[] { roll, pitch, yaw }, AngleUnit.RADIAN, StorageType.SPARSE));
+        r3da = new Direction3D(new DirectionVector(new double[] { roll, pitch, yaw }, AngleUnit.RADIAN, StorageType.SPARSE));
         checkRotation3D(r3da, roll, pitch, yaw);
         r3da =
-                new Rotation3D.Abs(new Direction(roll, AngleUnit.RADIAN), new Direction(pitch, AngleUnit.RADIAN),
-                        new Direction(yaw, AngleUnit.RADIAN));
+                new Direction3D(new Direction(roll, AngleUnit.RADIAN), new Direction(pitch, AngleUnit.RADIAN), new Direction(
+                        yaw, AngleUnit.RADIAN));
         checkRotation3D(r3da, roll, pitch, yaw);
         try
         {
-            new Rotation3D.Abs(new DirectionVector(new double[] { roll, pitch }, AngleUnit.RADIAN, StorageType.DENSE));
+            new Direction3D(new DirectionVector(new double[] { roll, pitch }, AngleUnit.RADIAN, StorageType.DENSE));
             fail("Short vector should have thrown an exception");
         }
         catch (ValueException ve)
@@ -56,8 +56,7 @@ public class Rotation3DTest
         }
         try
         {
-            new Rotation3D.Abs(new DirectionVector(new double[] { roll, pitch, yaw, pitch }, AngleUnit.RADIAN,
-                    StorageType.DENSE));
+            new Direction3D(new DirectionVector(new double[] { roll, pitch, yaw, pitch }, AngleUnit.RADIAN, StorageType.DENSE));
             fail("Long vector should have thrown an exception");
         }
         catch (ValueException ve)
@@ -66,7 +65,7 @@ public class Rotation3DTest
         }
         try
         {
-            new Rotation3D.Abs(new DirectionVector(new double[] { roll, pitch }, AngleUnit.RADIAN, StorageType.SPARSE));
+            new Direction3D(new DirectionVector(new double[] { roll, pitch }, AngleUnit.RADIAN, StorageType.SPARSE));
             fail("Short vector should have thrown an exception");
         }
         catch (ValueException ve)
@@ -75,27 +74,26 @@ public class Rotation3DTest
         }
         try
         {
-            new Rotation3D.Abs(new DirectionVector(new double[] { roll, pitch, yaw, pitch }, AngleUnit.RADIAN,
-                    StorageType.SPARSE));
+            new Direction3D(new DirectionVector(new double[] { roll, pitch, yaw, pitch }, AngleUnit.RADIAN, StorageType.SPARSE));
             fail("Long vector should have thrown an exception");
         }
         catch (ValueException ve)
         {
             // Ignore expected exception
         }
-        Rotation3D.Rel r3dr = new Rotation3D.Rel(roll, pitch, yaw, AngleUnit.RADIAN);
+        Angle3D r3dr = new Angle3D(roll, pitch, yaw, AngleUnit.RADIAN);
         checkRotation3D(r3dr, roll, pitch, yaw);
-        r3dr = new Rotation3D.Rel(new AngleVector(new double[] { roll, pitch, yaw }, AngleUnit.RADIAN, StorageType.DENSE));
+        r3dr = new Angle3D(new AngleVector(new double[] { roll, pitch, yaw }, AngleUnit.RADIAN, StorageType.DENSE));
         checkRotation3D(r3dr, roll, pitch, yaw);
-        r3dr = new Rotation3D.Rel(new AngleVector(new double[] { roll, pitch, yaw }, AngleUnit.RADIAN, StorageType.SPARSE));
+        r3dr = new Angle3D(new AngleVector(new double[] { roll, pitch, yaw }, AngleUnit.RADIAN, StorageType.SPARSE));
         checkRotation3D(r3dr, roll, pitch, yaw);
         r3dr =
-                new Rotation3D.Rel(new Angle(roll, AngleUnit.RADIAN), new Angle(pitch, AngleUnit.RADIAN),
-                        new Angle(yaw, AngleUnit.RADIAN));
+                new Angle3D(new Angle(roll, AngleUnit.RADIAN), new Angle(pitch, AngleUnit.RADIAN), new Angle(yaw,
+                        AngleUnit.RADIAN));
         checkRotation3D(r3dr, roll, pitch, yaw);
         try
         {
-            new Rotation3D.Rel(new AngleVector(new double[] { roll, pitch }, AngleUnit.RADIAN, StorageType.DENSE));
+            new Angle3D(new AngleVector(new double[] { roll, pitch }, AngleUnit.RADIAN, StorageType.DENSE));
             fail("Short vector should have thrown an exception");
         }
         catch (ValueException ve)
@@ -104,8 +102,7 @@ public class Rotation3DTest
         }
         try
         {
-            new Rotation3D.Rel(new AngleVector(new double[] { roll, pitch, yaw, pitch }, AngleUnit.RADIAN,
-                    StorageType.DENSE));
+            new Angle3D(new AngleVector(new double[] { roll, pitch, yaw, pitch }, AngleUnit.RADIAN, StorageType.DENSE));
             fail("Long vector should have thrown an exception");
         }
         catch (ValueException ve)
@@ -114,7 +111,7 @@ public class Rotation3DTest
         }
         try
         {
-            new Rotation3D.Rel(new AngleVector(new double[] { roll, pitch }, AngleUnit.RADIAN, StorageType.SPARSE));
+            new Angle3D(new AngleVector(new double[] { roll, pitch }, AngleUnit.RADIAN, StorageType.SPARSE));
             fail("Short vector should have thrown an exception");
         }
         catch (ValueException ve)
@@ -123,8 +120,7 @@ public class Rotation3DTest
         }
         try
         {
-            new Rotation3D.Rel(new AngleVector(new double[] { roll, pitch, yaw, pitch }, AngleUnit.RADIAN,
-                    StorageType.SPARSE));
+            new Angle3D(new AngleVector(new double[] { roll, pitch, yaw, pitch }, AngleUnit.RADIAN, StorageType.SPARSE));
             fail("Long vector should have thrown an exception");
         }
         catch (ValueException ve)
@@ -134,13 +130,13 @@ public class Rotation3DTest
     }
 
     /**
-     * Verify the values of the fields in a Rotation3D.Abs.
-     * @param r3da Rotation3D.Abs; the Rotation3D.Abs
+     * Verify the values of the fields in a Direction3D.
+     * @param r3da Direction3D; the Direction3D
      * @param roll double; the expected roll value
      * @param pitch double; the expected pitch value
      * @param yaw double; the expected yaw value
      */
-    private void checkRotation3D(final Rotation3D.Abs r3da, final double roll, final double pitch, final double yaw)
+    private void checkRotation3D(final Direction3D r3da, final double roll, final double pitch, final double yaw)
     {
         assertEquals("roll", roll, r3da.getRoll().si, 0.00001);
         assertEquals("pitch", pitch, r3da.getPitch().si, 0.00001);
@@ -148,13 +144,13 @@ public class Rotation3DTest
     }
 
     /**
-     * Verify the values of the fields in a Rotation3D.Rel.
-     * @param r3dr Rotation3D.Rel; the Rotation3D.Rel
+     * Verify the values of the fields in a Angle3D.
+     * @param r3dr Angle3D; the Angle3D
      * @param roll double; the expected roll value
      * @param pitch double; the expected pitch value
      * @param yaw double; the expected yaw value
      */
-    private void checkRotation3D(final Rotation3D.Rel r3dr, final double roll, final double pitch, final double yaw)
+    private void checkRotation3D(final Angle3D r3dr, final double roll, final double pitch, final double yaw)
     {
         assertEquals("roll", roll, r3dr.getRoll().si, 0.00001);
         assertEquals("pitch", pitch, r3dr.getPitch().si, 0.00001);

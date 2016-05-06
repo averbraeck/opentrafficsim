@@ -240,7 +240,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                             SpeedUnit.MILE_PER_HOUR);
             this.initialPosDist =
                     new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 0.0, 1.0), LengthUnit.METER);
-            this.carType = GTUType.makeGTUType("Car");
+            this.carType = GTUType.getInstance("Car");
         }
 
         /** {@inheritDoc} */

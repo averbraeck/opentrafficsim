@@ -82,7 +82,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         // To create Lanes we need Nodes and a LaneType
         OTSNode nodeAFrom = new OTSNode("AFrom", new OTSPoint3D(0, 0, 0));
         OTSNode nodeATo = new OTSNode("ATo", new OTSPoint3D(1000, 0, 0));
-        GTUType gtuType = GTUType.makeGTUType("Car");
+        GTUType gtuType = GTUType.getInstance("Car");
         LaneType laneType = new LaneType("CarLane");
         laneType.addCompatibility(gtuType);
         // And a simulator, but for that we first need something that implements OTSModelInterface

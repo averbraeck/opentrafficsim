@@ -113,7 +113,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         // System.out.println("minimum headway at speed " + speed + " is " + minimumHeadway);
         SimpleSimulator simulator =
                 new SimpleSimulator(new Time(0, SECOND), new Duration(0, SECOND), new Duration(1800, SECOND), this);
-        GTUType carType = GTUType.makeGTUType("Car");
+        GTUType carType = GTUType.getInstance("Car");
         LaneType laneType = new LaneType("CarLane");
         laneType.addCompatibility(carType);
         Lane lane = CarTest.makeLane(laneType);

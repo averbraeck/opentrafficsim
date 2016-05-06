@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -35,13 +35,13 @@ public final class GTUType implements Serializable
     public static final GTUType NONE;
 
     /** The set of previously instantiated GTUTypes. */
-    private static final Map<String, GTUType> INSTANTIATEDGTUTYPES = new LinkedHashMap<String, GTUType>();
+    private static final Map<String, GTUType> INSTANTIATEDGTUTYPES = new HashMap<String, GTUType>();
 
     /* static block to guarantee that ALL is always on the first place, and NONE on the second, for code reproducibility. */
     static
     {
-        ALL = makeGTUType("ALL");
-        NONE = makeGTUType("NONE");
+        ALL = getInstance("ALL");
+        NONE = getInstance("NONE");
     }
 
     /**
@@ -57,7 +57,7 @@ public final class GTUType implements Serializable
      * @param id String; the id of the GTUType
      * @return GTUType; a new or existing GTUType
      */
-    public static synchronized GTUType makeGTUType(final String id)
+    public static synchronized GTUType getInstance(final String id)
     {
         GTUType result = INSTANTIATEDGTUTYPES.get(id);
         if (null == result)
@@ -141,7 +141,7 @@ public final class GTUType implements Serializable
         {
             // this.id needs to be set to communicate the value to the readResolve() method
             this.id = (String) ois.readObject();
-            GTUType.makeGTUType(this.id);
+            GTUType.getInstance(this.id);
         }
         catch (ClassNotFoundException | IOException e)
         {
