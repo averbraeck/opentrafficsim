@@ -1,10 +1,9 @@
 package org.opentrafficsim.road.network.speed;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.opentrafficsim.core.Throw;
+import org.opentrafficsim.core.Type;
 
 /**
  * Defines the type of a speed limit, resulting in different behavior.
@@ -13,19 +12,17 @@ import org.opentrafficsim.core.Throw;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 29, 2016 <br>
+ * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> Class of speed info that is linked to the speed limit type.
  */
-public class SpeedLimitType<T> implements Serializable
+public class SpeedLimitType<T> extends Type<SpeedLimitType<T>> implements Serializable
 {
 
     /** */
     private static final long serialVersionUID = 20160501L;
 
-    /** Map of speed limit types by id. */
-    private static Map<String, SpeedLimitType<?>> speedLimitTypeMap = new HashMap<>();
-
-    /** Id of this speed limit type, which must be unique. */
+    /** Id of this speed limit type. */
     private final String id;
 
     /** Class of the info related to this speed limit type. */
@@ -42,11 +39,8 @@ public class SpeedLimitType<T> implements Serializable
     {
         Throw.whenNull(id, "Id may not be null.");
         Throw.whenNull(infoClass, "Info class may not be null.");
-        Throw.when(speedLimitTypeMap.containsKey(id), IllegalArgumentException.class,
-            "Speed limit type with id '%s' is already defined, id must be unique.", id);
         this.id = id;
         this.infoClass = infoClass;
-        speedLimitTypeMap.put(id, this);
     }
 
     /**
@@ -67,29 +61,6 @@ public class SpeedLimitType<T> implements Serializable
         return this.infoClass;
     }
 
-    /**
-     * Returns whether a speed limit type with given id is defined.
-     * @param id id to check
-     * @return whether a speed limit type with given id is defined
-     */
-    public static boolean isDefined(final String id)
-    {
-        return speedLimitTypeMap.containsKey(id);
-    }
-
-    /**
-     * Obtain a speed limit type by id.
-     * @param id id of speed limit type to obtain.
-     * @return speed limit type by id
-     * @throws IllegalStateException if no speed limit type with given id exists
-     */
-    public static SpeedLimitType<?> getById(final String id)
-    {
-        Throw.when(!isDefined(id), IllegalStateException.class,
-            "Speed limit type with id '%s' is requested but not defined.", id);
-        return speedLimitTypeMap.get(id);
-    }
-    
     /** {@inheritDoc} */
     @Override
     public final int hashCode()
@@ -119,6 +90,10 @@ public class SpeedLimitType<T> implements Serializable
         }
         SpeedLimitType<?> other = (SpeedLimitType<?>) obj;
         if (!this.id.equals(other.id))
+        {
+            return false;
+        }
+        if (!this.infoClass.equals(other.infoClass))
         {
             return false;
         }
