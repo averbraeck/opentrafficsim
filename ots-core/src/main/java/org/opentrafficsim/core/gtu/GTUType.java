@@ -1,5 +1,8 @@
 package org.opentrafficsim.core.gtu;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -23,7 +26,7 @@ public final class GTUType implements Serializable
     private static final long serialVersionUID = 20141231L;
 
     /** The id of the GTUType to make it identifiable. */
-    private final String id;
+    private String id;
 
     /** ALL GTUType to be used only for permeability and accessibility. */
     public static final GTUType ALL;
@@ -34,17 +37,11 @@ public final class GTUType implements Serializable
     /** The set of previously instantiated GTUTypes. */
     private static final Map<String, GTUType> INSTANTIATEDGTUTYPES = new LinkedHashMap<String, GTUType>();
 
-    /** Does the GTUType have a turn indicator or not? */
-    private boolean hasTurnIndicator = true;
-
+    /* static block to guarantee that ALL is always on the first place, and NONE on the second, for code reproducibility. */
     static
     {
-        ALL = new GTUType("ALL");
-        INSTANTIATEDGTUTYPES.put("ALL", GTUType.ALL);
-
-        NONE = new GTUType("NONE");
-        INSTANTIATEDGTUTYPES.put("NONE", GTUType.NONE);
-        NONE.setHasTurnIndicator(false);
+        ALL = makeGTUType("ALL");
+        NONE = makeGTUType("NONE");
     }
 
     /**
@@ -53,25 +50,22 @@ public final class GTUType implements Serializable
     private GTUType(final String id)
     {
         this.id = id;
-        INSTANTIATEDGTUTYPES.put(id, this);
     }
 
     /**
      * Construct a new GTUType or (if it already exists) return an existing GTUType.
      * @param id String; the id of the GTUType
-     * @return GTUType&lt;ID&gt;
+     * @return GTUType; a new or existing GTUType
      */
-    public static GTUType makeGTUType(final String id)
+    public static synchronized GTUType makeGTUType(final String id)
     {
-        synchronized (INSTANTIATEDGTUTYPES)
+        GTUType result = INSTANTIATEDGTUTYPES.get(id);
+        if (null == result)
         {
-            GTUType result = INSTANTIATEDGTUTYPES.get(id);
-            if (null == result)
-            {
-                result = new GTUType(id);
-            }
-            return result;
+            result = new GTUType(id);
+            INSTANTIATEDGTUTYPES.put(id, result);
         }
+        return result;
     }
 
     /**
@@ -80,22 +74,6 @@ public final class GTUType implements Serializable
     public String getId()
     {
         return this.id;
-    }
-
-    /**
-     * @return whether the GTUType has a turnIndicator or not
-     */
-    public boolean hasTurnIndicator()
-    {
-        return this.hasTurnIndicator;
-    }
-
-    /**
-     * @param hasTurnIndicator set whether the GTUType has a turnIndicator or not
-     */
-    public void setHasTurnIndicator(final boolean hasTurnIndicator)
-    {
-        this.hasTurnIndicator = hasTurnIndicator;
     }
 
     /** {@inheritDoc} */
@@ -136,4 +114,49 @@ public final class GTUType implements Serializable
         return true;
     }
 
+    /**
+     * Serialize this multiple-singleton object by serializing the id.
+     * @param oos the object output stream to write the object to
+     */
+    private void writeObject(final ObjectOutputStream oos)
+    {
+        try
+        {
+            oos.writeObject(this.id);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException("error during serialization of GTUType with id " + this.id, e);
+        }
+    }
+
+    /**
+     * Deserialize this multiple-singleton object by deserializing the id. Make sure that the GTU type is created if it does not
+     * yet exist.
+     * @param ois the object input stream to read the object from
+     */
+    private void readObject(final ObjectInputStream ois)
+    {
+        try
+        {
+            // this.id needs to be set to communicate the value to the readResolve() method
+            this.id = (String) ois.readObject();
+            GTUType.makeGTUType(this.id);
+        }
+        catch (ClassNotFoundException | IOException e)
+        {
+            throw new RuntimeException("error during deserialization of a GTUType", e);
+        }
+    }
+
+    /**
+     * Avoid that a deserialized object is a copy of the already stored object. If the object already existed, return the "old"
+     * copy and dereference the deserialized object (this) to be garbage collected. If the object did not exist yet, it was just
+     * added to the HashMap as "this" and can therefore be returned.
+     * @return the just created object (this), or the already existing object before deserialization.
+     */
+    private Object readResolve()
+    {
+        return INSTANTIATEDGTUTYPES.get(this.id);
+    }
 }

@@ -499,22 +499,13 @@ public abstract class AbstractGTU implements GTU
     @Override
     public final TurnIndicatorStatus getTurnIndicatorStatus()
     {
-        if (!getGTUType().hasTurnIndicator())
-        {
-            return TurnIndicatorStatus.NOTPRESENT;
-        }
         return this.turnIndicatorStatus;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void setTurnIndicatorStatus(final TurnIndicatorStatus turnIndicatorStatus) throws GTUException
+    public final void setTurnIndicatorStatus(final TurnIndicatorStatus turnIndicatorStatus)
     {
-        if (!getGTUType().hasTurnIndicator())
-        {
-            throw new GTUException("trying to set the TurnIndicatorStatus on GTU: " + getId() + ", but GTUType "
-                    + getGTUType().getId() + " has no TurnIndicator");
-        }
         this.turnIndicatorStatus = turnIndicatorStatus;
     }
 
