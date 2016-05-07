@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.opentrafficsim.core.Throw;
+import org.opentrafficsim.core.Type;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.immutablecollections.ImmutableHashSet;
 import org.opentrafficsim.core.immutablecollections.ImmutableSet;
@@ -23,7 +24,7 @@ import org.opentrafficsim.core.immutablecollections.ImmutableSet;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LinkType implements Serializable
+public class LinkType extends Type<LinkType> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20140821L;
@@ -95,8 +96,8 @@ public class LinkType implements Serializable
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.compatibilitySet == null) ? 0 : this.compatibilitySet.hashCode());
-        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        result = prime * result + this.compatibilitySet.hashCode();
+        result = prime * result + this.id.hashCode();
         return result;
     }
 
@@ -112,19 +113,9 @@ public class LinkType implements Serializable
         if (getClass() != obj.getClass())
             return false;
         LinkType other = (LinkType) obj;
-        if (this.compatibilitySet == null)
-        {
-            if (other.compatibilitySet != null)
-                return false;
-        }
-        else if (!this.compatibilitySet.equals(other.compatibilitySet))
+        if (!this.compatibilitySet.equals(other.compatibilitySet))
             return false;
-        if (this.id == null)
-        {
-            if (other.id != null)
-                return false;
-        }
-        else if (!this.id.equals(other.id))
+        if (!this.id.equals(other.id))
             return false;
         return true;
     }

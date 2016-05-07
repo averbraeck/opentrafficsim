@@ -24,7 +24,7 @@ public final class GTUType extends Type<GTUType> implements Serializable
     private static final long serialVersionUID = 20141231L;
 
     /** The id of the GTUType to make it identifiable. */
-    private String id;
+    private final String id;
 
     /** ALL GTUType to be used only for permeability and accessibility. */
     public static final GTUType ALL;
@@ -67,9 +67,7 @@ public final class GTUType extends Type<GTUType> implements Serializable
     @Override
     public int hashCode()
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        int result = 31 + this.id.hashCode();
         return result;
     }
 
@@ -85,12 +83,7 @@ public final class GTUType extends Type<GTUType> implements Serializable
         if (getClass() != obj.getClass())
             return false;
         GTUType other = (GTUType) obj;
-        if (this.id == null)
-        {
-            if (other.id != null)
-                return false;
-        }
-        else if (!this.id.equals(other.id))
+        if (!this.id.equals(other.id))
             return false;
         return true;
     }
