@@ -58,8 +58,8 @@ public class TemplateGTUTypeTest implements OTSModelInterface
     public final void templateGTUTypeTest() throws SimRuntimeException, NamingException, GTUException, ProbabilityException,
         ParameterException
     {
-        String typeNameA = "type name A";
-        String typeNameB = "type name B";
+        GTUType gtuTypeA = new GTUType("type name A");
+        GTUType gtuTypeB = new GTUType("type name B");
         IdGenerator idGeneratorA = new IdGenerator("A");
         IdGenerator idGeneratorB = new IdGenerator("B");
         Generator<Length> lengthGeneratorA = new Generator<Length>()
@@ -125,17 +125,17 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         OTSNetwork networkA = new OTSNetwork("testGTUCharacteristics A");
         OTSNetwork networkB = new OTSNetwork("testGTUCharacteristics B");
         TemplateGTUType templateA =
-            new TemplateGTUType(typeNameA, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA,
+            new TemplateGTUType(gtuTypeA, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA,
                 simulatorA, networkA);
         TemplateGTUType templateB =
-            new TemplateGTUType(typeNameB, idGeneratorB, lengthGeneratorB, widthGeneratorB, maximumVelocityGeneratorB,
+            new TemplateGTUType(gtuTypeB, idGeneratorB, lengthGeneratorB, widthGeneratorB, maximumVelocityGeneratorB,
                 simulatorB, networkB);
-        assertEquals("typenameA", typeNameA, templateA.getGTUType().getId());
-        assertEquals("typenameB", typeNameB, templateB.getGTUType().getId());
+        assertEquals("typenameA", gtuTypeA.getId(), templateA.getGTUType().getId());
+        assertEquals("typenameB", gtuTypeB.getId(), templateB.getGTUType().getId());
         GTUCharacteristics characteristicsA = templateA.draw();
         GTUCharacteristics characteristicsB = templateB.draw();
-        assertEquals("typenameA", typeNameA, characteristicsA.getGTUType().getId());
-        assertEquals("typenameB", typeNameB, characteristicsB.getGTUType().getId());
+        assertEquals("typenameA", gtuTypeA.getId(), characteristicsA.getGTUType().getId());
+        assertEquals("typenameB", gtuTypeB.getId(), characteristicsB.getGTUType().getId());
         assertEquals("idGeneratorA", idGeneratorA, templateA.getIdGenerator());
         assertEquals("idGeneratorB", idGeneratorB, templateB.getIdGenerator());
         assertEquals("lengthA", lengthGeneratorA.draw(), characteristicsA.getLength());
@@ -157,68 +157,68 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         {
             new TemplateGTUType(null, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA,
                 simulatorA, networkA);
-            fail("Previous statement should have thrown a GTUException");
+            fail("Previous statement should have thrown a NullPointerException");
         }
-        catch (GTUException gtue)
+        catch (NullPointerException gtue)
         {
             // Ignore expected exception
         }
         try
         {
-            new TemplateGTUType(typeNameA, null, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA, simulatorA,
+            new TemplateGTUType(gtuTypeA, null, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA, simulatorA,
                 networkA);
-            fail("Previous statement should have thrown a GTUException");
+            fail("Previous statement should have thrown a NullPointerException");
         }
-        catch (GTUException gtue)
+        catch (NullPointerException gtue)
         {
             // Ignore expected exception
         }
         try
         {
-            new TemplateGTUType(typeNameA, idGeneratorA, null, widthGeneratorA, maximumVelocityGeneratorA, simulatorA,
+            new TemplateGTUType(gtuTypeA, idGeneratorA, null, widthGeneratorA, maximumVelocityGeneratorA, simulatorA,
                 networkA);
-            fail("Previous statement should have thrown a GTUException");
+            fail("Previous statement should have thrown a NullPointerException");
         }
-        catch (GTUException gtue)
+        catch (NullPointerException gtue)
         {
             // Ignore expected exception
         }
         try
         {
-            new TemplateGTUType(typeNameA, idGeneratorA, lengthGeneratorA, null, maximumVelocityGeneratorA, simulatorA,
+            new TemplateGTUType(gtuTypeA, idGeneratorA, lengthGeneratorA, null, maximumVelocityGeneratorA, simulatorA,
                 networkA);
-            fail("Previous statement should have thrown a GTUException");
+            fail("Previous statement should have thrown a NullPointerException");
         }
-        catch (GTUException gtue)
+        catch (NullPointerException gtue)
         {
             // Ignore expected exception
         }
         try
         {
-            new TemplateGTUType(typeNameA, idGeneratorA, lengthGeneratorA, widthGeneratorA, null, simulatorA, networkA);
-            fail("Previous statement should have thrown a GTUException");
+            new TemplateGTUType(gtuTypeA, idGeneratorA, lengthGeneratorA, widthGeneratorA, null, simulatorA, networkA);
+            fail("Previous statement should have thrown a NullPointerException");
         }
-        catch (GTUException gtue)
+        catch (NullPointerException gtue)
         {
             // Ignore expected exception
         }
         try
         {
-            new TemplateGTUType(typeNameA, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA, null,
+            new TemplateGTUType(gtuTypeA, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA, null,
                 networkA);
-            fail("Previous statement should have thrown a GTUException");
+            fail("Previous statement should have thrown a NullPointerException");
         }
-        catch (GTUException gtue)
+        catch (NullPointerException gtue)
         {
             // Ignore expected exception
         }
         try
         {
-            new TemplateGTUType(typeNameA, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA,
+            new TemplateGTUType(gtuTypeA, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA,
                 simulatorA, null);
-            fail("Previous statement should have thrown a GTUException");
+            fail("Previous statement should have thrown a NullPointerException");
         }
-        catch (GTUException gtue)
+        catch (NullPointerException gtue)
         {
             // Ignore expected exception
         }
