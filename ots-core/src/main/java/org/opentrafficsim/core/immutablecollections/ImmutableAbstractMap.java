@@ -30,7 +30,6 @@ public abstract class ImmutableAbstractMap<K, V> implements ImmutableMap<K, V>
      */
     protected ImmutableAbstractMap(final Map<K, V> map)
     {
-        super();
         this.map = map;
     }
 

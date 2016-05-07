@@ -3,7 +3,7 @@ package org.opentrafficsim.core.immutablecollections;
 import java.util.EnumSet;
 
 /**
- * An immutable wrapper for a HashSet.
+ * An immutable wrapper for a EnumSet.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -13,7 +13,7 @@ import java.util.EnumSet;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
- * @param <E> the type of content of this List
+ * @param <E> the type of content of this EnumSet
  */
 public class ImmutableEnumSet<E extends Enum<E>> extends ImmutableAbstractSet<E>
 {
@@ -62,5 +62,4 @@ public class ImmutableEnumSet<E extends Enum<E>> extends ImmutableAbstractSet<E>
     {
         return new ImmutableEnumSet<E>(s.getSet());
     }
-
 }

@@ -33,7 +33,6 @@ public abstract class ImmutableAbstractSet<E> implements ImmutableSet<E>
      */
     protected ImmutableAbstractSet(final Set<E> set)
     {
-        super();
         this.set = set;
     }
 

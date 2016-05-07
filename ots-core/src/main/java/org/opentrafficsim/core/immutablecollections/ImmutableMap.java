@@ -1,8 +1,11 @@
 package org.opentrafficsim.core.immutablecollections;
 
 import java.io.Serializable;
+import java.util.ConcurrentModificationException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 /**
  * A Map interface without the methods that can change it. The constructor of the ImmutableMap needs to be given an initial Map.
@@ -86,20 +89,68 @@ public interface ImmutableMap<K, V> extends Serializable
     ImmutableCollection<V> values();
 
     /**
+     * Returns the value to which the specified key is mapped, or {@code defaultValue} if this map contains no mapping for the
+     * key. The default implementation makes no guarantees about synchronization or atomicity properties of this method. Any
+     * implementation providing atomicity guarantees must override this method and document its concurrency properties.
+     * @param key the key whose associated value is to be returned
+     * @param defaultValue the default mapping of the key
+     * @return the value to which the specified key is mapped, or {@code defaultValue} if this map contains no mapping for the
+     *         key
+     * @throws ClassCastException if the key is of an inappropriate type for this map
+     * @throws NullPointerException if the specified key is null and this map does not permit null keys
+     */
+    default V getOrDefault(Object key, V defaultValue)
+    {
+        V v = get(key);
+        return ((v != null) || containsKey(key)) ? v : defaultValue;
+    }
+
+    /**
+     * Performs the given action for each entry in this map until all entries have been processed or the action throws an
+     * exception. Unless otherwise specified by the implementing class, actions are performed in the order of entry set
+     * iteration (if an iteration order is specified.) Exceptions thrown by the action are relayed to the caller. The default
+     * implementation makes no guarantees about synchronization or atomicity properties of this method. Any implementation
+     * providing atomicity guarantees must override this method and document its concurrency properties.
+     * @param action The action to be performed for each entry
+     * @throws NullPointerException if the specified action is null
+     * @throws ConcurrentModificationException if an entry is found to be removed during iteration
+     */
+    default void forEach(BiConsumer<? super K, ? super V> action)
+    {
+        Objects.requireNonNull(action);
+        for (Map.Entry<K, V> entry : toMap().entrySet())
+        {
+            K k;
+            V v;
+            try
+            {
+                k = entry.getKey();
+                v = entry.getValue();
+            }
+            catch (IllegalStateException ise)
+            {
+                // this usually means the entry is no longer in the map.
+                throw new ConcurrentModificationException(ise);
+            }
+            action.accept(k, v);
+        }
+    }
+
+    /**
      * Returns a modifiable copy of this immutable list.
      * @return a modifiable copy of this immutable list.
      */
     Map<K, V> toMap();
 
     /**
-     * Force to redefine equals for the implementations of immutable collection classes. 
+     * Force to redefine equals for the implementations of immutable collection classes.
      * @param obj the object to compare this collection with
      * @return whether the objects are equal
      */
     boolean equals(final Object obj);
 
     /**
-     * Force to redefine hashCode for the implementations of immutable collection classes. 
+     * Force to redefine hashCode for the implementations of immutable collection classes.
      * @return the calculated hashCode
      */
     int hashCode();
