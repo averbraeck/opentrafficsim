@@ -60,12 +60,11 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
      *            driving direction).
      * @param simulator OTSDEVSSimulatorInterface; the simulator.
      * @param network OTSNetwork; the network that will own the GTUs
-     * @throws GTUException when one or more arguments are invalid
      * @throws NullPointerException when one of the arguments is null
      */
     public TemplateGTUType(final GTUType gtuType, final IdGenerator idGenerator, final Generator<Length> lengthGenerator,
             final Generator<Length> widthGenerator, final Generator<Speed> maximumVelocityGenerator,
-            final OTSDEVSSimulatorInterface simulator, final OTSNetwork network) throws GTUException, NullPointerException
+            final OTSDEVSSimulatorInterface simulator, final OTSNetwork network) throws NullPointerException
     {
         Throw.whenNull(gtuType, "gtuType is null");
         Throw.whenNull(idGenerator, "idGenerator is null");
