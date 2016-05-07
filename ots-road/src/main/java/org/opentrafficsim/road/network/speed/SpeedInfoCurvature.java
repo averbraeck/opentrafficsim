@@ -18,7 +18,7 @@ import org.opentrafficsim.core.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class SpeedInfoCurvature implements Comparable<SpeedInfoCurvature>, Serializable
+public class SpeedInfoCurvature implements Serializable
 {
 
     /** */
@@ -91,17 +91,6 @@ public class SpeedInfoCurvature implements Comparable<SpeedInfoCurvature>, Seria
             return false;
         }
         return true;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final int compareTo(final SpeedInfoCurvature curvatureSpeedInfo)
-    {
-        if (curvatureSpeedInfo == null)
-        {
-            return 1;
-        }
-        return this.radius.compareTo(curvatureSpeedInfo.radius);
     }
     
     /** {@inheritDoc} */

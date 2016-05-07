@@ -21,7 +21,6 @@ public class SpeedLimitTypeSpeed extends SpeedLimitType<Speed>
     /**
      * Constructor.
      * @param id id of this speed limit type, which must be unique
-     * @throws IllegalArgumentException if the provided id is already used
      * @throws NullPointerException if id is null
      */
     public SpeedLimitTypeSpeed(final String id)

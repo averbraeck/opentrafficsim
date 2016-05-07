@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.speed;
 
-
 /**
  * Similar to {@code SpeedLimitTypeSpeed} but implements the marker interface {@code LegalSpeedLimit}.
  * <p>
@@ -17,18 +16,17 @@ public class SpeedLimitTypeSpeedLegal extends SpeedLimitTypeSpeed implements Leg
 
     /** */
     private static final long serialVersionUID = 20160501L;
-    
+
     /**
      * Constructor.
      * @param id id of this speed limit type, which must be unique
-     * @throws IllegalArgumentException if the provided id is already used
      * @throws NullPointerException if id is null
      */
     public SpeedLimitTypeSpeedLegal(final String id)
     {
         super(id);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()
