@@ -7,8 +7,8 @@ import java.util.Map;
 import org.opentrafficsim.core.Throw;
 
 /**
- * Class to contain speed info related to various speed limit types. Instances can reflect the current speed limit situation, or
- * some situation ahead.
+ * Class to contain speed info related to various speed limit types. Instances can reflect the current speed limit situation,
+ * some situation ahead, or some situation in the past.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -36,17 +36,19 @@ public class SpeedLimitInfo implements Serializable
      */
     public final <T> void addSpeedInfo(final SpeedLimitType<T> speedLimitType, final T speedInfo)
     {
-        Throw.when(speedLimitType == null, NullPointerException.class, "Speed limit type may not be null.");
-        Throw.when(speedInfo == null, NullPointerException.class, "Speed info may not be null.");
+        Throw.whenNull(speedLimitType, "Speed limit type may not be null.");
+        Throw.whenNull(speedInfo, "Speed info may not be null.");
         this.speedInfoMap.put(speedLimitType, speedInfo);
     }
 
     /**
      * Removes the speed info of given speed limit type.
      * @param speedLimitType speed limit type of speed info to remove
+     * @throws NullPointerException if the speed limit type is null
      */
     public final void removeSpeedInfo(final SpeedLimitType<?> speedLimitType)
     {
+        Throw.whenNull(speedLimitType, "Speed limit type may not be null.");
         this.speedInfoMap.remove(speedLimitType);
     }
 
@@ -55,7 +57,7 @@ public class SpeedLimitInfo implements Serializable
      * @param speedLimitType speed limit type
      * @return whether speed info is present for the given speed limit type
      */
-    public final boolean contains(final SpeedLimitType<?> speedLimitType)
+    public final boolean containsType(final SpeedLimitType<?> speedLimitType)
     {
         return this.speedInfoMap.containsKey(speedLimitType);
     }
@@ -71,10 +73,44 @@ public class SpeedLimitInfo implements Serializable
     @SuppressWarnings("unchecked")
     public final <T> T getSpeedInfo(final SpeedLimitType<T> speedLimitType)
     {
-        Throw.when(speedLimitType == null, NullPointerException.class, "Speed limit type may not be null.");
-        Throw.when(!contains(speedLimitType), IllegalStateException.class, "The speed limit type '%s' "
-            + "is not present in the speed limit info. Use SpeedLimitInfo.contains() to check.", speedLimitType.getId());
+        Throw.whenNull(speedLimitType, "Speed limit type may not be null.");
+        Throw.when(!containsType(speedLimitType), IllegalStateException.class, "The speed limit type '%s' "
+            + "is not present in the speed limit info. Use SpeedLimitInfo.containsType() to check.", speedLimitType.getId());
         return (T) this.speedInfoMap.get(speedLimitType);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + this.speedInfoMap.hashCode();
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean equals(final Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        SpeedLimitInfo other = (SpeedLimitInfo) obj;
+        if (!this.speedInfoMap.equals(other.speedInfoMap))
+        {
+            return false;
+        }
+        return true;
     }
 
     /** {@inheritDoc} */
