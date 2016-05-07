@@ -90,4 +90,18 @@ public interface ImmutableMap<K, V> extends Serializable
      * @return a modifiable copy of this immutable list.
      */
     Map<K, V> toMap();
+
+    /**
+     * Force to redefine equals for the implementations of immutable collection classes. 
+     * @param obj the object to compare this collection with
+     * @return whether the objects are equal
+     */
+    boolean equals(final Object obj);
+
+    /**
+     * Force to redefine hashCode for the implementations of immutable collection classes. 
+     * @return the calculated hashCode
+     */
+    int hashCode();
+
 }
