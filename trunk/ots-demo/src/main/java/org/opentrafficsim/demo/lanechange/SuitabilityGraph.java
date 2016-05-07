@@ -5,6 +5,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.swing.JPanel;
@@ -142,9 +144,10 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
                 double mainLength = speedLimit.getSI() * this.timeRange.getSI();
                 OTSNode from = new OTSNode("From", new OTSPoint3D(-mainLength, 0, 0));
                 OTSNode branchPoint = new OTSNode("From", new OTSPoint3D(0, 0, 0));
-                LaneType laneType = new LaneType("CarLane");
-                GTUType gtuType = GTUType.getInstance("Car");
-                laneType.addCompatibility(gtuType);
+                GTUType gtuType = new GTUType("Car");
+                Set<GTUType> compatibility = new HashSet<GTUType>();
+                compatibility.add(gtuType);
+                LaneType laneType = new LaneType("CarLane", compatibility);
                 Lane[] lanes =
                     LaneFactory.makeMultiLane("Test road", from, branchPoint, null, LANECOUNT, laneType, speedLimit,
                         simulator, LongitudinalDirectionality.DIR_PLUS);

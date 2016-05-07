@@ -1,5 +1,8 @@
 package org.opentrafficsim.road.network.lane;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -59,9 +62,10 @@ public class CurveTest
         GTUException
     {
         final int laneCount = 1;
-        GTUType gtuType = GTUType.getInstance("Car");
-        LaneType laneType = new LaneType("CarLane");
-        laneType.addCompatibility(gtuType);
+        GTUType gtuType = new GTUType("Car");
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(gtuType);
+        LaneType laneType = new LaneType("CarLane", compatibility);
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
         OTSDEVSSimulatorInterface simulator = CarTest.makeSimulator();
         OTSNode origin = new OTSNode("origin", new OTSPoint3D(10, 10, 0));

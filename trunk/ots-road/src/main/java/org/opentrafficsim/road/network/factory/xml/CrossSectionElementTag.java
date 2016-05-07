@@ -62,7 +62,7 @@ class CrossSectionElementTag implements Serializable
 
     /** Lane type in case elementType is a LANE. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    LaneType laneType = XmlNetworkLaneParser.noTrafficLaneType;
+    LaneType laneType = null;
 
     /** Stripe type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

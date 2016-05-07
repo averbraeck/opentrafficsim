@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.changing;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -162,9 +163,10 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
     @Test
     public final void changeRight() throws Exception
     {
-        GTUType gtuType = GTUType.getInstance("car");
-        LaneType laneType = new LaneType("CarLane");
-        laneType.addCompatibility(gtuType);
+        GTUType gtuType = new GTUType("car");
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(gtuType);
+        LaneType laneType = new LaneType("CarLane", compatibility);
         int laneCount = 2;
         Lane[] lanes =
                 makeMultiLane("Road with two lanes", new OTSNode("From", new OTSPoint3D(0, 0, 0)), new OTSNode("To",

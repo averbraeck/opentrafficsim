@@ -38,14 +38,14 @@ public class LaneBasedTemplateGTUTypeDistribution implements LaneBasedGTUCharact
 
     /** {@inheritDoc} */
     @Override
-    public LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException
+    public final LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException
     {
         return this.distribution.draw().draw();
     }
 
     /** {@inheritDoc} */
     @Override
-    public OTSDEVSSimulatorInterface getSimulator() throws ProbabilityException
+    public final OTSDEVSSimulatorInterface getSimulator() throws ProbabilityException
     {
         return this.distribution.get(0).getObject().getSimulator();
     }

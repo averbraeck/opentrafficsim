@@ -5,6 +5,7 @@ import java.awt.Frame;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -319,7 +320,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
     private int carsCreated = 0;
 
     /** Type of all GTUs. */
-    private GTUType gtuType = GTUType.getInstance("Car");
+    private GTUType gtuType = new GTUType("Car");
 
     /** The car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModelOld carFollowingModelCars;
@@ -483,8 +484,9 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
 
             OTSNode start = new OTSNode("Start", new OTSPoint3D(radius, 0, 0));
             OTSNode halfway = new OTSNode("Halfway", new OTSPoint3D(-radius, 0, 0));
-            LaneType laneType = new LaneType("CarLane");
-            laneType.addCompatibility(this.gtuType);
+            Set<GTUType> compatibility = new HashSet<GTUType>();
+            compatibility.add(this.gtuType);
+            LaneType laneType = new LaneType("CarLane", compatibility);
 
             OTSPoint3D[] coordsHalf1 = new OTSPoint3D[127];
             for (int i = 0; i < coordsHalf1.length; i++)

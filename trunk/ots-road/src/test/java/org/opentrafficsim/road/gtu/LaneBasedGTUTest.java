@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -96,11 +97,12 @@ public class LaneBasedGTUTest implements UNITS
         OTSModelInterface model = new Model();
         SimpleSimulator simulator =
                 new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND), model);
-        GTUType carType = GTUType.getInstance("car");
-        GTUType truckType = GTUType.getInstance("truck");
-        LaneType laneType = new LaneType("CarLane");
-        laneType.addCompatibility(carType);
-        laneType.addCompatibility(truckType);
+        GTUType carType = new GTUType("car");
+        GTUType truckType = new GTUType("truck");
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(carType);
+        compatibility.add(truckType);
+        LaneType laneType = new LaneType("CarLane", compatibility);
         // Create a series of Nodes (some closely bunched together)
         ArrayList<OTSNode> nodes = new ArrayList<OTSNode>();
         int[] linkBoundaries = { 0, 25, 50, 100, 101, 102, 103, 104, 105, 150, 175, 200 };
@@ -376,9 +378,10 @@ public class LaneBasedGTUTest implements UNITS
                     ie = null; // ignore
                 }
             }
-            GTUType carType = GTUType.getInstance("car");
-            LaneType laneType = new LaneType("CarLane");
-            laneType.addCompatibility(carType);
+            GTUType carType = new GTUType("car");
+            Set<GTUType> compatibility = new HashSet<GTUType>();
+            compatibility.add(carType);
+            LaneType laneType = new LaneType("CarLane", compatibility);
             OTSNode fromNode = new OTSNode("Node A", new OTSPoint3D(0, 0, 0));
             OTSNode toNode = new OTSNode("Node B", new OTSPoint3D(1000, 0, 0));
             String linkName = "AB";

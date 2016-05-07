@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -113,9 +114,10 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         // System.out.println("minimum headway at speed " + speed + " is " + minimumHeadway);
         SimpleSimulator simulator =
                 new SimpleSimulator(new Time(0, SECOND), new Duration(0, SECOND), new Duration(1800, SECOND), this);
-        GTUType carType = GTUType.getInstance("Car");
-        LaneType laneType = new LaneType("CarLane");
-        laneType.addCompatibility(carType);
+        GTUType carType = new GTUType("Car");
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(carType);
+        LaneType laneType = new LaneType("CarLane", compatibility);
         Lane lane = CarTest.makeLane(laneType);
         Length initialPosition = new Length(1234.567, METER);
         Length length = new Length(5.0, METER);

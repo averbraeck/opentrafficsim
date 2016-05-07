@@ -166,6 +166,6 @@ public interface LaneBasedGTU extends GTU
      * @param lane Lane; the lane on which the event occurs
      * @param event SimeEvent&lt;OTSSimTimeDouble&gt; the event
      */
-    public void addTrigger(final Lane lane, final SimEvent<OTSSimTimeDouble> event);
+    void addTrigger(Lane lane, SimEvent<OTSSimTimeDouble> event);
 
 }

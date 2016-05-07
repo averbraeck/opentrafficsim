@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -50,16 +51,16 @@ public class LinkType implements Serializable
     /**
      * Create a new Link type with an immutable compatibility set.
      * @param id the id of the lane type.
-     * @param compatibilitySet the set of compatible GTUTypes for this LinkType
+     * @param compatibility the collection of compatible GTUTypes for this LinkType
      * @throws NullPointerException if either the id is null, or the compatibilitySet is null
      */
-    public LinkType(final String id, final Set<GTUType> compatibilitySet) throws NullPointerException
+    public LinkType(final String id, final Collection<GTUType> compatibility) throws NullPointerException
     {
         Throw.whenNull(id, "id cannot be null for LinkType");
-        Throw.whenNull(compatibilitySet, "compatibilitySet cannot be null for LinkType with id = %s", id);
+        Throw.whenNull(compatibility, "compatibilitySet cannot be null for LinkType with id = %s", id);
 
         this.id = id;
-        this.compatibilitySet = new ImmutableHashSet<>(compatibilitySet);
+        this.compatibilitySet = new ImmutableHashSet<>(compatibility);
     }
 
     /**

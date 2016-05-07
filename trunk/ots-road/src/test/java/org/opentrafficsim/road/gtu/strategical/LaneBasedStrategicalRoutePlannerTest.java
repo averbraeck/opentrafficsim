@@ -38,7 +38,7 @@ public class LaneBasedStrategicalRoutePlannerTest
     @Test
     public final void nextLinkDirectionTest() throws GTUException
     {
-        GTUType gtuType = GTUType.getInstance("car");
+        GTUType gtuType = new GTUType("car");
         // Build a really simple network
         OTSNode fromNode = new OTSNode("from", new OTSPoint3D(0, 0, 0));
         OTSNode toNode = new OTSNode("to", new OTSPoint3D(100, 0, 0));

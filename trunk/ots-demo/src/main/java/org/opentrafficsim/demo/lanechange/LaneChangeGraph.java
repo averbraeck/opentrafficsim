@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -278,9 +279,10 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
             ParameterException
     {
         // Set up the network
-        GTUType gtuType = GTUType.getInstance("car");
-        LaneType laneType = new LaneType("CarLane");
-        laneType.addCompatibility(gtuType);
+        GTUType gtuType = new GTUType("car");
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(gtuType);
+        LaneType laneType = new LaneType("CarLane", compatibility);
         final Speed speedLimit = new Speed(120, KM_PER_HOUR);
 
         Lane[] lanes =

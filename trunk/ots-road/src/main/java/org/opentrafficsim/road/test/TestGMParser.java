@@ -202,7 +202,7 @@ public class TestGMParser extends AbstractWrappableAnimation
             new GisRenderable2D(this.simulator, gisURL, rdto0);
 
             // make the GTU generators.
-            GTUType carType = GTUType.getInstance("CAR");
+            GTUType carType = new GTUType("CAR");
             StreamInterface stream = new MersenneTwister(1);
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 0.0), SpeedUnit.METER_PER_SECOND);
