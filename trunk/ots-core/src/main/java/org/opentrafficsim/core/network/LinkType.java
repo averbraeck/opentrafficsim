@@ -48,6 +48,7 @@ public class LinkType implements Serializable
     }
 
     /**
+     * Create a new Link type with an immutable compatibility set.
      * @param id the id of the lane type.
      * @param compatibilitySet the set of compatible GTUTypes for this LinkType
      * @throws NullPointerException if either the id is null, or the compatibilitySet is null
