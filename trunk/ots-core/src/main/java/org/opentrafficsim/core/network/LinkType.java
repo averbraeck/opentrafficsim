@@ -4,10 +4,15 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.immutablecollections.ImmutableHashSet;
+import org.opentrafficsim.core.immutablecollections.ImmutableSet;
 
 /**
- * Link type to indicate compatibility with GTU types.
+ * Link type to indicate compatibility with GTU types. The id of a LinkType should be unique within a simulation. This is,
+ * however, not checked or enforced, as different simulations running in the same JVM can have different compatibilitySets for
+ * LinkTypes with the same id. Therefore, uniqueness is not enforced.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -26,34 +31,34 @@ public class LinkType implements Serializable
     private final String id;
 
     /** The compatibility of GTU types with this link type. */
-    private final Set<GTUType> compatibilitySet = new HashSet<>();
+    private final ImmutableSet<GTUType> compatibilitySet;
 
     /** The link type that does not allow any vehicles. */
-    public static final LinkType NONE = new LinkType("NONE");
+    public static final LinkType NONE;
 
     /** The link type that allows all vehicles. */
-    public static final LinkType ALL = new LinkType("ALL");
+    public static final LinkType ALL;
 
     static
     {
-        ALL.addCompatibility(GTUType.ALL);
+        NONE = new LinkType("NONE", new HashSet<GTUType>());
+        Set<GTUType> allSet = new HashSet<>();
+        allSet.add(GTUType.ALL);
+        ALL = new LinkType("ALL", allSet);
     }
 
     /**
      * @param id the id of the lane type.
+     * @param compatibilitySet the set of compatible GTUTypes for this LinkType
+     * @throws NullPointerException if either the id is null, or the compatibilitySet is null
      */
-    public LinkType(final String id)
+    public LinkType(final String id, final Set<GTUType> compatibilitySet) throws NullPointerException
     {
-        super();
-        this.id = id;
-    }
+        Throw.whenNull(id, "id cannot be null for LinkType");
+        Throw.whenNull(compatibilitySet, "compatibilitySet cannot be null for LinkType with id = %s", id);
 
-    /**
-     * @param gtuType GTU type to add compatibility for.
-     */
-    public final void addCompatibility(final GTUType gtuType)
-    {
-        this.compatibilitySet.add(gtuType);
+        this.id = id;
+        this.compatibilitySet = new ImmutableHashSet<>(compatibilitySet);
     }
 
     /**
@@ -74,25 +79,28 @@ public class LinkType implements Serializable
     }
 
     /** {@inheritDoc} */
-    public final String toString()
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
     {
-        return "LinkType: " + this.id;
+        return "LinkType [id=" + this.id + ", compatibilitySet=" + this.compatibilitySet + "]";
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("checkstyle:designforextension")
     @Override
+    @SuppressWarnings("checkstyle:designforextension")
     public int hashCode()
     {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((this.compatibilitySet == null) ? 0 : this.compatibilitySet.hashCode());
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
         return result;
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     @Override
+    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
     public boolean equals(final Object obj)
     {
         if (this == obj)
@@ -102,6 +110,13 @@ public class LinkType implements Serializable
         if (getClass() != obj.getClass())
             return false;
         LinkType other = (LinkType) obj;
+        if (this.compatibilitySet == null)
+        {
+            if (other.compatibilitySet != null)
+                return false;
+        }
+        else if (!this.compatibilitySet.equals(other.compatibilitySet))
+            return false;
         if (this.id == null)
         {
             if (other.id != null)

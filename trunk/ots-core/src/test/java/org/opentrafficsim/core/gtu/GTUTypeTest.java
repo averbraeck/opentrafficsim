@@ -34,9 +34,9 @@ public class GTUTypeTest
     @Test
     public final void constructorTest()
     {
-        GTUType t = GTUType.getInstance("abc");
+        GTUType t = new GTUType("abc");
         assertTrue("Id is stored in the newly created GTUType", "abc".equals(t.getId()));
-        GTUType t2 = GTUType.getInstance("pqr");
+        GTUType t2 = new GTUType("pqr");
         assertTrue("Id is stored in the newly created GTUType", "pqr".equals(t2.getId()));
         // prove that the two are really distinct (do not use the same storage for the type string
         assertTrue("Id is stored in the newly created GTUType", "abc".equals(t.getId()));

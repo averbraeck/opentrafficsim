@@ -142,9 +142,11 @@ public class GTUTest implements OTSModelInterface
         };
         DirectedPoint initialLocation =
                 new DirectedPoint(10, 20, 30, Math.toRadians(10), Math.toRadians(20), Math.toRadians(30));
+        GTUType gtuType1 = new GTUType("gtu type 1"); 
+        GTUType gtuType2 = new GTUType("gtu type 2");
         for (String id : new String[] { "id1", "id2" })
         {
-            for (GTUType gtuType : new GTUType[] { GTUType.getInstance("gtu type 1"), GTUType.getInstance("gtu type 2") })
+            for (GTUType gtuType : new GTUType[] { gtuType1, gtuType2 })
             {
                 String gtuId = id + " " + gtuType.getId();
                 TestGTU gtu =
@@ -166,7 +168,7 @@ public class GTUTest implements OTSModelInterface
         assertFalse("first GTU and last GTU have different id", firstGTU.getId().equals(lastGTU.getId()));
         assertFalse("first GTU and last GTU have different GTUType", firstGTU.getGTUType().equals(lastGTU.getGTUType()));
         TestGTU gtu =
-                new TestGTU("id3", GTUType.getInstance("gtu type 1"), simulator, strategicalPlanner, perception,
+                new TestGTU("id3", gtuType1, simulator, strategicalPlanner, perception,
                         initialLocation, perceivableContext);
         DirectedPoint actualLocation = gtu.getLocation();
         assertEquals("initial location", 0, initialLocation.distance(actualLocation), 0.002);

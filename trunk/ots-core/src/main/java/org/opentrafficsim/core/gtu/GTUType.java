@@ -1,11 +1,9 @@
 package org.opentrafficsim.core.gtu;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.opentrafficsim.core.Throw;
+import org.opentrafficsim.core.Type;
 
 /**
  * A GTU type identifies the type of a GTU. <br>
@@ -20,7 +18,7 @@ import java.util.Map;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public final class GTUType implements Serializable
+public final class GTUType extends Type<GTUType> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20141231L;
@@ -34,38 +32,21 @@ public final class GTUType implements Serializable
     /** NONE GTUType to be used only for permeability and accessibility. */
     public static final GTUType NONE;
 
-    /** The set of previously instantiated GTUTypes. */
-    private static final Map<String, GTUType> INSTANTIATEDGTUTYPES = new HashMap<String, GTUType>();
-
     /* static block to guarantee that ALL is always on the first place, and NONE on the second, for code reproducibility. */
     static
     {
-        ALL = getInstance("ALL");
-        NONE = getInstance("NONE");
+        ALL = new GTUType("ALL");
+        NONE = new GTUType("NONE");
     }
 
     /**
      * @param id The id of the GTUType to make it identifiable.
+     * @throws NullPointerException if the id is null
      */
-    private GTUType(final String id)
+    public GTUType(final String id) throws NullPointerException
     {
+        Throw.whenNull(id, "id cannot be null for GTUType");
         this.id = id;
-    }
-
-    /**
-     * Construct a new GTUType or (if it already exists) return an existing GTUType.
-     * @param id String; the id of the GTUType
-     * @return GTUType; a new or existing GTUType
-     */
-    public static synchronized GTUType getInstance(final String id)
-    {
-        GTUType result = INSTANTIATEDGTUTYPES.get(id);
-        if (null == result)
-        {
-            result = new GTUType(id);
-            INSTANTIATEDGTUTYPES.put(id, result);
-        }
-        return result;
     }
 
     /**
@@ -114,49 +95,4 @@ public final class GTUType implements Serializable
         return true;
     }
 
-    /**
-     * Serialize this multiple-singleton object by serializing the id.
-     * @param oos the object output stream to write the object to
-     */
-    private void writeObject(final ObjectOutputStream oos)
-    {
-        try
-        {
-            oos.writeObject(this.id);
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException("error during serialization of GTUType with id " + this.id, e);
-        }
-    }
-
-    /**
-     * Deserialize this multiple-singleton object by deserializing the id. Make sure that the GTU type is created if it does not
-     * yet exist.
-     * @param ois the object input stream to read the object from
-     */
-    private void readObject(final ObjectInputStream ois)
-    {
-        try
-        {
-            // this.id needs to be set to communicate the value to the readResolve() method
-            this.id = (String) ois.readObject();
-            GTUType.getInstance(this.id);
-        }
-        catch (ClassNotFoundException | IOException e)
-        {
-            throw new RuntimeException("error during deserialization of a GTUType", e);
-        }
-    }
-
-    /**
-     * Avoid that a deserialized object is a copy of the already stored object. If the object already existed, return the "old"
-     * copy and dereference the deserialized object (this) to be garbage collected. If the object did not exist yet, it was just
-     * added to the HashMap as "this" and can therefore be returned.
-     * @return the just created object (this), or the already existing object before deserialization.
-     */
-    private Object readResolve()
-    {
-        return INSTANTIATEDGTUTYPES.get(this.id);
-    }
 }

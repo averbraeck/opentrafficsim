@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -48,7 +49,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
     private final OTSNetwork network;
 
     /**
-     * @param typeId String, the id of the GTUType to make it identifiable.
+     * @param gtuType GTUType, the GTUType to make it identifiable.
      * @param idGenerator IdGenerator; the id generator used to generate names for GTUs constructed using this TemplateGTUType.
      *            Provide null to use the default id generator of AbstractGTU.
      * @param lengthGenerator Generator&lt;Length&gt;; generator for the length of the GTU type (parallel with driving
@@ -60,45 +61,26 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
      * @param simulator OTSDEVSSimulatorInterface; the simulator.
      * @param network OTSNetwork; the network that will own the GTUs
      * @throws GTUException when one or more arguments are invalid
+     * @throws NullPointerException when one of the arguments is null
      */
-    public TemplateGTUType(final String typeId, final IdGenerator idGenerator, final Generator<Length> lengthGenerator,
+    public TemplateGTUType(final GTUType gtuType, final IdGenerator idGenerator, final Generator<Length> lengthGenerator,
             final Generator<Length> widthGenerator, final Generator<Speed> maximumVelocityGenerator,
-            final OTSDEVSSimulatorInterface simulator, final OTSNetwork network) throws GTUException
+            final OTSDEVSSimulatorInterface simulator, final OTSNetwork network) throws GTUException, NullPointerException
     {
-        if (null == typeId)
-        {
-            throw new GTUException("typeId is null");
-        }
-        this.gtuType = GTUType.getInstance(typeId);
-        if (null == idGenerator)
-        {
-            throw new GTUException("idGenerator is null");
-        }
+        Throw.whenNull(gtuType, "gtuType is null");
+        Throw.whenNull(idGenerator, "idGenerator is null");
+        Throw.whenNull(lengthGenerator, "lengthGenerator is null");
+        Throw.whenNull(widthGenerator, "widthGenerator is null");
+        Throw.whenNull(maximumVelocityGenerator, "maximumVelocityGenerator is null");
+        Throw.whenNull(simulator, "simulator is null");
+        Throw.whenNull(network, "network is null");
+
+        this.gtuType = gtuType;
         this.idGenerator = idGenerator;
-        if (null == lengthGenerator)
-        {
-            throw new GTUException("lengthGenerator is null");
-        }
         this.lengthGenerator = lengthGenerator;
-        if (null == widthGenerator)
-        {
-            throw new GTUException("widthGenerator is null");
-        }
         this.widthGenerator = widthGenerator;
-        if (null == maximumVelocityGenerator)
-        {
-            throw new GTUException("maximumVelocityGenerator is null");
-        }
         this.maximumVelocityGenerator = maximumVelocityGenerator;
-        if (null == simulator)
-        {
-            throw new GTUException("simulator");
-        }
         this.simulator = simulator;
-        if (null == network)
-        {
-            throw new GTUException("network is null");
-        }
         this.network = network;
     }
 
