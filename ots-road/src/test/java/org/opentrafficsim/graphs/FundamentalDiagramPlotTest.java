@@ -9,6 +9,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -78,9 +79,10 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         Duration aggregationTime = new Duration(30, SECOND);
         Length position = new Length(123, METER);
         Length carPosition = new Length(122.5, METER);
-        LaneType laneType = new LaneType("CarLane");
-        GTUType gtuType = GTUType.getInstance("Car");
-        laneType.addCompatibility(gtuType);
+        GTUType gtuType = new GTUType("Car");
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(gtuType);
+        LaneType laneType = new LaneType("CarLane", compatibility);
         Lane lane = CarTest.makeLane(laneType);
         FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime, lane, position);
         assertEquals("SeriesCount should match numberOfLanes", 1, fd.getSeriesCount());
@@ -330,7 +332,9 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
     {
         Duration aggregationTime = new Duration(30, SECOND);
         Length position = new Length(123, METER);
-        LaneType laneType = new LaneType("CarLane");
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(GTUType.ALL);
+        LaneType laneType = new LaneType("CarLane", compatibility);
         FundamentalDiagram fd =
                 new FundamentalDiagram("Fundamental Diagram", aggregationTime, CarTest.makeLane(laneType), position);
         // First get the panel that stores the result of updateHint (this is ugly)

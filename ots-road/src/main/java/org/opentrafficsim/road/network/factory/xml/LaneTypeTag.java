@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.XMLParser;
-import org.opentrafficsim.road.network.lane.LaneType;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -47,11 +46,9 @@ class LaneTypeTag implements Serializable
             if (attributes.getNamedItem("NAME") == null)
                 throw new SAXException("LANETYPE: missing attribute NAME");
             laneTypeTag.name = attributes.getNamedItem("NAME").getNodeValue().trim();
-            if (parser.laneTypes.keySet().contains(laneTypeTag.name))
+            if (parser.laneTypeTags.keySet().contains(laneTypeTag.name))
                 throw new SAXException("LANETYPE: NAME " + laneTypeTag.name + " defined twice");
-
-            LaneType laneType = new LaneType(laneTypeTag.name);
-            parser.laneTypes.put(laneTypeTag.name, laneType);
+            parser.laneTypeTags.put(laneTypeTag.name, laneTypeTag);
         }
     }
 

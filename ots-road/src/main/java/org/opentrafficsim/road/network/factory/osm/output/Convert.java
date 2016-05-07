@@ -686,11 +686,7 @@ public final class Convert
             }
             name.append(gtu.getId());
         }
-        LaneType result = new LaneType(name.toString());
-        for (GTUType gtu : gtuTypes)
-        {
-            result.addCompatibility(gtu);
-        }
+        LaneType result = new LaneType(name.toString(), gtuTypes);
         return result;
     }
 

@@ -81,7 +81,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     static
     {
-        BLOCK_GTU = GTUType.getInstance("BLOCK");
+        BLOCK_GTU = new GTUType("BLOCK");
         dummyStrategicalPlanner = new DummyStrategicalPlanner();
         RELATIVE_POSITIONS.put(RelativePosition.FRONT, new RelativePosition(Length.ZERO, Length.ZERO,
             Length.ZERO, RelativePosition.FRONT));

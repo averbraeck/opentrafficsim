@@ -10,7 +10,9 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -94,9 +96,10 @@ public class ContourPlotTest implements UNITS
     @Test
     public final void accelerationContourTest() throws Exception
     {
-        LaneType laneType = new LaneType("CarLane");
-        GTUType gtuType = GTUType.getInstance("Car");
-        laneType.addCompatibility(gtuType);
+        GTUType gtuType = new GTUType("Car");
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(gtuType);
+        LaneType laneType = new LaneType("CarLane", compatibility);
         List<Lane> path = dummyPath(laneType, gtuType);
         AccelerationContourPlot acp = new AccelerationContourPlot("Acceleration", path);
         assertTrue("newly created AccelerationContourPlot should not be null", null != acp);
@@ -112,9 +115,10 @@ public class ContourPlotTest implements UNITS
     @Test
     public final void densityContourTest() throws Exception
     {
-        LaneType laneType = new LaneType("CarLane");
-        GTUType gtuType = GTUType.getInstance("Car");
-        laneType.addCompatibility(gtuType);
+        GTUType gtuType = new GTUType("Car");
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(gtuType);
+        LaneType laneType = new LaneType("CarLane", compatibility);
         List<Lane> path = dummyPath(laneType, gtuType);
         DensityContourPlot dcp = new DensityContourPlot("Density", path);
         assertTrue("newly created DensityContourPlot should not be null", null != dcp);
@@ -170,9 +174,10 @@ public class ContourPlotTest implements UNITS
     @Test
     public final void flowContourTest() throws Exception
     {
-        LaneType laneType = new LaneType("CarLane");
-        GTUType gtuType = GTUType.getInstance("Car");
-        laneType.addCompatibility(gtuType);
+        GTUType gtuType = new GTUType("Car");
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(gtuType);
+        LaneType laneType = new LaneType("CarLane", compatibility);
         List<Lane> path = dummyPath(laneType, gtuType);
         FlowContourPlot fcp = new FlowContourPlot("Density", path);
         assertTrue("newly created DensityContourPlot should not be null", null != fcp);
@@ -188,9 +193,10 @@ public class ContourPlotTest implements UNITS
     @Test
     public final void speedContourTest() throws Exception
     {
-        LaneType laneType = new LaneType("CarLane");
-        GTUType gtuType = GTUType.getInstance("Car");
-        laneType.addCompatibility(gtuType);
+        GTUType gtuType = new GTUType("Car");
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(gtuType);
+        LaneType laneType = new LaneType("CarLane", compatibility);
         List<Lane> path = dummyPath(laneType, gtuType);
         SpeedContourPlot scp = new SpeedContourPlot("Density", path);
         assertTrue("newly created DensityContourPlot should not be null", null != scp);

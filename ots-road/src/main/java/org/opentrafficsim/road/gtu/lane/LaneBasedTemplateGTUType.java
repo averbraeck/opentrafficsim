@@ -8,7 +8,7 @@ import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
@@ -46,7 +46,7 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
     private Set<DirectedLanePosition> initialLongitudinalPositions;
 
     /**
-     * @param typeId The id of the GTUType to make it identifiable.
+     * @param gtuType The GTUType to make it identifiable.
      * @param idGenerator IdGenerator; the id generator used to generate names for GTUs constructed using this TemplateGTUType.
      *            Provide null to use the default id generator of AbstractGTU.
      * @param lengthGenerator Generator&lt;Length&gt; generator for the length of the GTU type (parallel with driving
@@ -64,21 +64,22 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
      *            generated GTUs
      * @param initialSpeedGenerator Generator&lt;Speed&gt;; the generator for the initial speed of generated GTUs
      * @param network OTSNetwork; the network that all generated GTUs are registered in
-     * @throws GTUException when GTUType defined more than once
+     * @throws NullPointerException when one or more parameters are null
      */
-    public LaneBasedTemplateGTUType(final String typeId, final IdGenerator idGenerator,
+    @SuppressWarnings("checkstyle:parameternumber")
+    public LaneBasedTemplateGTUType(final GTUType gtuType, final IdGenerator idGenerator,
             final Generator<Length> lengthGenerator, final Generator<Length> widthGenerator,
             final Generator<Speed> maximumSpeedGenerator, final OTSDEVSSimulatorInterface simulator,
             final Generator<LaneBasedStrategicalPlanner> strategicalPlannerGenerator,
             final Generator<LanePerceptionFull> perceptionGenerator,
             final Set<DirectedLanePosition> initialLongitudinalPositions, final Generator<Speed> initialSpeedGenerator,
-            final OTSNetwork network) throws GTUException
+            final OTSNetwork network) throws NullPointerException
     {
-        super(typeId, idGenerator, lengthGenerator, widthGenerator, maximumSpeedGenerator, simulator, network);
-        Throw.when(null == strategicalPlannerGenerator, GTUException.class, "strategicalPlannerGenerator is null");
-        Throw.when(null == perceptionGenerator, GTUException.class, "perceptionGenerator is null");
-        Throw.when(null == initialLongitudinalPositions, GTUException.class, "initialLongitudinalPositions is null");
-        Throw.when(null == initialSpeedGenerator, GTUException.class, "initialSpeedGenerator is null");
+        super(gtuType, idGenerator, lengthGenerator, widthGenerator, maximumSpeedGenerator, simulator, network);
+        Throw.whenNull(strategicalPlannerGenerator, "strategicalPlannerGenerator is null");
+        Throw.whenNull(perceptionGenerator, "perceptionGenerator is null");
+        Throw.whenNull(initialLongitudinalPositions, "initialLongitudinalPositions is null");
+        Throw.whenNull(initialSpeedGenerator, "initialSpeedGenerator is null");
         this.strategicalPlannerGenerator = strategicalPlannerGenerator;
         this.perceptionGenerator = perceptionGenerator;
         this.initialLongitudinalPositions = initialLongitudinalPositions;
@@ -87,16 +88,19 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
 
     /**
      * Generate the properties of the next GTU.
+     * @return the LaneBasedGTUCharacteristics with a drawn perception, strategical planner, and initial speed.
      * @throws ProbabilityException when a generator is improperly configured
      * @throws ParameterException in case of a parameter problem.
      */
-    public LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException
+    public final LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException
     {
         return new LaneBasedGTUCharacteristics(super.draw(), this.perceptionGenerator.draw(),
                 this.strategicalPlannerGenerator.draw(), this.initialSpeedGenerator.draw(), this.initialLongitudinalPositions);
     }
 
     /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return String.format("LaneBasedGTUTemplate [%s, %s, %s, %s, %s]", this.initialLongitudinalPositions,

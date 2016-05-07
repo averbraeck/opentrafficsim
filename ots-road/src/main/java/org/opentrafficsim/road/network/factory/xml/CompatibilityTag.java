@@ -2,8 +2,11 @@ package org.opentrafficsim.road.network.factory.xml;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -53,7 +56,7 @@ class CompatibilityTag implements Serializable
             if (attributes.getNamedItem("LANETYPE") == null)
                 throw new SAXException("COMPATIBILITY: missing attribute LANETYPE");
             compatibilityTag.laneTypeName = attributes.getNamedItem("LANETYPE").getNodeValue().trim();
-            if (!parser.laneTypes.keySet().contains(compatibilityTag.laneTypeName))
+            if (!parser.laneTypeTags.keySet().contains(compatibilityTag.laneTypeName))
                 throw new SAXException("COMPATIBILITY: LANETYPE " + compatibilityTag.laneTypeName
                     + " not defined in LANETYPE element");
 
@@ -95,15 +98,13 @@ class CompatibilityTag implements Serializable
      */
     private static void addLaneType(final CompatibilityTag laneTypeTag, final XmlNetworkLaneParser parser)
     {
-        if (!parser.laneTypes.containsKey(laneTypeTag.laneTypeName))
-        {
-            LaneType laneType = new LaneType(laneTypeTag.laneTypeName);
-            parser.laneTypes.put(laneTypeTag.laneTypeName, laneType);
-        }
+        Set<GTUType> compatibility = new HashSet<>();
         for (GTUTag gtuTag : laneTypeTag.gtuList)
         {
-            parser.laneTypes.get(laneTypeTag.laneTypeName).addCompatibility(gtuTag.gtuType);
+            compatibility.add(gtuTag.gtuType);
         }
+        LaneType laneType = new LaneType(laneTypeTag.laneTypeName, compatibility);
+        parser.laneTypes.put(laneType.getId(), laneType);
     }
 
     /** {@inheritDoc} */

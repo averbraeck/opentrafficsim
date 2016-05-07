@@ -1,12 +1,19 @@
 package org.opentrafficsim.road.network.lane;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.immutablecollections.ImmutableHashSet;
+import org.opentrafficsim.core.immutablecollections.ImmutableSet;
 
 /**
+ * Lane type to indicate compatibility with GTU types. The id of a LaneType should be unique. This is, however, not checked or
+ * enforced, as the LaneType is not a singleton as the result of the compatibilitySet. Different simulations running in the same
+ * GTU can have different compatibilitySets for LaneTypes with the same id. Therefore, uniqueness is not enforced.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -26,26 +33,35 @@ public class LaneType implements Serializable
     private final String id;
 
     /** The compatibility of GTUs with this lane type. */
-    private final Set<GTUType> compatibilitySet = new HashSet<>();
+    private final ImmutableSet<GTUType> compatibilitySet;
 
     /** Lane type that does not allow any vehicles. */
-    public static final LaneType NONE = new LaneType("NONE");
+    public static final LaneType NONE;
 
-    /**
-     * @param id the id of the lane type.
-     */
-    public LaneType(final String id)
+    /** Lane type that allows all vehicles. */
+    public static final LaneType ALL;
+
+    static
     {
-        super();
-        this.id = id;
+        NONE = new LaneType("NONE", new HashSet<GTUType>());
+        Set<GTUType> allSet = new HashSet<>();
+        allSet.add(GTUType.ALL);
+        ALL = new LaneType("ALL", allSet);
     }
 
     /**
-     * @param gtuType GTU type to add compatibility for.
+     * Create a new Lane type with an immutable compatibility set.
+     * @param id the id of the lane type.
+     * @param compatibility the collection of compatible GTUTypes for this LaneType
+     * @throws NullPointerException if either the id is null, or the compatibilitySet is null
      */
-    public final void addCompatibility(final GTUType gtuType)
+    public LaneType(final String id, final Collection<GTUType> compatibility) throws NullPointerException
     {
-        this.compatibilitySet.add(gtuType);
+        Throw.whenNull(id, "id cannot be null for LaneType");
+        Throw.whenNull(compatibility, "compatibility collection cannot be null for LaneType with id = %s", id);
+
+        this.id = id;
+        this.compatibilitySet = new ImmutableHashSet<>(compatibility);
     }
 
     /**
@@ -66,25 +82,28 @@ public class LaneType implements Serializable
     }
 
     /** {@inheritDoc} */
-    public final String toString()
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
     {
-        return "LaneType: " + this.id;
+        return "LaneType [id=" + this.id + ", compatibilitySet=" + this.compatibilitySet + "]";
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("checkstyle:designforextension")
     @Override
+    @SuppressWarnings("checkstyle:designforextension")
     public int hashCode()
     {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((this.compatibilitySet == null) ? 0 : this.compatibilitySet.hashCode());
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
         return result;
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     @Override
+    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
     public boolean equals(final Object obj)
     {
         if (this == obj)
@@ -94,6 +113,13 @@ public class LaneType implements Serializable
         if (getClass() != obj.getClass())
             return false;
         LaneType other = (LaneType) obj;
+        if (this.compatibilitySet == null)
+        {
+            if (other.compatibilitySet != null)
+                return false;
+        }
+        else if (!this.compatibilitySet.equals(other.compatibilitySet))
+            return false;
         if (this.id == null)
         {
             if (other.id != null)

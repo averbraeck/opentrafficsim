@@ -4,6 +4,7 @@ import java.awt.Frame;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
@@ -225,7 +226,7 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
     private int carsCreated = 0;
 
     /** Type of all GTUs. */
-    private GTUType gtuType = GTUType.getInstance("Car");
+    private GTUType gtuType = new GTUType("Car");
 
     /** The car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModelOld carFollowingModelCars;
@@ -288,8 +289,9 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
         OTSNode from = new OTSNode("From", new OTSPoint3D(getMinimumDistance().getSI(), 0, 0));
         OTSNode to = new OTSNode("To", new OTSPoint3D(getMaximumDistance().getSI(), 0, 0));
         OTSNode end = new OTSNode("End", new OTSPoint3D(getMaximumDistance().getSI() + 50.0, 0, 0));
-        LaneType laneType = new LaneType("CarLane");
-        laneType.addCompatibility(this.gtuType);
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(this.gtuType);
+        LaneType laneType = new LaneType("CarLane", compatibility);
         try
         {
             this.lane =

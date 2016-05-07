@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -363,7 +364,7 @@ class StraightModel implements OTSModelInterface, UNITS
     private int carsCreated = 0;
 
     /** Type of all GTUs. */
-    private GTUType gtuType = GTUType.getInstance("Car");
+    private GTUType gtuType = new GTUType("Car");
 
     /** The car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModelOld carFollowingModelCars;
@@ -437,8 +438,9 @@ class StraightModel implements OTSModelInterface, UNITS
         OTSNode end = new OTSNode("End", new OTSPoint3D(getMaximumDistance().getSI() + 50.0, 0, 0));
         try
         {
-            LaneType laneType = new LaneType("CarLane");
-            laneType.addCompatibility(this.gtuType);
+            Set<GTUType> compatibility = new HashSet<GTUType>();
+            compatibility.add(this.gtuType);
+            LaneType laneType = new LaneType("CarLane", compatibility);
             this.lane =
                     LaneFactory.makeLane("Lane", from, to, null, laneType, this.speedLimit, this.simulator,
                             LongitudinalDirectionality.DIR_PLUS);

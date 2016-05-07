@@ -2,6 +2,7 @@ package org.opentrafficsim.road.car;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -80,9 +81,10 @@ public class CarTest implements UNITS
         OTSGeometryException
     {
         Time initialTime = new Time(0, SECOND);
-        GTUType gtuType = GTUType.getInstance("Car");
-        LaneType laneType = new LaneType("CarLane");
-        laneType.addCompatibility(gtuType);
+        GTUType gtuType = new GTUType("Car");
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(gtuType);
+        LaneType laneType = new LaneType("CarLane", compatibility);
         OTSNetwork network = new OTSNetwork("network");
         Lane lane = makeLane(laneType);
         Length initialPosition = new Length(12, METER);

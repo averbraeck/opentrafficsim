@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.lane;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -62,10 +63,10 @@ public class SensorTest implements UNITS
         OTSNode nodeAFrom = new OTSNode("AFrom", new OTSPoint3D(0, 0, 0));
         OTSNode nodeATo = new OTSNode("ATo", new OTSPoint3D(1000, 0, 0));
         OTSNode nodeBTo = new OTSNode("BTo", new OTSPoint3D(20000, 0, 0)); // so car won't run off lane B in 100 s.
-        LaneType laneType = new LaneType("CarLane");
-        // A Car needs a type
-        GTUType gtuType = GTUType.getInstance("Car");
-        laneType.addCompatibility(gtuType);
+        GTUType gtuType = new GTUType("Car");
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(gtuType);
+        LaneType laneType = new LaneType("CarLane", compatibility);
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModelForSensorTest();
         final SimpleSimulator simulator =

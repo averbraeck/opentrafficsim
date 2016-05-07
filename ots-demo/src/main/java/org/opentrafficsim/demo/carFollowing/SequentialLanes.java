@@ -8,6 +8,7 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -369,7 +370,7 @@ class SequentialModel implements OTSModelInterface, UNITS
     private int carsCreated = 0;
 
     /** Type of all GTUs. */
-    private GTUType gtuType = GTUType.getInstance("Car");
+    private GTUType gtuType = new GTUType("Car");
 
     /** Minimum distance. */
     private Length minimumDistance = new Length(0, METER);
@@ -436,8 +437,9 @@ class SequentialModel implements OTSModelInterface, UNITS
         OTSNode n5 = new OTSNode("Node(2200,200)", new OTSPoint3D(2200, 200));
         this.nodes.addAll(Arrays.asList(new OTSNode[] { n0, n1, n2, n3, n4, n5 }));
 
-        LaneType laneType = new LaneType("CarLane");
-        laneType.addCompatibility(this.gtuType);
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(this.gtuType);
+        LaneType laneType = new LaneType("CarLane", compatibility);
 
         try
         {

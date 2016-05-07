@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -78,9 +79,10 @@ public class IDMPlusTest implements UNITS
         GTUFollowingModelOld carFollowingModel =
                 new IDMPlusOld(new Acceleration(1.25, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), s0,
                         new Duration(1, SECOND), 1d);
-        GTUType gtuType = GTUType.getInstance("Car");
-        LaneType laneType = new LaneType("CarLane");
-        laneType.addCompatibility(gtuType);
+        GTUType gtuType = new GTUType("Car");
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(gtuType);
+        LaneType laneType = new LaneType("CarLane", compatibility);
         Lane lane = CarTest.makeLane(laneType);
         Time initialTime = new Time(0, SECOND);
         Length initialPosition = new Length(123.456, METER);

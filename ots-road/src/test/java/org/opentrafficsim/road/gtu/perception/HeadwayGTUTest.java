@@ -42,10 +42,10 @@ public class HeadwayGTUTest
     {
         // Make two headway GTUs with different values to prove that HeadwayGTUs do not share static fields.
         String id1 = "id1";
-        GTUType gtuType1 = GTUType.getInstance("type1");
+        GTUType gtuType1 = new GTUType("type1");
         Length distance1 = new Length(123, LengthUnit.METER);
         String id2 = "id2";
-        GTUType gtuType2 = GTUType.getInstance("type2");
+        GTUType gtuType2 = new GTUType("type2");
         Length distance2 = new Length(234, LengthUnit.METER);
         HeadwayGTU hg1 = new HeadwayGTU(id1, gtuType1, distance1);
         HeadwayGTU hg2 = new HeadwayGTU(id2, gtuType2, distance2);

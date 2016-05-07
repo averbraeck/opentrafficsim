@@ -6,6 +6,7 @@ import java.awt.Frame;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -247,7 +248,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     // private int carsCreated = 0;
 
     /** Type of all GTUs (required to permit lane changing). */
-    GTUType gtuType = GTUType.getInstance("Car");
+    GTUType gtuType = new GTUType("Car");
 
     /** The car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModelOld carFollowingModelCars;
@@ -356,8 +357,9 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         int lanesOnCommon = lanesOnMain + lanesOnBranch;
         int lanesOnCommonCompressed = Integer.parseInt(networkType.split(" ")[merge ? 5 : 1]);
 
-        LaneType laneType = new LaneType("CarLane");
-        laneType.addCompatibility(this.gtuType);
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(this.gtuType);
+        LaneType laneType = new LaneType("CarLane", compatibility);
         try
         {
 
@@ -769,7 +771,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDistribution,
             Set<DirectedLanePosition> initialPositions, final TacticalPlanner tacticalPlanner) throws GTUException
     {
-        return new LaneBasedTemplateGTUType(this.gtuType.getId(), this.idGenerator, new Generator<Length>()
+        return new LaneBasedTemplateGTUType(this.gtuType, this.idGenerator, new Generator<Length>()
         {
             public Length draw()
             {

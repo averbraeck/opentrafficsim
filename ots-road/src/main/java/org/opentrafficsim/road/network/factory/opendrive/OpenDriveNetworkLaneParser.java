@@ -69,10 +69,6 @@ public class OpenDriveNetworkLaneParser implements Serializable
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, LaneType> laneTypes = new HashMap<>();
 
-    /** The no traffic LaneType. */
-    @SuppressWarnings("visibilitymodifier")
-    protected static LaneType noTrafficLaneType = new LaneType("NOTRAFFIC");
-
     /** The simulator for creating the animation. Null if no animation needed. */
     @SuppressWarnings("visibilitymodifier")
     protected OTSDEVSSimulatorInterface simulator;
@@ -103,7 +99,6 @@ public class OpenDriveNetworkLaneParser implements Serializable
     public OpenDriveNetworkLaneParser(final OTSDEVSSimulatorInterface simulator)
     {
         this.simulator = simulator;
-        this.laneTypes.put(noTrafficLaneType.getId(), noTrafficLaneType);
     }
 
     /**

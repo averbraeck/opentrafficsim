@@ -86,13 +86,13 @@ public class XmlNetworkLaneParser implements Serializable
     @SuppressWarnings("visibilitymodifier")
     public Map<String, GTUType> gtuTypes = new HashMap<>();
 
+    /** The LaneType tags that have been created. */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, LaneTypeTag> laneTypeTags = new HashMap<>();
+
     /** The LaneTypes that have been created. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, LaneType> laneTypes = new HashMap<>();
-
-    /** The no traffic LaneType. */
-    @SuppressWarnings("visibilitymodifier")
-    protected static LaneType noTrafficLaneType = new LaneType("NOTRAFFIC");
 
     /** The simulator for creating the animation. Null if no animation needed. */
     @SuppressWarnings("visibilitymodifier")
@@ -108,7 +108,9 @@ public class XmlNetworkLaneParser implements Serializable
     public XmlNetworkLaneParser(final OTSDEVSSimulatorInterface simulator)
     {
         this.simulator = simulator;
-        this.laneTypes.put(noTrafficLaneType.getId(), noTrafficLaneType);
+        LaneTypeTag laneTypeTagNoTraffic = new LaneTypeTag();
+        laneTypeTagNoTraffic.name = "NOTRAFFIC";
+        this.laneTypeTags.put(laneTypeTagNoTraffic.name, laneTypeTagNoTraffic);
     }
 
     /**
@@ -223,7 +225,7 @@ public class XmlNetworkLaneParser implements Serializable
                 + this.routeMixTags.size() + ", shortestRouteTagssize.=" + this.shortestRouteTags.size()
                 + ", shortestRouteMixTags.size=" + this.shortestRouteMixTags.size() + ", roadTypeTags.size="
                 + this.roadTypeTags.size() + ", gtuTypes.size=" + this.gtuTypes.size() + ", laneTypes.size="
-                + this.laneTypes.size() + "]";
+                + this.laneTypeTags.size() + "]";
     }
 
 }

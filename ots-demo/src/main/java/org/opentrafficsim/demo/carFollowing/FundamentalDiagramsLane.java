@@ -4,6 +4,7 @@ import java.awt.Frame;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
@@ -236,7 +237,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
         private int carsCreated = 0;
 
         /** Type of all GTUs. */
-        private GTUType gtuType = GTUType.getInstance("Car");
+        private GTUType gtuType = new GTUType("Car");
 
         /** The car following model, e.g. IDM Plus for cars. */
         private GTUFollowingModelOld carFollowingModelCars;
@@ -296,8 +297,9 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
             this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
             try
             {
-                LaneType laneType = new LaneType("CarLane");
-                laneType.addCompatibility(this.gtuType);
+                Set<GTUType> compatibility = new HashSet<GTUType>();
+                compatibility.add(this.gtuType);
+                LaneType laneType = new LaneType("CarLane", compatibility);
                 OTSNode node = new OTSNode("Node 0", new OTSPoint3D(this.startX.getSI(), 0, 0));
                 for (int laneNr = 0; laneNr < 10; laneNr++)
                 {

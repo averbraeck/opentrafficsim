@@ -6,8 +6,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.geom.Point2D;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.media.j3d.BoundingBox;
 import javax.media.j3d.Bounds;
@@ -67,11 +69,12 @@ public class LaneTest implements UNITS
         Length endLateralPos = new Length(5, METER);
         Length startWidth = new Length(3, METER);
         Length endWidth = new Length(4, METER);
-        GTUType gtuTypeCar = GTUType.getInstance("Car");
-        GTUType gtuTypeTruck = GTUType.getInstance("Truck");
-        LaneType laneType = new LaneType("Car");
-        laneType.addCompatibility(gtuTypeCar);
-        laneType.addCompatibility(gtuTypeTruck);
+        GTUType gtuTypeCar = new GTUType("Car");
+        GTUType gtuTypeTruck = new GTUType("Truck");
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(gtuTypeCar);
+        compatibility.add(gtuTypeTruck);
+        LaneType laneType = new LaneType("CarLane", compatibility);
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
         directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
@@ -179,7 +182,9 @@ public class LaneTest implements UNITS
         final double[] angles =
             {0, Math.PI * 0.01, Math.PI / 3, Math.PI / 2, Math.PI * 2 / 3, Math.PI * 0.99, Math.PI, Math.PI * 1.01,
                 Math.PI * 4 / 3, Math.PI * 3 / 2, Math.PI * 1.99, Math.PI * 2, Math.PI * (-0.2)};
-        LaneType laneType = new LaneType("Car");
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(GTUType.ALL);
+        LaneType laneType = new LaneType("CarLane", compatibility);
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
         directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();

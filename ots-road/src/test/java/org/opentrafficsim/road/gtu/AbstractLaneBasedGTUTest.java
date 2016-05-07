@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -82,9 +83,10 @@ public class AbstractLaneBasedGTUTest implements UNITS
         // To create Lanes we need Nodes and a LaneType
         OTSNode nodeAFrom = new OTSNode("AFrom", new OTSPoint3D(0, 0, 0));
         OTSNode nodeATo = new OTSNode("ATo", new OTSPoint3D(1000, 0, 0));
-        GTUType gtuType = GTUType.getInstance("Car");
-        LaneType laneType = new LaneType("CarLane");
-        laneType.addCompatibility(gtuType);
+        GTUType gtuType = new GTUType("Car");
+        Set<GTUType> compatibility = new HashSet<GTUType>();
+        compatibility.add(gtuType);
+        LaneType laneType = new LaneType("CarLane", compatibility);
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModel();
         final SimpleSimulatorInterface simulator =

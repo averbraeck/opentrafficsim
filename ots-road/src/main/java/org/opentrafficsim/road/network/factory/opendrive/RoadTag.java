@@ -135,9 +135,6 @@ class RoadTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<CrossSectionLink> subLinks = new ArrayList<>();
     
-    /** The lane type that allows all traffic. */
-    static LaneType LANETYPE_ALL = null;
-
     /**
      * Parse the attributes of the road tag. The sub-elements are parsed in separate classes.
      * @param node the top-level road node
@@ -150,11 +147,6 @@ class RoadTag implements Serializable
     static RoadTag parseRoad(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException,
         NetworkException
     {
-        if (LANETYPE_ALL == null)
-        {
-            LANETYPE_ALL = new LaneType("ALL");
-            LANETYPE_ALL.addCompatibility(GTUType.ALL);
-        }
         NamedNodeMap attributes = node.getAttributes();
         RoadTag roadTag = new RoadTag();
 
@@ -567,7 +559,7 @@ class RoadTag implements Serializable
                      */
 
                     Lane lane =
-                        new Lane(currentLink, leftLane.id.toString(), crossSectionSlices, LANETYPE_ALL, directionality,
+                        new Lane(currentLink, leftLane.id.toString(), crossSectionSlices, LaneType.ALL, directionality,
                             speedLimit, overtakingConditions);
                     currentLaneSec.lanes.put(leftLane.id, lane);
 
@@ -779,7 +771,7 @@ class RoadTag implements Serializable
                         // System.out.println();
 
                         Lane lane =
-                            new Lane(currentLink, rightLane.id.toString(), crossSectionSlices, LANETYPE_ALL,
+                            new Lane(currentLink, rightLane.id.toString(), crossSectionSlices, LaneType.ALL,
                                 directionality, speedLimit, overtakingConditions);
 
                         currentLaneSec.lanes.put(rightLane.id, lane);

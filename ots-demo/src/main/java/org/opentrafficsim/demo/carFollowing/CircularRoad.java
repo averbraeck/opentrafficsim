@@ -5,6 +5,7 @@ import java.awt.Frame;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -592,9 +593,10 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
                     }
                 }
             }
-            GTUType gtuType = GTUType.getInstance("car");
-            LaneType laneType = new LaneType("CarLane");
-            laneType.addCompatibility(gtuType);
+            GTUType gtuType = new GTUType("car");
+            Set<GTUType> compatibility = new HashSet<GTUType>();
+            compatibility.add(gtuType);
+            LaneType laneType = new LaneType("CarLane", compatibility);
             OTSNode start = new OTSNode("Start", new OTSPoint3D(radius, 0, 0));
             OTSNode halfway = new OTSNode("Halfway", new OTSPoint3D(-radius, 0, 0));
 
