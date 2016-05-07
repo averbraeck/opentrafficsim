@@ -25,19 +25,19 @@ public class ImmutableVector<E> extends ImmutableAbstractList<E>
     private static final long serialVersionUID = 20160507L;
 
     /**
-     * @param vector the vector to use as the immutable vector.
+     * @param list the list to use as the content of the immutable vector.
      */
-    public ImmutableVector(final Vector<E> vector)
+    public ImmutableVector(final List<E> list)
     {
-        super(new Vector<E>(vector));
+        super(new Vector<E>(list));
     }
 
     /**
-     * @param vector the vector to use as the immutable vector.
+     * @param list the list to use as the content of the immutable vector.
      */
-    public ImmutableVector(final ImmutableVector<E> vector)
+    public ImmutableVector(final ImmutableList<E> list)
     {
-        super(vector.getList());
+        this(list.toList());
     }
 
     /** {@inheritDoc} */
@@ -52,6 +52,13 @@ public class ImmutableVector<E> extends ImmutableAbstractList<E>
     public final List<E> toList()
     {
         return new Vector<E>(getList());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final ImmutableList<E> subList(final int fromIndex, final int toIndex)
+    {
+        return new ImmutableVector<E>(getList().subList(fromIndex, toIndex));
     }
 
     /**

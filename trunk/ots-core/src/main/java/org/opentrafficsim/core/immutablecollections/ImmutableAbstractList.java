@@ -34,7 +34,6 @@ public abstract class ImmutableAbstractList<E> implements ImmutableList<E>, Rand
      */
     protected ImmutableAbstractList(final List<E> list)
     {
-        super();
         this.list = list;
     }
 

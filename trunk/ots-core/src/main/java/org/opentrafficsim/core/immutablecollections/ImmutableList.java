@@ -51,20 +51,32 @@ public interface ImmutableList<E> extends ImmutableCollection<E>
     int lastIndexOf(Object o);
 
     /**
+     * Returns a safe, immutable copy of the portion of this immutable list between the specified <tt>fromIndex</tt>, inclusive,
+     * and <tt>toIndex</tt>, exclusive. (If <tt>fromIndex</tt> and <tt>toIndex</tt> are equal, the returned immutable list is
+     * empty).
+     * @param fromIndex low endpoint (inclusive) of the subList
+     * @param toIndex high endpoint (exclusive) of the subList
+     * @return a view of the specified range within this immutable list
+     * @throws IndexOutOfBoundsException for an illegal endpoint index value (<tt>fromIndex &lt; 0 || toIndex &gt; size ||
+     *         fromIndex &gt; toIndex</tt>)
+     */
+    ImmutableList<E> subList(int fromIndex, int toIndex);
+
+    /**
      * Returns a modifiable copy of this immutable list.
      * @return a modifiable copy of this immutable list.
      */
     List<E> toList();
-    
+
     /**
-     * Force to redefine equals for the implementations of immutable collection classes. 
+     * Force to redefine equals for the implementations of immutable collection classes.
      * @param obj the object to compare this collection with
      * @return whether the objects are equal
      */
     boolean equals(final Object obj);
 
     /**
-     * Force to redefine hashCode for the implementations of immutable collection classes. 
+     * Force to redefine hashCode for the implementations of immutable collection classes.
      * @return the calculated hashCode
      */
     int hashCode();

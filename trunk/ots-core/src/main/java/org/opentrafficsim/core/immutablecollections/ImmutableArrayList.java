@@ -50,4 +50,11 @@ public class ImmutableArrayList<E> extends ImmutableAbstractList<E>
     {
         return new ArrayList<E>(getList());
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final ImmutableList<E> subList(final int fromIndex, final int toIndex)
+    {
+        return new ImmutableArrayList<>(getList().subList(fromIndex, toIndex));
+    }
 }
