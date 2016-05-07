@@ -7,6 +7,10 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
@@ -35,34 +39,34 @@ public class Tester
 
     /**
      * @param args
-     * @throws IOException 
-     * @throws ClassNotFoundException 
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException
     {
-
-        SpeedLimitTypeSpeed   typeOrig = new SpeedLimitTypeSpeed("Maximum vehicle speed");
-        SpeedLimitTypeSpeed   typeCopy = new SpeedLimitTypeSpeed("Maximum vehicle speed");
+             
+        SpeedLimitTypeSpeed typeOrig = new SpeedLimitTypeSpeed("Maximum vehicle speed");
+        SpeedLimitTypeSpeed typeCopy = new SpeedLimitTypeSpeed("Maximum vehicle speed");
         SpeedLimitType<Speed> typeSupe = new SpeedLimitType<>("Maximum vehicle speed", Speed.class);
-        
+
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutput out = new ObjectOutputStream(bos);
         out.writeObject(typeOrig);
         out.close();
         byte[] buf = bos.toByteArray();
         ObjectInput in = new ObjectInputStream(new ByteArrayInputStream(buf));
-        SpeedLimitTypeSpeed   typeDese = (SpeedLimitTypeSpeed) in.readObject();
+        SpeedLimitTypeSpeed typeDese = (SpeedLimitTypeSpeed) in.readObject();
         in.close();
 
-        System.out.println("typeOrig is equal to typeCopy by '==':     " + (typeOrig == typeCopy));
+        System.out.println("typeOrig is equal to typeCopy by '=='    : " + (typeOrig == typeCopy));
         System.out.println("typeOrig is equal to typeCopy by isType(): " + typeOrig.isType(typeCopy));
         System.out.println("typeCopy is equal to typeOrig by isType(): " + typeCopy.isType(typeOrig));
-        System.out.println("typeOrig is equal to typeSupe by '==':     " + (typeOrig == typeSupe));
+        System.out.println("typeOrig is equal to typeSupe by '=='    : " + (typeOrig == typeSupe));
         System.out.println("typeOrig is equal to typeSupe by isType(): " + typeOrig.isType(typeSupe));
         System.out.println("typeSupe is equal to typeOrig by isType(): " + typeSupe.isType(typeOrig));
-        System.out.println("typeOrig is equal to typeDese by '==':     " + (typeOrig == typeDese));
+        System.out.println("typeOrig is equal to typeDese by '=='    : " + (typeOrig == typeDese));
         System.out.println("typeOrig is equal to typeDese by isType(): " + typeOrig.isType(typeDese));
-        System.out.println("typeDese is equal to typeOrig by isType(): " + typeDese.isType(typeOrig));       
+        System.out.println("typeDese is equal to typeOrig by isType(): " + typeDese.isType(typeOrig));
 
         // Throw.when(true, DummyException0.class, "dummy text");
         // RelativeLane r = new RelativeLane(LateralDirectionality.LEFT, -2);

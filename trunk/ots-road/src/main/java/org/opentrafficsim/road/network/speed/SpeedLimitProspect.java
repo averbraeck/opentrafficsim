@@ -77,7 +77,6 @@ public class SpeedLimitProspect implements Serializable
      * Checks the speed limit entry before adding to the prospect.
      * @param speedLimitEntry speed limit entry to add
      * @throws IllegalStateException if the speed entry forms an undefined set with any existing entry
-     * @throws IllegalStateException if speed info for a specific speed limit type is set twice with negative distance
      */
     private void checkAndAdd(final SpeedLimitEntry<?> speedLimitEntry)
     {
@@ -85,13 +84,6 @@ public class SpeedLimitProspect implements Serializable
         {
             if (s.getSpeedLimitType().equals(speedLimitEntry.getSpeedLimitType()))
             {
-                /*
-                 * For entries with negative distances, the speed limit type may not be the same, as only the latest one is
-                 * still valid at the current position.
-                 */
-                Throw.when(s.getDistance().si < 0 && speedLimitEntry.getDistance().si < 0, IllegalStateException.class,
-                    "Info of speed limit type '%s' is set twice with negative distances (%s, %s). This is undefined.", s
-                        .getSpeedLimitType().getId(), s.getDistance().toString(), speedLimitEntry.getDistance().toString());
                 /*
                  * For entries at the same distance, the speed limit type may not be the same, this leaves us with an undefined
                  * state as it cannot be derived which remains valid further on.
@@ -105,9 +97,9 @@ public class SpeedLimitProspect implements Serializable
     }
 
     /**
-     * Returns the distances at which a change in the prospect is present in order (closest first). If multiple changes are
+     * Returns the distances at which a change in the prospect is present in order (upstream first). If multiple changes are
      * present at the same distance, only one distance is returned in the list.
-     * @return distances at which a change in the prospect is present in order (closest first)
+     * @return distances at which a change in the prospect is present in order (upstream first)
      */
     public final List<Length> getDistances()
     {
@@ -120,7 +112,26 @@ public class SpeedLimitProspect implements Serializable
     }
 
     /**
-     * Returns whether the give speed limit type is changed at the given distance.
+     * Returns the distances at which a change of the given speed limit type in the prospect is present in order (upstream
+     * first). If multiple changes are present at the same distance, only one distance is returned in the list.
+     * @param speedLimitType speed limit type to get the distances of
+     * @return distances at which a change of the given speed limit type in the prospect is present in order (upstream first)
+     */
+    public final List<Length> getDistances(final SpeedLimitType<?> speedLimitType)
+    {
+        List<Length> list = new ArrayList<>();
+        for (SpeedLimitEntry<?> speedLimitEntry : this.prospect)
+        {
+            if (speedLimitEntry.getSpeedLimitType().equals(speedLimitType))
+            {
+                list.add(speedLimitEntry.getDistance());
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Returns whether the given speed limit type is changed at the given distance.
      * @param distance distance to check
      * @param speedLimitType speed limit type to check
      * @return whether the given speed limit type is changed at the given distance
@@ -189,7 +200,7 @@ public class SpeedLimitProspect implements Serializable
             else
             {
                 // method addSpeedInfo guarantees that speedInfo in speedLimitEntry is T
-                // for speedLimitType in speedLimitEntry is SpeedLimitType<T>, null is check above
+                // for speedLimitType in speedLimitEntry is SpeedLimitType<T>, null is checked above
                 setAsType(speedLimitInfo, speedLimitEntry);
             }
         }
