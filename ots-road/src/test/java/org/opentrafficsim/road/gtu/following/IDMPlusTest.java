@@ -92,7 +92,7 @@ public class IDMPlusTest implements UNITS
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
-        AbstractLaneChangeModel laneChangeModel = new Egoistic();
+        // AbstractLaneChangeModel laneChangeModel = new Egoistic();
         BehavioralCharacteristics behavioralCharacteristicsIDM = DefaultTestParameters.create();//new BehavioralCharacteristics();
         // fixed value for consistent testing even if the default value is changed
         Length lookAhead = new Length(250, LengthUnit.SI);

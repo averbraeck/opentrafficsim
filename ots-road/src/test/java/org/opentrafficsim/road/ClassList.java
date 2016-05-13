@@ -129,6 +129,10 @@ public final class ClassList
     {
         final ArrayList<String> retval = new ArrayList<String>();
         final File[] fileList = directory.listFiles();
+        if (null == fileList)
+        {
+            throw new Error("Could not list files in directory " + directory.toString());
+        }
         for (final File file : fileList)
         {
             if (file.isDirectory())

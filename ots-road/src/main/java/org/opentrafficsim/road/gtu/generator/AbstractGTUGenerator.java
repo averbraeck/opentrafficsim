@@ -249,7 +249,7 @@ public abstract class AbstractGTUGenerator implements Serializable
         DirectedLanePosition directedLanePosition = carBuilder.getInitialLongitudinalPositions().iterator().next();
         Lane generatorLane = directedLanePosition.getLane();
         double genPosSI = directedLanePosition.getPosition().getSI();
-        GTUDirectionality direction = directedLanePosition.getGtuDirection();
+        //GTUDirectionality direction = directedLanePosition.getGtuDirection();
         // XXX different from this.direction?
         double lengthSI = generatorLane.getLength().getSI();
         double frontNew = (genPosSI + carBuilder.getLength().getSI()) / lengthSI;

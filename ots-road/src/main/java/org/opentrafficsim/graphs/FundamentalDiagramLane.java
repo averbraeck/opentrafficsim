@@ -45,6 +45,8 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.AbstractSensor;
 import org.opentrafficsim.road.network.lane.Lane;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * The Fundamental Diagram Graph; see <a href="http://en.wikipedia.org/wiki/Fundamental_diagram_of_traffic_flow"> Wikipedia:
  * http://en.wikipedia.org/wiki/Fundamental_diagram_of_traffic_flow</a>.
@@ -434,6 +436,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
     }
 
     /** {@inheritDoc} */
+    @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
     public final void actionPerformed(final ActionEvent actionEvent)
     {

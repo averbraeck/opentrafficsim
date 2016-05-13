@@ -22,6 +22,8 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.network.factory.opendrive.data.OTSToRTIData;
 import org.opentrafficsim.road.network.factory.opendrive.data.RTIToOTSData;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /** */
 public class ReceiverThread extends Thread
 {
@@ -54,6 +56,7 @@ public class ReceiverThread extends Thread
      * @param network the network
      * @throws SocketException when communication fails
      */
+    @SuppressFBWarnings("IL_INFINITE_LOOP")
     public ReceiverThread(OTSDEVSSimulatorInterface simulator, GTUType carType, List<LaneBasedIndividualGTU> rtiCars,
             final OTSNetwork network) throws SocketException
     {
