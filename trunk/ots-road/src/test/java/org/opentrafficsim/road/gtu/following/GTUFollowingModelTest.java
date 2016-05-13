@@ -124,7 +124,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         Length width = new Length(2.0, METER);
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
-        AbstractLaneChangeModel laneChangeModel = new Egoistic();
+        // AbstractLaneChangeModel laneChangeModel = new Egoistic();
         BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create();//new BehavioralCharacteristics();
         maxHeadway = behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD);
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =

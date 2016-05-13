@@ -42,7 +42,7 @@ public class AccelerationContourPlot extends ContourPlot
     }
 
     /** Storage for the total time spent in each cell. */
-    private ArrayList<MutableTimeVector.Abs> cumulativeTimes;
+    private ArrayList<MutableTimeVector> cumulativeTimes;
 
     /** Storage for the total acceleration executed in each cell. */
     private ArrayList<MutableAccelerationVector> cumulativeAccelerations;
@@ -60,7 +60,7 @@ public class AccelerationContourPlot extends ContourPlot
     {
         if (null == this.cumulativeTimes)
         {
-            this.cumulativeTimes = new ArrayList<MutableTimeVector.Abs>();
+            this.cumulativeTimes = new ArrayList<MutableTimeVector>();
             this.cumulativeAccelerations = new ArrayList<MutableAccelerationVector>();
         }
         int highestBinNeeded =
@@ -70,7 +70,7 @@ public class AccelerationContourPlot extends ContourPlot
         {
             try
             {
-                this.cumulativeTimes.add(new MutableTimeVector.Abs(new double[this.getYAxis().getBinCount()], TimeUnit.SECOND,
+                this.cumulativeTimes.add(new MutableTimeVector(new double[this.getYAxis().getBinCount()], TimeUnit.SECOND,
                         StorageType.DENSE));
                 this.cumulativeAccelerations.add(new MutableAccelerationVector(new double[this.getYAxis().getBinCount()],
                         AccelerationUnit.METER_PER_SECOND_2, StorageType.DENSE));
@@ -91,7 +91,7 @@ public class AccelerationContourPlot extends ContourPlot
         {
             return;
         }
-        MutableTimeVector.Abs timeValues = this.cumulativeTimes.get(timeBin);
+        MutableTimeVector timeValues = this.cumulativeTimes.get(timeBin);
         MutableAccelerationVector accelerationValues = this.cumulativeAccelerations.get(timeBin);
         try
         {
@@ -124,7 +124,7 @@ public class AccelerationContourPlot extends ContourPlot
                 {
                     break;
                 }
-                MutableTimeVector.Abs timeValues = this.cumulativeTimes.get(timeBinIndex);
+                MutableTimeVector timeValues = this.cumulativeTimes.get(timeBinIndex);
                 MutableAccelerationVector accelerationValues = this.cumulativeAccelerations.get(timeBinIndex);
                 for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
                 {

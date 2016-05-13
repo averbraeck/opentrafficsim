@@ -32,8 +32,8 @@ public class TrajectoryPlotTest implements UNITS
     @Test
     public final void trajectoryTest() throws Exception
     {
-        Length minimumDistance = new Length(1234, METER);
-        Length maximumDistance = new Length(12345, METER);
+        // Length minimumDistance = new Length(1234, METER);
+        // Length maximumDistance = new Length(12345, METER);
 
         // TODO adapt to new path (List<Lane>) concept
         /*-
