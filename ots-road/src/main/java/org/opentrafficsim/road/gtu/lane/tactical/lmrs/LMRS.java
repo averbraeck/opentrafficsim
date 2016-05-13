@@ -7,9 +7,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTU;
@@ -59,7 +57,7 @@ public class LMRS extends AbstractLMRS
     @Override
     public final Set<MandatoryIncentive> getDefaultMandatoryIncentives()
     {
-        HashSet<MandatoryIncentive> set = new HashSet<MandatoryIncentive>();
+        HashSet<MandatoryIncentive> set = new HashSet<>();
         set.add(new IncentiveRoute());
         return set;
     }
@@ -68,7 +66,7 @@ public class LMRS extends AbstractLMRS
     @Override
     public final Set<VoluntaryIncentive> getDefaultVoluntaryIncentives()
     {
-        HashSet<VoluntaryIncentive> set = new HashSet<VoluntaryIncentive>();
+        HashSet<VoluntaryIncentive> set = new HashSet<>();
         set.add(new IncentiveSpeedWithCourtesy());
         set.add(new IncentiveKeep());
         return set;

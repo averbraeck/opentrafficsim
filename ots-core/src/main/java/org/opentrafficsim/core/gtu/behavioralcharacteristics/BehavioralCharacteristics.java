@@ -223,7 +223,7 @@ public class BehavioralCharacteristics implements Serializable
      */
     public final Map<AbstractParameterType<?, ?>, DoubleScalar.Rel<?>> getParameters()
     {
-        return new HashMap<AbstractParameterType<?, ?>, DoubleScalar.Rel<?>>(this.parameters);
+        return new HashMap<>(this.parameters);
     }
 
     /** {@inheritDoc} */

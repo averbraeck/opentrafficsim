@@ -8,6 +8,8 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.Type;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Defines meta-information of a parameter, defining the parameter uniquely.
  * <p>
@@ -115,12 +117,15 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
          * Constructor with message for value failure, pointing to a parameter using '%s'.
          * @param failMessage Message for value failure, pointing to a parameter using '%s'.
          */
+        @SuppressWarnings("redundantmodifier")
+        @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED")
         Check(final String failMessage)
         {
             Throw.whenNull(failMessage, "Default parameter check '%s' has null as fail message as given to the constructor,"
                 + " which is not allowed.", this);
             try
             {
+                // return value can be ignored
                 String.format(failMessage, "dummy");
             }
             catch (IllegalFormatException ife)

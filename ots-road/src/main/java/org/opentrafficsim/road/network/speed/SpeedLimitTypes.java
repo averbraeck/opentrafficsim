@@ -48,7 +48,7 @@ public class SpeedLimitTypes
         ROAD_CLASS = new SpeedLimitTypeSpeedLegal("Road class");
         FIXED_SIGN = new SpeedLimitTypeSpeedLegal("Fixed sign");
         DYNAMIC_SIGN = new SpeedLimitTypeSpeedLegal("Dynamic sign");
-        CURVATURE = new SpeedLimitType<SpeedInfoCurvature>("Curvature", SpeedInfoCurvature.class);
+        CURVATURE = new SpeedLimitType<>("Curvature", SpeedInfoCurvature.class);
         SPEED_BUMP = new SpeedLimitTypeSpeed("Speed bump");
     }
 
