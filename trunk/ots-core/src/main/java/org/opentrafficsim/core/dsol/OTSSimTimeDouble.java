@@ -61,7 +61,7 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
     @Override
     public final OTSSimTimeDouble setZero()
     {
-        // TODO this.time.setZero();
+        this.time = Time.ZERO;
         return this;
     }
 
@@ -69,7 +69,7 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
     @Override
     public final OTSSimTimeDouble copy()
     {
-        return new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(this.time.getInUnit(), this.time.getUnit()));
+        return new OTSSimTimeDouble(new DoubleScalar.Abs<>(this.time.getInUnit(), this.time.getUnit()));
     }
 
     /** {@inheritDoc} */
