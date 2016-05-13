@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.immutablecollections;
 
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.NavigableMap;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -61,7 +62,7 @@ public class ImmutableTreeMap<K, V> extends ImmutableAbstractMap<K, V> implement
     {
         return new ImmutableTreeSet<K>((SortedSet<K>) getMap().keySet());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final Comparator<? super K> comparator()
@@ -159,6 +160,18 @@ public class ImmutableTreeMap<K, V> extends ImmutableAbstractMap<K, V> implement
     public final ImmutableNavigableMap<K, V> tailMap(final K fromKey, final boolean inclusive)
     {
         return new ImmutableTreeMap<K, V>(getMap().tailMap(fromKey, inclusive));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        NavigableMap<K, V> map = getMap();
+        if (null == map)
+        {
+            return "ImmutableTreeMap []";
+        }
+        return "ImmutableTreeMap [" + map.toString() + "]";
     }
 
 }

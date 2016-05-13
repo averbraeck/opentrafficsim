@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.immutablecollections;
 
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.NavigableSet;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -157,6 +158,18 @@ public class ImmutableTreeSet<E> extends ImmutableAbstractSet<E> implements Immu
     public final ImmutableNavigableSet<E> tailSet(final E fromElement, final boolean inclusive)
     {
         return new ImmutableTreeSet<E>(getSet().tailSet(fromElement, inclusive));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        NavigableSet<E> set = getSet();
+        if (null == set)
+        {
+            return "ImmutableTreeSet []";
+        }
+        return "ImmutableTreeSet [" + set.toString() + "]";
     }
 
 }

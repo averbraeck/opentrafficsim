@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.immutablecollections;
 
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -51,4 +52,17 @@ public class ImmutableHashSet<E> extends ImmutableAbstractSet<E>
     {
         return new HashSet<E>(getSet());
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        Set<E> set = getSet();
+        if (null == set)
+        {
+            return "ImmutableHashSet []";
+        }
+        return "ImmutableHashSet [" + set.toString() + "]";
+    }
+
 }

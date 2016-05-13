@@ -163,4 +163,17 @@ public class ImmutableVector<E> extends ImmutableAbstractList<E>
     {
         return getList().lastElement();
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        List<E> list = getList();
+        if (null == list)
+        {
+            return "ImmutableVector []";
+        }
+        return "ImmutableVector [" + list.toString() + "]";
+    }
+
 }

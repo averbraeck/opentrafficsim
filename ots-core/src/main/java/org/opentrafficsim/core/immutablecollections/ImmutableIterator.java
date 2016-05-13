@@ -44,4 +44,11 @@ public class ImmutableIterator<E> implements Iterator<E>
         return this.iterator.next();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ImmutableIterator [iterator=" + this.iterator + "]";
+    }
+
 }

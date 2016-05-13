@@ -57,4 +57,17 @@ public class ImmutableArrayList<E> extends ImmutableAbstractList<E>
     {
         return new ImmutableArrayList<>(getList().subList(fromIndex, toIndex));
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        List<E> list = getList();
+        if (null == list)
+        {
+            return "ImmutableArrayList []";
+        }
+        return "ImmutableArrayList [" + list.toString() + "]";
+    }
+    
 }

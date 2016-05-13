@@ -62,4 +62,17 @@ public class ImmutableEnumSet<E extends Enum<E>> extends ImmutableAbstractSet<E>
     {
         return new ImmutableEnumSet<E>(s.getSet());
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        EnumSet<E> set = getSet();
+        if (null == set)
+        {
+            return "ImmutableEnumSet []";
+        }
+        return "ImmutableEnumSet [" + set.toString() + "]";
+    }
+
 }
