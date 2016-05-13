@@ -24,6 +24,8 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.linearref.LengthIndexedLine;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Line with OTSPoint3D points, a cached length indexed line, a cahced length, and a cached centroid (all calculated on first
  * use).
@@ -470,6 +472,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @return OTSLine3D; the selected sub-section
      * @throws OTSGeometryException when start &gt;= end, or start &lt; 0, or end &gt; length
      */
+    @SuppressFBWarnings("FE_FLOATING_POINT_EQUALITY")
     public final OTSLine3D extract(final double start, final double end) throws OTSGeometryException
     {
         if (Double.isNaN(start) || Double.isNaN(end) || start < 0 || start >= end || end > getLengthSI())

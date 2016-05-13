@@ -118,10 +118,9 @@ public abstract class AbstractGTU implements GTU
         Throw.when(simulator == null, GTUException.class, "simulator is null for GTU with id %s", id);
         Throw.when(strategicalPlanner == null, GTUException.class, "strategicalPlanner is null for GTU with id %s", id);
         Throw.when(perception == null, GTUException.class, "perception is null for GTU with id %s", id);
-        Throw.when(
-                initialLocation == null | Double.isNaN(initialLocation.x) | Double.isNaN(initialLocation.y)
-                        | Double.isNaN(initialLocation.z), GTUException.class, "initialLocation %s invalid for GTU with id %s",
-                initialLocation, id);
+        Throw.whenNull(initialLocation, "Initial location of GTU cannot be null");
+        Throw.when(Double.isNaN(initialLocation.x) || Double.isNaN(initialLocation.y) || Double.isNaN(initialLocation.z),
+                GTUException.class, "initialLocation %s invalid for GTU with id %s", initialLocation, id);
         Throw.when(initialSpeed == null, GTUException.class, "initialSpeed is null for GTU with id %s", id);
 
         this.id = id;
@@ -134,17 +133,13 @@ public abstract class AbstractGTU implements GTU
         this.perceivableContext.addGTU(this);
         Time now = this.simulator.getSimulatorTime().getTime();
 
-        if (initialLocation != null)
-        {
-            // Schedule the first move now; scheduling so super constructors can still finish.
-            // Store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
-            this.nextMoveEvent =
-                    new SimEvent<>(new OTSSimTimeDouble(now), this, this, "move", new Object[] { initialLocation });
-            this.simulator.scheduleEvent(this.nextMoveEvent);
-        }
+        // Schedule the first move now; scheduling so super constructors can still finish.
+        // Store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
+        this.nextMoveEvent = new SimEvent<>(new OTSSimTimeDouble(now), this, this, "move", new Object[] { initialLocation });
+        this.simulator.scheduleEvent(this.nextMoveEvent);
 
         // Give the GTU a 1 micrometer long operational plan, or a stand-still plan, so initialization will work
-        DirectedPoint p = initialLocation == null ? new DirectedPoint() : initialLocation;
+        DirectedPoint p = initialLocation;
         try
         {
             if (initialSpeed.si < OperationalPlan.DRIFTING_SPEED_SI)
