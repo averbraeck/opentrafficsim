@@ -142,7 +142,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
     {
         Acceleration a = behavioralCharacteristics.getParameter(ParameterTypes.A);
         Acceleration b = behavioralCharacteristics.getParameter(ParameterTypes.B);
-        return new Length(speed.si * (speed.si - leaderSpeed.si) / (2 * Math.sqrt(a.si + b.si)), LengthUnit.SI);
+        return new Length(speed.si * (speed.si - leaderSpeed.si) / (2 * Math.sqrt(a.si * b.si)), LengthUnit.SI);
     }
 
 }

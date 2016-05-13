@@ -10,15 +10,23 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeAcceleration;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDuration;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractCarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
+import org.opentrafficsim.road.network.speed.SpeedLimitType;
+import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
 /**
  * Houses common functionality for LMRS models.
@@ -26,7 +34,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
  * <li>Set of mandatory lane change incentives, with check on having at least one.</li>
  * <li>Set of voluntary lane change incentives.</li>
  * <li>Static parameter type definitions for dfree, dsync and dcoop, which are LMRS specific parameters.</li>
- * <li>Method to get the minimum acceleration.</i>
+ * <li>Method to get the minimum acceleration.</li>
  * </ul>
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -111,11 +119,15 @@ public abstract class AbstractLMRS extends AbstractLaneBasedTacticalPlanner
         }
     };
 
+    /** Maximum comfortable acceleration in the lateral direction. */
+    public static final ParameterTypeAcceleration A_LAT = new ParameterTypeAcceleration("aLat",
+        "Maximum comfortable lateral acceleration", new Acceleration(1.0, AccelerationUnit.SI));
+
     /** Set of mandatory lane change incentives. */
-    private HashSet<MandatoryIncentive> mandatoryIncentives;
+    private Set<MandatoryIncentive> mandatoryIncentives = new HashSet<>();
 
     /** Set of voluntary lane change incentives. */
-    private HashSet<VoluntaryIncentive> voluntaryIncentives;
+    private Set<VoluntaryIncentive> voluntaryIncentives = new HashSet<>();;
 
     /**
      * Constructor setting the car-following model.
@@ -221,7 +233,7 @@ public abstract class AbstractLMRS extends AbstractLaneBasedTacticalPlanner
         {
             throw new OperationalPlanException("At the least the LMRS requires one mandatory lane change incentive.");
         }
-        return new HashSet<MandatoryIncentive>(this.mandatoryIncentives);
+        return new HashSet<>(this.mandatoryIncentives);
     }
 
     /**
@@ -230,7 +242,7 @@ public abstract class AbstractLMRS extends AbstractLaneBasedTacticalPlanner
      */
     public final Set<VoluntaryIncentive> getVoluntaryIncentives()
     {
-        return new HashSet<VoluntaryIncentive>(this.voluntaryIncentives);
+        return new HashSet<>(this.voluntaryIncentives);
     }
 
     /**
@@ -243,6 +255,48 @@ public abstract class AbstractLMRS extends AbstractLaneBasedTacticalPlanner
         double ratio = bc.getParameter(DT).si / bc.getParameter(ParameterTypes.TAU).si;
         bc.setParameter(ParameterTypes.T, Duration.interpolate(bc.getParameter(ParameterTypes.T), bc
             .getParameter(ParameterTypes.TMAX), ratio <= 1.0 ? ratio : 1.0));
+    }
+
+    /**
+     * Acceleration for speed limit transitions. This implementation decelerates before curves and speed bumps. For this it uses
+     * {@code approachTargetSpeed()} of the abstract car-following model implementation. All remaining transitions happen in the
+     * default manner, i.e. deceleration and acceleration after the speed limit change and governed by the car-following model.
+     * @param behavioralCharacteristics behavioral characteristics
+     * @param speed current speed
+     * @param speedLimitProspect speed limit prospect
+     * @param carFollowingModel car following model
+     * @return acceleration for speed limit transitions
+     * @throws ParameterException if a required parameter is not found
+     */
+    protected final Acceleration considerSpeedLimitTransitions(final BehavioralCharacteristics behavioralCharacteristics,
+        final Speed speed, final SpeedLimitProspect speedLimitProspect, final AbstractCarFollowingModel carFollowingModel)
+        throws ParameterException
+    {
+        Acceleration out = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
+        SpeedLimitInfo currentSpeedLimitInfo = speedLimitProspect.getSpeedLimitInfo(Length.ZERO);
+
+        // decelerate for curves and speed bumps
+        for (SpeedLimitType<?> speedLimitType : new SpeedLimitType[] {SpeedLimitTypes.CURVATURE, SpeedLimitTypes.SPEED_BUMP})
+        {
+            for (Length distance : speedLimitProspect.getDownstreamDistances(speedLimitType))
+            {
+                SpeedLimitInfo speedLimitInfo = speedLimitProspect.buildSpeedLimitInfo(distance, speedLimitType);
+                Speed targetSpeed = carFollowingModel.desiredSpeed(behavioralCharacteristics, speedLimitInfo);
+                Acceleration a =
+                    carFollowingModel.approachTargetSpeed(behavioralCharacteristics, speed, currentSpeedLimitInfo, distance,
+                        targetSpeed);
+                if (a.lt(out))
+                {
+                    out = a;
+                }
+            }
+        }
+
+        // For lower legal speed limits (road class, fixed sign, dynamic sign), we assume that the car-following model will
+        // apply some reasonable deceleration after the change. For higher speed limits, we assume car-following acceleration
+        // after the change.
+
+        return out;
     }
 
 }

@@ -48,7 +48,7 @@ public class SpeedLimitProspect implements Serializable
         Throw.whenNull(distance, "Distance may not be null.");
         Throw.whenNull(speedLimitType, "Speed limit type may not be null.");
         Throw.whenNull(speedInfo, "Speed info may not be null.");
-        checkAndAdd(new SpeedLimitEntry<T>(distance, speedLimitType, speedInfo));
+        checkAndAdd(new SpeedLimitEntry<>(distance, speedLimitType, speedInfo));
     }
 
     /**
@@ -112,17 +112,54 @@ public class SpeedLimitProspect implements Serializable
     }
 
     /**
-     * Returns the distances at which a change of the given speed limit type in the prospect is present in order (upstream
+     * Returns the distances at which a change of the given speed limit type in the prospect is present in order (most upstream
      * first). If multiple changes are present at the same distance, only one distance is returned in the list.
      * @param speedLimitType speed limit type to get the distances of
-     * @return distances at which a change of the given speed limit type in the prospect is present in order (upstream first)
+     * @return distances at which a change of the given speed limit type in the prospect is present in order
      */
     public final List<Length> getDistances(final SpeedLimitType<?> speedLimitType)
+    {
+        return getDistancesInRange(speedLimitType, null, null);
+    }
+
+    /**
+     * Returns the upstream distances at which a change of the given speed limit type in the prospect is present in order (most
+     * upstream first). If multiple changes are present at the same distance, only one distance is returned in the list.
+     * @param speedLimitType speed limit type to get the distances of
+     * @return distances at which a change of the given speed limit type in the prospect is present in order
+     */
+    public final List<Length> getUpstreamDistances(final SpeedLimitType<?> speedLimitType)
+    {
+        return getDistancesInRange(speedLimitType, null, Length.ZERO);
+    }
+
+    /**
+     * Returns the downstream distances at which a change of the given speed limit type in the prospect is present in order
+     * (most upstream first). If multiple changes are present at the same distance, only one distance is returned in the list.
+     * @param speedLimitType speed limit type to get the distances of
+     * @return distances at which a change of the given speed limit type in the prospect is present in order
+     */
+    public final List<Length> getDownstreamDistances(final SpeedLimitType<?> speedLimitType)
+    {
+        return getDistancesInRange(speedLimitType, Length.ZERO, null);
+    }
+
+    /**
+     * Returns the distances between limits at which a change of the given speed limit type in the prospect is present in order
+     * (most upstream first). If multiple changes are present at the same distance, only one distance is returned in the list.
+     * @param speedLimitType speed limit type to get the distances of
+     * @param min minimum distance, may be {@code null} for no minimum limit
+     * @param max maximum distance, may be {@code null} for no maximum limit
+     * @return distances at which a change of the given speed limit type in the prospect is present in order
+     */
+    private List<Length> getDistancesInRange(final SpeedLimitType<?> speedLimitType, final Length min, final Length max)
     {
         List<Length> list = new ArrayList<>();
         for (SpeedLimitEntry<?> speedLimitEntry : this.prospect)
         {
-            if (speedLimitEntry.getSpeedLimitType().equals(speedLimitType))
+            if (speedLimitEntry.getSpeedLimitType().equals(speedLimitType)
+                && (min == null || speedLimitEntry.getDistance().gt(min))
+                && (max == null || speedLimitEntry.getDistance().le(max)))
             {
                 list.add(speedLimitEntry.getDistance());
             }
@@ -238,6 +275,33 @@ public class SpeedLimitProspect implements Serializable
         SpeedLimitType<T> speedLimitType = (SpeedLimitType<T>) speedLimitEntry.getSpeedLimitType();
         T speedInfoOfType = (T) speedLimitEntry.getSpeedInfo();
         speedLimitInfo.addSpeedInfo(speedLimitType, speedInfoOfType);
+    }
+
+    /**
+     * Builds speed limit info with only MAX_VEHICLE_SPEED and the given speed limit type, where the speed info is obtained at
+     * the given distance.
+     * @param distance distance to get the speed info at
+     * @param speedLimitType speed limit type of which to include the info
+     * @param <T> class of speed info of given speed limit type
+     * @return speed limit info with only MAX_VEHICLE_SPEED and the given speed limit type
+     */
+    public final <T> SpeedLimitInfo buildSpeedLimitInfo(final Length distance, final SpeedLimitType<T> speedLimitType)
+    {
+        SpeedLimitInfo out = new SpeedLimitInfo();
+        out.addSpeedInfo(speedLimitType, getSpeedInfoChange(distance, speedLimitType));
+        for (SpeedLimitEntry<?> speedLimitEntry : this.prospect)
+        {
+            if (speedLimitEntry.getDistance().gt(distance))
+            {
+                break;
+            }
+            if (speedLimitEntry.getSpeedLimitType().equals(SpeedLimitTypes.MAX_VEHICLE_SPEED))
+            {
+                out.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, SpeedLimitTypes.MAX_VEHICLE_SPEED.getInfoClass().cast(
+                    speedLimitEntry.getSpeedInfo()));
+            }
+        }
+        return out;
     }
 
     /** {@inheritDoc} */
@@ -394,18 +458,25 @@ public class SpeedLimitProspect implements Serializable
             {
                 return comp;
             }
+            // order by speed limit type
             comp = this.speedLimitType.getId().compareTo(speedLimitEntry.speedLimitType.getId());
             if (comp != 0)
             {
                 return comp;
             }
-            if (this.speedInfo != null && speedLimitEntry.speedInfo == null)
+            // equal distance and speed limit type is not allowed, so below code is not used
+            // if this requirement changes, compareTo should still work
+            if (this.speedInfo == null)
             {
-                return 1;
+                if (speedLimitEntry.speedInfo == null)
+                {
+                    return 0; // both null
+                }
+                return -1; // null under non-null
             }
-            else if (this.speedInfo == null && speedLimitEntry.speedInfo != null)
+            else if (speedLimitEntry.speedInfo == null)
             {
-                return -1;
+                return 1; // non-null over null
             }
             return this.speedInfo.hashCode() < speedLimitEntry.speedInfo.hashCode() ? -1 : 1;
         }

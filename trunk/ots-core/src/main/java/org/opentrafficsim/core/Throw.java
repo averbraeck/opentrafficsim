@@ -57,7 +57,7 @@ public final class Throw
     {
         if (condition)
         {
-            throwMessage(throwableClass, message, new ArrayList<Object>());
+            throwMessage(throwableClass, message, new ArrayList<>());
         }
     }
 
@@ -174,7 +174,7 @@ public final class Throw
         final List<Object> argList) throws T
     {
         // create a clear message
-        List<StackTraceElement> steList = new ArrayList<StackTraceElement>(Arrays.asList(new Throwable().getStackTrace()));
+        List<StackTraceElement> steList = new ArrayList<>(Arrays.asList(new Throwable().getStackTrace()));
         steList.remove(0); // remove the throwMessage(...) call
         steList.remove(0); // remove the when(...) call
         StackTraceElement[] ste = steList.toArray(new StackTraceElement[steList.size()]);
@@ -219,7 +219,7 @@ public final class Throw
     {
         if (object == null)
         {
-            throwMessage(NullPointerException.class, message, new ArrayList<Object>());
+            throwMessage(NullPointerException.class, message, new ArrayList<>());
         }
     }
 
