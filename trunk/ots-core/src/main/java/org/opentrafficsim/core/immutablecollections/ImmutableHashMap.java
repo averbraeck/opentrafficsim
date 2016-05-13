@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.immutablecollections;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -44,7 +45,7 @@ public class ImmutableHashMap<K, V> extends ImmutableAbstractMap<K, V>
     {
         return (HashMap<K, V>) super.getMap();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final Map<K, V> toMap()
@@ -57,6 +58,18 @@ public class ImmutableHashMap<K, V> extends ImmutableAbstractMap<K, V>
     public final ImmutableSet<K> keySet()
     {
         return new ImmutableHashSet<K>(getMap().keySet());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        Map<K, V> map = getMap();
+        if (null == map)
+        {
+            return "ImmutableHashMap []";
+        }
+        return "ImmutableHashMap [" + map.toString() + "]";
     }
 
 }
