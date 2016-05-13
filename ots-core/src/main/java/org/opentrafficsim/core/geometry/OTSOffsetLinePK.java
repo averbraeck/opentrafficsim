@@ -87,7 +87,7 @@ public final class OTSOffsetLinePK
 
         OTSLine3D filteredReferenceLine =
                 referenceLine.noiseFilteredLine(Math.max(offsetMinimumFilterValue,
-                        Math.min(bufferOffset / 10, offsetMaximumFilterValue)));
+                        Math.min(bufferOffset / offsetFilterRatio, offsetMaximumFilterValue)));
         List<OTSPoint3D> tempPoints = new ArrayList<>();
         // Make good use of the fact that an OTSLine3D cannot have consecutive duplicate points and has > 1 points
         OTSPoint3D prevPoint = filteredReferenceLine.get(0);
