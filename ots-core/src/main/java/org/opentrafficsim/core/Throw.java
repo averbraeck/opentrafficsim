@@ -46,6 +46,7 @@ public final class Throw
      * Throw a Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
      * as follows: <br>
      * <code>Throw.when(value == null, GTUException.class, "value cannot be null");</code>
+     * TODO this example is badly chosen; to test for null; call whenNull.
      * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
      * @param throwableClass the Throwable type to throw
      * @param message the message to use in the exception
