@@ -481,6 +481,14 @@ public class SpeedLimitProspect implements Serializable
             return this.speedInfo.hashCode() < speedLimitEntry.speedInfo.hashCode() ? -1 : 1;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "SpeedLimitEntry [distance=" + this.distance + ", speedLimitType=" + this.speedLimitType + ", speedInfo="
+                    + this.speedInfo + "]";
+        }
+
     }
 
 }
