@@ -49,4 +49,6 @@ public interface TacticalPlanner
      */
     OperationalPlan generateOperationalPlan(GTU gtu, Time startTime, DirectedPoint locationAtStartTime)
         throws OperationalPlanException, GTUException, NetworkException, ParameterException;
+    
+    // TODO InitialXVT generateInitialXVT(GTUState gtu, DirectedPoint initialLocation, Speed desiredSpeed, GenerationPolicy generationPolicy)  
 }
