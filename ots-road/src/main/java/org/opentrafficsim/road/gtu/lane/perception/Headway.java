@@ -29,7 +29,7 @@ import org.opentrafficsim.core.perception.PerceivedObject;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface Headway extends PerceivedObject
+public interface Headway extends PerceivedObject, Comparable<Headway>
 {
     /** the object types that can be distinguished for headway. */
     enum ObjectType
@@ -163,4 +163,11 @@ public interface Headway extends PerceivedObject
      * @return whether the other object is behind the reference object.
      */
     boolean isParallel();
+    
+    /** {@inheritDoc} */
+    @Override
+    default int compareTo(Headway headway)
+    {
+        return getDistance().compareTo(headway.getDistance());
+    }
 }
