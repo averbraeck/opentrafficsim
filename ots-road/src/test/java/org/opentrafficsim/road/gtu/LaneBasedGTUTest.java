@@ -316,20 +316,32 @@ public class LaneBasedGTUTest implements UNITS
                                 || step > truckPosition.getSI() + truckLength.getSI() ? 0 : 1;
                 // This one caught a complex bug
                 assertEquals("Left parallel set size should be " + expectedLeftSize, expectedLeftSize, leftParallel.size());
-                if (leftParallel.size() > 0)
+                boolean foundCar = false;
+                for (Headway hw : leftParallel)
                 {
-                    assertTrue("Parallel GTU should be the car", leftParallel.contains(car));
+                    if (car.getId().equals(hw.getId()))
+                    {
+                        foundCar = true;
+                        break;
+                    }
                 }
+                assertTrue("car was not found in rightParallel", foundCar);
                 Collection<Headway> rightParallel = truck.getPerception().getParallelHeadwaysRight();
                 int expectedRightSize =
                         laneRank + carLanesCovered - 1 <= truckFromLane || laneRank > truckUpToLane + 1
                                 || step + carLength.getSI() < truckPosition.getSI()
                                 || step > truckPosition.getSI() + truckLength.getSI() ? 0 : 1;
                 assertEquals("Right parallel set size should be " + expectedRightSize, expectedRightSize, rightParallel.size());
-                if (rightParallel.size() > 0)
+                foundCar = false;
+                for (Headway hw : rightParallel)
                 {
-                    assertTrue("Parallel GTU should be the car", rightParallel.contains(car));
+                    if (car.getId().equals(hw.getId()))
+                    {
+                        foundCar = true;
+                        break;
+                    }
                 }
+                assertTrue("car was not found in rightParallel", foundCar);
                 for (DirectedLanePosition pos : carPositions)
                 {
                     pos.getLane().removeGTU(car);
