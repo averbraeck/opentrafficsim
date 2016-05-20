@@ -48,6 +48,8 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -64,6 +66,7 @@ public final class Convert
     /**
      * Construct a converter.
      */
+    @SuppressFBWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
     public Convert()
     {
         baseX = Double.NaN;

@@ -71,6 +71,7 @@ public class ReceiverThread extends Thread
 
     /** {@inheritDoc} */
     @Override
+    @SuppressFBWarnings("IL_INFINITE_LOOP")
     public void run()
     {
         while (this.receiveData != null)
