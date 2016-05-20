@@ -680,4 +680,81 @@ public class OTSLine3DTest
         }
     }
 
+    /**
+     * Test the offsetLine method. Only tests a few easy cases.
+     * @throws OTSGeometryException should not happen (if it does; this test has failed)
+     */
+    @Test
+    public final void offsetLineTest() throws OTSGeometryException
+    {
+        OTSPoint3D from = new OTSPoint3D(1, 2, 3);
+        OTSPoint3D to = new OTSPoint3D(4, 3, 2);
+        OTSLine3D line = new OTSLine3D(from, to);
+        double lineLengthHorizontal = new OTSPoint3D(from.x, from.y).distanceSI(new OTSPoint3D(to.x, to.y));
+        for (int step = -5; step <= 5; step++)
+        {
+            OTSLine3D offsetLine = line.offsetLine(step);
+            assertEquals("Offset line of a single straight segment has two points", 2, offsetLine.size());
+            assertEquals("Distance between start points should be equal to offset", Math.abs(step), offsetLine.getFirst()
+                    .horizontalDistanceSI(line.getFirst()), 0.0001);
+            assertEquals("Distance between end points should be equal to offset", Math.abs(step), offsetLine.getLast()
+                    .horizontalDistanceSI(line.getLast()), 0.0001);
+            // System.out.println("step:      " + step);
+            // System.out.println("reference: " + line);
+            // System.out.println("offset:    " + offsetLine);
+            assertEquals("Length of offset line of straight segment should equal length of reference line",
+                    lineLengthHorizontal, offsetLine.getLengthSI(), 0.001);
+        }
+        OTSPoint3D via = new OTSPoint3D(4, 3, 3);
+        line = new OTSLine3D(from, via, to);
+        for (int step = -5; step <= 5; step++)
+        {
+            OTSLine3D offsetLine = line.offsetLine(step);
+            // System.out.println("step:      " + step);
+            // System.out.println("reference: " + line);
+            // System.out.println("offset:    " + offsetLine);
+            assertTrue("Offset line has > 2 points", 2 <= offsetLine.size());
+            assertEquals("Distance between start points should be equal to offset", Math.abs(step), offsetLine.getFirst()
+                    .horizontalDistanceSI(line.getFirst()), 0.0001);
+            assertEquals("Distance between end points should be equal to offset", Math.abs(step), offsetLine.getLast()
+                    .horizontalDistanceSI(line.getLast()), 0.0001);
+        }
+    }
+
+    /**
+     * Test the noiseFilteredLine method.
+     * @throws OTSGeometryException should not happen (if it does, this test has failed)
+     */
+    @Test
+    public final void testFilter() throws OTSGeometryException
+    {
+        OTSPoint3D from = new OTSPoint3D(1, 2, 3);
+        OTSPoint3D to = new OTSPoint3D(4, 3, 2);
+        for (int steps = 0; steps < 10; steps++)
+        {
+            List<OTSPoint3D> points = new ArrayList<>(2 + steps);
+            points.add(from);
+            for (int i = 0; i < steps; i++)
+            {
+                points.add(OTSPoint3D.interpolate(1.0 * (i + 1) / (steps + 2), from, to));
+            }
+            points.add(to);
+            OTSLine3D line = new OTSLine3D(points);
+            // System.out.println("ref: " + line);
+            double segmentLength = line.getFirst().distanceSI(line.get(1));
+            OTSLine3D filteredLine = line.noiseFilteredLine(segmentLength * 0.9);
+            assertEquals("filtering with a filter that is smaller than any segment should return the original", line.size(),
+                    filteredLine.size());
+            filteredLine = line.noiseFilteredLine(segmentLength * 1.1);
+            int expectedSize = 2 + steps / 2;
+            assertEquals("filtering with a filter slightly larger than each segment should return a line with " + expectedSize
+                    + " points", expectedSize, filteredLine.size());
+            filteredLine = line.noiseFilteredLine(segmentLength * 2.1);
+            // System.out.println("flt: " + filteredLine);
+            expectedSize = 2 + (steps - 1) / 3;
+            assertEquals("filtering with a filter slightly larger than twice the length of each segment should return a "
+                    + "line with " + expectedSize + " points", expectedSize, filteredLine.size());
+        }
+    }
+
 }

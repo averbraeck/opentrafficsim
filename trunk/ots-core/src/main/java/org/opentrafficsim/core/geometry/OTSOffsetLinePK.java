@@ -82,7 +82,14 @@ public final class OTSOffsetLinePK
         final double precision = 0.00001;
         if (bufferOffset < precision)
         {
-            return referenceLine; // "OTSLine3D" is immutable (except for some cached fields); so we can safely return it.
+            // squash the Z-coordinate
+            List<OTSPoint3D> coordinates = new ArrayList<>(referenceLine.size());
+            for (int i = 0; i < referenceLine.size(); i++)
+            {
+                OTSPoint3D coordinate = referenceLine.get(i);
+                coordinates.add(new OTSPoint3D(coordinate.x, coordinate.y));
+            }
+            return OTSLine3D.createAndCleanOTSLine3D(coordinates);
         }
 
         OTSLine3D filteredReferenceLine =
