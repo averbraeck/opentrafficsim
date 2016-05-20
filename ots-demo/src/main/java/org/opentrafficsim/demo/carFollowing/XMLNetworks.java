@@ -1047,4 +1047,5 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             return this.legend;
         }
     }
+    
 }
