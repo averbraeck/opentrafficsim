@@ -14,6 +14,8 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import org.junit.Test;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Test the Distribution class.
  * <p>
@@ -30,6 +32,7 @@ public class DistributionTest
      * @throws ProbabilityException the test fails if this happens uncaught
      */
     @Test
+    @SuppressFBWarnings("NP_NULL_PARAM_DEREF_NONVIRTUAL")
     public final void distributionTest() throws ProbabilityException
     {
         StreamInterface si = new MersenneTwister(1234);
@@ -207,7 +210,7 @@ public class DistributionTest
         generators.set(1, new FrequencyAndObject<DistributionTest.TestObject>(-1, to2));
         try
         {
-            dist = new Distribution<TestObject>(generators, si);
+            new Distribution<TestObject>(generators, si);
             fail("Negative frequency should have thrown a ProbabilityException");
         }
         catch (ProbabilityException pe)
