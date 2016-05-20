@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.util.List;
+import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -25,7 +26,7 @@ public interface PerceivedSurroundings
     /**************************/
 
     /**
-     * List of leaders on a lane, which is usually 0 or 1, but possibly more in case of a downstream split with no intermediate
+     * Set of leaders on a lane, which is usually 0 or 1, but possibly more in case of a downstream split with no intermediate
      * vehicle. This is shown below. Suppose A needs to go straight. If A considers a lane change to the left, both vehicle B
      * (who's tail ~ is still on the straight lane) and C need to be considered for whether it's safe to do so. In case of
      * multiple splits close to one another, the returned set may contain even more than 2 leaders.
@@ -40,10 +41,10 @@ public interface PerceivedSurroundings
      * @param lat LEFT, null (current) or RIGHT
      * @return list of followers on a lane
      */
-    List<HeadwayGTU> getFirstLeaders(LateralDirectionality lat);
+    SortedSet<HeadwayGTU> getFirstLeaders(LateralDirectionality lat);
 
     /**
-     * List of followers on a lane, which is usually 0 or 1, but possibly more in case of an upstream merge with no intermediate
+     * Set of followers on a lane, which is usually 0 or 1, but possibly more in case of an upstream merge with no intermediate
      * vehicle. This is shown below. If A considers a lane change to the left, both vehicle B and C need to be considered for
      * whether it's safe to do so. In case of multiple merges close to one another, the returned set may contain even more than
      * 2 followers.
@@ -52,36 +53,36 @@ public interface PerceivedSurroundings
      *        | |
      *        |C| 
      * ________\ \______
-     * _ _B_|_ _\_ _ _?_
+     * _ _B_|_ _ _ _ _?_
      * _ _ _|_ _ _ _ _A_ 
      * _____|___________
      * </pre>
      * @param lat LEFT, null (current) or RIGHT
      * @return list of followers on a lane
      */
-    List<HeadwayGTU> getFirstFollowers(LateralDirectionality lat);
+    SortedSet<HeadwayGTU> getFirstFollowers(LateralDirectionality lat);
 
     /**
-     * Whether there is an adjacent GTU, i.e. with overlap, in an adjacent lane.
+     * Whether there is a GTU alongside, i.e. with overlap, in an adjacent lane.
      * @param lat LEFT or RIGHT, null not allowed
      * @return whether there is an adjacent GTU, i.e. with overlap, in an adjacent lane
      * @throws NullPointerException if {@code lat == null}
      */
-    boolean gtuIsAdjacent(LateralDirectionality lat);
+    boolean existsGtuAlongside(LateralDirectionality lat);
 
     /**
-     * List of leaders on a lane, including adjacent GTU's who's nose is ahead of the own vehicle nose.
+     * Set of leaders on a lane, including adjacent GTU's who's FRONT is ahead of the own vehicle FRONT.
      * @param lane relative lateral lane
-     * @return list of leaders on a lane, including adjacent GTU's who's nose is ahead of the own vehicle nose
+     * @return set of leaders on a lane, including adjacent GTU's who's FRONT is ahead of the own vehicle FRONT
      */
-    List<HeadwayGTU> getLeaders(RelativeLane lane);
+    SortedSet<HeadwayGTU> getLeaders(RelativeLane lane);
 
     /**
-     * List of followers on a lane, including adjacent GTU's who's tail is back of the own vehicle tail.
+     * Set of followers on a lane, including adjacent GTU's who's REAR is back of the own vehicle REAR.
      * @param lane relative lateral lane
-     * @return list of followers on a lane, including adjacent GTU's who's tail is back of the own vehicle tail
+     * @return set of followers on a lane, including adjacent GTU's who's REAR is back of the own vehicle REAR
      */
-    List<HeadwayGTU> getFollowers(RelativeLane lane);
+    SortedSet<HeadwayGTU> getFollowers(RelativeLane lane);
 
     /********************/
     /** Infrastructure **/
@@ -109,7 +110,7 @@ public interface PerceivedSurroundings
      * @param lane relative lateral lane
      * @return infrastructure lane change info of a lane
      */
-    List<InfrastructureLaneChangeInfo> getInfrastructureLaneChangeInfo(RelativeLane lane);
+    SortedSet<InfrastructureLaneChangeInfo> getInfrastructureLaneChangeInfo(RelativeLane lane);
 
     /**
      * Returns the prospect for speed limits on a lane (dynamic speed limits may vary between lanes).
