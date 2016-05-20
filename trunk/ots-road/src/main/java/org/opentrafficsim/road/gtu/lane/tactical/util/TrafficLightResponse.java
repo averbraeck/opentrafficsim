@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane.tactical;
+package org.opentrafficsim.road.gtu.lane.tactical.util;
 
 import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.POSITIVE;
 
@@ -20,6 +20,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
+ * Static methods regarding traffic lights for composition in tactical planners.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.

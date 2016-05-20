@@ -13,6 +13,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacter
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
+import org.opentrafficsim.road.gtu.lane.tactical.util.SpeedLimit;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -41,8 +42,8 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
             throws ParameterException
     {
         Speed consideredSpeed =
-            getLegalSpeedLimit(speedInfo).multiplyBy(behavioralCharacteristics.getParameter(ParameterTypes.FSPEED));
-        Speed maxVehicleSpeed = getMaximumVehicleSpeed(speedInfo);
+            SpeedLimit.getLegalSpeedLimit(speedInfo).multiplyBy(behavioralCharacteristics.getParameter(ParameterTypes.FSPEED));
+        Speed maxVehicleSpeed = SpeedLimit.getMaximumVehicleSpeed(speedInfo);
         return consideredSpeed.le(maxVehicleSpeed) ? consideredSpeed : maxVehicleSpeed;
     }
 

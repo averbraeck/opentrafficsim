@@ -14,7 +14,7 @@ import org.opentrafficsim.core.Throw;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class InfrastructureLaneChangeInfo
+public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLaneChangeInfo>
 {
 
     /** Required number of lane changes. */
@@ -63,6 +63,13 @@ public class InfrastructureLaneChangeInfo
     {
         return "InfrastructureLaneChangeInfo [requiredNumberOfLaneChanges=" + this.requiredNumberOfLaneChanges
                 + ", remainingDistance=" + this.remainingDistance + "]";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final int compareTo(final InfrastructureLaneChangeInfo infrastructureLaneChangeInfo)
+    {
+        return this.remainingDistance.compareTo(infrastructureLaneChangeInfo.getRemainingDistance());
     }
 
 }
