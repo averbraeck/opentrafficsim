@@ -50,7 +50,7 @@ public final class Throw
      * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
      * @param throwableClass the Throwable type to throw
      * @param message the message to use in the exception
-     * @throws Throwable the throwable to throw on true condition
+     * @throws T the throwable to throw on true condition
      * @param <T> the Throwable type
      */
     public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass,
@@ -70,7 +70,7 @@ public final class Throw
      * @param throwableClass the Throwable type to throw
      * @param message the message to use in the exception, with formatting identifiers
      * @param arg value to use for the formatting identifiers
-     * @throws Throwable the throwable to throw on true condition
+     * @throws T the throwable to throw on true condition
      * @param <T> the Throwable type
      */
     public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass,
@@ -93,7 +93,7 @@ public final class Throw
      * @param message the message to use in the exception, with formatting identifiers
      * @param arg1 1st value to use for the formatting identifiers
      * @param arg2 2nd value to use for the formatting identifiers
-     * @throws Throwable the throwable to throw on true condition
+     * @throws T the throwable to throw on true condition
      * @param <T> the Throwable type
      */
     public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass,
@@ -118,7 +118,7 @@ public final class Throw
      * @param arg1 1st value to use for the formatting identifiers
      * @param arg2 2nd value to use for the formatting identifiers
      * @param arg3 3rd value to use for the formatting identifiers
-     * @throws Throwable the throwable to throw on true condition
+     * @throws T the throwable to throw on true condition
      * @param <T> the Throwable type
      */
     public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass,
@@ -145,7 +145,7 @@ public final class Throw
      * @param arg2 2nd value to use for the formatting identifiers
      * @param arg3 3rd value to use for the formatting identifiers
      * @param args potential 4th and further values to use for the formatting identifiers
-     * @throws Throwable the throwable to throw on true condition
+     * @throws T the throwable to throw on true condition
      * @param <T> the Throwable type
      */
     public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass,
@@ -167,7 +167,7 @@ public final class Throw
      * @param throwableClass the Throwable type to throw
      * @param message the message to use in the exception, with potential formatting identifiers
      * @param argList List with potential values to use for the formatting identifiers
-     * @throws Throwable the throwable to throw
+     * @throws T the throwable to throw
      * @param <T> the Throwable type
      */
     @SuppressWarnings("unchecked")
