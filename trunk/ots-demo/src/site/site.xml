@@ -30,13 +30,11 @@
       <item name="Test Xref" href="xref-test/index.html" target="_blank" />
       <item name="Checkstyle" href="checkstyle.html" />
       <item name="Surefire report" href="surefire-report.html" />
-      <item name="Cobertura" href="cobertura/index.html" target="_blank" />
       <item name="JaCoCo" href="jacoco/index.html" target="_blank" />
       <item name="Tag List" href="taglist.html" />
       <item name="FindBugs" href="findbugs.html" />
       <item name="CPD" href="cpd.html" />
       <item name="PMD" href="pmd.html" />
-      <item name="JavaNCSS" href="javancss.html" />
       <item name="JDepend" href="jdepend-report.html" />
     </menu>
       
