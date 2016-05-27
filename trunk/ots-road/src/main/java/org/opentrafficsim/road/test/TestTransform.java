@@ -29,7 +29,7 @@ public class TestTransform
 
     /**
      * @param args a
-     * @throws OTSGeometryException
+     * @throws OTSGeometryException on error
      */
     public static void main(String[] args) throws OTSGeometryException
     {

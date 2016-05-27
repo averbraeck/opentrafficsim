@@ -102,11 +102,11 @@ public interface PerceivedSurroundings
      * _ _ _ _ _ _ _ _ _
      * _________ _ _ ___
      *          \_______
-     *     <->        Lane-drop: 1 lane change  in 400m (400m per lane change)
-     *     <--------> Off-ramp:  3 lane changes in 900m (300m per lane change, critical)
+     *     (-)        Lane-drop: 1 lane change  in 400m (400m per lane change)
+     *     (--------) Off-ramp:  3 lane changes in 900m (300m per lane change, critical)
      *     
-     *     <->        Lane-drop: 1 lane change  in 100m (100m per lane change, critical)
-     *     <--------> Off-ramp:  3 lane changes in 600m (200m per lane change)
+     *     (-)        Lane-drop: 1 lane change  in 100m (100m per lane change, critical)
+     *     (--------) Off-ramp:  3 lane changes in 600m (200m per lane change)
      * </pre>
      * @param lane relative lateral lane
      * @return infrastructure lane change info of a lane

@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.util;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -10,6 +11,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeAcceleration;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypeSpeedLegal;
@@ -26,16 +28,20 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public final class SpeedLimit
+public final class SpeedLimitUtil
 {
 
     /**
      * Do not instantiate.
      */
-    private SpeedLimit()
+    private SpeedLimitUtil()
     {
         //
     }
+
+    /** Maximum comfortable acceleration in the lateral direction. */
+    public static final ParameterTypeAcceleration A_LAT = new ParameterTypeAcceleration("aLat",
+        "Maximum comfortable lateral acceleration", new Acceleration(1.0, AccelerationUnit.SI));
 
     /**
      * Returns the minimum speed of the applicable speed limit types MAX_LEGAL_VEHICLE_SPEED, ROAD_CLASS, FIXED_SIGN and
@@ -94,8 +100,8 @@ public final class SpeedLimit
      * 
      * <pre>
      * 
-     *  ___    location of target speed -->|        ___
-     * |___|<--------------s--------------> <--h-->|___| >>> vTar
+     *  ___    location of target speed --)|        ___
+     * |___|(--------------s--------------) (--h--)|___| ))) vTar
      * </pre>
      * 
      * Here, {@code s} is the distance to the target speed, and {@code h} is the desired headway if the vehicle would drive at

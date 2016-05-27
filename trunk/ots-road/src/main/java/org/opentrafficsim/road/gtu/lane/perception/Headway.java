@@ -104,10 +104,10 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
      * 
      * <pre>
      * ----------
-     * |  GTU 1 |          ----->
+     * |  GTU 1 |          -----&gt;
      * ----------
      *      ---------------
-     *      |    GTU 2    |          ----->
+     *      |    GTU 2    |          -----&gt;
      *      ---------------
      * | a  | b |     c   |
      * </pre>
@@ -121,10 +121,10 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
      * 
      * <pre>
      * ----------
-     * |  GTU 1 |          ----->
+     * |  GTU 1 |          -----&gt;
      * ----------
      *      ---------------
-     *      |    GTU 2    |          ----->
+     *      |    GTU 2    |          -----&gt;
      *      ---------------
      * | a  | b |     c   |
      * </pre>
@@ -138,10 +138,10 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
      * 
      * <pre>
      * ----------
-     * |  GTU 1 |          ----->
+     * |  GTU 1 |          -----&gt;
      * ----------
      *      ---------------
-     *      |    GTU 2    |          ----->
+     *      |    GTU 2    |          -----&gt;
      *      ---------------
      * | a  | b |     c   |
      * </pre>
