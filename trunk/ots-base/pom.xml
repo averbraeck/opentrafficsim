@@ -219,8 +219,7 @@
               <commands>
                 <command>rm -r -f /home/web/opentrafficsim.org/docs/current</command>
                 <command>mkdir -p /home/web/opentrafficsim.org/docs/current</command>
-                <command>cp -r -f /home/web/opentrafficsim.org/docs/${project.version}/.
-                  /home/web/opentrafficsim.org/docs/current</command>
+                <command>cp -r -f /home/web/opentrafficsim.org/docs/${project.version}/. /home/web/opentrafficsim.org/docs/current</command>
               </commands>
             </configuration>
           </execution>
