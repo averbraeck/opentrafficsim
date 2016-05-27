@@ -7,6 +7,9 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
  * Container for a reference to information about a (lane based) GTU and a headway. The Headway can store information about GTUs
@@ -32,7 +35,7 @@ import org.opentrafficsim.core.gtu.GTUType;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class HeadwayGTU extends AbstractHeadway
+public abstract class HeadwayGTU extends AbstractHeadway
 {
     /** */
     private static final long serialVersionUID = 20160410L;
@@ -167,6 +170,15 @@ public class HeadwayGTU extends AbstractHeadway
     {
         return this.gtuStatus.contains(GTUStatus.HONK);
     }
+    
+    // TODO 3 implementaties: echte objecten terguggeven, per GTUType teruggeven, eigen model teruggeven.
+    public abstract CarFollowingModel getCarFollowingModel();
+    
+    // TODO
+    public abstract BehavioralCharacteristics getBehavioralCharacteristics();
+    
+    // TODO
+    public abstract SpeedLimitInfo getSpeedLimitInfo();    
 
     /** {@inheritDoc} */
     @Override
