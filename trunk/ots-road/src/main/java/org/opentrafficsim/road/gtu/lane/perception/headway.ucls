@@ -45,7 +45,7 @@
   <class id="5" language="java" name="org.opentrafficsim.road.gtu.lane.perception.HeadwayObject" project="ots-road" 
     file="/ots-road/src/main/java/org/opentrafficsim/road/gtu/lane/perception/HeadwayObject.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="153" width="292" x="-87" y="742"/>    
+    <position height="-1" width="-1" x="-31" y="822"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -82,25 +82,25 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <association id="9">    
+  <realization id="9">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="6"/>  
+  </realization>  
+  <association id="10">    
     <bendpoint x="629" y="742"/>    
     <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="10" name="objectType"/>      
-      <multiplicity id="11" minimum="0" maximum="1"/>    
+      <attribute id="11" name="objectType"/>      
+      <multiplicity id="12" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="12">    
-    <end type="SOURCE" refId="8"/>    
+  <generalization id="13">    
+    <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="2"/>  
   </generalization>  
-  <realization id="13">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="6"/>  
-  </realization>  
   <generalization id="14">    
-    <end type="SOURCE" refId="4"/>    
+    <end type="SOURCE" refId="5"/>    
     <end type="TARGET" refId="2"/>  
   </generalization>  
   <association id="15">    
@@ -111,22 +111,22 @@
     <end type="TARGET" refId="7" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="18">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <nesting id="19">    
+  <nesting id="18">    
     <end type="SOURCE" refId="8"/>    
     <end type="TARGET" refId="7"/>  
   </nesting>  
-  <nesting id="20">    
+  <nesting id="19">    
     <end type="SOURCE" refId="6"/>    
     <end type="TARGET" refId="1"/>  
   </nesting>  
-  <realization id="21">    
-    <end type="SOURCE" refId="2"/>    
+  <realization id="20">    
+    <end type="SOURCE" refId="3"/>    
     <end type="TARGET" refId="6"/>  
   </realization>  
+  <generalization id="21">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    
