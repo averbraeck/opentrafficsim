@@ -23,7 +23,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractCarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.util.SpeedLimit;
+import org.opentrafficsim.road.gtu.lane.tactical.util.SpeedLimitUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 import org.opentrafficsim.road.network.speed.SpeedLimitType;
@@ -284,7 +284,7 @@ public abstract class AbstractLMRS extends AbstractLaneBasedTacticalPlanner
                 SpeedLimitInfo speedLimitInfo = speedLimitProspect.buildSpeedLimitInfo(distance, speedLimitType);
                 Speed targetSpeed = carFollowingModel.desiredSpeed(behavioralCharacteristics, speedLimitInfo);
                 Acceleration a =
-                    SpeedLimit.approachTargetSpeed(carFollowingModel, behavioralCharacteristics, speed,
+                    SpeedLimitUtil.approachTargetSpeed(carFollowingModel, behavioralCharacteristics, speed,
                         currentSpeedLimitInfo, distance, targetSpeed);
                 if (a.lt(out))
                 {
