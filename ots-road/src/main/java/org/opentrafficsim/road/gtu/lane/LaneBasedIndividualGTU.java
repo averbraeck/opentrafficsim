@@ -210,7 +210,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
     @Override
     public final String toString()
     {
-        return "LaneBasedIndividualGTU [relativePositions=" + this.relativePositions + "]";
+        return "LaneBasedIndividualGTU [id=" + getId() + "]";
     }
 
     /**

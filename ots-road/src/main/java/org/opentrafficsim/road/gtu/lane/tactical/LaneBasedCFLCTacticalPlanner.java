@@ -37,6 +37,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
@@ -99,9 +100,8 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
 
     /** {@inheritDoc} */
     @Override
-    public OperationalPlan generateOperationalPlan(final GTU gtu, final Time startTime,
-            final DirectedPoint locationAtStartTime) throws OperationalPlanException, NetworkException, GTUException,
-            ParameterException
+    public OperationalPlan generateOperationalPlan(final GTU gtu, final Time startTime, final DirectedPoint locationAtStartTime)
+            throws OperationalPlanException, NetworkException, GTUException, ParameterException
     {
         try
         {
@@ -119,10 +119,8 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             // NOTE: delete this if perception takes place independent of the tactical planning (different frequency)
             perception.perceive();
 
-            Length maximumForwardHeadway =
-                    laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
-            Length maximumReverseHeadway =
-                    laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACKOLD);
+            Length maximumForwardHeadway = laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
+            Length maximumReverseHeadway = laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACKOLD);
             Time now = gtu.getSimulator().getSimulatorTime().getTime();
             Speed speedLimit = perception.getSpeedLimit();
 
@@ -531,8 +529,8 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
      * @return boolean; true if the lane change appears possible; false if the lane change is not possible for the front or back
      *         of the GTU
      */
-    private boolean canChangeLane(final Map<Lane, Length> laneMap, final Map<Lane, Length> positions,
-            final LaneBasedGTU gtu, final LateralDirectionality direction)
+    private boolean canChangeLane(final Map<Lane, Length> laneMap, final Map<Lane, Length> positions, final LaneBasedGTU gtu,
+            final LateralDirectionality direction)
     {
         for (Lane lane : laneMap.keySet())
         {

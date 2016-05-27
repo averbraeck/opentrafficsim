@@ -131,7 +131,7 @@ public class DefaultCarAnimation extends Renderable2D implements Serializable
         }
         
         graphics.setColor(Color.RED);
-        if (car.getAcceleration().si < 0.0)
+        if (car.getAcceleration().si < -0.5) // TODO this could be a property of a GTU 
         {
             Rectangle2D.Double leftBrake = new Rectangle2D.Double(-l2, w2 - w4, w4, w4);
             Rectangle2D.Double rightBrake = new Rectangle2D.Double(-l2, -w2, w4, w4);

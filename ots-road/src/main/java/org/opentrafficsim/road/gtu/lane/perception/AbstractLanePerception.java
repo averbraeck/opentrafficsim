@@ -597,7 +597,7 @@ public abstract class AbstractLanePerception implements LanePerception
                 double posMax = Math.max(posFractionFront, posFractionRear);
                 for (LaneBasedGTU otherGTU : lane.getGtuList())
                 {
-                    if (!otherGTU.equals(this))
+                    if (!otherGTU.equals(this)) // TODO
                     {
                         /*- cater for: *-----*         *-----*       *-----*       *----------*
                          *                *-----*    *----*      *------------*       *-----*

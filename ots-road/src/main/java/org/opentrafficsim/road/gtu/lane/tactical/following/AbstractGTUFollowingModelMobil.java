@@ -58,7 +58,12 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
         // Find out if there is an immediate collision
         for (Headway headway : otherHeadways)
         {
-            if (!headway.getId().equals(referenceGTU.getId()) && null == headway.getDistance())
+            // XXX: Under which circumstances can getDistance() be NULL? Should that indeed result in TOODANGEROUS?
+            if (headway.getDistance() == null)
+            {
+                return TOODANGEROUS;
+            }
+            if (!headway.getId().equals(referenceGTU.getId()) && Double.isNaN(headway.getDistance().si))
             {
                 return TOODANGEROUS;
             }

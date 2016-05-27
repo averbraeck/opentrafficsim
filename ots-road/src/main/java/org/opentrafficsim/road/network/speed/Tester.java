@@ -64,21 +64,21 @@ public class Tester
         Speed targetSpeed = new Speed(60, SpeedUnit.KM_PER_HOUR);
         Length distance = new Length(300, LengthUnit.SI);
 
-        IDMPlus idm = new IDMPlus();
-        Speed speed = new Speed(120/3.6, SpeedUnit.SI);
-        Length x = new Length(0, LengthUnit.SI);
-        double dt = .5;
-        int i = 0;
-        while (x.lt(distance))
-        {
-            double t = i * dt;
-            i++;
-            Acceleration a = idm.approachTargetSpeed(bc, speed, sli, distance.minus(x), targetSpeed);
-            System.out.println("t:" + t + ", x:" + x + ", v:" + speed + ", a:" + a);
-            x = new Length(x.si + speed.si * dt + .5 * a.si * dt * dt, LengthUnit.SI);
-            speed = new Speed(speed.si + a.si * dt, SpeedUnit.SI);
-        }
-
+//        IDMPlus idm = new IDMPlus();
+//        Speed speed = new Speed(120/3.6, SpeedUnit.SI);
+//        Length x = new Length(0, LengthUnit.SI);
+//        double dt = .5;
+//        int i = 0;
+//        while (x.lt(distance))
+//        {
+//            double t = i * dt;
+//            i++;
+//            Acceleration a = idm.approachTargetSpeed(bc, speed, sli, distance.minus(x), targetSpeed);
+//            System.out.println("t:" + t + ", x:" + x + ", v:" + speed + ", a:" + a);
+//            x = new Length(x.si + speed.si * dt + .5 * a.si * dt * dt, LengthUnit.SI);
+//            speed = new Speed(speed.si + a.si * dt, SpeedUnit.SI);
+//        }
+//
 //        SpeedLimitTypeSpeed type1 = new SpeedLimitTypeSpeed("type1");
 //        SpeedLimitTypeSpeed type2 = new SpeedLimitTypeSpeed("type2");
 //        boolean a = type1 == type2; // I want a warning on this
