@@ -45,8 +45,8 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
      * Constructor.
      * @param lat lateral direction (use {@code null} for the current lane)
      * @param numLanes number of lanes in the lateral direction (not important for the current lane)
-     * @throw IllegalArgumentException if numLanes is not at least 1, except if {@code lat == null} (current lane)
-     * @throw IllegalArgumentException if numLanes is not 0 if {@code lat == null} (current lane)
+     * @throws IllegalArgumentException if numLanes is not at least 1, except if {@code lat == null} (current lane)
+     * @throws IllegalArgumentException if numLanes is not 0 if {@code lat == null} (current lane)
      */
     public RelativeLane(final LateralDirectionality lat, final int numLanes)
     {

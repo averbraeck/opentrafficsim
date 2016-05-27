@@ -42,8 +42,7 @@ public class FixedLaneChangeModel implements LaneChangeModel, Serializable
         this.laneChange = laneChange;
     }
 
-    /** {@inheritDoc} 
-     * @throws ParameterException */
+    /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:parameternumber")
     @Override
     public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
