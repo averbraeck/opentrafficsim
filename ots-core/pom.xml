@@ -80,25 +80,21 @@
 		<dependency>
 			<groupId>org.openstreetmap.osmosis</groupId>
 			<artifactId>osmosis-core</artifactId>
-			<version>0.43.1</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openstreetmap.osmosis</groupId>
 			<artifactId>osmosis-xml</artifactId>
-			<version>0.43.1</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openstreetmap.osmosis</groupId>
 			<artifactId>osmosis-pbf</artifactId>
-			<version>0.43.1</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openstreetmap.osmosis</groupId>
 			<artifactId>osmosis-osm-binary</artifactId>
-			<version>0.43.1</version>
 		</dependency>
 
 		<dependency>
@@ -109,7 +105,6 @@
 		<dependency>
 			<groupId>com.google.code.findbugs</groupId>
 			<artifactId>annotations</artifactId>
-			<version>3.0.1u2</version>
 		</dependency>
 
 

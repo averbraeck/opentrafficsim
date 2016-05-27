@@ -57,6 +57,7 @@
     <multislider.version>1.0</multislider.version>
     <ojalgo.version>38.2</ojalgo.version>
     <osm.version>0.43.1</osm.version>
+    <findbugs.version>3.0.1u2</findbugs.version>
 
     <maven.compiler.version>3.3</maven.compiler.version>
     <maven.site.version>3.4</maven.site.version>
@@ -81,7 +82,7 @@
     <wagon.ftp.version>2.10</wagon.ftp.version>
     <codehaus.javancss.version>2.1</codehaus.javancss.version>
     <codehaus.jdepend.version>2.0</codehaus.jdepend.version>
-    
+
   </properties>
 
 
@@ -218,7 +219,8 @@
               <commands>
                 <command>rm -r -f /home/web/opentrafficsim.org/docs/current</command>
                 <command>mkdir -p /home/web/opentrafficsim.org/docs/current</command>
-                <command>cp -r -f /home/web/opentrafficsim.org/docs/${project.version}/. /home/web/opentrafficsim.org/docs/current</command>
+                <command>cp -r -f /home/web/opentrafficsim.org/docs/${project.version}/.
+                  /home/web/opentrafficsim.org/docs/current</command>
               </commands>
             </configuration>
           </execution>
@@ -824,7 +826,13 @@
       <dependency>
         <groupId>org.openstreetmap.osmosis</groupId>
         <artifactId>osmosis-osm-binary</artifactId>
-        <version>0.43.1</version>
+        <version>${osm.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.code.findbugs</groupId>
+        <artifactId>annotations</artifactId>
+        <version>${findbugs.version}</version>
       </dependency>
 
     </dependencies>
