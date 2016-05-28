@@ -26,7 +26,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * operational plan can take 5 seconds. Based on external stimuli (for which the Perception unit of the GTU is responsible),
  * operational plans can always be interrupted.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
@@ -48,7 +48,8 @@ public interface TacticalPlanner
      * @throws ParameterException when there is a problem with a parameter
      */
     OperationalPlan generateOperationalPlan(GTU gtu, Time startTime, DirectedPoint locationAtStartTime)
-        throws OperationalPlanException, GTUException, NetworkException, ParameterException;
-    
-    // TODO InitialXVT generateInitialXVT(GTUState gtu, DirectedPoint initialLocation, Speed desiredSpeed, GenerationPolicy generationPolicy)  
+            throws OperationalPlanException, GTUException, NetworkException, ParameterException;
+
+    // TODO InitialXVT generateInitialXVT(GTUState gtu, DirectedPoint initialLocation, Speed desiredSpeed, GenerationPolicy
+    // generationPolicy)
 }

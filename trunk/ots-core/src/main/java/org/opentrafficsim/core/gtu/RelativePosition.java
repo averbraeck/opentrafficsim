@@ -9,7 +9,7 @@ import org.djunits.value.vdouble.scalar.Length;
  * A RelativePosition is a position on a GTU; e.g. the front, rear, position of the driver, etc. <br>
  * A RelativePosition stores the offset of the position from the reference position of the GTU.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$,
@@ -179,7 +179,7 @@ public class RelativePosition implements Serializable
     /**
      * The type of relative position, e.g., Front, Back, etc.
      * <p>
-     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
      * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
