@@ -14,7 +14,7 @@ import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
  * A simple way to construct a SwitchableGTUColorer set up with the "standard" set of GTUColorers. <br>
  * Do not assume that the set of GTUColorers in the result will never change.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision: 1378 $, $LastChangedDate: 2015-09-03 13:38:01 +0200 (Thu, 03 Sep 2015) $, by $Author: averbraeck $,

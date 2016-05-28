@@ -13,7 +13,6 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
@@ -30,7 +29,7 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
  * assistance on the route to take when the network splits. This abstract class contains a number of helper methods that make it
  * easy to implement a tactical planner.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
@@ -38,7 +37,7 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanner, Serializable
+public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacticalPlanner, Serializable
 {
     /** */
     private static final long serialVersionUID = 20151125L;
@@ -289,9 +288,9 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
     // TODO this method can probably disappear (lots of duplicated code)
-    protected static List<Lane> buildLaneListForwardXXX(final LaneBasedGTU gtu, final Length maxHeadway,
-            final Lane startLane, final double startLaneFractionalPosition, final GTUDirectionality startDirectionality)
-            throws GTUException, NetworkException
+    protected static List<Lane> buildLaneListForwardXXX(final LaneBasedGTU gtu, final Length maxHeadway, final Lane startLane,
+            final double startLaneFractionalPosition, final GTUDirectionality startDirectionality) throws GTUException,
+            NetworkException
     {
         List<Lane> laneListForward = new ArrayList<>();
         Lane lane = startLane;
@@ -683,10 +682,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
         return linkList;
     }
 
-    /**
-     * Returns the car-following model.
-     * @return Car-following model.
-     */
+    /** {@inheritDoc} */
+    @Override
     public final CarFollowingModel getCarFollowingModel()
     {
         return this.carFollowingModel;

@@ -58,7 +58,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.perception.Headway;
-import org.opentrafficsim.road.gtu.lane.perception.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.HeadwayGTUSimple;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -79,7 +79,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
 /**
  * Create a plot that characterizes a lane change graph.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$,
@@ -316,7 +316,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
                         new Length(4, METER), new Length(2, METER), new Speed(150, KM_PER_HOUR), simpleSimulator,
                         strategicalPlanner, new LanePerceptionFull(), this.network);
         Collection<Headway> sameLaneGTUs = new LinkedHashSet<>();
-        sameLaneGTUs.add(new HeadwayGTU(referenceCar.getId(), referenceCar.getGTUType(), Length.ZERO, referenceCar
+        sameLaneGTUs.add(new HeadwayGTUSimple(referenceCar.getId(), referenceCar.getGTUType(), Length.ZERO, referenceCar
                 .getSpeed(), null));
         // TODO play with the speed limit
         // TODO play with the preferredLaneRouteIncentive
@@ -402,7 +402,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
                 referenceCar.position(referenceCar.positions(referenceCar.getReference()).keySet().iterator().next(),
                         referenceCar.getReference());
         Headway otherHeadwayGTU =
-                new HeadwayGTU(otherCar.getId(), otherCar.getGTUType(), otherCarPosition.minus(referenceCarPosition),
+                new HeadwayGTUSimple(otherCar.getId(), otherCar.getGTUType(), otherCarPosition.minus(referenceCarPosition),
                         otherCar.getSpeed(), null);
         if (mergeRight)
         {

@@ -40,7 +40,7 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
  * to the back (important if we want to change lanes), and information about obstacles, traffic lights, speed signs, and ending
  * lanes.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
@@ -457,7 +457,7 @@ public abstract class AbstractLanePerception implements LanePerception
             return null;
         }
         double distanceSI = Math.abs(laneBasedGTU.position(lane, laneBasedGTU.getRear()).si - startPosSI);
-        return new HeadwayGTU(laneBasedGTU.getId(), laneBasedGTU.getGTUType(), new Length(cumDistSI + distanceSI,
+        return new HeadwayGTUSimple(laneBasedGTU.getId(), laneBasedGTU.getGTUType(), new Length(cumDistSI + distanceSI,
                 LengthUnit.SI), laneBasedGTU.getSpeed(), laneBasedGTU.getAcceleration());
     }
 
@@ -491,9 +491,9 @@ public abstract class AbstractLanePerception implements LanePerception
                 foundHeadway = closest;
             }
         }
-        if (foundHeadway instanceof HeadwayGTU)
+        if (foundHeadway instanceof AbstractHeadwayGTU)
         {
-            return new HeadwayGTU(foundHeadway.getId(), ((HeadwayGTU) foundHeadway).getGtuType(), foundHeadway.getDistance()
+            return new HeadwayGTUSimple(foundHeadway.getId(), ((AbstractHeadwayGTU) foundHeadway).getGtuType(), foundHeadway.getDistance()
                     .multiplyBy(-1.0), foundHeadway.getSpeed(), null);
         }
         if (foundHeadway instanceof HeadwayDistance)
@@ -530,7 +530,7 @@ public abstract class AbstractLanePerception implements LanePerception
             double distanceM = cumDistanceSI + lanePositionSI - otherGTU.position(lane, otherGTU.getFront(), when).getSI();
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
-                return new HeadwayGTU(otherGTU.getId(), otherGTU.getGTUType(), new Length(distanceM, LengthUnit.SI),
+                return new HeadwayGTUSimple(otherGTU.getId(), otherGTU.getGTUType(), new Length(distanceM, LengthUnit.SI),
                         otherGTU.getSpeed(), null);
             }
             return new HeadwayDistance(Double.MAX_VALUE);
@@ -617,7 +617,7 @@ public abstract class AbstractLanePerception implements LanePerception
                         if ((gtuMin >= posMin && gtuMin <= posMax) || (gtuMax >= posMin && gtuMax <= posMax)
                                 || (posMin >= gtuMin && posMin <= gtuMax) || (posMax >= gtuMin && posMax <= gtuMax))
                         {
-                            headwayCollection.add(new HeadwayGTU(otherGTU.getId(), otherGTU.getGTUType(), overlapFront,
+                            headwayCollection.add(new HeadwayGTUSimple(otherGTU.getId(), otherGTU.getGTUType(), overlapFront,
                                     overlap, overlapRear, otherGTU.getSpeed(), otherGTU.getAcceleration()));
                         }
                     }
@@ -718,7 +718,7 @@ public abstract class AbstractLanePerception implements LanePerception
         for (Headway p : parallel(directionality, when))
         {
             // TODO expand for other types of Headways
-            result.add(new HeadwayGTU(p.getId(), ((HeadwayGTU) p).getGtuType(), new Length(Double.NaN, LengthUnit.SI), p
+            result.add(new HeadwayGTUSimple(p.getId(), ((AbstractHeadwayGTU) p).getGtuType(), new Length(Double.NaN, LengthUnit.SI), p
                     .getSpeed(), p.getAcceleration()));
         }
 
@@ -742,7 +742,7 @@ public abstract class AbstractLanePerception implements LanePerception
                         headwayRecursiveBackwardSI(adjacentLane, this.gtu.getLanes().get(lane),
                                 this.gtu.projectedPosition(adjacentLane, this.gtu.getRear(), when).getSI(), 0.0,
                                 -maximumReverseHeadway.getSI(), when);
-                if (follower instanceof HeadwayGTU)
+                if (follower instanceof AbstractHeadwayGTU)
                 {
                     boolean found = false;
                     for (Headway headway : result)
@@ -754,7 +754,7 @@ public abstract class AbstractLanePerception implements LanePerception
                     }
                     if (!found)
                     {
-                        result.add(new HeadwayGTU(follower.getId(), ((HeadwayGTU) follower).getGtuType(), follower
+                        result.add(new HeadwayGTUSimple(follower.getId(), ((AbstractHeadwayGTU) follower).getGtuType(), follower
                                 .getDistance().multiplyBy(-1.0), follower.getSpeed(), null));
                     }
                 }

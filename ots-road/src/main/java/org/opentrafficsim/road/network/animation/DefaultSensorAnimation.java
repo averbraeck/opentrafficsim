@@ -17,7 +17,7 @@ import org.opentrafficsim.road.network.lane.Sensor;
 /**
  * Draw a road block.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision: 1178 $, $LastChangedDate: 2015-08-04 02:55:18 +0200 (Tue, 04 Aug 2015) $, by $Author: averbraeck $,

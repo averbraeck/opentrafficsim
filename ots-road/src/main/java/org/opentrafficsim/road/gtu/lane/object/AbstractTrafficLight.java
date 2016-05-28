@@ -41,6 +41,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -48,7 +49,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
@@ -353,6 +354,13 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
         return (LanePerceptionFull) super.getPerception();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public LaneBasedTacticalPlanner getTacticalPlanner()
+    {
+        return (LaneBasedTacticalPlanner) super.getTacticalPlanner();
+    }
+    
     /** {@inheritDoc} */
     @Override
     public void addTrigger(Lane lane, SimEvent<OTSSimTimeDouble> event)

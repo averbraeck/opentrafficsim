@@ -19,7 +19,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -256,7 +256,7 @@ public class LMRS extends AbstractLMRS
 
     }
 
-    protected Acceleration calculateAcceleration(final LaneBasedGTU follower, final HeadwayGTU leader, final double d)
+    protected Acceleration calculateAcceleration(final LaneBasedGTU follower, final AbstractHeadwayGTU leader, final double d)
     {
         // TODO: adjust desired headway based on desire
         // set T
@@ -265,7 +265,7 @@ public class LMRS extends AbstractLMRS
         return a;
     }
 
-    protected Acceleration calculateAcceleration(final LaneBasedGTU follower, final HeadwayGTU leader)
+    protected Acceleration calculateAcceleration(final LaneBasedGTU follower, final AbstractHeadwayGTU leader)
     {
         // TODO: speed limit
         // TODO: follower != self
