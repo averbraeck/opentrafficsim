@@ -11,7 +11,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
 /**
  * Characteristics of a GTU. This class is used to store all characteristics of a (not-yet constructed) GTU.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Mar 8, 2016 <br>
