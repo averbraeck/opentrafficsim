@@ -38,7 +38,7 @@ import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.perception.Headway;
-import org.opentrafficsim.road.gtu.lane.perception.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.HeadwayGTUSimple;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGTUFollowingModelMobil;
@@ -47,8 +47,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -59,7 +57,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
 /**
  * Test the methods that the classes that implement GTUFollowingModel have in common.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
@@ -182,14 +180,14 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         LaneBasedIndividualGTU gtu50m =
                 new LaneBasedIndividualGTU("100050", carType, initialLongitudinalPositions50, speed, length, width, maxSpeed,
                         simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
-        HeadwayGTU hwgtu50m = new HeadwayGTU(gtu50m.getId(), gtu50m.getGTUType(), headway50m, gtu50m.getSpeed(), null);
+        HeadwayGTUSimple hwgtu50m = new HeadwayGTUSimple(gtu50m.getId(), gtu50m.getGTUType(), headway50m, gtu50m.getSpeed(), null);
         Collection<Headway> otherGTUs = new ArrayList<Headway>();
         DualAccelerationStep asEmpty = gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);
         // System.out.println("asEmpty: [" + asEmpty[0] + ", " + asEmpty[1] + "]");
         Time expectedValidUntil = new Time(stepSize.getSI(), TimeUnit.SI);
         checkAccelerationStep("Empty collection", asEmpty, noLeader.getAcceleration(), noLeader.getAcceleration(),
                 expectedValidUntil);
-        otherGTUs.add(new HeadwayGTU(gtu.getId(), gtu.getGTUType(), new Length(Double.NaN, LengthUnit.SI), gtu
+        otherGTUs.add(new HeadwayGTUSimple(gtu.getId(), gtu.getGTUType(), new Length(Double.NaN, LengthUnit.SI), gtu
                 .getSpeed(), null));
         // If otherGTUs only contains the reference GTU, the result should be exactly the same
         asEmpty = gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);
@@ -209,17 +207,17 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         LaneBasedIndividualGTU gtu100m =
                 new LaneBasedIndividualGTU("100100", carType, initialLongitudinalPositions50, speed, length, width, maxSpeed,
                         simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
-        HeadwayGTU hwgtu100m = new HeadwayGTU(gtu100m.getId(), gtu100m.getGTUType(), headway100m, gtu100m.getSpeed(), null);
+        HeadwayGTUSimple hwgtu100m = new HeadwayGTUSimple(gtu100m.getId(), gtu100m.getGTUType(), headway100m, gtu100m.getSpeed(), null);
         otherGTUs.add(hwgtu100m);
         DualAccelerationStep as50and100m =
                 gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);
         checkAccelerationStep("leader at " + headway50m + " and at " + headway100m, as50and100m, a50.getAcceleration(),
                 noLeader.getAcceleration(), expectedValidUntil);
-        otherGTUs.add(new HeadwayGTU(gtu.getId(), gtu.getGTUType(), Length.ZERO, gtu.getSpeed(), null));
+        otherGTUs.add(new HeadwayGTUSimple(gtu.getId(), gtu.getGTUType(), Length.ZERO, gtu.getSpeed(), null));
         as50and100m = gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);
         checkAccelerationStep("follower at 0, leader at " + headway50m + " and at " + headway100m, as50and100m,
                 a50.getAcceleration(), noLeader.getAcceleration(), expectedValidUntil);
-        otherGTUs.add(new HeadwayGTU(gtu.getId(), gtu.getGTUType(), new Length(Double.NaN, LengthUnit.SI), gtu
+        otherGTUs.add(new HeadwayGTUSimple(gtu.getId(), gtu.getGTUType(), new Length(Double.NaN, LengthUnit.SI), gtu
                 .getSpeed(), null));
         as50and100m = gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);
         checkAccelerationStep("follower at NaN, leader at " + headway50m + " and at " + headway100m, as50and100m,
@@ -241,8 +239,8 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
                 new LaneBasedIndividualGTU("100100" + this.gtuIdGenerator.nextId(), carType, initialLongitudinalPositions50,
                         speed, length, width, maxSpeed, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
         Length overlap = new Length(length.minus(ahead));
-        HeadwayGTU hwgtu1m =
-                new HeadwayGTU(gtu1m.getId(), gtu1m.getGTUType(), ahead, overlap, Length.ZERO.minus(overlap),
+        HeadwayGTUSimple hwgtu1m =
+                new HeadwayGTUSimple(gtu1m.getId(), gtu1m.getGTUType(), ahead, overlap, Length.ZERO.minus(overlap),
                         gtu1m.getSpeed(), null);
         otherGTUs.add(hwgtu1m);
         DualAccelerationStep as1m = gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);
@@ -261,8 +259,8 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         LaneBasedIndividualGTU gtuMinus75m =
                 new LaneBasedIndividualGTU("100075", carType, initialLongitudinalPositionsMinus75, speed, length, width,
                         maxSpeed, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
-        HeadwayGTU hwgtuMinus75m =
-                new HeadwayGTU(gtuMinus75m.getId(), gtuMinus75m.getGTUType(), headwayMinus75m, gtuMinus75m.getSpeed(), null);
+        HeadwayGTUSimple hwgtuMinus75m =
+                new HeadwayGTUSimple(gtuMinus75m.getId(), gtuMinus75m.getGTUType(), headwayMinus75m, gtuMinus75m.getSpeed(), null);
         otherGTUs.add(hwgtuMinus75m);
         DualAccelerationStep asMinus75And100m =
                 gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);
@@ -280,8 +278,8 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         LaneBasedIndividualGTU gtuMinus200m =
                 new LaneBasedIndividualGTU("100200", carType, initialLongitudinalPositionsMinus200, speed, length, width,
                         maxSpeed, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
-        HeadwayGTU hwgtuMinus200m =
-                new HeadwayGTU(gtuMinus200m.getId(), gtuMinus200m.getGTUType(), headwayMinus200m, gtuMinus200m.getSpeed(),
+        HeadwayGTUSimple hwgtuMinus200m =
+                new HeadwayGTUSimple(gtuMinus200m.getId(), gtuMinus200m.getGTUType(), headwayMinus200m, gtuMinus200m.getSpeed(),
                         null);
         otherGTUs.add(hwgtuMinus200m);
         DualAccelerationStep asMinus200Minus75And100m =

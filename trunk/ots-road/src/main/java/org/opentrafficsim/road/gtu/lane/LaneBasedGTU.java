@@ -12,13 +12,14 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
  * This interface defines a lane based GTU.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision: 1401 $, $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, by $Author: averbraeck $,
@@ -36,6 +37,10 @@ public interface LaneBasedGTU extends GTU
     /** {@inheritDoc} */
     @Override
     LaneBasedStrategicalPlanner getStrategicalPlanner();
+
+    /** {@inheritDoc} */
+    @Override
+    LaneBasedTacticalPlanner getTacticalPlanner();
 
     /**
      * @return a safe copy of the lanes on which the GTU is registered.

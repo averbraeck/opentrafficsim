@@ -70,7 +70,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
 /**
  * Demonstrate the Trajectories plot.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$,
@@ -201,7 +201,7 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
  * Output is a trajectory plot with simulation time along the horizontal axis and distance along the road along the vertical
  * axis.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$,

@@ -6,7 +6,7 @@ import org.opentrafficsim.core.gtu.GTUType;
  * Some predefined GTU types.<br>
  * Should be moved into the GTU package.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-08-23 00:48:01 +0200 (Sun, 23 Aug 2015) $, @version $Revision: 1291 $, by $Author: averbraeck $,

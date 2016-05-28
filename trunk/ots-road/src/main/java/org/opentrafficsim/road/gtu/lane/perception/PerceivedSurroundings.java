@@ -40,7 +40,7 @@ public interface PerceivedSurroundings
      * @param lat LEFT, null (current) or RIGHT
      * @return list of followers on a lane
      */
-    SortedSet<HeadwayGTU> getFirstLeaders(LateralDirectionality lat);
+    SortedSet<AbstractHeadwayGTU> getFirstLeaders(LateralDirectionality lat);
 
     /**
      * Set of followers on a lane, which is usually 0 or 1, but possibly more in case of an upstream merge with no intermediate
@@ -59,7 +59,7 @@ public interface PerceivedSurroundings
      * @param lat LEFT, null (current) or RIGHT
      * @return list of followers on a lane
      */
-    SortedSet<HeadwayGTU> getFirstFollowers(LateralDirectionality lat);
+    SortedSet<AbstractHeadwayGTU> getFirstFollowers(LateralDirectionality lat);
 
     /**
      * Whether there is a GTU alongside, i.e. with overlap, in an adjacent lane.
@@ -75,7 +75,7 @@ public interface PerceivedSurroundings
      * @param lane relative lateral lane
      * @return set of leaders on a lane, including adjacent GTU's who's FRONT is ahead of the own vehicle FRONT
      */
-    SortedSet<HeadwayGTU> getLeaders(RelativeLane lane);
+    SortedSet<AbstractHeadwayGTU> getLeaders(RelativeLane lane);
 
     /**
      * Set of followers on a lane, including adjacent GTU's who's REAR is back of the own vehicle REAR. Follower are are sorted
@@ -83,7 +83,7 @@ public interface PerceivedSurroundings
      * @param lane relative lateral lane
      * @return set of followers on a lane, including adjacent GTU's who's REAR is back of the own vehicle REAR
      */
-    SortedSet<HeadwayGTU> getFollowers(RelativeLane lane);
+    SortedSet<AbstractHeadwayGTU> getFollowers(RelativeLane lane);
 
     /********************/
     /** Infrastructure **/

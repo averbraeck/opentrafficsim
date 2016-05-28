@@ -44,6 +44,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
@@ -68,7 +69,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * and remove it from current lanes as needed during the time step that is has committed to. Finally, it re-schedules its next
  * movement evaluation with the simulator.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision: 1408 $, $LastChangedDate: 2015-09-24 15:17:25 +0200 (Thu, 24 Sep 2015) $, by $Author: pknoppers $,
@@ -840,6 +841,13 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         return getStrategicalPlanner().getBehavioralCharacteristics();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public LaneBasedTacticalPlanner getTacticalPlanner()
+    {
+        return (LaneBasedTacticalPlanner) super.getTacticalPlanner();
+    }
+    
     /** {@inheritDoc} */
     public void addTrigger(final Lane lane, final SimEvent<OTSSimTimeDouble> event)
     {

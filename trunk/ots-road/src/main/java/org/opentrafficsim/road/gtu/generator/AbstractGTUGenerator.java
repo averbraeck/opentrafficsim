@@ -31,7 +31,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU.LaneBasedIndividualCarBuilder;
 import org.opentrafficsim.road.gtu.lane.perception.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.HeadwayDistance;
-import org.opentrafficsim.road.gtu.lane.perception.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.HeadwayGTUSimple;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
@@ -46,7 +46,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * GTU will be constructed next. When this happens, the generator must remember the properties of the GTU, but postpone actual
  * generation until there is enough room.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision: 1401 $, $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, by $Author: averbraeck $,
@@ -321,7 +321,7 @@ public abstract class AbstractGTUGenerator implements Serializable
             double distanceM = cumDistanceSI + otherGTU.position(theLane, otherGTU.getRear(), when).getSI() - lanePositionSI;
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
-                return new HeadwayGTU(otherGTU.getId(), otherGTU.getGTUType(), new Length(distanceM, LengthUnit.SI),
+                return new HeadwayGTUSimple(otherGTU.getId(), otherGTU.getGTUType(), new Length(distanceM, LengthUnit.SI),
                         otherGTU.getSpeed(), null);
             }
             return new HeadwayDistance(Double.MAX_VALUE);
@@ -382,7 +382,7 @@ public abstract class AbstractGTUGenerator implements Serializable
             double distanceM = cumDistanceSI + otherGTU.position(theLane, otherGTU.getFront(), when).getSI() - lanePositionSI;
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
-                return new HeadwayGTU(otherGTU.getId(), otherGTU.getGTUType(), new Length(distanceM, LengthUnit.SI),
+                return new HeadwayGTUSimple(otherGTU.getId(), otherGTU.getGTUType(), new Length(distanceM, LengthUnit.SI),
                         otherGTU.getSpeed(), null);
             }
             return new HeadwayDistance(Double.MAX_VALUE);

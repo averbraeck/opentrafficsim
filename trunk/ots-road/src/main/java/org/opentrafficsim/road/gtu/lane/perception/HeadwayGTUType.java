@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
-import java.util.EnumSet;
-
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -16,6 +14,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * or objects ahead of the reference GTU, behind the reference GTU, or (partially) parallel to the reference GTU. In addition to
  * the (perceived) headway, several other pieces of information can be stored, such as (perceived) speed, (perceived)
  * acceleration, (perceived) turn indicators, and (perceived) braking lights. <br>
+ * This particular version returns behavioral information about the observed GTU objects based on their type.<br>
  * Special care must be taken in curves when perceiving headway of a GTU or object on an adjacent lane.The question is whether
  * we perceive the parallel or ahead/behind based on a line perpendicular to the front/back of the GTU (rectangular), or
  * perpendicular to the center line of the lane (wedge-shaped in case of a curve). The difficulty of a wedge-shaped situation is
@@ -27,82 +26,62 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * positions. See examples in <a href=
  * "http://simulation.tudelft.nl:8085/browse/OTS-113">http://simulation.tudelft.nl:8085/browse/OTS-113</a>.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
- * <p>
- * @version $Revision: 1368 $, $LastChangedDate: 2015-09-02 00:20:20 +0200 (Wed, 02 Sep 2015) $, by $Author: averbraeck $,
- *          initial version 11 feb. 2015 <br>
+ * </p>
+ * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
+ * initial version May 27, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class HeadwayGTU extends AbstractHeadway
+public class HeadwayGTUType extends AbstractHeadwayGTU
 {
     /** */
-    private static final long serialVersionUID = 20160410L;
+    private static final long serialVersionUID = 20160527L;
 
-    /** The perceived GTU Type, or null if unknown. */
-    private final GTUType gtuType;
-
-    /** Observable characteristics of a GTU. */
-    public enum GTUStatus
-    {
-        /** Braking lights are on when observing the headway. */
-        BRAKING_LIGHTS,
-
-        /** Left turn indicator was on when observing the headway. */
-        LEFT_TURNINDICATOR,
-
-        /** Right turn indicator was on when observing the headway. */
-        RIGHT_TURNINDICATOR,
-
-        /** Alarm lights are on. */
-        EMERGENCY_LIGHTS,
-
-        /** GTU was honking (car) or ringing a bell (cyclist) when observing the headway. */
-        HONK;
-    }
-
-    /** The observable characteristics of the GTU. */
-    private final EnumSet<GTUStatus> gtuStatus = EnumSet.noneOf(GTUStatus.class);
+    /** a pointer to centrally kept or GTU specific GTUTypeAssumptions. */
+    private final GTUTypeAssumptions gtuTypeAssumptions;
 
     /**
      * Construct a new Headway information object, for a moving GTU ahead of us or behind us.
      * @param id the id of the GTU for comparison purposes, can not be null.
      * @param gtuType the perceived GTU Type, or null if unknown.
+     * @param gtuTypeAssumptions centrally kept or GTU specific GTUTypeAssumptions
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
      * @param gtuStatus the observable characteristics of the GTU.
      * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
      */
-    public HeadwayGTU(final String id, final GTUType gtuType, final Length distance, final Speed speed,
-            final Acceleration acceleration, final GTUStatus... gtuStatus) throws GTUException
+    public HeadwayGTUType(final String id, final GTUType gtuType, final GTUTypeAssumptions gtuTypeAssumptions,
+            final Length distance, final Speed speed, final Acceleration acceleration, final GTUStatus... gtuStatus)
+            throws GTUException
     {
-        super(ObjectType.GTU, id, distance, speed, acceleration);
-        this.gtuType = gtuType;
-        for (GTUStatus status : gtuStatus)
-        {
-            this.gtuStatus.add(status);
-        }
+        super(id, gtuType, distance, speed, acceleration, gtuStatus);
+        this.gtuTypeAssumptions = gtuTypeAssumptions;
     }
 
     /**
      * Construct a new Headway information object, for a non-moving GTU ahead of us or behind us.
-     * @param id String; the id of the GTU for comparison purposes, can not be null.
-     * @param gtuType GTUType; the perceived GTU Type, or null if unknown.
+     * @param id the id of the GTU for comparison purposes, can not be null.
+     * @param gtuType the perceived GTU Type, or null if unknown.
+     * @param gtuTypeAssumptions centrally kept or GTU specific GTUTypeAssumptions
      * @param distance Length; the distance to the other GTU; if this constructor is used, distance cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public HeadwayGTU(final String id, final GTUType gtuType, final Length distance) throws GTUException
+    public HeadwayGTUType(final String id, final GTUType gtuType, final GTUTypeAssumptions gtuTypeAssumptions,
+            final Length distance) throws GTUException
     {
-        super(ObjectType.GTU, id, distance);
-        this.gtuType = gtuType;
+        super(id, gtuType, distance);
+        this.gtuTypeAssumptions = gtuTypeAssumptions;
     }
 
     /**
      * Construct a new Headway information object, for a moving GTU parallel with us.
      * @param id the id of the GTU for comparison purposes, can not be null.
      * @param gtuType the perceived GTU Type, or null if unknown.
+     * @param gtuTypeAssumptions centrally kept or GTU specific GTUTypeAssumptions
      * @param overlapFront the front-front distance to the other GTU; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other GTU; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
@@ -110,81 +89,51 @@ public abstract class HeadwayGTU extends AbstractHeadway
      * @param acceleration the (perceived) acceleration of the other GTU; can be null if unknown.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public HeadwayGTU(final String id, final GTUType gtuType, final Length overlapFront, final Length overlap,
-            final Length overlapRear, final Speed speed, final Acceleration acceleration) throws GTUException
+    @SuppressWarnings("checkstyle:parameternumber")
+    public HeadwayGTUType(final String id, final GTUType gtuType, final GTUTypeAssumptions gtuTypeAssumptions,
+            final Length overlapFront, final Length overlap, final Length overlapRear, final Speed speed,
+            final Acceleration acceleration) throws GTUException
     {
-        super(ObjectType.GTU, id, overlapFront, overlap, overlapRear, speed, acceleration);
-        this.gtuType = gtuType;
+        super(id, gtuType, overlapFront, overlap, overlapRear, speed, acceleration);
+        this.gtuTypeAssumptions = gtuTypeAssumptions;
     }
 
     /**
      * Construct a new Headway information object, for a non-moving GTU parallel with us.
      * @param id the id of the GTU for comparison purposes, can not be null.
      * @param gtuType the perceived GTU Type, or null if unknown.
+     * @param gtuTypeAssumptions centrally kept or GTU specific GTUTypeAssumptions
      * @param overlapFront the front-front distance to the other GTU; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other GTU; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public HeadwayGTU(final String id, final GTUType gtuType, final Length overlapFront, final Length overlap,
-            final Length overlapRear) throws GTUException
+    public HeadwayGTUType(final String id, final GTUType gtuType, final GTUTypeAssumptions gtuTypeAssumptions,
+            final Length overlapFront, final Length overlap, final Length overlapRear) throws GTUException
     {
-        super(ObjectType.GTU, id, overlapFront, overlap, overlapRear);
-        this.gtuType = gtuType;
+        super(id, gtuType, overlapFront, overlap, overlapRear);
+        this.gtuTypeAssumptions = gtuTypeAssumptions;
     }
-
-    /**
-     * @return gtuType
-     */
-    public final GTUType getGtuType()
-    {
-        return this.gtuType;
-    }
-
-    /** @return were the braking lights on? */
-    public final boolean isBrakingLightsOn()
-    {
-        return this.gtuStatus.contains(GTUStatus.BRAKING_LIGHTS);
-    }
-
-    /** @return was the left turn indicator on? */
-    public final boolean isLeftTurnIndicatorOn()
-    {
-        return this.gtuStatus.contains(GTUStatus.LEFT_TURNINDICATOR);
-    }
-
-    /** @return was the right turn indicator on? */
-    public final boolean isRightTurnIndicatorOn()
-    {
-        return this.gtuStatus.contains(GTUStatus.RIGHT_TURNINDICATOR);
-    }
-
-    /** @return were the emergency lights on? */
-    public final boolean isEmergencyLightsOn()
-    {
-        return this.gtuStatus.contains(GTUStatus.EMERGENCY_LIGHTS);
-    }
-
-    /** @return was the vehicle honking or ringing its bell when being observed for the headway? */
-    public final boolean isHonking()
-    {
-        return this.gtuStatus.contains(GTUStatus.HONK);
-    }
-    
-    // TODO 3 implementaties: echte objecten terguggeven, per GTUType teruggeven, eigen model teruggeven.
-    public abstract CarFollowingModel getCarFollowingModel();
-    
-    // TODO
-    public abstract BehavioralCharacteristics getBehavioralCharacteristics();
-    
-    // TODO
-    public abstract SpeedLimitInfo getSpeedLimitInfo();    
 
     /** {@inheritDoc} */
     @Override
-    public final String toString()
+    public final CarFollowingModel getCarFollowingModel()
     {
-        return "HeadwayGTU [gtuType=" + this.gtuType + ", gtuStatus=" + this.gtuStatus + "]";
+        return this.gtuTypeAssumptions.getCarFollowingModel(getGtuType());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final BehavioralCharacteristics getBehavioralCharacteristics()
+    {
+        return this.gtuTypeAssumptions.getBehavioralCharacteristics(getGtuType());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final SpeedLimitInfo getSpeedLimitInfo()
+    {
+        return null; // TODO create SpeedLimitInfo on the basis of this.gtuTypeAssumptions.getLaneTypeMaxSpeed(...)
     }
 
 }

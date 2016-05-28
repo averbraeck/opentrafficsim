@@ -62,9 +62,10 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <enumeration id="7" language="java" name="org.opentrafficsim.road.gtu.lane.perception.HeadwayGTU.GTUStatus" 
-    project="ots-road" file="/ots-road/src/main/java/org/opentrafficsim/road/gtu/lane/perception/HeadwayGTU.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
+  <enumeration id="7" language="java" name="org.opentrafficsim.road.gtu.lane.perception.AbstractHeadwayGTU.GTUStatus" 
+    project="ots-road" 
+    file="/ots-road/src/main/java/org/opentrafficsim/road/gtu/lane/perception/AbstractHeadwayGTU.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="423" y="1173"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -72,8 +73,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </enumeration>  
-  <class id="8" language="java" name="org.opentrafficsim.road.gtu.lane.perception.HeadwayGTU" project="ots-road" 
-    file="/ots-road/src/main/java/org/opentrafficsim/road/gtu/lane/perception/HeadwayGTU.java" binary="false" 
+  <class id="8" language="java" name="org.opentrafficsim.road.gtu.lane.perception.AbstractHeadwayGTU" project="ots-road" 
+    file="/ots-road/src/main/java/org/opentrafficsim/road/gtu/lane/perception/AbstractHeadwayGTU.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="279" width="354" x="245" y="742"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -82,27 +83,27 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <realization id="9">    
+  <nesting id="9">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="7"/>  
+  </nesting>  
+  <realization id="10">    
     <end type="SOURCE" refId="2"/>    
     <end type="TARGET" refId="6"/>  
   </realization>  
-  <association id="10">    
+  <association id="11">    
     <bendpoint x="629" y="742"/>    
     <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="11" name="objectType"/>      
-      <multiplicity id="12" minimum="0" maximum="1"/>    
+      <attribute id="12" name="objectType"/>      
+      <multiplicity id="13" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="13">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <generalization id="14">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
+  <realization id="14">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="6"/>  
+  </realization>  
   <association id="15">    
     <end type="SOURCE" refId="8" navigable="false">      
       <attribute id="16" name="gtuStatus"/>      
@@ -111,18 +112,18 @@
     <end type="TARGET" refId="7" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="18">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="7"/>  
-  </nesting>  
+  <generalization id="18">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
   <nesting id="19">    
     <end type="SOURCE" refId="6"/>    
     <end type="TARGET" refId="1"/>  
   </nesting>  
-  <realization id="20">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="6"/>  
-  </realization>  
+  <generalization id="20">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
   <generalization id="21">    
     <end type="SOURCE" refId="8"/>    
     <end type="TARGET" refId="2"/>  
