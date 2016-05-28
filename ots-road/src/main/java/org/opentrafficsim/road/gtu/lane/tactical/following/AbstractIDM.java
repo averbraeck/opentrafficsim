@@ -41,8 +41,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
             throws ParameterException
     {
         Speed consideredSpeed =
-                SpeedLimitUtil.getLegalSpeedLimit(speedInfo).multiplyBy(
-                        behavioralCharacteristics.getParameter(ParameterTypes.FSPEED));
+            SpeedLimitUtil.getLegalSpeedLimit(speedInfo).multiplyBy(behavioralCharacteristics.getParameter(ParameterTypes.FSPEED));
         Speed maxVehicleSpeed = SpeedLimitUtil.getMaximumVehicleSpeed(speedInfo);
         return consideredSpeed.le(maxVehicleSpeed) ? consideredSpeed : maxVehicleSpeed;
     }
