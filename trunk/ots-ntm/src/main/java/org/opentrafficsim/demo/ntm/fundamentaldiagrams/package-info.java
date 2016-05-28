@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, Jaffalaan 5, 2628 BX
+ * Copyright (c) 2013-2016 Delft University of Technology, Jaffalaan 5, 2628 BX
  * Delft, the Netherlands. All rights reserved.
  * 
  * <p>
