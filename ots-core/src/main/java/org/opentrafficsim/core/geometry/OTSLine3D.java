@@ -65,10 +65,16 @@ public class OTSLine3D implements Locatable, Serializable
     private Bounds bounds = null;
 
     /** The cached helper points for fractional projection; will be calculated when needed for the first time. */
-    private Point2D.Double[] fractionalHelperPoints = null;
+    private Point2D.Double[] fractionalHelperCenters = null;
 
     /** The cached helper directions for fractional projection; will be calculated when needed for the first time. */
     private Point2D.Double[] fractionalHelperDirections = null;
+
+    /** Intersection of unit offset lines of first two segments. */
+    private Point2D.Double firstOffsetIntersection;
+
+    /** Intersection of unit offset lines of last two segments. */
+    private Point2D.Double lastOffsetIntersection;
 
     /** Precision for fractional projection algorithm. */
     private static final double FRAC_PROJ_PRECISION = 1e-9;
@@ -1092,10 +1098,13 @@ public class OTSLine3D implements Locatable, Serializable
      */
     public final double projectOrthogonal(final double x, final double y)
     {
+
+        // prepare
         makeLengthIndexedLine();
         double minDistance = Double.POSITIVE_INFINITY;
         double minSegmentFraction = 0;
         int minSegment = -1;
+
         // code based on Line2D.ptSegDistSq(...)
         for (int i = 0; i < size() - 1; i++)
         {
@@ -1144,8 +1153,11 @@ public class OTSLine3D implements Locatable, Serializable
                 minSegment = i;
             }
         }
+
+        // return
         double segLen = this.lengthIndexedLine[minSegment + 1] - this.lengthIndexedLine[minSegment];
         return (this.lengthIndexedLine[minSegment] + segLen * minSegmentFraction) / getLengthSI();
+
     }
 
     /**
@@ -1196,87 +1208,15 @@ public class OTSLine3D implements Locatable, Serializable
     public final double projectFractional(final Direction start, final Direction end, final double x, final double y)
         throws OTSGeometryException
     {
+
+        // prepare
         makeLengthIndexedLine();
         double minDistance = Double.POSITIVE_INFINITY;
         double minSegmentFraction = 0;
         int minSegment = -1;
-        // calculate fractional helper points if not done yet
-        if (this.fractionalHelperPoints == null && this.points.length > 2)
-        {
-            this.fractionalHelperPoints = new Point2D.Double[this.points.length - 1];
-            this.fractionalHelperDirections = new Point2D.Double[this.points.length - 1];
-            // intersection of parallel lines of first and second segment
-            double[] xy1 = getParallelLine(0);
-            double[] xy2 = getParallelLine(1);
-            Point2D.Double parStartPoint =
-                getIntersection(xy1[0], xy1[1], xy1[2], xy1[3], xy2[0], xy2[1], xy2[2], xy2[3], FRAC_PROJ_PRECISION);
-            // a) first helper point is the intersection of the first two parallel lines
-            this.fractionalHelperPoints[0] = parStartPoint;
-            // loop segments
-            xy1 = xy2;
-            for (int i = 1; i < this.points.length - 2; i++)
-            {
-                xy2 = getParallelLine(i + 1);
-                Point2D.Double parEndPoint =
-                    getIntersection(xy1[0], xy1[1], xy1[2], xy1[3], xy2[0], xy2[1], xy2[2], xy2[3], FRAC_PROJ_PRECISION);
-                // b) intermediate helper points are centers, i.e. the intersections of helper lines
-                this.fractionalHelperPoints[i] =
-                    getIntersection(this.points[i].x, this.points[i].y, parStartPoint.x, parStartPoint.y,
-                        this.points[i + 1].x, this.points[i + 1].y, parEndPoint.x, parEndPoint.y, FRAC_PROJ_PRECISION);
-                if (this.fractionalHelperPoints[i] == null)
-                {
-                    // parallel helper lines, parallel segments or /\/ cause parallel helper lines, use direction for projection
-                    this.fractionalHelperDirections[i] =
-                        new Point2D.Double(parStartPoint.x - this.points[i].x, parStartPoint.y - this.points[i].y);
-                }
-                xy1 = xy2;
-                parStartPoint = parEndPoint;
-            }
-            // c) last helper point is the intersection of the last two parallel lines
-            this.fractionalHelperPoints[this.points.length - 2] = parStartPoint;
-        }
 
-        // use directions at start and end to get parallel points to the left at a distance of 1
-        double ang = start.si + Math.PI / 2;
-        double x1 = this.points[0].x + Math.cos(ang);
-        double y1 = this.points[0].y + Math.sin(ang);
-        ang = end.si + Math.PI / 2;
-        double x2 = this.points[this.points.length - 1].x + Math.cos(ang);
-        double y2 = this.points[this.points.length - 1].y + Math.sin(ang);
-        // calculate first and last center (i.e. intersection of helper lines), which depend on inputs 'start' and 'end'
-        Point2D.Double firstCenter;
-        Point2D.Double lastCenter;
-        if (this.points.length > 2)
-        {
-            firstCenter =
-                getIntersection(this.points[0].x, this.points[0].y, x1, y1, this.points[1].x, this.points[1].y,
-                    this.fractionalHelperPoints[0].x, this.fractionalHelperPoints[0].y, FRAC_PROJ_PRECISION);
-            lastCenter =
-                getIntersection(this.points[this.points.length - 2].x, this.points[this.points.length - 2].y,
-                    this.fractionalHelperPoints[this.points.length - 2].x,
-                    this.fractionalHelperPoints[this.points.length - 2].y, this.points[this.points.length - 1].x,
-                    this.points[this.points.length - 1].y, x2, y2, FRAC_PROJ_PRECISION);
-            if (lastCenter == null)
-            {
-                // parallel helper lines, use direction for projection
-                this.fractionalHelperDirections[this.points.length - 2] =
-                    new Point2D.Double(x2 - this.points[this.points.length - 1].x, y2
-                        - this.points[this.points.length - 1].y);
-            }
-        }
-        else
-        {
-            // only a single segment
-            firstCenter =
-                getIntersection(this.points[0].x, this.points[0].y, x1, y1, this.points[1].x, this.points[1].y, x2, y2,
-                    FRAC_PROJ_PRECISION);
-            lastCenter = null;
-        }
-        if (firstCenter == null)
-        {
-            // parallel helper lines, use direction for projection
-            this.fractionalHelperDirections[0] = new Point2D.Double(x1 - this.points[0].x, y1 - this.points[0].y);
-        }
+        // determine helpers (centers and directions)
+        determineFractionalHelpers(start, end);
 
         // get distance of point to each segment
         double[] d = new double[this.points.length - 1];
@@ -1286,6 +1226,7 @@ public class OTSLine3D implements Locatable, Serializable
             d[i] = Line2D.ptSegDist(this.points[i].x, this.points[i].y, this.points[i + 1].x, this.points[i + 1].y, x, y);
             minD = d[i] < minD ? d[i] : minD;
         }
+
         // loop over segments for projection
         double distance;
         for (int i = 0; i < this.points.length - 1; i++)
@@ -1295,8 +1236,7 @@ public class OTSLine3D implements Locatable, Serializable
             {
                 continue;
             }
-            Point2D.Double center =
-                (i == 0) ? firstCenter : (i == this.points.length - 2) ? lastCenter : this.fractionalHelperPoints[i];
+            Point2D.Double center = this.fractionalHelperCenters[i];
             Point2D.Double p;
             if (center != null)
             {
@@ -1309,8 +1249,7 @@ public class OTSLine3D implements Locatable, Serializable
                 p =
                     getIntersection(center.x, center.y, x, y, this.points[i].x, this.points[i].y, this.points[i + 1].x,
                         this.points[i + 1].y, 0.0);
-                if ((Math.min(x, p.x) + FRAC_PROJ_PRECISION < center.x && center.x < Math.max(x, p.x)
-                        - FRAC_PROJ_PRECISION)
+                if ((Math.min(x, p.x) + FRAC_PROJ_PRECISION < center.x && center.x < Math.max(x, p.x) - FRAC_PROJ_PRECISION)
                     || (Math.min(y, p.y) + FRAC_PROJ_PRECISION < center.y && center.y < Math.max(y, p.y)
                         - FRAC_PROJ_PRECISION))
                 {
@@ -1327,7 +1266,7 @@ public class OTSLine3D implements Locatable, Serializable
                         this.points[i + 1].y, FRAC_PROJ_PRECISION);
             }
             if (p.x + FRAC_PROJ_PRECISION < Math.min(this.points[i].x, this.points[i + 1].x)
-                    || p.x - FRAC_PROJ_PRECISION > Math.max(this.points[i].x, this.points[i + 1].x)
+                || p.x - FRAC_PROJ_PRECISION > Math.max(this.points[i].x, this.points[i + 1].x)
                 || p.y + FRAC_PROJ_PRECISION < Math.min(this.points[i].y, this.points[i + 1].y)
                 || p.y - FRAC_PROJ_PRECISION > Math.max(this.points[i].y, this.points[i + 1].y))
             {
@@ -1350,29 +1289,152 @@ public class OTSLine3D implements Locatable, Serializable
                 minSegment = i;
             }
         }
+
+        // return
         Throw.when(minSegment == -1, OTSGeometryException.class,
             "Point for fractional projection is not within the applicable area of the line.");
         double segLen = this.lengthIndexedLine[minSegment + 1] - this.lengthIndexedLine[minSegment];
         return (this.lengthIndexedLine[minSegment] + segLen * minSegmentFraction) / getLengthSI();
+        
     }
 
     /**
-     * Helper method for fractional projection which returns a parallel line to the left of a segment at a distance of 1.
+     * Determines all helpers (points and/or directions) for fractional projection and stores fixed information in properties
+     * while returning the first and last center points (.
+     * @param start direction in first point
+     * @param end direction in last point
+     */
+    private void determineFractionalHelpers(final Direction start, final Direction end)
+    {
+
+        // calculate fixed helpers if not done yet
+        if (this.fractionalHelperCenters == null && this.points.length > 2)
+        {
+            this.fractionalHelperCenters = new Point2D.Double[this.points.length - 1];
+            this.fractionalHelperDirections = new Point2D.Double[this.points.length - 1];
+            // intersection of parallel lines of first and second segment
+            OTSLine3D prevOfsSeg = unitOffsetSegment(0);
+            OTSLine3D nextOfsSeg = unitOffsetSegment(1);
+            Point2D.Double parStartPoint;
+            try
+            {
+                parStartPoint =
+                    getIntersection(prevOfsSeg.get(0).x, prevOfsSeg.get(0).y, prevOfsSeg.get(1).x, prevOfsSeg.get(1).y,
+                        nextOfsSeg.get(0).x, nextOfsSeg.get(0).y, nextOfsSeg.get(1).x, nextOfsSeg.get(1).y,
+                        FRAC_PROJ_PRECISION);
+            }
+            catch (OTSGeometryException oge)
+            {
+                // cannot happen as only the first and second point (which are always present) are requested
+                throw new RuntimeException(oge);
+            }
+            // remember the intersection of the first two unit offset segments
+            this.firstOffsetIntersection = parStartPoint;
+            // loop segments
+            for (int i = 1; i < this.points.length - 2; i++)
+            {
+                prevOfsSeg = nextOfsSeg;
+                nextOfsSeg = unitOffsetSegment(i + 1);
+                Point2D.Double parEndPoint;
+                try
+                {
+                    parEndPoint =
+                        getIntersection(prevOfsSeg.get(0).x, prevOfsSeg.get(0).y, prevOfsSeg.get(1).x, prevOfsSeg.get(1).y,
+                            nextOfsSeg.get(0).x, nextOfsSeg.get(0).y, nextOfsSeg.get(1).x, nextOfsSeg.get(1).y,
+                            FRAC_PROJ_PRECISION);
+                }
+                catch (OTSGeometryException oge)
+                {
+                    // cannot happen as only the first and second point (which are always present) are requested
+                    throw new RuntimeException(oge);
+                }
+                // center = intersections of helper lines
+                this.fractionalHelperCenters[i] =
+                    getIntersection(this.points[i].x, this.points[i].y, parStartPoint.x, parStartPoint.y,
+                        this.points[i + 1].x, this.points[i + 1].y, parEndPoint.x, parEndPoint.y, FRAC_PROJ_PRECISION);
+                if (this.fractionalHelperCenters[i] == null)
+                {
+                    // parallel helper lines, parallel segments or /\/ cause parallel helper lines, use direction for projection
+                    this.fractionalHelperDirections[i] =
+                        new Point2D.Double(parStartPoint.x - this.points[i].x, parStartPoint.y - this.points[i].y);
+                }
+                parStartPoint = parEndPoint;
+            }
+            // remember the intersection of the last two unit offset segments
+            this.lastOffsetIntersection = parStartPoint;
+        }
+
+        // use directions at start and end to get unit offset points to the left at a distance of 1
+        double ang = start.si + Math.PI / 2;
+        double x1 = this.points[0].x + Math.cos(ang);
+        double y1 = this.points[0].y + Math.sin(ang);
+        ang = end.si + Math.PI / 2;
+        double x2 = this.points[this.points.length - 1].x + Math.cos(ang);
+        double y2 = this.points[this.points.length - 1].y + Math.sin(ang);
+
+        // calculate first and last center (i.e. intersection of unit offset segments), which depend on inputs 'start' and 'end'
+        if (this.points.length > 2)
+        {
+            this.fractionalHelperCenters[0] =
+                getIntersection(this.points[0].x, this.points[0].y, x1, y1, this.points[1].x, this.points[1].y,
+                    this.firstOffsetIntersection.x, this.firstOffsetIntersection.y, FRAC_PROJ_PRECISION);
+            this.fractionalHelperCenters[this.points.length - 2] =
+                getIntersection(this.points[this.points.length - 2].x, this.points[this.points.length - 2].y,
+                    this.lastOffsetIntersection.x, this.lastOffsetIntersection.y, this.points[this.points.length - 1].x,
+                    this.points[this.points.length - 1].y, x2, y2, FRAC_PROJ_PRECISION);
+            if (this.fractionalHelperCenters[this.points.length - 2] == null)
+            {
+                // parallel helper lines, use direction for projection
+                this.fractionalHelperDirections[this.points.length - 2] =
+                    new Point2D.Double(x2 - this.points[this.points.length - 1].x, y2
+                        - this.points[this.points.length - 1].y);
+            }
+        }
+        else
+        {
+            // only a single segment
+            this.fractionalHelperCenters[0] =
+                getIntersection(this.points[0].x, this.points[0].y, x1, y1, this.points[1].x, this.points[1].y, x2, y2,
+                    FRAC_PROJ_PRECISION);
+            this.fractionalHelperCenters[this.points.length - 2] = null;
+        }
+        if (this.fractionalHelperCenters[0] == null)
+        {
+            // parallel helper lines, use direction for projection
+            this.fractionalHelperDirections[0] = new Point2D.Double(x1 - this.points[0].x, y1 - this.points[0].y);
+        }
+
+    }
+
+    /**
+     * Helper method for fractional projection which returns an offset line to the left of a segment at a distance of 1.
      * @param segment segment number
      * @return parallel line to the left of a segment at a distance of 1
      */
-    private double[] getParallelLine(final int segment)
+    private OTSLine3D unitOffsetSegment(final int segment)
     {
-        // differences in x and y
-        double dx = this.points[segment + 1].x - this.points[segment].x;
-        double dy = this.points[segment + 1].y - this.points[segment].y;
-        // normalize differences
-        double len = this.lengthIndexedLine[segment + 1] - this.lengthIndexedLine[segment];
-        dx /= len;
-        dy /= len;
-        // get parallel line to the left at a distance of 1
-        return new double[] {this.points[segment].x - dy, this.points[segment].y + dx, this.points[segment + 1].x - dy,
-            this.points[segment + 1].y + dx};
+        OTSPoint3D from = new OTSPoint3D(this.points[segment].x, this.points[segment].y);
+        OTSPoint3D to = new OTSPoint3D(this.points[segment + 1].x, this.points[segment + 1].y);
+        try
+        {
+            OTSLine3D line = new OTSLine3D(from, to);
+            return line.offsetLine(1.0);
+        }
+        catch (OTSGeometryException oge)
+        {
+            // cannot happen as points are from this OTSLine3D which performed the same checks and 2 points are given
+            throw new RuntimeException(oge);
+        }
+        // // differences in x and y
+        // double dx = this.points[segment + 1].x - this.points[segment].x;
+        // double dy = this.points[segment + 1].y - this.points[segment].y;
+        // // normalize differences
+        // double len = this.lengthIndexedLine[segment + 1] - this.lengthIndexedLine[segment];
+        // dx /= len;
+        // dy /= len;
+        // // get parallel line to the left at a distance of 1
+        // return new double[] {this.points[segment].x - dy, this.points[segment].y + dx, this.points[segment + 1].x - dy,
+        // this.points[segment + 1].y + dx};
     }
 
     /**
