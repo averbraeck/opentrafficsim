@@ -77,7 +77,7 @@ public class OTSLine3D implements Locatable, Serializable
     private Point2D.Double lastOffsetIntersection;
 
     /** Precision for fractional projection algorithm. */
-    private static final double FRAC_PROJ_PRECISION = 1e-9;
+    private static final double FRAC_PROJ_PRECISION = 1e-6;
 
     /** Bounding of this OTSLine3D. */
     private Envelope envelope;
@@ -1238,17 +1238,18 @@ public class OTSLine3D implements Locatable, Serializable
             }
             Point2D.Double center = this.fractionalHelperCenters[i];
             Point2D.Double p;
+            /*
+             * Intersect using precision of -1 (i.e. lines are never parallel) as helper lines should never be considered
+             * parallel. Using the same precision as when determining that the adjoining segments are not parallel, may give a
+             * center that is so far away that the same precision makes the helper lines be considered parallel (even when using
+             * 0.0). Then p == null results, which is useless.
+             */
             if (center != null)
             {
                 // get intersection of line "center - (x, y)" and the segment
-                /*
-                 * Use precision of 0.0 as helper lines should never be considered parallel. Using the same precision as when
-                 * determining that the adjoining segments are not parallel, may give a center that is so far away that the same
-                 * precision makes the helper lines be considered parallel. Then p == null results, which is useless.
-                 */
                 p =
                     getIntersection(center.x, center.y, x, y, this.points[i].x, this.points[i].y, this.points[i + 1].x,
-                        this.points[i + 1].y, 0.0);
+                        this.points[i + 1].y, -1);
                 if ((Math.min(x, p.x) + FRAC_PROJ_PRECISION < center.x && center.x < Math.max(x, p.x) - FRAC_PROJ_PRECISION)
                     || (Math.min(y, p.y) + FRAC_PROJ_PRECISION < center.y && center.y < Math.max(y, p.y)
                         - FRAC_PROJ_PRECISION))
@@ -1263,7 +1264,7 @@ public class OTSLine3D implements Locatable, Serializable
                 p =
                     getIntersection(x, y, x + this.fractionalHelperDirections[i].x,
                         y + this.fractionalHelperDirections[i].y, this.points[i].x, this.points[i].y, this.points[i + 1].x,
-                        this.points[i + 1].y, FRAC_PROJ_PRECISION);
+                        this.points[i + 1].y, -1);
             }
             if (p.x + FRAC_PROJ_PRECISION < Math.min(this.points[i].x, this.points[i + 1].x)
                 || p.x - FRAC_PROJ_PRECISION > Math.max(this.points[i].x, this.points[i + 1].x)
@@ -1295,7 +1296,7 @@ public class OTSLine3D implements Locatable, Serializable
             "Point for fractional projection is not within the applicable area of the line.");
         double segLen = this.lengthIndexedLine[minSegment + 1] - this.lengthIndexedLine[minSegment];
         return (this.lengthIndexedLine[minSegment] + segLen * minSegmentFraction) / getLengthSI();
-        
+
     }
 
     /**
@@ -1425,16 +1426,6 @@ public class OTSLine3D implements Locatable, Serializable
             // cannot happen as points are from this OTSLine3D which performed the same checks and 2 points are given
             throw new RuntimeException(oge);
         }
-        // // differences in x and y
-        // double dx = this.points[segment + 1].x - this.points[segment].x;
-        // double dy = this.points[segment + 1].y - this.points[segment].y;
-        // // normalize differences
-        // double len = this.lengthIndexedLine[segment + 1] - this.lengthIndexedLine[segment];
-        // dx /= len;
-        // dy /= len;
-        // // get parallel line to the left at a distance of 1
-        // return new double[] {this.points[segment].x - dy, this.points[segment].y + dx, this.points[segment + 1].x - dy,
-        // this.points[segment + 1].y + dx};
     }
 
     /**
