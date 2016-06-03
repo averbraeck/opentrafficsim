@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -797,7 +798,7 @@ public class OTSLine3DTest
             checkGetLocation(line, fraction, new OTSPoint3D(2, -2 + f * 4, 0), Math.atan2(1, 0)); // from y = -2 to 2
         }
         // test projection on barely parallel lines outside of bend
-        double[] e = new double[] {1e-3, 1e-9, 1e-12, 1e-16, 1e-32};
+        double[] e = new double[] {1e-3, 1e-6, 1e-9, 1e-12, 1e-16, 1e-32};
         double[] d = new double[] {1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e9, 1e12}; // that's pretty far from a line...
         for (int i = 0; i < e.length; i++)
         {
@@ -806,55 +807,93 @@ public class OTSLine3DTest
                     6 - e[i]), new OTSPoint3D(8, 8 - e[i]));
             for (int j = 0; j < d.length; j++)
             {
-                try
+                fraction = line.projectFractional(zeroDir, zeroDir, 4 - d[j], 4 + d[j]); // on outside of slight bend
+                if (Math.abs(fraction - 0.5) > 0.001)
                 {
-                    fraction = line.projectFractional(zeroDir, zeroDir, 4 - d[j], 4 + d[j]); // on outside of slight bend
+                    line.projectFractional(zeroDir, zeroDir, 4 - d[j], 4 + d[j]);
+                }
+                if (e[i] >= 1e-6)
+                {
                     assertTrue("Projection of point on outside of very slight bend was wrong with e=" + e[i] + " and d="
                         + d[j], Math.abs(fraction - 0.5) < 0.001);
                 }
-                catch (OTSGeometryException oge)
+                else
                 {
-                    fail("Could not project point on outside of very slight bend with e=" + e[i] + " and d=" + d[j]);
+                    assertTrue("Projection of point on outside of very slight bend was wrong with e=" + e[i] + " and d="
+                        + d[j], fraction >= 0.0 && fraction <= 1.0);
                 }
             }
         }
-        // test before/beyond center, and some other points inside/outside of applicable area
-        line = new OTSLine3D(new OTSPoint3D(0, 0), new OTSPoint3D(2, 1), new OTSPoint3D(3, 2), new OTSPoint3D(4, 4));
-        assertFalse("Projection of point 'before' center should not fail.", projectionFails(line, zeroDir, 0, 4)); // before
-        assertTrue("Projection of point 'beyond' center should fail.", projectionFails(line, zeroDir, -1, -5)); // beyond
-        assertFalse("Projection of point 'inside' should not fail.", projectionFails(line, zeroDir, -2, 6)); // some inside
-        assertFalse("Projection of point 'inside' should not fail.", projectionFails(line, zeroDir, 1, 10));
-        assertFalse("Projection of point 'inside' should not fail.", projectionFails(line, zeroDir, 1, -10));
-        assertFalse("Projection of point 'inside' should not fail.", projectionFails(line, zeroDir, 3, 10));
-        assertFalse("Projection of point 'inside' should not fail.", projectionFails(line, zeroDir, 3, -10));
-        assertFalse("Projection of point 'inside' should not fail.", projectionFails(line, zeroDir, 8, -2));
-        assertTrue("Projection of point 'outside' should fail.", projectionFails(line, zeroDir, -1, 4)); // some outside
-        assertTrue("Projection of point 'outside' should fail.", projectionFails(line, zeroDir, -10, 4));
-        assertTrue("Projection of point 'outside' should fail.", projectionFails(line, zeroDir, -1, -10));
-        assertTrue("Projection of point 'outside' should fail.", projectionFails(line, zeroDir, 5, 2));
-        assertTrue("Projection of point 'outside' should fail.", projectionFails(line, zeroDir, 5, 10));
-        assertTrue("Projection of point 'outside' should fail.", projectionFails(line, zeroDir, 10, 5));
-    }
+        // test circle center
+        Direction start = new Direction(Math.PI / 2, AngleUnit.SI);
+        Direction end = new Direction(-Math.PI / 2, AngleUnit.SI);
+        for (double radius : new double[] {1e16, 1e12, 1e9, 1e6, 1e3, 1, 0.1, 1e-3, 1e-6, 1e-9, 1e-12})
+        {
+            for (int n : new int[] {9, 10, 901, 1000})
+            {
+                List<OTSPoint3D> list = new ArrayList<>();
+                for (double r = 0; r <= Math.PI; r += Math.PI / n)
+                {
+                    list.add(new OTSPoint3D(Math.cos(r) * radius, Math.sin(r) * radius));
+                }
+                line = new OTSLine3D(list);
+                for (double x : new double[] {0, 1e-3, 1e-6, 1e-9, 1e-12})
+                {
+                    for (double y : new double[] {0, 1e-3, 1e-6, 1e-9, 1e-12})
+                    {
+                        double f = line.projectFractional(start, end, x, y);
+                        assertTrue("Fractional projection on circle is not between 0.0 and 1.0.", f >= 0.0 && f <= 1.0);
+                    }
+                }
+            }
+        }
+        // random line test
+        Random random = new Random(0);
+        for (int n = 0; n < 10; n++)
+        {
+            // System.out.println(n);
+            List<OTSPoint3D> list = new ArrayList<>();
+            double prevX = 0;
+            for (int i = 0; i < 100; i++)
+            {
+                double x = prevX + random.nextDouble() - 0.4;
+                prevX = x;
+                list.add(new OTSPoint3D(x, random.nextDouble()));
+                // System.out.println(list.get(list.size() - 1).x + ", " + list.get(list.size() - 1).y);
+            }
+            line = new OTSLine3D(list);
+            for (double x = -2; x < 12; x += 0.01)
+            {
+                for (double y = -1; y <= 2; y += 0.1)
+                {
+                    double f = line.projectFractional(zeroDir, zeroDir, x, y);
+                    assertTrue("Fractional projection on circle is not between 0.0 and 1.0.", f >= 0.0 && f <= 1.0);
+                }
+            }
+        }
+        // 2-point line
+        line = new OTSLine3D(new OTSPoint3D(0, 0), new OTSPoint3D(1, 1));
+        fraction = line.projectFractional(zeroDir, zeroDir, .5, 1);
+        assertTrue("Projection on line with single segment is not correct.", Math.abs(fraction - 0.5) < 0.001);
+        // square test (THIS TEST IS NOT YET SUCCESSFUL, THE POINTS ARE PROJECTED ORTHOGONALLY TO BEFORE END!!!)
+        // {@formatter:off}
+        /*
+         * --------- 
+         * a\     /|  'a' should project to end, not just before end
+         *   /\ /  |  point in the /\ should project to end, not before end
+         *  /'' \  |               '' 
+         * /      \| 
+         * ---------
+         */
+        // {@formatter:on}
+//        line = new OTSLine3D(new OTSPoint3D(0, 0), new OTSPoint3D(4, 0), new OTSPoint3D(4, 4), new OTSPoint3D(0, 4));
+//        start = new Direction(Math.atan2(-1, 3), AngleUnit.SI);
+//        end = new Direction(Math.atan2(-1, -1), AngleUnit.SI);
+//        fraction = line.projectFractional(start, end, 1.25, 2.25); // nearest to top of square, but can only project to bottom
+//        assertTrue("Projection should be possible to nearest successful segment.", Math.abs(fraction - 1.0) < 0.001);
+//        fraction = line.projectFractional(start, end, 0.25, 3.25); // nearest to top of square, but can only project to bottom
+//        assertTrue("Projection should be possible to nearest successful segment.", Math.abs(fraction - 1.0) < 0.001);
 
-    /**
-     * Checks whether the projection throws a OTSGeometryException.
-     * @param line line to project to
-     * @param zeroDir start and end direction
-     * @param x x-coordinate of point to project
-     * @param y y-coordinate of point to project
-     * @return whether the projection throws a OTSGeometryException
-     */
-    private boolean projectionFails(final OTSLine3D line, final Direction zeroDir, final double x, final double y)
-    {
-        try
-        {
-            line.projectFractional(zeroDir, zeroDir, x, y);
-            return false;
-        }
-        catch (OTSGeometryException oge)
-        {
-            return true;
-        }
     }
 
 }
