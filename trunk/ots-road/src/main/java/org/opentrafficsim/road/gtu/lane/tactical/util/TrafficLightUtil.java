@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.util;
 
 import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.POSITIVE;
 
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -28,7 +29,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version May 13, 2016 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public final class TrafficLightResponse
+public final class TrafficLightUtil
 {
     /** Maximum deceleration for stopping for yellow traffic light. */
     public static final ParameterTypeAcceleration B_YELLOW = new ParameterTypeAcceleration("bYellow",
@@ -37,11 +38,45 @@ public final class TrafficLightResponse
     /**
      * Do not instantiate.
      */
-    private TrafficLightResponse()
+    private TrafficLightUtil()
     {
         //
     }
 
+    /**
+     * Returns an acceleration as response to a set of traffic lights, being positive infinity if ignored. The response is
+     * governed by the car-following model in case a traffic light is yellow or red. A constant deceleration to stop is also
+     * calculated, and the highest acceleration of both is used. If this value is below -bYellow (B_YELLOW), the traffic light
+     * is ignored, which usually occurs only during the yellow phase. By using the highest acceleration of the car-following
+     * model and the constant deceleration, it is ensured that comfortable deceleration is applied if approaching a red traffic
+     * light from far away, while strong deceleration is only applied if required and appropriately represents stopping for
+     * yellow.
+     * @param behavioralCharacteristics behavioral characteristics
+     * @param headwayTrafficLights set of headway traffic lights
+     * @param carFollowingModel car following model
+     * @param speed speed
+     * @param speedLimitInfo speed limit info
+     * @return acceleration as response to a traffic light, being positive infinity if ignored
+     * @throws ParameterException if a parameter is not defined
+     * @throws NullPointerException if any input is null
+     * @throws IllegalArgumentException if the traffic light is not downstream
+     */
+    public static Acceleration respondToTrafficLights(final BehavioralCharacteristics behavioralCharacteristics,
+        final Set<HeadwayTrafficLight> headwayTrafficLights, final CarFollowingModel carFollowingModel, final Speed speed,
+        final SpeedLimitInfo speedLimitInfo) throws ParameterException
+    {
+        Throw.whenNull(headwayTrafficLights, "Traffic light set may not be null.");
+        Acceleration a = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
+        for (HeadwayTrafficLight headwayTrafficLight : headwayTrafficLights)
+        {
+            Acceleration aLight =
+                respondToTrafficLight(behavioralCharacteristics, headwayTrafficLight, carFollowingModel, speed,
+                    speedLimitInfo);
+            a = Acceleration.min(a, aLight);
+        }
+        return a;
+    }  
+    
     /**
      * Returns an acceleration as response to a traffic light, being positive infinity if ignored. The response is governed by
      * the car-following model in case the traffic light is yellow or red. A constant deceleration to stop is also calculated,
@@ -85,7 +120,7 @@ public final class TrafficLightResponse
                 Acceleration aConstant =
                     new Acceleration(-0.5 * speed.si * speed.si / (headwayTrafficLight.getDistance().si - s0.si),
                         AccelerationUnit.SI);
-                a = a.gt(aConstant) ? a : aConstant;
+                a = Acceleration.max(a, aConstant);
             }
             // return a if a > -b
             if (a.gt(behavioralCharacteristics.getParameter(B_YELLOW).multiplyBy(-1.0)))
@@ -96,4 +131,5 @@ public final class TrafficLightResponse
         // ignore traffic light
         return new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
     }
+
 }
