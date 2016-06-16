@@ -150,8 +150,8 @@ public class OTSPoint3D implements Locatable, Serializable
     public static OTSPoint3D interpolate(final double ratio, final OTSPoint3D zeroValue, final OTSPoint3D oneValue)
     {
         double complement = 1 - ratio;
-        return new OTSPoint3D(complement * zeroValue.x + ratio * oneValue.x, complement * zeroValue.y + ratio
-            * oneValue.y, complement * zeroValue.z + ratio * oneValue.z);
+        return new OTSPoint3D(complement * zeroValue.x + ratio * oneValue.x, complement * zeroValue.y + ratio * oneValue.y,
+                complement * zeroValue.z + ratio * oneValue.z);
     }
 
     /**
@@ -164,24 +164,24 @@ public class OTSPoint3D implements Locatable, Serializable
      * @return OTSPoint3D; the intersection of the two lines, or null if the lines are (almost) parallel, or do not intersect
      */
     public static OTSPoint3D intersectionOfLineSegments(final OTSPoint3D line1P1, final OTSPoint3D line1P2,
-        final OTSPoint3D line2P1, final OTSPoint3D line2P2)
+            final OTSPoint3D line2P1, final OTSPoint3D line2P2)
     {
         double denominator =
-            (line2P2.y - line2P1.y) * (line1P2.x - line1P1.x) - (line2P2.x - line2P1.x) * (line1P2.y - line1P1.y);
+                (line2P2.y - line2P1.y) * (line1P2.x - line1P1.x) - (line2P2.x - line2P1.x) * (line1P2.y - line1P1.y);
         if (denominator == 0f)
         {
             return null; // lines are parallel (they might even be on top of each other, but we don't check that)
         }
         double uA =
-            ((line2P2.x - line2P1.x) * (line1P1.y - line2P1.y) - (line2P2.y - line2P1.y) * (line1P1.x - line2P1.x))
-                / denominator;
+                ((line2P2.x - line2P1.x) * (line1P1.y - line2P1.y) - (line2P2.y - line2P1.y) * (line1P1.x - line2P1.x))
+                        / denominator;
         if ((uA < 0f) || (uA > 1f))
         {
             return null; // intersection outside line 1
         }
         double uB =
-            ((line1P2.x - line1P1.x) * (line1P1.y - line2P1.y) - (line1P2.y - line1P1.y) * (line1P1.x - line2P1.x))
-                / denominator;
+                ((line1P2.x - line1P1.x) * (line1P1.y - line2P1.y) - (line1P2.y - line1P1.y) * (line1P1.x - line2P1.x))
+                        / denominator;
         if (uB < 0 || uB > 1)
         {
             return null; // intersection outside line 2
@@ -198,22 +198,22 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param line2P2 OTSPoint3D; second point of line 2
      * @return OTSPoint3D; the intersection of the two lines, or null if the lines are (almost) parallel
      */
-    public static OTSPoint3D intersectionOfLines(final OTSPoint3D line1P1, final OTSPoint3D line1P2,
-        final OTSPoint3D line2P1, final OTSPoint3D line2P2)
+    public static OTSPoint3D intersectionOfLines(final OTSPoint3D line1P1, final OTSPoint3D line1P2, final OTSPoint3D line2P1,
+            final OTSPoint3D line2P2)
     {
         double determinant =
-            (line1P1.x - line1P2.x) * (line2P1.y - line2P2.y) - (line1P1.y - line1P2.y) * (line2P1.x - line2P2.x);
+                (line1P1.x - line1P2.x) * (line2P1.y - line2P2.y) - (line1P1.y - line1P2.y) * (line2P1.x - line2P2.x);
         if (Math.abs(determinant) < 0.0000001)
         {
             return null;
         }
         return new OTSPoint3D(
-            ((line1P1.x * line1P2.y - line1P1.y * line1P2.x) * (line2P1.x - line2P2.x) - (line1P1.x - line1P2.x)
-                * (line2P1.x * line2P2.y - line2P1.y * line2P2.x))
-                / determinant,
-            ((line1P1.x * line1P2.y - line1P1.y * line1P2.x) * (line2P1.y - line2P2.y) - (line1P1.y - line1P2.y)
-                * (line2P1.x * line2P2.y - line2P1.y * line2P2.x))
-                / determinant);
+                ((line1P1.x * line1P2.y - line1P1.y * line1P2.x) * (line2P1.x - line2P2.x) - (line1P1.x - line1P2.x)
+                        * (line2P1.x * line2P2.y - line2P1.y * line2P2.x))
+                        / determinant,
+                ((line1P1.x * line1P2.y - line1P1.y * line1P2.x) * (line2P1.y - line2P2.y) - (line1P1.y - line1P2.y)
+                        * (line2P1.x * line2P2.y - line2P1.y * line2P2.x))
+                        / determinant);
     }
 
     /**
@@ -226,21 +226,21 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param segmentPoint2 OTSPoint3D; end of line segment
      * @return double; the distance of this point to (one of the end points of the line segment)
      */
-    public final double distanceToLineSegment(final OTSPoint3D segmentPoint1, final OTSPoint3D segmentPoint2)
-    {
-        return closestPointOnSegment(segmentPoint1, segmentPoint2).distanceSI(this);
-    }
+    // public final double horizontalDistanceToLineSegment(final OTSPoint3D segmentPoint1, final OTSPoint3D segmentPoint2)
+    // {
+    // return closestPointOnSegment(segmentPoint1, segmentPoint2).horizontalDistanceSI(this);
+    // }
 
     /**
      * Project a point on a line segment (2D - Z-component is ignored). If the the projected points lies outside the line
      * segment, the nearest end point of the line segment is returned. Otherwise the returned point lies between the end points
      * of the line segment. <br>
-     * Adapted from <a href="http://paulbourke.net/geometry/pointlineplane/DistancePoint.java"> example code provided by Paul
+     * Adapted from <a href="http://paulbourke.net/geometry/pointlineplane/DistancePoint.java">example code provided by Paul
      * Bourke</a>.
      * @param segmentPoint1 OTSPoint3D; start of line segment
      * @param segmentPoint2 OTSPoint3D; end of line segment
      * @return Point2D.Double; either <cite>lineP1</cite>, or <cite>lineP2</cite> or a new OTSPoint3D that lies somewhere in
-     *         between those two
+     *         between those two. The Z-component of the result matches the Z-component of the line segment at that point
      */
     public final OTSPoint3D closestPointOnSegment(final OTSPoint3D segmentPoint1, final OTSPoint3D segmentPoint2)
     {
@@ -261,8 +261,59 @@ public class OTSPoint3D implements Locatable, Serializable
         }
         else
         {
-            return new OTSPoint3D(segmentPoint1.x + u * dX, segmentPoint1.y + u * dY); // could use interpolate in stead
+            return interpolate(u, segmentPoint1, segmentPoint2);
+            // WAS new OTSPoint3D(segmentPoint1.x + u * dX, segmentPoint1.y + u * dY); // could use interpolate in stead
         }
+    }
+
+    /**
+     * Return the closest point on an OTSLine3D.
+     * @param line OTSLine3D; the line
+     * @param useHorizontalDistance boolean; if true; the horizontal distance is used to determine the closest point; if false;
+     *            the 3D distance is used to determine the closest point
+     * @return OTSPoint3D; the Z component of the returned point matches the Z-component of hte line at that point
+     */
+    private final OTSPoint3D internalClosestPointOnLine(final OTSLine3D line, final boolean useHorizontalDistance)
+    {
+        OTSPoint3D prevPoint = null;
+        double distance = Double.MAX_VALUE;
+        OTSPoint3D result = null;
+        for (OTSPoint3D nextPoint : line.getPoints())
+        {
+            if (null != prevPoint)
+            {
+                OTSPoint3D closest = closestPointOnSegment(prevPoint, nextPoint);
+                double thisDistance = useHorizontalDistance ? horizontalDistanceSI(closest) : distanceSI(closest);
+                if (thisDistance < distance)
+                {
+                    result = closest;
+                    distance = thisDistance;
+                }
+            }
+            prevPoint = nextPoint;
+        }
+        return result;
+    }
+
+    /**
+     * Return the closest point on an OTSLine3D. This method takes the Z-component of this point and the line into account.
+     * @param line OTSLine3D; the line
+     * @return OTSPoint3D; the Z-component of the returned point matches the Z-component of the line at that point
+     */
+    public final OTSPoint3D closestPointOnLine(final OTSLine3D line)
+    {
+        return internalClosestPointOnLine(line, false);
+    }
+
+    /**
+     * Return the closest point on an OTSLine3D. This method ignores the Z-component of this point and the line when computing
+     * the distance.
+     * @param line OTSLine3D; the line
+     * @return OTSPoint3D; the Z-component of the returned point matches the Z-component of the line at that point
+     */
+    public final OTSPoint3D closestPointOnLine2D(final OTSLine3D line)
+    {
+        return internalClosestPointOnLine(line, true);
     }
 
     /**
@@ -375,7 +426,7 @@ public class OTSPoint3D implements Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
     public boolean equals(final Object obj)
     {
         if (this == obj)

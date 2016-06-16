@@ -136,7 +136,7 @@ public class OTSPoint3DTest
     {
         OTSPoint3D p0 = new OTSPoint3D(123, 234, 345);
         OTSPoint3D p1 = new OTSPoint3D(567, 678, 789);
-        for (double ratio : new double[] {0, 1, 0.5, 0.1, -10, 10})
+        for (double ratio : new double[] { 0, 1, 0.5, 0.1, -10, 10 })
         {
             OTSPoint3D pi = OTSPoint3D.interpolate(ratio, p0, p1);
             assertTrue("result of interpolate is not null", null != pi);
@@ -145,5 +145,41 @@ public class OTSPoint3DTest
             assertEquals("z of interpolate", (1 - ratio) * p0.z + ratio * p1.z, pi.z, 0.00001);
         }
     }
-    
+
+    /**
+     * Test the closestPointOnLine methods.
+     * @throws OTSGeometryException should not happen; this test has failed if it does
+     */
+    @Test
+    public final void closestPointTest() throws OTSGeometryException
+    {
+        // Approximate a spiral centered on 0,0 with increasing Z
+        final int numPoints = 100;
+        final double growthPerRevolution = 5;
+        final double heightGainPerPoint = 10;
+        final double pointsPerRevolution = 15;
+        OTSPoint3D[] spiralPoints = new OTSPoint3D[numPoints];
+        final double rotationPerPoint = 2 * Math.PI / pointsPerRevolution;
+        final double maxRevolution = 1.0 * numPoints / pointsPerRevolution;
+        for (int i = 0; i < numPoints; i++)
+        {
+            double radius = i * growthPerRevolution / pointsPerRevolution;
+            spiralPoints[i] =
+                    new OTSPoint3D(radius * Math.cos(i * rotationPerPoint), radius * Math.sin(i * rotationPerPoint), i
+                            * heightGainPerPoint);
+        }
+        OTSLine3D line = new OTSLine3D(spiralPoints);
+        System.out.println("line is " + line);
+        for (double x = 0; x < maxRevolution * growthPerRevolution; x += growthPerRevolution)
+        {
+            OTSPoint3D point = new OTSPoint3D(x, 0, 0);
+            OTSPoint3D result = point.closestPointOnLine2D(line);
+            System.out.printf("2D x=%.2f, point=%s, result=%s\n", x, point, result);
+            assertEquals("distance to spiral is 0", 0, point.horizontalDistanceSI(result), 0.0001);
+            result = point.closestPointOnLine(line);
+            System.out.printf("3D x=%.2f, point=%s, result=%s\n", x, point, result);
+            assertEquals("horizontal distance to spiral is x", x, point.horizontalDistanceSI(result), 0.5);
+        }
+    }
+
 }
