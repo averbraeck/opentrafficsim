@@ -13,6 +13,7 @@ import javax.vecmath.Point3d;
 import nl.tudelft.simulation.language.d3.CartesianPoint;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.junit.Test;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -126,6 +127,9 @@ public class OTSPoint3DTest
         assertEquals("x value", expectedX, otsPoint3D.x, Math.ulp(expectedX));
         assertEquals("y value", expectedY, otsPoint3D.y, Math.ulp(expectedY));
         assertEquals("z value", expectedZ, otsPoint3D.z, Math.ulp(expectedZ));
+        Point2D.Double p = (Point2D.Double) otsPoint3D.getPoint2D();
+        assertEquals("x value", expectedX, p.x, Math.ulp(expectedX));
+        assertEquals("y value", expectedY, p.y, Math.ulp(expectedY));
     }
 
     /**
@@ -174,12 +178,18 @@ public class OTSPoint3DTest
         {
             OTSPoint3D point = new OTSPoint3D(x, 0, 0);
             OTSPoint3D result = point.closestPointOnLine2D(line);
-            System.out.printf("2D x=%.2f, point=%s, result=%s\n", x, point, result);
+            // System.out.printf("2D x=%.2f, point=%s, result=%s\n", x, point, result);
             assertEquals("distance to spiral is 0", 0, point.horizontalDistanceSI(result), 0.0001);
             result = point.closestPointOnLine(line);
-            System.out.printf("3D x=%.2f, point=%s, result=%s\n", x, point, result);
-            assertEquals("horizontal distance to spiral is x", x, point.horizontalDistanceSI(result), 0.5);
+            // System.out.printf("3D x=%.2f, point=%s, result=%s\n", x, point, result);
+            double distance = point.horizontalDistanceSI(result);
+            assertEquals("horizontal distance to spiral is x", x, distance, 0.5);
+            // Check the horizontalDistance method
+            Length horizontalDistance = point.horizontalDistance(result);
+            assertEquals("horizontal distance as Length should match result of horizontalDistanceSI", distance,
+                    horizontalDistance.si, Math.ulp(distance));
         }
+        // TODO: extend by testing at a few other elevations.
     }
 
 }
