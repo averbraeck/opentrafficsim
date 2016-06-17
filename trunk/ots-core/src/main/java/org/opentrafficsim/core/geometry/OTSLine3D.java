@@ -18,7 +18,6 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.Throw;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
