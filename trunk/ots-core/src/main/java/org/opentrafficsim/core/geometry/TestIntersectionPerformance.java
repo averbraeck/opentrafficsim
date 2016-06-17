@@ -126,7 +126,10 @@ public final class TestIntersectionPerformance
         System.out.println(Results.getHeader());
         for (int numVertices : new int[] { 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000 })
         {
-            System.out.println(test(numEdges / numVertices, numVertices, 0.10, numRuns, false).result(true, false));
+            if (numEdges / numVertices > 2)
+            {
+                System.out.println(test(numEdges / numVertices, numVertices, 0.10, numRuns, false).result(true, false));
+            }
         }
         System.out.println("Finished");
     }
