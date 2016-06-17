@@ -273,7 +273,7 @@ public class OTSPoint3D implements Locatable, Serializable
      *            the 3D distance is used to determine the closest point
      * @return OTSPoint3D; the Z component of the returned point matches the Z-component of hte line at that point
      */
-    private final OTSPoint3D internalClosestPointOnLine(final OTSLine3D line, final boolean useHorizontalDistance)
+    private OTSPoint3D internalClosestPointOnLine(final OTSLine3D line, final boolean useHorizontalDistance)
     {
         OTSPoint3D prevPoint = null;
         double distance = Double.MAX_VALUE;
