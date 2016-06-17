@@ -173,7 +173,7 @@ public class OTSPoint3DTest
                             * heightGainPerPoint);
         }
         OTSLine3D line = new OTSLine3D(spiralPoints);
-        System.out.println("line is " + line);
+        // System.out.println("line is " + line);
         for (double x = 0; x < maxRevolution * growthPerRevolution; x += growthPerRevolution)
         {
             OTSPoint3D point = new OTSPoint3D(x, 0, 0);
