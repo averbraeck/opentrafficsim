@@ -3,9 +3,11 @@ package org.opentrafficsim.core.geometry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.geom.Point2D;
+import java.util.Random;
 
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
@@ -190,6 +192,100 @@ public class OTSPoint3DTest
                     horizontalDistance.si, Math.ulp(distance));
         }
         // TODO: extend by testing at a few other elevations.
+    }
+
+    /**
+     * Test the 2D line segment intersection method.
+     */
+    @Test
+    public final void lineSegmentIntersectionTest()
+    {
+        Random doubleRandom = new Random(12345);
+        for (double xTranslation = -20; xTranslation <= 20; xTranslation += 10)
+        {
+            for (double yTranslation = -20; yTranslation <= 20; yTranslation += 10)
+            {
+                for (double rotation = 0; rotation < 2 * Math.PI; rotation += 0.5)
+                {
+                    OTSPoint3D p1 =
+                            makeRotatedTranslatedPoint(new OTSPoint3D(-2, 0, 100 * (doubleRandom.nextDouble() - 0.5)),
+                                    rotation, xTranslation, yTranslation);
+                    OTSPoint3D p2 =
+                            makeRotatedTranslatedPoint(new OTSPoint3D(2, 0, 100 * (doubleRandom.nextDouble() - 0.5)), rotation,
+                                    xTranslation, yTranslation);
+                    OTSPoint3D q1 =
+                            makeRotatedTranslatedPoint(new OTSPoint3D(0, 10, 100 * (doubleRandom.nextDouble() - 0.5)),
+                                    rotation, xTranslation, yTranslation);
+
+                    for (int x = -4; x <= 4; x++)
+                    {
+                        OTSPoint3D q2 =
+                                makeRotatedTranslatedPoint(new OTSPoint3D(x, -1, 100 * (doubleRandom.nextDouble() - 0.5)),
+                                        rotation, xTranslation, yTranslation);
+                        boolean shouldBeNull = x < -2 || x > 2;
+                        checkIntersection(shouldBeNull, OTSPoint3D.intersectionOfLineSegments(p1, p2, q1, q2));
+                        // reverse order of q
+                        checkIntersection(shouldBeNull, OTSPoint3D.intersectionOfLineSegments(p1, p2, q2, q1));
+                        // reverse order of p
+                        checkIntersection(shouldBeNull, OTSPoint3D.intersectionOfLineSegments(p2, p1, q1, q2));
+                        // reverse order of both p and q
+                        checkIntersection(shouldBeNull, OTSPoint3D.intersectionOfLineSegments(p2, p1, q2, q1));
+                        q2 =
+                                makeRotatedTranslatedPoint(new OTSPoint3D(x, 1, 100 * (doubleRandom.nextDouble() - 0.5)),
+                                        rotation, xTranslation, yTranslation);
+                        checkIntersection(true, OTSPoint3D.intersectionOfLineSegments(p1, p2, q1, q2));
+                        // reverse order of q
+                        checkIntersection(true, OTSPoint3D.intersectionOfLineSegments(p1, p2, q2, q1));
+                        // reverse order of p
+                        checkIntersection(true, OTSPoint3D.intersectionOfLineSegments(p2, p1, q1, q2));
+                        // reverse order of both p and q
+                        checkIntersection(true, OTSPoint3D.intersectionOfLineSegments(p2, p1, q2, q1));
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Create a rotated and translated point.
+     * @param p OTSPoint3D; the point before rotation and translation
+     * @param rotation double; rotation in radians
+     * @param dX double; translation along X direction
+     * @param dY double; translation along Y direction
+     * @return OTSPoint3D
+     * @throws OTSGeometryException
+     */
+    private OTSPoint3D makeRotatedTranslatedPoint(final OTSPoint3D p, final double rotation, final double dX, final double dY)
+    {
+        double sin = Math.sin(rotation);
+        double cos = Math.cos(rotation);
+        return new OTSPoint3D((p.x * cos + p.y * sin) + dX, (p.y * cos - p.x * cos) + dY, p.z);
+    }
+
+    /**
+     * Helper for lineSegmentIntersectionTest.
+     * @param expectNull boolean; if true; the other parameter should be null; if false; the other parameter should be true
+     * @param point OTSPoint3D; an OTSPoint3D or null
+     */
+    private void checkIntersection(final boolean expectNull, final OTSPoint3D point)
+    {
+        if (expectNull)
+        {
+            if (null != point)
+            {
+                System.out.println("problem");
+            }
+            assertNull("there should be an intersection", point);
+        }
+        else
+        {
+            if (null == point)
+            {
+                System.out.println("problem");
+            }
+            assertNotNull("There should not be an intersection", point);
+        }
+
     }
 
 }
