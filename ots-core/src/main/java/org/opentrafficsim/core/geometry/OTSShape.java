@@ -3,6 +3,7 @@ package org.opentrafficsim.core.geometry;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -129,7 +130,19 @@ public class OTSShape extends OTSLine3D
     {
         return getShape().contains(point.x, point.y);
     }
-    
+
+    /**
+     * Check if this OTSShape completely covers a rectangular region.
+     * @param rectangle Rectangle2D; the rectangular region
+     * @return boolean; true if this OTSShape completely covers the region; false otherwise (or when the implementation of
+     *         java.awt.geom.Path2D.contains found it prohibitively expensive to decide. Let us hope that this cannot happen
+     *         with OTSShape objects. Peter has been unable to find out when this might happen.
+     */
+    public final boolean contains(final Rectangle2D rectangle)
+    {
+        return getShape().contains(rectangle);
+    }
+
     /**
      * @param otsShape the shape to test the intersection with
      * @return whether the shapes intersect or whether one shape contains the other
