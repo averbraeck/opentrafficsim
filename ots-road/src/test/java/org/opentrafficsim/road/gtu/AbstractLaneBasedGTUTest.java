@@ -189,7 +189,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
                         }
                         else
                         {
-                            Length expectedPosition = laneGroup.equals(lanesGroupA) ? positionA : positionB;
+                            Length expectedPosition = laneGroup == lanesGroupA ? positionA : positionB;
                             expectedPosition = expectedPosition.plus(relativePosition.getDx());
                             // System.out.println("reported position: " + position);
                             // System.out.println("expected position: " + expectedPosition);
