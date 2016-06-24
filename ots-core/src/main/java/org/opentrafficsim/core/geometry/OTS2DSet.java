@@ -21,7 +21,16 @@ import com.vividsolutions.jts.geom.Envelope;
  * Leaf nodes that cannot be expanded (because they are too small) also store all OTSShapes that partially cover the area of the
  * node. <br>
  * If removal of an OTSShape objects results in a leaf becoming empty, that leaf is removed from its parent (which may then
- * itself become empty and removed in turn).
+ * itself become empty and removed in turn).<br>
+ * Problems with this implementation:
+ * <ul>
+ * <li>The iterator must maintain a set of previously returned OTSShape objects; takes (quadratic?) time and memory.</li>
+ * <li>Implementation of remove in the iterator is very problematic.</li>
+ * </ul>
+ * An alternative approach for the iterator is to maintain one set of all objects and iterate over that. This solves the
+ * complexity of the iterator, but it somewhat increases memory use when no iterator is in use. It does allow for a much faster
+ * contains method (provided that the hashCode is good). The real use of this class is to find objects in a particular area.
+ * The methods required because it implements the Set interface are of secondary importance.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -48,21 +57,23 @@ public class OTS2DSet implements Set<OTSShape>
     /** The bounding box of this OTS2DSet as an OTSShape. */
     private final OTSShape boundingShape;
 
-    /** How fine will this quad tree divide. */
+    /** How fine will this quad tree divide. This one is copied to each sub-node which is somewhat inefficient. */
     private final double minimumCellSize;
 
-    /** Can this node contain sub nodes? */
+    /** Is node allowed to create sub nodes of itself? */
     private final boolean mayHaveSubNodes;
 
+    /** Root node of the quad tree. */
+    private final OTS2DSet root;
+
     /**
-     * Construct an empty OTS2DSet for a rectangular region. Objects that do not intersect this region will never be stored in
-     * this OTS2DSet. (Trying to add such an OTSShape is <b>not</b> an error; the <code>add</code> method will return false,
-     * indicating that the set has not been modified.)
+     * Construct an empty OTS2DSet for a (sub-)region.
      * @param boundingBox Rectangle2D; the region
      * @param minimumCellSize double; resolution of the underlying quad tree
+     * @param root OTS2DSet; the root node of the OTS2DSet (null if this is the root node)
      * @throws OTSGeometryException when the bounding box covers no surface
      */
-    public OTS2DSet(final Rectangle2D boundingBox, final double minimumCellSize) throws OTSGeometryException
+    private OTS2DSet(final Rectangle2D boundingBox, final double minimumCellSize, OTS2DSet root) throws OTSGeometryException
     {
         Throw.when(null == boundingBox, NullPointerException.class, "The boundingBox may not be null");
         Throw.when(boundingBox.getWidth() <= 0 || boundingBox.getHeight() <= 0, OTSGeometryException.class,
@@ -74,6 +85,20 @@ public class OTS2DSet implements Set<OTSShape>
         this.minimumCellSize = minimumCellSize;
         this.mayHaveSubNodes =
                 this.boundingBox.getWidth() > this.minimumCellSize || this.boundingBox.getHeight() > this.minimumCellSize;
+        this.root = root;
+    }
+
+    /**
+     * Construct an empty OTS2DSet for a rectangular region. Objects that do not intersect this region will never be stored in
+     * this OTS2DSet. (Trying to add such an OTSShape is <b>not</b> an error; the <code>add</code> method will return false,
+     * indicating that the set has not been modified.)
+     * @param boundingBox Rectangle2D; the region
+     * @param minimumCellSize double; resolution of the underlying quad tree
+     * @throws OTSGeometryException when the bounding box covers no surface
+     */
+    public OTS2DSet(final Rectangle2D boundingBox, final double minimumCellSize) throws OTSGeometryException
+    {
+        this(boundingBox, minimumCellSize, null);
     }
 
     /** {@inheritDoc} */
@@ -140,17 +165,7 @@ public class OTS2DSet implements Set<OTSShape>
     @Override
     public final Object[] toArray()
     {
-        if (0 == this.size())
-        {
-            return EMPTY_ARRAY_OF_OBJECT;
-        }
-        Object[] result = new Object[this.size()];
-        int nextIndex = 0;
-        for (OTSShape shape : this)
-        {
-            result[nextIndex++] = shape;
-        }
-        return result;
+        return toArray(EMPTY_ARRAY_OF_OBJECT);
     }
 
     /** {@inheritDoc} */
@@ -222,16 +237,38 @@ public class OTS2DSet implements Set<OTSShape>
         {
             if (null == this.leaves[index])
             {
-                Rectangle2D subBox =
-                        new Rectangle2D.Double(index / 2 == 0 ? this.boundingBox.getMinX() : this.boundingBox.getCenterX(),
-                                index % 2 == 0 ? this.boundingBox.getMinY() : this.boundingBox.getCenterY(),
-                                this.boundingBox.getWidth() / 2, this.boundingBox.getHeight() / 2);
+                double subWidth = this.boundingBox.getWidth() / 2;
+                double subHeight = this.boundingBox.getHeight() / 2;
+                if (0 == subWidth)
+                {
+                    // loss of precision; degenerate into a binary tree
+                    subWidth = this.boundingBox.getWidth();
+                }
+                if (0 == subHeight)
+                {
+                    // loss of precision; degenerate into a binary tree
+                    subHeight = this.boundingBox.getHeight();
+                }
+                double left = this.boundingBox.getMinX();
+                if (0 == index / 2)
+                {
+                    left += subWidth;
+                }
+                double bottom = this.boundingBox.getMinY();
+                if (0 == index % 2)
+                {
+                    bottom += subHeight;
+                }
+                Rectangle2D subBox = new Rectangle2D.Double(left, bottom, subWidth, subHeight);
+                // new Rectangle2D.Double(index / 2 == 0 ? this.boundingBox.getMinX() : this.boundingBox.getCenterX(),
+                // index % 2 == 0 ? this.boundingBox.getMinY() : this.boundingBox.getCenterY(),
+                // subWidth, subHeight);
                 if (rectangleShape(subBox).intersects(e))
                 {
                     // Expand this node by adding a sub node.
                     try
                     {
-                        this.leaves[index] = new OTS2DSet(subBox, this.minimumCellSize);
+                        this.leaves[index] = new OTS2DSet(subBox, this.minimumCellSize, null == this.root ? this : this.root);
                         if (this.leaves[index].add(e))
                         {
                             result = true;
@@ -301,6 +338,7 @@ public class OTS2DSet implements Set<OTSShape>
                 }
             }
         }
+        System.out.println("Decrementing size of node " + toString(0) + " from " + this.size + " to " + (this.size - 1));
         this.size--;
         return result;
     }
@@ -613,6 +651,9 @@ public class OTS2DSet implements Set<OTSShape>
         /** The next OTSShape. Must be stored because hasNext has to inspect it to ensure it has not been seen before. */
         private OTSShape nextResult;
 
+        /** The current OTSShape. Must be stored so we can remove it starting from the root of the quad tree. */
+        private OTSShape currentResult;
+
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
@@ -667,12 +708,13 @@ public class OTS2DSet implements Set<OTSShape>
                     throw new NoSuchElementException();
                 }
             }
-            OTSShape result = this.nextResult;
+            this.currentResult = this.nextResult;
             this.nextResult = null;
-            return result;
+            return this.currentResult;
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public final void remove()
         {
@@ -680,7 +722,23 @@ public class OTS2DSet implements Set<OTSShape>
             {
                 throw new IllegalStateException();
             }
-            this.subIterator.remove();
+            this.subIterator.remove(); // Removes it from the current node and fixes the iterator
+            if (null != OTS2DSet.this.root)
+            {
+                OTS2DSet.this.root.remove(this.currentResult); // Removes it from any other nodes that it intersects.
+            }
+            else
+            {
+                OTS2DSet.this.remove(this.currentResult);
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "QuadTreeIterator [phase=" + this.phase + ", seen=" + this.seen.size() + ", subIterator=" + this.subIterator
+                    + ", nextResult=" + this.nextResult + "]";
         }
 
     }
