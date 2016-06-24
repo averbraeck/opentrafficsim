@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.geometry;
 
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -55,11 +56,12 @@ public final class TestIntersectionPerformance
      * @param desiredHitFraction double; intended fraction of shapes that overlap a randomly selected shape
      * @param numRuns int; number of runs to execute
      * @param verbose boolean; if true; print details of each run
+     * @param variant int; variant of the collision tester to use
      * @return Results; collected statistics of this test
      * @throws OTSGeometryException when the number of vertices iss less than two
      */
-    public static Results test(final int numShapes, final int numVertices, final double desiredHitFraction, final int numRuns,
-            final boolean verbose) throws OTSGeometryException
+    public static Results baseTest(final int numShapes, final int numVertices, final double desiredHitFraction,
+            final int numRuns, final boolean verbose, final int variant) throws OTSGeometryException
     {
         Results results = new Results(numShapes, numVertices);
         if (verbose)
@@ -68,34 +70,46 @@ public final class TestIntersectionPerformance
         }
         for (int run = 0; run < numRuns; run++)
         {
-            Collection<OTSShape> shapes = new ArrayList<OTSShape>();
             double radius = 19;
             double dx = 6 * radius / desiredHitFraction / numShapes;
+            Collection<OTSShape> shapes = new ArrayList<OTSShape>();
+            OTS2DSet ots2Dset = new OTS2DSet(new Rectangle2D.Double(-20, -20, dx * numShapes / 2 + 40, 4 * radius), 1);
             for (int i = 0; i < numShapes; i++)
             {
-                shapes.add(makeNGon(numVertices, radius, i % (numShapes / 2) * dx, i > numShapes / 2 ? radius * 1.5 : 0));
+                OTSShape shape = makeNGon(numVertices, radius, i % (numShapes / 2) * dx, i > numShapes / 2 ? radius * 1.5 : 0);
+                shapes.add(shape);
+                ots2Dset.add(shape);
             }
-            // if (0 == run)
-            // {
-            // Iterator<OTSShape> iterator = shapes.iterator();
-            // for (int i = 0; i < 2; i++)
-            // {
-            // System.out.println(iterator.next());
-            // }
-            // }
             long startMillis = System.currentTimeMillis();
             int hits = 0;
             int tests = 0;
-            for (OTSShape ref : shapes)
+            switch (variant)
             {
-                for (OTSShape other : shapes)
-                {
-                    tests++;
-                    if (ref.intersects(other))
+                case 0:
+                    for (OTSShape ref : shapes)
                     {
-                        hits++;
+                        for (OTSShape other : shapes)
+                        {
+                            tests++;
+                            if (ref.intersects(other))
+                            {
+                                hits++;
+                            }
+                        }
                     }
-                }
+                    break;
+
+                case 1:
+                    for (OTSShape ref : shapes)
+                    {
+                        tests += shapes.size();
+                        hits += ots2Dset.intersectingShapes(ref).size();
+                    }
+                    break;
+
+                default:
+                    throw new Error("Bad variant: " + variant);
+
             }
             long endMillis = System.currentTimeMillis();
             double duration = 0.001 * (endMillis - startMillis);
@@ -123,12 +137,16 @@ public final class TestIntersectionPerformance
         System.in.read();
         final int numEdges = 8000;
         final int numRuns = 10;
-        System.out.println(Results.getHeader());
-        for (int numVertices : new int[] { 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000 })
+        for (int variant = 0; variant <= 1; variant++)
         {
-            if (numEdges / numVertices > 2)
+            System.out.println(Results.getHeader());
+            for (int numVertices : new int[] { 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000 })
             {
-                System.out.println(test(numEdges / numVertices, numVertices, 0.10, numRuns, false).result(true, false));
+                if (numEdges / numVertices > 2)
+                {
+                    System.out.println(baseTest(numEdges / numVertices, numVertices, 0.10, numRuns, false, variant).result(
+                            true, false));
+                }
             }
         }
         System.out.println("Finished");
