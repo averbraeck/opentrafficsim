@@ -4,7 +4,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.opentrafficsim.core.Throw;
@@ -21,16 +20,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * Leaf nodes that cannot be expanded (because they are too small) also store all OTSShapes that partially cover the area of the
  * node. <br>
  * If removal of an OTSShape objects results in a leaf becoming empty, that leaf is removed from its parent (which may then
- * itself become empty and removed in turn).<br>
- * Problems with this implementation:
- * <ul>
- * <li>The iterator must maintain a set of previously returned OTSShape objects; takes (quadratic?) time and memory.</li>
- * <li>Implementation of remove in the iterator is very problematic.</li>
- * </ul>
- * An alternative approach for the iterator is to maintain one set of all objects and iterate over that. This solves the
- * complexity of the iterator, but it somewhat increases memory use when no iterator is in use. It does allow for a much faster
- * contains method (provided that the hashCode is good). The real use of this class is to find objects in a particular area.
- * The methods required because it implements the Set interface are of secondary importance.
+ * itself become empty and removed in turn).
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -42,51 +32,14 @@ import com.vividsolutions.jts.geom.Envelope;
  */
 public class OTS2DSet implements Set<OTSShape>
 {
-    /** Current number of Shapes in this set. */
-    private int size = 0;
-
-    /** The four leaves of this node in the quad tree. An empty sub tree may be represented by null. */
-    private OTS2DSet[] leaves = new OTS2DSet[4];
-
-    /** The OTSShapes stored at this node. */
-    private Set<OTSShape> shapes = new HashSet<OTSShape>();
-
-    /** The bounding box of this OTS2DSet. */
-    private final Rectangle2D boundingBox;
-
-    /** The bounding box of this OTS2DSet as an OTSShape. */
-    private final OTSShape boundingShape;
+    /** Set of all shapes used for iterators, etc. */
+    private final Set<OTSShape> allShapes = new HashSet<OTSShape>();
 
     /** How fine will this quad tree divide. This one is copied to each sub-node which is somewhat inefficient. */
     private final double minimumCellSize;
 
-    /** Is node allowed to create sub nodes of itself? */
-    private final boolean mayHaveSubNodes;
-
-    /** Root node of the quad tree. */
-    private final OTS2DSet root;
-
-    /**
-     * Construct an empty OTS2DSet for a (sub-)region.
-     * @param boundingBox Rectangle2D; the region
-     * @param minimumCellSize double; resolution of the underlying quad tree
-     * @param root OTS2DSet; the root node of the OTS2DSet (null if this is the root node)
-     * @throws OTSGeometryException when the bounding box covers no surface
-     */
-    private OTS2DSet(final Rectangle2D boundingBox, final double minimumCellSize, OTS2DSet root) throws OTSGeometryException
-    {
-        Throw.when(null == boundingBox, NullPointerException.class, "The boundingBox may not be null");
-        Throw.when(boundingBox.getWidth() <= 0 || boundingBox.getHeight() <= 0, OTSGeometryException.class,
-                "The boundingBox must have nonzero surface (got %s", boundingBox);
-        Throw.when(minimumCellSize <= 0, OTSGeometryException.class, "The minimumCellSize must be > 0 (got %f)",
-                minimumCellSize);
-        this.boundingBox = boundingBox;
-        this.boundingShape = rectangleShape(boundingBox);
-        this.minimumCellSize = minimumCellSize;
-        this.mayHaveSubNodes =
-                this.boundingBox.getWidth() > this.minimumCellSize || this.boundingBox.getHeight() > this.minimumCellSize;
-        this.root = root;
-    }
+    /** Spatial storage for the OTSShapes. */
+    private QuadTreeNode quadTree;
 
     /**
      * Construct an empty OTS2DSet for a rectangular region. Objects that do not intersect this region will never be stored in
@@ -98,57 +51,34 @@ public class OTS2DSet implements Set<OTSShape>
      */
     public OTS2DSet(final Rectangle2D boundingBox, final double minimumCellSize) throws OTSGeometryException
     {
-        this(boundingBox, minimumCellSize, null);
+        Throw.when(null == boundingBox, NullPointerException.class, "The boundingBox may not be null");
+        Throw.when(boundingBox.getWidth() <= 0 || boundingBox.getHeight() <= 0, OTSGeometryException.class,
+                "The boundingBox must have nonzero surface (got %s", boundingBox);
+        Throw.when(minimumCellSize <= 0, OTSGeometryException.class, "The minimumCellSize must be > 0 (got %f)",
+                minimumCellSize);
+        this.quadTree = new QuadTreeNode(boundingBox);
+        this.minimumCellSize = minimumCellSize;
     }
 
     /** {@inheritDoc} */
     @Override
     public final int size()
     {
-        return this.size;
+        return this.allShapes.size();
     }
 
     /** {@inheritDoc} */
     @Override
     public final boolean isEmpty()
     {
-        return 0 == size();
+        return this.allShapes.isEmpty();
     }
 
     /** {@inheritDoc} */
     @Override
     public final boolean contains(final Object o)
     {
-        if (!(o instanceof OTSShape))
-        {
-            return false;
-        }
-        OTSShape shape = (OTSShape) o;
-        Envelope shapeEnvelope = shape.getEnvelope();
-        if (shapeEnvelope.getMinX() >= this.boundingBox.getMaxX() || shapeEnvelope.getMaxX() <= this.boundingBox.getMinX()
-                || shapeEnvelope.getMinY() >= this.boundingBox.getMaxY()
-                || shapeEnvelope.getMaxY() <= this.boundingBox.getMinY())
-        {
-            return false; // shape does not intersect the bounding box of this node
-        }
-        // This contains operation is the spatial operation with that name!
-        if ((!this.mayHaveSubNodes) || shape.contains(this.boundingBox))
-        {
-            // This contains operation is the set operation with that name!
-            if (this.shapes.contains(shape))
-            {
-                return true;
-            }
-        }
-        // Recursively check the sub nodes
-        for (OTS2DSet subSet : this.leaves)
-        {
-            if (null != subSet && subSet.contains(shape))
-            {
-                return true;
-            }
-        }
-        return false;
+        return this.allShapes.contains(o);
     }
 
     /** {@inheritDoc} */
@@ -158,189 +88,52 @@ public class OTS2DSet implements Set<OTSShape>
         return new QuadTreeIterator();
     }
 
-    /** Returned value of toArray() when size of this OTS2DSet is 0. */
-    private static final Object[] EMPTY_ARRAY_OF_OBJECT = new Object[0];
-
     /** {@inheritDoc} */
     @Override
     public final Object[] toArray()
     {
-        return toArray(EMPTY_ARRAY_OF_OBJECT);
+        return this.allShapes.toArray();
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
     @Override
     public final <T> T[] toArray(final T[] a)
     {
-        T[] result = a;
-        if (result.length < this.size())
-        {
-            result = (T[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), this.size());
-        }
-        else if (result.length > this.size())
-        {
-            result[this.size()] = null;
-        }
-        int nextIndex = 0;
-        for (OTSShape shape : this)
-        {
-            result[nextIndex++] = (T) shape;
-        }
-        return result;
-    }
-
-    /**
-     * Construct a OTSShape from a Rectangle2D.
-     * @param rectangle Rectangle3D; the rectangle
-     * @return OTSShape; a new OTSShape
-     */
-    private OTSShape rectangleShape(final Rectangle2D rectangle)
-    {
-        double left = rectangle.getMinX();
-        double bottom = rectangle.getMinY();
-        double right = rectangle.getMaxX();
-        double top = rectangle.getMaxY();
-        try
-        {
-            return new OTSShape(new OTSPoint3D(left, bottom), new OTSPoint3D(right, bottom), new OTSPoint3D(right, top),
-                    new OTSPoint3D(left, top));
-        }
-        catch (OTSGeometryException exception)
-        {
-            exception.printStackTrace();
-            return null;
-        }
+        return this.allShapes.toArray(a);
     }
 
     /** {@inheritDoc} */
     @Override
     public final boolean add(final OTSShape e)
     {
-        if (!this.boundingShape.intersects(e))
+        if (!this.quadTree.intersects(e))
         {
             return false;
         }
-        if ((!this.mayHaveSubNodes) || e.contains(this.boundingBox))
+        if (this.allShapes.contains(e))
         {
-            // e belongs in the set of shapes of this node.
-            boolean result = this.shapes.add(e);
-            if (result)
-            {
-                this.size++;
-            }
-            return result;
+            return false;
         }
-        // This node may have sub nodes and e does not entirely contain this node. Add e to all applicable sub nodes.
-        boolean result = false;
-        for (int index = 0; index < this.leaves.length; index++)
+        if (!this.quadTree.add(e))
         {
-            if (null == this.leaves[index])
-            {
-                double subWidth = this.boundingBox.getWidth() / 2;
-                double subHeight = this.boundingBox.getHeight() / 2;
-                if (0 == subWidth)
-                {
-                    // loss of precision; degenerate into a binary tree
-                    subWidth = this.boundingBox.getWidth();
-                }
-                if (0 == subHeight)
-                {
-                    // loss of precision; degenerate into a binary tree
-                    subHeight = this.boundingBox.getHeight();
-                }
-                double left = this.boundingBox.getMinX();
-                if (0 == index / 2)
-                {
-                    left += subWidth;
-                }
-                double bottom = this.boundingBox.getMinY();
-                if (0 == index % 2)
-                {
-                    bottom += subHeight;
-                }
-                Rectangle2D subBox = new Rectangle2D.Double(left, bottom, subWidth, subHeight);
-                // new Rectangle2D.Double(index / 2 == 0 ? this.boundingBox.getMinX() : this.boundingBox.getCenterX(),
-                // index % 2 == 0 ? this.boundingBox.getMinY() : this.boundingBox.getCenterY(),
-                // subWidth, subHeight);
-                if (rectangleShape(subBox).intersects(e))
-                {
-                    // Expand this node by adding a sub node.
-                    try
-                    {
-                        this.leaves[index] = new OTS2DSet(subBox, this.minimumCellSize, null == this.root ? this : this.root);
-                        if (this.leaves[index].add(e))
-                        {
-                            result = true;
-                        }
-                        else
-                        {
-                            throw new Error("Cannot happen: new node refused to add shape that intersects it");
-                        }
-                    }
-                    catch (OTSGeometryException exception)
-                    {
-                        exception.printStackTrace(); // Should not be possible
-                    }
-                }
-            }
-            else
-            {
-                // Leaf node already exists. Let the leaf determine if e should be stored (somewhere) in it.
-                if (this.leaves[index].add(e))
-                {
-                    result = true;
-                }
-            }
+            System.err.println("add: ERROR object could not be added to the quad tree");
         }
-        if (result)
-        {
-            this.size++;
-        }
-        return result;
+        return this.allShapes.add(e);
     }
 
     /** {@inheritDoc} */
     @Override
     public final boolean remove(final Object o)
     {
-        if (!(o instanceof OTSShape))
+        if (!this.allShapes.remove(o))
         {
             return false;
         }
-        OTSShape shape = (OTSShape) o;
-        if (!this.boundingShape.intersects(shape))
+        if (!this.quadTree.remove((OTSShape) o))
         {
-            return false;
+            System.err.println("remove: ERROR object could not be removed from the quad tree");
         }
-        for (OTSShape s : this.shapes)
-        {
-            if (shape.equals(s))
-            {
-                this.shapes.remove(shape);
-                this.size--;
-                return true;
-            }
-        }
-        boolean result = false;
-        for (int index = 0; index < this.leaves.length; index++)
-        {
-            OTS2DSet set = this.leaves[index];
-            if (null != set)
-            {
-                if (set.remove(shape))
-                {
-                    result = true;
-                    if (0 == set.size())
-                    {
-                        this.leaves[index] = null; // Cut off empty leaf node
-                    }
-                }
-            }
-        }
-        System.out.println("Decrementing size of node " + toString(0) + " from " + this.size + " to " + (this.size - 1));
-        this.size--;
-        return result;
+        return true;
     }
 
     /** {@inheritDoc} */
@@ -410,11 +203,8 @@ public class OTS2DSet implements Set<OTSShape>
     @Override
     public final void clear()
     {
-        for (int index = 0; index < this.leaves.length; index++)
-        {
-            this.leaves[index] = null;
-        }
-        this.shapes.clear();
+        this.quadTree.clear();
+        this.allShapes.clear();
     }
 
     /**
@@ -424,27 +214,25 @@ public class OTS2DSet implements Set<OTSShape>
      */
     public final Set<OTSShape> intersectingShapes(final Rectangle2D rectangle)
     {
-        Set<OTSShape> result = new HashSet<OTSShape>();
-        if (!this.boundingBox.intersects(rectangle))
-        {
-            return result;
-        }
-        for (OTS2DSet leaf : this.leaves)
-        {
-            if (null != leaf && leaf.boundingBox.intersects(rectangle))
-            {
-                result.addAll(leaf.intersectingShapes(rectangle));
-            }
-        }
-        for (OTSShape shape : this.shapes)
-        {
-            OTSShape rectangleShape = rectangleShape(rectangle);
-            if (rectangleShape.intersects(shape))
-            {
-                result.add(shape);
-            }
-        }
-        return result;
+        return this.quadTree.intersectingShapes(rectangle);
+    }
+
+    /**
+     * Recursively print this OTS2DSet.
+     * @param recursionDepth int; maximum depth to recurse
+     * @return String
+     */
+    final String toString(final int recursionDepth)
+    {
+        return "OTS2DSet [contains " + size() + (1 == this.allShapes.size() ? "shape" : "shapes") + ", minimumCellSize="
+                + this.minimumCellSize + ", quadTree=" + this.quadTree.toString(recursionDepth) + "]";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return toString(0);
     }
 
     /**
@@ -468,167 +256,14 @@ public class OTS2DSet implements Set<OTSShape>
         return result;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final String toString()
-    {
-        return toString(0);
-    }
-
     /**
-     * Helper function for toString.
-     * @param recursionDepth int; maximum number of levels to print recursively
-     * @param index int; index in leaves
-     * @return String
-     */
-    private String printLeaf(final int recursionDepth, final int index)
-    {
-        OTS2DSet leaf = this.leaves[index];
-        if (null == leaf)
-        {
-            return "null";
-        }
-        if (recursionDepth > 0)
-        {
-            return leaf.toString(recursionDepth - 1);
-        }
-        int leafSize = this.leaves[index].size();
-        return leafSize + " shape" + (1 == leafSize ? "" : "s");
-    }
-
-    /**
-     * Recursively print this OTS2DSet.
-     * @param recursionDepth int; maximum depth to recurse
-     * @return String
-     */
-    final String toString(final int recursionDepth)
-    {
-        return "OTS2DSet [size=" + this.size + ", bounds=[LB: " + this.boundingBox.getMinX() + "," + this.boundingBox.getMinY()
-                + ", RT: " + this.boundingBox.getMaxX() + "," + this.boundingBox.getMaxY() + "], leaves=[LB: "
-                + printLeaf(recursionDepth, 0) + ", RB: " + printLeaf(recursionDepth, 1) + ", LT: "
-                + printLeaf(recursionDepth, 2) + ", RT: " + printLeaf(recursionDepth, 3) + "], local " + this.shapes.size()
-                + " shape" + (1 == this.shapes.size() ? "" : "s") + ", minimumCellSize=" + this.minimumCellSize + "]";
-
-    }
-
-    /**
-     * Return concatenation of a number of copies of a string.
-     * @param count int; number of copies to concatenate
-     * @param string String; the string to repeat
-     * @return String
-     */
-    private String repeat(final int count, final String string)
-    {
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < count; i++)
-        {
-            result.append(string);
-        }
-        return result.toString();
-    }
-
-    /** Graphic to draw a vertical line. */
-    private static final String VLINE = "|";
-
-    /** Graphic to draw a horizontal line. */
-    private static final String HLINE = "-";
-
-    /** Graphic to draw a space. */
-    private static final String SPACE = " ";
-
-    /** Number of digits to print. */
-    private static final int NUMBERSIZE = 6;
-
-    /**
-     * Similar to toStringGraphic, but with OTS2DSet argument which can be null. <br>
-     * This code is <b>not</b> optimized for performance; the repeated use of String.split is probably expensive.
-     * @param set OTS2DSet; the OTS2DSet to render. Can be null.
-     * @param recursionDepth int; levels to recurse
-     * @return String
-     */
-    private String subStringGraphic(final OTS2DSet set, final int recursionDepth)
-    {
-        StringBuffer result = new StringBuffer();
-        if (0 == recursionDepth)
-        {
-            if (null == set)
-            {
-                result.append(repeat(NUMBERSIZE, SPACE));
-            }
-            else
-            {
-                String numberBuf = String.format("%d", size());
-                int spare = NUMBERSIZE - numberBuf.length();
-                int filled = 0;
-                while (filled < spare / 2)
-                {
-                    result.append(SPACE);
-                    filled++;
-                }
-                result.append(numberBuf);
-                while (filled < spare)
-                {
-                    result.append(SPACE);
-                    filled++;
-                }
-                result.append("\n");
-                return result.toString();
-            }
-        }
-        else
-        {
-            String[] left = subStringGraphic(null == set ? null : set.leaves[1], recursionDepth - 1).split("\\n");
-            String[] right = subStringGraphic(null == set ? null : set.leaves[3], recursionDepth - 1).split("\\n");
-            String horizontalLine = null;
-            for (int i = 0; i < left.length; i++)
-            {
-                if (0 == i)
-                {
-                    StringBuilder line = new StringBuilder();
-                    int width = left[0].length() + 1 + right[0].length();
-                    if (null == set)
-                    {
-                        line.append(repeat(width, SPACE));
-                    }
-                    else
-                    {
-                        String numberBuf = String.format("%d", set.shapes.size());
-                        int spare = width - numberBuf.length();
-                        line.append(repeat(spare / 2, HLINE));
-                        line.append(numberBuf);
-                        line.append(repeat(spare - spare / 2, HLINE));
-                    }
-                    horizontalLine = line.toString();
-                }
-                result.append(left[i]);
-                result.append(null == set ? SPACE : VLINE);
-                result.append(right[i]);
-                result.append("\n");
-            }
-            result.append(horizontalLine);
-            result.append("\n");
-            left = subStringGraphic(null == set ? null : set.leaves[0], recursionDepth - 1).split("\\n");
-            right = subStringGraphic(null == set ? null : set.leaves[2], recursionDepth - 1).split("\\n");
-            for (int i = 0; i < left.length; i++)
-            {
-                result.append(left[i]);
-                result.append(null == set ? SPACE : VLINE);
-                result.append(right[i]);
-                result.append("\n");
-            }
-            result.append("\n");
-        }
-        return result.toString();
-    }
-
-    /**
-     * Return a String depicting an OTS2DSet.
-     * @param recursionDepth int; levels to recurse
-     * @return String
+     * Return an ASCII art rendering of this OTS2DSet.
+     * @param recursionDepth int; maximum recursion depth
+     * @return String; a somewhat human readable rendering of this OTS2DSet
      */
     public final String toStringGraphic(final int recursionDepth)
     {
-        return subStringGraphic(this, recursionDepth);
+        return this.quadTree.toStringGraphic(recursionDepth);
     }
 
     /**
@@ -636,81 +271,26 @@ public class OTS2DSet implements Set<OTSShape>
      */
     class QuadTreeIterator implements Iterator<OTSShape>
     {
-        /**
-         * Position in the current node. Phase values 0..3 index the four leaves; phase value 4 selects the shapes set the
-         * current node.
-         */
-        private int phase = 4;
+        /** Underlying iterator that traverses the allShapes Set. */
+        @SuppressWarnings("synthetic-access")
+        private final Iterator<OTSShape> theIterator = OTS2DSet.this.allShapes.iterator();
 
-        /** Set of OTSShapes that were already returned by this iterator. This is probably dreadfully expensive. */
-        private Set<OTSShape> seen = new HashSet<OTSShape>();
-
-        /** Iterator of the current (sub-)node. */
-        private Iterator<OTSShape> subIterator = null;
-
-        /** The next OTSShape. Must be stored because hasNext has to inspect it to ensure it has not been seen before. */
-        private OTSShape nextResult;
-
-        /** The current OTSShape. Must be stored so we can remove it starting from the root of the quad tree. */
-        private OTSShape currentResult;
+        /** Remember the last returned result so we can remove it when requested. */
+        private OTSShape lastResult = null;
 
         /** {@inheritDoc} */
-        @SuppressWarnings("synthetic-access")
         @Override
         public final boolean hasNext()
         {
-            while (this.phase >= 0)
-            {
-                if (null == this.subIterator)
-                {
-                    if (4 == this.phase)
-                    {
-                        this.subIterator = OTS2DSet.this.shapes.iterator();
-                    }
-                    else
-                    {
-                        // The second part of this if statement is a (minor) performance improvement
-                        if (null == OTS2DSet.this.leaves[this.phase] || 0 == OTS2DSet.this.leaves[this.phase].size())
-                        {
-                            this.phase--; // move to the next phase
-                            continue;
-                        }
-                        this.subIterator = OTS2DSet.this.leaves[this.phase].iterator();
-                    }
-                }
-                // If execution gets here; we have a valid subIterator.
-                while (this.subIterator.hasNext())
-                {
-                    this.nextResult = this.subIterator.next();
-                    if (this.seen.contains(this.nextResult))
-                    {
-                        continue;
-                    }
-                    this.seen.add(this.nextResult);
-                    return true;
-                }
-                // Our subIterator has run out of things to return. Get rid of it, then see if there is another set to iterate
-                // over.
-                this.subIterator = null;
-                this.phase--; // move to the next phase.
-            }
-            return false;
+            return this.theIterator.hasNext();
         }
 
         /** {@inheritDoc} */
         @Override
         public final OTSShape next()
         {
-            if (null == this.nextResult)
-            {
-                if (!hasNext())
-                {
-                    throw new NoSuchElementException();
-                }
-            }
-            this.currentResult = this.nextResult;
-            this.nextResult = null;
-            return this.currentResult;
+            this.lastResult = this.theIterator.next();
+            return this.lastResult;
         }
 
         /** {@inheritDoc} */
@@ -718,18 +298,10 @@ public class OTS2DSet implements Set<OTSShape>
         @Override
         public final void remove()
         {
-            if (null == this.subIterator)
+            this.theIterator.remove();
+            if (!OTS2DSet.this.quadTree.remove(this.lastResult))
             {
-                throw new IllegalStateException();
-            }
-            this.subIterator.remove(); // Removes it from the current node and fixes the iterator
-            if (null != OTS2DSet.this.root)
-            {
-                OTS2DSet.this.root.remove(this.currentResult); // Removes it from any other nodes that it intersects.
-            }
-            else
-            {
-                OTS2DSet.this.remove(this.currentResult);
+                System.err.println("iterator.remove: ERROR: could not remove " + this.lastResult + " from the quad tree");
             }
         }
 
@@ -737,8 +309,449 @@ public class OTS2DSet implements Set<OTSShape>
         @Override
         public String toString()
         {
-            return "QuadTreeIterator [phase=" + this.phase + ", seen=" + this.seen.size() + ", subIterator=" + this.subIterator
-                    + ", nextResult=" + this.nextResult + "]";
+            return "QuadTreeIterator [theIterator=" + this.theIterator + ", lastResult=" + this.lastResult + "]";
+        }
+
+    }
+
+    /**
+     * Spatial-aware storage for a set of OTSShape objects.
+     */
+    class QuadTreeNode
+    {
+        /** The OTSShapes stored at this node. */
+        private Set<OTSShape> shapes = new HashSet<OTSShape>();
+
+        /** The bounding box of this QuadTreeNode. */
+        private final Rectangle2D boundingBox;
+
+        /** The bounding box of this QuadTreeNode as an OTSShape. */
+        private final OTSShape boundingShape;
+
+        /**
+         * The four leaves of this node in the quad tree. An empty sub tree may be represented by null. If this field is
+         * initialized to null; this node may not expand by adding sub-nodes.
+         */
+        private final QuadTreeNode[] leaves;
+
+        /**
+         * Construct a new QuadTreeNode.
+         * @param boundingBox Rectangle2D; the bounding box of the area of the new QuadTreeNode
+         */
+        @SuppressWarnings("synthetic-access")
+        QuadTreeNode(final Rectangle2D boundingBox)
+        {
+            this.boundingBox = boundingBox;
+            this.boundingShape = rectangleShape(boundingBox);
+            this.leaves =
+                    boundingBox.getWidth() > OTS2DSet.this.minimumCellSize
+                            || boundingBox.getHeight() > OTS2DSet.this.minimumCellSize ? new QuadTreeNode[4] : null;
+        }
+
+        /**
+         * Return a Set containing all OTSShapes in this QuadTreeNode that intersect a rectangular area.
+         * @param rectangle Rectangle2D; the area
+         * @return Set&lt;OTSShape&gt;; the set
+         */
+        public Set<OTSShape> intersectingShapes(final Rectangle2D rectangle)
+        {
+            Set<OTSShape> result = new HashSet<OTSShape>();
+            if (!this.boundingBox.intersects(rectangle))
+            {
+                return result;
+            }
+            if (null == this.leaves)
+            {
+                return result;
+            }
+            for (QuadTreeNode leaf : this.leaves)
+            {
+                if (null != leaf && leaf.intersects(rectangle))
+                {
+                    result.addAll(leaf.intersectingShapes(rectangle));
+                }
+            }
+            for (OTSShape shape : this.shapes)
+            {
+                OTSShape rectangleShape = rectangleShape(rectangle);
+                if (rectangleShape.intersects(shape))
+                {
+                    result.add(shape);
+                }
+            }
+            return result;
+        }
+
+        /**
+         * Test if this QuadTreeNode intersects a rectangular area.
+         * @param rectangle Rectangle2D; the rectangular area
+         * @return boolean; true if the rectangular area intersects this QuadTreeNode; false otherwise
+         */
+        private boolean intersects(final Rectangle2D rectangle)
+        {
+            return this.boundingBox.intersects(rectangle);
+        }
+
+        /**
+         * Remove all OTSShapes from this QuadTreeNode and cut off all leaves.
+         */
+        public void clear()
+        {
+            this.shapes.clear();
+            for (int index = 0; index < this.leaves.length; index++)
+            {
+                this.leaves[index] = null;
+            }
+        }
+
+        /**
+         * Remove an OTSShape from this QuadTreeNode.
+         * @param shape OTSShape; the shape that must be removed.
+         * @return boolean; true if this node (or a sub-node) was altered; false otherwise
+         */
+        public boolean remove(final OTSShape shape)
+        {
+            if (!this.boundingShape.intersects(shape))
+            {
+                return false;
+            }
+            for (OTSShape s : this.shapes)
+            {
+                if (shape.equals(s))
+                {
+                    this.shapes.remove(shape);
+                    return true;
+                }
+            }
+            boolean result = false;
+            for (int index = 0; index < this.leaves.length; index++)
+            {
+                QuadTreeNode qtn = this.leaves[index];
+                if (null != qtn)
+                {
+                    if (qtn.remove(shape))
+                    {
+                        result = true;
+                        if (qtn.isEmpty())
+                        {
+                            this.leaves[index] = null; // Cut off empty leaf node
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
+        /**
+         * Check if this QuadTreeNode is empty.
+         * @return boolean; true if this QuadTreeNode is empty
+         */
+        private boolean isEmpty()
+        {
+            if (!this.shapes.isEmpty())
+            {
+                return false;
+            }
+            if (null == this.leaves)
+            {
+                return true;
+            }
+            for (QuadTreeNode qtn : this.leaves)
+            {
+                if (null != qtn)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /**
+         * Test if the area of this QuadTree intersects an OTSShape.
+         * @param shape OTSShape; the shape
+         * @return boolean; true if the area of this QuadTree intersects the shape; false otherwise
+         */
+        public boolean intersects(final OTSShape shape)
+        {
+            return this.boundingShape.intersects(shape);
+        }
+
+        /**
+         * Construct a OTSShape from a Rectangle2D.
+         * @param rectangle Rectangle3D; the rectangle
+         * @return OTSShape; a new OTSShape
+         */
+        private OTSShape rectangleShape(final Rectangle2D rectangle)
+        {
+            double left = rectangle.getMinX();
+            double bottom = rectangle.getMinY();
+            double right = rectangle.getMaxX();
+            double top = rectangle.getMaxY();
+            try
+            {
+                return new OTSShape(new OTSPoint3D(left, bottom), new OTSPoint3D(right, bottom), new OTSPoint3D(right, top),
+                        new OTSPoint3D(left, top));
+            }
+            catch (OTSGeometryException exception)
+            {
+                exception.printStackTrace();
+                return null;
+            }
+        }
+
+        /**
+         * Add an OTSShape to this QuadTreeNode.
+         * @param shape OTSShape; the shape
+         * @return boolean; true if this QuadTreeNode changed as a result of this operation
+         */
+        public final boolean add(final OTSShape shape)
+        {
+            if (!this.boundingShape.intersects(shape))
+            {
+                return false;
+            }
+            if ((null == this.leaves) || shape.contains(this.boundingBox))
+            {
+                // shape belongs in the set of shapes of this node.
+                return this.shapes.add(shape);
+            }
+            // This node may have leaves and shape does not entirely contain this node. Add shape to all applicable leaves.
+            boolean result = false;
+            for (int index = 0; index < this.leaves.length; index++)
+            {
+                if (null == this.leaves[index])
+                {
+                    double subWidth = this.boundingBox.getWidth() / 2;
+                    double subHeight = this.boundingBox.getHeight() / 2;
+                    if (0 == subWidth)
+                    {
+                        // loss of precision; degenerate into a binary tree
+                        subWidth = this.boundingBox.getWidth();
+                    }
+                    if (0 == subHeight)
+                    {
+                        // loss of precision; degenerate into a binary tree
+                        subHeight = this.boundingBox.getHeight();
+                    }
+                    double left = this.boundingBox.getMinX();
+                    if (0 != index / 2)
+                    {
+                        left += subWidth;
+                    }
+                    double bottom = this.boundingBox.getMinY();
+                    if (0 != index % 2)
+                    {
+                        bottom += subHeight;
+                    }
+                    Rectangle2D subBox = new Rectangle2D.Double(left, bottom, subWidth, subHeight);
+                    if (rectangleShape(subBox).intersects(shape))
+                    {
+                        // Expand this node by adding a sub node.
+                        this.leaves[index] = new QuadTreeNode(subBox);
+                        if (this.leaves[index].add(shape))
+                        {
+                            result = true;
+                        }
+                        else
+                        {
+                            throw new Error("Cannot happen: new QuadTreeNode refused to add shape that intersects it");
+                        }
+                    }
+                }
+                else
+                {
+                    // Leaf node already exists. Let the leaf determine if shape should be stored (somewhere) in it.
+                    if (this.leaves[index].add(shape))
+                    {
+                        result = true;
+                    }
+                }
+            }
+            return result;
+        }
+
+        /**
+         * Helper function for toString.
+         * @param recursionDepth int; maximum number of levels to print recursively
+         * @param index int; index in leaves
+         * @return String
+         */
+        private String printLeaf(final int recursionDepth, final int index)
+        {
+            QuadTreeNode leaf = this.leaves[index];
+            if (null == leaf)
+            {
+                return "null";
+            }
+            if (recursionDepth > 0)
+            {
+                return leaf.toString(recursionDepth - 1);
+            }
+            int leafSize = leaf.shapes.size();
+            return leafSize + " shape" + (1 == leafSize ? "" : "s");
+        }
+
+        /**
+         * Recursively print this QuadTreeNode.
+         * @param recursionDepth int; maximum depth to recurse
+         * @return String
+         */
+        final String toString(final int recursionDepth)
+        {
+            return "QuadTreeNode [" + this.shapes.size() + ", bounds=[LB: " + this.boundingBox.getMinX() + ","
+                    + this.boundingBox.getMinY() + ", RT: " + this.boundingBox.getMaxX() + "," + this.boundingBox.getMaxY()
+                    + "], " + subNodes(recursionDepth) + ", local " + this.shapes.size()
+                    + (1 == this.shapes.size() ? " shape" : " shapes") + "]";
+        }
+
+        /**
+         * Print the leaves of this QuadTreeNode.
+         * @param recursionDepth int; maximum depth to recurse
+         * @return String
+         */
+        private String subNodes(final int recursionDepth)
+        {
+            if (null == this.leaves)
+            {
+                return "cannot have leaves";
+            }
+            return "leaves=[LB: " + printLeaf(recursionDepth, 0) + ", RB: " + printLeaf(recursionDepth, 1) + ", LT: "
+                    + printLeaf(recursionDepth, 2) + ", RT: " + printLeaf(recursionDepth, 3) + "]";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return toString(0);
+        }
+
+        /**
+         * Return concatenation of a number of copies of a string.
+         * @param count int; number of copies to concatenate
+         * @param string String; the string to repeat
+         * @return String
+         */
+        private String repeat(final int count, final String string)
+        {
+            StringBuilder result = new StringBuilder();
+            for (int i = 0; i < count; i++)
+            {
+                result.append(string);
+            }
+            return result.toString();
+        }
+
+        /** Graphic to draw a vertical line. */
+        private static final String VLINE = "|";
+
+        /** Graphic to draw a horizontal line. */
+        private static final String HLINE = "-";
+
+        /** Graphic to draw a space. */
+        private static final String SPACE = " ";
+
+        /** Number of digits to print. */
+        private static final int NUMBERSIZE = 6;
+
+        /**
+         * Similar to toStringGraphic, but with QuadTreeNode argument which can be null. <br>
+         * This code is <b>not</b> optimized for performance; the repeated use of String.split is probably expensive.
+         * @param qtn QuadTreeNode; the QuadTreeNode to render. Can be null.
+         * @param recursionDepth int; levels to recurse
+         * @return String
+         */
+        private String subStringGraphic(final QuadTreeNode qtn, final int recursionDepth)
+        {
+            StringBuffer result = new StringBuffer();
+            if (0 == recursionDepth)
+            {
+                if (null == qtn)
+                {
+                    result.append(repeat(NUMBERSIZE, SPACE));
+                }
+                else
+                {
+                    String numberBuf = String.format("%d", size());
+                    int spare = NUMBERSIZE - numberBuf.length();
+                    int filled = 0;
+                    while (filled < spare / 2)
+                    {
+                        result.append(SPACE);
+                        filled++;
+                    }
+                    result.append(numberBuf);
+                    while (filled < spare)
+                    {
+                        result.append(SPACE);
+                        filled++;
+                    }
+                    result.append("\n");
+                    return result.toString();
+                }
+            }
+            else
+            {
+                String[] left =
+                        subStringGraphic(null == qtn || null == qtn.leaves ? null : qtn.leaves[1], recursionDepth - 1).split(
+                                "\\n");
+                String[] right =
+                        subStringGraphic(null == qtn || null == qtn.leaves ? null : qtn.leaves[3], recursionDepth - 1).split(
+                                "\\n");
+                String horizontalLine = null;
+                for (int i = 0; i < left.length; i++)
+                {
+                    if (0 == i)
+                    {
+                        StringBuilder line = new StringBuilder();
+                        int width = left[0].length() + 1 + right[0].length();
+                        if (null == qtn)
+                        {
+                            line.append(repeat(width, SPACE));
+                        }
+                        else
+                        {
+                            String numberBuf = String.format("%d", qtn.shapes.size());
+                            int spare = width - numberBuf.length();
+                            line.append(repeat(spare / 2, HLINE));
+                            line.append(numberBuf);
+                            line.append(repeat(spare - spare / 2, HLINE));
+                        }
+                        horizontalLine = line.toString();
+                    }
+                    result.append(left[i]);
+                    result.append(null == qtn ? SPACE : VLINE);
+                    result.append(right[i]);
+                    result.append("\n");
+                }
+                result.append(horizontalLine);
+                result.append("\n");
+                left =
+                        subStringGraphic(null == qtn || null == qtn.leaves ? null : qtn.leaves[0], recursionDepth - 1).split(
+                                "\\n");
+                right =
+                        subStringGraphic(null == qtn || null == qtn.leaves ? null : qtn.leaves[2], recursionDepth - 1).split(
+                                "\\n");
+                for (int i = 0; i < left.length; i++)
+                {
+                    result.append(left[i]);
+                    result.append(null == qtn ? SPACE : VLINE);
+                    result.append(right[i]);
+                    result.append("\n");
+                }
+                result.append("\n");
+            }
+            return result.toString();
+        }
+
+        /**
+         * Return a String depicting this QuadTreeNode.
+         * @param recursionDepth int; levels to recurse
+         * @return String
+         */
+        public final String toStringGraphic(final int recursionDepth)
+        {
+            return subStringGraphic(this, recursionDepth);
         }
 
     }
