@@ -44,7 +44,10 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
         OBJECT,
 
         /** there is no observed object, just a distance. */
-        DISTANCEONLY;
+        DISTANCEONLY,
+        
+        /** intersection conflict. */
+        CONFLICT;
 
         /** @return whether this object is a GTU or not. */
         public boolean isGtu()
@@ -69,6 +72,13 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
         {
             return this.equals(DISTANCEONLY);
         }
+        
+        /** @return whether this object is a conflict or not. */
+        public boolean isConflict()
+        {
+            return this.equals(CONFLICT);
+        }
+        
     }
 
     /**

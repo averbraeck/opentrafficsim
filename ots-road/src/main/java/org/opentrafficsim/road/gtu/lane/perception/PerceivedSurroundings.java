@@ -159,6 +159,6 @@ public interface PerceivedSurroundings
      * @param lane relative lateral lane
      * @return set of intersection conflicts along the route
      */
-    SortedSet<Object> getIntersectionConflicts(RelativeLane lane); // TODO Change output type to ConflictHeadway
+    SortedSet<HeadwayConflict> getIntersectionConflicts(RelativeLane lane); // TODO Change output type to ConflictHeadway
 
 }
