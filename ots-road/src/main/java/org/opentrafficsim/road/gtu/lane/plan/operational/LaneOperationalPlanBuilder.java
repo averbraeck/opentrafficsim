@@ -3,23 +3,34 @@ package org.opentrafficsim.road.gtu.lane.plan.operational;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.AccelerationSegment;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.SpeedSegment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.math.Solver;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneDirection;
 
 /**
  * Builder for several often used operational plans, based on a list of lanes. E.g., decelerate to come to a full stop at the
@@ -70,9 +81,9 @@ public final class LaneOperationalPlanBuilder
      *             first lane
      */
     public static LaneBasedOperationalPlan buildGradualAccelerationPlan(final LaneBasedGTU gtu, final List<Lane> lanes,
-        final Length firstLanePosition, final Length distance, final Time startTime,
-        final Speed startSpeed, final Speed endSpeed, final Acceleration maxAcceleration,
-        final Acceleration maxDeceleration) throws OperationalPlanException, OTSGeometryException
+        final Length firstLanePosition, final Length distance, final Time startTime, final Speed startSpeed,
+        final Speed endSpeed, final Acceleration maxAcceleration, final Acceleration maxDeceleration)
+        throws OperationalPlanException, OTSGeometryException
     {
         OTSLine3D path = makePath(lanes, firstLanePosition, distance);
         OperationalPlan.Segment segment;
@@ -126,9 +137,8 @@ public final class LaneOperationalPlanBuilder
      * @throws OTSGeometryException in case the lanes are not connected or firstLanePosition is larger than the length of the
      *             first lane
      */
-    public static OTSLine3D makePath(final List<Lane> lanes,
-        final Length firstLanePosition, final Length distance) throws OperationalPlanException,
-        OTSGeometryException
+    public static OTSLine3D makePath(final List<Lane> lanes, final Length firstLanePosition, final Length distance)
+        throws OperationalPlanException, OTSGeometryException
     {
         if (lanes.size() == 0)
         {
@@ -160,8 +170,8 @@ public final class LaneOperationalPlanBuilder
      *             first lane
      */
     public static LaneBasedOperationalPlan buildGradualAccelerationPlan(final LaneBasedGTU gtu, final List<Lane> lanes,
-        final Length firstLanePosition, final Length distance, final Time startTime,
-        final Speed startSpeed, final Speed endSpeed) throws OperationalPlanException, OTSGeometryException
+        final Length firstLanePosition, final Length distance, final Time startTime, final Speed startSpeed,
+        final Speed endSpeed) throws OperationalPlanException, OTSGeometryException
     {
         return buildGradualAccelerationPlan(gtu, lanes, firstLanePosition, distance, startTime, startSpeed, endSpeed,
             MAX_ACCELERATION, MAX_DECELERATION);
@@ -187,8 +197,8 @@ public final class LaneOperationalPlanBuilder
      *             first lane
      */
     public static LaneBasedOperationalPlan buildMaximumAccelerationPlan(final LaneBasedGTU gtu, final List<Lane> lanes,
-        final Length firstLanePosition, final Length distance, final Time startTime,
-        final Speed startSpeed, final Speed endSpeed, final Acceleration acceleration, final Acceleration deceleration)
+        final Length firstLanePosition, final Length distance, final Time startTime, final Speed startSpeed,
+        final Speed endSpeed, final Acceleration acceleration, final Acceleration deceleration)
         throws OperationalPlanException, OTSGeometryException
     {
         OTSLine3D path = makePath(lanes, firstLanePosition, distance);
@@ -204,14 +214,12 @@ public final class LaneOperationalPlanBuilder
                 if (endSpeed.gt(startSpeed))
                 {
                     Duration t = endSpeed.minus(startSpeed).divideBy(acceleration);
-                    Length x =
-                        startSpeed.multiplyBy(t).plus(acceleration.multiplyBy(0.5).multiplyBy(t).multiplyBy(t));
+                    Length x = startSpeed.multiplyBy(t).plus(acceleration.multiplyBy(0.5).multiplyBy(t).multiplyBy(t));
                     if (x.ge(distance))
                     {
                         // we cannot reach the end speed in the given distance with the given acceleration
                         Duration duration =
-                            new Duration(
-                                Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -distance.si),
+                            new Duration(Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -distance.si),
                                 TimeUnit.SI);
                         segmentList.add(new OperationalPlan.AccelerationSegment(duration, acceleration));
                     }
@@ -226,14 +234,12 @@ public final class LaneOperationalPlanBuilder
                 else
                 {
                     Duration t = endSpeed.minus(startSpeed).divideBy(deceleration);
-                    Length x =
-                        startSpeed.multiplyBy(t).plus(deceleration.multiplyBy(0.5).multiplyBy(t).multiplyBy(t));
+                    Length x = startSpeed.multiplyBy(t).plus(deceleration.multiplyBy(0.5).multiplyBy(t).multiplyBy(t));
                     if (x.ge(distance))
                     {
                         // we cannot reach the end speed in the given distance with the given deceleration
                         Duration duration =
-                            new Duration(
-                                Solver.firstSolutionAfter(0, deceleration.si / 2, startSpeed.si, -distance.si),
+                            new Duration(Solver.firstSolutionAfter(0, deceleration.si / 2, startSpeed.si, -distance.si),
                                 TimeUnit.SI);
                         segmentList.add(new OperationalPlan.AccelerationSegment(duration, deceleration));
                     }
@@ -244,8 +250,7 @@ public final class LaneOperationalPlanBuilder
                             // if endSpeed == 0, we cannot reach the end of the path. Therefore, build a partial path.
                             OTSLine3D partialPath = path.truncate(x.si);
                             segmentList.add(new OperationalPlan.AccelerationSegment(t, deceleration));
-                            return new LaneBasedOperationalPlan(gtu, partialPath, startTime, startSpeed, segmentList,
-                                lanes);
+                            return new LaneBasedOperationalPlan(gtu, partialPath, startTime, startSpeed, segmentList, lanes);
                         }
                         // we reach the (lower) end speed, larger than zero, before the end of the segment. Make two segments.
                         segmentList.add(new OperationalPlan.AccelerationSegment(t, deceleration));
@@ -280,10 +285,219 @@ public final class LaneOperationalPlanBuilder
      *             first lane
      */
     public static LaneBasedOperationalPlan buildStopPlan(final LaneBasedGTU gtu, final List<Lane> lanes,
-        final Length firstLanePosition, final Length distance, final Time startTime,
-        final Speed startSpeed, final Acceleration deceleration) throws OperationalPlanException, OTSGeometryException
+        final Length firstLanePosition, final Length distance, final Time startTime, final Speed startSpeed,
+        final Acceleration deceleration) throws OperationalPlanException, OTSGeometryException
     {
-        return buildMaximumAccelerationPlan(gtu, lanes, firstLanePosition, distance, startTime, startSpeed, new Speed(
-            0.0, SpeedUnit.SI), new Acceleration(1.0, AccelerationUnit.SI), deceleration);
+        return buildMaximumAccelerationPlan(gtu, lanes, firstLanePosition, distance, startTime, startSpeed, new Speed(0.0,
+            SpeedUnit.SI), new Acceleration(1.0, AccelerationUnit.SI), deceleration);
     }
+
+    public static OperationalPlan buildSpatialPlan(final LaneBasedGTU gtu, final Time startTime,
+        final Acceleration startAcceleration, final Speed maxSpeed, final Duration duration,
+        final List<LaneDirection> fromLanes, List<LaneDirection> toLanes, final CurvatureType curvatureType,
+        final double laneChangeProgress, final DirectedPoint endPoint) throws OperationalPlanException
+    {
+        return buildSpatialPlan(gtu, startTime, gtu.getLocation(), gtu.getSpeed(), startAcceleration, maxSpeed, duration,
+            fromLanes, toLanes, curvatureType, laneChangeProgress, endPoint);
+    }
+
+    public static OperationalPlan buildSpatialPlan(final LaneBasedGTU gtu, final Time startTime,
+        final DirectedPoint startPoint, final Speed startSpeed, final Acceleration startAcceleration, final Speed maxSpeed,
+        final Duration duration, final List<LaneDirection> fromLanes, List<LaneDirection> toLanes,
+        final CurvatureType curvatureType, final double laneChangeProgress, final DirectedPoint endPoint)
+        throws OperationalPlanException
+    {
+
+        // check
+        checkLaneDirections(fromLanes, toLanes);
+
+        // get start fractional position on link
+        final CrossSectionLink startLink = fromLanes.get(0).getLane().getParentLink();
+        Direction start;
+        Direction end;
+        if (fromLanes.get(0).getDirection() == GTUDirectionality.DIR_PLUS)
+        {
+            start = startLink.getStartNode().getDirection();
+            end = startLink.getEndNode().getDirection();
+        }
+        else
+        {
+            start = startLink.getEndNode().getDirection();
+            end = startLink.getStartNode().getDirection();
+        }
+        double fStart = startLink.getDesignLine().projectFractional(start, end, startPoint.x, startPoint.y);
+
+        // get end fractional position on link, and end link
+        double fEnd = 0;
+        CrossSectionLink endLink = null;
+        for (int i = 0; i < toLanes.size(); i++)
+        {
+            CrossSectionLink l = toLanes.get(i).getLane().getParentLink();
+            if (toLanes.get(i).getDirection() == GTUDirectionality.DIR_PLUS)
+            {
+                start = l.getStartNode().getDirection();
+                end = l.getEndNode().getDirection();
+            }
+            else
+            {
+                start = l.getEndNode().getDirection();
+                end = l.getStartNode().getDirection();
+            }
+            fEnd = l.getDesignLine().projectFractional(start, end, endPoint.x, endPoint.y);
+            if (fEnd > 0 && fEnd < 1)
+            {
+                endLink = l;
+                break;
+            }
+        }
+        Throw.when(endLink == null, OperationalPlanException.class, "End point cannot be projected to to-lanes.");
+
+        // build from-line and to-line
+        OTSLine3D from = null;
+        OTSLine3D to = null;
+        for (int i = 0; i < toLanes.size(); i++)
+        {
+            CrossSectionLink l = toLanes.get(i).getLane().getParentLink();
+            try
+            {
+                if (l == startLink)
+                {
+                    from = fromLanes.get(i).getLane().getCenterLine().extractFractional(fStart, 1);
+                    to = toLanes.get(i).getLane().getCenterLine().extractFractional(fStart, 1);
+                }
+                else if (l == endLink)
+                {
+                    from =
+                        OTSLine3D.concatenate(from, fromLanes.get(i).getLane().getCenterLine().extractFractional(0, fEnd));
+                    to = OTSLine3D.concatenate(to, toLanes.get(i).getLane().getCenterLine().extractFractional(0, fEnd));
+                    break;
+                }
+                from = OTSLine3D.concatenate(from, fromLanes.get(i).getLane().getCenterLine());
+                to = OTSLine3D.concatenate(to, toLanes.get(i).getLane().getCenterLine());
+            }
+            catch (OTSGeometryException exception)
+            {
+                throw new RuntimeException("Bug in buildSpatialPlan method.");
+            }
+        }
+
+        // interpolate path
+        List<OTSPoint3D> line = new ArrayList<>();
+        line.add(new OTSPoint3D(startPoint.x, startPoint.y, startPoint.z));
+        if (curvatureType.equals(CurvatureType.LINEAR))
+        {
+            int n = (int) Math.ceil(32 * (1.0 - laneChangeProgress));
+            for (int i = 1; i < n; i++)
+            {
+                double fraction = 1.0 * i / n;
+                double f0 = laneChangeProgress + (1.0 - laneChangeProgress) * fraction;
+                double f1 = 1.0 - f0;
+                DirectedPoint p1;
+                DirectedPoint p2;
+                try
+                {
+                    p1 = from.getLocationFraction(fraction);
+                    p2 = to.getLocationFraction(fraction);
+                }
+                catch (OTSGeometryException exception)
+                {
+                    throw new RuntimeException("Bug in buildSpatialPlan method.");
+                }
+                line.add(new OTSPoint3D(p1.x * f1 + p2.x * f0, p1.y * f1 + p2.y * f0, p1.z * f1 + p2.z * f0));
+            }
+        }
+        OTSLine3D path;
+        try
+        {
+            path = new OTSLine3D(line);
+        }
+        catch (OTSGeometryException exception)
+        {
+            throw new RuntimeException("Bug in buildSpatialPlan method.");
+        }
+
+        // acceleration segments
+        List<Segment> segmentList = new ArrayList<>();
+        Acceleration b = startAcceleration.multiplyBy(-1.0);
+        if (startSpeed.lt(b.multiplyBy(duration)))
+        {
+            // will reach zero speed within duration
+            Duration d = startSpeed.divideBy(b);
+            segmentList.add(new AccelerationSegment(d, startAcceleration)); // decelerate to zero
+            segmentList.add(new SpeedSegment(duration.minus(d))); // stay at zero for the remainder of duration
+        }
+        else
+        {
+            segmentList.add(new AccelerationSegment(duration, startAcceleration));
+        }
+
+        return new OperationalPlan(gtu, path, startTime, startSpeed, segmentList);
+    }
+
+    public static OperationalPlan buildSpatialPlan(final LaneBasedGTU gtu, final Acceleration startAcceleration,
+        final Speed maxSpeed, final List<LaneDirection> fromLanes, List<LaneDirection> toLanes,
+        final CurvatureType curvatureType, final Duration duration) throws OperationalPlanException
+    {
+        return buildSpatialPlan(gtu, gtu.getLocation(), gtu.getSpeed(), startAcceleration, maxSpeed, fromLanes, toLanes,
+            curvatureType, duration);
+    }
+
+    public static OperationalPlan buildSpatialPlan(final LaneBasedGTU gtu, final DirectedPoint startPoint,
+        final Speed startSpeed, final Acceleration startAcceleration, final Speed maxSpeed,
+        final List<LaneDirection> fromLanes, List<LaneDirection> toLanes, final CurvatureType curvatureType,
+        final Duration duration) throws OperationalPlanException
+    {
+        checkLaneDirections(fromLanes, toLanes);
+
+        return null;
+    }
+
+    private final static void checkLaneDirections(final List<LaneDirection> fromLanes, List<LaneDirection> toLanes)
+        throws OperationalPlanException
+    {
+        Throw.when(fromLanes == null || toLanes == null, OperationalPlanException.class, "Lane lists may not be null.");
+        Throw.when(fromLanes.isEmpty(), OperationalPlanException.class, "Lane lists may not be empty.");
+        Throw.when(fromLanes.size() != toLanes.size(), OperationalPlanException.class,
+            "Set of from lanes has different length than set of to lanes.");
+        for (int i = 0; i < fromLanes.size(); i++)
+        {
+            Throw.when(!fromLanes.get(i).getLane().getParentLink().equals(toLanes.get(i).getLane().getParentLink()),
+                OperationalPlanException.class,
+                "A lane in the from-lanes list is not on the same link as the lane at equal index in the to-lanes list.");
+        }
+    }
+
+    /**
+     * Defines curvature.
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version May 27, 2016 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public enum CurvatureType
+    {
+        /** Linear lateral movement. */
+        LINEAR
+        {
+            public double[] getFractions(final double strartFraction)
+            {
+                return new double[1];
+            }
+        },
+
+        /** */
+        SCURVE
+        {
+            public double[] getFractions(final double strartFraction)
+            {
+                return new double[1];
+            }
+        };
+
+        public abstract double[] getFractions(double startFraction);
+    }
+
 }
