@@ -108,6 +108,16 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
             {
                 return value < 0.0 || value > 1.0;
             }
+        },
+
+        /** Checks for &ge;1. */
+        ATLEASTONE("Value of parameter '%s' may not be below one.")
+        {
+            /** {@inheritDoc} */
+            boolean fails(final double value)
+            {
+                return value < 1.0;
+            }
         };
 
         /** Message for value failure, pointing to a parameter using '%s'. */
