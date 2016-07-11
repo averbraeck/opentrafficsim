@@ -1,5 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.tactical.toledo;
 
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.UNITINTERVAL;
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.POSITIVE;
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.NEGATIVE;
+
 import java.lang.reflect.Field;
 
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
@@ -20,7 +24,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public final class ToledoParameters
+public final class ToledoLaneChangeParameters
 {
 
     /** */
@@ -136,11 +140,12 @@ public final class ToledoParameters
         "Factor on individual error term in target lane lag gap.", 0.107);
 
     /** */
-    public static final ParameterTypeDouble C_FWD =
-        new ParameterTypeDouble("C_fwd", "Constant forward gap utility.", -0.837);
+    public static final ParameterTypeDouble C_FWD_TG = new ParameterTypeDouble("C_fwd_tg", "Constant forward gap utility.",
+        -0.837);
 
     /** */
-    public static final ParameterTypeDouble C_BCK = new ParameterTypeDouble("C_fwd", "Constant forward gap utility.", 0.913);
+    public static final ParameterTypeDouble C_BCK_TG = new ParameterTypeDouble("C_bck_tg", "Constant forward gap utility.",
+        0.913);
 
     /** */
     public static final ParameterTypeDouble BETA_DTG = new ParameterTypeDouble("Beta_dtg", "Factor on distance to gap.",
@@ -166,10 +171,62 @@ public final class ToledoParameters
     public static final ParameterTypeDouble ALPHA_BCK = new ParameterTypeDouble("Alpha_bck",
         "Factor on individual error term in backward gap.", 0.239);
 
+    /** */
+    public static final ParameterTypeDouble BETA_DP = new ParameterTypeDouble("BETA_DP",
+        "Factor on target gap for desired position.", 0.604, UNITINTERVAL);
+
+    /** */
+    public static final ParameterTypeDouble C_FWD_ACC = new ParameterTypeDouble("C_fwd_acc",
+        "Constant forward gap acceleration.", 0.385, POSITIVE);
+
+    /** */
+    public static final ParameterTypeDouble BETA_FWD = new ParameterTypeDouble("BETA_fwd",
+        "Power on desired relative position forward.", 0.323);
+
+    /** */
+    public static final ParameterTypeDouble LAMBDA_FWD_POS = new ParameterTypeDouble("LAMBDA_fwd_pos",
+        "Factor on positive relative speed forward.", 0.0678);
+
+    /** */
+    public static final ParameterTypeDouble LAMBDA_FWD_NEG = new ParameterTypeDouble("LAMBDA_fwd_neg",
+        "Factor on negative relative speed forward.", 0.217);
+
+    /** */
+    public static final ParameterTypeDouble SIGMA_FWD = new ParameterTypeDouble("SIGMA_fwd",
+        "Standard deviation on forward gap acceleration error.", Math.exp(-0.540));
+
+    /** */
+    public static final ParameterTypeDouble C_BCK_ACC = new ParameterTypeDouble("C_bck_acc",
+        "Constant backward gap acceleration.", -0.596, NEGATIVE);
+
+    /** */
+    public static final ParameterTypeDouble BETA_BCK = new ParameterTypeDouble("BETA_bck",
+        "Power on desired relative position backward.", -0.219);
+
+    /** */
+    public static final ParameterTypeDouble LAMBDA_BCK_POS = new ParameterTypeDouble("LAMBDA_bck_pos",
+        "Factor on positive relative speed backward.", -0.0832);
+
+    /** */
+    public static final ParameterTypeDouble LAMBDA_BCK_NEG = new ParameterTypeDouble("LAMBDA_bck_neg",
+        "Factor on negative relative speed backward.", -0.170);
+
+    /** */
+    public static final ParameterTypeDouble SIGMA_BCK = new ParameterTypeDouble("SIGMA_bck",
+        "Standard deviation on backward gap acceleration error.", Math.exp(0.391));
+
+    /** */
+    public static final ParameterTypeDouble C_ADJ_ACC = new ParameterTypeDouble("C_adj_acc",
+        "Constant adjacent gap acceleration.", 0.131);
+
+    /** */
+    public static final ParameterTypeDouble SIGMA_ADJ = new ParameterTypeDouble("SIGMA_adj",
+        "Standard deviation on adjacent gap acceleration error.", Math.exp(-1.202));
+
     /**
      * 
      */
-    private ToledoParameters()
+    private ToledoLaneChangeParameters()
     {
     }
 
@@ -179,7 +236,7 @@ public final class ToledoParameters
      */
     public static void setDefaultParameters(final BehavioralCharacteristics behavioralCharacteristics)
     {
-        for (Field field : ToledoParameters.class.getDeclaredFields())
+        for (Field field : ToledoLaneChangeParameters.class.getDeclaredFields())
         {
             ParameterTypeDouble p;
             try
