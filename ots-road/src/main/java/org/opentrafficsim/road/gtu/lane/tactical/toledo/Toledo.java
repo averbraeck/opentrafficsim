@@ -150,7 +150,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
                 CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, gtu.getSpeed(), sli, perception
                     .getLeaders(RelativeLane.RIGHT));
         }
-        else if (vC < vL && vC < vR)
+        else
         {
             GapInfo gapAdj;
             GapInfo gapFwd;
