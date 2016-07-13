@@ -47,45 +47,47 @@ public class HeadwayGTUTest
         String id2 = "id2";
         GTUType gtuType2 = new GTUType("type2");
         Length distance2 = new Length(234, LengthUnit.METER);
-        HeadwayGTUSimple hg1 = new HeadwayGTUSimple(id1, gtuType1, distance1);
-        HeadwayGTUSimple hg2 = new HeadwayGTUSimple(id2, gtuType2, distance2);
-        verifyFields(hg1, null, distance1, gtuType1, id1, Headway.ObjectType.GTU, null, null, null, null, true, false, false,
-                false, false, false, false, false);
-        verifyFields(hg2, null, distance2, gtuType2, id2, Headway.ObjectType.GTU, null, null, null, null, true, false, false,
-                false, false, false, false, false);
+        HeadwayGTUSimple hg1 = new HeadwayGTUSimple(id1, gtuType1, distance1, Length.ZERO);
+        HeadwayGTUSimple hg2 = new HeadwayGTUSimple(id2, gtuType2, distance2, Length.ZERO);
+        verifyFields(hg1, null, distance1, gtuType1, id1, Headway.ObjectType.GTU, null, null, null, null, true, false,
+            false, false, false, false, false, false);
+        verifyFields(hg2, null, distance2, gtuType2, id2, Headway.ObjectType.GTU, null, null, null, null, true, false,
+            false, false, false, false, false, false);
         Length overlapFront = new Length(2, LengthUnit.METER);
         Length overlap = new Length(3, LengthUnit.METER);
         Length overlapRear = new Length(4, LengthUnit.METER);
-        hg2 = new HeadwayGTUSimple(id2, gtuType2, overlapFront, overlap, overlapRear);
-        verifyFields(hg2, null, null, gtuType2, id2, Headway.ObjectType.GTU, overlap, overlapFront, overlapRear, null, false,
-                false, false, false, false, false, false, true);
+        hg2 = new HeadwayGTUSimple(id2, gtuType2, overlapFront, overlap, overlapRear, Length.ZERO);
+        verifyFields(hg2, null, null, gtuType2, id2, Headway.ObjectType.GTU, overlap, overlapFront, overlapRear, null,
+            false, false, false, false, false, false, false, true);
         Speed speed2 = new Speed(50, SpeedUnit.KM_PER_HOUR);
         Acceleration acceleration2 = new Acceleration(1.234, AccelerationUnit.METER_PER_SECOND_2);
-        hg2 = new HeadwayGTUSimple(id2, gtuType2, overlapFront, overlap, overlapRear, speed2, acceleration2);
+        hg2 = new HeadwayGTUSimple(id2, gtuType2, overlapFront, overlap, overlapRear, Length.ZERO, speed2, acceleration2);
         verifyFields(hg2, acceleration2, null, gtuType2, id2, Headway.ObjectType.GTU, overlap, overlapFront, overlapRear,
-                speed2, false, false, false, false, false, false, false, true);
+            speed2, false, false, false, false, false, false, false, true);
         // Test all combinations of two GTUStatus values.
         for (HeadwayGTUSimple.GTUStatus gtuStatus1 : HeadwayGTUSimple.GTUStatus.values())
         {
             for (HeadwayGTUSimple.GTUStatus gtuStatus2 : HeadwayGTUSimple.GTUStatus.values())
             {
-                hg2 = new HeadwayGTUSimple(id2, gtuType2, distance2, speed2, acceleration2, gtuStatus1, gtuStatus2);
+                hg2 =
+                    new HeadwayGTUSimple(id2, gtuType2, distance2, Length.ZERO, speed2, acceleration2, gtuStatus1,
+                        gtuStatus2);
                 boolean honking =
-                        HeadwayGTUSimple.GTUStatus.HONK == gtuStatus1 || HeadwayGTUSimple.GTUStatus.HONK == gtuStatus2;
+                    HeadwayGTUSimple.GTUStatus.HONK == gtuStatus1 || HeadwayGTUSimple.GTUStatus.HONK == gtuStatus2;
                 boolean braking =
-                        HeadwayGTUSimple.GTUStatus.BRAKING_LIGHTS == gtuStatus1
-                                || HeadwayGTUSimple.GTUStatus.BRAKING_LIGHTS == gtuStatus2;
+                    HeadwayGTUSimple.GTUStatus.BRAKING_LIGHTS == gtuStatus1
+                        || HeadwayGTUSimple.GTUStatus.BRAKING_LIGHTS == gtuStatus2;
                 boolean leftIndicator =
-                        HeadwayGTUSimple.GTUStatus.LEFT_TURNINDICATOR == gtuStatus1
-                                || HeadwayGTUSimple.GTUStatus.LEFT_TURNINDICATOR == gtuStatus2;
+                    HeadwayGTUSimple.GTUStatus.LEFT_TURNINDICATOR == gtuStatus1
+                        || HeadwayGTUSimple.GTUStatus.LEFT_TURNINDICATOR == gtuStatus2;
                 boolean rightIndicator =
-                        HeadwayGTUSimple.GTUStatus.RIGHT_TURNINDICATOR == gtuStatus1
-                                || HeadwayGTUSimple.GTUStatus.RIGHT_TURNINDICATOR == gtuStatus2;
+                    HeadwayGTUSimple.GTUStatus.RIGHT_TURNINDICATOR == gtuStatus1
+                        || HeadwayGTUSimple.GTUStatus.RIGHT_TURNINDICATOR == gtuStatus2;
                 boolean hazardLights =
-                        HeadwayGTUSimple.GTUStatus.EMERGENCY_LIGHTS == gtuStatus1
-                                || HeadwayGTUSimple.GTUStatus.EMERGENCY_LIGHTS == gtuStatus2;
+                    HeadwayGTUSimple.GTUStatus.EMERGENCY_LIGHTS == gtuStatus1
+                        || HeadwayGTUSimple.GTUStatus.EMERGENCY_LIGHTS == gtuStatus2;
                 verifyFields(hg2, acceleration2, distance2, gtuType2, id2, Headway.ObjectType.GTU, null, null, null, speed2,
-                        true, false, braking, hazardLights, honking, leftIndicator, rightIndicator, false);
+                    true, false, braking, hazardLights, honking, leftIndicator, rightIndicator, false);
 
             }
         }
@@ -94,7 +96,7 @@ public class HeadwayGTUTest
         assertTrue("toString returns something", hg2.toString().length() > 10);
         try
         {
-            new HeadwayGTUSimple(null, gtuType1, distance1);
+            new HeadwayGTUSimple(null, gtuType1, distance1, Length.ZERO);
             fail("null for id should have thrown a GTUException");
         }
         catch (GTUException e)
@@ -103,7 +105,7 @@ public class HeadwayGTUTest
         }
         try
         {
-            new HeadwayGTUSimple(id1, gtuType1, null);
+            new HeadwayGTUSimple(id1, gtuType1, null, Length.ZERO);
             fail("null for distance should have thrown a GTUException");
         }
         catch (GTUException e)
@@ -138,10 +140,10 @@ public class HeadwayGTUTest
      * @param parallel boolean; the expected return value for isParallel
      */
     private void verifyFields(final HeadwayGTUSimple headwayGTU, final Acceleration acceleration, final Length distance,
-            final GTUType gtuType, final String id, final Headway.ObjectType objectType, final Length overlap,
-            final Length overlapFront, final Length overlapRear, final Speed speed, final boolean ahead, final boolean behind,
-            final boolean breakingLights, final boolean hazardLights, final boolean honk, final boolean leftIndicator,
-            final boolean rightIndicator, final boolean parallel)
+        final GTUType gtuType, final String id, final Headway.ObjectType objectType, final Length overlap,
+        final Length overlapFront, final Length overlapRear, final Speed speed, final boolean ahead, final boolean behind,
+        final boolean breakingLights, final boolean hazardLights, final boolean honk, final boolean leftIndicator,
+        final boolean rightIndicator, final boolean parallel)
     {
         assertNotNull("headwayGTU should not be null", headwayGTU);
         if (null == acceleration)
@@ -151,7 +153,7 @@ public class HeadwayGTUTest
         else
         {
             assertEquals("acceleration should be " + acceleration, acceleration.si, headwayGTU.getAcceleration().si,
-                    acceleration.si / 99999);
+                acceleration.si / 99999);
         }
         if (null == distance)
         {
@@ -179,7 +181,7 @@ public class HeadwayGTUTest
         else
         {
             assertEquals("overlapFront should be " + overlapFront, overlapFront.si, headwayGTU.getOverlapFront().si,
-                    overlapFront.si / 99999);
+                overlapFront.si / 99999);
         }
         if (null == overlap)
         {
@@ -188,7 +190,7 @@ public class HeadwayGTUTest
         else
         {
             assertEquals("overlapRear should be " + overlapRear, overlapRear.si, headwayGTU.getOverlapRear().si,
-                    overlapRear.si / 99999);
+                overlapRear.si / 99999);
         }
         if (null == speed)
         {

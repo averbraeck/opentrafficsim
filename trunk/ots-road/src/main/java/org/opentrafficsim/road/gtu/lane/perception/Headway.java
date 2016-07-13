@@ -96,6 +96,11 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
     String getId();
 
     /**
+     * @return Length; the length of the other object; can be null if unknown.
+     */
+    Length getLength();
+    
+    /**
      * @return Speed; the (perceived) speed of the other object; can be null if unknown.
      */
     Speed getSpeed();

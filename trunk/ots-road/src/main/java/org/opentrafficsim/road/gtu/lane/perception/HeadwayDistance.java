@@ -56,6 +56,13 @@ public class HeadwayDistance implements Headway
 
     /** {@inheritDoc} */
     @Override
+    public final Length getLength()
+    {
+        return null;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
     public final Speed getSpeed()
     {
         return Speed.ZERO;

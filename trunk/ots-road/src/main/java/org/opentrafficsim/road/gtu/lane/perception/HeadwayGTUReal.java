@@ -39,29 +39,30 @@ public class HeadwayGTUReal extends AbstractHeadwayGTU
 {
     /** */
     private static final long serialVersionUID = 20160527L;
-    
+
     /** stored car following model of the observed GTU. */
     private final CarFollowingModel carFollowingModel;
-    
+
     /** stored behavioral characteristics of the observed GTU. */
     private final BehavioralCharacteristics behavioralCharacteristics;
 
     /** stored speed limit info of the observed GTU. */
     private final SpeedLimitInfo speedLimitInfo;
-    
+
     /**
      * Construct a new Headway information object, for a moving GTU ahead of us or behind us.
      * @param gtu the observed GTU, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
+     * @param length the length of the other object; if this constructor is used, length cannot be null.
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
      * @param gtuStatus the observable characteristics of the GTU.
      * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
      */
-    public HeadwayGTUReal(final LaneBasedGTU gtu, final Length distance, final Speed speed, final Acceleration acceleration,
-            final GTUStatus... gtuStatus) throws GTUException
+    public HeadwayGTUReal(final LaneBasedGTU gtu, final Length distance, final Length length, final Speed speed,
+        final Acceleration acceleration, final GTUStatus... gtuStatus) throws GTUException
     {
-        super(gtu.getId(), gtu.getGTUType(), distance, speed, acceleration, gtuStatus);
+        super(gtu.getId(), gtu.getGTUType(), distance, length, speed, acceleration, gtuStatus);
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
         this.behavioralCharacteristics = gtu.getBehavioralCharacteristics();
         this.speedLimitInfo = null; // TODO obtain speed limit info from GTU
@@ -71,11 +72,12 @@ public class HeadwayGTUReal extends AbstractHeadwayGTU
      * Construct a new Headway information object, for a non-moving GTU ahead of us or behind us.
      * @param gtu the observed GTU, can not be null.
      * @param distance Length; the distance to the other GTU; if this constructor is used, distance cannot be null.
+     * @param length the length of the other object; if this constructor is used, length cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public HeadwayGTUReal(final LaneBasedGTU gtu, final Length distance) throws GTUException
+    public HeadwayGTUReal(final LaneBasedGTU gtu, final Length distance, final Length length) throws GTUException
     {
-        super(gtu.getId(), gtu.getGTUType(), distance);
+        super(gtu.getId(), gtu.getGTUType(), distance, length);
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
         this.behavioralCharacteristics = gtu.getBehavioralCharacteristics();
         this.speedLimitInfo = null; // TODO obtain speed limit info from GTU
@@ -87,14 +89,15 @@ public class HeadwayGTUReal extends AbstractHeadwayGTU
      * @param overlapFront the front-front distance to the other GTU; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other GTU; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
+     * @param length the length of the other object; if this constructor is used, length cannot be null.
      * @param speed the (perceived) speed of the other GTU; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other GTU; can be null if unknown.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public HeadwayGTUReal(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap, final Length overlapRear,
-            final Speed speed, final Acceleration acceleration) throws GTUException
+        final Length length, final Speed speed, final Acceleration acceleration) throws GTUException
     {
-        super(gtu.getId(), gtu.getGTUType(), overlapFront, overlap, overlapRear, speed, acceleration);
+        super(gtu.getId(), gtu.getGTUType(), overlapFront, overlap, overlapRear, length, speed, acceleration);
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
         this.behavioralCharacteristics = gtu.getBehavioralCharacteristics();
         this.speedLimitInfo = null; // TODO obtain speed limit info from GTU
@@ -106,12 +109,13 @@ public class HeadwayGTUReal extends AbstractHeadwayGTU
      * @param overlapFront the front-front distance to the other GTU; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other GTU; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
+     * @param length the length of the other object; if this constructor is used, length cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public HeadwayGTUReal(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap, final Length overlapRear)
-            throws GTUException
+    public HeadwayGTUReal(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap, final Length overlapRear,
+        final Length length) throws GTUException
     {
-        super(gtu.getId(), gtu.getGTUType(), overlapFront, overlap, overlapRear);
+        super(gtu.getId(), gtu.getGTUType(), overlapFront, overlap, overlapRear, length);
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
         this.behavioralCharacteristics = gtu.getBehavioralCharacteristics();
         this.speedLimitInfo = null; // TODO obtain speed limit info from GTU
