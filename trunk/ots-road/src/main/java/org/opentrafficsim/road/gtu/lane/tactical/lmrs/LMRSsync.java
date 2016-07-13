@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedHashSet;
 
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -66,18 +65,18 @@ public class LMRSsync extends AbstractLMRS
 
     /** {@inheritDoc} */
     @Override
-    public final Set<MandatoryIncentive> getDefaultMandatoryIncentives()
+    public final LinkedHashSet<MandatoryIncentive> getDefaultMandatoryIncentives()
     {
-        HashSet<MandatoryIncentive> set = new HashSet<MandatoryIncentive>();
+        LinkedHashSet<MandatoryIncentive> set = new LinkedHashSet<>();
         set.add(new IncentiveRoute());
         return set;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Set<VoluntaryIncentive> getDefaultVoluntaryIncentives()
+    public final LinkedHashSet<VoluntaryIncentive> getDefaultVoluntaryIncentives()
     {
-        HashSet<VoluntaryIncentive> set = new HashSet<VoluntaryIncentive>();
+        LinkedHashSet<VoluntaryIncentive> set = new LinkedHashSet<>();
         set.add(new IncentiveSpeed());
         set.add(new IncentiveKeep());
         set.add(new IncentiveHierarchal());
@@ -103,7 +102,7 @@ public class LMRSsync extends AbstractLMRS
         {
             mandatory = "mandatoryIncentives=" + getMandatoryIncentives() + ", ";
         }
-        catch (OperationalPlanException ope)
+        catch (GTUException ope)
         {
             // thrown if no mandatory incentives
             mandatory = "mandatoryIncentives=[]";

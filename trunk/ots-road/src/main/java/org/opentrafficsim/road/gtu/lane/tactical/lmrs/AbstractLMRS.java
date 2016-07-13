@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.POSITIVE;
 import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.UNITINTERVAL;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djunits.unit.AccelerationUnit;
@@ -13,13 +13,13 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.Throw;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeAcceleration;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDuration;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractCarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -119,16 +119,18 @@ public abstract class AbstractLMRS extends AbstractLaneBasedTacticalPlanner
             }
         }
     };
-
-    /** Maximum comfortable acceleration in the lateral direction. */
-    public static final ParameterTypeAcceleration A_LAT = new ParameterTypeAcceleration("aLat",
-        "Maximum comfortable lateral acceleration", new Acceleration(1.0, AccelerationUnit.SI));
+    
+    /** Current left lane change desire. */
+    public static final ParameterTypeDouble DLEFT = new ParameterTypeDouble("dLeft", "Left lane change desire.", 0);
+    
+    /** Current right lane change desire. */
+    public static final ParameterTypeDouble DRIGHT = new ParameterTypeDouble("dLeft", "Left lane change desire.", 0);
 
     /** Set of mandatory lane change incentives. */
-    private Set<MandatoryIncentive> mandatoryIncentives = new HashSet<>();
+    private final Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
 
     /** Set of voluntary lane change incentives. */
-    private Set<VoluntaryIncentive> voluntaryIncentives = new HashSet<>();;
+    private final Set<VoluntaryIncentive> voluntaryIncentives = new LinkedHashSet<>();;
 
     /**
      * Constructor setting the car-following model.
@@ -178,13 +180,13 @@ public abstract class AbstractLMRS extends AbstractLaneBasedTacticalPlanner
      * Returns a set of default mandatory incentives.
      * @return Set of default mandatory incentives.
      */
-    public abstract Set<MandatoryIncentive> getDefaultMandatoryIncentives();
+    public abstract LinkedHashSet<MandatoryIncentive> getDefaultMandatoryIncentives();
 
     /**
      * Returns a set of default voluntary incentives.
      * @return Set of default voluntary incentives.
      */
-    public abstract Set<VoluntaryIncentive> getDefaultVoluntaryIncentives();
+    public abstract LinkedHashSet<VoluntaryIncentive> getDefaultVoluntaryIncentives();
 
     /**
      * Disables lane changes by clearing all incentives and setting a dummy incentive as mandatory incentive.
@@ -197,44 +199,15 @@ public abstract class AbstractLMRS extends AbstractLaneBasedTacticalPlanner
     }
 
     /**
-     * Limits the supplied acceleration to a given maximum deceleration.
-     * @param a Acceleration to limit.
-     * @param b Maximum deceleration to limit to.
-     * @return Limited acceleration &ge;<tt>-b</tt>.
-     */
-    protected final Acceleration limitDeceleration(final Acceleration a, final Acceleration b)
-    {
-        if (a.si >= -b.si)
-        {
-            return a;
-        }
-        return new Acceleration(-b.si, AccelerationUnit.SI);
-    }
-
-    /**
-     * Returns the minimum of two accelerations.
-     * @param a1 First acceleration.
-     * @param a2 Second acceleration.
-     * @return Minimum of two accelerations.
-     */
-    public final Acceleration minOf(final Acceleration a1, final Acceleration a2)
-    {
-        return a1.lt(a2) ? a1 : a2;
-    }
-
-    /**
      * Returns a defensive copy of the mandatory incentives.
-     * @return Defensive copy of the mandatory incentives.
-     * @throws OperationalPlanException If there is no mandatory incentive. The model requires at least one.
+     * @return defensive copy of the mandatory incentives.
+     * @throws GTUException if there is no mandatory incentive, the model requires at least one
      */
-    public final Set<MandatoryIncentive> getMandatoryIncentives() throws OperationalPlanException
+    public final Set<MandatoryIncentive> getMandatoryIncentives() throws GTUException
     {
-        // Check existence of mandatory incentive
-        if (this.mandatoryIncentives.isEmpty())
-        {
-            throw new OperationalPlanException("At the least the LMRS requires one mandatory lane change incentive.");
-        }
-        return new HashSet<>(this.mandatoryIncentives);
+        Throw.when(this.mandatoryIncentives.isEmpty(), GTUException.class,
+            "At the least the LMRS requires one mandatory lane change incentive.");
+        return new LinkedHashSet<>(this.mandatoryIncentives);
     }
 
     /**
@@ -243,7 +216,7 @@ public abstract class AbstractLMRS extends AbstractLaneBasedTacticalPlanner
      */
     public final Set<VoluntaryIncentive> getVoluntaryIncentives()
     {
-        return new HashSet<>(this.voluntaryIncentives);
+        return new LinkedHashSet<>(this.voluntaryIncentives);
     }
 
     /**
@@ -259,6 +232,76 @@ public abstract class AbstractLMRS extends AbstractLaneBasedTacticalPlanner
     }
 
     /**
+     * Determines lane change desire for the given RSU. Mandatory desire is deduced as the maximum of a set of mandatory
+     * incentives, while voluntary desires are added. Depending on the level of mandatory lane change desire, voluntary desire
+     * may be included partially. If both are positive or negative, voluntary desire is fully included. Otherwise, voluntary
+     * desire is less considered within the range dSync &lt; |mandatory| &lt; dCoop. The absolute value is used as large
+     * negative mandatory desire may also dominate voluntary desire.
+     * @param gtu gtu to determine desire for
+     * @return lane change desire for gtu
+     * @throws ParameterException if a parameter is not defined
+     * @throws GTUException if there is no mandatory incentive, the model requires at least one
+     */
+    protected final Desire getLaneChangeDesire(final LaneBasedGTU gtu) throws ParameterException, GTUException
+    {
+
+        BehavioralCharacteristics bc = gtu.getBehavioralCharacteristics();
+        double dSync = bc.getParameter(DSYNC);
+        double dCoop = bc.getParameter(DCOOP);
+
+        // Mandatory desire
+        double dLeftMandatory = Double.NEGATIVE_INFINITY;
+        double dRightMandatory = Double.NEGATIVE_INFINITY;
+        Desire mandatoryDesire = new Desire(dLeftMandatory, dRightMandatory);
+        for (MandatoryIncentive incentive : getMandatoryIncentives())
+        {
+            Desire d = incentive.determineDesire(gtu, mandatoryDesire);
+            dLeftMandatory = d.getLeft() > dLeftMandatory ? d.getLeft() : dLeftMandatory;
+            dRightMandatory = d.getRight() > dRightMandatory ? d.getRight() : dRightMandatory;
+            mandatoryDesire = new Desire(dLeftMandatory, dRightMandatory);
+        }
+        
+        // Voluntary desire
+        double dLeftVoluntary = 0;
+        double dRightVoluntary = 0;
+        Desire voluntaryDesire = new Desire(dLeftVoluntary, dRightVoluntary);
+        for (VoluntaryIncentive incentive : getVoluntaryIncentives())
+        {
+            Desire d = incentive.determineDesire(gtu, mandatoryDesire, voluntaryDesire);
+            dLeftVoluntary += d.getLeft();
+            dRightVoluntary += d.getRight();
+            voluntaryDesire = new Desire(dLeftVoluntary, dRightVoluntary);
+        }
+        
+        // Total desire
+        double thetaLeft = 0;
+        if (dLeftMandatory <= dSync || dLeftMandatory * dLeftVoluntary >= 0)
+        {
+            // low mandatory desire, or same sign
+            thetaLeft = 1;
+        }
+        else if (dSync < dLeftMandatory && dLeftMandatory < dCoop && dLeftMandatory * dLeftVoluntary < 0)
+        {
+            // linear from 1 at dSync to 0 at dCoop
+            thetaLeft = (dCoop - Math.abs(dLeftMandatory)) / (dCoop - dSync);
+        }
+        double thetaRight = 0;
+        if (dRightMandatory <= dSync || dRightMandatory * dRightVoluntary >= 0)
+        {
+            // low mandatory desire, or same sign
+            thetaRight = 1;
+        }
+        else if (dSync < dRightMandatory && dRightMandatory < dCoop && dRightMandatory * dRightVoluntary < 0)
+        {
+            // linear from 1 at dSync to 0 at dCoop
+            thetaRight = (dCoop - Math.abs(dRightMandatory)) / (dCoop - dSync);
+        }
+        
+        return new Desire(dLeftMandatory + thetaLeft * dLeftVoluntary, dRightMandatory + thetaRight * dRightVoluntary);
+        
+    }
+
+    /**
      * Acceleration for speed limit transitions. This implementation decelerates before curves and speed bumps. For this it uses
      * {@code approachTargetSpeed()} of the abstract car-following model implementation. All remaining transitions happen in the
      * default manner, i.e. deceleration and acceleration after the speed limit change and governed by the car-following model.
@@ -270,7 +313,7 @@ public abstract class AbstractLMRS extends AbstractLaneBasedTacticalPlanner
      * @throws ParameterException if a required parameter is not found
      */
     protected final Acceleration considerSpeedLimitTransitions(final BehavioralCharacteristics behavioralCharacteristics,
-        final Speed speed, final SpeedLimitProspect speedLimitProspect, final AbstractCarFollowingModel carFollowingModel)
+        final Speed speed, final SpeedLimitProspect speedLimitProspect, final CarFollowingModel carFollowingModel)
         throws ParameterException
     {
         Acceleration out = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);

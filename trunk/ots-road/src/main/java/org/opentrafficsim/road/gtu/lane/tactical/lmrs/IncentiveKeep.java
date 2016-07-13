@@ -1,11 +1,11 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
 /**
  * Determines lane change desire in order to adhere to keeping right or left. Such desire only exists if the route and speed
- * (considered within an anticpation distance) are not affected on the adjacent lane. The level of lane change desire is only
+ * (considered within an anticipation distance) are not affected on the adjacent lane. The level of lane change desire is only
  * sufficient to overcome the lowest threshold for free lane changes.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -19,9 +19,16 @@ public class IncentiveKeep implements VoluntaryIncentive
 
     /** {@inheritDoc} */
     @Override
-    public final Desire determineDesire(final LaneBasedGTU gtu, final LanePerception perception, final Desire mandatory)
+    public final Desire determineDesire(final LaneBasedGTU gtu, final Desire mandatoryDesire, final Desire voluntaryDesire)
+        throws ParameterException
     {
-        return new Desire(0, 0); // XXXXX STUB
+        if (mandatoryDesire.getRight() < 0 || voluntaryDesire.getRight() < 0)
+        {
+            // no desire to go right if more dominant incentives provide a negative desire to go right
+            return new Desire(0, 0);
+        }
+        // keep right with dFree
+        return new Desire(0, gtu.getBehavioralCharacteristics().getParameter(AbstractLMRS.DFREE));
     }
 
     /** {@inheritDoc} */

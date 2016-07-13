@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import java.io.Serializable;
 
+import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.opentrafficsim.core.network.LateralDirectionality;
 
 /**
@@ -37,6 +38,16 @@ public class Desire implements Serializable
     {
         this.left = left <= 1 ? left : 1;
         this.right = right <= 1 ? right : 1;
+    }
+    
+    /**
+     * Constructor which sets the supplied desire. Desire is limited to a maximum of 1.
+     * @param left Left desire.
+     * @param right Right desire.
+     */
+    public Desire(final Dimensionless left, final Dimensionless right)
+    {
+        this(left.si, right.si);
     }
 
     /**

@@ -34,7 +34,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface LanePerception extends Perception
+public interface LanePerception extends Perception, PerceivedSurroundings
 {
     /**
      * Sets the GTU -- call this method before any call to the perceive() method!

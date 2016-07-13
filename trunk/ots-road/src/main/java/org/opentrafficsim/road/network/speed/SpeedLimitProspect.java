@@ -338,7 +338,7 @@ public class SpeedLimitProspect implements Serializable
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      * @param <T> class of speed info
      */
-    private class SpeedLimitEntry<T> implements Comparable<SpeedLimitEntry<?>>, Serializable
+    private static class SpeedLimitEntry<T> implements Comparable<SpeedLimitEntry<?>>, Serializable
     {
 
         /** */

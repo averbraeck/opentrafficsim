@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -92,6 +93,19 @@ public class LanePathInfo implements Serializable
         return this.laneDirectionList;
     }
 
+    /**
+     * @return list of lanes
+     */
+    public final List<Lane> getLanes()
+    {
+        List<Lane> lanes = new ArrayList<>();
+        for (LaneDirection ld : this.laneDirectionList)
+        {
+            lanes.add(ld.getLane());
+        }
+        return lanes;
+    }
+    
     /**
      * The reference lane is the widest lane on which the reference point of the GTU is fully registered.
      * @return the reference lane on which the GTU is registered, plus the driving direction on this lane, or null if the GTU is
