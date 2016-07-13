@@ -113,7 +113,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         GapAcceptanceInfo gapAcceptL = getGapAcceptanceInfo(gtu, bc, perception, emuTgL, eLead, eLag, RelativeLane.LEFT);
         GapAcceptanceInfo gapAcceptR = getGapAcceptanceInfo(gtu, bc, perception, emuTgR, eLead, eLag, RelativeLane.RIGHT);
 
-        // 1st layer of model: Target lane model 
+        // 1st layer of model: Target lane model
         double vL = laneUtility(gtu, bc, perception, gapAcceptL.getEmu(), sli, RelativeLane.LEFT);
         double vC = laneUtility(gtu, bc, perception, 0, sli, RelativeLane.CURRENT);
         double vR = laneUtility(gtu, bc, perception, gapAcceptR.getEmu(), sli, RelativeLane.RIGHT);
@@ -216,6 +216,10 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
                         * Math.pow(desiredPosition.si, bc.getParameter(ToledoLaneChangeParameters.BETA_BCK))
                         * Math.exp(deltaV) + ebck, AccelerationUnit.SI);
             }
+            // limit by acceleration to current leader
+            acceleration =
+                Acceleration.min(acceleration, CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, gtu.getSpeed(),
+                    sli, perception.getLeaders(RelativeLane.CURRENT)));
         }
         return null;
     }
@@ -839,7 +843,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         }
 
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()
