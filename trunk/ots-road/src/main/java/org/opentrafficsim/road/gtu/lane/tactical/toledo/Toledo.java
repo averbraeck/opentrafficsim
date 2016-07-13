@@ -132,13 +132,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
         // acceleration model
         Acceleration acceleration;
-        if (!this.changingLeft && !this.changingRight && vC > vR && vC > vL)
-        {
-            acceleration =
-                CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, gtu.getSpeed(), sli, perception
-                    .getLeaders(RelativeLane.CURRENT));
-        }
-        else if (this.changingLeft)
+        if (this.changingLeft)
         {
             acceleration =
                 CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, gtu.getSpeed(), sli, perception
@@ -149,6 +143,14 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             acceleration =
                 CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, gtu.getSpeed(), sli, perception
                     .getLeaders(RelativeLane.RIGHT));
+        }
+        else if ((vC > vR && vC > vL) || !perception.getLeaders(RelativeLane.CURRENT).isEmpty()
+                && perception.getLeaders(RelativeLane.CURRENT).first().getDistance().lt(
+                    getCarFollowingModel().desiredHeadway(bc, gtu.getSpeed())))
+        {
+            acceleration =
+                CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, gtu.getSpeed(), sli, perception
+                    .getLeaders(RelativeLane.CURRENT));
         }
         else
         {
@@ -216,10 +218,6 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
                         * Math.pow(desiredPosition.si, bc.getParameter(ToledoLaneChangeParameters.BETA_BCK))
                         * Math.exp(deltaV) + ebck, AccelerationUnit.SI);
             }
-            // limit by acceleration to current leader
-            acceleration =
-                Acceleration.min(acceleration, CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, gtu.getSpeed(),
-                    sli, perception.getLeaders(RelativeLane.CURRENT)));
         }
         return null;
     }
