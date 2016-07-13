@@ -30,9 +30,6 @@ public class HeadwayConflict extends AbstractHeadway
     /** Conflict rule. */
     private final ConflictRule conflictRule;
 
-    /** Length of the conflict. */
-    private final Length length;
-
     /** Length of the conflict in the conflicting directions. */
     private final Length conflictingLength;
 
@@ -84,12 +81,11 @@ public class HeadwayConflict extends AbstractHeadway
         final Speed conflictingSpeedLimit, final HeadwayStopLine stopLine, final HeadwayStopLine conflictingStopLine)
         throws GTUException
     {
-        super(ObjectType.CONFLICT, id, distance);
+        super(ObjectType.CONFLICT, id, distance, length);
         Throw.whenNull(conflictType, "Conflict type may not be null.");
         Throw.whenNull(conflictRule, "Conflict rule may not be null.");
         Throw.whenNull(id, "Conflict id may not be null.");
         Throw.whenNull(distance, "Conflict distance may not be null.");
-        Throw.whenNull(length, "Vehicle length may not be null.");
         Throw.whenNull(conflictingLength, "Conflict length may not be null.");
         Throw.whenNull(upstreamConflictingGTUs, "Upstreaem conflicting GTU's may not be null.");
         Throw.whenNull(downstreamConflictingGTUs, "Downstream conflicting GTU's may not be null.");
@@ -97,7 +93,6 @@ public class HeadwayConflict extends AbstractHeadway
         Throw.whenNull(conflictingSpeedLimit, "Conflict speed limit may not be null.");
         this.conflictType = conflictType;
         this.conflictRule = conflictRule;
-        this.length = length;
         this.conflictingLength = conflictingLength;
         this.upstreamConflictingGTUs = upstreamConflictingGTUs;
         this.downstreamConflictingGTUs = downstreamConflictingGTUs;
@@ -202,15 +197,6 @@ public class HeadwayConflict extends AbstractHeadway
     public final boolean isAllStop()
     {
         return this.conflictRule == ConflictRule.ALL_STOP;
-    }
-
-    /**
-     * Returns the length of the conflict.
-     * @return length of the conflict
-     */
-    public final Length getLength()
-    {
-        return this.length;
     }
 
     /**

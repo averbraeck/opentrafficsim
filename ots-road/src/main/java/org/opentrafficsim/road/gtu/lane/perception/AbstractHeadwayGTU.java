@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
@@ -70,15 +71,16 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadway
      * @param id the id of the GTU for comparison purposes, can not be null.
      * @param gtuType the perceived GTU Type, or null if unknown.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
+     * @param length the (perceived) length of the other object; can not be null.
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
      * @param gtuStatus the observable characteristics of the GTU.
      * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
      */
-    public AbstractHeadwayGTU(final String id, final GTUType gtuType, final Length distance, final Speed speed,
-            final Acceleration acceleration, final GTUStatus... gtuStatus) throws GTUException
+    public AbstractHeadwayGTU(final String id, final GTUType gtuType, final Length distance, final Length length,
+        final Speed speed, final Acceleration acceleration, final GTUStatus... gtuStatus) throws GTUException
     {
-        super(ObjectType.GTU, id, distance, speed, acceleration);
+        super(ObjectType.GTU, id, distance, length, speed, acceleration);
         this.gtuType = gtuType;
         for (GTUStatus status : gtuStatus)
         {
@@ -91,11 +93,13 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadway
      * @param id String; the id of the GTU for comparison purposes, can not be null.
      * @param gtuType GTUType; the perceived GTU Type, or null if unknown.
      * @param distance Length; the distance to the other GTU; if this constructor is used, distance cannot be null.
+     * @param length the (perceived) length of the other object; can not be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public AbstractHeadwayGTU(final String id, final GTUType gtuType, final Length distance) throws GTUException
+    public AbstractHeadwayGTU(final String id, final GTUType gtuType, final Length distance, final Length length)
+        throws GTUException
     {
-        super(ObjectType.GTU, id, distance);
+        super(ObjectType.GTU, id, distance, length);
         this.gtuType = gtuType;
     }
 
@@ -106,14 +110,17 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadway
      * @param overlapFront the front-front distance to the other GTU; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other GTU; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
+     * @param length the (perceived) length of the other object; can not be null.
      * @param speed the (perceived) speed of the other GTU; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other GTU; can be null if unknown.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
+    @SuppressWarnings("checkstyle:parameternumber")
     public AbstractHeadwayGTU(final String id, final GTUType gtuType, final Length overlapFront, final Length overlap,
-            final Length overlapRear, final Speed speed, final Acceleration acceleration) throws GTUException
+        final Length overlapRear, final Length length, final Speed speed, final Acceleration acceleration)
+        throws GTUException
     {
-        super(ObjectType.GTU, id, overlapFront, overlap, overlapRear, speed, acceleration);
+        super(ObjectType.GTU, id, overlapFront, overlap, overlapRear, length, speed, acceleration);
         this.gtuType = gtuType;
     }
 
@@ -124,12 +131,13 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadway
      * @param overlapFront the front-front distance to the other GTU; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other GTU; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
+     * @param length the (perceived) length of the other object; can not be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public AbstractHeadwayGTU(final String id, final GTUType gtuType, final Length overlapFront, final Length overlap,
-            final Length overlapRear) throws GTUException
+        final Length overlapRear, final Length length) throws GTUException
     {
-        super(ObjectType.GTU, id, overlapFront, overlap, overlapRear);
+        super(ObjectType.GTU, id, overlapFront, overlap, overlapRear, length);
         this.gtuType = gtuType;
     }
 
