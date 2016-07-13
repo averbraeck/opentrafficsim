@@ -144,9 +144,9 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
                 CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, gtu.getSpeed(), sli, perception
                     .getLeaders(RelativeLane.RIGHT));
         }
-        else if ((vC > vR && vC > vL) || !perception.getLeaders(RelativeLane.CURRENT).isEmpty()
+        else if ( (vC > vR && vC > vL) || (!perception.getLeaders(RelativeLane.CURRENT).isEmpty()
                 && perception.getLeaders(RelativeLane.CURRENT).first().getDistance().lt(
-                    getCarFollowingModel().desiredHeadway(bc, gtu.getSpeed())))
+                    getCarFollowingModel().desiredHeadway(bc, gtu.getSpeed()))) )
         {
             acceleration =
                 CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, gtu.getSpeed(), sli, perception
