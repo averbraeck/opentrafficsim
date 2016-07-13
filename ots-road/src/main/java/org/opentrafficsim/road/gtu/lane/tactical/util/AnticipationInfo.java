@@ -36,7 +36,7 @@ public final class AnticipationInfo
      * @param duration duration of movement
      * @param endSpeed end speed of movement
      */
-    private AnticipationInfo(final Duration duration, final Speed endSpeed)
+    public AnticipationInfo(final Duration duration, final Speed endSpeed)
     {
         this.duration = duration;
         this.endSpeed = endSpeed;
@@ -59,7 +59,7 @@ public final class AnticipationInfo
     }
     
     /**
-     * Returns info of the anticipation.
+     * Returns info of the anticipation assuming constant acceleration.
      * @param distance distance to cover
      * @param initialSpeed initial speed
      * @param acceleration (assumed) acceleration
@@ -68,19 +68,19 @@ public final class AnticipationInfo
     public static AnticipationInfo anticipateMovement(final Length distance, final Speed initialSpeed,
         final Acceleration acceleration)
     {
-        return anticipateMovement(distance, initialSpeed, acceleration, new Speed(Double.POSITIVE_INFINITY,
+        return anticipateMovementSpeedLimited(distance, initialSpeed, acceleration, new Speed(Double.POSITIVE_INFINITY,
             SpeedUnit.SI));
     }
     
     /**
-     * Returns info of the anticipation, without exceeding maximum speed.
+     * Returns info of the anticipation assuming constant acceleration, without exceeding maximum speed.
      * @param distance distance to cover
      * @param initialSpeed initial speed
      * @param acceleration (assumed) acceleration
      * @param maxSpeed maximum speed
      * @return duration to cover given distance with given initial speed and acceleration, without exceeding maximum speed
      */
-    public static AnticipationInfo anticipateMovement(final Length distance, final Speed initialSpeed,
+    public static AnticipationInfo anticipateMovementSpeedLimited(final Length distance, final Speed initialSpeed,
         final Acceleration acceleration, final Speed maxSpeed)
     {
         // solve constant speed movement
@@ -115,7 +115,7 @@ public final class AnticipationInfo
     }
     
     /**
-     * Returns info of the anticipation, using free acceleration from car-following model.
+     * Returns info of the anticipation using free acceleration from car-following model.
      * @param distance distance to cover
      * @param initialSpeed initial speed
      * @param behavioralCharacteristics behavioral characteristics of the anticipated GTU
@@ -125,7 +125,7 @@ public final class AnticipationInfo
      * @return info regarding anticipation of movement
      * @throws ParameterException if parameter is not defined
      */
-    public static AnticipationInfo anticipateMovement(final Length distance, final Speed initialSpeed,
+    public static AnticipationInfo anticipateMovementFreeAcceleration(final Length distance, final Speed initialSpeed,
         final BehavioralCharacteristics behavioralCharacteristics, final CarFollowingModel carFollowingModel,
         final SpeedLimitInfo speedLimitInfo, final Duration timeStep) throws ParameterException
     {

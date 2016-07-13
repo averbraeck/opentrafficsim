@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
 /**
  * Determines desire out of hierarchal courtesy. For right-hand driving this is towards the right if the follower has a higher
@@ -19,7 +19,8 @@ public class IncentiveHierarchal implements VoluntaryIncentive
 
     /** {@inheritDoc} */
     @Override
-    public final Desire determineDesire(final LaneBasedGTU gtu, final LanePerception perception, final Desire mandatory)
+    public final Desire determineDesire(final LaneBasedGTU gtu, final Desire mandatoryDesire, final Desire voluntaryDesire)
+        throws ParameterException
     {
         return new Desire(0, 0); // XXXXX STUB
     }

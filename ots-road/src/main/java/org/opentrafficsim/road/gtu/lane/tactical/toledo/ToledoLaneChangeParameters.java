@@ -129,7 +129,7 @@ public final class ToledoLaneChangeParameters
 
     /** */
     public static final ParameterTypeDouble BETA_EMU_LAG = new ParameterTypeDouble("Beta_EMU_lag",
-        "Factor on EMU target gap gap.", 0.0152);
+        "Factor on EMU target lag gap.", 0.0152);
 
     /** */
     public static final ParameterTypeDouble ALPHA_TL_LEAD = new ParameterTypeDouble("Alpha_tl_lead",

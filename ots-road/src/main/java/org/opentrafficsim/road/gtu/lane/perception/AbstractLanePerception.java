@@ -8,6 +8,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
@@ -29,6 +31,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanne
 import org.opentrafficsim.road.gtu.lane.tactical.LanePathInfo;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
+import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
+import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
 /**
  * The perception module of a GTU based on lanes. It is responsible for perceiving (sensing) the environment of the GTU, which
@@ -977,4 +981,152 @@ public abstract class AbstractLanePerception implements LanePerception
         return new TimeStampedObject<Collection<PerceivedObject>>(new HashSet<PerceivedObject>(), getTimestamp());
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public SortedSet<AbstractHeadwayGTU> getFirstLeaders(LateralDirectionality lat)
+    {
+        if (lat == null)
+        {
+            return getLeaders(RelativeLane.CURRENT);
+        }
+        else if (lat.isLeft())
+        {
+            return getLeaders(RelativeLane.LEFT);
+        }
+        return getLeaders(RelativeLane.RIGHT);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SortedSet<AbstractHeadwayGTU> getFirstFollowers(LateralDirectionality lat)
+    {
+        if (lat == null)
+        {
+            return getFollowers(RelativeLane.CURRENT);
+        }
+        else if (lat.isLeft())
+        {
+            return getFollowers(RelativeLane.LEFT);
+        }
+        return getFollowers(RelativeLane.RIGHT);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean existsGtuAlongside(LateralDirectionality lat)
+    {
+        for (Headway headway : getNeighboringHeadways(lat))
+        {
+            if (headway.isParallel())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SortedSet<AbstractHeadwayGTU> getLeaders(RelativeLane lane)
+    {
+        SortedSet<AbstractHeadwayGTU> leaders = new TreeSet<>();
+        if (lane.isCurrent())
+        {
+            if (getForwardHeadway() instanceof AbstractHeadwayGTU)
+            {
+                leaders.add((AbstractHeadwayGTU) getForwardHeadway());
+            }
+        }
+        else
+        {
+            for (Headway headway : getNeighboringHeadways(lane.getLateralDirectionality()))
+            {
+                if (headway instanceof AbstractHeadwayGTU && headway.isAhead())
+                {
+                    leaders.add((AbstractHeadwayGTU) headway);
+                }
+            }
+        }
+        return leaders;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SortedSet<AbstractHeadwayGTU> getFollowers(RelativeLane lane)
+    {
+        SortedSet<AbstractHeadwayGTU> followers = new TreeSet<>();
+        if (lane.isCurrent())
+        {
+            if (getBackwardHeadway() instanceof AbstractHeadwayGTU)
+            {
+                followers.add((AbstractHeadwayGTU) getBackwardHeadway());
+            }
+        }
+        else
+        {
+            for (Headway headway : getNeighboringHeadways(lane.getLateralDirectionality()))
+            {
+                if (headway instanceof AbstractHeadwayGTU && headway.isBehind())
+                {
+                    followers.add((AbstractHeadwayGTU) headway);
+                }
+            }
+        }
+        return followers;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SortedSet<InfrastructureLaneChangeInfo> getInfrastructureLaneChangeInfo(RelativeLane lane)
+    {
+        return new TreeSet<>();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SpeedLimitProspect getSpeedLimitProspect(RelativeLane lane)
+    {
+        SpeedLimitProspect slp = new SpeedLimitProspect();
+        slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.FIXED_SIGN, getSpeedLimit());
+        slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.MAX_VEHICLE_SPEED, getGTU().getMaximumVelocity());
+        return slp;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Length getLegalLaneChangePossibility(RelativeLane fromLane, LateralDirectionality lat)
+    {
+        return Length.ZERO;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Length getPhysicalLaneChangePossibility(RelativeLane fromLane, LateralDirectionality lat)
+    {
+        return Length.ZERO;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SortedSet<RelativeLane> getCurrentCrossSection()
+    {
+        return new TreeSet<>();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SortedSet<HeadwayTrafficLight> getTrafficLights()
+    {
+        return new TreeSet<>();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SortedSet<HeadwayConflict> getIntersectionConflicts(RelativeLane lane)
+    {
+        return new TreeSet<>();
+    }
+
+    
+    
 }
