@@ -1082,6 +1082,13 @@ public abstract class AbstractLanePerception implements LanePerception
     {
         return new TreeSet<>();
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public int getSplitNumber(InfrastructureLaneChangeInfo info)
+    {
+        return 0;
+    }
 
     /** {@inheritDoc} */
     @Override

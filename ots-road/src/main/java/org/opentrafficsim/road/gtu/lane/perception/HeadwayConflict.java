@@ -153,6 +153,15 @@ public class HeadwayConflict extends AbstractHeadway
     {
         return this.conflictType == ConflictType.MERGE;
     }
+    
+    /**
+     * Returns whether this is a split conflict.
+     * @return whether this is a split conflict
+     */
+    public final boolean isSplit()
+    {
+        return this.conflictType == ConflictType.SPLIT;
+    }
 
     /**
      * Returns the conflict rule.
@@ -289,7 +298,10 @@ public class HeadwayConflict extends AbstractHeadway
         CROSSING,
 
         /** Merge conflict. */
-        MERGE;
+        MERGE,
+        
+        /** Split conflict. */
+        SPLIT;
     }
 
     /**
