@@ -14,7 +14,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractHeadwayGTU;
-import org.opentrafficsim.road.gtu.lane.perception.PerceivedSurroundings;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -56,7 +56,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
     {
 
         // zero if no lane change is possible
-        PerceivedSurroundings perception = (PerceivedSurroundings) gtu.getPerception();
+        LanePerception perception = gtu.getPerception();
         if (perception.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).si == 0
             && perception.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si == 0)
         {
@@ -122,7 +122,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
      * @throws ParameterException if a parameter is not defined
      */
     private Speed anticipationSpeed(final RelativeLane lane, final BehavioralCharacteristics bc,
-        final PerceivedSurroundings perception, final CarFollowingModel cfm) throws ParameterException
+        final LanePerception perception, final CarFollowingModel cfm) throws ParameterException
     {
         
         Speed anticipationSpeed =

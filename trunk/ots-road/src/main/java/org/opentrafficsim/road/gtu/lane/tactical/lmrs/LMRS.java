@@ -30,7 +30,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.HeadwayTrafficLight;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceivedSurroundings;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -420,7 +419,7 @@ public class LMRS extends AbstractLMRS
      * @return whether a gap is acceptable
      * @throws ParameterException if a parameter is not defined
      */
-    protected final boolean acceptGap(final PerceivedSurroundings perception, final BehavioralCharacteristics bc,
+    protected final boolean acceptGap(final LanePerception perception, final BehavioralCharacteristics bc,
         final SpeedLimitInfo sli, final CarFollowingModel cfm, final double desire, final Speed ownSpeed,
         final LateralDirectionality lat) throws ParameterException
     {
@@ -464,7 +463,7 @@ public class LMRS extends AbstractLMRS
      * @return acceleration for synchronization
      * @throws ParameterException if a parameter is not defined
      */
-    private Acceleration synchronize(final PerceivedSurroundings perception, final BehavioralCharacteristics bc,
+    private Acceleration synchronize(final LanePerception perception, final BehavioralCharacteristics bc,
         final SpeedLimitInfo sli, final CarFollowingModel cfm, final double desire, final Speed ownSpeed,
         final LateralDirectionality lat) throws ParameterException
     {
@@ -494,7 +493,7 @@ public class LMRS extends AbstractLMRS
      * @return acceleration for synchronization
      * @throws ParameterException if a parameter is not defined
      */
-    private Acceleration cooperate(final PerceivedSurroundings perception, final BehavioralCharacteristics bc,
+    private Acceleration cooperate(final LanePerception perception, final BehavioralCharacteristics bc,
         final SpeedLimitInfo sli, final CarFollowingModel cfm, final double desire, final Speed ownSpeed,
         final LateralDirectionality lat) throws ParameterException
     {
