@@ -41,6 +41,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -708,21 +709,17 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
-        BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
+        BehavioralCharacteristics behavioralCharacteristics;
         if (this.tacticalPlannerCars instanceof LMRS)
         {
-            try
-            {
-                behavioralCharacteristics.setParameter(AbstractIDM.DELTA, AbstractIDM.DELTA.getDefaultValue());
-                behavioralCharacteristics.setParameter(AbstractLMRS.DT, AbstractLMRS.DT.getDefaultValue());
-                behavioralCharacteristics.setParameter(AbstractLMRS.DFREE, AbstractLMRS.DFREE.getDefaultValue());
-                behavioralCharacteristics.setParameter(AbstractLMRS.DSYNC, AbstractLMRS.DSYNC.getDefaultValue());
-                behavioralCharacteristics.setParameter(AbstractLMRS.DCOOP, AbstractLMRS.DCOOP.getDefaultValue());
-            }
-            catch (ParameterException exception)
-            {
-                exception.printStackTrace();
-            }
+            behavioralCharacteristics = new BehavioralCharacteristics();
+            behavioralCharacteristics.setDefaultParameters(ParameterTypes.class);
+            behavioralCharacteristics.setDefaultParameters(AbstractIDM.class);
+            behavioralCharacteristics.setDefaultParameters(AbstractLMRS.class);
+        }
+        else
+        {
+            behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
         }
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars,

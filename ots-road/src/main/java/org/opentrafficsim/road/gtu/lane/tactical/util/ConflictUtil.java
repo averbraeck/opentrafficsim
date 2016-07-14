@@ -697,6 +697,13 @@ public final class ConflictUtil
                 && this.stopPhases.get(stopLine.getId()).equals(StopPhase.RUN);
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "ConflictPlans";
+        }
+        
     }
     
     /**

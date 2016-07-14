@@ -166,4 +166,11 @@ public final class AnticipationInfo
         throw new RuntimeException("Distance for anticipation of conflict movement is surpassed.");
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "AnticipationInfo [duration = " + this.duration + ", endSpeed = " + this.endSpeed + "]"; 
+    }
+
 }
