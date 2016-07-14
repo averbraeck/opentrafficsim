@@ -30,4 +30,11 @@ public final class HeadwayStopLine extends AbstractHeadway
         super(ObjectType.STOPLINE, id, distance);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return super.toString();
+    }
+    
 }

@@ -1,8 +1,12 @@
 package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
+import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 import org.djunits.unit.DimensionlessUnit;
 import org.djunits.unit.Unit;
@@ -45,11 +49,11 @@ public class BehavioralCharacteristics implements Serializable
      * @param <T> Class of value.
      * @throws ParameterException If the value does not comply with value type constraints.
      */
-    public final <U extends Unit<U>, T extends DoubleScalar.Rel<U>> void setParameter(final ParameterType<U, T> parameterType,
-            final T value) throws ParameterException
+    public final <U extends Unit<U>, T extends DoubleScalar.Rel<U>> void setParameter(
+        final ParameterType<U, T> parameterType, final T value) throws ParameterException
     {
         Throw.when(value == null, ParameterException.class,
-                "Parameter of type '%s' was assigned a null value, this is not allowed.", parameterType.getId());
+            "Parameter of type '%s' was assigned a null value, this is not allowed.", parameterType.getId());
         parameterType.check(value, this);
         saveSetParameter(parameterType, value);
     }
@@ -105,7 +109,7 @@ public class BehavioralCharacteristics implements Serializable
      * @throws ParameterException If the value does not comply with constraints.
      */
     private <U extends Unit<U>, T extends DoubleScalar.Rel<U>> void saveSetParameter(
-            final AbstractParameterType<U, T> parameterType, final T value) throws ParameterException
+        final AbstractParameterType<U, T> parameterType, final T value) throws ParameterException
     {
         parameterType.checkCheck(value);
         if (this.parameters.containsKey(parameterType))
@@ -128,7 +132,7 @@ public class BehavioralCharacteristics implements Serializable
     public final void resetParameter(final AbstractParameterType<?, ?> parameterType) throws ParameterException
     {
         Throw.when(!this.previous.containsKey(parameterType), ParameterException.class,
-                "Reset on parameter of type '%s' could not be performed, it was not set.", parameterType.getId());
+            "Reset on parameter of type '%s' could not be performed, it was not set.", parameterType.getId());
         if (this.previous.get(parameterType) instanceof Empty)
         {
             // no value was set before last set, so make parameter type not set
@@ -151,7 +155,7 @@ public class BehavioralCharacteristics implements Serializable
      */
     @SuppressWarnings("checkstyle:designforextension")
     public <U extends Unit<U>, T extends DoubleScalar.Rel<U>> T getParameter(final ParameterType<U, T> parameterType)
-            throws ParameterException
+        throws ParameterException
     {
         checkContains(parameterType);
         @SuppressWarnings("unchecked")
@@ -204,7 +208,7 @@ public class BehavioralCharacteristics implements Serializable
     private void checkContains(final AbstractParameterType<?, ?> parameterType) throws ParameterException
     {
         Throw.when(!contains(parameterType), ParameterException.class,
-                "Could not get parameter of type '%s' as it was not set.", parameterType.getId());
+            "Could not get parameter of type '%s' as it was not set.", parameterType.getId());
     }
 
     /**
@@ -224,6 +228,77 @@ public class BehavioralCharacteristics implements Serializable
     public final Map<AbstractParameterType<?, ?>, DoubleScalar.Rel<?>> getParameters()
     {
         return new HashMap<>(this.parameters);
+    }
+
+    /**
+     * Sets the default values of all accessible parameters defined in the given class.
+     * @param clazz class with parameters
+     * @return this set of behavioral characteristics (for method chaining)
+     */
+    public final BehavioralCharacteristics setDefaultParameters(final Class<?> clazz)
+    {
+        return setDefaultParametersLocal(clazz);
+    }
+
+    /**
+     * Sets the default values of all accessible parameters defined in the given class.
+     * @param clazz class with parameters
+     * @param <U> Unit of the value.
+     * @param <T> Class of the value.
+     * @return this set of behavioral characteristics (for method chaining)
+     */
+    @SuppressWarnings("unchecked")
+    private <U extends Unit<U>, T extends DoubleScalar.Rel<U>> BehavioralCharacteristics setDefaultParametersLocal(
+        final Class<?> clazz)
+    {
+        // set all default values using reflection
+        Set<Field> fields = ClassUtil.getAllFields(clazz);
+
+        for (Field field : fields)
+        {
+            if (AbstractParameterType.class.isAssignableFrom(field.getType()))
+            {
+                try
+                {
+                    field.setAccessible(true);
+                    AbstractParameterType<U, T> p = (AbstractParameterType<U, T>) field.get(clazz);
+                    T defaultValue;
+                    if (p.getDefaultValue() instanceof DoubleScalar.Rel<?>)
+                    {
+                        // all types based on DJUNITS
+                        defaultValue = (T) p.getDefaultValue();
+                    }
+                    else if (p.getDefaultValue() instanceof Boolean)
+                    {
+                        // boolean
+                        defaultValue =
+                            (T) new Dimensionless((boolean) p.getDefaultValue() ? 1.0 : 0.0, DimensionlessUnit.SI);
+                    }
+                    else
+                    {
+                        // double or integer
+                        defaultValue =
+                            (T) new Dimensionless(((Number) p.getDefaultValue()).doubleValue(), DimensionlessUnit.SI);
+                    }
+                    saveSetParameter(p, defaultValue);
+                }
+                catch (IllegalArgumentException iare)
+                {
+                    // should not happen, field and clazz are related
+                    throw new RuntimeException(iare);
+                }
+                catch (IllegalAccessException iace)
+                {
+                    // parameter type not public
+                }
+                catch (ParameterException pe)
+                {
+                    // do not set parameter without default value
+                }
+            }
+        }
+
+        return this;
     }
 
     /** {@inheritDoc} */

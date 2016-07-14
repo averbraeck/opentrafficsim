@@ -42,81 +42,10 @@ public final class DefaultsFactory
      * Returns a default set of behavioral characteristics.
      * @return Default set of behavioral characteristics.
      */
-    @SuppressWarnings("unchecked")
     public static BehavioralCharacteristics getDefaultBehavioralCharacteristics()
     {
         
-        BehavioralCharacteristics bc = new BehavioralCharacteristics();
-
-        // set all default values using reflection
-        Set<Field> fields = ClassUtil.getAllFields(ParameterTypes.class);
-        try
-        {
-            for (Field field : fields)
-            {
-                if (ParameterType.class.isAssignableFrom(field.getType()))
-                {
-                    try 
-                    {
-                        field.setAccessible(true);
-                        @SuppressWarnings("rawtypes")
-                        ParameterType p = (ParameterType) field.get(ParameterTypes.class);
-                        bc.setParameter(p, p.getDefaultValue());
-                    }
-                    catch (ParameterException pe)
-                    {
-                        // do not set parameter without default value
-                    }
-                }
-                else if (ParameterTypeBoolean.class.equals(field.getType()))
-                {
-                    try 
-                    {
-                        field.setAccessible(true);
-                        ParameterTypeBoolean p = (ParameterTypeBoolean) field.get(ParameterTypes.class);
-                        bc.setParameter(p, p.getDefaultValue());
-                    }
-                    catch (ParameterException pe)
-                    {
-                        // do not sat parameter without default value
-                    }
-                }
-                else if (ParameterTypeDouble.class.equals(field.getType()))
-                {
-                    try 
-                    {
-                        field.setAccessible(true);
-                        ParameterTypeDouble p = (ParameterTypeDouble) field.get(ParameterTypes.class);
-                        bc.setParameter(p, p.getDefaultValue());
-                    }
-                    catch (ParameterException pe)
-                    {
-                        // do not sat parameter without default value
-                    }
-                }
-                else if (ParameterTypeInteger.class.equals(field.getType()))
-                {
-                    try 
-                    {
-                        field.setAccessible(true);
-                        ParameterTypeInteger p = (ParameterTypeInteger) field.get(ParameterTypes.class);
-                        bc.setParameter(p, p.getDefaultValue());
-                    }
-                    catch (ParameterException pe)
-                    {
-                        // do not sat parameter without default value
-                    }
-                }
-            }
-        }
-        catch (IllegalArgumentException iare)
-        {
-            iare.printStackTrace();
-        }
-        catch (IllegalAccessException iace)
-        {
-            iace.printStackTrace();
-        }
+        BehavioralCharacteristics bc = new BehavioralCharacteristics().setDefaultParameters(ParameterTypes.class);
 
         // demos use different value from default LMRS value
         try

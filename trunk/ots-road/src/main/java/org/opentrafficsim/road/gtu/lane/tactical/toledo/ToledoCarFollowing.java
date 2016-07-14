@@ -73,7 +73,7 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
 
     /** */
     public static final ParameterTypeDouble RHOACC = new ParameterTypeDouble("RHO_ACC",
-        "Power on density for acceleration.", 0.550, NEGATIVE);
+        "Power on density for acceleration.", 0.550, POSITIVE);
 
     /** */
     public static final ParameterTypeDouble LAMBDAACC = new ParameterTypeDouble("LAMBDA_ACC",

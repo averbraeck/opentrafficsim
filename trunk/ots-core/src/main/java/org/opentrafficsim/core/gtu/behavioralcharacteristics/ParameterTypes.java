@@ -31,7 +31,7 @@ public class ParameterTypes
     {
         //
     }
-
+    
     /** Car-following stopping distance. */
     public static final ParameterTypeLength S0;
 
