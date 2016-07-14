@@ -1,8 +1,10 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -28,12 +30,13 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractHeadwayGTU;
-import org.opentrafficsim.road.gtu.lane.perception.HeadwayTrafficLight;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.ConflictPlans;
 import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -62,11 +65,17 @@ public class LMRS extends AbstractLMRS
     /** Lane change direction, null if none. */
     private LateralDirectionality laneChangeDirectionality = null;
 
-    /** Total number of time steps for lane change. */
+    /** Number of time steps of current lane change. */
+    private int laneChangeStep = 0;
+
+    /** Total number of time steps of lane change. */
     private int totalLaneChangeSteps = 6;
 
-    /** Current time step number during lane changes. */
-    private int currentLaneChangeStep = 0;
+    /** Set of yield plans at conflicts with priority. Remembering for static model. */
+    private final ConflictPlans yieldPlans = new ConflictPlans();
+
+    /** Remembered leaders. */
+    private final Set<AbstractHeadwayGTU> lastLeaders = new HashSet<>();
 
     /**
      * Constructor setting the car-following model.
@@ -111,23 +120,48 @@ public class LMRS extends AbstractLMRS
         SpeedLimitInfo sli = slp.getSpeedLimitInfo(Length.ZERO);
         BehavioralCharacteristics bc = gtuLane.getBehavioralCharacteristics();
 
+        // update T as response to new leader
+        Set<AbstractHeadwayGTU> leaders = perception.getFirstLeaders(null);
+        for (AbstractHeadwayGTU leader : leaders)
+        {
+            if (!this.lastLeaders.contains(leader))
+            {
+                // TODO updated headway based on (estimated) desire of other vehicle
+                // uses current headway, this results in larger deceleration than using the desire
+                // we require a desire where T = desire*Tmin + (1-desire)*Tmax gives a deceleration of b*desire
+                //
+                // idea: acceleration for actual T
+                // acceleration for Tmin
+                // interpolate appropriately (which is... ? )
+                Duration tLead = leader.getDistance().minus(bc.getParameter(ParameterTypes.S0)).divideBy(gtu.getSpeed());
+                if (tLead.lt(bc.getParameter(ParameterTypes.T)))
+                {
+                    bc.setParameter(ParameterTypes.T, tLead);
+                }
+            }
+        }
+        this.lastLeaders.clear();
+        this.lastLeaders.addAll(leaders);
+
         // regular car-following
         Speed speed = gtu.getSpeed(startTime);
         Acceleration a =
             CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, speed, sli, perception
                 .getLeaders(RelativeLane.CURRENT));
 
-        // approaching speed limits
-        Acceleration aTrans = considerSpeedLimitTransitions(bc, speed, slp, getCarFollowingModel());
-        a = a.lt(aTrans) ? a : aTrans;
+        // speed limits
+        a = Acceleration.min(a, considerSpeedLimitTransitions(bc, speed, slp, getCarFollowingModel()));
 
         // traffic lights
-        for (HeadwayTrafficLight headwayTrafficLight : perception.getTrafficLights())
-        {
-            Acceleration aLight =
-                TrafficLightUtil.respondToTrafficLight(bc, headwayTrafficLight, getCarFollowingModel(), speed, sli);
-            a = a.lt(aLight) ? a : aLight;
-        }
+        a =
+            Acceleration.min(a, TrafficLightUtil.respondToTrafficLights(bc, perception.getTrafficLights(),
+                getCarFollowingModel(), speed, sli));
+
+        // conflicts
+        a =
+            Acceleration.min(a, ConflictUtil.approachConflicts(bc,
+                perception.getIntersectionConflicts(RelativeLane.CURRENT), perception.getLeaders(RelativeLane.CURRENT),
+                getCarFollowingModel(), gtu.getLength(), speed, sli, this.yieldPlans));
 
         // during a lane change, both leaders are followed
         if (this.laneChangeDirectionality != null)
@@ -136,20 +170,24 @@ public class LMRS extends AbstractLMRS
             Acceleration aTar =
                 CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, gtu.getSpeed(startTime), sli, perception
                     .getLeaders(tar));
-            a = a.lt(aTar) ? a : aTar;
+            a = Acceleration.min(a, aTar);
 
-            Length distance = bc.getParameter(ParameterTypes.LOOKAHEAD);
-            List<Lane> lanes = buildLanePathInfo(gtuLane, distance).getLanes();
-            Length firstLanePosition = gtuLane.position(lanes.get(0), RelativePosition.REFERENCE_POSITION);
+            // operational plan
+            // TODO apply acceleration 'a' during lane change
+            // TODO set this.laneChange to null if lane change will be over
+            Length forwardHeadway = bc.getParameter(ParameterTypes.LOOKAHEAD);
+            List<Lane> lanes = buildLanePathInfo(gtuLane, forwardHeadway).getLanes();
+            Length firstLanePosition = gtuLane.position(getReferenceLane(gtuLane), RelativePosition.REFERENCE_POSITION);
             try
             {
-                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtuLane, lanes, firstLanePosition, startTime, gtu
-                    .getSpeed(), a, bc.getParameter(DT));
+                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtuLane, lanes, firstLanePosition, startTime,
+                    gtuLane.getSpeed(), a, bc.getParameter(DT));
             }
             catch (OTSGeometryException exception)
             {
                 throw new OperationalPlanException(exception);
             }
+            // return buildAccelerationPlanWithLaneChange(gtuLane, startTime, speed, bc.getParameter(DT), a, bc, perception);
         }
 
         // relaxation
@@ -175,16 +213,26 @@ public class LMRS extends AbstractLMRS
         {
             // change left
             changeLeft = true;
-            bc.setParameter(ParameterTypes.T, Duration.interpolate(bc.getParameter(ParameterTypes.TMAX), bc
-                .getParameter(ParameterTypes.TMIN), desire.getLeft()));
+            Duration tRel =
+                Duration.interpolate(bc.getParameter(ParameterTypes.TMAX), bc.getParameter(ParameterTypes.TMIN), desire
+                    .getLeft());
+            if (tRel.lt(bc.getParameter(ParameterTypes.T)))
+            {
+                bc.setParameter(ParameterTypes.T, tRel);
+            }
             // TODO headway of other driver...
         }
         else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dFree && acceptRight)
         {
             // change right
             changeRight = true;
-            bc.setParameter(ParameterTypes.T, Duration.interpolate(bc.getParameter(ParameterTypes.TMAX), bc
-                .getParameter(ParameterTypes.TMIN), desire.getRight()));
+            Duration tRel =
+                Duration.interpolate(bc.getParameter(ParameterTypes.TMAX), bc.getParameter(ParameterTypes.TMIN), desire
+                    .getRight());
+            if (tRel.lt(bc.getParameter(ParameterTypes.T)))
+            {
+                bc.setParameter(ParameterTypes.T, tRel);
+            }
             // TODO headway of other driver...
         }
 
@@ -200,14 +248,14 @@ public class LMRS extends AbstractLMRS
                 aSync =
                     synchronize(perception, bc, sli, getCarFollowingModel(), desire.getLeft(), speed,
                         LateralDirectionality.LEFT);
-                a = a.lt(aSync) ? a : aSync;
+                a = Acceleration.min(a, aSync);
             }
             else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dSync)
             {
                 aSync =
                     synchronize(perception, bc, sli, getCarFollowingModel(), desire.getRight(), speed,
                         LateralDirectionality.RIGHT);
-                a = a.lt(aSync) ? a : aSync;
+                a = Acceleration.min(a, aSync);
             }
             // use indicators to indicate lane change need
             if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dCoop)
@@ -224,11 +272,10 @@ public class LMRS extends AbstractLMRS
         gtu.setTurnIndicatorStatus(turnIndicatorStatus);
 
         // cooperate
-        aSync = cooperate(perception, bc, sli, getCarFollowingModel(), desire.getLeft(), speed, LateralDirectionality.LEFT);
-        a = a.lt(aSync) ? a : aSync;
-        aSync =
-            cooperate(perception, bc, sli, getCarFollowingModel(), desire.getRight(), speed, LateralDirectionality.RIGHT);
-        a = a.lt(aSync) ? a : aSync;
+        aSync = cooperate(perception, bc, sli, getCarFollowingModel(), speed, LateralDirectionality.LEFT);
+        a = Acceleration.min(a, aSync);
+        aSync = cooperate(perception, bc, sli, getCarFollowingModel(), speed, LateralDirectionality.RIGHT);
+        a = Acceleration.min(a, aSync);
 
         // operational plan
         if (changeLeft)
@@ -240,35 +287,50 @@ public class LMRS extends AbstractLMRS
             this.laneChangeDirectionality = LateralDirectionality.RIGHT;
         }
 
-        Length distance = bc.getParameter(ParameterTypes.LOOKAHEAD);
-        List<Lane> lanes = buildLanePathInfo(gtuLane, distance).getLanes();
+        Length forwardHeadway = bc.getParameter(ParameterTypes.LOOKAHEAD);
+        List<Lane> lanes = buildLanePathInfo(gtuLane, forwardHeadway).getLanes();
+
+        // TODO Build the operational plan using minimum acceleration and including a possible lane change using
+        // TODO determine lane change duration, shorten if required
+        // a
+        // changeLeft/changeRight
+        
         if (this.laneChangeDirectionality == null)
         {
-            try 
+            Length firstLanePosition = gtuLane.position(getReferenceLane(gtuLane), RelativePosition.REFERENCE_POSITION);
+            try
             {
-                Length firstLanePosition = gtuLane.position(lanes.get(0), RelativePosition.REFERENCE_POSITION);
-                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtuLane, lanes, firstLanePosition, startTime, gtu
-                    .getSpeed(), a, bc.getParameter(DT));
+                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtuLane, lanes, firstLanePosition, startTime,
+                    gtuLane.getSpeed(), a, bc.getParameter(DT));
             }
             catch (OTSGeometryException exception)
             {
                 throw new OperationalPlanException(exception);
             }
         }
+        
         List<Lane> toLanes = new ArrayList<>();
         for (Lane lane : lanes)
         {
-            toLanes.add(lane.accessibleAdjacentLanes(this.laneChangeDirectionality, gtu.getGTUType()).iterator().next());
-        }
-        OperationalPlan plan;
-        try 
-        {
-            plan = LaneOperationalPlanBuilder.buildAccelerationLaneChangePlan(gtuLane, lanes, toLanes, gtu.getLocation(),
-                startTime, gtu.getSpeed(), a, bc.getParameter(DT), this.totalLaneChangeSteps, this.currentLaneChangeStep);
-            this.currentLaneChangeStep++;
-            if (this.currentLaneChangeStep >= this.totalLaneChangeSteps)
+            if (!lane.accessibleAdjacentLanes(this.laneChangeDirectionality, gtu.getGTUType()).isEmpty())
             {
-                this.currentLaneChangeStep = 0;
+                toLanes.add(lane.accessibleAdjacentLanes(this.laneChangeDirectionality, gtu.getGTUType()).iterator().next());
+            }
+            else
+            {
+                new Exception().printStackTrace();
+                System.exit(-1);
+            }
+        }
+        try
+        {
+            OperationalPlan plan =
+                LaneOperationalPlanBuilder.buildAccelerationLaneChangePlan(gtuLane, lanes, toLanes, gtu.getLocation(),
+                    startTime, gtu.getSpeed(), a, bc.getParameter(DT), this.totalLaneChangeSteps, this.laneChangeStep);
+            this.laneChangeStep++;
+            if (this.laneChangeStep >= this.totalLaneChangeSteps)
+            {
+                this.laneChangeStep = 0;
                 this.laneChangeDirectionality = null;
             }
             return plan;
@@ -278,26 +340,15 @@ public class LMRS extends AbstractLMRS
             throw new OperationalPlanException(exception);
         }
 
-        // TODO Build the operational plan using minimum acceleration and including a possible lane change using
-        // TODO determine lane change duration, shorten if required
-        // a
-        // changeLeft/changeRight
-        //return buildAccelerationPlanWithLaneChange(gtuLane, startTime, speed, bc.getParameter(DT), a, bc, perception);
-
     }
 
-    /*-
-    
-    /** Lane path info ahead at start of lane change. /
+    /*-* Lane path info ahead at start of lane change. /
     private LanePathInfo startLanePathInfo = null;
-    
+
     /** Lane change progress. /
     private double laneChangeProgress;
 
-    /** Start time of lane change. /
-    private Time laneChangeStartTime;
-    
-    /**
+    /*
      * Returns a plan for fixed acceleration over some duration. A lane change is implemented when performed.
      * @param gtu GTU
      * @param startTime start time
@@ -310,7 +361,7 @@ public class LMRS extends AbstractLMRS
      * @throws GTUException if the reference lane cannot be found
      * @throws NetworkException if lane path info cannot be build
      * @throws ParameterException if a parameter is not defined
-     /
+     *
     private OperationalPlan buildAccelerationPlanWithLaneChange(final LaneBasedGTU gtu, final Time startTime,
         final Speed startSpeed, final Duration duration, final Acceleration a, final BehavioralCharacteristics bc,
         final PerceivedSurroundings perception) throws GTUException, NetworkException, ParameterException
@@ -383,8 +434,7 @@ public class LMRS extends AbstractLMRS
                     perception.getPhysicalLaneChangePossibility(RelativeLane.CURRENT, this.laneChangeDirectionality);
                 Duration normalRemainingTime = new Duration(3, TimeUnit.SECOND).multiplyBy(1 - this.laneChangeProgress);
                 Duration availableRemainingTime = remainingDistance.divideBy(startSpeed);
-                Duration remainingTime =
-                    normalRemainingTime.lt(availableRemainingTime) ? normalRemainingTime : availableRemainingTime;
+                Duration remainingTime = Duration.min(normalRemainingTime, availableRemainingTime);
 
                 // build path
 
@@ -405,8 +455,8 @@ public class LMRS extends AbstractLMRS
             throw new RuntimeException(ope);
         }
     }
-     */
-
+    */
+    
     /**
      * Determine whether a gap is acceptable.
      * @param perception perception
@@ -429,24 +479,19 @@ public class LMRS extends AbstractLMRS
             Acceleration aFollow = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
             for (AbstractHeadwayGTU follower : perception.getFirstFollowers(lat))
             {
-                // TODO bc, sli and cfm of follower
                 Acceleration a =
-                    singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed, desire, bc, sli, cfm);
-                if (a.lt(aFollow))
-                {
-                    aFollow = a;
-                }
+                    singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed, desire, follower
+                        .getBehavioralCharacteristics(), follower.getSpeedLimitInfo(), follower.getCarFollowingModel());
+                aFollow = Acceleration.min(aFollow, a);
             }
             Acceleration aSelf = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
             for (AbstractHeadwayGTU leader : perception.getFirstLeaders(lat))
             {
                 Acceleration a = singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, bc, sli, cfm);
-                if (a.lt(aSelf))
-                {
-                    aSelf = a;
-                }
+                aSelf = Acceleration.min(aSelf, a);
             }
-            return aSelf.getSI() >= -b.si * desire && aFollow.getSI() >= -b.si * desire;
+            Acceleration threshold = b.multiplyBy(-desire);
+            return aFollow.ge(threshold) && aSelf.ge(threshold);
         }
         return false;
     }
@@ -473,12 +518,9 @@ public class LMRS extends AbstractLMRS
         {
             Acceleration aSingle =
                 singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, bc, sli, cfm);
-            if (aSingle.lt(a))
-            {
-                a = aSingle;
-            }
+            a = Acceleration.min(a, aSingle);
         }
-        return a.si < -b.si ? b.multiplyBy(-1) : a;
+        return Acceleration.max(a, b.multiplyBy(-1));
     }
 
     /**
@@ -487,15 +529,14 @@ public class LMRS extends AbstractLMRS
      * @param bc behavioral characteristics
      * @param sli speed limit info
      * @param cfm car-following model
-     * @param desire level of lane change desire
      * @param ownSpeed own speed
      * @param lat lateral direction for cooperation
      * @return acceleration for synchronization
      * @throws ParameterException if a parameter is not defined
      */
     private Acceleration cooperate(final LanePerception perception, final BehavioralCharacteristics bc,
-        final SpeedLimitInfo sli, final CarFollowingModel cfm, final double desire, final Speed ownSpeed,
-        final LateralDirectionality lat) throws ParameterException
+        final SpeedLimitInfo sli, final CarFollowingModel cfm, final Speed ownSpeed, final LateralDirectionality lat)
+        throws ParameterException
     {
         Acceleration b = bc.getParameter(ParameterTypes.B);
         Acceleration a = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
@@ -504,15 +545,16 @@ public class LMRS extends AbstractLMRS
             if ((lat == LateralDirectionality.LEFT && leader.isRightTurnIndicatorOn())
                 || (lat == LateralDirectionality.RIGHT && leader.isLeftTurnIndicatorOn()))
             {
+                BehavioralCharacteristics bc2 = leader.getBehavioralCharacteristics();
+                double desire =
+                    lat == LateralDirectionality.LEFT && bc2.contains(DRIGHT) ? bc2.getParameter(DRIGHT)
+                        : lat == LateralDirectionality.RIGHT && bc2.contains(DLEFT) ? bc2.getParameter(DLEFT) : 0;
                 Acceleration aSingle =
                     singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, bc, sli, cfm);
-                if (aSingle.lt(a))
-                {
-                    a = aSingle;
-                }
+                a = Acceleration.min(a, aSingle);
             }
         }
-        return a.si < -b.si ? b.multiplyBy(-1) : a;
+        return Acceleration.max(a, b.multiplyBy(-1));
     }
 
     /**
