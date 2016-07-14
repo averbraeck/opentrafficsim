@@ -114,6 +114,25 @@ public interface PerceivedSurroundings
     SortedSet<InfrastructureLaneChangeInfo> getInfrastructureLaneChangeInfo(RelativeLane lane);
 
     /**
+     * Split number of given infrastructure lane change info, 0 if it does nor regard a split.
+     * <pre>
+     *  ________________
+     *  _ _ _ _ _ _ _ _____________
+     * A___.....____________.....__
+     *     \______          \______ (destination of A)
+     *                          ^
+     *                          |
+     *             This split provides the 1st 
+     *      infrastructure info on the current lane. 
+     *      It regards the 3rd split along the road.
+     *                 split number = 3
+     * </pre>
+     * @param info infrastructure lane change info
+     * @return split number of given infrastructure lane change info, 0 if it does nor regard a split
+     */
+    int getSplitNumber(InfrastructureLaneChangeInfo info);
+    
+    /**
      * Returns the prospect for speed limits on a lane (dynamic speed limits may vary between lanes).
      * @param lane relative lateral lane
      * @return prospect for speed limits on a lane
@@ -160,5 +179,5 @@ public interface PerceivedSurroundings
      * @return set of intersection conflicts along the route
      */
     SortedSet<HeadwayConflict> getIntersectionConflicts(RelativeLane lane); // TODO Change output type to ConflictHeadway
-
+    
 }

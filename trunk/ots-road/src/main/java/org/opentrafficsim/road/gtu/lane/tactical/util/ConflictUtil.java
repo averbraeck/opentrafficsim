@@ -105,19 +105,19 @@ public final class ConflictUtil
         {
 
             // adjust acceleration for situations where stopping might not be required
-            if (conflict.isMerge())
-            {
-                // follow leading GTUs on merge
-                a =
-                    Acceleration.min(a, followConflictingLeaderOnMerge(conflict, behavioralCharacteristics,
-                        carFollowingModel, speed, speedLimitInfo));
-            }
-            else
+            if (conflict.isCrossing())
             {
                 // avoid collision if crossing is occupied
                 a =
                     Acceleration.min(a, avoidCrossingCollision(behavioralCharacteristics, conflict, carFollowingModel,
                         speed, speedLimitInfo));
+            }
+            else
+            {
+                // follow leading GTUs on merge or split
+                a =
+                    Acceleration.min(a, followConflictingLeaderOnMergeOrSplit(conflict, behavioralCharacteristics,
+                        carFollowingModel, speed, speedLimitInfo));
             }
 
             // determine if we need to stop
@@ -183,16 +183,16 @@ public final class ConflictUtil
     }
 
     /**
-     * Determines acceleration for following conflicting vehicles <i>on</i> a merge conflict.
-     * @param conflict merge conflict
+     * Determines acceleration for following conflicting vehicles <i>on</i> a merge or split conflict.
+     * @param conflict merge or split conflict
      * @param behavioralCharacteristics behavioral characteristics
      * @param carFollowingModel car-following model
      * @param speed current speed
      * @param speedLimitInfo speed limit info
-     * @return acceleration for following conflicting vehicles <i>on</i> a merge conflict
+     * @return acceleration for following conflicting vehicles <i>on</i> a merge or split conflict
      * @throws ParameterException if a parameter is not given or out of bounds
      */
-    private static Acceleration followConflictingLeaderOnMerge(final HeadwayConflict conflict,
+    private static Acceleration followConflictingLeaderOnMergeOrSplit(final HeadwayConflict conflict,
         final BehavioralCharacteristics behavioralCharacteristics, final CarFollowingModel carFollowingModel,
         final Speed speed, final SpeedLimitInfo speedLimitInfo) throws ParameterException
     {
@@ -225,7 +225,7 @@ public final class ConflictUtil
         Acceleration a = carFollowingModel.followingAcceleration(behavioralCharacteristics, speed, speedLimitInfo, leaders);
         // if conflicting GTU is partially upstream of the conflict and at (near) stand-still, stop for the conflict rather than
         // following the tail of the conflicting GTU
-        if (virtualHeadway.lt(conflict.getDistance()))
+        if (conflict.isMerge() && virtualHeadway.lt(conflict.getDistance()))
         {
             // {@formatter:off}
             /*
@@ -270,8 +270,8 @@ public final class ConflictUtil
                 AnticipationInfo ttcC =
                     AnticipationInfo.anticipateMovement(distance, conflictingGTU.getSpeed(), Acceleration.ZERO);
                 AnticipationInfo tteO =
-                    AnticipationInfo.anticipateMovementFreeAcceleration(conflict.getDistance(), speed, behavioralCharacteristics,
-                        carFollowingModel, speedLimitInfo, new Duration(.5, TimeUnit.SI));
+                    AnticipationInfo.anticipateMovementFreeAcceleration(conflict.getDistance(), speed,
+                        behavioralCharacteristics, carFollowingModel, speedLimitInfo, new Duration(.5, TimeUnit.SI));
                 // enter before cleared
                 if (tteO.getDuration().lt(ttcC.getDuration()))
                 {
@@ -400,8 +400,8 @@ public final class ConflictUtil
             distance = distance.plus(conflict.getLength());
         }
         AnticipationInfo ttcO =
-            AnticipationInfo.anticipateMovementFreeAcceleration(distance, speed, behavioralCharacteristics, carFollowingModel,
-                speedLimitInfo, new Duration(.5, TimeUnit.SI));
+            AnticipationInfo.anticipateMovementFreeAcceleration(distance, speed, behavioralCharacteristics,
+                carFollowingModel, speedLimitInfo, new Duration(.5, TimeUnit.SI));
         // time till downstream vehicle will make the conflict passible, under constant speed or safe deceleration
         AnticipationInfo ttpDz = null;
         AnticipationInfo ttpDs = null;
@@ -530,16 +530,15 @@ public final class ConflictUtil
     private static boolean stopForAllStopConflict(final HeadwayConflict conflict, final ConflictPlans conflictPlans)
     {
         // TODO all-stop behavior
-        
+
         if (conflictPlans.isStopPhaseRun(conflict.getStopLine()))
         {
             return false;
         }
-        
+
         return false;
     }
 
-    
     /**
      * Holds the tactical plans of a driver considering conflicts. These are remembered for consistency. Set of yield plans in
      * case of having priority. Such plans are remembered to get consistency. For instance, if the decision is made to yield as
@@ -703,14 +702,13 @@ public final class ConflictUtil
         {
             return "ConflictPlans";
         }
-        
+
     }
-    
+
     /**
      * Phases of navigating an all-stop intersection.
      * <p>
-     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
-     * reserved. <br>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jun 30, 2016 <br>
@@ -729,5 +727,5 @@ public final class ConflictUtil
         /** Running over stop intersection. */
         RUN;
     }
-    
+
 }

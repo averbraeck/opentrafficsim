@@ -488,7 +488,14 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
     {
 
         // get infrastructure info
-        boolean takeNextOffRamp = true; // TODO from perception
+        boolean takeNextOffRamp = false;
+        for (InfrastructureLaneChangeInfo info : perception.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT))
+        {
+            if (perception.getSplitNumber(info) == 1)
+            {
+                takeNextOffRamp = true;
+            }
+        }
         int deltaNextExit = takeNextOffRamp ? 1 : 0;
 
         Length dExit;

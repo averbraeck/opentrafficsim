@@ -62,7 +62,7 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
     public String toString()
     {
         return "InfrastructureLaneChangeInfo [requiredNumberOfLaneChanges=" + this.requiredNumberOfLaneChanges
-                + ", remainingDistance=" + this.remainingDistance + "]";
+            + ", remainingDistance=" + this.remainingDistance + "]";
     }
 
     /** {@inheritDoc} */
