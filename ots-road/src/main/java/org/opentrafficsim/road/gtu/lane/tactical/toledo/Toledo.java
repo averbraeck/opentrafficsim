@@ -25,7 +25,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceivedSurroundings;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -234,7 +233,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
      * @return utility of gap
      * @throws ParameterException if parameter is not given
      */
-    private GapInfo getGapInfo(final GTU gtu, final BehavioralCharacteristics bc, final PerceivedSurroundings perception,
+    private GapInfo getGapInfo(final GTU gtu, final BehavioralCharacteristics bc, final LanePerception perception,
         final Gap gap, final RelativeLane lane) throws ParameterException
     {
 
@@ -400,7 +399,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
      * @throws ParameterException if parameter is not defined
      */
     private GapAcceptanceInfo getGapAcceptanceInfo(final GTU gtu, final BehavioralCharacteristics bc,
-        final PerceivedSurroundings perception, final double emuTg, final double eLead, final double eLag,
+        final LanePerception perception, final double emuTg, final double eLead, final double eLag,
         final RelativeLane lane) throws ParameterException
     {
 
@@ -483,7 +482,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
      * @return utility of lane
      * @throws ParameterException if parameter is not defined
      */
-    private double laneUtility(final GTU gtu, final BehavioralCharacteristics bc, final PerceivedSurroundings perception,
+    private double laneUtility(final GTU gtu, final BehavioralCharacteristics bc, final LanePerception perception,
         final double emuGa, final SpeedLimitInfo sli, final RelativeLane lane) throws ParameterException
     {
 
@@ -624,7 +623,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
      * @param lane lane to get density of
      * @return density in the given lane based on the following and leading vehicles
      */
-    private LinearDensity getDensityInLane(final GTU gtu, final PerceivedSurroundings perception, final RelativeLane lane)
+    private LinearDensity getDensityInLane(final GTU gtu, final LanePerception perception, final RelativeLane lane)
     {
         int nVehicles = 0;
         nVehicles += perception.getFollowers(lane).size();

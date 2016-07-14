@@ -7,7 +7,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
-import org.opentrafficsim.road.gtu.lane.perception.PerceivedSurroundings;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 
 /**
@@ -31,7 +31,7 @@ public class IncentiveRoute implements MandatoryIncentive
     public final Desire determineDesire(final LaneBasedGTU gtu, final Desire mandatoryDesire) throws ParameterException
     {
         BehavioralCharacteristics bc = gtu.getBehavioralCharacteristics();
-        PerceivedSurroundings perception = (PerceivedSurroundings) gtu.getPerception();
+        LanePerception perception = gtu.getPerception();
         Speed v = gtu.getSpeed();
         // desire to leave each lane
         double dLeft = getDesireToLeave(bc, perception, RelativeLane.LEFT, v);
@@ -52,7 +52,7 @@ public class IncentiveRoute implements MandatoryIncentive
      * @return desire to leave a lane
      * @throws ParameterException in case of a parameter exception
      */
-    private double getDesireToLeave(final BehavioralCharacteristics bc, final PerceivedSurroundings perception,
+    private double getDesireToLeave(final BehavioralCharacteristics bc, final LanePerception perception,
         final RelativeLane lane, final Speed v) throws ParameterException
     {
         double dOut = Double.NEGATIVE_INFINITY;

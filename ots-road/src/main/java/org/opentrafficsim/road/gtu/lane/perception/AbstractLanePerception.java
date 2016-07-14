@@ -1135,4 +1135,176 @@ public abstract class AbstractLanePerception implements LanePerception
         return new TreeSet<>();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public TimeStampedObject<SortedSet<AbstractHeadwayGTU>> getTimeStampedFirstLeaders(LateralDirectionality lat)
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TimeStampedObject<SortedSet<AbstractHeadwayGTU>> getTimeStampedFirstFollowers(LateralDirectionality lat)
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TimeStampedObject<Boolean> existsGtuAlongsideTimeStamped(LateralDirectionality lat)
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TimeStampedObject<SortedSet<AbstractHeadwayGTU>> getTimeStampedLeaders(RelativeLane lane)
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TimeStampedObject<SortedSet<AbstractHeadwayGTU>> getTimeStampedFollowers(RelativeLane lane)
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TimeStampedObject<SortedSet<InfrastructureLaneChangeInfo>> getTimeStampedInfrastructureLaneChangeInfo(
+        RelativeLane lane)
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TimeStampedObject<Integer> getTimeStampedSplitNumber(InfrastructureLaneChangeInfo info)
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TimeStampedObject<SpeedLimitProspect> getTimeStampedSpeedLimitProspect(RelativeLane lane)
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TimeStampedObject<Length> getTimeStampedLegalLaneChangePossibility(RelativeLane fromLane,
+        LateralDirectionality lat)
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TimeStampedObject<Length> getTimeStampedPhysicalLaneChangePossibility(RelativeLane fromLane,
+        LateralDirectionality lat)
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TimeStampedObject<SortedSet<RelativeLane>> getTimeStampedCurrentCrossSection()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TimeStampedObject<SortedSet<HeadwayTrafficLight>> getTimeStampedTrafficLights()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TimeStampedObject<SortedSet<HeadwayConflict>> getTimeStampedIntersectionConflicts(RelativeLane lane)
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateFirstLeaders()
+    {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateFirstFollowers()
+    {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateGtuAlongside()
+    {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateLeaders()
+    {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateFollowers()
+    {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateInfrastructureLaneChangeInfo()
+    {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateSplitNumber()
+    {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateSpeedLimitProspect()
+    {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateLegalLaneChangePossibility()
+    {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updatePhysicalLaneChangePossibility()
+    {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateCurrentCrossSection()
+    {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateTrafficLights()
+    {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateIntersectionConflicts()
+    {
+    }
+
 }
