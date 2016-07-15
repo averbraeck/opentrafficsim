@@ -231,6 +231,60 @@ public class OTSLine3D implements Locatable, Serializable
     }
 
     /**
+     * Clean up a list of points that describe a polyLine by removing points that lie within epsilon distance of a more
+     * straightened version of the line. <br>
+     * TODO Test this code (currently untested).
+     * @param epsilon double; maximal deviation
+     * @param useHorizontalDistance boolean; if true; the horizontal distance is used; if false; the 3D distance is used
+     * @return OTSLine3D; a new OTSLine3D containing all the remaining points
+     */
+    public final OTSLine3D noiseFilterRamerDouglasPeuker(final double epsilon, final boolean useHorizontalDistance)
+    {
+        try
+        {
+            // Apply the Ramers-Douglas-Peucker algorithm to the buffered points.
+            // Adapted from https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm
+            double maxDeviation = 0;
+            int splitIndex = -1;
+            int pointCount = size();
+            OTSLine3D straight = new OTSLine3D(get(0), get(pointCount - 1));
+            // Find the point with largest deviation from the straight line from start point to end point
+            for (int i = 1; i < pointCount - 1; i++)
+            {
+                OTSPoint3D point = get(i);
+                OTSPoint3D closest =
+                        useHorizontalDistance ? point.closestPointOnLine2D(straight) : point.closestPointOnLine(straight);
+                double deviation = useHorizontalDistance ? closest.horizontalDistanceSI(point) : closest.distanceSI(point);
+                if (deviation > maxDeviation)
+                {
+                    splitIndex = i;
+                    maxDeviation = deviation;
+                }
+            }
+            if (maxDeviation <= epsilon)
+            {
+                // All intermediate points can be dropped. Return a new list containing only the first and last point.
+                return straight;
+            }
+            // The largest deviation is larger than epsilon.
+            // Split the polyLine at the point with the maximum deviation. Process each sub list recursively and concatenate the
+            // results
+            OTSLine3D first =
+                    new OTSLine3D(Arrays.copyOfRange(this.points, 0, splitIndex + 1)).noiseFilterRamerDouglasPeuker(epsilon,
+                            useHorizontalDistance);
+            OTSLine3D second =
+                    new OTSLine3D(Arrays.copyOfRange(this.points, splitIndex, this.points.length))
+                            .noiseFilterRamerDouglasPeuker(epsilon, useHorizontalDistance);
+            return concatenate(epsilon, first, second);
+        }
+        catch (OTSGeometryException exception)
+        {
+            exception.printStackTrace(); // Peter thinks this cannot happen ...
+            return null;
+        }
+    }
+
+    /**
      * Create a line at linearly varying offset from this line. The offset may change linearly from its initial value at the
      * start of the reference line to its final offset value at the end of the reference line.
      * @param offsetAtStart double; offset at the start of the reference line (positive value is Left, negative value is Right)
