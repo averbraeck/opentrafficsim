@@ -242,7 +242,7 @@ public class OTSLine3D implements Locatable, Serializable
     {
         try
         {
-            // Apply the Ramers-Douglas-Peucker algorithm to the buffered points.
+            // Apply the Ramer-Douglas-Peucker algorithm to the buffered points.
             // Adapted from https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm
             double maxDeviation = 0;
             int splitIndex = -1;
