@@ -175,126 +175,123 @@ public class LMRS extends AbstractLMRS
             // operational plan
             // TODO apply acceleration 'a' during lane change
             // TODO set this.laneChange to null if lane change will be over
-            Length forwardHeadway = bc.getParameter(ParameterTypes.LOOKAHEAD);
-            List<Lane> lanes = buildLanePathInfo(gtuLane, forwardHeadway).getLanes();
-            Length firstLanePosition = gtuLane.position(getReferenceLane(gtuLane), RelativePosition.REFERENCE_POSITION);
-            try
-            {
-                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtuLane, lanes, firstLanePosition, startTime,
-                    gtuLane.getSpeed(), a, bc.getParameter(DT));
-            }
-            catch (OTSGeometryException exception)
-            {
-                throw new OperationalPlanException(exception);
-            }
+            // Length forwardHeadway = bc.getParameter(ParameterTypes.LOOKAHEAD);
+            // List<Lane> lanes = buildLanePathInfo(gtuLane, forwardHeadway).getLanes();
+            // Length firstLanePosition = gtuLane.position(getReferenceLane(gtuLane), RelativePosition.REFERENCE_POSITION);
+            // try
+            // {
+            // return LaneOperationalPlanBuilder.buildAccelerationPlan(gtuLane, lanes, firstLanePosition, startTime,
+            // gtuLane.getSpeed(), a, bc.getParameter(DT));
+            // }
+            // catch (OTSGeometryException exception)
+            // {
+            // throw new OperationalPlanException(exception);
+            // }
             // return buildAccelerationPlanWithLaneChange(gtuLane, startTime, speed, bc.getParameter(DT), a, bc, perception);
         }
-
-        // relaxation
-        exponentialHeadwayRelaxation(bc);
-
-        // determine lane change desire based on incentives
-        Desire desire = getLaneChangeDesire(gtuLane);
-
-        // gap acceptance
-        boolean acceptLeft =
-            acceptGap(perception, bc, sli, getCarFollowingModel(), desire.getLeft(), speed, LateralDirectionality.LEFT);
-        boolean acceptRight =
-            acceptGap(perception, bc, sli, getCarFollowingModel(), desire.getRight(), speed, LateralDirectionality.RIGHT);
-
-        // lane change decision
-        double dFree = bc.getParameter(DFREE);
-        double dSync = bc.getParameter(DSYNC);
-        double dCoop = bc.getParameter(DCOOP);
-        // decide
-        boolean changeLeft = false;
-        boolean changeRight = false;
-        if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dFree && acceptLeft)
+        else
         {
-            // change left
-            changeLeft = true;
-            Duration tRel =
-                Duration.interpolate(bc.getParameter(ParameterTypes.TMAX), bc.getParameter(ParameterTypes.TMIN), desire
-                    .getLeft());
-            if (tRel.lt(bc.getParameter(ParameterTypes.T)))
-            {
-                bc.setParameter(ParameterTypes.T, tRel);
-            }
-            // TODO headway of other driver...
-        }
-        else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dFree && acceptRight)
-        {
-            // change right
-            changeRight = true;
-            Duration tRel =
-                Duration.interpolate(bc.getParameter(ParameterTypes.TMAX), bc.getParameter(ParameterTypes.TMIN), desire
-                    .getRight());
-            if (tRel.lt(bc.getParameter(ParameterTypes.T)))
-            {
-                bc.setParameter(ParameterTypes.T, tRel);
-            }
-            // TODO headway of other driver...
-        }
+            // relaxation
+            exponentialHeadwayRelaxation(bc);
 
-        // take action if we cannot change lane
-        Acceleration aSync;
-        TurnIndicatorStatus turnIndicatorStatus =
-            changeLeft ? TurnIndicatorStatus.LEFT : changeRight ? TurnIndicatorStatus.RIGHT : TurnIndicatorStatus.NONE;
-        if (!changeLeft && !changeRight)
-        {
-            // synchronize
-            if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dSync)
+            // determine lane change desire based on incentives
+            Desire desire = getLaneChangeDesire(gtuLane);
+
+            // gap acceptance
+            boolean acceptLeft =
+                acceptGap(perception, bc, sli, getCarFollowingModel(), desire.getLeft(), speed, LateralDirectionality.LEFT);
+            boolean acceptRight =
+                acceptGap(perception, bc, sli, getCarFollowingModel(), desire.getRight(), speed, LateralDirectionality.RIGHT);
+
+            // lane change decision
+            double dFree = bc.getParameter(DFREE);
+            double dSync = bc.getParameter(DSYNC);
+            double dCoop = bc.getParameter(DCOOP);
+            // decide
+            boolean changeLeft = false;
+            boolean changeRight = false;
+            if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dFree && acceptLeft)
             {
-                aSync =
-                    synchronize(perception, bc, sli, getCarFollowingModel(), desire.getLeft(), speed,
-                        LateralDirectionality.LEFT);
-                a = Acceleration.min(a, aSync);
+                // change left
+                changeLeft = true;
+                Duration tRel =
+                    Duration.interpolate(bc.getParameter(ParameterTypes.TMAX), bc.getParameter(ParameterTypes.TMIN), desire
+                        .getLeft());
+                if (tRel.lt(bc.getParameter(ParameterTypes.T)))
+                {
+                    bc.setParameter(ParameterTypes.T, tRel);
+                }
+                // TODO headway of other driver...
             }
-            else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dSync)
+            else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dFree && acceptRight)
             {
-                aSync =
-                    synchronize(perception, bc, sli, getCarFollowingModel(), desire.getRight(), speed,
-                        LateralDirectionality.RIGHT);
-                a = Acceleration.min(a, aSync);
+                // change right
+                changeRight = true;
+                Duration tRel =
+                    Duration.interpolate(bc.getParameter(ParameterTypes.TMAX), bc.getParameter(ParameterTypes.TMIN), desire
+                        .getRight());
+                if (tRel.lt(bc.getParameter(ParameterTypes.T)))
+                {
+                    bc.setParameter(ParameterTypes.T, tRel);
+                }
+                // TODO headway of other driver...
             }
-            // use indicators to indicate lane change need
-            if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dCoop)
+
+            // take action if we cannot change lane
+            Acceleration aSync;
+            TurnIndicatorStatus turnIndicatorStatus =
+                changeLeft ? TurnIndicatorStatus.LEFT : changeRight ? TurnIndicatorStatus.RIGHT : TurnIndicatorStatus.NONE;
+            if (!changeLeft && !changeRight)
             {
-                // switch on left indicator
-                turnIndicatorStatus = TurnIndicatorStatus.LEFT;
+                // synchronize
+                if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dSync)
+                {
+                    aSync =
+                        synchronize(perception, bc, sli, getCarFollowingModel(), desire.getLeft(), speed,
+                            LateralDirectionality.LEFT);
+                    a = Acceleration.min(a, aSync);
+                }
+                else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dSync)
+                {
+                    aSync =
+                        synchronize(perception, bc, sli, getCarFollowingModel(), desire.getRight(), speed,
+                            LateralDirectionality.RIGHT);
+                    a = Acceleration.min(a, aSync);
+                }
+                // use indicators to indicate lane change need
+                if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dCoop)
+                {
+                    // switch on left indicator
+                    turnIndicatorStatus = TurnIndicatorStatus.LEFT;
+                }
+                else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dCoop)
+                {
+                    // switch on right indicator
+                    turnIndicatorStatus = TurnIndicatorStatus.RIGHT;
+                }
             }
-            else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dCoop)
+            gtu.setTurnIndicatorStatus(turnIndicatorStatus);
+
+            // cooperate
+            aSync = cooperate(perception, bc, sli, getCarFollowingModel(), speed, LateralDirectionality.LEFT);
+            a = Acceleration.min(a, aSync);
+            aSync = cooperate(perception, bc, sli, getCarFollowingModel(), speed, LateralDirectionality.RIGHT);
+            a = Acceleration.min(a, aSync);
+
+            // operational plan
+            if (changeLeft)
             {
-                // switch on right indicator
-                turnIndicatorStatus = TurnIndicatorStatus.RIGHT;
+                this.laneChangeDirectionality = LateralDirectionality.LEFT;
+            }
+            else if (changeRight)
+            {
+                this.laneChangeDirectionality = LateralDirectionality.RIGHT;
             }
         }
-        gtu.setTurnIndicatorStatus(turnIndicatorStatus);
-
-        // cooperate
-        aSync = cooperate(perception, bc, sli, getCarFollowingModel(), speed, LateralDirectionality.LEFT);
-        a = Acceleration.min(a, aSync);
-        aSync = cooperate(perception, bc, sli, getCarFollowingModel(), speed, LateralDirectionality.RIGHT);
-        a = Acceleration.min(a, aSync);
 
         // operational plan
-        if (changeLeft)
-        {
-            this.laneChangeDirectionality = LateralDirectionality.LEFT;
-        }
-        else if (changeRight)
-        {
-            this.laneChangeDirectionality = LateralDirectionality.RIGHT;
-        }
-
         Length forwardHeadway = bc.getParameter(ParameterTypes.LOOKAHEAD);
         List<Lane> lanes = buildLanePathInfo(gtuLane, forwardHeadway).getLanes();
-
-        // TODO Build the operational plan using minimum acceleration and including a possible lane change using
-        // TODO determine lane change duration, shorten if required
-        // a
-        // changeLeft/changeRight
-        
         if (this.laneChangeDirectionality == null)
         {
             Length firstLanePosition = gtuLane.position(getReferenceLane(gtuLane), RelativePosition.REFERENCE_POSITION);
@@ -308,25 +305,13 @@ public class LMRS extends AbstractLMRS
                 throw new OperationalPlanException(exception);
             }
         }
-        
-        List<Lane> toLanes = new ArrayList<>();
-        for (Lane lane : lanes)
-        {
-            if (!lane.accessibleAdjacentLanes(this.laneChangeDirectionality, gtu.getGTUType()).isEmpty())
-            {
-                toLanes.add(lane.accessibleAdjacentLanes(this.laneChangeDirectionality, gtu.getGTUType()).iterator().next());
-            }
-            else
-            {
-                new Exception().printStackTrace();
-                System.exit(-1);
-            }
-        }
+
         try
         {
             OperationalPlan plan =
-                LaneOperationalPlanBuilder.buildAccelerationLaneChangePlan(gtuLane, lanes, toLanes, gtu.getLocation(),
-                    startTime, gtu.getSpeed(), a, bc.getParameter(DT), this.totalLaneChangeSteps, this.laneChangeStep);
+                LaneOperationalPlanBuilder.buildAccelerationLaneChangePlan(gtuLane, lanes, this.laneChangeDirectionality,
+                    gtu.getLocation(), startTime, gtu.getSpeed(), a, bc.getParameter(DT), this.totalLaneChangeSteps,
+                    this.laneChangeStep);
             this.laneChangeStep++;
             if (this.laneChangeStep >= this.totalLaneChangeSteps)
             {
@@ -455,8 +440,8 @@ public class LMRS extends AbstractLMRS
             throw new RuntimeException(ope);
         }
     }
-    */
-    
+     */
+
     /**
      * Determine whether a gap is acceptable.
      * @param perception perception

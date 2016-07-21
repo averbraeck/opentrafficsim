@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.toledo;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -14,21 +15,27 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
+import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 
@@ -64,11 +71,14 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
     /** Random number generator. */
     public static final Random RANDOM = new Random();
 
-    /** Currently changing left. */
-    private boolean changingLeft = false;
+    /** Lane change direction, null if none. */
+    private LateralDirectionality laneChangeDirectionality = null;
 
-    /** Currently changing right. */
-    private boolean changingRight = false;
+    /** Number of time steps of current lane change. */
+    private int laneChangeStep = 0;
+
+    /** Total number of time steps of lane change. */
+    private int totalLaneChangeSteps = 6;
 
     /**
      * Constructor.
@@ -94,133 +104,195 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         SpeedLimitInfo sli = slp.getSpeedLimitInfo(Length.ZERO);
         BehavioralCharacteristics bc = gtuLane.getBehavioralCharacteristics();
 
-        // 3rd layer of model: Target gap model
-        // TODO vehicle not ahead and not backwards but completely adjacent
-        GapInfo gapFwdL = getGapInfo(gtu, bc, perception, Gap.FORWARD, RelativeLane.LEFT);
-        GapInfo gapAdjL = getGapInfo(gtu, bc, perception, Gap.ADJACENT, RelativeLane.LEFT);
-        GapInfo gapBckL = getGapInfo(gtu, bc, perception, Gap.BACKWARD, RelativeLane.LEFT);
-        GapInfo gapFwdR = getGapInfo(gtu, bc, perception, Gap.FORWARD, RelativeLane.RIGHT);
-        GapInfo gapAdjR = getGapInfo(gtu, bc, perception, Gap.ADJACENT, RelativeLane.RIGHT);
-        GapInfo gapBckR = getGapInfo(gtu, bc, perception, Gap.BACKWARD, RelativeLane.RIGHT);
-        double emuTgL =
-            Math.log(Math.exp(gapFwdL.getUtility()) + Math.exp(gapAdjL.getUtility()) + Math.exp(gapBckL.getUtility()));
-        double emuTgR =
-            Math.log(Math.exp(gapFwdR.getUtility()) + Math.exp(gapAdjR.getUtility()) + Math.exp(gapBckR.getUtility()));
+        Acceleration acceleration = null;
 
-        // 2nd layer of model: Gap-acceptance model
-        // gap acceptance random terms (variable over time, equal for left and right)
-        double eLead = RANDOM.nextGaussian() * Math.pow(bc.getParameter(ToledoLaneChangeParameters.SIGMA_LEAD), 2);
-        double eLag = RANDOM.nextGaussian() * Math.pow(bc.getParameter(ToledoLaneChangeParameters.SIGMA_LAG), 2);
-        GapAcceptanceInfo gapAcceptL = getGapAcceptanceInfo(gtu, bc, perception, emuTgL, eLead, eLag, RelativeLane.LEFT);
-        GapAcceptanceInfo gapAcceptR = getGapAcceptanceInfo(gtu, bc, perception, emuTgR, eLead, eLag, RelativeLane.RIGHT);
-
-        // 1st layer of model: Target lane model
-        double vL = laneUtility(gtu, bc, perception, gapAcceptL.getEmu(), sli, RelativeLane.LEFT);
-        double vC = laneUtility(gtu, bc, perception, 0, sli, RelativeLane.CURRENT);
-        double vR = laneUtility(gtu, bc, perception, gapAcceptR.getEmu(), sli, RelativeLane.RIGHT);
-
-        // change lane?
-        boolean changeLeft = vL > vR && vL > vC && gapAcceptL.isAcceptable();
-        boolean changeRight = vR > vL && vR > vC && gapAcceptR.isAcceptable();
-        if (changeLeft)
+        if (this.laneChangeDirectionality == null)
         {
-            this.changingLeft = true;
+            // not changing lane
+
+            // 3rd layer of model: Target gap model
+            // TODO vehicle not ahead and not backwards but completely adjacent
+            GapInfo gapFwdL = getGapInfo(gtu, bc, perception, Gap.FORWARD, RelativeLane.LEFT);
+            GapInfo gapAdjL = getGapInfo(gtu, bc, perception, Gap.ADJACENT, RelativeLane.LEFT);
+            GapInfo gapBckL = getGapInfo(gtu, bc, perception, Gap.BACKWARD, RelativeLane.LEFT);
+            GapInfo gapFwdR = getGapInfo(gtu, bc, perception, Gap.FORWARD, RelativeLane.RIGHT);
+            GapInfo gapAdjR = getGapInfo(gtu, bc, perception, Gap.ADJACENT, RelativeLane.RIGHT);
+            GapInfo gapBckR = getGapInfo(gtu, bc, perception, Gap.BACKWARD, RelativeLane.RIGHT);
+            double emuTgL =
+                Math.log(Math.exp(gapFwdL.getUtility()) + Math.exp(gapAdjL.getUtility()) + Math.exp(gapBckL.getUtility()));
+            double emuTgR =
+                Math.log(Math.exp(gapFwdR.getUtility()) + Math.exp(gapAdjR.getUtility()) + Math.exp(gapBckR.getUtility()));
+
+            // 2nd layer of model: Gap-acceptance model
+            // gap acceptance random terms (variable over time, equal for left and right)
+            double eLead = RANDOM.nextGaussian() * Math.pow(bc.getParameter(ToledoLaneChangeParameters.SIGMA_LEAD), 2);
+            double eLag = RANDOM.nextGaussian() * Math.pow(bc.getParameter(ToledoLaneChangeParameters.SIGMA_LAG), 2);
+            GapAcceptanceInfo gapAcceptL = getGapAcceptanceInfo(gtu, bc, perception, emuTgL, eLead, eLag, RelativeLane.LEFT);
+            GapAcceptanceInfo gapAcceptR =
+                getGapAcceptanceInfo(gtu, bc, perception, emuTgR, eLead, eLag, RelativeLane.RIGHT);
+
+            // 1st layer of model: Target lane model
+            double vL = laneUtility(gtu, bc, perception, gapAcceptL.getEmu(), sli, RelativeLane.LEFT);
+            double vC = laneUtility(gtu, bc, perception, 0, sli, RelativeLane.CURRENT);
+            double vR = laneUtility(gtu, bc, perception, gapAcceptR.getEmu(), sli, RelativeLane.RIGHT);
+
+            // change lane?
+            if (vL > vR && vL > vC && gapAcceptL.isAcceptable())
+            {
+                this.laneChangeDirectionality = LateralDirectionality.LEFT;
+            }
+            else if (vR > vL && vR > vC && gapAcceptR.isAcceptable())
+            {
+                this.laneChangeDirectionality = LateralDirectionality.RIGHT;
+            }
+
+            // accelerate for gap selection
+            if (this.laneChangeDirectionality == null)
+            {
+                if ((vC > vR && vC > vL)
+                    || (!perception.getLeaders(RelativeLane.CURRENT).isEmpty() && perception
+                        .getLeaders(RelativeLane.CURRENT).first().getDistance().lt(
+                            getCarFollowingModel().desiredHeadway(bc, gtu.getSpeed()))))
+                {
+                    acceleration =
+                        CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, gtu.getSpeed(), sli, perception
+                            .getLeaders(RelativeLane.CURRENT));
+                    // TODO remove this test code
+                    if (gtu.getId().equals("19"))
+                    {
+                        System.out.println("Acceleration of GTU " + gtu.getId() + ": " + acceleration + " at "
+                            + gtu.getSpeed() + ", following "
+                            + perception.getLeaders(RelativeLane.CURRENT).first().getSpeed() + ", "
+                            + perception.getLeaders(RelativeLane.CURRENT).first().getDistance());
+                    }
+                }
+                else
+                {
+                    GapInfo gapAdj;
+                    GapInfo gapFwd;
+                    GapInfo gapBck;
+                    if (vL > vR && vL > vC)
+                    {
+                        gapAdj = gapAdjL;
+                        gapFwd = gapFwdL;
+                        gapBck = gapBckL;
+                    }
+                    else
+                    {
+                        gapAdj = gapAdjR;
+                        gapFwd = gapFwdR;
+                        gapBck = gapBckR;
+                    }
+                    if (gapAdj.getUtility() > gapFwd.getUtility() && gapAdj.getUtility() > gapBck.getUtility())
+                    {
+                        // adjacent gap selected
+                        double eadj =
+                            Toledo.RANDOM.nextGaussian() * bc.getParameter(ToledoLaneChangeParameters.SIGMA_ADJ)
+                                * bc.getParameter(ToledoLaneChangeParameters.SIGMA_ADJ);
+                        acceleration =
+                            new Acceleration(bc.getParameter(ToledoLaneChangeParameters.C_ADJ_ACC)
+                                * (bc.getParameter(ToledoLaneChangeParameters.BETA_DP) * gapAdj.getLength().si - gapAdj
+                                    .getDistance().si) + eadj, AccelerationUnit.SI);
+                    }
+                    else if (gapFwd.getUtility() > gapAdj.getUtility() && gapFwd.getUtility() > gapBck.getUtility())
+                    {
+                        // forward gap selected
+                        Length desiredPosition =
+                            new Length(gapFwd.getDistance().si + bc.getParameter(ToledoLaneChangeParameters.BETA_DP)
+                                * gapFwd.getLength().si, LengthUnit.SI);
+                        double deltaV =
+                            gapFwd.getSpeed().si > gtu.getSpeed().si ? bc
+                                .getParameter(ToledoLaneChangeParameters.LAMBDA_FWD_POS)
+                                * (gapFwd.getSpeed().si - gtu.getSpeed().si) : bc
+                                .getParameter(ToledoLaneChangeParameters.LAMBDA_FWD_NEG)
+                                * (gtu.getSpeed().si - gapFwd.getSpeed().si);
+                        double efwd =
+                            Toledo.RANDOM.nextGaussian() * bc.getParameter(ToledoLaneChangeParameters.SIGMA_FWD)
+                                * bc.getParameter(ToledoLaneChangeParameters.SIGMA_FWD);
+                        acceleration =
+                            new Acceleration(bc.getParameter(ToledoLaneChangeParameters.C_FWD_ACC)
+                                * Math.pow(desiredPosition.si, bc.getParameter(ToledoLaneChangeParameters.BETA_FWD))
+                                * Math.exp(deltaV) + efwd, AccelerationUnit.SI);
+                    }
+                    else
+                    {
+                        // backward gap selected
+                        Length desiredPosition =
+                            new Length(gapBck.getDistance().si + (1 - bc.getParameter(ToledoLaneChangeParameters.BETA_DP))
+                                * gapBck.getLength().si, LengthUnit.SI);
+                        double deltaV =
+                            gapBck.getSpeed().si > gtu.getSpeed().si ? bc
+                                .getParameter(ToledoLaneChangeParameters.LAMBDA_BCK_POS)
+                                * (gapBck.getSpeed().si - gtu.getSpeed().si) : bc
+                                .getParameter(ToledoLaneChangeParameters.LAMBDA_BCK_NEG)
+                                * (gtu.getSpeed().si - gapBck.getSpeed().si);
+                        double ebck =
+                            Toledo.RANDOM.nextGaussian() * bc.getParameter(ToledoLaneChangeParameters.SIGMA_BCK)
+                                * bc.getParameter(ToledoLaneChangeParameters.SIGMA_BCK);
+                        acceleration =
+                            new Acceleration(bc.getParameter(ToledoLaneChangeParameters.C_BCK_ACC)
+                                * Math.pow(desiredPosition.si, bc.getParameter(ToledoLaneChangeParameters.BETA_BCK))
+                                * Math.exp(deltaV) + ebck, AccelerationUnit.SI);
+                    }
+                }
+            }
         }
-        if (changeRight)
-        {
-            this.changingRight = true;
-        }
 
-        // acceleration model
-        Acceleration acceleration;
-        if (this.changingLeft)
+        if (this.laneChangeDirectionality != null && this.laneChangeDirectionality.isLeft())
         {
+            // changing left
             acceleration =
                 CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, gtu.getSpeed(), sli, perception
                     .getLeaders(RelativeLane.LEFT));
         }
-        else if (this.changingRight)
+        else if (this.laneChangeDirectionality != null)
         {
+            // changing right
             acceleration =
                 CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, gtu.getSpeed(), sli, perception
                     .getLeaders(RelativeLane.RIGHT));
         }
-        else if ((vC > vR && vC > vL)
-            || (!perception.getLeaders(RelativeLane.CURRENT).isEmpty() && perception.getLeaders(RelativeLane.CURRENT)
-                .first().getDistance().lt(getCarFollowingModel().desiredHeadway(bc, gtu.getSpeed()))))
+
+        if (acceleration == null)
         {
-            acceleration =
-                CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, gtu.getSpeed(), sli, perception
-                    .getLeaders(RelativeLane.CURRENT));
+            throw new Error("Acceleration from toledo model is null.");
         }
-        else
+
+        // operational plan
+        Length forwardHeadway = bc.getParameter(ParameterTypes.LOOKAHEAD);
+        List<Lane> lanes = buildLanePathInfo(gtuLane, forwardHeadway).getLanes();
+        if (this.laneChangeDirectionality == null)
         {
-            GapInfo gapAdj;
-            GapInfo gapFwd;
-            GapInfo gapBck;
-            if (vL > vR && vL > vC)
+            Length firstLanePosition = gtuLane.position(getReferenceLane(gtuLane), RelativePosition.REFERENCE_POSITION);
+            try
             {
-                gapAdj = gapAdjL;
-                gapFwd = gapFwdL;
-                gapBck = gapBckL;
+                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtuLane, lanes, firstLanePosition, startTime,
+                    gtuLane.getSpeed(), acceleration, bc.getParameter(ToledoLaneChangeParameters.DT));
             }
-            else
+            catch (OTSGeometryException exception)
             {
-                gapAdj = gapAdjR;
-                gapFwd = gapFwdR;
-                gapBck = gapBckR;
-            }
-            if (gapAdj.getUtility() > gapFwd.getUtility() && gapAdj.getUtility() > gapBck.getUtility())
-            {
-                // adjacent gap selected
-                double eadj =
-                    Toledo.RANDOM.nextGaussian() * bc.getParameter(ToledoLaneChangeParameters.SIGMA_ADJ)
-                        * bc.getParameter(ToledoLaneChangeParameters.SIGMA_ADJ);
-                acceleration =
-                    new Acceleration(bc.getParameter(ToledoLaneChangeParameters.C_ADJ_ACC)
-                        * (bc.getParameter(ToledoLaneChangeParameters.BETA_DP) * gapAdj.getLength().si - gapAdj
-                            .getDistance().si) + eadj, AccelerationUnit.SI);
-            }
-            else if (gapFwd.getUtility() > gapAdj.getUtility() && gapFwd.getUtility() > gapBck.getUtility())
-            {
-                // forward gap selected
-                Length desiredPosition =
-                    new Length(gapFwd.getDistance().si + bc.getParameter(ToledoLaneChangeParameters.BETA_DP)
-                        * gapFwd.getLength().si, LengthUnit.SI);
-                double deltaV =
-                    gapFwd.getSpeed().si > gtu.getSpeed().si ? bc.getParameter(ToledoLaneChangeParameters.LAMBDA_FWD_POS)
-                        * (gapFwd.getSpeed().si - gtu.getSpeed().si) : bc
-                        .getParameter(ToledoLaneChangeParameters.LAMBDA_FWD_NEG)
-                        * (gtu.getSpeed().si - gapFwd.getSpeed().si);
-                double efwd =
-                    Toledo.RANDOM.nextGaussian() * bc.getParameter(ToledoLaneChangeParameters.SIGMA_FWD)
-                        * bc.getParameter(ToledoLaneChangeParameters.SIGMA_FWD);
-                acceleration =
-                    new Acceleration(bc.getParameter(ToledoLaneChangeParameters.C_FWD_ACC)
-                        * Math.pow(desiredPosition.si, bc.getParameter(ToledoLaneChangeParameters.BETA_FWD))
-                        * Math.exp(deltaV) + efwd, AccelerationUnit.SI);
-            }
-            else
-            {
-                // backward gap selected
-                Length desiredPosition =
-                    new Length(gapBck.getDistance().si + (1 - bc.getParameter(ToledoLaneChangeParameters.BETA_DP))
-                        * gapBck.getLength().si, LengthUnit.SI);
-                double deltaV =
-                    gapBck.getSpeed().si > gtu.getSpeed().si ? bc.getParameter(ToledoLaneChangeParameters.LAMBDA_BCK_POS)
-                        * (gapBck.getSpeed().si - gtu.getSpeed().si) : bc
-                        .getParameter(ToledoLaneChangeParameters.LAMBDA_BCK_NEG)
-                        * (gtu.getSpeed().si - gapBck.getSpeed().si);
-                double ebck =
-                    Toledo.RANDOM.nextGaussian() * bc.getParameter(ToledoLaneChangeParameters.SIGMA_BCK)
-                        * bc.getParameter(ToledoLaneChangeParameters.SIGMA_BCK);
-                acceleration =
-                    new Acceleration(bc.getParameter(ToledoLaneChangeParameters.C_BCK_ACC)
-                        * Math.pow(desiredPosition.si, bc.getParameter(ToledoLaneChangeParameters.BETA_BCK))
-                        * Math.exp(deltaV) + ebck, AccelerationUnit.SI);
+                throw new OperationalPlanException(exception);
             }
         }
-        return null;
+
+        try
+        {
+            OperationalPlan plan =
+                LaneOperationalPlanBuilder.buildAccelerationLaneChangePlan(gtuLane, lanes, this.laneChangeDirectionality,
+                    gtu.getLocation(), startTime, gtu.getSpeed(), acceleration, bc
+                        .getParameter(ToledoLaneChangeParameters.DT), this.totalLaneChangeSteps, this.laneChangeStep);
+            this.laneChangeStep++;
+            if (this.laneChangeStep >= this.totalLaneChangeSteps)
+            {
+                this.laneChangeStep = 0;
+                this.laneChangeDirectionality = null;
+            }
+            return plan;
+        }
+        catch (OTSGeometryException exception)
+        {
+            throw new OperationalPlanException(exception);
+        }
     }
 
     /**
@@ -399,65 +471,67 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
      * @throws ParameterException if parameter is not defined
      */
     private GapAcceptanceInfo getGapAcceptanceInfo(final GTU gtu, final BehavioralCharacteristics bc,
-        final LanePerception perception, final double emuTg, final double eLead, final double eLag,
-        final RelativeLane lane) throws ParameterException
+        final LanePerception perception, final double emuTg, final double eLead, final double eLag, final RelativeLane lane)
+        throws ParameterException
     {
 
-        // get lead and lag speed difference and distance
-        Speed dVLead;
-        Length sLead;
+        // get lead and lag utility and acceptance
+        double vLead;
+        double vLag;
+        boolean acceptLead;
+        boolean acceptLag;
+
         if (!perception.getLeaders(lane).isEmpty())
         {
-            dVLead = perception.getLeaders(lane).first().getSpeed().minus(gtu.getSpeed());
-            sLead = perception.getLeaders(lane).first().getDistance();
+            Speed dVLead = perception.getLeaders(lane).first().getSpeed().minus(gtu.getSpeed());
+            Length sLead = perception.getLeaders(lane).first().getDistance();
+            // critical gap
+            Length gLead =
+                new Length(Math.exp(bc.getParameter(ToledoLaneChangeParameters.C_LEAD)
+                    + bc.getParameter(ToledoLaneChangeParameters.BETA_POS_LEAD) * Speed.max(dVLead, Speed.ZERO).si
+                    + bc.getParameter(ToledoLaneChangeParameters.BETA_NEG_LEAD) * Speed.min(dVLead, Speed.ZERO).si
+                    + bc.getParameter(ToledoLaneChangeParameters.BETA_EMU_LEAD) * emuTg
+                    + bc.getParameter(ToledoLaneChangeParameters.ALPHA_TL_LEAD)
+                    * bc.getParameter(ToledoLaneChangeParameters.ERROR_TERM) + eLead), LengthUnit.SI);
+            vLead =
+                Math.log(gLead.si)
+                    - (bc.getParameter(ToledoLaneChangeParameters.C_LEAD)
+                        + bc.getParameter(ToledoLaneChangeParameters.BETA_POS_LEAD) * Speed.max(dVLead, Speed.ZERO).si
+                        + bc.getParameter(ToledoLaneChangeParameters.BETA_NEG_LEAD) * Speed.min(dVLead, Speed.ZERO).si + bc
+                        .getParameter(ToledoLaneChangeParameters.BETA_EMU_LEAD)
+                        * emuTg);
+            acceptLead = gLead.lt(sLead);
         }
         else
         {
-            dVLead = Speed.ZERO;
-            sLead = new Length(Double.POSITIVE_INFINITY, LengthUnit.SI);
+            vLead = 0;
+            acceptLead = false;
         }
-        Speed dVLag;
-        Length sLag;
+
         if (!perception.getFollowers(lane).isEmpty())
         {
-            dVLag = perception.getFollowers(lane).first().getSpeed().minus(gtu.getSpeed());
-            sLag = perception.getFollowers(lane).first().getDistance();
+            Speed dVLag = perception.getFollowers(lane).first().getSpeed().minus(gtu.getSpeed());
+            Length sLag = perception.getFollowers(lane).first().getDistance();
+            // critical gap
+            Length gLag =
+                new Length(Math.exp(bc.getParameter(ToledoLaneChangeParameters.C_LAG)
+                    + bc.getParameter(ToledoLaneChangeParameters.BETA_POS_LAG) * Speed.max(dVLag, Speed.ZERO).si
+                    + bc.getParameter(ToledoLaneChangeParameters.BETA_EMU_LAG) * emuTg
+                    + bc.getParameter(ToledoLaneChangeParameters.ALPHA_TL_LAG)
+                    * bc.getParameter(ToledoLaneChangeParameters.ERROR_TERM) + eLag), LengthUnit.SI);
+            vLag =
+                Math.log(gLag.si)
+                    - (bc.getParameter(ToledoLaneChangeParameters.C_LAG)
+                        + bc.getParameter(ToledoLaneChangeParameters.BETA_POS_LAG) * Speed.max(dVLag, Speed.ZERO).si + bc
+                        .getParameter(ToledoLaneChangeParameters.BETA_EMU_LAG)
+                        * emuTg);
+            acceptLag = gLag.lt(sLag);
         }
         else
         {
-            dVLag = Speed.ZERO;
-            sLag = new Length(Double.POSITIVE_INFINITY, LengthUnit.SI);
+            vLag = 0;
+            acceptLag = false;
         }
-
-        // critical gaps
-        // {@formatter:off}
-        Length gLead = new Length(Math.exp(bc.getParameter(ToledoLaneChangeParameters.C_LEAD) 
-            + bc.getParameter(ToledoLaneChangeParameters.BETA_POS_LEAD) * Speed.max(dVLead, Speed.ZERO).si
-            + bc.getParameter(ToledoLaneChangeParameters.BETA_NEG_LEAD) * Speed.min(dVLead, Speed.ZERO).si
-            + bc.getParameter(ToledoLaneChangeParameters.BETA_EMU_LEAD) * emuTg 
-            + bc.getParameter(ToledoLaneChangeParameters.ALPHA_TL_LEAD) * bc.getParameter(ToledoLaneChangeParameters.ERROR_TERM)
-            + eLead), LengthUnit.SI);
-        Length gLag = new Length(Math.exp(bc.getParameter(ToledoLaneChangeParameters.C_LAG) 
-            + bc.getParameter(ToledoLaneChangeParameters.BETA_POS_LAG) * Speed.max(dVLag, Speed.ZERO).si
-            + bc.getParameter(ToledoLaneChangeParameters.BETA_EMU_LAG) * emuTg 
-            + bc.getParameter(ToledoLaneChangeParameters.ALPHA_TL_LAG) * bc.getParameter(ToledoLaneChangeParameters.ERROR_TERM)
-            + eLag), LengthUnit.SI);
-        // {@formatter:on}
-
-        // lead and lag utilities
-        double vLead =
-            Math.log(gLead.si)
-                - (bc.getParameter(ToledoLaneChangeParameters.C_LEAD)
-                    + bc.getParameter(ToledoLaneChangeParameters.BETA_POS_LEAD) * Speed.max(dVLead, Speed.ZERO).si
-                    + bc.getParameter(ToledoLaneChangeParameters.BETA_NEG_LEAD) * Speed.min(dVLead, Speed.ZERO).si + bc
-                    .getParameter(ToledoLaneChangeParameters.BETA_EMU_LEAD)
-                    * emuTg);
-        double vLag =
-            Math.log(gLag.si)
-                - (bc.getParameter(ToledoLaneChangeParameters.C_LAG)
-                    + bc.getParameter(ToledoLaneChangeParameters.BETA_POS_LAG) * Speed.max(dVLag, Speed.ZERO).si + bc
-                    .getParameter(ToledoLaneChangeParameters.BETA_EMU_LAG)
-                    * emuTg);
 
         // gap acceptance emu
         double vRatLead = vLead / bc.getParameter(ToledoLaneChangeParameters.SIGMA_LEAD);
@@ -467,7 +541,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
                 + vLag * cumNormDist(vRatLag) + bc.getParameter(ToledoLaneChangeParameters.SIGMA_LAG) * normDist(vRatLag);
 
         // return info
-        return new GapAcceptanceInfo(emuGa, gLead.lt(sLead) && gLag.lt(sLag));
+        return new GapAcceptanceInfo(emuGa, acceptLead && acceptLag);
 
     }
 

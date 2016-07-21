@@ -192,7 +192,7 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
     private double getDensity(final SortedMap<Length, Speed> leaders)
     {
         if (leaders.isEmpty())
-        { 
+        {
             return 0;
         }
         return leaders.lastKey().getInUnit(LengthUnit.KILOMETER) / leaders.size();
