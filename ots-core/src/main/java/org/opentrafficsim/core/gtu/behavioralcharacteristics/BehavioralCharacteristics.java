@@ -231,6 +231,46 @@ public class BehavioralCharacteristics implements Serializable
     }
 
     /**
+     * Sets the default value of a parameter.
+     * @param parameter parameter to set the default value of
+     * @param <U> Unit of the value.
+     * @param <T> Class of the value.
+     * @return this set of behavioral characteristics (for method chaining)
+     * @throws ParameterException if the parameter type has no default value
+     */
+    @SuppressWarnings("unchecked")
+    public final <U extends Unit<U>, T extends DoubleScalar.Rel<U>> BehavioralCharacteristics setDefaultParameter(
+        final AbstractParameterType<U, T> parameter) throws ParameterException
+    {
+        T defaultValue;
+        if (parameter.getDefaultValue() instanceof DoubleScalar.Rel<?>)
+        {
+            // all types based on DJUNITS
+            defaultValue = (T) parameter.getDefaultValue();
+        }
+        else if (parameter.getDefaultValue() instanceof Boolean)
+        {
+            // boolean
+            defaultValue = (T) new Dimensionless((boolean) parameter.getDefaultValue() ? 1.0 : 0.0, DimensionlessUnit.SI);
+        }
+        else
+        {
+            // double or integer
+            defaultValue = (T) new Dimensionless(((Number) parameter.getDefaultValue()).doubleValue(), DimensionlessUnit.SI);
+        }
+        try
+        {
+            saveSetParameter(parameter, defaultValue);
+        }
+        catch (ParameterException pe)
+        {
+            // should not happen, default value and parameter type are connected
+            throw new RuntimeException(pe);
+        }
+        return this;
+    }
+
+    /**
      * Sets the default values of all accessible parameters defined in the given class.
      * @param clazz class with parameters
      * @return this set of behavioral characteristics (for method chaining)

@@ -6,9 +6,12 @@ import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractPara
 
 import java.lang.reflect.Field;
 
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDuration;
 
 /**
  * List of parameters for the model of Toledo (2003).<br>
@@ -27,6 +30,10 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble
 public final class ToledoLaneChangeParameters
 {
 
+    /** Fixed model time step. */
+    public static final ParameterTypeDuration DT = new ParameterTypeDuration("dt", "Fixed model time step.", new Duration(
+        0.5, TimeUnit.SI), POSITIVE);
+    
     /** */
     public static final ParameterTypeDouble C_CL = new ParameterTypeDouble("C_CL", "Current lane constant.", 2.128);
 
