@@ -26,8 +26,8 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
     /** The strategical planner of the GTU. */
     final LaneBasedStrategicalPlanner strategicalPlanner;
 
-    /** The maximum velocity of the GTU. */
-    final Speed velocity;
+    /** The maximum speed of the GTU. */
+    final Speed speed;
 
     /** The initial lanes, positions and direction of the GTU. */
     final Set<DirectedLanePosition> initialLongitudinalPositions;
@@ -37,19 +37,19 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
      * @param gtuCharacteristics GTUCharacteristics; characteristics of the super GTU type to be used for the GTU
      * @param lanePerceptionFull LanePerceptionFull; the perception for the GTU
      * @param laneBasedStrategicalPlanner LaneBasedStrategicalPlanner; the strategical planner for the GTU
-     * @param velocity Speed; the initial velocity of the GTU
+     * @param speed Speed; the initial speed of the GTU
      * @param initialLongitudinalPositions Set&lt;DirectedLanePosition&gt;; the lane, initial position and direction of the GTU
      */
     public LaneBasedGTUCharacteristics(final GTUCharacteristics gtuCharacteristics, LanePerceptionFull lanePerceptionFull,
-            LaneBasedStrategicalPlanner laneBasedStrategicalPlanner, Speed velocity,
+            LaneBasedStrategicalPlanner laneBasedStrategicalPlanner, Speed speed,
             Set<DirectedLanePosition> initialLongitudinalPositions)
     {
         super(gtuCharacteristics.getGTUType(), gtuCharacteristics.getIdGenerator(), gtuCharacteristics.getLength(),
-                gtuCharacteristics.getWidth(), gtuCharacteristics.getMaximumVelocity(), gtuCharacteristics.getSimulator(),
+                gtuCharacteristics.getWidth(), gtuCharacteristics.getMaximumSpeed(), gtuCharacteristics.getSimulator(),
                 gtuCharacteristics.getNetwork());
         this.perception = lanePerceptionFull;
         this.strategicalPlanner = laneBasedStrategicalPlanner;
-        this.velocity = velocity;
+        this.speed = speed;
         this.initialLongitudinalPositions = initialLongitudinalPositions;
     }
 
@@ -70,11 +70,11 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
     }
 
     /**
-     * @return Speed; the maximum velocity of the GTU
+     * @return Speed; the maximum speed of the GTU
      */
-    public Speed getVelocity()
+    public Speed getSpeed()
     {
-        return this.velocity;
+        return this.speed;
     }
 
     /**

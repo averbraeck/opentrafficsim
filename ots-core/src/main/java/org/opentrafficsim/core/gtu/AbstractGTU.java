@@ -371,19 +371,19 @@ public abstract class AbstractGTU implements GTU
         }
         try
         {
-            return this.operationalPlan.getVelocity(time);
+            return this.operationalPlan.getSpeed(time);
         }
         catch (OperationalPlanException ope)
         {
-            // should not happen --there is a still valid operational plan. Return the end velocity of the plan.
+            // should not happen --there is a still valid operational plan. Return the end speed of the plan.
             try
             {
-                return this.operationalPlan.getVelocity(this.operationalPlan.getTotalDuration());
+                return this.operationalPlan.getSpeed(this.operationalPlan.getTotalDuration());
             }
             catch (OperationalPlanException ope2)
             {
                 // this should not happen at all...
-                throw new RuntimeException("getVelocity() could not derive a valid velocity for the current operationalPlan",
+                throw new RuntimeException("getSpeed() could not derive a valid speed for the current operationalPlan",
                         ope2);
             }
         }

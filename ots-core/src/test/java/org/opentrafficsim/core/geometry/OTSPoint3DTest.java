@@ -253,7 +253,6 @@ public class OTSPoint3DTest
      * @param dX double; translation along X direction
      * @param dY double; translation along Y direction
      * @return OTSPoint3D
-     * @throws OTSGeometryException
      */
     private OTSPoint3D makeRotatedTranslatedPoint(final OTSPoint3D p, final double rotation, final double dX, final double dY)
     {

@@ -17,7 +17,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
 /**
- * Specific type of LaneBasedGTU. This class adds length, width, maximum velocity and a reference to the simulator to the
+ * Specific type of LaneBasedGTU. This class adds length, width, maximum speed and a reference to the simulator to the
  * AbstractLaneBasedGTU.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -40,7 +40,7 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
     private final Length width;
 
     /** The maximum speed of the GTU (in the driving direction). */
-    private final Speed maximumVelocity;
+    private final Speed maximumSpeed;
 
     /**
      * Construct a new AbstractLaneBasedIndividualGTU.
@@ -50,7 +50,7 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
      * @param initialSpeed the initial speed of the car on the lane
      * @param length the maximum length of the GTU (parallel with driving direction)
      * @param width the maximum width of the GTU (perpendicular to driving direction)
-     * @param maximumVelocity the maximum speed of the GTU (in the driving direction)
+     * @param maximumSpeed the maximum speed of the GTU (in the driving direction)
      * @param simulator the simulator
      * @param strategicalPlanner the strategical planner (e.g., route determination) to use
      * @param perception the lane-based perception model of the GTU
@@ -63,7 +63,7 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractLaneBasedIndividualGTU(final String id, final GTUType gtuType,
         final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
-        final Length length, final Length width, final Speed maximumVelocity,
+        final Length length, final Length width, final Speed maximumSpeed,
         final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
         final LanePerception perception, final OTSNetwork network) throws NetworkException, SimRuntimeException,
         GTUException, OTSGeometryException
@@ -72,11 +72,11 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
             network);
         this.length = length;
         this.width = width;
-        if (null == maximumVelocity)
+        if (null == maximumSpeed)
         {
-            throw new GTUException("maximumVelocity may not be null");
+            throw new GTUException("maximumSpeed may not be null");
         }
-        this.maximumVelocity = maximumVelocity;
+        this.maximumSpeed = maximumSpeed;
     }
 
     /** {@inheritDoc} */
@@ -95,9 +95,9 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
 
     /** {@inheritDoc} */
     @Override
-    public final Speed getMaximumVelocity()
+    public final Speed getMaximumSpeed()
     {
-        return this.maximumVelocity;
+        return this.maximumSpeed;
     }
 
 }

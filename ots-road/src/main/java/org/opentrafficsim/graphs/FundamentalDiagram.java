@@ -275,7 +275,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     /**
      * Add the effect of one passing car to this Fundamental Diagram.
      * @param gtu AbstractLaneBasedGTU; the GTU that passes the detection point
-     * @throws GTUException when the velocity of the GTU cannot be assessed
+     * @throws GTUException when the speed of the GTU cannot be assessed
      */
     public final void addData(final LaneBasedGTU gtu) throws GTUException
     {

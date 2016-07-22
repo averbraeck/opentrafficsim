@@ -132,7 +132,7 @@ public class LaneBasedGTUTest implements UNITS
         Speed truckSpeed = new Speed(0, KM_PER_HOUR);
         Length truckWidth = new Length(2.5, METER);
         LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
-        Speed maximumVelocity = new Speed(120, KM_PER_HOUR);
+        Speed maximumSpeed = new Speed(120, KM_PER_HOUR);
         GTUFollowingModelOld gtuFollowingModel = new IDMPlusOld();
         BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create(); // new
                                                                                               // BehavioralCharacteristics();
@@ -143,7 +143,7 @@ public class LaneBasedGTUTest implements UNITS
                         gtuFollowingModel, laneChangeModel));
         LaneBasedIndividualGTU truck =
                 new LaneBasedIndividualGTU("Truck", truckType, truckPositions, truckSpeed, truckLength, truckWidth,
-                        maximumVelocity, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
+                        maximumSpeed, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
         // Verify that the truck is registered on the correct Lanes
         int lanesChecked = 0;
         int found = 0;
@@ -218,7 +218,7 @@ public class LaneBasedGTUTest implements UNITS
                                 gtuFollowingModel, laneChangeModel));
                 LaneBasedIndividualGTU car =
                         new LaneBasedIndividualGTU("Car", carType, carPositions, carSpeed, carLength, carWidth,
-                                maximumVelocity, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
+                                maximumSpeed, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
                 // leader = truck.headway(forwardMaxDistance);
                 // TODO see how we can ask the vehicle to look 'forwardMaxDistance' ahead
                 leader = truck.getPerception().getForwardHeadway();
@@ -407,7 +407,7 @@ public class LaneBasedGTUTest implements UNITS
             Acceleration acceleration = new Acceleration(a, METER_PER_SECOND_2);
             FixedAccelerationModel fam = new FixedAccelerationModel(acceleration, new Duration(10, SECOND));
             LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
-            Speed maximumVelocity = new Speed(200, KM_PER_HOUR);
+            Speed maximumSpeed = new Speed(200, KM_PER_HOUR);
             BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create(); // new
                                                                                                   // BehavioralCharacteristics();
             // LaneBasedBehavioralCharacteristics drivingCharacteristics = new LaneBasedBehavioralCharacteristics(fam,
@@ -417,7 +417,7 @@ public class LaneBasedGTUTest implements UNITS
                             laneChangeModel));
             LaneBasedIndividualGTU car =
                     new LaneBasedIndividualGTU("Car" + this.idGenerator.nextId(), carType, carPositions, carSpeed,
-                            new Length(4, METER), new Length(1.8, METER), maximumVelocity, simulator,
+                            new Length(4, METER), new Length(1.8, METER), maximumSpeed, simulator,
                             strategicalPlanner, new LanePerceptionFull(), this.network);
             // Let the simulator execute the move method of the car
             simulator.runUpTo(new Time(61, SECOND));

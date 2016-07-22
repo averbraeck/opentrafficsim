@@ -39,9 +39,9 @@ class GlobalTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length defaultLaneWidth = null;
 
-    /** Default VelocityGTUColorer.maxSpeed. */
+    /** Default SpeedGTUColorer.maxSpeed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Speed velocityGTUColorerMaxSpeed = null;
+    Speed speedGTUColorerMaxSpeed = null;
 
     /** Default lane keeping policy. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -81,18 +81,18 @@ class GlobalTag implements Serializable
             if (width != null)
                 parser.globalTag.defaultLaneWidth = LengthUnits.parseLengthRel(width.getNodeValue().trim());
 
-            // VELOCITYGTUCOLORER attributes
-            List<Node> velocityGTUColorerNodes = XMLParser.getNodes(node.getChildNodes(), "VELOCITYGTUCOLORER");
-            if (velocityGTUColorerNodes.size() > 1)
-                throw new SAXException("GLOBAL: More than one tag VELOCITYGTUCOLORER in the XML-file");
-            if (velocityGTUColorerNodes.size() == 1)
+            // SPEEDGTUCOLORER attributes
+            List<Node> speedGTUColorerNodes = XMLParser.getNodes(node.getChildNodes(), "SPEEDGTUCOLORER");
+            if (speedGTUColorerNodes.size() > 1)
+                throw new SAXException("GLOBAL: More than one tag SPEEDGTUCOLORER in the XML-file");
+            if (speedGTUColorerNodes.size() == 1)
             {
-                Node velocityGTUColorerNode = nodes.get(0);
-                NamedNodeMap velocityGTUColorerAttributes = velocityGTUColorerNode.getAttributes();
-                if (velocityGTUColorerAttributes.getNamedItem("MAXSPEED") == null)
-                    throw new SAXException("GLOBAL: No attribute MAXSPEED for the tag VELOCITYGTUCOLORER");
-                parser.globalTag.velocityGTUColorerMaxSpeed =
-                    SpeedUnits.parseSpeedAbs(velocityGTUColorerAttributes.getNamedItem("MAXSPEED").getNodeValue());
+                Node speedGTUColorerNode = nodes.get(0);
+                NamedNodeMap speedGTUColorerAttributes = speedGTUColorerNode.getAttributes();
+                if (speedGTUColorerAttributes.getNamedItem("MAXSPEED") == null)
+                    throw new SAXException("GLOBAL: No attribute MAXSPEED for the tag SPEEDGTUCOLORER");
+                parser.globalTag.speedGTUColorerMaxSpeed =
+                    SpeedUnits.parseSpeedAbs(speedGTUColorerAttributes.getNamedItem("MAXSPEED").getNodeValue());
             }
 
             Node lkp = attributes.getNamedItem("DEFAULTLANEKEEPING");
@@ -114,7 +114,7 @@ class GlobalTag implements Serializable
     public final String toString()
     {
         return "GlobalTag [defaultMaxSpeed=" + this.defaultMaxSpeed + ", defaultLaneWidth=" + this.defaultLaneWidth
-                + ", velocityGTUColorerMaxSpeed=" + this.velocityGTUColorerMaxSpeed + ", defaultLaneKeepingPolicy="
+                + ", speedGTUColorerMaxSpeed=" + this.speedGTUColorerMaxSpeed + ", defaultLaneKeepingPolicy="
                 + this.defaultLaneKeepingPolicy + ", defaultOvertakingConditions=" + this.defaultOvertakingConditions + "]";
     }
 }

@@ -507,7 +507,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         /*
          * Move the vehicle into any new lanes with the front, and schedule entrance during this time step and calculate the
          * current position based on the fractional position, because THE POSITION METHOD DOES NOT WORK FOR THIS. IT CALCULATES
-         * THE POSITION BASED ON THE NEWLY CALCULATED ACCELERATION AND VELOCITY AND CAN THEREFORE MAKE AN ERROR.
+         * THE POSITION BASED ON THE NEWLY CALCULATED ACCELERATION AND SPEED AND CAN THEREFORE MAKE AN ERROR.
          */
         double timestep = getOperationalPlan().getTotalDuration().si;
         // TODO WRONG - should be based on timeAtPosition() as the plan can have acc/dec/const segments

@@ -415,23 +415,23 @@ public class OperationalPlan implements Serializable
     }
 
     /**
-     * Calculate the velocity of the GTU after the given duration since the start of the plan.
+     * Calculate the speed of the GTU after the given duration since the start of the plan.
      * @param time the relative time to look for a location
      * @return the location after the given duration since the start of the plan.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final Speed getVelocity(final Duration time) throws OperationalPlanException
+    public final Speed getSpeed(final Duration time) throws OperationalPlanException
     {
-        return getVelocity(time.plus(this.startTime));
+        return getSpeed(time.plus(this.startTime));
     }
 
     /**
-     * Calculate the velocity of the GTU at the given time.
+     * Calculate the speed of the GTU at the given time.
      * @param time the absolute time to look for a location
      * @return the location at the given time.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final Speed getVelocity(final Time time) throws OperationalPlanException
+    public final Speed getSpeed(final Time time) throws OperationalPlanException
     {
         SegmentProgress sp = getSegmentProgress(time);
         return new Speed(sp.getSegment().speedSI(time.minus(sp.getSegmentStartTime()).si), SpeedUnit.SI);

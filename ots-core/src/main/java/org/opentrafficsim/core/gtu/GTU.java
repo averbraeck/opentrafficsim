@@ -50,8 +50,8 @@ public interface GTU extends Locatable, Serializable
     /** @return the maximum width of the GTU (perpendicular to driving direction). */
     Length getWidth();
 
-    /** @return the maximum velocity of the GTU, in the linear direction. */
-    Speed getMaximumVelocity();
+    /** @return the maximum speed of the GTU, in the direction of movement. */
+    Speed getMaximumSpeed();
 
     /** @return the maximum acceleration of the GTU, in the linear direction. */
     Acceleration getMaximumAcceleration();

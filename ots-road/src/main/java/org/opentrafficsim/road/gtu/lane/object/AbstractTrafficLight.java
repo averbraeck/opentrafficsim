@@ -176,7 +176,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public Speed getMaximumVelocity()
+    public Speed getMaximumSpeed()
     {
         return Speed.ZERO;
     }

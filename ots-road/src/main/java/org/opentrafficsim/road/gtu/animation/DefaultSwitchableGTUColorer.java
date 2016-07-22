@@ -8,7 +8,7 @@ import org.opentrafficsim.core.gtu.animation.AccelerationGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
-import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
+import org.opentrafficsim.core.gtu.animation.SpeedGTUColorer;
 
 /**
  * A simple way to construct a SwitchableGTUColorer set up with the "standard" set of GTUColorers. <br>
@@ -31,7 +31,7 @@ public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer
     {
         COLORERS = new GTUColorer[4];
         COLORERS[0] = new IDGTUColorer();
-        COLORERS[1] = new VelocityGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR));
+        COLORERS[1] = new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR));
         COLORERS[2] =
             new AccelerationGTUColorer(new Acceleration(-4, AccelerationUnit.METER_PER_SECOND_2), new Acceleration(2,
                 AccelerationUnit.METER_PER_SECOND_2));

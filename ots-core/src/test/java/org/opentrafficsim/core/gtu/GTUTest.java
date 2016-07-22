@@ -238,7 +238,7 @@ class TestGTU extends AbstractGTU
 
     /** {@inheritDoc} */
     @Override
-    public Speed getMaximumVelocity()
+    public Speed getMaximumSpeed()
     {
         return null;
     }

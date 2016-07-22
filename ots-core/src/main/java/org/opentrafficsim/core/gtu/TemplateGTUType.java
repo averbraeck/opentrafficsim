@@ -40,7 +40,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
     private final Generator<Length> widthGenerator;
 
     /** Generator for the maximum speed of the GTU. */
-    private final Generator<Speed> maximumVelocityGenerator;
+    private final Generator<Speed> maximumSpeedGenerator;
 
     /** The simulator. */
     private final OTSDEVSSimulatorInterface simulator;
@@ -56,21 +56,21 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
      *            direction).
      * @param widthGenerator Generator&lt;Length&gt;; generator for the width of the GTU type (perpendicular to driving
      *            direction).
-     * @param maximumVelocityGenerator Generator&lt;Speed&gt;; generator for the maximum velocity of the GTU type (in the
+     * @param maximumSpeedGenerator Generator&lt;Speed&gt;; generator for the maximum speed of the GTU type (in the
      *            driving direction).
      * @param simulator OTSDEVSSimulatorInterface; the simulator.
      * @param network OTSNetwork; the network that will own the GTUs
      * @throws NullPointerException when one of the arguments is null
      */
     public TemplateGTUType(final GTUType gtuType, final IdGenerator idGenerator, final Generator<Length> lengthGenerator,
-            final Generator<Length> widthGenerator, final Generator<Speed> maximumVelocityGenerator,
+            final Generator<Length> widthGenerator, final Generator<Speed> maximumSpeedGenerator,
             final OTSDEVSSimulatorInterface simulator, final OTSNetwork network) throws NullPointerException
     {
         Throw.whenNull(gtuType, "gtuType is null");
         Throw.whenNull(idGenerator, "idGenerator is null");
         Throw.whenNull(lengthGenerator, "lengthGenerator is null");
         Throw.whenNull(widthGenerator, "widthGenerator is null");
-        Throw.whenNull(maximumVelocityGenerator, "maximumVelocityGenerator is null");
+        Throw.whenNull(maximumSpeedGenerator, "maximumSpeedGenerator is null");
         Throw.whenNull(simulator, "simulator is null");
         Throw.whenNull(network, "network is null");
 
@@ -78,7 +78,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
         this.idGenerator = idGenerator;
         this.lengthGenerator = lengthGenerator;
         this.widthGenerator = widthGenerator;
-        this.maximumVelocityGenerator = maximumVelocityGenerator;
+        this.maximumSpeedGenerator = maximumSpeedGenerator;
         this.simulator = simulator;
         this.network = network;
     }
@@ -88,7 +88,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
     public GTUCharacteristics draw() throws ProbabilityException, ParameterException
     {
         return new GTUCharacteristics(this.gtuType, this.idGenerator, this.lengthGenerator.draw(), this.widthGenerator.draw(),
-                this.maximumVelocityGenerator.draw(), this.simulator, this.network);
+                this.maximumSpeedGenerator.draw(), this.simulator, this.network);
     }
 
     /**
@@ -122,7 +122,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
     public String toString()
     {
         return String.format("TemplateGTUType [%s, %s, %s, %s, %s]", this.gtuType, this.idGenerator, this.lengthGenerator,
-                this.widthGenerator, this.maximumVelocityGenerator);
+                this.widthGenerator, this.maximumSpeedGenerator);
     }
 
 }
