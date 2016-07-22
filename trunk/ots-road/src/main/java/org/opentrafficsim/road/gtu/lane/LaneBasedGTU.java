@@ -53,7 +53,7 @@ public interface LaneBasedGTU extends GTU
      * are relative towards this position.
      * @param lane the lane to add to the list of lanes on which the GTU is registered.
      * @param gtuDirection the direction of the GTU on the lane (which can be bidirectional). If the GTU has a positive
-     *            velocity, it is moving in this direction.
+     *            speed, it is moving in this direction.
      * @param position the position on the lane.
      * @throws GTUException when positioning the GTU on the lane causes a problem
      */

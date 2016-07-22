@@ -1096,7 +1096,7 @@ public abstract class AbstractLanePerception implements LanePerception
     {
         SpeedLimitProspect slp = new SpeedLimitProspect();
         slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.FIXED_SIGN, getSpeedLimit());
-        slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.MAX_VEHICLE_SPEED, getGTU().getMaximumVelocity());
+        slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.MAX_VEHICLE_SPEED, getGTU().getMaximumSpeed());
         return slp;
     }
 

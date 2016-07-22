@@ -98,7 +98,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
                 return new Length(139, LengthUnit.CENTIMETER);
             }
         };
-        Generator<Speed> maximumVelocityGeneratorA = new Generator<Speed>()
+        Generator<Speed> maximumSpeedGeneratorA = new Generator<Speed>()
         {
 
             @Override
@@ -107,7 +107,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
                 return new Speed(50, SpeedUnit.KM_PER_HOUR);
             }
         };
-        Generator<Speed> maximumVelocityGeneratorB = new Generator<Speed>()
+        Generator<Speed> maximumSpeedGeneratorB = new Generator<Speed>()
         {
 
             @Override
@@ -125,10 +125,10 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         OTSNetwork networkA = new OTSNetwork("testGTUCharacteristics A");
         OTSNetwork networkB = new OTSNetwork("testGTUCharacteristics B");
         TemplateGTUType templateA =
-            new TemplateGTUType(gtuTypeA, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA,
+            new TemplateGTUType(gtuTypeA, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumSpeedGeneratorA,
                 simulatorA, networkA);
         TemplateGTUType templateB =
-            new TemplateGTUType(gtuTypeB, idGeneratorB, lengthGeneratorB, widthGeneratorB, maximumVelocityGeneratorB,
+            new TemplateGTUType(gtuTypeB, idGeneratorB, lengthGeneratorB, widthGeneratorB, maximumSpeedGeneratorB,
                 simulatorB, networkB);
         assertEquals("typenameA", gtuTypeA.getId(), templateA.getGTUType().getId());
         assertEquals("typenameB", gtuTypeB.getId(), templateB.getGTUType().getId());
@@ -142,8 +142,8 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         assertEquals("lengthB", lengthGeneratorB.draw(), characteristicsB.getLength());
         assertEquals("widthA", widthGeneratorA.draw(), characteristicsA.getWidth());
         assertEquals("widthB", widthGeneratorB.draw(), characteristicsB.getWidth());
-        assertEquals("maximumVelocityA", maximumVelocityGeneratorA.draw(), characteristicsA.getMaximumVelocity());
-        assertEquals("maximumVelocityB", maximumVelocityGeneratorB.draw(), characteristicsB.getMaximumVelocity());
+        assertEquals("maximumSpeedA", maximumSpeedGeneratorA.draw(), characteristicsA.getMaximumSpeed());
+        assertEquals("maximumSpeedB", maximumSpeedGeneratorB.draw(), characteristicsB.getMaximumSpeed());
         assertEquals("simulatorA", simulatorA, templateA.getSimulator());
         assertEquals("simulatorB", simulatorB, templateB.getSimulator());
         assertEquals("simulatorA", simulatorA, characteristicsA.getSimulator());
@@ -155,7 +155,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         // Test that the constructor throws the expected Exception when an argument is invalid
         try
         {
-            new TemplateGTUType(null, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA,
+            new TemplateGTUType(null, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumSpeedGeneratorA,
                 simulatorA, networkA);
             fail("Previous statement should have thrown a NullPointerException");
         }
@@ -165,7 +165,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         }
         try
         {
-            new TemplateGTUType(gtuTypeA, null, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA, simulatorA,
+            new TemplateGTUType(gtuTypeA, null, lengthGeneratorA, widthGeneratorA, maximumSpeedGeneratorA, simulatorA,
                 networkA);
             fail("Previous statement should have thrown a NullPointerException");
         }
@@ -175,7 +175,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         }
         try
         {
-            new TemplateGTUType(gtuTypeA, idGeneratorA, null, widthGeneratorA, maximumVelocityGeneratorA, simulatorA,
+            new TemplateGTUType(gtuTypeA, idGeneratorA, null, widthGeneratorA, maximumSpeedGeneratorA, simulatorA,
                 networkA);
             fail("Previous statement should have thrown a NullPointerException");
         }
@@ -185,7 +185,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         }
         try
         {
-            new TemplateGTUType(gtuTypeA, idGeneratorA, lengthGeneratorA, null, maximumVelocityGeneratorA, simulatorA,
+            new TemplateGTUType(gtuTypeA, idGeneratorA, lengthGeneratorA, null, maximumSpeedGeneratorA, simulatorA,
                 networkA);
             fail("Previous statement should have thrown a NullPointerException");
         }
@@ -204,7 +204,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         }
         try
         {
-            new TemplateGTUType(gtuTypeA, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA, null,
+            new TemplateGTUType(gtuTypeA, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumSpeedGeneratorA, null,
                 networkA);
             fail("Previous statement should have thrown a NullPointerException");
         }
@@ -214,7 +214,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         }
         try
         {
-            new TemplateGTUType(gtuTypeA, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA,
+            new TemplateGTUType(gtuTypeA, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumSpeedGeneratorA,
                 simulatorA, null);
             fail("Previous statement should have thrown a NullPointerException");
         }

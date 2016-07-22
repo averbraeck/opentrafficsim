@@ -741,7 +741,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                                 .minimumHeadway(leaderSpeed, leaderSpeed, new Length(0.1, LengthUnit.METER),
                                         new Length(Double.MAX_VALUE, LengthUnit.SI),
                                         lane.getSpeedLimit(XMLNetworkModel.this.gtuType),
-                                        laneBasedGTUCharacteristics.getMaximumVelocity())))
+                                        laneBasedGTUCharacteristics.getMaximumSpeed())))
                         {
                             return null;
                         }
@@ -757,7 +757,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
      * @param lane
      * @param lengthDistribution
      * @param widthDistribution
-     * @param maximumVelocityDistribution
+     * @param maximumSpeedDistribution
      * @param initialSpeedDistribution
      * @param initialPositions
      * @param tacticalPlanner
@@ -767,7 +767,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     LaneBasedTemplateGTUType makeTemplate(final StreamInterface stream, final Lane lane,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDistribution,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDistribution,
-            final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumVelocityDistribution,
+            final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDistribution,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDistribution,
             Set<DirectedLanePosition> initialPositions, final TacticalPlanner tacticalPlanner) throws GTUException
     {
@@ -787,7 +787,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         {
             public Speed draw()
             {
-                return maximumVelocityDistribution.draw();
+                return maximumSpeedDistribution.draw();
             }
         }, this.simulator, new Generator<LaneBasedStrategicalPlanner>()
         {
@@ -934,7 +934,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     // System.out.println("Not generating GTU due to insufficient room");
     // generate = false;
     // }
-    // double leaderSpeed = leader.getVelocity().si;
+    // double leaderSpeed = leader.getSpeed().si;
     // if (leaderSpeed < initialSpeed.si)
     // {
     // // What distance will it take to reduce speed to 0 with a decent deceleration?

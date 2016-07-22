@@ -62,7 +62,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      * @param initialSpeed Speed; the initial speed of the car on the lane
      * @param length Length; the maximum length of the GTU (parallel with driving direction)
      * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
-     * @param maximumVelocity Speed;the maximum speed of the GTU (in the driving direction)
+     * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @param strategicalPlanner the strategical planner (e.g., route determination) to use
      * @param perception the lane-based perception model of the GTU
@@ -76,11 +76,11 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualGTU(final String id, final GTUType gtuType,
             final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed, final Length length,
-            final Length width, final Speed maximumVelocity, final OTSDEVSSimulatorInterface simulator,
+            final Length width, final Speed maximumSpeed, final OTSDEVSSimulatorInterface simulator,
             final LaneBasedStrategicalPlanner strategicalPlanner, final LanePerception perception, final OTSNetwork network)
             throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
     {
-        this(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumVelocity, simulator,
+        this(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumSpeed, simulator,
                 strategicalPlanner, perception, DefaultCarAnimation.class, null, network);
     }
 
@@ -92,7 +92,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      * @param initialSpeed Speed; the initial speed of the car on the lane
      * @param length Length; the maximum length of the GTU (parallel with driving direction)
      * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
-     * @param maximumVelocity Speed;the maximum speed of the GTU (in the driving direction)
+     * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @param strategicalPlanner the strategical planner (e.g., route determination) to use
      * @param perception the lane-based perception model of the GTU
@@ -109,12 +109,12 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualGTU(final String id, final GTUType gtuType,
             final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed, final Length length,
-            final Length width, final Speed maximumVelocity, final OTSDEVSSimulatorInterface simulator,
+            final Length width, final Speed maximumSpeed, final OTSDEVSSimulatorInterface simulator,
             final LaneBasedStrategicalPlanner strategicalPlanner, final LanePerception perception,
             final Class<? extends Renderable2D> animationClass, final GTUColorer gtuColorer, final OTSNetwork network)
             throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
     {
-        super(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumVelocity, simulator,
+        super(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumSpeed, simulator,
                 strategicalPlanner, perception, network);
 
         // sensor positions.
@@ -263,7 +263,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         private Length width = null;
 
         /** The maximum speed of the GTU (in the driving direction). */
-        private Speed maximumVelocity = null;
+        private Speed maximumSpeed = null;
 
         /** The simulator. */
         private OTSDEVSSimulatorInterface simulator = null;
@@ -345,12 +345,12 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
 
         /**
-         * @param maximumVelocity set maximumVelocity
+         * @param maximumSpeed set maximumSpeed
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder setMaximumVelocity(final Speed maximumVelocity)
+        public final LaneBasedIndividualCarBuilder setMaximumSpeed(final Speed maximumSpeed)
         {
-            this.maximumVelocity = maximumVelocity;
+            this.maximumSpeed = maximumSpeed;
             return this;
         }
 
@@ -463,11 +463,11 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
 
         /**
-         * @return maximumVelocity.
+         * @return maximumSpeed.
          */
-        public final Speed getMaximumVelocity()
+        public final Speed getMaximumSpeed()
         {
-            return this.maximumVelocity;
+            return this.maximumSpeed;
         }
 
         /**
@@ -527,7 +527,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         {
             if (null == this.id || null == this.gtuType || null == this.strategicalPlanner || null == this.perception
                     || null == this.initialLongitudinalPositions || null == this.initialSpeed || null == this.length
-                    || null == this.width || null == this.maximumVelocity || null == this.simulator || null == this.network)
+                    || null == this.width || null == this.maximumSpeed || null == this.simulator || null == this.network)
             {
                 // TODO Should throw a more specific Exception type
                 throw new GTUException("factory settings incomplete");
@@ -535,7 +535,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
 
             LaneBasedIndividualGTU gtu =
                     new LaneBasedIndividualGTU(this.id, this.gtuType, this.initialLongitudinalPositions, this.initialSpeed,
-                            this.length, this.width, this.maximumVelocity, this.simulator, this.strategicalPlanner,
+                            this.length, this.width, this.maximumSpeed, this.simulator, this.strategicalPlanner,
                             this.perception, this.animationClass, this.gtuColorer, this.network);
             return gtu;
 
@@ -547,8 +547,8 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         {
             return "LaneBasedIndividualCarBuilder [id=" + this.id + ", gtuType=" + this.gtuType
                     + ", initialLongitudinalPositions=" + this.initialLongitudinalPositions + ", initialSpeed="
-                    + this.initialSpeed + ", length=" + this.length + ", width=" + this.width + ", maximumVelocity="
-                    + this.maximumVelocity + ", strategicalPlanner=" + this.strategicalPlanner + "]";
+                    + this.initialSpeed + ", length=" + this.length + ", width=" + this.width + ", maximumSpeed="
+                    + this.maximumSpeed + ", strategicalPlanner=" + this.strategicalPlanner + "]";
         }
 
     }

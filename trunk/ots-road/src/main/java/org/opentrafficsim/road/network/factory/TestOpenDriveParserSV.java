@@ -50,7 +50,7 @@ import org.opentrafficsim.core.gtu.animation.AccelerationGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
-import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
+import org.opentrafficsim.core.gtu.animation.SpeedGTUColorer;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Link;
@@ -630,7 +630,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
             GTUColorer[] gtuColorers =
                 new GTUColorer[]{
                     new IDGTUColorer(),
-                    new VelocityGTUColorer(new Speed(100.0, SpeedUnit.KM_PER_HOUR)),
+                    new SpeedGTUColorer(new Speed(100.0, SpeedUnit.KM_PER_HOUR)),
                     new AccelerationGTUColorer(new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2),
                         new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2))};
             return new SwitchableGTUColorer(0, gtuColorers);

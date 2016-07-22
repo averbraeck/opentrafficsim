@@ -154,7 +154,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
             leaderOrBlockSpeed = leaderSpeed;
         }
         final Speed followerSpeed = gtu.getSpeed();
-        final Speed followerMaximumSpeed = gtu.getMaximumVelocity();
+        final Speed followerMaximumSpeed = gtu.getMaximumSpeed();
         Acceleration newAcceleration =
                 computeAcceleration(followerSpeed, followerMaximumSpeed, leaderOrBlockSpeed, distance, speedLimit, stepSize);
         Time nextEvaluationTime = gtu.getSimulator().getSimulatorTime().getTime().plus(stepSize);
@@ -195,12 +195,12 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
             final Speed speedLimit, final Duration stepSize) throws GTUException
     {
         Length stopDistance =
-                new Length(gtu.getMaximumVelocity().si * gtu.getMaximumVelocity().si
+                new Length(gtu.getMaximumSpeed().si * gtu.getMaximumSpeed().si
                         / (2.0 * getMaximumSafeDeceleration().si), LengthUnit.SI);
         return computeAccelerationStep(gtu, gtu.getSpeed(), stopDistance, maxDistance, speedLimit, stepSize);
         /*-
-        return computeAcceleration(gtu, gtu.getVelocity(), Calc.speedSquaredDividedByDoubleAcceleration(gtu
-            .getMaximumVelocity(), maximumSafeDeceleration()), speedLimit);
+        return computeAcceleration(gtu, gtu.getSpeed(), Calc.speedSquaredDividedByDoubleAcceleration(gtu
+            .getMaximumSpeed(), maximumSafeDeceleration()), speedLimit);
          */
     }
 

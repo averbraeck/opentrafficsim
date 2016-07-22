@@ -63,7 +63,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         LanePerceptionFull perception = laneBasedGTU.getPerception();
 
         // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
-        if (laneBasedGTU.getMaximumVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
+        if (laneBasedGTU.getMaximumSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
         {
             return new OperationalPlan(gtu, locationAtStartTime, startTime, new Duration(1.0, TimeUnit.SECOND));
         }

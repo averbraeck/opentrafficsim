@@ -336,7 +336,7 @@ public class IDMPlusTest implements UNITS
                 }
             }
             // System.out.println(String.format("step %3d, t=%s, referenceCar: %s, speed %s, leaderCar: %s", timeStep,
-            // simulateUntil, referenceCar, referenceCar.getVelocity(), leaderCar));
+            // simulateUntil, referenceCar, referenceCar.getSpeed(), leaderCar));
             if (timeStep > 120)
             {
                 double position = referenceCar40.position(lane, referenceCar40.getFront()).getSI();

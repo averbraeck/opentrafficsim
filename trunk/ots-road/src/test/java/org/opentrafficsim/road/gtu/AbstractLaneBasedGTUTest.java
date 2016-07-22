@@ -123,8 +123,8 @@ public class AbstractLaneBasedGTUTest implements UNITS
         Length carLength = new Length(4, METER);
         // Width of the Car
         Length carWidth = new Length(1.8, METER);
-        // Maximum velocity of the Car
-        Speed maximumVelocity = new Speed(200, KM_PER_HOUR);
+        // Maximum speed of the Car
+        Speed maximumSpeed = new Speed(200, KM_PER_HOUR);
         // ID of the Car
         String carID = "theCar";
         // List of Nodes visited by the Car
@@ -141,7 +141,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
             new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(gfm, laneChangeModel), route);
         LaneBasedIndividualGTU car =
             new LaneBasedIndividualGTU(carID, gtuType, initialLongitudinalPositions, initialSpeed, carLength, carWidth,
-                maximumVelocity, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
+                maximumSpeed, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
         // Now we can verify the various fields in the newly created Car
         assertEquals("ID of the car should be identical to the provided one", carID, car.getId());
         // TODO: Test with gfm as part of tactical planner
@@ -155,7 +155,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         assertEquals("front in lanesGroupB[1] is positionB", positionB.getSI(),
             car.position(lanesGroupB[1], car.getReference()).getSI(), 0.0001);
         assertEquals("acceleration is 0", 0, car.getAcceleration().getSI(), 0.00001);
-        assertEquals("longitudinal velocity is " + initialSpeed, initialSpeed.getSI(), car.getSpeed().getSI(),
+        assertEquals("longitudinal speed is " + initialSpeed, initialSpeed.getSI(), car.getSpeed().getSI(),
             0.00001);
         assertEquals("lastEvaluation time is 0", 0, car.getOperationalPlan().getStartTime().getSI(), 0.00001);
         // Test the position(Lane, RelativePosition) method
@@ -246,10 +246,10 @@ public class AbstractLaneBasedGTUTest implements UNITS
                 assertEquals("acceleration is " + acceleration, acceleration.getSI(), car.getAcceleration().getSI(),
                     0.00001);
             }
-            Speed longitudinalVelocity = car.getSpeed();
-            double expectedLongitudinalVelocity = initialSpeed.getSI() + stepTime.getSI() * acceleration.getSI();
-            assertEquals("longitudinal velocity is " + expectedLongitudinalVelocity, expectedLongitudinalVelocity,
-                longitudinalVelocity.getSI(), 0.00001);
+            Speed longitudinalSpeed = car.getSpeed();
+            double expectedLongitudinalSpeed = initialSpeed.getSI() + stepTime.getSI() * acceleration.getSI();
+            assertEquals("longitudinal speed is " + expectedLongitudinalSpeed, expectedLongitudinalSpeed,
+                longitudinalSpeed.getSI(), 0.00001);
             for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
             {
                 Map<Lane, Double> positions = car.fractionalPositions(relativePosition);

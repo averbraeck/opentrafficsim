@@ -193,7 +193,7 @@ public abstract class AbstractGTUGenerator implements Serializable
             Length carLength = getLengthDist().draw();
             carBuilder.setLength(carLength);
             carBuilder.setWidth(getWidthDist().draw());
-            carBuilder.setMaximumVelocity(getMaximumSpeedDist().draw());
+            carBuilder.setMaximumSpeed(getMaximumSpeedDist().draw());
             carBuilder.setInitialSpeed(getInitialSpeedDist().draw());
             carBuilder.setSimulator(getSimulator());
             Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
@@ -279,10 +279,10 @@ public abstract class AbstractGTUGenerator implements Serializable
             minimumHeadway =
                     followingModel.minimumHeadway(carBuilder.getInitialSpeed(), headway.getSpeed(), new Length(1.0,
                             LengthUnit.CENTIMETER), new Length(250.0, LengthUnit.METER), generatorLane
-                            .getSpeedLimit(carBuilder.getGtuType()), carBuilder.getMaximumVelocity());
+                            .getSpeedLimit(carBuilder.getGtuType()), carBuilder.getMaximumSpeed());
             double acc =
-                    followingModel.computeAcceleration(carBuilder.getInitialSpeed(), carBuilder.getMaximumVelocity(),
-                            headway.getSpeed(), minimumHeadway, carBuilder.getMaximumVelocity()).getSI();
+                    followingModel.computeAcceleration(carBuilder.getInitialSpeed(), carBuilder.getMaximumSpeed(),
+                            headway.getSpeed(), minimumHeadway, carBuilder.getMaximumSpeed()).getSI();
             if (acc < 0)
             {
                 System.err.println(getSimulator().getSimulatorTime() + ", generator headway for GTU " + headway.getId()

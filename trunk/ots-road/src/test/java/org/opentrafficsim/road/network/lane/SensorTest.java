@@ -101,8 +101,8 @@ public class SensorTest implements UNITS
         Length carLength = new Length(4, METER);
         // Width of the Car
         Length carWidth = new Length(1.8, METER);
-        // Maximum velocity of the Car
-        Speed maximumVelocity = new Speed(100, KM_PER_HOUR);
+        // Maximum speed of the Car
+        Speed maximumSpeed = new Speed(100, KM_PER_HOUR);
         // ID of the Car
         String carID = "theCar";
         // Create an acceleration profile for the car
@@ -116,7 +116,7 @@ public class SensorTest implements UNITS
             new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, 
                 new LaneBasedGTUFollowingTacticalPlanner(fas));
         LaneBasedIndividualGTU car = new LaneBasedIndividualGTU(carID, gtuType, initialLongitudinalPositions, initialSpeed, carLength, carWidth,
-            maximumVelocity, simulator, strategicalPlanner, new LanePerceptionFull(), network);
+            maximumSpeed, simulator, strategicalPlanner, new LanePerceptionFull(), network);
         simulator.runUpTo(new Time(1, SECOND));
         if (!simulator.isRunning())
         {

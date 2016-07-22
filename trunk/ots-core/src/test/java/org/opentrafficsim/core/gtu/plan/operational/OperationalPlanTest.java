@@ -164,11 +164,11 @@ public class OperationalPlanTest
             actualPosition = op.getLocation(relTime);
             assertEquals("Position at rel time " + deltaT, 0,
                 expectedPosition.distance(new OTSPoint3D(actualPosition)).si, 0.002);
-            double expectedVelocity = startSpeed.si + a.si * deltaT;
-            Speed actualSpeed = op.getVelocity(absTime);
-            assertEquals("Velocity at abs time " + deltaT, expectedVelocity, actualSpeed.si, 0.0001);
-            actualSpeed = op.getVelocity(relTime);
-            assertEquals("Velocity at rel time " + deltaT, expectedVelocity, actualSpeed.si, 0.0001);
+            double expectedSpeed = startSpeed.si + a.si * deltaT;
+            Speed actualSpeed = op.getSpeed(absTime);
+            assertEquals("Speed at abs time " + deltaT, expectedSpeed, actualSpeed.si, 0.0001);
+            actualSpeed = op.getSpeed(relTime);
+            assertEquals("Speed at rel time " + deltaT, expectedSpeed, actualSpeed.si, 0.0001);
             Time actualTimeAtPosition =
                 op.timeAtDistance(new Length(fraction * path.getLength().si, LengthUnit.SI));
             assertEquals("TimeAtDistance matches time", startTime.si + deltaT, actualTimeAtPosition.si, 0.0001);

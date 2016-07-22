@@ -36,8 +36,8 @@ public class GTUCharacteristics implements Serializable
     /** Width of the GTU. */
     private final Length width;
 
-    /** Maximum velocity of the GTU. */
-    private final Speed maximumVelocity;
+    /** Maximum speed of the GTU. */
+    private final Speed maximumSpeed;
 
     /** The simulator that controls the GTU. */
     private final OTSDEVSSimulatorInterface simulator;
@@ -51,19 +51,19 @@ public class GTUCharacteristics implements Serializable
      * @param idGenerator IdGenerator; the id generator for the (not yet constructed) GTU
      * @param length Length; the length of the (non yet constructed) GTU
      * @param width Length; the width of the (non yet constructed) GTU
-     * @param maximumVelocity Length; the maximum velocity of the (non yet constructed) GTU
+     * @param maximumSpeed Length; the maximum speed of the (non yet constructed) GTU
      * @param simulator OTSDEVSSimulatorInterface; the simulator that controls the (not yet constructed) GTU
      * @param network OTSNetwork; the network that will contain the GTU
      */
     public GTUCharacteristics(final GTUType gtuType, final IdGenerator idGenerator, final Length length,
-            final Length width, final Speed maximumVelocity, final OTSDEVSSimulatorInterface simulator,
+            final Length width, final Speed maximumSpeed, final OTSDEVSSimulatorInterface simulator,
             final OTSNetwork network)
     {
         this.gtuType = gtuType;
         this.idGenerator = idGenerator;
         this.length = length;
         this.width = width;
-        this.maximumVelocity = maximumVelocity;
+        this.maximumSpeed = maximumSpeed;
         this.simulator = simulator;
         this.network = network;
     }
@@ -105,12 +105,12 @@ public class GTUCharacteristics implements Serializable
     }
 
     /**
-     * Retrieve the maximum velocity.
+     * Retrieve the maximum speed.
      * @return Speed
      */
-    public final Speed getMaximumVelocity()
+    public final Speed getMaximumSpeed()
     {
-        return this.maximumVelocity;
+        return this.maximumSpeed;
     }
 
     /**
@@ -136,7 +136,7 @@ public class GTUCharacteristics implements Serializable
     public final String toString()
     {
         return "GTUCharacteristics [gtuType=" + this.gtuType + ", length=" + this.length + ", width=" + this.width
-                + ", maximumVelocity=" + this.maximumVelocity + "]";
+                + ", maximumSpeed=" + this.maximumSpeed + "]";
     }
 
 }

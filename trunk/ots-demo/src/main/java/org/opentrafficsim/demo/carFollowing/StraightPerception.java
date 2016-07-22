@@ -743,7 +743,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
          * @param initialSpeed Speed; the initial speed of the car on the lane
          * @param length Length; the maximum length of the GTU (parallel with driving direction)
          * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
-         * @param maximumVelocity Speed;the maximum speed of the GTU (in the driving direction)
+         * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
          * @param simulator OTSDEVSSimulatorInterface; the simulator
          * @param strategicalPlanner the strategical planner (e.g., route determination) to use
          * @param perception the lane-based perception model of the GTU
@@ -758,12 +758,12 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
         @SuppressWarnings("checkstyle:parameternumber")
         LaneBasedPerceivingCar(final String id, final GTUType gtuType,
                 final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed, final Length length,
-                final Length width, final Speed maximumVelocity, final OTSDEVSSimulatorInterface simulator,
+                final Length width, final Speed maximumSpeed, final OTSDEVSSimulatorInterface simulator,
                 final LaneBasedStrategicalPlanner strategicalPlanner, final LanePerceptionFull perception,
                 final OTSNetwork network) throws NamingException, NetworkException, SimRuntimeException, GTUException,
                 OTSGeometryException, ParameterException
         {
-            super(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumVelocity, simulator,
+            super(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumSpeed, simulator,
                     strategicalPlanner, perception, network);
             perceive();
         }
@@ -776,7 +776,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
          * @param initialSpeed Speed; the initial speed of the car on the lane
          * @param length Length; the maximum length of the GTU (parallel with driving direction)
          * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
-         * @param maximumVelocity Speed;the maximum speed of the GTU (in the driving direction)
+         * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
          * @param simulator OTSDEVSSimulatorInterface; the simulator
          * @param strategicalPlanner the strategical planner (e.g., route determination) to use
          * @param perception the lane-based perception model of the GTU
@@ -794,13 +794,13 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
         @SuppressWarnings("checkstyle:parameternumber")
         LaneBasedPerceivingCar(final String id, final GTUType gtuType,
                 final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed, final Length length,
-                final Length width, final Speed maximumVelocity, final OTSDEVSSimulatorInterface simulator,
+                final Length width, final Speed maximumSpeed, final OTSDEVSSimulatorInterface simulator,
                 final LaneBasedStrategicalPlanner strategicalPlanner, final LanePerceptionFull perception,
                 final Class<? extends Renderable2D> animationClass, final GTUColorer gtuColorer, final OTSNetwork network)
                 throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException,
                 ParameterException
         {
-            super(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumVelocity, simulator,
+            super(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumSpeed, simulator,
                     strategicalPlanner, perception, animationClass, gtuColorer, network);
             perceive();
         }
@@ -855,7 +855,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             LanePerceptionFull perception = laneBasedGTU.getPerception();
 
             // if the GTU's maximum speed is zero (block), generate a stand still plan
-            if (laneBasedGTU.getMaximumVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
+            if (laneBasedGTU.getMaximumSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
             {
                 // time equal to fastest reaction time of GTU
                 return new OperationalPlan(laneBasedGTU, locationAtStartTime, startTime, new Duration(
@@ -883,7 +883,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             }
             else
             {
-                // TODO do not use the velocity of the other GTU, but the PERCEIVED velocity
+                // TODO do not use the speed of the other GTU, but the PERCEIVED speed
                 accelerationStep =
                         ((GTUFollowingModelOld) this.getCarFollowingModel()).computeAccelerationStep(laneBasedGTU,
                                 headway.getSpeed(), headway.getDistance(), maxDistance, perception.getSpeedLimit());

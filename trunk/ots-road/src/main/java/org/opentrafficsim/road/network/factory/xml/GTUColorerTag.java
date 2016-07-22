@@ -8,7 +8,7 @@ import org.opentrafficsim.core.gtu.animation.AccelerationGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
-import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
+import org.opentrafficsim.core.gtu.animation.SpeedGTUColorer;
 import org.xml.sax.SAXException;
 
 /**
@@ -29,7 +29,7 @@ final class GTUColorerTag
     }
 
     /**
-     * Parses the right GTUColorer from ID|VELOCITY|ACCELERATION|LANECHANGEURGE|SWITCHABLE.
+     * Parses the right GTUColorer from ID|SPEED|ACCELERATION|LANECHANGEURGE|SWITCHABLE.
      * @param name name of the GTUColorer
      * @param globalTag to define the default parameters of the colorers
      * @return the corresponding GTUColorer
@@ -42,8 +42,8 @@ final class GTUColorerTag
             case "ID":
                 return new IDGTUColorer();
 
-            case "VELOCITY":
-                return makeVelocityGTUColorer(globalTag);
+            case "SPEED":
+                return makeSpeedGTUColorer(globalTag);
 
             case "ACCELERATION":
                 return makeAccelerationGTUColorer(globalTag);
@@ -53,7 +53,7 @@ final class GTUColorerTag
 
             default:
                 throw new SAXException("GTUCOLORER: unknown name " + name
-                    + " not one of ID|VELOCITY|ACCELERATION|SWITCHABLE");
+                    + " not one of ID|SPEED|ACCELERATION|SWITCHABLE");
         }
     }
 
@@ -61,13 +61,13 @@ final class GTUColorerTag
      * @param globalTag to define the default parameters of the colorers
      * @return the corresponding GTUColorer
      */
-    static GTUColorer makeVelocityGTUColorer(final GlobalTag globalTag)
+    static GTUColorer makeSpeedGTUColorer(final GlobalTag globalTag)
     {
-        if (globalTag.velocityGTUColorerMaxSpeed != null)
+        if (globalTag.speedGTUColorerMaxSpeed != null)
         {
-            return new VelocityGTUColorer(globalTag.velocityGTUColorerMaxSpeed);
+            return new SpeedGTUColorer(globalTag.speedGTUColorerMaxSpeed);
         }
-        return new VelocityGTUColorer(new Speed(100.0, SpeedUnit.KM_PER_HOUR));
+        return new SpeedGTUColorer(new Speed(100.0, SpeedUnit.KM_PER_HOUR));
     }
 
     /**
@@ -88,7 +88,7 @@ final class GTUColorerTag
     static GTUColorer makeSwitchableGTUColorer(final GlobalTag globalTag)
     {
         GTUColorer[] gtuColorers =
-            new GTUColorer[]{new IDGTUColorer(), makeVelocityGTUColorer(globalTag),
+            new GTUColorer[]{new IDGTUColorer(), makeSpeedGTUColorer(globalTag),
                 makeAccelerationGTUColorer(globalTag)};
         // TODO default colorer
         return new SwitchableGTUColorer(0, gtuColorers);

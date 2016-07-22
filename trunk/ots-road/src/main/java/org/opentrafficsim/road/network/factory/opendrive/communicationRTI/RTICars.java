@@ -38,7 +38,7 @@ public class RTICars extends LaneBasedIndividualGTU
      * @param speed initial car speed
      * @param carLength car length
      * @param width car width
-     * @param maxSpeed maximum velocity of the car
+     * @param maxSpeed maximum speed of the car
      * @param simulator the simulator
      * @param sPlanner the strategical planner unit
      * @param perception the perception unit

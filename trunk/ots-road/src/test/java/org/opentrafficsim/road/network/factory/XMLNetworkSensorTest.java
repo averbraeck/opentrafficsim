@@ -140,8 +140,8 @@ public class XMLNetworkSensorTest implements UNITS
                         Assert.assertTrue("More than one GTU in the model: " + gtus.size(), gtus.size() <= 1);
                         for (LaneBasedGTU gtu : gtus)
                         {
-                            Assert.assertEquals("Velocity of GTU " + gtu + "<> 10 m/s: " + gtu.getVelocity(), 10.0, gtu
-                                .getVelocity().getSI(), 0.00001);
+                            Assert.assertEquals("Speed of GTU " + gtu + "<> 10 m/s: " + gtu.getSpeed(), 10.0, gtu
+                                .getSpeed().getSI(), 0.00001);
                             gtu.getLocation();
                             gtu.positions(gtu.getFront());
                             gtu.positions(gtu.getRear());

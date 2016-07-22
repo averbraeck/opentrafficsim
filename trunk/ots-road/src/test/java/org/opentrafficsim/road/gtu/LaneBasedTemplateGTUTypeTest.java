@@ -269,8 +269,8 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
      * @param gtuType String; the expected id
      * @param length Length; the expected length
      * @param width Length; the expected width
-     * @param maximumSpeed Speed; the expected maximum velocity
-     * @param initialSpeed Speed; the initial velocity
+     * @param maximumSpeed Speed; the expected maximum speed
+     * @param initialSpeed Speed; the initial speed
      * @param simulator OTSDEVSSimulatorInterface; the expected simulator
      * @throws ProbabilityException in case of probability drawing exception
      * @throws ParameterException in case of a parameter problem.
@@ -287,8 +287,8 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         assertEquals("Length should be " + length, length.draw().getSI(), characteristics.getLength().getSI(), 0.0001);
         assertEquals("Width should be " + width, width.draw().getSI(), characteristics.getWidth().getSI(), 0.0001);
         assertEquals("Maximum speed should be " + maximumSpeed, maximumSpeed.draw().getSI(), characteristics
-                .getMaximumVelocity().getSI(), 0.0001);
-        assertEquals("Initial speed should be " + initialSpeed, initialSpeed.draw().getSI(), characteristics.getVelocity()
+                .getMaximumSpeed().getSI(), 0.0001);
+        assertEquals("Initial speed should be " + initialSpeed, initialSpeed.draw().getSI(), characteristics.getSpeed()
                 .getSI(), 0.0001);
         assertEquals("Simulator", simulator, templateGTUType.getSimulator());
     }

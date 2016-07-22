@@ -79,8 +79,8 @@ public class GTUCharacteristicsTest implements OTSModelInterface
         assertEquals("lengthB", lengthB, gtucB.getLength());
         assertEquals("widthA", widthA, gtucA.getWidth());
         assertEquals("widthB", widthB, gtucB.getWidth());
-        assertEquals("maximumVelocityA", maximumSpeedA, gtucA.getMaximumVelocity());
-        assertEquals("maximumVelocityB", maximumSpeedB, gtucB.getMaximumVelocity());
+        assertEquals("maximumSpeedA", maximumSpeedA, gtucA.getMaximumSpeed());
+        assertEquals("maximumSpeedB", maximumSpeedB, gtucB.getMaximumSpeed());
         assertEquals("simulatorA", simulatorA, gtucA.getSimulator());
         assertEquals("simulatorB", simulatorB, gtucB.getSimulator());
         assertEquals("networkA", networkA, gtucA.getNetwork());

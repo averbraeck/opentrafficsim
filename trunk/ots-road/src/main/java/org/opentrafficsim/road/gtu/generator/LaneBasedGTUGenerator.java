@@ -205,7 +205,7 @@ public class LaneBasedGTUGenerator implements Serializable
         }
         if (shortestHeadway.si > 0)
         {
-            Speed safeSpeed = characteristics.getVelocity();
+            Speed safeSpeed = characteristics.getSpeed();
             if (null != leaderSpeed)
             {
                 safeSpeed = this.roomChecker.canPlace(leaderSpeed, shortestHeadway, characteristics);
@@ -217,13 +217,13 @@ public class LaneBasedGTUGenerator implements Serializable
                 {
                     this.unplacedTemplates.remove();
                 }
-                if (safeSpeed.gt(characteristics.getMaximumVelocity()))
+                if (safeSpeed.gt(characteristics.getMaximumSpeed()))
                 {
-                    safeSpeed = characteristics.getMaximumVelocity();
+                    safeSpeed = characteristics.getMaximumSpeed();
                 }
                 String gtuId = null == characteristics.getIdGenerator() ? null : characteristics.getIdGenerator().nextId();
                 new LaneBasedIndividualGTU(gtuId, characteristics.getGTUType(), this.initialLongitudinalPositions, safeSpeed,
-                        characteristics.getLength(), characteristics.getWidth(), characteristics.getMaximumVelocity(),
+                        characteristics.getLength(), characteristics.getWidth(), characteristics.getMaximumSpeed(),
                         simulator, characteristics.getStrategicalPlanner(), characteristics.getPerception(),
                         DefaultCarAnimation.class, this.gtuColorer, characteristics.getNetwork());
                 // System.out.println("tryToPlace: Constructed GTU on " + this.initialLongitudinalPositions);
@@ -312,7 +312,7 @@ public class LaneBasedGTUGenerator implements Serializable
          * Return the maximum safe speed for a new GTU with the specified characteristics. Return null if there is no safe
          * speed. This method will never be called if the newly proposed GTU overlaps with the leader. Nor will this method be
          * called if there is no leader.
-         * @param leaderSpeed Speed; velocity of the nearest leader
+         * @param leaderSpeed Speed; speed of the nearest leader
          * @param headway Length; net distance to the nearest leader (always &gt; 0)
          * @param laneBasedGTUCharacteristics LaneBasedGTUCharacteristics; characteristics of the proposed new GTU
          * @return Speed; maximum safe speed, or null if a GTU with the specified characteristics cannot be placed at the
