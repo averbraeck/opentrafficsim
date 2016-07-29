@@ -2,6 +2,7 @@ package org.opentrafficsim.core.gtu;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Set;
 
 import javax.media.j3d.Bounds;
 
@@ -11,10 +12,8 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
@@ -76,32 +75,17 @@ public interface GTU extends Locatable, Serializable
 
     /** @return the center position of the GTU, relative to its reference point. */
     RelativePosition getCenter();
+    
+    /** @return the contour points of the GTU. */
+    Set<RelativePosition> getContourPoints();
 
-    /** @return the positions for this GTU. */
+    /** @return the positions for this GTU, but not the contour points. */
     Map<RelativePosition.TYPE, RelativePosition> getRelativePositions();
 
-    /**
-     * @param time the time for which the speed needs to be calculated.
-     * @return the speed of the GTU at the given time, along the direction of movement.
-     * @throws GTUException when the time is outside the current operational plan's interval
-     */
-    Speed getSpeed(final Time time) throws GTUException;
-
-    /**
-     * @return the current speed of the GTU, along the direction of movement.
-     */
+    /** @return the current speed of the GTU, along the direction of movement. */
     Speed getSpeed();
 
-    /**
-     * @param time the time for which the acceleration needs to be calculated.
-     * @return the acceleration of the GTU at the given time, along the direction of movement.
-     * @throws GTUException when the time is outside the current operational plan's interval
-     */
-    Acceleration getAcceleration(final Time time) throws GTUException;
-
-    /**
-     * @return the current acceleration of the GTU, along the direction of movement.
-     */
+    /** @return the current acceleration of the GTU, along the direction of movement. */
     Acceleration getAcceleration();
 
     /** @return Length; the current odometer value. */
@@ -111,19 +95,16 @@ public interface GTU extends Locatable, Serializable
     BehavioralCharacteristics getBehavioralCharacteristics();
 
     /**
-     * @return strategicalPlanner the planner responsible for the overall 'mission' of the GTU, usually indicating where it
+     * @return StrategicalPlanner; the planner responsible for the overall 'mission' of the GTU, usually indicating where it
      *         needs to go. It operates by instantiating tactical planners to do the work.
      */
     StrategicalPlanner getStrategicalPlanner();
 
-    /** @return tacticalPlanner the tactical planner that can generate an operational plan */
+    /** @return TacticalPlanner; the current tactical planner that can generate an operational plan */
     TacticalPlanner getTacticalPlanner();
 
-    /** @return the operational plan for the GTU. */
+    /** @return the current operational plan for the GTU. */
     OperationalPlan getOperationalPlan();
-
-    /** @return the perception module of this GTU */
-    Perception getPerception();
 
     /** @return the status of the turn indicator. */
     TurnIndicatorStatus getTurnIndicatorStatus();
