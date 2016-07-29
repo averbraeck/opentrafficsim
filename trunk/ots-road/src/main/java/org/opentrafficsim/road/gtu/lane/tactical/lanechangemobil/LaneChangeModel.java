@@ -48,7 +48,7 @@ public interface LaneChangeModel
         final Collection<Headway> leftLaneTraffic, final Speed speedLimit,
         final Acceleration preferredLaneRouteIncentive, final Acceleration laneChangeThreshold,
         final Acceleration nonPreferredLaneRouteIncentive) throws GTUException, ParameterException;
-
+    
     /**
      * Return the name of this GTU following model.
      * @return String; just the name of the GTU following model

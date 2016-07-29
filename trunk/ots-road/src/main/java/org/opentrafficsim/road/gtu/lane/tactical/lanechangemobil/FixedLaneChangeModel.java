@@ -29,7 +29,7 @@ public class FixedLaneChangeModel implements LaneChangeModel, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150211L;
-    
+
     /** Lane change that will always be returned by this FixedLaneChangeModel. */
     private final LateralDirectionality laneChange;
 
@@ -46,30 +46,29 @@ public class FixedLaneChangeModel implements LaneChangeModel, Serializable
     @SuppressWarnings("checkstyle:parameternumber")
     @Override
     public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
-        final Collection<Headway> sameLaneTraffic, final Collection<Headway> rightLaneTraffic,
-        final Collection<Headway> leftLaneTraffic, final Speed speedLimit,
-        final Acceleration preferredLaneRouteIncentive, final Acceleration laneChangeThreshold,
-        final Acceleration nonPreferredLaneRouteIncentive) throws GTUException, ParameterException
+            final Collection<Headway> sameLaneTraffic, final Collection<Headway> rightLaneTraffic,
+            final Collection<Headway> leftLaneTraffic, final Speed speedLimit, final Acceleration preferredLaneRouteIncentive,
+            final Acceleration laneChangeThreshold, final Acceleration nonPreferredLaneRouteIncentive) throws GTUException,
+            ParameterException
     {
         Length headway = gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
-        GTUFollowingModelOld gtuFollowingModel = (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlannerOld) gtu
-                .getTacticalPlanner()).getCarFollowingModel();
+        GTUFollowingModelOld gtuFollowingModel =
+                (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlannerOld) gtu.getTacticalPlanner()).getCarFollowingModel();
         if (null == this.laneChange)
         {
             return new LaneMovementStep(gtuFollowingModel
-                .computeDualAccelerationStep(gtu, sameLaneTraffic, headway, speedLimit).getLeaderAccelerationStep(), null);
+                    .computeDualAccelerationStep(gtu, sameLaneTraffic, headway, speedLimit).getLeaderAccelerationStep(), null);
         }
         else if (LateralDirectionality.LEFT == this.laneChange)
         {
             return new LaneMovementStep(gtuFollowingModel
-                .computeDualAccelerationStep(gtu, leftLaneTraffic, headway, speedLimit).getLeaderAccelerationStep(),
-                this.laneChange);
+                    .computeDualAccelerationStep(gtu, leftLaneTraffic, headway, speedLimit).getLeaderAccelerationStep(),
+                    this.laneChange);
         }
         else if (LateralDirectionality.RIGHT == this.laneChange)
         {
-            return new LaneMovementStep(gtuFollowingModel
-                .computeDualAccelerationStep(gtu, rightLaneTraffic, headway, speedLimit).getLeaderAccelerationStep(),
-                this.laneChange);
+            return new LaneMovementStep(gtuFollowingModel.computeDualAccelerationStep(gtu, rightLaneTraffic, headway,
+                    speedLimit).getLeaderAccelerationStep(), this.laneChange);
         }
         throw new Error("Program Error - unhandled LateralDirectionality");
     }
@@ -86,7 +85,7 @@ public class FixedLaneChangeModel implements LaneChangeModel, Serializable
     public final String getLongName()
     {
         return "Fixed lane change model. This model returns a lane change decision that is independent of the actual "
-            + "traffic. It is used mostly for testing.";
+                + "traffic. It is used mostly for testing.";
     }
 
     /** {@inheritDoc} */

@@ -15,6 +15,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlannerOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGTUFollowingModelMobil;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
@@ -34,7 +35,6 @@ import org.opentrafficsim.road.network.lane.Lane;
  */
 public abstract class AbstractLaneChangeModel implements LaneChangeModel
 {
-
     /** Attempt to overcome rounding errors. */
     private static Acceleration extraThreshold = new Acceleration(0.000001, AccelerationUnit.SI);
 
@@ -49,6 +49,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
     {
         try
         {
+            LanePerceptionFull perception = (LanePerceptionFull) gtu.getTacticalPlanner().getPerception();
             Length headway = gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
             Map<Lane, Length> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
             Lane lane = positions.keySet().iterator().next();
@@ -57,8 +58,8 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             // road cars are supposed to drive
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;
             final LateralDirectionality nonPreferred = LateralDirectionality.LEFT;
-            Lane nonPreferredLane = gtu.getPerception().bestAccessibleAdjacentLane(lane, nonPreferred, longitudinalPosition);
-            Lane preferredLane = gtu.getPerception().bestAccessibleAdjacentLane(lane, preferred, longitudinalPosition);
+            Lane nonPreferredLane = perception.bestAccessibleAdjacentLane(lane, nonPreferred, longitudinalPosition);
+            Lane preferredLane = perception.bestAccessibleAdjacentLane(lane, preferred, longitudinalPosition);
             AbstractLaneBasedTacticalPlannerOld albtp = (AbstractLaneBasedTacticalPlannerOld) gtu.getTacticalPlanner();
             if (null == albtp)
             {
@@ -170,4 +171,5 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
      *         acceleration in the non-, or different-lane-changed state) to decide if a lane change should be performed
      */
     public abstract Acceleration applyDriverPersonality(DualAccelerationStep accelerationSteps);
+
 }

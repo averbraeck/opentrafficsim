@@ -16,7 +16,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
  */
 public class Altruistic extends AbstractLaneChangeModel
 {
-
     /** {@inheritDoc} */
     @Override
     public final Acceleration applyDriverPersonality(final DualAccelerationStep accelerationSteps)
@@ -46,7 +45,7 @@ public class Altruistic extends AbstractLaneChangeModel
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "Altruistic []";
     }
