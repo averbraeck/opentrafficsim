@@ -106,7 +106,13 @@ public class GTUTest implements OTSModelInterface
             }
 
             @Override
-            public TacticalPlanner generateTacticalPlanner(final GTU gtu)
+            public TacticalPlanner generateTacticalPlanner()
+            {
+                return null;
+            }
+
+            @Override
+            public GTU getGtu()
             {
                 return null;
             }
