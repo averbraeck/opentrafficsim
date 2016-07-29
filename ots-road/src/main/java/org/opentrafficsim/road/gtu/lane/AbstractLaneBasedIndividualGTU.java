@@ -1,20 +1,11 @@
 package org.opentrafficsim.road.gtu.lane;
 
-import java.util.Set;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerception;
-import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
 /**
  * Specific type of LaneBasedGTU. This class adds length, width, maximum speed and a reference to the simulator to the
@@ -46,30 +37,18 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
      * Construct a new AbstractLaneBasedIndividualGTU.
      * @param id the id of the GTU
      * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
-     * @param initialLongitudinalPositions the initial positions of the car on one or more lanes
-     * @param initialSpeed the initial speed of the car on the lane
      * @param length the maximum length of the GTU (parallel with driving direction)
      * @param width the maximum width of the GTU (perpendicular to driving direction)
      * @param maximumSpeed the maximum speed of the GTU (in the driving direction)
      * @param simulator the simulator
-     * @param strategicalPlanner the strategical planner (e.g., route determination) to use
-     * @param perception the lane-based perception model of the GTU
      * @param network the network that the GTU is initially registered in
-     * @throws NetworkException when the GTU cannot be placed on the given lane
-     * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GTUException when a parameter is invalid
-     * @throws OTSGeometryException when the initial path is wrong
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractLaneBasedIndividualGTU(final String id, final GTUType gtuType,
-        final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
-        final Length length, final Length width, final Speed maximumSpeed,
-        final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
-        final LanePerception perception, final OTSNetwork network) throws NetworkException, SimRuntimeException,
-        GTUException, OTSGeometryException
+    public AbstractLaneBasedIndividualGTU(final String id, final GTUType gtuType, final Length length, final Length width,
+            final Speed maximumSpeed, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network) throws GTUException
     {
-        super(id, gtuType, initialLongitudinalPositions, initialSpeed, simulator, strategicalPlanner, perception,
-            network);
+        super(id, gtuType, simulator, network);
         this.length = length;
         this.width = width;
         if (null == maximumSpeed)

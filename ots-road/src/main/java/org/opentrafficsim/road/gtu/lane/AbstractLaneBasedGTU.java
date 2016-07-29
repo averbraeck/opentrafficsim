@@ -42,8 +42,6 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
@@ -110,26 +108,41 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * Construct a Lane Based GTU.
      * @param id the id of the GTU
      * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
-     * @param initialLongitudinalPositions the initial positions of the car on one or more lanes with their directions
-     * @param initialSpeed the initial speed of the car on the lane
      * @param simulator to initialize the move method and to get the current time
-     * @param strategicalPlanner the strategical planner (e.g., route determination) to use
-     * @param perception the lane-based perception model of the GTU
      * @param network the network that the GTU is initially registered in
-     * @throws NetworkException when the GTU cannot be placed on the given lane
-     * @throws SimRuntimeException when the move method cannot be scheduled
-     * @throws GTUException when gtuFollowingModel is null
-     * @throws OTSGeometryException when the initial path is wrong
+     * @throws GTUException when initial values are not correct
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractLaneBasedGTU(final String id, final GTUType gtuType,
-            final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
-            final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
-            final LanePerception perception, final OTSNetwork network) throws NetworkException, SimRuntimeException,
-            GTUException, OTSGeometryException
+    public AbstractLaneBasedGTU(final String id, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
+            final OTSNetwork network) throws GTUException
     {
-        super(id, gtuType, simulator, strategicalPlanner, perception, verifyInitialLocation(initialLongitudinalPositions),
-                initialSpeed, network);
+        super(id, gtuType, simulator, network);
+    }
+
+    /**
+     * @param strategicalPlanner the strategical planner (e.g., route determination) to use
+     * @param initialLongitudinalPositions the initial positions of the car on one or more lanes with their directions
+     * @param initialSpeed the initial speed of the car on the lane
+     * @throws NetworkException when the GTU cannot be placed on the given lane
+     * @throws SimRuntimeException when the move method cannot be scheduled
+     * @throws GTUException when initial values are not correct
+     * @throws OTSGeometryException when the initial path is wrong
+     */
+    public final void init(final LaneBasedStrategicalPlanner strategicalPlanner,
+            final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed) throws NetworkException,
+            SimRuntimeException, GTUException, OTSGeometryException
+    {
+        Throw.when(null == initialLongitudinalPositions, GTUException.class, "InitialLongitudinalPositions is null");
+        Throw.when(0 == initialLongitudinalPositions.size(), GTUException.class, "InitialLongitudinalPositions is empty set");
+
+        DirectedPoint lastPoint = null;
+        for (DirectedLanePosition pos : initialLongitudinalPositions)
+        {
+            Throw.when(lastPoint != null && pos.getLocation().distance(lastPoint) > 1E-6, GTUException.class,
+                    "initial locations for GTU have distance > 1 mm");
+            lastPoint = pos.getLocation();
+        }
+        DirectedPoint initialLocation = lastPoint;
 
         // register the GTU on the lanes
         for (DirectedLanePosition directedLanePosition : initialLongitudinalPositions)
@@ -143,27 +156,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             this.lanes.put(lane, directedLanePosition.getGtuDirection());
             lane.addGTU(this, lane.fraction(directedLanePosition.getPosition()));
         }
-    }
 
-    /**
-     * Throw a GTUException if the provided set of initial longitudinal positions is null or empty.
-     * @param initialLongitudinalPositions Set&lt;DirectedLanePosition&gt;; the set of initial longitudinal positions to check
-     * @return Set&lt;DirectedLanePosition&gt;; the argument of this method
-     * @throws GTUException when the provided set is null or empty
-     */
-    private static DirectedPoint verifyInitialLocation(Set<DirectedLanePosition> initialLongitudinalPositions)
-            throws GTUException
-    {
-        Throw.when(null == initialLongitudinalPositions, GTUException.class, "InitialLongitudinalPositions is null");
-        Throw.when(0 == initialLongitudinalPositions.size(), GTUException.class, "InitialLongitudinalPositions is empty set");
-        DirectedPoint lastPoint = null;
-        for (DirectedLanePosition pos : initialLongitudinalPositions)
-        {
-            Throw.when(lastPoint != null && pos.getLocation().distance(lastPoint) > 1E-6, GTUException.class,
-                    "initial locations for GTU have distance > 1 mm");
-            lastPoint = pos.getLocation();
-        }
-        return lastPoint;
+        // initiate the actual move
+        super.init(strategicalPlanner, initialLocation, initialSpeed);
     }
 
     /** {@inheritDoc} */
@@ -210,10 +205,6 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     public final void leaveLane(final Lane lane, final boolean beingDestroyed) throws GTUException
     {
         Throw.when(!MOVEMENT_LANE_BASED, GTUException.class, "MOVEMENT_LANE_BASED is true, but leaveLane() is called");
-        if (null == this.lanes.get(lane))
-        {
-            // No problem -- this method can be scheduled and the GTU can already have left the lane
-        }
         this.lanes.remove(lane);
         List<SimEvent<OTSSimTimeDouble>> pending = this.pendingTriggers.get(lane);
         if (null != pending)
@@ -345,6 +336,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                 }
 
                 // 3. determine for each rectangle with which lanes there is an overlap
+                @SuppressWarnings("unchecked")
                 List<Lane>[] laneLists = new ArrayList[steps + 1];
                 Set<Lane> laneSet = new HashSet<>();
                 OTSNetwork network = (OTSNetwork) getPerceivableContext();
@@ -384,8 +376,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public final Map<Lane, Length> positions(final RelativePosition relativePosition, final Time when)
-            throws GTUException
+    public final Map<Lane, Length> positions(final RelativePosition relativePosition, final Time when) throws GTUException
     {
         Map<Lane, Length> positions = new LinkedHashMap<>();
         for (Lane lane : this.lanes.keySet())
@@ -403,8 +394,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     }
 
     /** {@inheritDoc} */
-    public final Length projectedPosition(final Lane projectionLane, final RelativePosition relativePosition,
-            final Time when) throws GTUException
+    public final Length projectedPosition(final Lane projectionLane, final RelativePosition relativePosition, final Time when)
+            throws GTUException
     {
         // do not make a wedge in a curve of the projected position!
         CrossSectionLink link = projectionLane.getParentLink();
@@ -430,8 +421,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public final Length position(final Lane lane, final RelativePosition relativePosition, final Time when)
-            throws GTUException
+    public final Length position(final Lane lane, final RelativePosition relativePosition, final Time when) throws GTUException
     {
         if (null == lane)
         {
@@ -556,8 +546,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                     else if (direction.equals(GTUDirectionality.DIR_MINUS))
                     {
                         Length refPosAtLastTimestep =
-                                new Length(nextLane.getLength().si + (lane.getLength().si - frontPosSI)
-                                        + getFront().getDx().si, LengthUnit.SI);
+                                new Length(
+                                        nextLane.getLength().si + (lane.getLength().si - frontPosSI) + getFront().getDx().si,
+                                        LengthUnit.SI);
                         enterLane(nextLane, refPosAtLastTimestep, direction);
                         // schedule any sensor triggers on this lane for the remainder time
                         // TODO extra argument for DIR_MINUS driving direction?
@@ -819,34 +810,27 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public LanePerceptionFull getPerception()
-    {
-        return (LanePerceptionFull) super.getPerception();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public LaneBasedStrategicalPlanner getStrategicalPlanner()
+    public final LaneBasedStrategicalPlanner getStrategicalPlanner()
     {
         return (LaneBasedStrategicalPlanner) super.getStrategicalPlanner();
     }
 
     /** {@inheritDoc} */
     @Override
-    public BehavioralCharacteristics getBehavioralCharacteristics()
+    public final BehavioralCharacteristics getBehavioralCharacteristics()
     {
         return getStrategicalPlanner().getBehavioralCharacteristics();
     }
 
     /** {@inheritDoc} */
     @Override
-    public LaneBasedTacticalPlanner getTacticalPlanner()
+    public final LaneBasedTacticalPlanner getTacticalPlanner()
     {
         return (LaneBasedTacticalPlanner) super.getTacticalPlanner();
     }
-    
+
     /** {@inheritDoc} */
-    public void addTrigger(final Lane lane, final SimEvent<OTSSimTimeDouble> event)
+    public final void addTrigger(final Lane lane, final SimEvent<OTSSimTimeDouble> event)
     {
         List<SimEvent<OTSSimTimeDouble>> list = this.pendingTriggers.get(lane);
         if (null == list)
@@ -890,6 +874,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return String.format("GTU " + getId());
