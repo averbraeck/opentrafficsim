@@ -36,7 +36,6 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.gtu.lane.LaneBasedTemplateGTUType;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -103,12 +102,6 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                     {
                         return null;
                     }
-                }, new Generator<LanePerceptionFull>()
-                {
-                    public LanePerceptionFull draw()
-                    {
-                        return null;
-                    }
                 }, initialLongitudinalPositions, new Generator<Speed>()
                 {
                     public Speed draw()
@@ -150,12 +143,6 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                 }, truckSimulator, new Generator<LaneBasedStrategicalPlanner>()
                 {
                     public LaneBasedStrategicalPlanner draw()
-                    {
-                        return null;
-                    }
-                }, new Generator<LanePerceptionFull>()
-                {
-                    public LanePerceptionFull draw()
                     {
                         return null;
                     }
@@ -235,7 +222,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                 return truckMaximumSpeed.draw();
             }
         }, truckSimulator, network);
-        
+
         // Create some LaneTypes
         Set<GTUType> trucksForbiddenSet = new HashSet<>();
         trucksForbiddenSet.add(passengerCar.getGTUType());
@@ -246,7 +233,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         LaneType trucksOnly = new LaneType("Trucks Only", trucksOnlySet);
 
         LaneType bicycleLane = new LaneType("Bicycles Only", new HashSet<GTUType>());
-        
+
         Set<GTUType> urbanRoadSet = new HashSet<>();
         urbanRoadSet.add(passengerCar.getGTUType());
         trucksOnlySet.add(truck.getGTUType());
@@ -286,10 +273,10 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         LaneBasedGTUCharacteristics characteristics = templateGTUType.draw();
         assertEquals("Length should be " + length, length.draw().getSI(), characteristics.getLength().getSI(), 0.0001);
         assertEquals("Width should be " + width, width.draw().getSI(), characteristics.getWidth().getSI(), 0.0001);
-        assertEquals("Maximum speed should be " + maximumSpeed, maximumSpeed.draw().getSI(), characteristics
-                .getMaximumSpeed().getSI(), 0.0001);
-        assertEquals("Initial speed should be " + initialSpeed, initialSpeed.draw().getSI(), characteristics.getSpeed()
+        assertEquals("Maximum speed should be " + maximumSpeed, maximumSpeed.draw().getSI(), characteristics.getMaximumSpeed()
                 .getSI(), 0.0001);
+        assertEquals("Initial speed should be " + initialSpeed, initialSpeed.draw().getSI(),
+                characteristics.getSpeed().getSI(), 0.0001);
         assertEquals("Simulator", simulator, templateGTUType.getSimulator());
     }
 }
