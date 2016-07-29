@@ -1,11 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.object;
 
-import java.io.Serializable;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
 import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
@@ -14,11 +12,8 @@ import javax.vecmath.Point3d;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.language.d3.BoundingBox;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -26,42 +21,20 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.AbstractGTU;
-import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
-import org.opentrafficsim.core.gtu.perception.TimeStampedObject;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
-import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
-import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.core.perception.PerceivedObject;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 
 /**
  * <p>
@@ -79,19 +52,19 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
     private static final long serialVersionUID = 1L;
 
     /** The lane of the block. */
-    final Lane laneTL;
+    private final Lane laneTL;
 
     /** The position of the block on the lane. */
-    final Length positionTL;
+    private final Length positionTL;
 
     /** Light blocked or not? */
     private boolean blocked = true;
 
     /** Blocking GTU type. */
-    public static final GTUType BLOCK_GTU;
+    private static final GTUType BLOCK_GTU;
 
-    /** The dummy strategical planner. */
-    public static final StrategicalPlanner dummyStrategicalPlanner;
+    /** the dummy contour positions. */
+    private static final Set<RelativePosition> CONTOUR_POINTS = new HashSet<>();
 
     /** Relative position (0,0,0). */
     public static final Map<RelativePosition.TYPE, RelativePosition> RELATIVE_POSITIONS = new HashMap<>();
@@ -99,11 +72,10 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
     static
     {
         BLOCK_GTU = new GTUType("BLOCK");
-        dummyStrategicalPlanner = new DummyStrategicalPlanner();
-        RELATIVE_POSITIONS.put(RelativePosition.FRONT, new RelativePosition(Length.ZERO, Length.ZERO,
-            Length.ZERO, RelativePosition.FRONT));
-        RELATIVE_POSITIONS.put(RelativePosition.REAR, new RelativePosition(Length.ZERO, Length.ZERO,
-            Length.ZERO, RelativePosition.REAR));
+        RELATIVE_POSITIONS.put(RelativePosition.FRONT, new RelativePosition(Length.ZERO, Length.ZERO, Length.ZERO,
+                RelativePosition.FRONT));
+        RELATIVE_POSITIONS.put(RelativePosition.REAR, new RelativePosition(Length.ZERO, Length.ZERO, Length.ZERO,
+                RelativePosition.REAR));
         RELATIVE_POSITIONS.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
         RELATIVE_POSITIONS.put(RelativePosition.CENTER, RelativePosition.REFERENCE_POSITION);
     }
@@ -121,11 +93,10 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
      * @throws SimRuntimeException x
      */
     public AbstractTrafficLight(final String name, final Lane lane, final Length position,
-        final OTSDEVSSimulatorInterface simulator, final OTSNetwork network) throws GTUException, NetworkException,
-        NamingException, SimRuntimeException, OTSGeometryException
+            final OTSDEVSSimulatorInterface simulator, final OTSNetwork network) throws GTUException, NetworkException,
+            NamingException, SimRuntimeException, OTSGeometryException
     {
-        super(name, BLOCK_GTU, simulator, dummyStrategicalPlanner, new DummyLanePerception(), lane.getCenterLine()
-            .getLocation(position), Speed.ZERO, network);
+        super(name, BLOCK_GTU, simulator, network);
         this.positionTL = position;
         this.laneTL = lane;
 
@@ -174,60 +145,68 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
         return this.laneTL;
     }
 
+    /**
+     * @return positionTL
+     */
+    public final Length getPositionTL()
+    {
+        return this.positionTL;
+    }
+    
     /* ========================================================================================================= */
 
     /** {@inheritDoc} */
     @Override
-    public Length getLength()
+    public final Length getLength()
     {
         return Length.ZERO;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Length getWidth()
+    public final Length getWidth()
     {
         return Length.ZERO;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Speed getMaximumSpeed()
+    public final Speed getMaximumSpeed()
     {
         return Speed.ZERO;
     }
 
     /** {@inheritDoc} */
     @Override
-    public RelativePosition getFront()
+    public final RelativePosition getFront()
     {
         return RELATIVE_POSITIONS.get(RelativePosition.FRONT);
     }
 
     /** {@inheritDoc} */
     @Override
-    public RelativePosition getRear()
+    public final RelativePosition getRear()
     {
         return RELATIVE_POSITIONS.get(RelativePosition.REAR);
     }
 
     /** {@inheritDoc} */
     @Override
-    public RelativePosition getCenter()
+    public final RelativePosition getCenter()
     {
         return RELATIVE_POSITIONS.get(RelativePosition.CENTER);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Map<TYPE, RelativePosition> getRelativePositions()
+    public final Map<TYPE, RelativePosition> getRelativePositions()
     {
         return RELATIVE_POSITIONS;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Bounds getBounds()
+    public final Bounds getBounds()
     {
         double dx = 2;
         double dy = 1;
@@ -236,22 +215,21 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public BehavioralCharacteristics getBehavioralCharacteristics()
+    public final BehavioralCharacteristics getBehavioralCharacteristics()
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Map<Lane, GTUDirectionality> getLanes()
+    public final Map<Lane, GTUDirectionality> getLanes()
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void enterLane(final Lane lane, final Length position, final GTUDirectionality gtuDirection)
-        throws GTUException
+    public void enterLane(final Lane lane, final Length position, final GTUDirectionality gtuDirection) throws GTUException
     {
         // do nothing
     }
@@ -265,7 +243,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public Map<Lane, Length> positions(final RelativePosition relativePosition) throws GTUException
+    public final Map<Lane, Length> positions(final RelativePosition relativePosition) throws GTUException
     {
         Map<Lane, Length> map = new HashMap<Lane, Length>();
         map.put(this.laneTL, this.positionTL);
@@ -274,15 +252,14 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public Map<Lane, Length> positions(final RelativePosition relativePosition, final Time when)
-        throws GTUException
+    public final Map<Lane, Length> positions(final RelativePosition relativePosition, final Time when) throws GTUException
     {
         return positions(relativePosition);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Length position(final Lane lane, final RelativePosition relativePosition) throws GTUException
+    public final Length position(final Lane lane, final RelativePosition relativePosition) throws GTUException
     {
         if (this.laneTL.equals(lane))
         {
@@ -293,15 +270,14 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public Length position(final Lane lane, final RelativePosition relativePosition, final Time when)
-        throws GTUException
+    public final Length position(final Lane lane, final RelativePosition relativePosition, final Time when) throws GTUException
     {
         return position(lane, relativePosition);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Map<Lane, Double> fractionalPositions(final RelativePosition relativePosition) throws GTUException
+    public final Map<Lane, Double> fractionalPositions(final RelativePosition relativePosition) throws GTUException
     {
         Map<Lane, Double> map = new HashMap<Lane, Double>();
         map.put(this.laneTL, this.positionTL.getSI() / this.laneTL.getLength().getSI());
@@ -310,15 +286,15 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public Map<Lane, Double> fractionalPositions(final RelativePosition relativePosition, final Time when)
-        throws GTUException
+    public final Map<Lane, Double> fractionalPositions(final RelativePosition relativePosition, final Time when)
+            throws GTUException
     {
         return fractionalPositions(relativePosition);
     }
 
     /** {@inheritDoc} */
     @Override
-    public double fractionalPosition(final Lane lane, final RelativePosition relativePosition) throws GTUException
+    public final double fractionalPosition(final Lane lane, final RelativePosition relativePosition) throws GTUException
     {
         if (this.laneTL.equals(lane))
         {
@@ -329,16 +305,16 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public double fractionalPosition(final Lane lane, final RelativePosition relativePosition, final Time when)
-        throws GTUException
+    public final double fractionalPosition(final Lane lane, final RelativePosition relativePosition, final Time when)
+            throws GTUException
     {
         return fractionalPosition(lane, relativePosition);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Length projectedPosition(final Lane projectionLane, final RelativePosition relativePosition,
-        final Time when) throws GTUException
+    public final Length projectedPosition(final Lane projectionLane, final RelativePosition relativePosition, final Time when)
+            throws GTUException
     {
         CrossSectionLink link = projectionLane.getParentLink();
         for (CrossSectionElement cse : link.getCrossSectionElementList())
@@ -358,190 +334,38 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public LaneBasedStrategicalPlanner getStrategicalPlanner()
+    public final LaneBasedStrategicalPlanner getStrategicalPlanner()
     {
         return (LaneBasedStrategicalPlanner) super.getStrategicalPlanner();
     }
 
     /** {@inheritDoc} */
     @Override
-    public LanePerceptionFull getPerception()
+    public final LaneBasedTacticalPlanner getTacticalPlanner()
     {
-        return (LanePerceptionFull) super.getPerception();
+        return (LaneBasedTacticalPlanner) super.getTacticalPlanner();
     }
 
     /** {@inheritDoc} */
     @Override
-    public LaneBasedTacticalPlanner getTacticalPlanner()
-    {
-        return (LaneBasedTacticalPlanner) super.getTacticalPlanner();
-    }
-    
-    /** {@inheritDoc} */
-    @Override
-    public void addTrigger(Lane lane, SimEvent<OTSSimTimeDouble> event)
+    public final void addTrigger(final Lane lane, final SimEvent<OTSSimTimeDouble> event)
     {
         // Nothing to do as this is not really a GTU.
     }
 
     /** {@inheritDoc} */
     @Override
+    public final Set<RelativePosition> getContourPoints()
+    {
+        return CONTOUR_POINTS;
+    }
+
+    /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:designforextension")
+    @Override
     public String toString()
     {
         return "AbstractTrafficLight [laneTL=" + this.laneTL + ", positionTL=" + this.positionTL + ", blocked=" + this.blocked
                 + "]";
     }
-
-    /* ========================================================================================================= */
-
-    /**
-     * Dummy strategical planner.
-     */
-    static class DummyStrategicalPlanner implements LaneBasedStrategicalPlanner, Serializable
-    {
-        /** */
-        private static final long serialVersionUID = 20160400L;
-        
-        /** */
-        private BehavioralCharacteristics behavioralCharacteristics;
-
-        /** {@inheritDoc} */
-        @Override
-        public Node nextNode(Node node, Link previousLink, final GTUType gtuType) throws NetworkException
-        {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Node nextNode(Link link, GTUDirectionality direction, final GTUType gtuType) throws NetworkException
-        {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public LinkDirection nextLinkDirection(Node node, Link previousLink, final GTUType gtuType)
-            throws NetworkException
-        {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public LinkDirection nextLinkDirection(Link link, GTUDirectionality direction, final GTUType gtuType)
-            throws NetworkException
-        {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public TacticalPlanner generateTacticalPlanner()
-        {
-            return new DummyTacticalPlanner();
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public BehavioralCharacteristics getBehavioralCharacteristics()
-        {
-            return this.behavioralCharacteristics;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void setBehavioralCharacteristics(final BehavioralCharacteristics drivingCharacteristics)
-        {
-            this.behavioralCharacteristics = drivingCharacteristics;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public final String toString()
-        {
-            return "DummyStrategicalPlanner [behavioralCharacteristics=" + this.behavioralCharacteristics + "]";
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public LaneBasedGTU getGtu()
-        {
-            return null;
-        }
-        
-    }
-
-    /** */
-    static class DummyTacticalPlanner implements TacticalPlanner
-    {
-        /** {@inheritDoc} */
-        @Override
-        public OperationalPlan generateOperationalPlan(final Time startTime,
-            final DirectedPoint locationAtStartTime) throws OperationalPlanException, GTUException, NetworkException
-        {
-            return new OperationalPlan(getGtu(), locationAtStartTime, startTime, new Duration(1.0, TimeUnit.MINUTE));
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public final String toString()
-        {
-            return "DummyTacticalPlanner []";
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public GTU getGtu()
-        {
-            return null;
-        }
-        
-    }
-    
-    static class DummyLanePerception implements LanePerception
-    {
-
-        /** {@inheritDoc} */
-        @Override
-        public void perceive() throws GTUException, NetworkException, ParameterException
-        {
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public LaneBasedGTU getGtu()
-        {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void addPerceptionCategory(AbstractPerceptionCategory perceptionCategory)
-        {
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public <T extends AbstractPerceptionCategory> boolean contains(Class<T> clazz)
-        {
-            return false;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public <T extends AbstractPerceptionCategory> T getPerceptionCategory(Class<T> clazz)
-            throws OperationalPlanException
-        {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void removePerceptionCategory(AbstractPerceptionCategory perceptionCategory)
-        {
-        }
-
-    }
-
 }
