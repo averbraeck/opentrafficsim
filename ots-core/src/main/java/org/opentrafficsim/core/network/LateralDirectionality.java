@@ -18,7 +18,9 @@ public enum LateralDirectionality
     /** Direction to the left of the longitudinal orientation of the GTU, relative to the forward driving direction. */
     LEFT,
     /** Direction to the right of the longitudinal orientation of the GTU, relative to the forward driving direction. */
-    RIGHT;
+    RIGHT,
+    /** Absence of a lateral direction. */
+    NONE;
 
     /**
      * Determine whether the direction is the left direction.
@@ -37,4 +39,14 @@ public enum LateralDirectionality
     {
         return this.equals(LEFT);
     }
+
+    /**
+     * Determine whether the lateral direction is not present.
+     * @return whether the lateral direction is not present
+     */
+    public boolean isNone()
+    {
+        return this.equals(NONE);
+    }
+
 }
