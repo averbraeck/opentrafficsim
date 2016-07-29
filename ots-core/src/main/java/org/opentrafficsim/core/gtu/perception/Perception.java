@@ -3,8 +3,10 @@ package org.opentrafficsim.core.gtu.perception;
 import java.io.Serializable;
 import java.util.Collection;
 
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.PerceivedObject;
 
@@ -31,15 +33,38 @@ public interface Perception extends Serializable
     void perceive() throws GTUException, NetworkException, ParameterException;
 
     /**
-     * Return information about the perceived objects with their (estimated) location, speed, and state.
-     * @return a collection of objects within the perception range and angle
+     * Return the GTU of this perception.
+     * @return GTU of this perception
      */
-    Collection<PerceivedObject> getPerceivedObjects();
+    GTU getGtu();
 
     /**
-     * Return time stamped information about the perceived objects with their (estimated) location, speed, and state.
-     * @return a time stamped collection of objects within the perception range and angle
-     * @throws GTUException when the GTU was not initialized yet.
+     * Adds given perception category to the perception.
+     * @param perceptionCategory perception category
      */
-    TimeStampedObject<Collection<PerceivedObject>> getTimeStampedPerceivedObjects() throws GTUException;
+    void addPerceptionCategory(final AbstractPerceptionCategory perceptionCategory);
+
+    /**
+     * Returns whether the given perception category is present.
+     * @param clazz perception category class
+     * @param <T> perception category
+     * @return whether the given perception category is present
+     */
+    <T extends AbstractPerceptionCategory> boolean contains(final Class<T> clazz);
+
+    /**
+     * Returns the given perception category.
+     * @param clazz perception category class
+     * @param <T> perception category
+     * @return given perception category
+     * @throws OperationalPlanException if the perception category is not present
+     */
+    <T extends AbstractPerceptionCategory> T getPerceptionCategory(final Class<T> clazz) throws OperationalPlanException;
+
+    /**
+     * Remove give perception category.
+     * @param perceptionCategory perception category to remove
+     */
+    void removePerceptionCategory(final AbstractPerceptionCategory perceptionCategory);
+
 }

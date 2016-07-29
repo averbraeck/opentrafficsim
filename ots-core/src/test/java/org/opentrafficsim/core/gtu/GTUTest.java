@@ -30,6 +30,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.perception.AbstractPerception;
 import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.perception.TimeStampedObject;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
@@ -75,7 +76,7 @@ public class GTUTest implements OTSModelInterface
     {
         TestGTU firstGTU = null;
         TestGTU lastGTU = null;
-        Perception perception = new Perception()
+        Perception perception = new AbstractPerception(null)
         {
 
             /** */
@@ -85,19 +86,6 @@ public class GTUTest implements OTSModelInterface
             public void perceive() throws GTUException, NetworkException
             {
                 // Fake implementation; do nothing
-            }
-
-            @Override
-            public Collection<PerceivedObject> getPerceivedObjects()
-            {
-                return new HashSet<PerceivedObject>();
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public TimeStampedObject<Collection<PerceivedObject>> getTimeStampedPerceivedObjects()
-            {
-                return new TimeStampedObject<Collection<PerceivedObject>>(new HashSet<PerceivedObject>(), Time.ZERO);
             }
         };
         OTSNetwork perceivableContext = new OTSNetwork("network");
@@ -135,10 +123,18 @@ public class GTUTest implements OTSModelInterface
             }
 
             @Override
-            public TacticalPlanner generateTacticalPlanner(final GTU gtu)
+            public TacticalPlanner generateTacticalPlanner()
             {
                 return null;
             }
+
+            /** {@inheritDoc} */
+            @Override
+            public GTU getGtu()
+            {
+                return null;
+            }
+            
         };
         DirectedPoint initialLocation =
                 new DirectedPoint(10, 20, 30, Math.toRadians(10), Math.toRadians(20), Math.toRadians(30));

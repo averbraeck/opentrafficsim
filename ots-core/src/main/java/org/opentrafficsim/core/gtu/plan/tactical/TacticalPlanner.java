@@ -36,9 +36,15 @@ import org.opentrafficsim.core.network.NetworkException;
  */
 public interface TacticalPlanner
 {
+    
+    /**
+     * Returns the GTU.
+     * @return GTU
+     */
+    GTU getGtu();
+    
     /**
      * generate an operational plan, for now or for in the future.
-     * @param gtu the gtu to generate the plan for
      * @param startTime the time from which the new operational plan has to be operational
      * @param locationAtStartTime the location of the GTU at the start time of the new plan
      * @return a new operational plan
@@ -47,7 +53,7 @@ public interface TacticalPlanner
      * @throws NetworkException when there is a problem with the network on which the GTU is driving
      * @throws ParameterException when there is a problem with a parameter
      */
-    OperationalPlan generateOperationalPlan(GTU gtu, Time startTime, DirectedPoint locationAtStartTime)
+    OperationalPlan generateOperationalPlan(Time startTime, DirectedPoint locationAtStartTime)
             throws OperationalPlanException, GTUException, NetworkException, ParameterException;
 
     // TODO InitialXVT generateInitialXVT(GTUState gtu, DirectedPoint initialLocation, Speed desiredSpeed, GenerationPolicy

@@ -243,9 +243,9 @@ public abstract class AbstractGTU implements GTU
         if (this.tacticalPlanner == null)
         {
             // Tell the strategical planner to provide a tactical planner
-            this.tacticalPlanner = this.strategicalPlanner.generateTacticalPlanner(this);
+            this.tacticalPlanner = this.strategicalPlanner.generateTacticalPlanner();
         }
-        this.operationalPlan = this.tacticalPlanner.generateOperationalPlan(this, now, fromLocation);
+        this.operationalPlan = this.tacticalPlanner.generateOperationalPlan(now, fromLocation);
 
         // schedule the next move at the end of the current operational plan
         // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
@@ -322,7 +322,7 @@ public abstract class AbstractGTU implements GTU
         // TODO discuss when a new tactical planner may be needed
         if (null == this.tacticalPlanner)
         {
-            this.tacticalPlanner = this.strategicalPlanner.generateTacticalPlanner(this);
+            this.tacticalPlanner = this.strategicalPlanner.generateTacticalPlanner();
         }
         return this.tacticalPlanner;
     }
