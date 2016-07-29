@@ -49,6 +49,9 @@ public class RelativePosition implements Serializable
     /** Standard relative position type DRIVER. */
     public static final TYPE DRIVER = new TYPE("DRIVER");
 
+    /** Standard relative position type CONTOUR. */
+    public static final TYPE CONTOUR = new TYPE("CONTOUR");
+
     /** The reference position (always 0, 0, 0). */
     public static final RelativePosition REFERENCE_POSITION = new RelativePosition(new Length(0.0d, LengthUnit.SI),
         new Length(0.0d, LengthUnit.SI), new Length(0.0d, LengthUnit.SI), RelativePosition.REFERENCE);

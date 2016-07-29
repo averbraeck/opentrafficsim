@@ -1,12 +1,6 @@
 package org.opentrafficsim.core.gtu;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
-import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.gtu.perception.Perception;
-import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 /**
@@ -31,21 +25,14 @@ public abstract class AbstractLinkBasedGTU extends AbstractGTU
      * @param id the id of the GTU
      * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
      * @param simulator the simulator to schedule plan changes on
-     * @param strategicalPlanner the planner responsible for the overall 'mission' of the GTU, usually indicating where it needs
-     *            to go. It operates by instantiating tactical planners to do the work.
-     * @param perception the perception unit that takes care of observing the environment of the GTU
-     * @param initialLocation the initial location (and direction) of the GTU
-     * @param initialSpeed the initial speed of the GTU
      * @param network the network in which this GTU is (initially) registered
-     * @throws SimRuntimeException when scheduling after the first move fails
      * @throws GTUException when the construction of the original waiting path fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractLinkBasedGTU(final String id, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
-        final StrategicalPlanner strategicalPlanner, final Perception perception, final DirectedPoint initialLocation,
-        final Speed initialSpeed, final OTSNetwork network) throws SimRuntimeException, GTUException
+            final OTSNetwork network) throws GTUException
     {
-        super(id, gtuType, simulator, strategicalPlanner, perception, initialLocation, initialSpeed, network);
+        super(id, gtuType, simulator, network);
         this.network = network;
     }
 
