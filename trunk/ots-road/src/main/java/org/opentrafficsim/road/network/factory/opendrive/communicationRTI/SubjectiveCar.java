@@ -2,6 +2,7 @@ package org.opentrafficsim.road.network.factory.opendrive.communicationRTI;
 
 import java.rmi.RemoteException;
 import java.util.Map;
+import java.util.Set;
 
 import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
@@ -21,12 +22,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.perception.Perception;
-import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionNone;
-import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerNone;
 
 /** */
 public class SubjectiveCar extends AbstractGTU
@@ -49,17 +45,17 @@ public class SubjectiveCar extends AbstractGTU
      * @param type GTU type
      * @param simulator simulator
      * @param initialLocation location
-     * @param network hhe network in whoch the subjective car will be registered
+     * @param network the network in whoch the subjective car will be registered
      * @throws GTUException when GTU cannot be initialized
      * @throws SimRuntimeException when operational plan execution or perception execution cannot be scheduled
      * @throws NamingException when animation cannot be registered
      * @throws RemoteException when animation context or simulator cannot be reached
      */
-    public SubjectiveCar(String id, GTUType type, OTSDEVSSimulatorInterface simulator, DirectedPoint initialLocation,
-            final OTSNetwork network) throws SimRuntimeException, GTUException, RemoteException, NamingException
+    public SubjectiveCar(final String id, final GTUType type, final OTSDEVSSimulatorInterface simulator,
+            final DirectedPoint initialLocation, final OTSNetwork network) throws SimRuntimeException, GTUException,
+            RemoteException, NamingException
     {
-        super(id, type, simulator, new LaneBasedStrategicalPlannerNone(), new LanePerceptionNone(), initialLocation,
-                Speed.ZERO, network);
+        super(id, type, simulator, network);
         this.position = initialLocation;
         System.out.println("Subjective car created at position " + this.position);
 
@@ -70,28 +66,10 @@ public class SubjectiveCar extends AbstractGTU
     }
 
     /**
-     * @param id car id
-     * @param gtuType GTU type
-     * @param strategicalPlanner the strategical planner of the GTU
-     * @param perception the perception unit of the GTU
-     * @param simulator simulator
-     * @param initialLocation location
-     * @throws GTUException when GTU cannot be initialized
-     * @throws SimRuntimeException when operational plan execution or perception execution cannot be scheduled
-     * @throws NetworkException on inconsistency of the network
-     */
-    public SubjectiveCar(String id, GTUType gtuType, OTSDEVSSimulatorInterface simulator,
-            StrategicalPlanner strategicalPlanner, Perception perception, DirectedPoint initialLocation)
-            throws SimRuntimeException, NetworkException, GTUException
-    {
-        super(id, gtuType, simulator, strategicalPlanner, perception, initialLocation, Speed.ZERO, null);
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
-    public Length getLength()
+    public final Length getLength()
     {
         return this.length;
     }
@@ -100,7 +78,7 @@ public class SubjectiveCar extends AbstractGTU
      * {@inheritDoc}
      */
     @Override
-    public Length getWidth()
+    public final Length getWidth()
     {
         return this.width;
     }
@@ -109,7 +87,7 @@ public class SubjectiveCar extends AbstractGTU
      * {@inheritDoc}
      */
     @Override
-    public Speed getMaximumSpeed()
+    public final Speed getMaximumSpeed()
     {
         return null;
     }
@@ -118,7 +96,7 @@ public class SubjectiveCar extends AbstractGTU
      * {@inheritDoc}
      */
     @Override
-    public RelativePosition getFront()
+    public final RelativePosition getFront()
     {
         return null;
     }
@@ -127,14 +105,14 @@ public class SubjectiveCar extends AbstractGTU
      * {@inheritDoc}
      */
     @Override
-    public RelativePosition getRear()
+    public final RelativePosition getRear()
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public RelativePosition getCenter()
+    public final RelativePosition getCenter()
     {
         return null;
     }
@@ -143,7 +121,7 @@ public class SubjectiveCar extends AbstractGTU
      * {@inheritDoc}
      */
     @Override
-    public Map<TYPE, RelativePosition> getRelativePositions()
+    public final Map<TYPE, RelativePosition> getRelativePositions()
     {
         return null;
     }
@@ -152,15 +130,16 @@ public class SubjectiveCar extends AbstractGTU
      * {@inheritDoc}
      */
     @Override
-    public void destroy()
+    public final void destroy()
     {
+        super.destroy();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Bounds getBounds()
+    public final Bounds getBounds()
     {
         double dx = 0.5 * getLength().doubleValue();
         double dy = 0.5 * getWidth().doubleValue();
@@ -170,7 +149,7 @@ public class SubjectiveCar extends AbstractGTU
     /**
      * @return position
      */
-    public DirectedPoint getPosition()
+    public final DirectedPoint getPosition()
     {
         return this.position;
     }
@@ -178,14 +157,14 @@ public class SubjectiveCar extends AbstractGTU
     /**
      * @param position set position
      */
-    public void setPosition(DirectedPoint position)
+    public final void setPosition(final DirectedPoint position)
     {
         this.position = position;
     }
 
     /** {@inheritDoc} */
     @Override
-    public DirectedPoint getLocation()
+    public final DirectedPoint getLocation()
     {
         // System.out.println("Subjective car at position " + this.position);
 
@@ -194,7 +173,14 @@ public class SubjectiveCar extends AbstractGTU
 
     /** {@inheritDoc} */
     @Override
-    public BehavioralCharacteristics getBehavioralCharacteristics()
+    public final BehavioralCharacteristics getBehavioralCharacteristics()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Set<RelativePosition> getContourPoints()
     {
         return null;
     }
