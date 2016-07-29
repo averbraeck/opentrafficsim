@@ -620,7 +620,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         double relativeMeanSpeed = (relativeToDistance - relativeFromDistance) / (relativeToTime - relativeFromTime);
         // The code for acceleration assumes that acceleration is constant (which is correct for IDM+, but may be
         // wrong for other car following algorithms).
-        double acceleration = car.getAcceleration(car.getOperationalPlan().getStartTime()).getSI();
+        double acceleration = car.getAcceleration().getSI();
         for (int timeBin = fromTimeBin; timeBin < toTimeBin; timeBin++)
         {
             if (timeBin < 0)
