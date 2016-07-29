@@ -13,12 +13,11 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
  *          initial version Sep 19, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public final class Egoistic extends AbstractLaneChangeModel
+public class Egoistic extends AbstractLaneChangeModel
 {
-
     /** {@inheritDoc} */
     @Override
-    public Acceleration applyDriverPersonality(final DualAccelerationStep accelerations)
+    public final Acceleration applyDriverPersonality(final DualAccelerationStep accelerations)
     {
         // The egoistic driver only looks at the effects on him-/herself.
         return accelerations.getLeaderAcceleration();
@@ -26,14 +25,14 @@ public final class Egoistic extends AbstractLaneChangeModel
 
     /** {@inheritDoc} */
     @Override
-    public String getName()
+    public final String getName()
     {
         return "Egoistic";
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getLongName()
+    public final String getLongName()
     {
         return "Egoistic lane change model (as described by Treiber).";
     }
