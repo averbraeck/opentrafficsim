@@ -151,7 +151,7 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
                     * Math.pow(leaders.firstKey().si, behavioralCharacteristics.getParameter(GAMMAACC))
                     * Math.pow(getDensity(leaders), behavioralCharacteristics.getParameter(RHOACC))
                     * Math.pow(leaders.get(leaders.firstKey()).si - speed.si, behavioralCharacteristics.getParameter(LAMBDAACC))
-                    * eCfAcc,
+                    + eCfAcc,
                 AccelerationUnit.SI);
             // {@formatter:on}
         }
@@ -165,7 +165,7 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
                 * Math.pow(leaders.firstKey().si, behavioralCharacteristics.getParameter(GAMMADEC))
                 * Math.pow(getDensity(leaders), behavioralCharacteristics.getParameter(RHODEC))
                 * Math.pow(speed.si - leaders.get(leaders.firstKey()).si, behavioralCharacteristics.getParameter(LAMBDADEC))
-                * eCfDec,
+                + eCfDec,
             AccelerationUnit.SI);
         // {@formatter:on}
     }

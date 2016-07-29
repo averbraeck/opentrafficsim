@@ -1,7 +1,10 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
 
 /**
  * Determines lane change desire in order to adhere to keeping right or left. Such desire only exists if the route and speed
@@ -19,8 +22,9 @@ public class IncentiveKeep implements VoluntaryIncentive
 
     /** {@inheritDoc} */
     @Override
-    public final Desire determineDesire(final LaneBasedGTU gtu, final Desire mandatoryDesire, final Desire voluntaryDesire)
-        throws ParameterException
+    public final Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics,
+        final LanePerception perception, final Desire mandatoryDesire, final Desire voluntaryDesire)
+        throws ParameterException, OperationalPlanException
     {
         if (mandatoryDesire.getRight() < 0 || voluntaryDesire.getRight() < 0)
         {
@@ -28,7 +32,7 @@ public class IncentiveKeep implements VoluntaryIncentive
             return new Desire(0, 0);
         }
         // keep right with dFree
-        return new Desire(0, gtu.getBehavioralCharacteristics().getParameter(AbstractLMRS.DFREE));
+        return new Desire(0, behavioralCharacteristics.getParameter(LmrsUtil.DFREE));
     }
 
     /** {@inheritDoc} */

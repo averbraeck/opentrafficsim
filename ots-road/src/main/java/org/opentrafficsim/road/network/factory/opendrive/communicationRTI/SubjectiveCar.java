@@ -25,7 +25,7 @@ import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionNone;
+import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionNone;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerNone;
 
 /** */

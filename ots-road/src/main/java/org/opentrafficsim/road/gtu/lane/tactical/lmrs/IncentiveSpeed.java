@@ -1,7 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
 /**
  * Determines lane change desire for speed, where the slowest vehicle in the current and adjacent lanes are assessed. The larger
@@ -22,10 +23,10 @@ public class IncentiveSpeed implements VoluntaryIncentive
 
     /** {@inheritDoc} */
     @Override
-    public final Desire determineDesire(final LaneBasedGTU gtu, final Desire mandatoryDesire, final Desire voluntaryDesire)
+    public final Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics,
+        final LanePerception perception, final Desire mandatoryDesire, final Desire voluntaryDesire)
         throws ParameterException
     {
-
         return new Desire(0, 0);
     }
 

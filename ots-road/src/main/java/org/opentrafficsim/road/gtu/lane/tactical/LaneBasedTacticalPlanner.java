@@ -1,6 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 
 /**
@@ -18,8 +20,18 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner
 {
     /**
      * Returns the car-following model.
-     * @return car following model.
+     * @return car following model
      */
     CarFollowingModel getCarFollowingModel();
+    
+    /** 
+     * Returns the perception. 
+     * @return perception
+     */
+    LanePerception getPerception();
+    
+    /** {@inheritDoc} */
+    LaneBasedGTU getGtu();
+    
 }
 

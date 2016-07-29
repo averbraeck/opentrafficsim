@@ -30,9 +30,9 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDuration;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
-import org.opentrafficsim.road.gtu.lane.perception.AbstractHeadwayGTU;
-import org.opentrafficsim.road.gtu.lane.perception.HeadwayConflict;
-import org.opentrafficsim.road.gtu.lane.perception.HeadwayStopLine;
+import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayStopLine;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 

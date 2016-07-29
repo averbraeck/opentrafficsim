@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.strategical;
 import java.io.Serializable;
 
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
 /**
  * <p>
@@ -18,17 +19,23 @@ public abstract class AbstractLaneBasedStrategicalPlanner implements LaneBasedSt
 {
     /** */
     private static final long serialVersionUID = 20151126L;
-    
+
+    /** GTU. */
+    private final LaneBasedGTU gtu;
+
     /** The personal driving characteristics, which contain settings for the tactical planner. */
-    protected BehavioralCharacteristics behavioralCharacteristics;
+    private BehavioralCharacteristics behavioralCharacteristics;
 
     /**
      * @param behavioralCharacteristics the personal driving characteristics, which contain settings for the tactical planner
+     * @param gtu GTU
      */
-    public AbstractLaneBasedStrategicalPlanner(final BehavioralCharacteristics behavioralCharacteristics)
+    public AbstractLaneBasedStrategicalPlanner(final BehavioralCharacteristics behavioralCharacteristics,
+        final LaneBasedGTU gtu)
     {
         super();
         this.behavioralCharacteristics = behavioralCharacteristics;
+        this.gtu = gtu;
     }
 
     /** {@inheritDoc} */
@@ -44,7 +51,12 @@ public abstract class AbstractLaneBasedStrategicalPlanner implements LaneBasedSt
     {
         this.behavioralCharacteristics = behavioralCharacteristics;
     }
-    
-    
+
+    /** {@inheritDoc} */
+    @Override
+    public final LaneBasedGTU getGtu()
+    {
+        return this.gtu;
+    }
 
 }

@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane.perception;
+package org.opentrafficsim.road.gtu.lane.perception.headway;
 
 import java.util.EnumSet;
 

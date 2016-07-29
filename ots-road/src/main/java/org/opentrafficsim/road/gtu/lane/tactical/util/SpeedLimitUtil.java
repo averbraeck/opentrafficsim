@@ -14,6 +14,8 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeAcceleration;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
+import org.opentrafficsim.road.network.speed.SpeedLimitType;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypeSpeedLegal;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
@@ -92,6 +94,48 @@ public final class SpeedLimitUtil
         return speedLimitInfo.getSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED);
     }
 
+    /**
+     * Acceleration for speed limit transitions. This implementation decelerates before curves and speed bumps. For this it uses
+     * {@code approachTargetSpeed()} of the abstract car-following model implementation. All remaining transitions happen in the
+     * default manner, i.e. deceleration and acceleration after the speed limit change and governed by the car-following model.
+     * @param behavioralCharacteristics behavioral characteristics
+     * @param speed current speed
+     * @param speedLimitProspect speed limit prospect
+     * @param carFollowingModel car following model
+     * @return acceleration for speed limit transitions
+     * @throws ParameterException if a required parameter is not found
+     */
+    public static Acceleration considerSpeedLimitTransitions(final BehavioralCharacteristics behavioralCharacteristics,
+        final Speed speed, final SpeedLimitProspect speedLimitProspect, final CarFollowingModel carFollowingModel)
+        throws ParameterException
+    {
+        Acceleration out = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
+        SpeedLimitInfo currentSpeedLimitInfo = speedLimitProspect.getSpeedLimitInfo(Length.ZERO);
+
+        // decelerate for curves and speed bumps
+        for (SpeedLimitType<?> speedLimitType : new SpeedLimitType[] {SpeedLimitTypes.CURVATURE, SpeedLimitTypes.SPEED_BUMP})
+        {
+            for (Length distance : speedLimitProspect.getDownstreamDistances(speedLimitType))
+            {
+                SpeedLimitInfo speedLimitInfo = speedLimitProspect.buildSpeedLimitInfo(distance, speedLimitType);
+                Speed targetSpeed = carFollowingModel.desiredSpeed(behavioralCharacteristics, speedLimitInfo);
+                Acceleration a =
+                    SpeedLimitUtil.approachTargetSpeed(carFollowingModel, behavioralCharacteristics, speed,
+                        currentSpeedLimitInfo, distance, targetSpeed);
+                if (a.lt(out))
+                {
+                    out = a;
+                }
+            }
+        }
+
+        // For lower legal speed limits (road class, fixed sign, dynamic sign), we assume that the car-following model will
+        // apply some reasonable deceleration after the change. For higher speed limits, we assume car-following acceleration
+        // after the change.
+
+        return out;
+    }
+    
     /**
      * Returns an acceleration based on the car-following model in order to adjust the speed to a given value at some location
      * ahead. This is done by placing a virtual vehicle somewhere near the location. Both the location and speed of this virtual

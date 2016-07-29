@@ -2,7 +2,6 @@ package org.opentrafficsim.road.gtu.strategical;
 
 import java.io.Serializable;
 
-import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
@@ -11,6 +10,7 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
 /**
  * <p>
@@ -29,16 +29,17 @@ public class LaneBasedStrategicalPlannerNone extends AbstractLaneBasedStrategica
     private static final long serialVersionUID = 20150724L;
 
     /**
-     * 
+     * Constructor.
+     * @param gtu GTU
      */
-    public LaneBasedStrategicalPlannerNone()
+    public LaneBasedStrategicalPlannerNone(final LaneBasedGTU gtu)
     {
-        super(new BehavioralCharacteristics());
+        super(new BehavioralCharacteristics(), gtu);
     }
 
     /** {@inheritDoc} */
     @Override
-    public TacticalPlanner generateTacticalPlanner(GTU gtu)
+    public TacticalPlanner generateTacticalPlanner()
     {
         return null;
     }

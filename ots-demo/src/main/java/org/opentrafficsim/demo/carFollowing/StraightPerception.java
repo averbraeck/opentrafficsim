@@ -70,9 +70,9 @@ import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.perception.Headway;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
-import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
+import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlannerOld;
 import org.opentrafficsim.road.gtu.lane.tactical.LanePathInfo;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -830,7 +830,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
     /**
      * Tactical planner without perception update.
      */
-    class GTUFollowingTacticalPlannerNoPerceive extends AbstractLaneBasedTacticalPlanner
+    class GTUFollowingTacticalPlannerNoPerceive extends AbstractLaneBasedTacticalPlannerOld
     {
         /** */
         private static final long serialVersionUID = 20151125L;

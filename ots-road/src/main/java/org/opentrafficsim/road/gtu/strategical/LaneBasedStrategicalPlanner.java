@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.strategical;
 
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
 /**
  * <p>
@@ -27,5 +28,8 @@ public interface LaneBasedStrategicalPlanner extends StrategicalPlanner
      *            different characteristics
      */
     void setBehavioralCharacteristics(final BehavioralCharacteristics behavioralCharacteristics);
-    
+
+    /** {@inheritDoc} */
+    LaneBasedGTU getGtu();
+
 }

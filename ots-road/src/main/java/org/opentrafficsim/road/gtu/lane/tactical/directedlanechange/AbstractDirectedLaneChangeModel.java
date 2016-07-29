@@ -15,8 +15,8 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.Headway;
-import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlannerOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGTUFollowingModelMobil;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -51,7 +51,7 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
         Length longitudinalPosition = positions.get(lane);
         Lane otherLane = gtu.getPerception().bestAccessibleAdjacentLane(lane, direction, longitudinalPosition);
         GTUFollowingModelOld gtuFollowingModel =
-                (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner()).getCarFollowingModel();
+                (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlannerOld) gtu.getTacticalPlanner()).getCarFollowingModel();
         if (null == gtuFollowingModel)
         {
             throw new Error(gtu + " has null GTUFollowingModel");
