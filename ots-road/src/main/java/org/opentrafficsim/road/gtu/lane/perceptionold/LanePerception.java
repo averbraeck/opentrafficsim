@@ -49,7 +49,7 @@ public interface LanePerception extends Perception
     /**
      * @return the gtu for which this is the perception
      */
-    LaneBasedGTU getGTU();
+    LaneBasedGTU getGtu();
 
     /************************************************************************************************************/
     /********************************** RETRIEVING OF THE INFORMATION *****************************************/

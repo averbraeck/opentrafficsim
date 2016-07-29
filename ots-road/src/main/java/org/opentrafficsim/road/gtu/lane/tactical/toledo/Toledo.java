@@ -251,17 +251,17 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         }
         else
         {
-            initiatedLaneChange = null;
+            initiatedLaneChange = LateralDirectionality.NONE;
         }
 
-        if (initiatedLaneChange != null && initiatedLaneChange.isLeft())
+        if (initiatedLaneChange.isLeft())
         {
             // changing left
             acceleration =
                 CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, getGtu().getSpeed(), sli, perception
                     .getPerceptionCategory(NeighborsCategory.class).getLeaders(RelativeLane.LEFT));
         }
-        else if (initiatedLaneChange != null)
+        else if (initiatedLaneChange.isRight())
         {
             // changing right
             acceleration =
@@ -277,7 +277,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         // operational plan
         Length forwardHeadway = bc.getParameter(ParameterTypes.LOOKAHEAD);
         List<Lane> lanes = buildLanePathInfo(getGtu(), forwardHeadway).getLanes();
-        if (initiatedLaneChange == null)
+        if (initiatedLaneChange.isNone())
         {
             Length firstLanePosition = getGtu().position(getReferenceLane(getGtu()), RelativePosition.REFERENCE_POSITION);
             try
