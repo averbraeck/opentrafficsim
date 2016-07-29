@@ -63,4 +63,11 @@ public class EgoPerception extends AbstractPerceptionCategory
         updateSpeed();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "EgoPerception [speed=" + this.speed + "]";
+    }
+
 }
