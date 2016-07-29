@@ -74,7 +74,6 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     public LMRS(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu)
     {
         super(carFollowingModel, gtu);
-
     }
 
     /**
@@ -116,34 +115,34 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     /** {@inheritDoc} */
     @Override
     public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
-        throws OperationalPlanException, GTUException, NetworkException, ParameterException
+            throws OperationalPlanException, GTUException, NetworkException, ParameterException
     {
-
         // obtain objects to get info
         getPerception().perceive();
         SpeedLimitProspect slp =
-            getPerception().getPerceptionCategory(InfrastructureCategory.class).getSpeedLimitProspect(RelativeLane.CURRENT);
+                getPerception().getPerceptionCategory(InfrastructureCategory.class).getSpeedLimitProspect(RelativeLane.CURRENT);
         SpeedLimitInfo sli = slp.getSpeedLimitInfo(Length.ZERO);
         BehavioralCharacteristics bc = getGtu().getBehavioralCharacteristics();
 
         // LMRS
         SimpleOperationalPlan simplePlan =
-            LmrsUtil.determinePlan(getGtu(), startTime, this.lmrsStatus, getCarFollowingModel(), this.laneChange,
-                getPerception(), this.mandatoryIncentives, this.voluntaryIncentives);
+                LmrsUtil.determinePlan(getGtu(), startTime, this.lmrsStatus, getCarFollowingModel(), this.laneChange,
+                        getPerception(), this.mandatoryIncentives, this.voluntaryIncentives);
 
         // speed limits
         Speed speed = getGtu().getSpeed();
         simplePlan.minimumAcceleration(SpeedLimitUtil.considerSpeedLimitTransitions(bc, speed, slp, getCarFollowingModel()));
 
         // traffic lights
-        simplePlan.minimumAcceleration(TrafficLightUtil.respondToTrafficLights(bc, getPerception().getPerceptionCategory(
-            IntersectionCategory.class).getTrafficLights(), getCarFollowingModel(), speed, sli));
+        simplePlan.minimumAcceleration(TrafficLightUtil.respondToTrafficLights(bc,
+                getPerception().getPerceptionCategory(IntersectionCategory.class).getTrafficLights(), getCarFollowingModel(),
+                speed, sli));
 
         // conflicts
-        simplePlan.minimumAcceleration(ConflictUtil.approachConflicts(bc, getPerception().getPerceptionCategory(
-            IntersectionCategory.class).getConflicts(RelativeLane.CURRENT), getPerception().getPerceptionCategory(
-            NeighborsCategory.class).getLeaders(RelativeLane.CURRENT), getCarFollowingModel(), getGtu().getLength(), speed,
-            sli, this.yieldPlans));
+        simplePlan.minimumAcceleration(ConflictUtil.approachConflicts(bc,
+                getPerception().getPerceptionCategory(IntersectionCategory.class).getConflicts(RelativeLane.CURRENT),
+                getPerception().getPerceptionCategory(NeighborsCategory.class).getLeaders(RelativeLane.CURRENT),
+                getCarFollowingModel(), getGtu().getLength(), speed, sli, this.yieldPlans));
 
         // create plan
         return buildPlanFromSimplePlan(getGtu(), startTime, bc, simplePlan, this.laneChange);

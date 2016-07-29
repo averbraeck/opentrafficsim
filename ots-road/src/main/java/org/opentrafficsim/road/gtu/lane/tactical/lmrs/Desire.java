@@ -61,11 +61,11 @@ public class Desire implements Serializable
         {
             return this.left;
         }
-        else if (dir == LateralDirectionality.RIGHT)
+        if (dir == LateralDirectionality.RIGHT)
         {
             return this.right;
         }
-        throw new NullPointerException("Lateral direction may not be null.");
+        throw new RuntimeException("Lateral direction may not be NONE.");
     }
 
     /**
