@@ -27,8 +27,9 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedAltruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedEgoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedLaneChangeModel;
@@ -113,7 +114,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
         {
             // ask Perception for the local situation
             LaneBasedGTU laneBasedGTU = getGtu();
-            LanePerception perception = laneBasedGTU.getPerception();
+            LanePerception perception = getPerception();
             BehavioralCharacteristics behavioralCharacteristics = laneBasedGTU.getBehavioralCharacteristics();
             behavioralCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, ParameterTypes.LOOKAHEAD.getDefaultValue());
 
@@ -191,7 +192,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
                     {
                         sameLaneTraffic.add(perception.getBackwardHeadway());
                     }
-                    DirectedLaneChangeModel dlcm = new DirectedAltruistic();
+                    DirectedLaneChangeModel dlcm = new DirectedAltruistic((LanePerceptionFull) getPerception());
                     DirectedLaneMovementStep dlms =
                         dlcm.computeLaneChangeAndAcceleration(laneBasedGTU, LateralDirectionality.LEFT, sameLaneTraffic,
                             perception.getNeighboringHeadwaysLeft(), behavioralCharacteristics
@@ -235,7 +236,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
                     {
                         sameLaneTraffic.add(perception.getBackwardHeadway());
                     }
-                    DirectedLaneChangeModel dlcm = new DirectedAltruistic();
+                    DirectedLaneChangeModel dlcm = new DirectedAltruistic((LanePerceptionFull) getPerception());
                     DirectedLaneMovementStep dlms =
                         dlcm.computeLaneChangeAndAcceleration(laneBasedGTU, LateralDirectionality.RIGHT, sameLaneTraffic,
                             perception.getNeighboringHeadwaysRight(), behavioralCharacteristics
@@ -285,7 +286,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
         final DirectedPoint locationAtStartTime, final LanePathInfo lanePathInfo) throws OperationalPlanException,
         GTUException
     {
-        LanePerception perception = laneBasedGTU.getPerception();
+        LanePerception perception = getPerception();
 
         // No lane change. Continue on current lane.
         AccelerationStep accelerationStep;
@@ -374,11 +375,15 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
             perception.updateLaneTrafficLeft();
             otherLaneTraffic = perception.getNeighboringHeadwaysLeft();
         }
-        else
+        else if (direction.isRight())
         {
             perception.updateParallelHeadwaysRight();
             perception.updateLaneTrafficRight();
             otherLaneTraffic = perception.getNeighboringHeadwaysRight();
+        }
+        else
+        {
+            throw new GTUException("Lateral direction is neither LEFT nor RIGHT during a lane change");
         }
         if (!perception.getParallelHeadways(direction).isEmpty())
         {
@@ -397,7 +402,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
         }
 
         // TODO make type of plan (Egoistic, Altruistic) parameter of the class
-        DirectedLaneChangeModel dlcm = new DirectedEgoistic();
+        DirectedLaneChangeModel dlcm = new DirectedEgoistic((LanePerceptionFull) getPerception());
         // TODO make the elasticities 2.0 and 0.1 parameters of the class
         DirectedLaneMovementStep dlms =
             dlcm.computeLaneChangeAndAcceleration(gtu, direction, sameLaneTraffic, otherLaneTraffic, gtu
