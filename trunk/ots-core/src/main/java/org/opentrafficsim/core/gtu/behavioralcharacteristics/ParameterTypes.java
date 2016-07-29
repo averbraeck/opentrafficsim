@@ -32,6 +32,10 @@ public class ParameterTypes
         //
     }
     
+    /** Fixed model time step. */
+    public static final ParameterTypeDuration DT = new ParameterTypeDuration("dt", "Fixed model time step.", new Duration(
+        0.5, TimeUnit.SI), POSITIVE);
+    
     /** Car-following stopping distance. */
     public static final ParameterTypeLength S0;
 

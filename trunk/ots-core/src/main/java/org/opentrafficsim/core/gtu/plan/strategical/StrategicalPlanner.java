@@ -24,12 +24,18 @@ import org.opentrafficsim.core.network.Node;
  */
 public interface StrategicalPlanner
 {
+    
+    /**
+     * Returns the GTU.
+     * @return GTU
+     */
+    GTU getGtu();
+    
     /**
      * Generate a new tactical planner for the GTU.
-     * @param gtu the gtu to generate the plan for
      * @return a new tactical planner
      */
-    TacticalPlanner generateTacticalPlanner(GTU gtu);
+    TacticalPlanner generateTacticalPlanner();
 
     /**
      * Determine the next node in a network based on a current Link we are on.
