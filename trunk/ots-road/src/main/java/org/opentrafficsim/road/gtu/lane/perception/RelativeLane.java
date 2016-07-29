@@ -147,8 +147,8 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
      */
     public final RelativeLane add(final RelativeLane relativeLane)
     {
-        int nThis = this.lat == null ? 0 : this.lat.isLeft() ? -this.numLanes : this.numLanes;
-        int nOther = relativeLane.lat == null ? 0 : relativeLane.lat.isLeft() ? -relativeLane.numLanes : relativeLane.numLanes;
+        int nThis = this.lat.isNone() ? 0 : this.lat.isLeft() ? -this.numLanes : this.numLanes;
+        int nOther = relativeLane.lat.isNone() ? 0 : relativeLane.lat.isLeft() ? -relativeLane.numLanes : relativeLane.numLanes;
         int nSum = nThis + nOther;
         if (nSum < 0)
         {
@@ -207,8 +207,8 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
     @Override
     public final int compareTo(final RelativeLane rel)
     {
-        int nThis = this.lat == null ? 0 : this.lat.isLeft() ? -this.numLanes : this.numLanes;
-        int nRel = rel.lat == null ? 0 : rel.lat.isLeft() ? -rel.numLanes : rel.numLanes;
+        int nThis = this.lat.isNone() ? 0 : this.lat.isLeft() ? -this.numLanes : this.numLanes;
+        int nRel = rel.lat.isNone() ? 0 : rel.lat.isLeft() ? -rel.numLanes : rel.numLanes;
         return nThis - nRel;
     }
 
