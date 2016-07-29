@@ -29,7 +29,6 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -68,9 +67,6 @@ public class ListGTUGenerator implements Serializable
     /** The lane-based strategical planner to use. */
     private final LaneBasedStrategicalPlanner strategicalPlanner;
 
-    /** The LanePerception to use. */
-    private final LanePerceptionFull perception;
-
     /** The simulator that controls everything. */
     private final OTSDEVSSimulatorInterface simulator;
 
@@ -97,17 +93,15 @@ public class ListGTUGenerator implements Serializable
      * @param direction the direction on the lane in which the GTU has to be generated (DIR_PLUS, or DIR_MINUS)
      * @param gtuColorer GTUColorere; the GTUColorer of the generated GTUs
      * @param strategicalPlanner the lane-based strategical planner to use
-     * @param perception the LanePerception to use
      * @param network the network to initially register the cars in
      * @param fileName String; name of file with the times when another GTU is to be generated (XXXX STUB)
      * @throws SimRuntimeException on
      * @throws NetworkException on
      */
     public ListGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
-        final Speed initialSpeed, final Lane lane, final Length position, final GTUDirectionality direction,
-        final GTUColorer gtuColorer, final LaneBasedStrategicalPlanner strategicalPlanner,
-        final LanePerceptionFull perception, final OTSNetwork network, final String fileName)
-        throws SimRuntimeException, NetworkException
+            final Speed initialSpeed, final Lane lane, final Length position, final GTUDirectionality direction,
+            final GTUColorer gtuColorer, final LaneBasedStrategicalPlanner strategicalPlanner, final OTSNetwork network,
+            final String fileName) throws SimRuntimeException, NetworkException
     {
         if (null == lane)
         {
@@ -120,7 +114,6 @@ public class ListGTUGenerator implements Serializable
         this.simulator = simulator;
         this.gtuColorer = gtuColorer;
         this.strategicalPlanner = strategicalPlanner;
-        this.perception = perception;
         this.network = network;
         try
         {
@@ -181,10 +174,11 @@ public class ListGTUGenerator implements Serializable
         {
             initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
             Length vehicleLength = new Length(4, LengthUnit.METER);
-            new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, initialPositions, this.initialSpeed,
-                vehicleLength, new Length(1.8, LengthUnit.METER), new Speed(200, SpeedUnit.KM_PER_HOUR),
-                this.simulator, this.strategicalPlanner, this.perception, DefaultCarAnimation.class, this.gtuColorer,
-                this.network);
+            LaneBasedIndividualGTU gtu =
+                    new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength, new Length(1.8,
+                            LengthUnit.METER), new Speed(200, SpeedUnit.KM_PER_HOUR), this.simulator,
+                            DefaultCarAnimation.class, this.gtuColorer, this.network);
+            gtu.init(this.strategicalPlanner, initialPositions, this.initialSpeed);
             scheduleNextVehicle();
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)

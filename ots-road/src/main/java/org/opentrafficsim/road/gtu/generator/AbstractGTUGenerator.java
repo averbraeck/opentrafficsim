@@ -201,7 +201,6 @@ public abstract class AbstractGTUGenerator implements Serializable
             carBuilder.setInitialLongitudinalPositions(initialLongitudinalPositions);
             carBuilder.setAnimationClass(DefaultCarAnimation.class);
             carBuilder.setStrategicalPlanner(getStrategicalPlanner()); // TODO same instance? clone?
-            carBuilder.setPerception(this.perceptionClass.newInstance()); // TODO same instance? clone?
             carBuilder.setGtuColorer(this.gtuColorer);
             carBuilder.setNetwork(this.network);
             this.generatedGTUs++;
