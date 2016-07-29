@@ -49,8 +49,8 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.AccelerationGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
-import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SpeedGTUColorer;
+import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -61,12 +61,7 @@ import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
-import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.opendrive.GeneratorAnimation;
 import org.opentrafficsim.road.network.factory.opendrive.OpenDriveNetworkLaneParser;
 import org.opentrafficsim.road.network.factory.opendrive.communicationRTI.ReceiverThread;
@@ -94,6 +89,9 @@ import org.xml.sax.SAXException;
  */
 public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
 {
+    /** */
+    private static final long serialVersionUID = 1L;
+
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
@@ -110,8 +108,8 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                 {
                     TestOpenDriveParserNASA xmlModel = new TestOpenDriveParserNASA();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
-                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
+                    xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND), new Duration(
+                            60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -235,8 +233,8 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
 
             // stream
             StreamInterface stream = new MersenneTwister(1);
-            Length M25 = new Length(25.0, LengthUnit.METER);
-            Length M0 = new Length(0.0, LengthUnit.METER);
+            Length m25 = new Length(25.0, LengthUnit.METER);
+            Length m0 = new Length(0.0, LengthUnit.METER);
 
             // distributions
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist =
@@ -273,26 +271,30 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                                 // make a generator
                                 Time startTime = Time.ZERO;
                                 Time endTime = new Time(Double.MAX_VALUE, TimeUnit.SI);
-                                Length position = lane.getLength().lt(M25) ? M0 : M25;
+                                Length position = lane.getLength().lt(m25) ? m0 : m25;
                                 String id = lane.getParentLink().getId() + "." + lane.getId();
                                 BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
                                 // LaneBasedBehavioralCharacteristics drivingCharacteristics =
                                 // new LaneBasedBehavioralCharacteristics(new IDMPlus(), new Altruistic());
+                                /*- TODO GENERATOR CODE CHANGES
                                 try
                                 {
+                                    LanePerceptionFull perception = new LanePerceptionFull();
                                     LaneBasedStrategicalPlanner strategicalPlanner =
                                             new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
-                                                    new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), new Altruistic()));
+                                                    new LaneBasedCFLCTacticalPlanner(perception, new IDMPlusOld(),
+                                                            new Altruistic()));
+                                    new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
+                                            initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
+                                            startTime, endTime, lane, position, GTUDirectionality.DIR_PLUS,
+                                            makeSwitchableGTUColorer(), strategicalPlanner, perception);
                                 }
                                 catch (GTUException exception1)
                                 {
                                     throw new SimRuntimeException(exception1);
                                 }
-                                LanePerceptionFull perception = new LanePerceptionFull();
-                                // new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
-                                // initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
-                                // startTime, endTime, lane, position, GTUDirectionality.DIR_PLUS,
-                                // makeSwitchableGTUColorer(), strategicalPlanner, perception);
+                                 */
+
                                 try
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);
@@ -305,7 +307,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                             else
                             {
                                 // make a sink
-                                Length position = lane.getLength().lt(M25) ? M0 : M25;
+                                Length position = lane.getLength().lt(m25) ? m0 : m25;
                                 Sensor sensor = new SinkSensor(lane, position, this.simulator);
                                 try
                                 {
@@ -332,26 +334,28 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                                 // make a generator
                                 Time startTime = Time.ZERO;
                                 Time endTime = new Time(Double.MAX_VALUE, TimeUnit.SI);
-                                Length position = lane.getLength().lt(M25) ? lane.getLength() : lane.getLength().minus(M25);
+                                Length position = lane.getLength().lt(m25) ? lane.getLength() : lane.getLength().minus(m25);
                                 String id = lane.getParentLink().getId() + "." + lane.getId();
                                 BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
                                 // LaneBasedBehavioralCharacteristics drivingCharacteristics =
                                 // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
+                                /*- TODO GENERATOR CODE CHANGES
                                 try
                                 {
+                                    new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
+                                    initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
+                                    startTime, endTime, lane, position, GTUDirectionality.DIR_MINUS,
+                                    makeSwitchableGTUColorer(), strategicalPlanner, perception);     
                                     LaneBasedStrategicalPlanner strategicalPlanner =
                                             new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
-                                                    new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), new Altruistic()));
-                                }
+                                                    new LaneBasedCFLCTacticalPlanner(perception, new IDMPlusOld(),
+                                                            new Altruistic()));}
                                 catch (GTUException exception1)
                                 {
                                     throw new SimRuntimeException(exception1);
                                 }
-                                LanePerceptionFull perception = new LanePerceptionFull();
-                                // new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
-                                // initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
-                                // startTime, endTime, lane, position, GTUDirectionality.DIR_MINUS,
-                                // makeSwitchableGTUColorer(), strategicalPlanner, perception);
+                                 */
+
                                 try
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);
@@ -364,7 +368,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                             else
                             {
                                 // make a sink
-                                Length position = lane.getLength().lt(M25) ? lane.getLength() : lane.getLength().minus(M25);
+                                Length position = lane.getLength().lt(m25) ? lane.getLength() : lane.getLength().minus(m25);
                                 Sensor sensor = new SinkSensor(lane, position, this.simulator);
                                 try
                                 {
@@ -490,17 +494,19 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                 // LaneBasedBehavioralCharacteristics drivingCharacteristics =
                 // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
                 LaneBasedStrategicalPlanner sPlanner;
+                /*- TODO GENERATOR CODE CHANGES
                 try
                 {
+                    LanePerceptionFull perception = new LanePerceptionFull();
                     sPlanner =
                             new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
-                                    new IDMPlusOld(), new Altruistic()));
+                                    perception, new IDMPlusOld(), new Altruistic()));
                 }
                 catch (GTUException exception2)
                 {
                     throw new SimRuntimeException(exception2);
                 }
-                LanePerceptionFull perception = new LanePerceptionFull();
+                 */
 
                 DirectedLanePosition directedLanePosition = null;
                 try
@@ -546,17 +552,20 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                     }
                     if ((frontNew >= rearGTU && frontNew <= frontGTU) || (rearNew >= rearGTU && rearNew <= frontGTU)
                             || (frontGTU >= rearNew && frontGTU <= frontNew) || (rearGTU >= rearNew && rearGTU <= frontNew))
+                    {
                         isEnoughSpace = false;
+                    }
                 }
 
                 if (isEnoughSpace)
                 {
+                    /*- TODO GENERATOR CODE CHANGES
                     try
                     {
                         LaneBasedIndividualGTU car =
-                                new LaneBasedIndividualGTU(String.valueOf(i), carType, lanepositionSet, new Speed(0.0,
-                                        SpeedUnit.METER_PER_SECOND), carLength, widthDist.draw(), maxSpeedDist.draw(),
-                                        this.simulator, sPlanner, perception, network);
+                                new LaneBasedIndividualGTU(String.valueOf(i), carType, carLength, widthDist.draw(),
+                                        maxSpeedDist.draw(), this.simulator, network);
+                        car.init(sPlanner, lanepositionSet, new Speed(0.0, SpeedUnit.METER_PER_SECOND));
                         this.rtiCars.add(car);
 
                     }
@@ -564,6 +573,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                     {
                         exception.printStackTrace();
                     }
+                     */
                 }
                 else
                 {
@@ -594,7 +604,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
         /**
          * @return a GTUColorer
          */
-        private GTUColorer makeSwitchableGTUColorer()
+        private final GTUColorer makeSwitchableGTUColorer()
         {
             GTUColorer[] gtuColorers =
                     new GTUColorer[] {

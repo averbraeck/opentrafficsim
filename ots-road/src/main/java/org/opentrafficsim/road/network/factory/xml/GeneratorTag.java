@@ -21,13 +21,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
 import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
-import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
-import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.xml.CrossSectionElementTag.ElementType;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.w3c.dom.NamedNodeMap;
@@ -301,14 +295,16 @@ class GeneratorTag implements Serializable
         BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
+        /*- TODO GENERATOR CODE CHANGES
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedGTUFollowingTacticalPlanner(
-                        new IDMPlusOld()), generatorTag.routeTag.route);
+                        perception, new IDMPlusOld()), generatorTag.routeTag.route);
         new GTUGeneratorIndividual(linkTag.name + "." + generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType,
                 gtuClass, generatorTag.initialSpeedDist, generatorTag.iatDist, generatorTag.gtuTag.lengthDist,
                 generatorTag.gtuTag.widthDist, generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime,
                 lane, position, generatorTag.gtuDirection, generatorTag.gtuColorer, strategicalPlanner,
                 LanePerceptionFull.class, parser.network);
+         */
 
         // TODO GTUMix
         // TODO RouteMix
