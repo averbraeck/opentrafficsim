@@ -11,7 +11,6 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -31,11 +30,6 @@ public interface LaneBasedGTU extends GTU
 {
     /** {@inheritDoc} */
     @Override
-    // TODO change into LanePerception interface! 
-    LanePerceptionFull getPerception();
-
-    /** {@inheritDoc} */
-    @Override
     LaneBasedStrategicalPlanner getStrategicalPlanner();
 
     /** {@inheritDoc} */
@@ -46,14 +40,14 @@ public interface LaneBasedGTU extends GTU
      * @return a safe copy of the lanes on which the GTU is registered.
      */
     Map<Lane, GTUDirectionality> getLanes();
-    
+
     /**
      * insert GTU at a certain position. This can happen at setup (first initialization), and after a lane change of the GTU.
      * The relative position that will be registered is the referencePosition (dx, dy, dz) = (0, 0, 0). Front and rear positions
      * are relative towards this position.
      * @param lane the lane to add to the list of lanes on which the GTU is registered.
-     * @param gtuDirection the direction of the GTU on the lane (which can be bidirectional). If the GTU has a positive
-     *            speed, it is moving in this direction.
+     * @param gtuDirection the direction of the GTU on the lane (which can be bidirectional). If the GTU has a positive speed,
+     *            it is moving in this direction.
      * @param position the position on the lane.
      * @throws GTUException when positioning the GTU on the lane causes a problem
      */
@@ -163,8 +157,7 @@ public interface LaneBasedGTU extends GTU
      * @return Length; the position of this GTU in the projectionLane
      * @throws GTUException when projectionLane it not in any of the CrossSectionLink that the GTU is on
      */
-    Length projectedPosition(Lane projectionLane, RelativePosition relativePosition, Time when)
-        throws GTUException;
+    Length projectedPosition(Lane projectionLane, RelativePosition relativePosition, Time when) throws GTUException;
 
     /**
      * Add an event to the list of lane triggers scheduled for this GTU.

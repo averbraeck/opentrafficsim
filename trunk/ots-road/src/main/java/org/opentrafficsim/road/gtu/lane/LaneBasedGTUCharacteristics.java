@@ -4,7 +4,6 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUCharacteristics;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
@@ -20,51 +19,41 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
  */
 public class LaneBasedGTUCharacteristics extends GTUCharacteristics
 {
-    /** The lane perception of the GTU. */
-    final LanePerceptionFull perception;
+    /** */
+    private static final long serialVersionUID = 1L;
 
     /** The strategical planner of the GTU. */
-    final LaneBasedStrategicalPlanner strategicalPlanner;
+    private final LaneBasedStrategicalPlanner strategicalPlanner;
 
     /** The maximum speed of the GTU. */
-    final Speed speed;
+    private final Speed speed;
 
     /** The initial lanes, positions and direction of the GTU. */
-    final Set<DirectedLanePosition> initialLongitudinalPositions;
+    private final Set<DirectedLanePosition> initialLongitudinalPositions;
 
     /**
      * Construct a new set of lane based GTU characteristics.
      * @param gtuCharacteristics GTUCharacteristics; characteristics of the super GTU type to be used for the GTU
-     * @param lanePerceptionFull LanePerceptionFull; the perception for the GTU
      * @param laneBasedStrategicalPlanner LaneBasedStrategicalPlanner; the strategical planner for the GTU
      * @param speed Speed; the initial speed of the GTU
      * @param initialLongitudinalPositions Set&lt;DirectedLanePosition&gt;; the lane, initial position and direction of the GTU
      */
-    public LaneBasedGTUCharacteristics(final GTUCharacteristics gtuCharacteristics, LanePerceptionFull lanePerceptionFull,
-            LaneBasedStrategicalPlanner laneBasedStrategicalPlanner, Speed speed,
-            Set<DirectedLanePosition> initialLongitudinalPositions)
+    public LaneBasedGTUCharacteristics(final GTUCharacteristics gtuCharacteristics, 
+            final LaneBasedStrategicalPlanner laneBasedStrategicalPlanner, final Speed speed,
+            final Set<DirectedLanePosition> initialLongitudinalPositions)
     {
         super(gtuCharacteristics.getGTUType(), gtuCharacteristics.getIdGenerator(), gtuCharacteristics.getLength(),
                 gtuCharacteristics.getWidth(), gtuCharacteristics.getMaximumSpeed(), gtuCharacteristics.getSimulator(),
                 gtuCharacteristics.getNetwork());
-        this.perception = lanePerceptionFull;
         this.strategicalPlanner = laneBasedStrategicalPlanner;
         this.speed = speed;
         this.initialLongitudinalPositions = initialLongitudinalPositions;
     }
 
     /**
-     * @return LanePerceptionFull; the lane perception of the GTU
-     */
-    public LanePerceptionFull getPerception()
-    {
-        return this.perception;
-    }
-
-    /**
      * @return LaneBasedStrategicalPlanner; the strategical planner for the GTU
      */
-    public LaneBasedStrategicalPlanner getStrategicalPlanner()
+    public final LaneBasedStrategicalPlanner getStrategicalPlanner()
     {
         return this.strategicalPlanner;
     }
@@ -72,7 +61,7 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
     /**
      * @return Speed; the maximum speed of the GTU
      */
-    public Speed getSpeed()
+    public final Speed getSpeed()
     {
         return this.speed;
     }
@@ -80,7 +69,7 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
     /**
      * @return Set&lt;DirectedLanePosition&gt;; the position and direction on each lane that the GTU will initially be on
      */
-    public Set<DirectedLanePosition> getInitialLongitudinalPositions()
+    public final Set<DirectedLanePosition> getInitialLongitudinalPositions()
     {
         return this.initialLongitudinalPositions;
     }
