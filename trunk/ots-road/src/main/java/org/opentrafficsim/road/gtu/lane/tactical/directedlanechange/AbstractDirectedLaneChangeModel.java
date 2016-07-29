@@ -16,6 +16,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlannerOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGTUFollowingModelMobil;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
@@ -38,6 +39,18 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
     /** Attempt to overcome rounding errors. */
     private static Acceleration extraThreshold = new Acceleration(0.000001, AccelerationUnit.SI);
 
+    /** the perception. */
+    private final LanePerceptionFull perception;
+
+    /**
+     * Construct a DirectedLaneChangeModel.
+     * @param perception the perception.
+     */
+    public AbstractDirectedLaneChangeModel(final LanePerceptionFull perception)
+    {
+        this.perception = perception;
+    }
+
     /** {@inheritDoc} */
     @Override
     public final DirectedLaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
@@ -49,7 +62,7 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
         Map<Lane, Length> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
         Lane lane = positions.keySet().iterator().next();
         Length longitudinalPosition = positions.get(lane);
-        Lane otherLane = gtu.getPerception().bestAccessibleAdjacentLane(lane, direction, longitudinalPosition);
+        Lane otherLane = getPerception().bestAccessibleAdjacentLane(lane, direction, longitudinalPosition);
         GTUFollowingModelOld gtuFollowingModel =
                 (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlannerOld) gtu.getTacticalPlanner()).getCarFollowingModel();
         if (null == gtuFollowingModel)
@@ -100,4 +113,11 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
      *         acceleration in the non-, or different-lane-changed state) to decide if a lane change should be performed
      */
     public abstract Acceleration applyDriverPersonality(DualAccelerationStep accelerationStep);
+
+    /** {@inheritDoc} */
+    @Override
+    public final LanePerceptionFull getPerception()
+    {
+        return this.perception;
+    }
 }

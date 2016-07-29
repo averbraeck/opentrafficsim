@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.directedlanechange;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
 
 /**
@@ -13,11 +14,19 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
  *          initial version Sep 19, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public final class DirectedEgoistic extends AbstractDirectedLaneChangeModel
+public class DirectedEgoistic extends AbstractDirectedLaneChangeModel
 {
+    /**
+     * @param perception the perception to use
+     */
+    public DirectedEgoistic(final LanePerceptionFull perception)
+    {
+        super(perception);
+    }
+
     /** {@inheritDoc} */
     @Override
-    public Acceleration applyDriverPersonality(final DualAccelerationStep accelerations)
+    public final Acceleration applyDriverPersonality(final DualAccelerationStep accelerations)
     {
         // The egoistic driver only looks at the effects on him-/herself.
         return accelerations.getLeaderAcceleration();
@@ -25,14 +34,14 @@ public final class DirectedEgoistic extends AbstractDirectedLaneChangeModel
 
     /** {@inheritDoc} */
     @Override
-    public String getName()
+    public final String getName()
     {
         return "Egoistic";
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getLongName()
+    public final String getLongName()
     {
         return "Egoistic lane change model (as described by Treiber).";
     }
