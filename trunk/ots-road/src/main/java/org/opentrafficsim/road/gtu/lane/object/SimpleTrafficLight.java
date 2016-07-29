@@ -39,9 +39,9 @@ public class SimpleTrafficLight extends AbstractTrafficLight
      * @throws OTSGeometryException x
      * @throws SimRuntimeException x
      */
-    public SimpleTrafficLight(String name, Lane lane, Length position, OTSDEVSSimulatorInterface simulator,
-        OTSNetwork network) throws GTUException, NetworkException, NamingException, SimRuntimeException,
-        OTSGeometryException
+    public SimpleTrafficLight(final String name, final Lane lane, final Length position,
+            final OTSDEVSSimulatorInterface simulator, final OTSNetwork network) throws GTUException, NetworkException,
+            NamingException, SimRuntimeException, OTSGeometryException
     {
         super(name, lane, position, simulator, network);
         setBlocked(false);
@@ -55,4 +55,3 @@ public class SimpleTrafficLight extends AbstractTrafficLight
     }
 
 }
-

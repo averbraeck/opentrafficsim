@@ -88,7 +88,7 @@ public class LaneBlockOnOff extends AbstractTrafficLight
     @Override
     public String toString()
     {
-        return "LaneBlockOnOff [lane=" + this.laneTL + ", position=" + this.positionTL + "]";
+        return "LaneBlockOnOff [lane=" + getLane() + ", position=" + getPositionTL() + "]";
     }
 
 }
