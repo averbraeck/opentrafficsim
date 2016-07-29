@@ -20,6 +20,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
+import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -56,8 +57,8 @@ import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
+import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingChange0TacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlanner;
@@ -69,11 +70,11 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AbstractLMRS;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
 import org.opentrafficsim.road.gtu.lane.tactical.toledo.Toledo;
 import org.opentrafficsim.road.gtu.lane.tactical.toledo.ToledoCarFollowing;
 import org.opentrafficsim.road.gtu.lane.tactical.toledo.ToledoLaneChangeParameters;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.LaneFactory;
@@ -725,7 +726,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
             behavioralCharacteristics = new BehavioralCharacteristics();
             behavioralCharacteristics.setDefaultParameters(ParameterTypes.class);
             behavioralCharacteristics.setDefaultParameters(AbstractIDM.class);
-            behavioralCharacteristics.setDefaultParameters(AbstractLMRS.class);
+            behavioralCharacteristics.setDefaultParameters(LmrsUtil.class);
         }
         else if (this.tacticalPlannerCars instanceof Toledo)
         {

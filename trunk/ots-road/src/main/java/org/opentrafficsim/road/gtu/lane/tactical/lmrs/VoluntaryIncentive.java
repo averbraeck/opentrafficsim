@@ -1,7 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
 /**
  * Interface for voluntary incentives.
@@ -19,12 +21,15 @@ public interface VoluntaryIncentive
 
     /**
      * Determines level of lane change desire for a lane change incentive.
-     * @param gtu GTU to determine the lane change desire for.
+     * @param behavioralCharacteristics behavioral characteristics
+     * @param perception perception
      * @param mandatoryDesire level of mandatory desire at current time
      * @param voluntaryDesire level of voluntary desire at current time, of voluntary incentives calculated before
      * @return level of lane change desire for this incentive
      * @throws ParameterException if a parameter is not given or out of bounds
+     * @throws OperationalPlanException in case of a perception exception
      */
-    Desire determineDesire(LaneBasedGTU gtu, Desire mandatoryDesire, Desire voluntaryDesire) throws ParameterException;
+    Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics, final LanePerception perception,
+        Desire mandatoryDesire, Desire voluntaryDesire) throws ParameterException, OperationalPlanException;
 
 }

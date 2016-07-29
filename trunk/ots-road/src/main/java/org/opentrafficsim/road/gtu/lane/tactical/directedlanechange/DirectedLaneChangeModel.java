@@ -10,7 +10,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
 /**
  * All directed lane change models must implement this interface. A directed lane change model is a lane change model where the

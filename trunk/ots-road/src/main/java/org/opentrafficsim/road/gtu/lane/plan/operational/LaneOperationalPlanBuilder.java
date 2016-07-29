@@ -15,15 +15,19 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.SpeedSegment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.math.Solver;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -283,7 +287,7 @@ public final class LaneOperationalPlanBuilder
         final Length firstLanePosition, final Time startTime, final Speed startSpeed, final Acceleration acceleration,
         final Duration timeStep) throws OperationalPlanException, OTSGeometryException
     {
-        
+
         if (startSpeed.eq(Speed.ZERO) && acceleration.le(Acceleration.ZERO))
         {
             // stand-still
@@ -333,8 +337,7 @@ public final class LaneOperationalPlanBuilder
      * @param startSpeed the speed at the start of the path
      * @param acceleration the acceleration to use
      * @param timeStep time step for the plan
-     * @param numberOfSteps total number of steps for the lane change
-     * @param stepNumber current step of the lane change, starts at 0
+     * @param laneChange lane change status
      * @return the operational plan to accomplish the given end speed
      * @throws OperationalPlanException when the construction of the operational path fails
      * @throws OTSGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
@@ -344,7 +347,7 @@ public final class LaneOperationalPlanBuilder
     public static LaneBasedOperationalPlan buildAccelerationLaneChangePlan(final LaneBasedGTU gtu,
         final List<Lane> fromLanes, final LateralDirectionality laneChangeDirectionality, final DirectedPoint startPosition,
         final Time startTime, final Speed startSpeed, final Acceleration acceleration, final Duration timeStep,
-        final int numberOfSteps, final int stepNumber) throws OperationalPlanException, OTSGeometryException
+        final LaneChange laneChange) throws OperationalPlanException, OTSGeometryException
     {
         Length fromLaneDistance =
             new Length(startSpeed.si * timeStep.si + .5 * acceleration.si * timeStep.si * timeStep.si, LengthUnit.SI);
@@ -388,7 +391,7 @@ public final class LaneOperationalPlanBuilder
         DirectedPoint fromLast = fromLanes.get(lastLaneIndex).getCenterLine().getLocation(fromLaneLastPosition);
         DirectedPoint toLast = toLanes.get(lastLaneIndex).getCenterLine().getLocation(toLaneLastPosition);
 
-        double lastFraction = (stepNumber + 1.0) / (numberOfSteps * 1.0);
+        double lastFraction = laneChange.updateAndGetFraction(timeStep, laneChangeDirectionality);
         OTSPoint3D lastPoint =
             new OTSPoint3D(fromLast.x * (1 - lastFraction) + toLast.x * lastFraction, fromLast.y * (1 - lastFraction)
                 + toLast.y * lastFraction, fromLast.z * (1 - lastFraction) + toLast.z * lastFraction);
@@ -410,6 +413,109 @@ public final class LaneOperationalPlanBuilder
             segmentList.add(new OperationalPlan.AccelerationSegment(timeStep, acceleration));
         }
         return new LaneBasedOperationalPlan(gtu, path, startTime, startSpeed, segmentList, fromLanes);
+    }
+
+    /**
+     * Lane change status across operational plans.
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jul 26, 2016 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public static class LaneChange
+    {
+
+        /** Lane change progress. */
+        private Duration laneChangeProgress;
+
+        /** Total lane change duration. */
+        private Duration laneChangeDuration;
+
+        /** Whether the GTU is changing lane. */
+        private LateralDirectionality laneChangeDirectionality = null;
+
+        /**
+         * Return whether the GTU is changing lane.
+         * @return whether the GTU is changing lane
+         */
+        public final boolean isChangingLane()
+        {
+            return this.laneChangeDirectionality != null;
+        }
+
+        /**
+         * Return whether the GTU is changing left.
+         * @return whether the GTU is changing left
+         */
+        public final boolean isChangingLeft()
+        {
+            return LateralDirectionality.LEFT.equals(this.laneChangeDirectionality);
+        }
+
+        /**
+         * Return whether the GTU is changing right.
+         * @return whether the GTU is changing right
+         */
+        public final boolean isChangingRight()
+        {
+            return LateralDirectionality.RIGHT.equals(this.laneChangeDirectionality);
+        }
+
+        /**
+         * Target lane of lane change.
+         * @return target lane of lane change
+         * @throws OperationalPlanException If no lane change is being performed.
+         */
+        public final RelativeLane getTargetLane() throws OperationalPlanException
+        {
+            Throw.when(!isChangingLane(), OperationalPlanException.class,
+                "Target lane is requested, but no lane change is being performed.");
+            return isChangingLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT;
+        }
+
+        /**
+         * Sets the duration for a lane change. May be set during a lane change. Whenever the lane change progress exceeds the
+         * lane change duration, the lane change is finalized in the next time step.
+         * @param laneChangeDuration total lane change duration
+         */
+        public final void setLaneChangeDuration(final Duration laneChangeDuration)
+        {
+            this.laneChangeDuration = laneChangeDuration;
+        }
+
+        /**
+         * Update the lane change and return the lateral fraction for the end of the coming time step. This method is for use by
+         * the operational plan builder. It adds the time step duration to the lane change progress. Lane changes are
+         * automatically initiated and finalized.
+         * @param timeStep coming time step duration
+         * @param laneChangeDirection direction of lane change
+         * @return lateral fraction for the end of the coming time step
+         */
+        final double updateAndGetFraction(final Duration timeStep, final LateralDirectionality laneChangeDirection)
+        {
+            if (!isChangingLane())
+            {
+                // initiate lane change
+                this.laneChangeProgress = Duration.ZERO;
+                this.laneChangeDirectionality = laneChangeDirection;
+            }
+            // add current time step
+            this.laneChangeProgress.plus(timeStep);
+            // get lateral fraction at end of current time step
+            double fraction = this.laneChangeProgress.divideBy(this.laneChangeDuration).si;
+            if (fraction >= 1.0)
+            {
+                // limit by 1 and finalize lane change
+                this.laneChangeDirectionality = null;
+                return 1.0;
+            }
+            return fraction;
+        }
+
     }
 
     /**

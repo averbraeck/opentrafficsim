@@ -9,7 +9,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
 /**
  * GTU following model interface. <br>

@@ -7,7 +7,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
 /**
  * All lane change models must implement this interface. <br>

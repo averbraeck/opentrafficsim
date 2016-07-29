@@ -14,8 +14,8 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.Headway;
-import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlannerOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGTUFollowingModelMobil;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -59,7 +59,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             final LateralDirectionality nonPreferred = LateralDirectionality.LEFT;
             Lane nonPreferredLane = gtu.getPerception().bestAccessibleAdjacentLane(lane, nonPreferred, longitudinalPosition);
             Lane preferredLane = gtu.getPerception().bestAccessibleAdjacentLane(lane, preferred, longitudinalPosition);
-            AbstractLaneBasedTacticalPlanner albtp = (AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner();
+            AbstractLaneBasedTacticalPlannerOld albtp = (AbstractLaneBasedTacticalPlannerOld) gtu.getTacticalPlanner();
             if (null == albtp)
             {
                 throw new Error(gtu + " returns null for its tactical planner");

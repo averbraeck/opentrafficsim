@@ -13,8 +13,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.Headway;
-import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlannerOld;
 
 /**
  * Code shared between various car following models. <br>
@@ -77,7 +77,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
             System.err.println ("tactical planner is null");
         }
         GTUFollowingModelOld gfm =
-                (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) referenceGTU.getTacticalPlanner())
+                (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlannerOld) referenceGTU.getTacticalPlanner())
                         .getCarFollowingModel();
         // Find the leader and the follower that cause/experience the least positive (most negative) acceleration.
         for (Headway headway : otherHeadways)

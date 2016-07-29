@@ -1,8 +1,11 @@
 package org.opentrafficsim.road.gtu.lane.object;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
 
 import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
@@ -30,22 +33,35 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
+import org.opentrafficsim.core.gtu.perception.TimeStampedObject;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.perception.PerceivedObject;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
+import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
+import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 
 /**
  * <p>
@@ -108,7 +124,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
         final OTSDEVSSimulatorInterface simulator, final OTSNetwork network) throws GTUException, NetworkException,
         NamingException, SimRuntimeException, OTSGeometryException
     {
-        super(name, BLOCK_GTU, simulator, dummyStrategicalPlanner, new LanePerceptionFull(), lane.getCenterLine()
+        super(name, BLOCK_GTU, simulator, dummyStrategicalPlanner, new DummyLanePerception(), lane.getCenterLine()
             .getLocation(position), Speed.ZERO, network);
         this.positionTL = position;
         this.laneTL = lane;
@@ -421,7 +437,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
         /** {@inheritDoc} */
         @Override
-        public TacticalPlanner generateTacticalPlanner(GTU gtu)
+        public TacticalPlanner generateTacticalPlanner()
         {
             return new DummyTacticalPlanner();
         }
@@ -446,6 +462,14 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
         {
             return "DummyStrategicalPlanner [behavioralCharacteristics=" + this.behavioralCharacteristics + "]";
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public LaneBasedGTU getGtu()
+        {
+            return null;
+        }
+        
     }
 
     /** */
@@ -453,10 +477,10 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
     {
         /** {@inheritDoc} */
         @Override
-        public OperationalPlan generateOperationalPlan(final GTU gtu, final Time startTime,
+        public OperationalPlan generateOperationalPlan(final Time startTime,
             final DirectedPoint locationAtStartTime) throws OperationalPlanException, GTUException, NetworkException
         {
-            return new OperationalPlan(gtu, locationAtStartTime, startTime, new Duration(1.0, TimeUnit.MINUTE));
+            return new OperationalPlan(getGtu(), locationAtStartTime, startTime, new Duration(1.0, TimeUnit.MINUTE));
         }
 
         /** {@inheritDoc} */
@@ -464,6 +488,58 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
         public final String toString()
         {
             return "DummyTacticalPlanner []";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public GTU getGtu()
+        {
+            return null;
+        }
+        
+    }
+    
+    static class DummyLanePerception implements LanePerception
+    {
+
+        /** {@inheritDoc} */
+        @Override
+        public void perceive() throws GTUException, NetworkException, ParameterException
+        {
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public LaneBasedGTU getGtu()
+        {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void addPerceptionCategory(AbstractPerceptionCategory perceptionCategory)
+        {
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public <T extends AbstractPerceptionCategory> boolean contains(Class<T> clazz)
+        {
+            return false;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public <T extends AbstractPerceptionCategory> T getPerceptionCategory(Class<T> clazz)
+            throws OperationalPlanException
+        {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void removePerceptionCategory(AbstractPerceptionCategory perceptionCategory)
+        {
         }
 
     }

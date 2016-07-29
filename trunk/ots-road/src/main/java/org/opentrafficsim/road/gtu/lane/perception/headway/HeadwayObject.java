@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane.perception;
+package org.opentrafficsim.road.gtu.lane.perception.headway;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;

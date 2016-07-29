@@ -1,7 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
 /**
  * Determines lane change desire for courtesy lane changes, which are performed to supply space for other drivers. In case
@@ -22,8 +24,9 @@ public class IncentiveCourtesy implements VoluntaryIncentive
 
     /** {@inheritDoc} */
     @Override
-    public final Desire determineDesire(final LaneBasedGTU gtu, final Desire mandatoryDesire, final Desire voluntaryDesire)
-        throws ParameterException
+    public final Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics,
+        final LanePerception perception, final Desire mandatoryDesire, final Desire voluntaryDesire)
+        throws ParameterException, OperationalPlanException
     {
         return new Desire(0, 0); // XXXXX STUB
     }

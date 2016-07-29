@@ -16,8 +16,8 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.road.gtu.lane.perception.Headway;
-import org.opentrafficsim.road.gtu.lane.perception.HeadwayGTUSimple;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
 
 /**
  * Test the HeadwayGTU class and the EnumType in the Headway interface.
