@@ -222,10 +222,12 @@ public class LaneBasedGTUGenerator implements Serializable
                     safeSpeed = characteristics.getMaximumSpeed();
                 }
                 String gtuId = null == characteristics.getIdGenerator() ? null : characteristics.getIdGenerator().nextId();
-                new LaneBasedIndividualGTU(gtuId, characteristics.getGTUType(), this.initialLongitudinalPositions, safeSpeed,
-                        characteristics.getLength(), characteristics.getWidth(), characteristics.getMaximumSpeed(),
-                        simulator, characteristics.getStrategicalPlanner(), characteristics.getPerception(),
-                        DefaultCarAnimation.class, this.gtuColorer, characteristics.getNetwork());
+                LaneBasedIndividualGTU gtu =
+                        new LaneBasedIndividualGTU(gtuId, characteristics.getGTUType(), characteristics.getLength(),
+                                characteristics.getWidth(), characteristics.getMaximumSpeed(), simulator,
+                                DefaultCarAnimation.class, this.gtuColorer, characteristics.getNetwork());
+                gtu.init(characteristics.getStrategicalPlanner(), this.initialLongitudinalPositions, safeSpeed);
+
                 // System.out.println("tryToPlace: Constructed GTU on " + this.initialLongitudinalPositions);
             }
         }
