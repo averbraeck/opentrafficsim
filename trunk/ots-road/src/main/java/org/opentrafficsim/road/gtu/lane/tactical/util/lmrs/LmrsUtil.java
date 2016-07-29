@@ -15,7 +15,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.Throw;
-import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
@@ -188,7 +187,7 @@ public final class LmrsUtil
         lmrsStatus.setLastLeaders(leaders);
 
         // regular car-following
-        Speed speed = gtu.getSpeed(startTime);
+        Speed speed = gtu.getSpeed();
         Acceleration a =
             CarFollowingUtil.followLeaders(carFollowingModel, bc, speed, sli, perception.getPerceptionCategory(
                 NeighborsCategory.class).getLeaders(RelativeLane.CURRENT));
@@ -201,7 +200,7 @@ public final class LmrsUtil
             RelativeLane tar = laneChange.getTargetLane();
             initiatedLaneChange = tar.getLateralDirectionality();
             Acceleration aTar =
-                CarFollowingUtil.followLeaders(carFollowingModel, bc, gtu.getSpeed(startTime), sli, perception
+                CarFollowingUtil.followLeaders(carFollowingModel, bc, speed, sli, perception
                     .getPerceptionCategory(NeighborsCategory.class).getLeaders(tar));
             a = Acceleration.min(a, aTar);
 

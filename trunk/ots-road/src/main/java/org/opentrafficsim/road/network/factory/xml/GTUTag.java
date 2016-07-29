@@ -12,10 +12,6 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.w3c.dom.NamedNodeMap;
@@ -102,16 +98,16 @@ class GTUTag implements Serializable
             if (width == null)
                 throw new SAXException("GTU: missing attribute WIDTH");
             gtuTag.widthDist = Distributions.parseLengthDistRel(width.getNodeValue());
-
-            Node following = attributes.getNamedItem("FOLLOWING");
-            if (following == null)
-                throw new SAXException("GTU: missing attribute FOLLOWING");
-            gtuTag.followingModel = parseFollowingModel(following.getNodeValue());
-
-            Node laneChange = attributes.getNamedItem("LANECHANGE");
-            if (laneChange == null)
-                throw new SAXException("GTU: missing attribute LANECHANGE");
-            gtuTag.laneChangeModel = parseLaneChangeModel(laneChange.getNodeValue());
+            //
+            // Node following = attributes.getNamedItem("FOLLOWING");
+            // if (following == null)
+            // throw new SAXException("GTU: missing attribute FOLLOWING");
+            // gtuTag.followingModel = parseFollowingModel(following.getNodeValue());
+            //
+            // Node laneChange = attributes.getNamedItem("LANECHANGE");
+            // if (laneChange == null)
+            // throw new SAXException("GTU: missing attribute LANECHANGE");
+            // gtuTag.laneChangeModel = parseLaneChangeModel(laneChange.getNodeValue());
 
             Node maxSpeed = attributes.getNamedItem("MAXSPEED");
             if (maxSpeed == null)
@@ -135,44 +131,6 @@ class GTUTag implements Serializable
             parser.gtuTypes.put(typeName, gtuType);
         }
         return parser.gtuTypes.get(typeName);
-    }
-
-    /**
-     * XXX probably ok to generate a new model for each GTU 'type'.
-     * @param modelName the name of the GTU following model.
-     * @return the model.
-     * @throws NetworkException in case of unknown model.
-     */
-    static GTUFollowingModelOld parseFollowingModel(final String modelName) throws NetworkException
-    {
-        if (modelName.equals("IDM"))
-        {
-            return new IDMOld();
-        }
-        else if (modelName.equals("IDM+"))
-        {
-            return new IDMPlusOld();
-        }
-        throw new NetworkException("Unknown GTU following model: " + modelName);
-    }
-
-    /**
-     * XXX probably ok to generate a new model for each GTU 'type'.
-     * @param modelName the name of the lane change model.
-     * @return the model.
-     * @throws NetworkException in case of unknown model.
-     */
-    static LaneChangeModel parseLaneChangeModel(final String modelName) throws NetworkException
-    {
-        if (modelName.equals("EGOISTIC"))
-        {
-            return new Egoistic();
-        }
-        else if (modelName.equals("ALTRUISTIC"))
-        {
-            return new Altruistic();
-        }
-        throw new NetworkException("Unknown lane change model: " + modelName);
     }
 
     /** {@inheritDoc} */

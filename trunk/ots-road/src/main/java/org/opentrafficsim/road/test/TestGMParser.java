@@ -42,8 +42,8 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.AccelerationGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
-import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SpeedGTUColorer;
+import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.NetworkException;
@@ -78,6 +78,9 @@ import org.xml.sax.SAXException;
  */
 public class TestGMParser extends AbstractWrappableAnimation
 {
+    /** */
+    private static final long serialVersionUID = 1L;
+
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
@@ -94,8 +97,8 @@ public class TestGMParser extends AbstractWrappableAnimation
                 {
                     TestGMParser xmlModel = new TestGMParser();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
-                        new Duration(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
+                    xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND), new Duration(
+                            60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -176,9 +179,7 @@ public class TestGMParser extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public final
-            void
-            constructModel(
+        public final void constructModel(
                 final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
                 throws SimRuntimeException
         {
@@ -191,11 +192,11 @@ public class TestGMParser extends AbstractWrappableAnimation
                 network = nlp.build(url);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
-                | GTUException | OTSGeometryException exception)
+                    | GTUException | OTSGeometryException exception)
             {
                 exception.printStackTrace();
             }
-            
+
             URL gisURL = URLResource.getResource("/N201/map.xml");
             System.err.println("GIS-map file: " + gisURL.toString());
             CoordinateTransform rdto0 = new CoordinateTransformRD(104450, 478845);
@@ -205,27 +206,30 @@ public class TestGMParser extends AbstractWrappableAnimation
             GTUType carType = new GTUType("CAR");
             StreamInterface stream = new MersenneTwister(1);
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist =
-                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 0.0), SpeedUnit.METER_PER_SECOND);
+                    new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 0.0), SpeedUnit.METER_PER_SECOND);
             ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> interarrivelTimeDist =
-                new ContinuousDistDoubleScalar.Rel<>(new DistExponential(stream, 7.0), TimeUnit.SECOND);
+                    new ContinuousDistDoubleScalar.Rel<>(new DistExponential(stream, 7.0), TimeUnit.SECOND);
             ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist =
-                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 4.5), LengthUnit.METER);
+                    new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 4.5), LengthUnit.METER);
             ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDist =
-                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 2.0), LengthUnit.METER);
+                    new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 2.0), LengthUnit.METER);
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist =
-                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 140.0), SpeedUnit.KM_PER_HOUR);
+                    new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 140.0), SpeedUnit.KM_PER_HOUR);
             int maxGTUs = Integer.MAX_VALUE;
             Time startTime = Time.ZERO;
             Time endTime = new Time(1E24, TimeUnit.HOUR);
             GTUColorer gtuColorer =
-                new SwitchableGTUColorer(0, new IDGTUColorer(), new SpeedGTUColorer(new Speed(100.0,
-                    SpeedUnit.KM_PER_HOUR)), new AccelerationGTUColorer(new Acceleration(-1.0,
-                    AccelerationUnit.METER_PER_SECOND_2), new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2)));
+                    new SwitchableGTUColorer(0, new IDGTUColorer(),
+                            new SpeedGTUColorer(new Speed(100.0, SpeedUnit.KM_PER_HOUR)), new AccelerationGTUColorer(
+                                    new Acceleration(-1.0, AccelerationUnit.METER_PER_SECOND_2), new Acceleration(1.0,
+                                            AccelerationUnit.METER_PER_SECOND_2)));
             GTUFollowingModelOld gtuFollowingModel = new IDMPlusOld();
             BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
-            //LaneBasedBehavioralCharacteristics drivingCharacteristics =
-            //    new LaneBasedBehavioralCharacteristics(gtuFollowingModel, null);
-            TacticalPlanner fixedTacticalPlanner = new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel);
+            // LaneBasedBehavioralCharacteristics drivingCharacteristics =
+            // new LaneBasedBehavioralCharacteristics(gtuFollowingModel, null);
+            /*- TODO GENERATOR CODE CHANGES
+            LanePerceptionFull perception = new LanePerceptionFull();
+            TacticalPlanner fixedTacticalPlanner = new LaneBasedGTUFollowingTacticalPlanner(perception, gtuFollowingModel);
             LaneBasedStrategicalPlanner strategicalPlanner;
             try
             {
@@ -260,12 +264,12 @@ public class TestGMParser extends AbstractWrappableAnimation
                 initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
                 endTime, L49b_A2, new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
                 strategicalPlanner, perceptionClass, network);
+             */
         }
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
-            getSimulator()
+        public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
 
         {
             return this.simulator;
@@ -309,7 +313,7 @@ public class TestGMParser extends AbstractWrappableAnimation
         public float[] floatTransform(double x, double y)
         {
             double[] d = doubleTransform(x, y);
-            return new float[]{(float) d[0], (float) d[1]};
+            return new float[] { (float) d[0], (float) d[1] };
         }
 
         /** {@inheritDoc} */
@@ -319,12 +323,12 @@ public class TestGMParser extends AbstractWrappableAnimation
             try
             {
                 Coords c = WGS84ToRDNewTransform.ellipswgs842rd(x, y);
-                return new double[]{c.x - this.dx, c.y - this.dy};
+                return new double[] { c.x - this.dx, c.y - this.dy };
             }
             catch (Exception exception)
             {
                 exception.printStackTrace();
-                return new double[]{0, 0};
+                return new double[] { 0, 0 };
             }
         }
 
@@ -350,7 +354,7 @@ public class TestGMParser extends AbstractWrappableAnimation
 
         /** */
         private static final long serialVersionUID = 20141017L;
-        
+
         //@formatter:off
         private static final double r[][] = { /* p down, q right */
             {  155000.00, 190094.945,   -0.008, -32.391, 0.0   , },
@@ -366,12 +370,10 @@ public class TestGMParser extends AbstractWrappableAnimation
             {      0.0  ,      0.0  ,    0.0  ,   0.0  ,  0.0  , }};
         //@formatter:on
 
-        public static void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts)
-            throws Exception
+        public static void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts) throws Exception
         {
             int offsetDelta = dstOff - srcOff;
-            for (int i = srcOff; i < srcOff + numPts && i + 1 < srcPts.length && i + offsetDelta + 1 < dstPts.length; i +=
-                2)
+            for (int i = srcOff; i < srcOff + numPts && i + 1 < srcPts.length && i + offsetDelta + 1 < dstPts.length; i += 2)
             {
                 Coords transformedCoords = ellipswgs842rd(srcPts[i], srcPts[i + 1]);
                 dstPts[i + offsetDelta] = transformedCoords.x;
@@ -407,14 +409,14 @@ public class TestGMParser extends AbstractWrappableAnimation
             return result;
         }
 
-        /** 
+        /**
          * Coordinate pair.
          */
         static class Coords implements Serializable
         {
             /** */
             private static final long serialVersionUID = 20141017L;
-            
+
             public double x, y;
 
             public Coords(double x, double y)
@@ -423,14 +425,13 @@ public class TestGMParser extends AbstractWrappableAnimation
                 this.y = y;
             }
 
-
             /** {@inheritDoc} */
             @Override
             public final String toString()
             {
                 return "Coords [x=" + this.x + ", y=" + this.y + "]";
             }
-            
+
         }
 
         /** {@inheritDoc} */

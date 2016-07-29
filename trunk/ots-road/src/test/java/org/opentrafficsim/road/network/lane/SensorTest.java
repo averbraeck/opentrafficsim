@@ -70,22 +70,21 @@ public class SensorTest implements UNITS
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModelForSensorTest();
         final SimpleSimulator simulator =
-            new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND),
-                model);
+                new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND), model);
         Lane[] lanesA =
-            LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new Speed(100, KM_PER_HOUR),
-                simulator, LongitudinalDirectionality.DIR_PLUS);
+                LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new Speed(100, KM_PER_HOUR), simulator,
+                        LongitudinalDirectionality.DIR_PLUS);
         Lane[] lanesB =
-            LaneFactory.makeMultiLane("B", nodeATo, nodeBTo, null, 3, laneType, new Speed(100, KM_PER_HOUR), simulator,
-                LongitudinalDirectionality.DIR_PLUS);
+                LaneFactory.makeMultiLane("B", nodeATo, nodeBTo, null, 3, laneType, new Speed(100, KM_PER_HOUR), simulator,
+                        LongitudinalDirectionality.DIR_PLUS);
 
         // put a sensor on each of the lanes at the end of LaneA
         for (Lane lane : lanesA)
         {
             Length longitudinalPosition = new Length(999.9999, METER);
             TriggerSensor sensor =
-                new TriggerSensor(lane, longitudinalPosition, RelativePosition.REFERENCE, "Trigger@" + lane.toString(),
-                    simulator);
+                    new TriggerSensor(lane, longitudinalPosition, RelativePosition.REFERENCE, "Trigger@" + lane.toString(),
+                            simulator);
             lane.addSensor(sensor, GTUType.ALL);
         }
 
@@ -107,16 +106,19 @@ public class SensorTest implements UNITS
         String carID = "theCar";
         // Create an acceleration profile for the car
         FixedAccelerationModel fas =
-            new FixedAccelerationModel(new Acceleration(0.5, METER_PER_SECOND_2), new Duration(100, SECOND));
+                new FixedAccelerationModel(new Acceleration(0.5, METER_PER_SECOND_2), new Duration(100, SECOND));
         // Now we can make a car (GTU) (and we don't even have to hold a pointer to it)
-        BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create(); //new BehavioralCharacteristics();
-        //LaneBasedBehavioralCharacteristics drivingCharacteristics =
-        //    new LaneBasedBehavioralCharacteristics(fas, null);
+        BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create(); // new
+                                                                                              // BehavioralCharacteristics();
+        // LaneBasedBehavioralCharacteristics drivingCharacteristics =
+        // new LaneBasedBehavioralCharacteristics(fas, null);
+        LanePerceptionFull perception = new LanePerceptionFull();
         LaneBasedStrategicalPlanner strategicalPlanner =
-            new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, 
-                new LaneBasedGTUFollowingTacticalPlanner(fas));
-        LaneBasedIndividualGTU car = new LaneBasedIndividualGTU(carID, gtuType, initialLongitudinalPositions, initialSpeed, carLength, carWidth,
-            maximumSpeed, simulator, strategicalPlanner, new LanePerceptionFull(), network);
+                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedGTUFollowingTacticalPlanner(
+                        perception, fas));
+        LaneBasedIndividualGTU car =
+                new LaneBasedIndividualGTU(carID, gtuType, carLength, carWidth, maximumSpeed, simulator, network);
+        car.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
         simulator.runUpTo(new Time(1, SECOND));
         if (!simulator.isRunning())
         {
@@ -144,14 +146,14 @@ public class SensorTest implements UNITS
                 triggerEvent = event;
             }
         }
-        // XXX this is not true anymore with OperationalPlans, Perception, etc => 
+        // XXX this is not true anymore with OperationalPlans, Perception, etc =>
         // XXX the number of events that should be scheduled can vary per models chosen
-        // XXX assertEquals("There should be three scheduled events (trigger, leaveLane, 
+        // XXX assertEquals("There should be three scheduled events (trigger, leaveLane,
         // XXX car.move, terminate)", 4, eventList.size());
         // The sensor should be triggered around t=38.3403 (exact value: 10 / 9 * (sqrt(3541) - 25))
         // System.out.println("trigger event is " + triggerEvent);
-        /// TODO not triggered in next half second.
-        // XXX assertEquals("Trigger event should be around 38.3403", 38.3403, 
+        // / TODO not triggered in next half second.
+        // XXX assertEquals("Trigger event should be around 38.3403", 38.3403,
         // XXX triggerEvent.getAbsoluteExecutionTime().get().getSI(), 0.0001);
     }
 }
@@ -169,8 +171,8 @@ class TriggerSensor extends AbstractSensor
      * @param name
      * @param simulator
      */
-    public TriggerSensor(final Lane lane, final Length longitudinalPosition,
-        final RelativePosition.TYPE positionType, final String name, OTSDEVSSimulatorInterface simulator)
+    public TriggerSensor(final Lane lane, final Length longitudinalPosition, final RelativePosition.TYPE positionType,
+            final String name, OTSDEVSSimulatorInterface simulator)
     {
         super(lane, longitudinalPosition, positionType, name, simulator);
     }
@@ -207,7 +209,7 @@ class DummyModelForSensorTest implements OTSModelInterface
      * @param simulator SimulatorInterface&lt;Time, Duration, OTSSimTimeDouble&gt;; the simulator
      */
     public final void setSimulator(
-        SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+            SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
     {
         this.simulator = simulator;
     }
@@ -215,8 +217,8 @@ class DummyModelForSensorTest implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public final void constructModel(
-        SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> arg0)
-        throws SimRuntimeException
+            SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> arg0)
+            throws SimRuntimeException
     {
         // Nothing happens here
     }
