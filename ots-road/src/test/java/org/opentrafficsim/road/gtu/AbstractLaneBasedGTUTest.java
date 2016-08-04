@@ -39,7 +39,6 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -135,12 +134,11 @@ public class AbstractLaneBasedGTUTest implements UNITS
                                                                                               // BehavioralCharacteristics();
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(gfm, laneChangeModel);
-        LanePerceptionFull perception = new LanePerceptionFull();
-        LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(perception,
-                        gfm, laneChangeModel), route);
         LaneBasedIndividualGTU car =
                 new LaneBasedIndividualGTU(carID, gtuType, carLength, carWidth, maximumSpeed, simulator, this.network);
+        LaneBasedStrategicalPlanner strategicalPlanner =
+                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
+                        gfm, laneChangeModel, car), car);
         car.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
         // Now we can verify the various fields in the newly created Car
         assertEquals("ID of the car should be identical to the provided one", carID, car.getId());
@@ -154,7 +152,9 @@ public class AbstractLaneBasedGTUTest implements UNITS
                 .position(lanesGroupA[1], car.getReference()).getSI(), 0.0001);
         assertEquals("front in lanesGroupB[1] is positionB", positionB.getSI(), car
                 .position(lanesGroupB[1], car.getReference()).getSI(), 0.0001);
-        assertEquals("acceleration is 0", 0, car.getAcceleration().getSI(), 0.00001);
+        // assertEquals("acceleration is 0", 0, car.getAcceleration().getSI(), 0.00001);
+        // edit wouter schakel: fixed acceleration model has a=2.0m/s^2, first plan is made during initialization
+        assertEquals("acceleration is 2", 2.0, car.getAcceleration().getSI(), 0.00001);
         assertEquals("longitudinal speed is " + initialSpeed, initialSpeed.getSI(), car.getSpeed().getSI(), 0.00001);
         assertEquals("lastEvaluation time is 0", 0, car.getOperationalPlan().getStartTime().getSI(), 0.00001);
         // Test the position(Lane, RelativePosition) method
@@ -210,7 +210,9 @@ public class AbstractLaneBasedGTUTest implements UNITS
         // Assign a movement to the car (10 seconds of acceleration of 2 m/s/s)
         // scheduled event that moves the car at t=0
         assertEquals("lastEvaluation time is 0", 0, car.getOperationalPlan().getStartTime().getSI(), 0.00001);
-        assertEquals("nextEvaluation time is 0", 0, car.getOperationalPlan().getEndTime().getSI(), 0.00001);
+        // assertEquals("nextEvaluation time is 0", 0, car.getOperationalPlan().getEndTime().getSI(), 0.00001);
+        // edit wouter schakel: fixed acceleration model has t=10s, first plan is made during initialization
+        assertEquals("nextEvaluation time is 10", 10.0, car.getOperationalPlan().getEndTime().getSI(), 0.00001);
         // Increase the simulator clock in small steps and verify the both positions on all lanes at each step
         double step = 0.01d;
         for (int i = 0;; i++)

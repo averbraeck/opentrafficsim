@@ -32,9 +32,9 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionCatego
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsCategory;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
+import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.util.SimpleOperationalPlan;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -481,7 +481,6 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             if (laneChange)
             {
                 nextSplitNode = lastNode;
-                LinkDirection ld = gtu.getStrategicalPlanner().nextLinkDirection(nextSplitNode, lastLink, gtu.getGTUType());
                 // which lane(s) we are registered on and adjacent lanes link to a lane
                 // that does not drop?
                 for (CrossSectionElement cse : referenceLane.getParentLink().getCrossSectionElementList())

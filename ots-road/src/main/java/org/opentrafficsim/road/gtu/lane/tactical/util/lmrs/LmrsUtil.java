@@ -30,13 +30,13 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructureCategory;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsCategory;
 import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.MandatoryIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
-import org.opentrafficsim.road.gtu.lane.tactical.util.SimpleOperationalPlan;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 
@@ -165,7 +165,8 @@ public final class LmrsUtil
         BehavioralCharacteristics bc = gtu.getBehavioralCharacteristics();
 
         // update T as response to new leader
-        Set<AbstractHeadwayGTU> leaders = perception.getPerceptionCategory(NeighborsCategory.class).getFirstLeaders(null);
+        Set<AbstractHeadwayGTU> leaders =
+            perception.getPerceptionCategory(NeighborsCategory.class).getFirstLeaders(LateralDirectionality.NONE);
         for (AbstractHeadwayGTU leader : leaders)
         {
             if (!lmrsStatus.getLastLeaders().contains(leader))
@@ -200,8 +201,8 @@ public final class LmrsUtil
             RelativeLane tar = laneChange.getTargetLane();
             initiatedLaneChange = tar.getLateralDirectionality();
             Acceleration aTar =
-                CarFollowingUtil.followLeaders(carFollowingModel, bc, speed, sli, perception
-                    .getPerceptionCategory(NeighborsCategory.class).getLeaders(tar));
+                CarFollowingUtil.followLeaders(carFollowingModel, bc, speed, sli, perception.getPerceptionCategory(
+                    NeighborsCategory.class).getLeaders(tar));
             a = Acceleration.min(a, aTar);
 
         }
@@ -557,6 +558,13 @@ public final class LmrsUtil
         {
             this.lastLeaders.clear();
             this.lastLeaders.addAll(lastLeaders);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "LmrsStatus";
         }
 
     }

@@ -37,7 +37,7 @@ public enum LateralDirectionality
      */
     public boolean isRight()
     {
-        return this.equals(LEFT);
+        return this.equals(RIGHT);
     }
 
     /**

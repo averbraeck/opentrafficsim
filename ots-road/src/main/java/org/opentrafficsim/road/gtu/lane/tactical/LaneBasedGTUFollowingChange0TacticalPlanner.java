@@ -14,7 +14,6 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
@@ -27,9 +26,9 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultAlexander;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedAltruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedEgoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedLaneChangeModel;
@@ -69,7 +68,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBasedTacticalPlannerOld
+public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBasedTacticalPlanner
 {
     /** */
     private static final long serialVersionUID = 20160129L;
@@ -128,10 +127,10 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
             }
 
             // perceive the forward headway, accessible lanes and speed limit.
-            perception.updateForwardHeadway();
-            perception.updateAccessibleAdjacentLanesLeft();
-            perception.updateAccessibleAdjacentLanesRight();
-            perception.updateSpeedLimit();
+            perception.getPerceptionCategory(DefaultAlexander.class).updateForwardHeadway();
+            perception.getPerceptionCategory(DefaultAlexander.class).updateAccessibleAdjacentLanesLeft();
+            perception.getPerceptionCategory(DefaultAlexander.class).updateAccessibleAdjacentLanesRight();
+            perception.getPerceptionCategory(DefaultAlexander.class).updateSpeedLimit();
 
             // find out where we are going
             Length forwardHeadway = behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD);
@@ -170,33 +169,40 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
 
             // Step 2. Do we want to change lanes to the left because of our predecessor on the current lane?
             // does the lane left of us [TODO: driving direction] bring us to our destination as well?
-            Set<Lane> leftLanes = perception.getAccessibleAdjacentLanesLeft().get(lanePathInfo.getReferenceLane());
+            Set<Lane> leftLanes =
+                perception.getPerceptionCategory(DefaultAlexander.class).getAccessibleAdjacentLanesLeft().get(
+                    lanePathInfo.getReferenceLane());
             if (nextSplitInfo.isSplit())
             {
                 leftLanes.retainAll(nextSplitInfo.getCorrectCurrentLanes());
             }
             if (!leftLanes.isEmpty() && laneBasedGTU.getSpeed().si > 4.0) // XXX we are driving...
             {
-                perception.updateBackwardHeadway();
-                perception.updateParallelHeadwaysLeft();
-                perception.updateLaneTrafficLeft();
-                if (perception.getParallelHeadwaysLeft().isEmpty())
+                perception.getPerceptionCategory(DefaultAlexander.class).updateBackwardHeadway();
+                perception.getPerceptionCategory(DefaultAlexander.class).updateParallelHeadwaysLeft();
+                perception.getPerceptionCategory(DefaultAlexander.class).updateNeighboringHeadwaysLeft();
+                if (perception.getPerceptionCategory(DefaultAlexander.class).getParallelHeadwaysLeft().isEmpty())
                 {
                     Collection<Headway> sameLaneTraffic = new HashSet<>();
                     // TODO should it be getObjectType().isGtu() or !getObjectType().isDistanceOnly() ?
-                    if (perception.getForwardHeadway() != null && perception.getForwardHeadway().getObjectType().isGtu())
+                    if (perception.getPerceptionCategory(DefaultAlexander.class).getForwardHeadway() != null
+                        && perception.getPerceptionCategory(DefaultAlexander.class).getForwardHeadway().getObjectType()
+                            .isGtu())
                     {
-                        sameLaneTraffic.add(perception.getForwardHeadway());
+                        sameLaneTraffic.add(perception.getPerceptionCategory(DefaultAlexander.class).getForwardHeadway());
                     }
-                    if (perception.getBackwardHeadway() != null && perception.getBackwardHeadway().getObjectType().isGtu())
+                    if (perception.getPerceptionCategory(DefaultAlexander.class).getBackwardHeadway() != null
+                        && perception.getPerceptionCategory(DefaultAlexander.class).getBackwardHeadway().getObjectType()
+                            .isGtu())
                     {
-                        sameLaneTraffic.add(perception.getBackwardHeadway());
+                        sameLaneTraffic.add(perception.getPerceptionCategory(DefaultAlexander.class).getBackwardHeadway());
                     }
-                    DirectedLaneChangeModel dlcm = new DirectedAltruistic((LanePerceptionFull) getPerception());
+                    DirectedLaneChangeModel dlcm = new DirectedAltruistic(getPerception());
                     DirectedLaneMovementStep dlms =
                         dlcm.computeLaneChangeAndAcceleration(laneBasedGTU, LateralDirectionality.LEFT, sameLaneTraffic,
-                            perception.getNeighboringHeadwaysLeft(), behavioralCharacteristics
-                                .getParameter(ParameterTypes.LOOKAHEAD), perception.getSpeedLimit(), new Acceleration(1.0,
+                            perception.getPerceptionCategory(DefaultAlexander.class).getNeighboringHeadwaysLeft(),
+                            behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD), perception
+                                .getPerceptionCategory(DefaultAlexander.class).getSpeedLimit(), new Acceleration(1.0,
                                 AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI), new Duration(0.5,
                                 TimeUnit.SECOND));
                     if (dlms.getLaneChange() != null)
@@ -214,33 +220,40 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
             }
 
             // Step 3. Do we want to change lanes to the right because of TODO traffic rules?
-            Set<Lane> rightLanes = perception.getAccessibleAdjacentLanesRight().get(lanePathInfo.getReferenceLane());
+            Set<Lane> rightLanes =
+                perception.getPerceptionCategory(DefaultAlexander.class).getAccessibleAdjacentLanesRight().get(
+                    lanePathInfo.getReferenceLane());
             if (nextSplitInfo.isSplit())
             {
                 rightLanes.retainAll(nextSplitInfo.getCorrectCurrentLanes());
             }
             if (!rightLanes.isEmpty() && laneBasedGTU.getSpeed().si > 4.0) // XXX we are driving...
             {
-                perception.updateBackwardHeadway();
-                perception.updateParallelHeadwaysRight();
-                perception.updateLaneTrafficRight();
-                if (perception.getParallelHeadwaysRight().isEmpty())
+                perception.getPerceptionCategory(DefaultAlexander.class).updateBackwardHeadway();
+                perception.getPerceptionCategory(DefaultAlexander.class).updateParallelHeadwaysRight();
+                perception.getPerceptionCategory(DefaultAlexander.class).updateNeighboringHeadwaysRight();
+                if (perception.getPerceptionCategory(DefaultAlexander.class).getParallelHeadwaysRight().isEmpty())
                 {
                     Collection<Headway> sameLaneTraffic = new HashSet<>();
                     // TODO should it be getObjectType().isGtu() or !getObjectType().isDistanceOnly() ?
-                    if (perception.getForwardHeadway() != null && perception.getForwardHeadway().getObjectType().isGtu())
+                    if (perception.getPerceptionCategory(DefaultAlexander.class).getForwardHeadway() != null
+                        && perception.getPerceptionCategory(DefaultAlexander.class).getForwardHeadway().getObjectType()
+                            .isGtu())
                     {
-                        sameLaneTraffic.add(perception.getForwardHeadway());
+                        sameLaneTraffic.add(perception.getPerceptionCategory(DefaultAlexander.class).getForwardHeadway());
                     }
-                    if (perception.getBackwardHeadway() != null && perception.getBackwardHeadway().getObjectType().isGtu())
+                    if (perception.getPerceptionCategory(DefaultAlexander.class).getBackwardHeadway() != null
+                        && perception.getPerceptionCategory(DefaultAlexander.class).getBackwardHeadway().getObjectType()
+                            .isGtu())
                     {
-                        sameLaneTraffic.add(perception.getBackwardHeadway());
+                        sameLaneTraffic.add(perception.getPerceptionCategory(DefaultAlexander.class).getBackwardHeadway());
                     }
-                    DirectedLaneChangeModel dlcm = new DirectedAltruistic((LanePerceptionFull) getPerception());
+                    DirectedLaneChangeModel dlcm = new DirectedAltruistic(getPerception());
                     DirectedLaneMovementStep dlms =
                         dlcm.computeLaneChangeAndAcceleration(laneBasedGTU, LateralDirectionality.RIGHT, sameLaneTraffic,
-                            perception.getNeighboringHeadwaysRight(), behavioralCharacteristics
-                                .getParameter(ParameterTypes.LOOKAHEAD), perception.getSpeedLimit(), new Acceleration(1.0,
+                            perception.getPerceptionCategory(DefaultAlexander.class).getNeighboringHeadwaysRight(),
+                            behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD), perception
+                                .getPerceptionCategory(DefaultAlexander.class).getSpeedLimit(), new Acceleration(1.0,
                                 AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI), new Duration(0.5,
                                 TimeUnit.SECOND));
                     if (dlms.getLaneChange() != null)
@@ -291,10 +304,11 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
         // No lane change. Continue on current lane.
         AccelerationStep accelerationStep;
         accelerationStep =
-            this.getCarFollowingModelOld().computeAccelerationStep(laneBasedGTU, perception.getForwardHeadway().getSpeed(),
-                perception.getForwardHeadway().getDistance(),
+            this.getCarFollowingModelOld().computeAccelerationStep(laneBasedGTU,
+                perception.getPerceptionCategory(DefaultAlexander.class).getForwardHeadway().getSpeed(),
+                perception.getPerceptionCategory(DefaultAlexander.class).getForwardHeadway().getDistance(),
                 lanePathInfo.getPath().getLength().minus(laneBasedGTU.getLength().multiplyBy(2.0)),
-                perception.getSpeedLimit());
+                perception.getPerceptionCategory(DefaultAlexander.class).getSpeedLimit());
 
         // see if we have to continue standing still. In that case, generate a stand still plan
         if (accelerationStep.getAcceleration().si < 1E-6 && laneBasedGTU.getSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
@@ -362,53 +376,57 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
      * @throws NetworkException when there is a network inconsistency in updating the perception
      * @throws GTUException when there is an issue retrieving GTU information for the perception update
      * @throws ParameterException when there is a parameter problem.
+     * @throws OperationalPlanException in case a perception category is not present
      */
     private boolean canChange(final LaneBasedGTU gtu, final LanePerception perception, final LanePathInfo lanePathInfo,
-        final LateralDirectionality direction) throws GTUException, NetworkException, ParameterException
+        final LateralDirectionality direction) throws GTUException, NetworkException, ParameterException,
+        OperationalPlanException
     {
         Collection<Headway> otherLaneTraffic;
-        perception.updateForwardHeadway();
-        perception.updateBackwardHeadway();
+        perception.getPerceptionCategory(DefaultAlexander.class).updateForwardHeadway();
+        perception.getPerceptionCategory(DefaultAlexander.class).updateBackwardHeadway();
         if (direction.isLeft())
         {
-            perception.updateParallelHeadwaysLeft();
-            perception.updateLaneTrafficLeft();
-            otherLaneTraffic = perception.getNeighboringHeadwaysLeft();
+            perception.getPerceptionCategory(DefaultAlexander.class).updateParallelHeadwaysLeft();
+            perception.getPerceptionCategory(DefaultAlexander.class).updateNeighboringHeadwaysLeft();
+            otherLaneTraffic = perception.getPerceptionCategory(DefaultAlexander.class).getNeighboringHeadwaysLeft();
         }
         else if (direction.isRight())
         {
-            perception.updateParallelHeadwaysRight();
-            perception.updateLaneTrafficRight();
-            otherLaneTraffic = perception.getNeighboringHeadwaysRight();
+            perception.getPerceptionCategory(DefaultAlexander.class).updateParallelHeadwaysRight();
+            perception.getPerceptionCategory(DefaultAlexander.class).updateNeighboringHeadwaysRight();
+            otherLaneTraffic = perception.getPerceptionCategory(DefaultAlexander.class).getNeighboringHeadwaysRight();
         }
         else
         {
             throw new GTUException("Lateral direction is neither LEFT nor RIGHT during a lane change");
         }
-        if (!perception.getParallelHeadways(direction).isEmpty())
+        if (!perception.getPerceptionCategory(DefaultAlexander.class).getParallelHeadways(direction).isEmpty())
         {
             return false;
         }
 
         Collection<Headway> sameLaneTraffic = new HashSet<>();
         // TODO should it be getObjectType().isGtu() or !getObjectType().isDistanceOnly() ?
-        if (perception.getForwardHeadway() != null && perception.getForwardHeadway().getObjectType().isGtu())
+        if (perception.getPerceptionCategory(DefaultAlexander.class).getForwardHeadway() != null
+            && perception.getPerceptionCategory(DefaultAlexander.class).getForwardHeadway().getObjectType().isGtu())
         {
-            sameLaneTraffic.add(perception.getForwardHeadway());
+            sameLaneTraffic.add(perception.getPerceptionCategory(DefaultAlexander.class).getForwardHeadway());
         }
-        if (perception.getBackwardHeadway() != null && perception.getBackwardHeadway().getObjectType().isGtu())
+        if (perception.getPerceptionCategory(DefaultAlexander.class).getBackwardHeadway() != null
+            && perception.getPerceptionCategory(DefaultAlexander.class).getBackwardHeadway().getObjectType().isGtu())
         {
-            sameLaneTraffic.add(perception.getBackwardHeadway());
+            sameLaneTraffic.add(perception.getPerceptionCategory(DefaultAlexander.class).getBackwardHeadway());
         }
 
         // TODO make type of plan (Egoistic, Altruistic) parameter of the class
-        DirectedLaneChangeModel dlcm = new DirectedEgoistic((LanePerceptionFull) getPerception());
+        DirectedLaneChangeModel dlcm = new DirectedEgoistic(getPerception());
         // TODO make the elasticities 2.0 and 0.1 parameters of the class
         DirectedLaneMovementStep dlms =
             dlcm.computeLaneChangeAndAcceleration(gtu, direction, sameLaneTraffic, otherLaneTraffic, gtu
-                .getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD), perception.getSpeedLimit(),
-                new Acceleration(2.0, AccelerationUnit.SI), new Acceleration(0.1, AccelerationUnit.SI), new Duration(0.5,
-                    TimeUnit.SECOND));
+                .getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD), perception.getPerceptionCategory(
+                DefaultAlexander.class).getSpeedLimit(), new Acceleration(2.0, AccelerationUnit.SI), new Acceleration(0.1,
+                AccelerationUnit.SI), new Duration(0.5, TimeUnit.SECOND));
         if (dlms.getLaneChange() == null)
         {
             return false;

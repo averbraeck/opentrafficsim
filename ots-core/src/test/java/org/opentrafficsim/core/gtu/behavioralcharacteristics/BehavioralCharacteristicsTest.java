@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.InvocationTargetException;
@@ -75,7 +76,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         // Check ParameterType construction (id, description, class, defaultValue)
         Length defaultValue = new Length(1.0, LengthUnit.SI);
         ParameterType<LengthUnit, Length> a =
-            new ParameterType<LengthUnit, Length>("a", "along", Length.class, defaultValue);
+            new ParameterType<>("a", "along", Length.class, defaultValue);
         assertEquals("Parameter type id not properly set.", "a", a.getId());
         assertEquals("Parameter type description not properly set.", "along", a.getDescription());
         try
@@ -88,7 +89,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         }
 
         // Check ParameterType construction (id, description, class)
-        ParameterType<LengthUnit, Length> b = new ParameterType<LengthUnit, Length>("b", "blong", Length.class);
+        ParameterType<LengthUnit, Length> b = new ParameterType<>("b", "blong", Length.class);
         assertEquals("Parameter type id not properly set.", "b", b.getId());
         assertEquals("Parameter type description not properly set.", "blong", b.getDescription());
         try
@@ -455,7 +456,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         // null default value
         try
         {
-            new ParameterType<SpeedUnit, Speed>("v", "vlong", Speed.class, null, POSITIVE);
+            new ParameterType<>("v", "vlong", Speed.class, null, POSITIVE);
             fail("Setting a default value of 'null' on ParameterType did not fail.");
         }
         catch (RuntimeException re)
@@ -473,7 +474,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         }
 
         // set null value
-        ParameterType<SpeedUnit, Speed> v = new ParameterType<SpeedUnit, Speed>("v", "vlong", Speed.class);
+        ParameterType<SpeedUnit, Speed> v = new ParameterType<>("v", "vlong", Speed.class);
         BehavioralCharacteristics bc = new BehavioralCharacteristics();
         try
         {
@@ -506,7 +507,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         checkDefaultValuesPerClass(ParameterTypeAcceleration.class,  new Acceleration(3, AccelerationUnit.SI));
         checkDefaultValuesPerClass(ParameterTypeLength.class,        new Length(3, LengthUnit.SI));
         checkDefaultValuesPerClass(ParameterTypeFrequency.class,     new Frequency(3, FrequencyUnit.SI));
-        checkDefaultValuesPerClass(ParameterTypeDuration.class,          new Duration(3, TimeUnit.SI));
+        checkDefaultValuesPerClass(ParameterTypeDuration.class,      new Duration(3, TimeUnit.SI));
         checkDefaultValuesPerClass(ParameterTypeLinearDensity.class, new LinearDensity(3, LinearDensityUnit.SI));
         checkDefaultValuesPerClass(ParameterTypeBoolean.class,       new Boolean(false));
         checkDefaultValuesPerClass(ParameterTypeDouble.class,        new Double(3));
@@ -645,6 +646,26 @@ public class BehavioralCharacteristicsTest implements CheckInterface
             return Integer.TYPE;
         }
         return defaultValue.getClass();
+    }
+
+    /**
+     * Tests the merging of parameter sets using setAll.
+     * @throws ParameterException parameter exception
+     */
+    @Test
+    public final void mergeTest() throws ParameterException
+    {
+        BehavioralCharacteristics bcA = new BehavioralCharacteristics();
+        bcA.setDefaultParameter(ParameterTypes.A);
+        BehavioralCharacteristics bcB = new BehavioralCharacteristics();
+        bcB.setDefaultParameter(ParameterTypes.B);
+        bcA.setAll(bcB);
+        assertTrue("When merging set B with set A, set A should contain the parameters of set B.", bcA
+            .contains(ParameterTypes.B));
+        assertTrue("When merging set B with set A, parameter values should be equal.", bcA.getParameter(ParameterTypes.B)
+            .eq(bcB.getParameter(ParameterTypes.B)));
+        assertFalse("When merging set B with set A, set B should not contain the parameters of set A.", bcB
+            .contains(ParameterTypes.A));
     }
 
 }

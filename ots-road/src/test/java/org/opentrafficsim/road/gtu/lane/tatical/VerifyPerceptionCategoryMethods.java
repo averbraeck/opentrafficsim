@@ -35,7 +35,9 @@ public class VerifyPerceptionCategoryMethods
      * <ul>
      * <li>{@code testField*} property of any type. Data may be organized e.g. per lane, so type is not forced to be
      * {@code TimeStampedObject}. Data may also be stored as e.g. {@code testFieldLeft} and {@code testFieldRight}, hence the
-     * {@code *}.</li>
+     * {@code *}. <br>
+     * If the field is not found, wrapped {@code AbstractPerceptionCategory} fields are checked. If either has the property the
+     * test succeeds. Methods should still be in place as forwards to the wrapped category.</li>
      * <li>{@code updateTestField} method</li>
      * <li>For boolean:
      * <ul>
@@ -157,8 +159,29 @@ public class VerifyPerceptionCategoryMethods
         }
         if (!fieldFound)
         {
+            // perhaps the perception category wraps another category
+            Field[] fields = c.getDeclaredFields();
+            i = 0;
+            while (!fieldFound && i < fields.length)
+            {
+                if (AbstractPerceptionCategory.class.isAssignableFrom(fields[i].getType()))
+                {
+                    // check if this wrapped category has the right field
+                    Field[] wrappedFields = fields[i].getType().getDeclaredFields();
+                    int j = 0;
+                    while (!fieldFound && j < wrappedFields.length)
+                    {
+                        fieldFound = wrappedFields[j].getName().startsWith(field);
+                        j++;
+                    }
+                }
+                i++;
+            }
+        }
+        if (!fieldFound)
+        {
             // System.out.println("Class " + c.getSimpleName() + " does not have a field '" + field + "'.");
-            fail("Class " + c + " does not have a field '" + field + "*'.");
+            fail("Class " + c + " does not have a field '" + field + "*', nor wraps a perception category that does.");
         }
         if (methodNames.contains(getter))
         {

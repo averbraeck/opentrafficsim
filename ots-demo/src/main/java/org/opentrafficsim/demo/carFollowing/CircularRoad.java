@@ -20,7 +20,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -41,9 +40,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
-import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -57,11 +53,9 @@ import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingChange0TacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingChange0TacticalPlannerFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
@@ -70,13 +64,11 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
-import org.opentrafficsim.road.gtu.lane.tactical.toledo.Toledo;
-import org.opentrafficsim.road.gtu.lane.tactical.toledo.ToledoCarFollowing;
-import org.opentrafficsim.road.gtu.lane.tactical.toledo.ToledoLaneChangeParameters;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.toledo.ToledoFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
-import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
+import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -124,7 +116,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                 + "the personal gain).</html>", new String[] {"Egoistic", "Altruistic"}, 0, false, 500));
         this.properties.add(new SelectionProperty("TacticalPlanner", "Tactical planner",
             "<html>The tactical planner determines if a lane change is desired and possible.</html>", new String[] {"MOBIL",
-                "Verbraeck", "Verbraeck0", "LMRS", "Toledo"}, 4, false, 600));
+                "Verbraeck", "Verbraeck0", "LMRS", "Toledo"}, 2, false, 600));
         this.properties.add(new IntegerProperty("TrackLength", "Track length", "Circumference of the track", 2000, 500,
             6000, "Track length %dm", false, 10));
         this.properties.add(new ContinuousProperty("MeanDensity", "Mean density", "Number of vehicles per km", 40.0, 5.0,
@@ -399,11 +391,11 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
     /** The GTUColorer for the generated vehicles. */
     private final GTUColorer gtuColorer;
 
-    /** The tactical planner that will be used by all car GTUs. */
-    private TacticalPlanner tacticalPlannerCars = null;
+    /** Strategical planner generator for cars. */
+    private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorCars = null;
 
-    /** The tactical planner that will be used by all truck GTUs. */
-    private TacticalPlanner tacticalPlannerTrucks = null;
+    /** Strategical planner generator for cars. */
+    private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorTrucks = null;
 
     /**
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
@@ -544,39 +536,49 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
                         String tacticalPlannerName = sp.getValue();
                         if ("MOBIL".equals(tacticalPlannerName))
                         {
-                            this.tacticalPlannerCars =
-                                new LaneBasedCFLCTacticalPlanner(this.carFollowingModelCars, this.laneChangeModel);
-                            this.tacticalPlannerTrucks =
-                                new LaneBasedCFLCTacticalPlanner(this.carFollowingModelTrucks, this.laneChangeModel);
+                            this.strategicalPlannerGeneratorCars =
+                                new LaneBasedStrategicalRoutePlannerFactory(new LaneBasedCFLCTacticalPlannerFactory(
+                                    this.carFollowingModelCars, this.laneChangeModel));
+                            this.strategicalPlannerGeneratorTrucks =
+                                new LaneBasedStrategicalRoutePlannerFactory(new LaneBasedCFLCTacticalPlannerFactory(
+                                    this.carFollowingModelTrucks, this.laneChangeModel));
                         }
                         else if ("Verbraeck".equals(tacticalPlannerName))
                         {
-                            this.tacticalPlannerCars =
-                                new LaneBasedGTUFollowingLaneChangeTacticalPlanner(this.carFollowingModelCars);
-                            this.tacticalPlannerTrucks =
-                                new LaneBasedGTUFollowingLaneChangeTacticalPlanner(this.carFollowingModelTrucks);
+                            this.strategicalPlannerGeneratorCars =
+                                new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LaneBasedGTUFollowingLaneChangeTacticalPlannerFactory(this.carFollowingModelCars));
+                            this.strategicalPlannerGeneratorTrucks =
+                                new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LaneBasedGTUFollowingLaneChangeTacticalPlannerFactory(this.carFollowingModelTrucks));
                         }
                         else if ("Verbraeck0".equals(tacticalPlannerName))
                         {
-                            this.tacticalPlannerCars =
-                                new LaneBasedGTUFollowingChange0TacticalPlanner(this.carFollowingModelCars);
-                            this.tacticalPlannerTrucks =
-                                new LaneBasedGTUFollowingChange0TacticalPlanner(this.carFollowingModelTrucks);
+                            this.strategicalPlannerGeneratorCars =
+                                new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LaneBasedGTUFollowingChange0TacticalPlannerFactory(this.carFollowingModelCars));
+                            this.strategicalPlannerGeneratorTrucks =
+                                new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LaneBasedGTUFollowingChange0TacticalPlannerFactory(this.carFollowingModelTrucks));
                         }
                         else if ("LMRS".equals(tacticalPlannerName))
                         {
-                            // stateful, only used for 'instanceof'
-                            LMRS planner = new LMRS(new IDMPlus());
-                            planner.setDefaultIncentives();
-                            this.tacticalPlannerCars = planner;
-                            this.tacticalPlannerTrucks = planner;
+                            // provide default parameters with the car-following model
+                            BehavioralCharacteristics defaultBehavioralCFCharacteristics = new BehavioralCharacteristics();
+                            defaultBehavioralCFCharacteristics.setDefaultParameters(AbstractIDM.class);
+                            this.strategicalPlannerGeneratorCars =
+                                new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(IDMPlus.class,
+                                    defaultBehavioralCFCharacteristics));
+                            this.strategicalPlannerGeneratorTrucks =
+                                new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(IDMPlus.class,
+                                    defaultBehavioralCFCharacteristics));
                         }
                         else if ("Toledo".equals(tacticalPlannerName))
                         {
-                            // stateful, only used for 'instanceof'
-                            Toledo planner = new Toledo(new ToledoCarFollowing());
-                            this.tacticalPlannerCars = planner;
-                            this.tacticalPlannerTrucks = planner;
+                            this.strategicalPlannerGeneratorCars =
+                                new LaneBasedStrategicalRoutePlannerFactory(new ToledoFactory());
+                            this.strategicalPlannerGeneratorTrucks =
+                                new LaneBasedStrategicalRoutePlannerFactory(new ToledoFactory());
                         }
                         else
                         {
@@ -715,66 +717,31 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
     protected final void generateCar(final Length initialPosition, final Lane lane, final GTUType gtuType)
         throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
     {
+
+        // GTU itself
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
-        Speed initialSpeed = new Speed(0, KM_PER_HOUR);
+        Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
+        LaneBasedIndividualGTU gtu =
+            new LaneBasedIndividualGTU("" + (++this.carsCreated), gtuType, vehicleLength, new Length(1.8, METER), new Speed(
+                200, KM_PER_HOUR), this.simulator, DefaultCarAnimation.class, this.gtuColorer, this.network);
+
+        // strategical planner
+        LaneBasedStrategicalPlanner strategicalPlanner;
+        if (!generateTruck)
+        {
+            strategicalPlanner = this.strategicalPlannerGeneratorCars.create(gtu);
+        }
+        else
+        {
+            strategicalPlanner = this.strategicalPlannerGeneratorTrucks.create(gtu);
+        }
+        
+        // init
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
-        Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
-        BehavioralCharacteristics behavioralCharacteristics;
-        if (this.tacticalPlannerCars instanceof LMRS)
-        {
-            behavioralCharacteristics = new BehavioralCharacteristics();
-            behavioralCharacteristics.setDefaultParameters(ParameterTypes.class);
-            behavioralCharacteristics.setDefaultParameters(AbstractIDM.class);
-            behavioralCharacteristics.setDefaultParameters(LmrsUtil.class);
-        }
-        else if (this.tacticalPlannerCars instanceof Toledo)
-        {
-            behavioralCharacteristics = new BehavioralCharacteristics();
-            try
-            {
-                behavioralCharacteristics.setDefaultParameter(ParameterTypes.LOOKAHEAD);
-                behavioralCharacteristics.setDefaultParameter(ParameterTypes.LOOKBACKOLD);
-            }
-            catch (ParameterException exception)
-            {
-                exception.printStackTrace();
-            }
-            behavioralCharacteristics.setDefaultParameters(ToledoLaneChangeParameters.class);
-            behavioralCharacteristics.setDefaultParameters(ToledoCarFollowing.class);
-            behavioralCharacteristics.setDefaultParameters(Toledo.class);
-        }
-        else
-        {
-            behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
-        }
-        // LaneBasedBehavioralCharacteristics drivingCharacteristics =
-        // new LaneBasedBehavioralCharacteristics(generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars,
-        // this.laneChangeModel);
-        LaneBasedStrategicalPlanner strategicalPlanner;
-        if (this.tacticalPlannerCars instanceof LMRS)
-        {
-            LMRS tacticalPlanner = new LMRS(new IDMPlus());
-            tacticalPlanner.setDefaultIncentives();
-            strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, tacticalPlanner);
-        }
-        else if (this.tacticalPlannerCars instanceof Toledo)
-        {
-            Toledo tacticalPlanner = new Toledo(new ToledoCarFollowing());
-            strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, tacticalPlanner);
-        }
-        else
-        {
-            strategicalPlanner =
-                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, generateTruck ? this.tacticalPlannerTrucks
-                        : this.tacticalPlannerCars);
-        }
-        // TODO correct perception per tactical planner
-        LanePerception perception =
-            this.tacticalPlannerCars instanceof LMRS ? new LanePerceptionFull() : new LanePerceptionFull();
-        new LaneBasedIndividualGTU("" + (++this.carsCreated), gtuType, initialPositions, initialSpeed, vehicleLength,
-            new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, strategicalPlanner, perception,
-            DefaultCarAnimation.class, this.gtuColorer, this.network);
+        Speed initialSpeed = new Speed(0, KM_PER_HOUR);
+        gtu.init(strategicalPlanner, initialPositions, initialSpeed);
+
     }
 
     /** {@inheritDoc} */

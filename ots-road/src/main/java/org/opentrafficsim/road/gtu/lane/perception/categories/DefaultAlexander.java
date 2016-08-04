@@ -87,20 +87,6 @@ public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
     }
 
     /**
-     * Check whether the GTU has been initialized, and returns the current time.
-     * @return the current time according to the simulator.
-     * @throws GTUException when the GTU was not initialized yet.
-     */
-    private Time getTimestamp() throws GTUException
-    {
-        if (getGtu() == null)
-        {
-            throw new GTUException("gtu value has not been initialized for LanePerception when perceiving.");
-        }
-        return getGtu().getSimulator().getSimulatorTime().getTime();
-    }
-
-    /**
      * @throws GTUException when the GTU was not initialized yet.
      * @throws NetworkException when the speed limit for a GTU type cannot be retrieved from the network.
      * @throws ParameterException in case of not being able to retrieve parameter ParameterTypes.LOOKAHEAD
@@ -131,9 +117,9 @@ public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
 
     /**
      * Update the forward headway and first object (e.g., a GTU) in front.
-     * @throws GTUException
-     * @throws ParameterException
-     * @throws NetworkException
+     * @throws GTUException when the GTU was not yet initialized
+     * @throws ParameterException if parameter is not defined or out of bounds
+     * @throws NetworkException in case of network exception
      */
     public final void updateForwardHeadway() throws GTUException, NetworkException, ParameterException
     {
@@ -148,9 +134,9 @@ public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
 
     /**
      * Update the backward headway and first object (e.g., a GTU) behind.
-     * @throws GTUException
-     * @throws ParameterException
-     * @throws NetworkException
+     * @throws GTUException when the GTU was not yet initialized
+     * @throws ParameterException if parameter is not defined or out of bounds
+     * @throws NetworkException in case of network exception
      */
     public final void updateBackwardHeadway() throws GTUException, ParameterException, NetworkException
     {
@@ -161,7 +147,7 @@ public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
 
     /**
      * Update the accessible adjacent lanes on the left.
-     * @throws GTUException
+     * @throws GTUException when the GTU was not yet initialized
      */
     public final void updateAccessibleAdjacentLanesLeft() throws GTUException
     {
@@ -178,7 +164,7 @@ public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
 
     /**
      * Update the accessible adjacent lanes on the right.
-     * @throws GTUException
+     * @throws GTUException when the GTU was not yet initialized
      */
     public final void updateAccessibleAdjacentLanesRight() throws GTUException
     {
@@ -212,9 +198,9 @@ public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
     /**
      * Update the objects (e.g., GTUs) in parallel, in front and behind on the left neighboring lane, with their headway
      * relative to our GTU, and information about the status of the adjacent objects.
-     * @throws GTUException
-     * @throws ParameterException
-     * @throws NetworkException
+     * @throws GTUException when the GTU was not yet initialized
+     * @throws ParameterException if parameter is not defined or out of bounds
+     * @throws NetworkException in case of network exception
      */
     public final void updateNeighboringHeadwaysLeft() throws GTUException, ParameterException, NetworkException
     {
@@ -240,9 +226,9 @@ public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
     /**
      * Update the objects (e.g., GTUs) in parallel, in front and behind on the right neighboring lane, with their headway
      * relative to our GTU, and information about the status of the adjacent objects.
-     * @throws GTUException
-     * @throws ParameterException
-     * @throws NetworkException
+     * @throws GTUException when the GTU was not yet initialized
+     * @throws ParameterException if parameter is not defined or out of bounds
+     * @throws NetworkException in case of network exception
      */
     public final void updateNeighboringHeadwaysRight() throws GTUException, ParameterException, NetworkException
     {
@@ -269,9 +255,9 @@ public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
      * Update the objects (e.g., GTUs) in parallel, in front and behind for the lane in the given direction, with their headway
      * relative to our GTU, and information about the status of the adjacent objects.
      * @param lateralDirection the direction to update the parallel headway collection for
-     * @throws NetworkException
-     * @throws ParameterException
-     * @throws GTUException
+     * @throws GTUException when the GTU was not yet initialized
+     * @throws ParameterException if parameter is not defined or out of bounds
+     * @throws NetworkException in case of network exception
      */
     public final void updateNeighboringHeadways(final LateralDirectionality lateralDirection) throws GTUException,
         ParameterException, NetworkException
@@ -289,7 +275,7 @@ public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
     /**
      * Update the parallel objects (e.g., GTUs) on the left, with information about their status and parallel overlap with our
      * GTU.
-     * @throws GTUException
+     * @throws GTUException when the GTU was not yet initialized
      */
     public final void updateParallelHeadwaysLeft() throws GTUException
     {
@@ -312,7 +298,7 @@ public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
     /**
      * Update the parallel objects (e.g., GTUs) on the right, with information about their status and parallel overlap with our
      * GTU.
-     * @throws GTUException
+     * @throws GTUException when the GTU was not yet initialized
      */
     public final void updateParallelHeadwaysRight() throws GTUException
     {
@@ -336,7 +322,7 @@ public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
      * Update the parallel objects (e.g., GTUs) for the given direction, with information about their status and parallel
      * overlap with our GTU.
      * @param lateralDirection the direction to return the neighboring headway collection for
-     * @throws GTUException
+     * @throws GTUException when the GTU was not yet initialized
      */
     public final void updateParallelHeadways(final LateralDirectionality lateralDirection) throws GTUException
     {
@@ -352,8 +338,8 @@ public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
 
     /**
      * Update speedLimit.
-     * @throws GTUException
-     * @throws NetworkException
+     * @throws GTUException when the GTU was not yet initialized
+     * @throws NetworkException in case of network exception
      */
     public final void updateSpeedLimit() throws GTUException, NetworkException
     {
@@ -405,20 +391,10 @@ public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
      * @param lateralDirection the direction to return the accessible adjacent lane map for
      * @return the accessible adjacent lane map for the given direction
      */
-    public final Map<Lane, Set<Lane>> accessibleAdjacentLaneMap(final LateralDirectionality lateralDirection)
+    public final Map<Lane, Set<Lane>> getAccessibleAdjacentLanes(final LateralDirectionality lateralDirection)
     {
         return lateralDirection.equals(LateralDirectionality.LEFT) ? this.accessibleAdjacentLanesLeft.getObject()
             : this.accessibleAdjacentLanesRight.getObject();
-    }
-
-    /**
-     * TODO Remove this, rename the one without get. This is only for unit test.
-     * @param lateralDirection the direction to return the accessible adjacent lane map for
-     * @return the accessible adjacent lane map for the given direction
-     */
-    public final Map<Lane, Set<Lane>> getAccessibleAdjacentLanes(final LateralDirectionality lateralDirection)
-    {
-        return null;
     }
 
     /**
@@ -617,7 +593,60 @@ public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
     {
         return this.lanePathInfo;
     }
+    
+    /**
+     * Determine whether there is a lane to the left or to the right of this lane, which is accessible from this lane, or null
+     * if no lane could be found. The method takes the LongitidinalDirectionality of the lane into account. In other words, if
+     * we drive FORWARD and look for a lane on the LEFT, and there is a lane but the Directionality of that lane is not FORWARD
+     * or BOTH, null will be returned.<br>
+     * A lane is called adjacent to another lane if the lateral edges are not more than a delta distance apart. This means that
+     * a lane that <i>overlaps</i> with another lane is <b>not</b> returned as an adjacent lane. <br>
+     * The algorithm also looks for RoadMarkerAcross elements between the lanes to determine the lateral permeability for a GTU.
+     * A RoadMarkerAcross is seen as being between two lanes if its center line is not more than delta distance from the
+     * relevant lateral edges of the two adjacent lanes. <br>
+     * When there are multiple lanes that are adjacent, which could e.g. be the case if an overlapping tram lane and a car lane
+     * are adjacent to the current lane, the widest lane that best matches the GTU accessibility of the provided GTUType is
+     * returned. <br>
+     * <b>Note:</b> LEFT is seen as a negative lateral direction, RIGHT as a positive lateral direction. <br>
+     * FIXME In other places in OTS LEFT is positive (and RIGHT is negative). This should be made more consistent.
+     * @param currentLane the lane to look for the best accessible adjacent lane
+     * @param lateralDirection the direction (LEFT, RIGHT) to look at
+     * @param longitudinalPosition Length; the position of the GTU along <cite>currentLane</cite>
+     * @return the lane if it is accessible, or null if there is no lane, it is not accessible, or the driving direction does
+     *         not match.
+     */
+    public final Lane bestAccessibleAdjacentLane(final Lane currentLane, final LateralDirectionality lateralDirection,
+        final Length longitudinalPosition)
+    {
+        Set<Lane> candidates = getAccessibleAdjacentLanes(lateralDirection).get(currentLane);
+        if (candidates.isEmpty())
+        {
+            return null; // There is no adjacent Lane that this GTU type can cross into
+        }
+        if (candidates.size() == 1)
+        {
+            return candidates.iterator().next(); // There is exactly one adjacent Lane that this GTU type can cross into
+        }
+        // There are several candidates; find the one that is widest at the beginning.
+        Lane bestLane = null;
+        double widestSeen = Double.NEGATIVE_INFINITY;
+        for (Lane lane : candidates)
+        {
+            if (lane.getWidth(longitudinalPosition).getSI() > widestSeen)
+            {
+                widestSeen = lane.getWidth(longitudinalPosition).getSI();
+                bestLane = lane;
+            }
+        }
+        return bestLane;
+    }
 
+    /** {@inheritDoc} */
+    public final String toString()
+    {
+        return "DefaultAlexander perception category";
+    }
+    
     /**************************************************************************************************************************/
     /**************************************************** HEADWAY ALGORITHMS **************************************************/
     /**************************************************************************************************************************/
@@ -952,7 +981,7 @@ public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
         Collection<Headway> gtuSet = new LinkedHashSet<>();
         for (Lane lane : getGtu().getLanes().keySet())
         {
-            for (Lane adjacentLane : accessibleAdjacentLaneMap(lateralDirection).get(lane))
+            for (Lane adjacentLane : getAccessibleAdjacentLanes(lateralDirection).get(lane))
             {
                 gtuSet.addAll(parallel(adjacentLane, when));
             }
@@ -985,7 +1014,7 @@ public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
         }
 
         // forward
-        for (Lane adjacentLane : accessibleAdjacentLaneMap(directionality).get(getLanePathInfo().getReferenceLane()))
+        for (Lane adjacentLane : getAccessibleAdjacentLanes(directionality).get(getLanePathInfo().getReferenceLane()))
         {
             LanePathInfo lpiAdjacent = buildLanePathInfoAdjacent(adjacentLane, directionality, when);
             Headway leader = forwardHeadway(lpiAdjacent, maximumForwardHeadway);
@@ -998,7 +1027,7 @@ public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
         // backward
         for (Lane lane : getGtu().getLanes().keySet())
         {
-            for (Lane adjacentLane : accessibleAdjacentLaneMap(directionality).get(lane))
+            for (Lane adjacentLane : getAccessibleAdjacentLanes(directionality).get(lane))
             {
                 Headway follower =
                     headwayRecursiveBackwardSI(adjacentLane, getGtu().getLanes().get(lane), getGtu().projectedPosition(

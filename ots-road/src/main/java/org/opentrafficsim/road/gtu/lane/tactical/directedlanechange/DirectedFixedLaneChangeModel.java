@@ -9,9 +9,9 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
-import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlannerOld;
+import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 
 /**
@@ -36,7 +36,7 @@ public class DirectedFixedLaneChangeModel implements DirectedLaneChangeModel
             throws GTUException
     {
         GTUFollowingModelOld gtuFollowingModel =
-                (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlannerOld) gtu.getTacticalPlanner()).getCarFollowingModel();
+                (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner()).getCarFollowingModel();
         if (null == direction)
         {
             return new DirectedLaneMovementStep(gtuFollowingModel.computeDualAccelerationStep(gtu, sameLaneTraffic,
@@ -73,7 +73,7 @@ public class DirectedFixedLaneChangeModel implements DirectedLaneChangeModel
 
     /** {@inheritDoc} */
     @Override
-    public final LanePerceptionFull getPerception()
+    public final LanePerception getPerception()
     {
         return null;
     }

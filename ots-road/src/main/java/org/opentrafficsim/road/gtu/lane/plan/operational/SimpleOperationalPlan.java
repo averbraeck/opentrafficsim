@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane.tactical.util;
+package org.opentrafficsim.road.gtu.lane.plan.operational;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -66,6 +66,13 @@ public class SimpleOperationalPlan
     public final void minimumAcceleration(final Acceleration a)
     {
         this.acceleration = Acceleration.min(this.acceleration, a);
+    }
+    
+    /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "SimpleOperationalPlan [Acceleration=" + this.acceleration + ", change=" + this.laneChangeDirection + "]";
     }
 
 }

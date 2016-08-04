@@ -17,8 +17,9 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultAlexander;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 
@@ -37,7 +38,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacticalPlannerOld
+public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacticalPlanner
 {
     /** */
     private static final long serialVersionUID = 20151125L;
@@ -55,11 +56,11 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
     /** {@inheritDoc} */
     @Override
     public OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
-            throws OperationalPlanException, NetworkException, GTUException, ParameterException
+        throws OperationalPlanException, NetworkException, GTUException, ParameterException
     {
         // ask Perception for the local situation
         LaneBasedGTU laneBasedGTU = getGtu();
-        LanePerceptionFull perception = (LanePerceptionFull) getPerception();
+        LanePerception perception = getPerception();
 
         // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
         if (laneBasedGTU.getMaximumSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
@@ -75,20 +76,22 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         LanePathInfo lanePathInfo = buildLanePathInfo(laneBasedGTU, maxDistance);
 
         // look at the conditions for headway
-        Headway headway = perception.getForwardHeadway();
+        Headway headway = perception.getPerceptionCategory(DefaultAlexander.class).getForwardHeadway();
         AccelerationStep accelerationStep = null;
         if (headway.getDistance().ge(maxDistance))
         {
             // TODO I really don't like this -- if there is a lane drop at 20 m, the GTU should stop...
             accelerationStep =
-                    ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStepWithNoLeader(laneBasedGTU,
-                            lanePathInfo.getPath().getLength(), perception.getSpeedLimit());
+                ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStepWithNoLeader(laneBasedGTU,
+                    lanePathInfo.getPath().getLength(), perception.getPerceptionCategory(DefaultAlexander.class)
+                        .getSpeedLimit());
         }
         else
         {
             accelerationStep =
-                    ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStep(laneBasedGTU, headway.getSpeed(),
-                            headway.getDistance(), lanePathInfo.getPath().getLength(), perception.getSpeedLimit());
+                ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStep(laneBasedGTU, headway.getSpeed(),
+                    headway.getDistance(), lanePathInfo.getPath().getLength(), perception.getPerceptionCategory(
+                        DefaultAlexander.class).getSpeedLimit());
         }
 
         // see if we have to continue standing still. In that case, generate a stand still plan
@@ -106,12 +109,11 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         else
         {
             Segment segment =
-                    new OperationalPlan.AccelerationSegment(accelerationStep.getDuration(), accelerationStep.getAcceleration());
+                new OperationalPlan.AccelerationSegment(accelerationStep.getDuration(), accelerationStep.getAcceleration());
             operationalPlanSegmentList.add(segment);
         }
         OperationalPlan op =
-                new OperationalPlan(getGtu(), lanePathInfo.getPath(), startTime, getGtu().getSpeed(),
-                        operationalPlanSegmentList);
+            new OperationalPlan(getGtu(), lanePathInfo.getPath(), startTime, getGtu().getSpeed(), operationalPlanSegmentList);
         return op;
     }
 

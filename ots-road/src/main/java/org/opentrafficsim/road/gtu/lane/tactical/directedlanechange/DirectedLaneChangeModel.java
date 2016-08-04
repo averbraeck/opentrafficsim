@@ -8,10 +8,11 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
 
 /**
  * All directed lane change models must implement this interface. A directed lane change model is a lane change model where the
@@ -45,16 +46,17 @@ public interface DirectedLaneChangeModel
      * @return LaneMovementStep; the result of the lane change and GTU following model
      * @throws GTUException when the position of the GTU on the lane(s) cannot be determined
      * @throws ParameterException in case of a parameter problem.
+     * @throws OperationalPlanException if DefaultAlexander perception category is not present
      */
     @SuppressWarnings("checkstyle:parameternumber")
     DirectedLaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu, final LateralDirectionality direction,
-            final Collection<Headway> sameLaneTraffic, final Collection<Headway> otherLaneTraffic,
-            final Length maxDistance, final Speed speedLimit, final Acceleration otherLaneRouteIncentive,
-            final Acceleration laneChangeThreshold, Duration laneChangeTime) throws GTUException, ParameterException;
+        final Collection<Headway> sameLaneTraffic, final Collection<Headway> otherLaneTraffic, final Length maxDistance,
+        final Speed speedLimit, final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold,
+        Duration laneChangeTime) throws GTUException, ParameterException, OperationalPlanException;
 
     /** @return the perception. */
-    LanePerceptionFull getPerception();
-    
+    LanePerception getPerception();
+
     /**
      * Return the name of this GTU following model.
      * @return String; just the name of the GTU following model

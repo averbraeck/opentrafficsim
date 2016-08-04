@@ -13,7 +13,7 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.DefaultTestParameters;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
+import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
@@ -47,11 +47,10 @@ public class LaneBasedStrategicalRoutePlannerTest
         directionalityMap.put(gtuType, LongitudinalDirectionality.DIR_PLUS); // Start with the easy cases
         OTSLink link = new OTSLink("link", fromNode, toNode, LinkType.ALL, null, directionalityMap);
         CarFollowingModel cfm = new IDMPlus();
-        LanePerceptionFull perception = new LanePerceptionFull();
         LaneBasedGTUFollowingLaneChangeTacticalPlanner tacticalPlanner =
-                new LaneBasedGTUFollowingLaneChangeTacticalPlanner(perception, null);
+                new LaneBasedGTUFollowingLaneChangeTacticalPlanner(null, null);
         BehavioralCharacteristics bc = DefaultTestParameters.create();
-        LaneBasedStrategicalRoutePlanner lbsrp = new LaneBasedStrategicalRoutePlanner(bc, tacticalPlanner);
+        LaneBasedStrategicalRoutePlanner lbsrp = new LaneBasedStrategicalRoutePlanner(bc, tacticalPlanner, null);
 
     }
 }

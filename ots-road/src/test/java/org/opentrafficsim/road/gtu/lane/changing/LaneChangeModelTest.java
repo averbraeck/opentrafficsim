@@ -44,7 +44,6 @@ import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
@@ -186,30 +185,20 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
 
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions
-                .add(new DirectedLanePosition(lanes[0], new Length(100, METER), GTUDirectionality.DIR_PLUS));
+                .add(new DirectedLanePosition(lanes[1], new Length(100, METER), GTUDirectionality.DIR_PLUS));
         SimpleSimulator simpleSimulator =
                 new SimpleSimulator(new Time(0, SECOND), new Duration(0, SECOND), new Duration(3600, SECOND), this);
-        LanePerceptionFull perception = new LanePerceptionFull();
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
-        BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
-        // behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
-        // behavioralCharacteristics.setParameter(ParameterTypes.B, new Acceleration(1.5, METER_PER_SECOND_2));
-        // behavioralCharacteristics.setParameter(ParameterTypes.S0, new Length(2, METER));
-        // behavioralCharacteristics.setParameter(ParameterTypes.T, new Duration(1, SECOND));
-        // behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
-        // behavioralCharacteristics.setParameter(AbstractIDM.DELTA, 1d);
-        // behavioralCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, ParameterTypes.LOOKAHEAD.getDefaultValue());
-        // behavioralCharacteristics.setParameter(ParameterTypes.LOOKBACKOLD, ParameterTypes.LOOKBACKOLD.getDefaultValue());
-        behavioralCharacteristics = DefaultTestParameters.create();
+        BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create();
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(
         // 1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d), laneChangeModel);
-        LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(perception,
-                        new IDMPlusOld(), laneChangeModel));
         LaneBasedIndividualGTU car =
                 new LaneBasedIndividualGTU("ReferenceCar", gtuType, new Length(4, METER), new Length(2, METER), new Speed(150,
                         KM_PER_HOUR), simpleSimulator, this.network);
+        LaneBasedStrategicalPlanner strategicalPlanner =
+                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
+                        new IDMPlusOld(), laneChangeModel, car), car);
         car.init(strategicalPlanner, initialLongitudinalPositions, new Speed(100, KM_PER_HOUR));
         car.getTacticalPlanner().getPerception().perceive();
         Collection<Headway> sameLaneGTUs = new LinkedHashSet<Headway>();
@@ -251,12 +240,12 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
             // new Acceleration(1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d),
             // laneChangeModel);
-            strategicalPlanner =
-                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
-                            perception, new IDMPlusOld(), laneChangeModel));
             LaneBasedIndividualGTU collisionCar =
                     new LaneBasedIndividualGTU("LaneChangeBlockingCarAt" + pos, gtuType, vehicleLength, new Length(2, METER),
                             new Speed(150, KM_PER_HOUR), simpleSimulator, this.network);
+            strategicalPlanner =
+                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
+                            new IDMPlusOld(), laneChangeModel, collisionCar), collisionCar);
             collisionCar.init(strategicalPlanner, otherLongitudinalPositions, new Speed(100, KM_PER_HOUR));
             preferredLaneGTUs.clear();
             HeadwayGTUSimple collisionHWGTU =
@@ -271,7 +260,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             assertEquals("Vehicle cannot to change to the right lane because that would result in an immediate collision",
                     null, laneChangeModelResult.getLaneChange());
         }
-        for (double pos = 0; pos < 200; pos += 5)
+        for (double pos = 0; pos < 180; pos += 5) // beyond 180m, a GTU gets a plan beyond the 200m long network
         {
             Set<DirectedLanePosition> otherLongitudinalPositions = new LinkedHashSet<>(1);
             otherLongitudinalPositions.add(new DirectedLanePosition(lanes[1], new Length(pos, METER),
@@ -283,17 +272,19 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             behavioralCharacteristics.setParameter(ParameterTypes.S0, new Length(2, METER));
             behavioralCharacteristics.setParameter(ParameterTypes.T, new Duration(1, SECOND));
             behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
+            behavioralCharacteristics.setDefaultParameter(ParameterTypes.LOOKAHEAD);
+            behavioralCharacteristics.setDefaultParameter(ParameterTypes.LOOKBACKOLD);
             behavioralCharacteristics.setParameter(AbstractIDM.DELTA, 1d);
             // drivingCharacteristics =
             // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
             // new Acceleration(1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d),
             // laneChangeModel);
-            strategicalPlanner =
-                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
-                            perception, new IDMPlusOld(), laneChangeModel));
             LaneBasedIndividualGTU otherCar =
                     new LaneBasedIndividualGTU("OtherCarAt" + pos, gtuType, vehicleLength, new Length(2, METER), new Speed(150,
                             KM_PER_HOUR), simpleSimulator, this.network);
+            strategicalPlanner =
+                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
+                            new IDMPlusOld(), laneChangeModel, otherCar), otherCar);
             otherCar.init(strategicalPlanner, otherLongitudinalPositions, new Speed(100, KM_PER_HOUR));
             preferredLaneGTUs.clear();
             HeadwayGTUSimple collisionHWGTU =

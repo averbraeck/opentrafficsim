@@ -17,7 +17,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -80,7 +80,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
         final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist, final long maxGTUs,
         final Time startTime, final Time endTime, final Lane lane, final Length position,
         final GTUDirectionality direction, final GTUColorer gtuColorer,
-        final LaneBasedStrategicalPlanner strategicalPlanner, final Class<LanePerceptionFull> perceptionClass,
+        final LaneBasedStrategicalPlanner strategicalPlanner, final Class<? extends LanePerception> perceptionClass,
         final OTSNetwork network) throws SimRuntimeException
     {
         super(name, simulator, gtuType, gtuClass, initialSpeedDist, interarrivelTimeDist, maxGTUs, startTime, endTime,

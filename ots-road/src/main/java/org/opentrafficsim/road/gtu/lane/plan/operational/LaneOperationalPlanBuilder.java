@@ -19,8 +19,6 @@ import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.SpeedSegment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -514,6 +512,13 @@ public final class LaneOperationalPlanBuilder
                 return 1.0;
             }
             return fraction;
+        }
+
+        /** {@inheritDoc} */
+        public final String toString()
+        {
+            return "LaneChange [" + this.laneChangeDuration + " of " + this.laneChangeDuration + " to "
+                + this.laneChangeDirectionality + "]";
         }
 
     }

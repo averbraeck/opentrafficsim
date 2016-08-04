@@ -29,10 +29,10 @@ import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU.LaneBasedIndividualCarBuilder;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayDistance;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -102,7 +102,7 @@ public abstract class AbstractGTUGenerator implements Serializable
     private final LaneBasedStrategicalPlanner strategicalPlanner;
 
     /** The LanePerception to use. */
-    private final Class<LanePerceptionFull> perceptionClass;
+    private final Class<? extends LanePerception> perceptionClass;
 
     /** The network. */
     private final OTSNetwork network;
@@ -139,7 +139,7 @@ public abstract class AbstractGTUGenerator implements Serializable
             final ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> interarrivelTimeDist, final long maxGTUs,
             final Time startTime, final Time endTime, final Lane lane, final Length position,
             final GTUDirectionality direction, final GTUColorer gtuColorer,
-            final LaneBasedStrategicalPlanner strategicalPlanner, final Class<LanePerceptionFull> perceptionClass,
+            final LaneBasedStrategicalPlanner strategicalPlanner, final Class<? extends LanePerception> perceptionClass,
             final OTSNetwork network) throws SimRuntimeException
     {
         super();
@@ -577,7 +577,7 @@ public abstract class AbstractGTUGenerator implements Serializable
     /**
      * @return perception
      */
-    public final Class<LanePerceptionFull> getPerceptionClass()
+    public final Class<? extends LanePerception> getPerceptionClass()
     {
         return this.perceptionClass;
     }

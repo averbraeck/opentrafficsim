@@ -6,6 +6,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
@@ -41,13 +42,14 @@ public interface LaneChangeModel
      * @return LaneMovementStep; the result of the lane change and GTU following model
      * @throws GTUException when the speed of the GTU can not be determined
      * @throws ParameterException in case of a parameter problem.
+     * @throws OperationalPlanException if DefaultAlexander perception category is not present.
      */
     @SuppressWarnings("checkstyle:parameternumber")
     LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
         final Collection<Headway> sameLaneTraffic, final Collection<Headway> rightLaneTraffic,
         final Collection<Headway> leftLaneTraffic, final Speed speedLimit,
         final Acceleration preferredLaneRouteIncentive, final Acceleration laneChangeThreshold,
-        final Acceleration nonPreferredLaneRouteIncentive) throws GTUException, ParameterException;
+        final Acceleration nonPreferredLaneRouteIncentive) throws GTUException, ParameterException, OperationalPlanException;
     
     /**
      * Return the name of this GTU following model.

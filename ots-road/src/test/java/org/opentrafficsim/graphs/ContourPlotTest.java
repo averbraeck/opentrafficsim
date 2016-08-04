@@ -394,11 +394,7 @@ public class ContourPlotTest implements UNITS
             SECOND)));
         LaneChangeModel laneChangeModel = new Egoistic();
         OTSNetwork network = new OTSNetwork("network");
-        LaneBasedIndividualGTU car =
-            CarTest.makeReferenceCar("0", gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
-                laneChangeModel, network);
-        car.getStrategicalPlanner().getBehavioralCharacteristics().setParameter(
-            ParameterTypes.LOOKAHEAD, new Length(10, LengthUnit.KILOMETER));
+        
         // Check that the initial data in the graph contains no trace of any car.
         for (int item = 0; item < bins; item++)
         {
@@ -434,6 +430,13 @@ public class ContourPlotTest implements UNITS
                     0.0000);
             }
         }
+        
+        LaneBasedIndividualGTU car =
+                CarTest.makeReferenceCar("0", gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
+                    laneChangeModel, network);
+            car.getStrategicalPlanner().getBehavioralCharacteristics().setParameter(
+                ParameterTypes.LOOKAHEAD, new Length(10, LengthUnit.KILOMETER));
+        
         // System.out.println("Running simulator from " + simulator.getSimulatorTime().get() + " to "
         // + gtuFollowingModel.timeAfterCompletionOfStep(0));
         double stopTime = gtuFollowingModel.timeAfterCompletionOfStep(0).si;

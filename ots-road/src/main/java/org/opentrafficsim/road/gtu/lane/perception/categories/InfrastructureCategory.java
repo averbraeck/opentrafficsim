@@ -1,18 +1,24 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.TimeStampedObject;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
+import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
 /**
+ * Perceives information concerning the infrastructure, including slits, lanes, speed limits and road markings.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -22,24 +28,28 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class InfrastructureCategory extends AbstractPerceptionCategory
+// TODO update methods produce dummy "stay in infinite lane" data
+public class InfrastructureCategory extends LaneBasedAbstractPerceptionCategory
 {
 
     /** Infrastructure lane change info per relative lane. */
-    private Map<RelativeLane, TimeStampedObject<SortedSet<InfrastructureLaneChangeInfo>>> infrastructureLaneChangeInfo;
-    
+    private final Map<RelativeLane, TimeStampedObject<SortedSet<InfrastructureLaneChangeInfo>>> infrastructureLaneChangeInfo =
+        new HashMap<>();
+
     /** Speed limit prospect per relative lane. */
-    private Map<RelativeLane, TimeStampedObject<SpeedLimitProspect>> speedLimitProspect;
-    
+    private final Map<RelativeLane, TimeStampedObject<SpeedLimitProspect>> speedLimitProspect = new HashMap<>();
+
     /** Legal Lane change possibilities per relative lane and lateral direction. */
-    private Map<RelativeLane, Map<LateralDirectionality, TimeStampedObject<Length>>> legalLaneChangePossibility;
-    
+    private final Map<RelativeLane, Map<LateralDirectionality, TimeStampedObject<Length>>> legalLaneChangePossibility =
+        new HashMap<>();
+
     /** Physical Lane change possibilities per relative lane and lateral direction. */
-    private Map<RelativeLane, Map<LateralDirectionality, TimeStampedObject<Length>>> physicalLaneChangePossibility;
-    
+    private final Map<RelativeLane, Map<LateralDirectionality, TimeStampedObject<Length>>> physicalLaneChangePossibility =
+        new HashMap<>();
+
     /** Cross-section. */
     private TimeStampedObject<SortedSet<RelativeLane>> crossSection;
-    
+
     /**
      * @param perception perception
      */
@@ -50,55 +60,121 @@ public class InfrastructureCategory extends AbstractPerceptionCategory
 
     /** {@inheritDoc} */
     @Override
-    public final void updateAll()
+    public final void updateAll() throws GTUException
     {
-        //
+        updateCrossSection();
+        for (RelativeLane lane : this.crossSection.getObject())
+        {
+            updateInfrastructureLaneChangeInfo(lane);
+            updateSpeedLimitProspect(lane);
+            updateLegalLaneChangePossibility(lane, LateralDirectionality.LEFT);
+            updateLegalLaneChangePossibility(lane, LateralDirectionality.RIGHT);
+            updatePhysicalLaneChangePossibility(lane, LateralDirectionality.LEFT);
+            updatePhysicalLaneChangePossibility(lane, LateralDirectionality.RIGHT);
+        }
     }
 
     /**
      * Updates the infrastructural lane change info.
      * @param lane relative lateral lane
+     * @throws GTUException if the GTU was not initialized
      */
-    public final void updateInfrastructureLaneChangeInfo(final RelativeLane lane)
+    public final void updateInfrastructureLaneChangeInfo(final RelativeLane lane) throws GTUException
     {
-        //
+        updateCrossSection();
+        this.infrastructureLaneChangeInfo.put(RelativeLane.CURRENT, new TimeStampedObject<>(new TreeSet<>(),
+            getTimestamp()));
     }
 
     /**
      * Updates the speed limit prospect.
      * @param lane relative lateral lane
+     * @throws GTUException if the GTU was not initialized
      */
-    public final void updateSpeedLimitProspect(final RelativeLane lane)
+    public final void updateSpeedLimitProspect(final RelativeLane lane) throws GTUException
     {
-        //
+        updateCrossSection();
+        SpeedLimitProspect slp = new SpeedLimitProspect();
+        slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.MAX_VEHICLE_SPEED, getGtu().getMaximumSpeed());
+        try
+        {
+            slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.FIXED_SIGN, getGtu().getLanes().keySet().iterator().next()
+                .getSpeedLimit(getGtu().getGTUType()));
+        }
+        catch (NetworkException exception)
+        {
+            throw new RuntimeException("Could not obtain speed limit from lane for perception.", exception);
+        }
+        this.speedLimitProspect.put(RelativeLane.CURRENT, new TimeStampedObject<>(slp, getTimestamp()));
     }
 
     /**
      * Updates the distance over which lane changes remains legally possible.
      * @param fromLane lane from which the lane change possibility is requested
      * @param lat LEFT or RIGHT, null not allowed
+     * @throws GTUException if the GTU was not initialized
      */
-    public final void updateLegalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
+    public final void updateLegalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat) throws GTUException
     {
-        //
+        updateCrossSection();
+        Map<LateralDirectionality, TimeStampedObject<Length>> map = new HashMap<>();
+        map.put(LateralDirectionality.LEFT, new TimeStampedObject<>(Length.ZERO, getTimestamp()));
+        map.put(LateralDirectionality.RIGHT, new TimeStampedObject<>(Length.ZERO, getTimestamp()));
+        this.legalLaneChangePossibility.put(RelativeLane.CURRENT, map);
     }
 
     /**
      * Updates the distance over which lane changes remains physically possible.
      * @param fromLane lane from which the lane change possibility is requested
      * @param lat LEFT or RIGHT, null not allowed
+     * @throws GTUException if the GTU was not initialized
      */
-    public final void updatePhysicalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
+    public final void updatePhysicalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat) throws GTUException
     {
-        //
+        updateCrossSection();
+        Map<LateralDirectionality, TimeStampedObject<Length>> map = new HashMap<>();
+        map.put(LateralDirectionality.LEFT, new TimeStampedObject<>(Length.ZERO, getTimestamp()));
+        map.put(LateralDirectionality.RIGHT, new TimeStampedObject<>(Length.ZERO, getTimestamp()));
+        this.physicalLaneChangePossibility.put(RelativeLane.CURRENT, map);
     }
 
     /**
      * Updates a set of relative lanes representing the cross section.
+     * @throws GTUException if the GTU was not initialized
      */
-    public final void updateCrossSection()
+    public final void updateCrossSection() throws GTUException
     {
-        //
+        if (this.crossSection != null && this.crossSection.getTimestamp().equals(getTimestamp()))
+        {
+            // already done at this time
+            return;
+        }
+        // get current cross section
+        SortedSet<RelativeLane> set = new TreeSet<>();
+        set.add(RelativeLane.CURRENT);
+        this.crossSection = new TimeStampedObject<>(set, getTimestamp());
+        // remove all mappings related to lanes no longer in the set
+        removeInvalidMappings(this.infrastructureLaneChangeInfo);
+        removeInvalidMappings(this.speedLimitProspect);
+        removeInvalidMappings(this.legalLaneChangePossibility);
+        removeInvalidMappings(this.physicalLaneChangePossibility);
+    }
+
+    /**
+     * Removes all mappings to relative lanes that are not in the most recent cross sections.
+     * @param map map to clear mappings from
+     */
+    private void removeInvalidMappings(final Map<RelativeLane, ? extends Object> map)
+    {
+        Iterator<RelativeLane> iterator = map.keySet().iterator();
+        while (iterator.hasNext())
+        {
+            RelativeLane lane = iterator.next();
+            if (!this.crossSection.getObject().contains(lane))
+            {
+                iterator.remove();
+            }
+        }
     }
 
     /**
@@ -244,4 +320,10 @@ public class InfrastructureCategory extends AbstractPerceptionCategory
         return this.crossSection;
     }
 
+    /** {@inheritDoc} */
+    public final String toString()
+    {
+        return "InfrastructureCategory";
+    }
+    
 }

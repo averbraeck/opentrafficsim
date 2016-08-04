@@ -1,11 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
 /**
+ * Standard perception completely based on connected perception categories. 
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -29,12 +27,12 @@ public class CategorialLanePerception extends AbstractLanePerception
     {
         super(gtu);
     }
-
+    
     /** {@inheritDoc} */
     @Override
-    public void perceive() throws GTUException, NetworkException, ParameterException
+    public final String toString()
     {
-        // TODO what?
+        return super.toString();
     }
 
 }

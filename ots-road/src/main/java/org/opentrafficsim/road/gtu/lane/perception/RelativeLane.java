@@ -27,7 +27,7 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
     public static final RelativeLane LEFT = new RelativeLane(LateralDirectionality.LEFT, 1);
 
     /** Current lane. */
-    public static final RelativeLane CURRENT = new RelativeLane(null, 0);
+    public static final RelativeLane CURRENT = new RelativeLane(LateralDirectionality.NONE, 0);
 
     /** right lane. */
     public static final RelativeLane RIGHT = new RelativeLane(LateralDirectionality.RIGHT, 1);
@@ -50,10 +50,11 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
      */
     public RelativeLane(final LateralDirectionality lat, final int numLanes)
     {
-        Throw.when(lat != null && numLanes <= 0, IllegalArgumentException.class,
+        Throw.whenNull(lat, "Lateral directionality may not be null.");
+        Throw.when(lat.equals(LateralDirectionality.NONE) && numLanes != 0, IllegalArgumentException.class,
+                "Number of lanes must be zero if the lateral directionality is NONE.");
+        Throw.when(numLanes < 0, IllegalArgumentException.class,
             "Relative lane with %d lanes in %s direction is not allowed, use values > 0.", numLanes, lat);
-        Throw.when(lat == null && numLanes != 0, IllegalArgumentException.class,
-            "Number of lanes must be zero if the lateral directionality is null.");
         this.lat = lat;
         this.numLanes = numLanes;
     }
@@ -148,7 +149,8 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
     public final RelativeLane add(final RelativeLane relativeLane)
     {
         int nThis = this.lat.isNone() ? 0 : this.lat.isLeft() ? -this.numLanes : this.numLanes;
-        int nOther = relativeLane.lat.isNone() ? 0 : relativeLane.lat.isLeft() ? -relativeLane.numLanes : relativeLane.numLanes;
+        int nOther =
+            relativeLane.lat.isNone() ? 0 : relativeLane.lat.isLeft() ? -relativeLane.numLanes : relativeLane.numLanes;
         int nSum = nThis + nOther;
         if (nSum < 0)
         {

@@ -340,6 +340,18 @@ public class BehavioralCharacteristics implements Serializable
 
         return this;
     }
+    
+    /**
+     * Sets all behavioral characteristics from the given set in this set.
+     * @param behavioralCharacteristics set of behavioral characteristics to include in this set
+     */
+    public final void setAll(final BehavioralCharacteristics behavioralCharacteristics)
+    {
+        for (AbstractParameterType<?, ?> key : behavioralCharacteristics.parameters.keySet())
+        {
+            this.parameters.put(key, behavioralCharacteristics.parameters.get(key));
+        }
+    }
 
     /** {@inheritDoc} */
     public final String toString()

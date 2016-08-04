@@ -18,7 +18,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 /**
  * Wrapper class around {@code InfrastructureCategory} that forwards all methods except for infrastructure lane change info.
  * These methods determine and return infrastructure information of type {@code InfrastructureLaneChangeInfoToledo}, which
- * includes split number .
+ * includes split number.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -28,7 +28,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
+// TODO updateInfrastructureLaneChangeInfo with split number
 public class ToledoPerceptionCategory extends AbstractPerceptionCategory
 {
 
@@ -114,8 +114,9 @@ public class ToledoPerceptionCategory extends AbstractPerceptionCategory
     /**
      * Updates the speed limit prospect.
      * @param lane relative lateral lane
+     * @throws GTUException if the GTU was not initialized
      */
-    public final void updateSpeedLimitProspect(final RelativeLane lane)
+    public final void updateSpeedLimitProspect(final RelativeLane lane) throws GTUException
     {
         this.infrastructureCategory.updateSpeedLimitProspect(lane);
     }
@@ -124,8 +125,10 @@ public class ToledoPerceptionCategory extends AbstractPerceptionCategory
      * Updates the distance over which lane changes remains legally possible.
      * @param fromLane lane from which the lane change possibility is requested
      * @param lat LEFT or RIGHT, null not allowed
+     * @throws GTUException if the GTU was not initialized
      */
     public final void updateLegalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
+        throws GTUException
     {
         this.infrastructureCategory.updateLegalLaneChangePossibility(fromLane, lat);
     }
@@ -134,16 +137,19 @@ public class ToledoPerceptionCategory extends AbstractPerceptionCategory
      * Updates the distance over which lane changes remains physically possible.
      * @param fromLane lane from which the lane change possibility is requested
      * @param lat LEFT or RIGHT, null not allowed
+     * @throws GTUException if the GTU was not initialized
      */
     public final void updatePhysicalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
+        throws GTUException
     {
         this.infrastructureCategory.updatePhysicalLaneChangePossibility(fromLane, lat);
     }
 
     /**
      * Updates a set of relative lanes representing the cross section.
+     * @throws GTUException if the GTU was not initialized
      */
-    public final void updateCrossSection()
+    public final void updateCrossSection() throws GTUException
     {
         this.infrastructureCategory.updateCrossSection();
     }
@@ -241,6 +247,13 @@ public class ToledoPerceptionCategory extends AbstractPerceptionCategory
     public final void updateAll() throws GTUException, NetworkException, ParameterException
     {
         this.infrastructureCategory.updateAll();
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ToledoPerceptionCategory";
     }
 
 }
