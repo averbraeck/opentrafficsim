@@ -64,4 +64,11 @@ public class InfrastructureLaneChangeInfoToledo extends InfrastructureLaneChange
         return this.splitNumber;
     }
     
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "InfrastructureLaneChangeInfoToledo [requiredNumberOfLaneChanges=" + getRequiredNumberOfLaneChanges()
+            + ", remainingDistance=" + getRemainingDistance() + ", split=" + this.splitNumber + "]";
+    }
 }

@@ -52,7 +52,7 @@ public class LaneBasedGTUGenerator implements Serializable
     private static final long serialVersionUID = 20160000L;
 
     /** FIFO for templates that have not been generated yet due to insufficient room/headway. */
-    private final Queue<LaneBasedGTUCharacteristics> unplacedTemplates = new LinkedList<LaneBasedGTUCharacteristics>();
+    private final Queue<LaneBasedGTUCharacteristics> unplacedTemplates = new LinkedList<>();
 
     /** Name of the GTU generator. */
     private final String id;
@@ -103,10 +103,10 @@ public class LaneBasedGTUGenerator implements Serializable
      * @throws ProbabilityException pe
      */
     public LaneBasedGTUGenerator(String id, final Generator<Duration> interarrivelTimeGenerator, final long maxGTUs,
-            final Time startTime, final Time endTime, final GTUColorer gtuColorer,
-            final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator,
-            final Set<DirectedLanePosition> initialLongitudinalPositions, final OTSNetwork network, RoomChecker roomChecker)
-            throws SimRuntimeException, ProbabilityException
+        final Time startTime, final Time endTime, final GTUColorer gtuColorer,
+        final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator,
+        final Set<DirectedLanePosition> initialLongitudinalPositions, final OTSNetwork network, RoomChecker roomChecker)
+        throws SimRuntimeException, ProbabilityException
     {
         this.id = id;
         this.interarrivelTimeGenerator = interarrivelTimeGenerator;
@@ -116,30 +116,33 @@ public class LaneBasedGTUGenerator implements Serializable
         this.initialLongitudinalPositions = initialLongitudinalPositions;
         this.roomChecker = roomChecker;
         this.gtuColorer = gtuColorer;
-        laneBasedGTUCharacteristicsGenerator.getSimulator().scheduleEventAbs(startTime, this, this, "generateCharacteristics",
-                new Object[] {});
+        laneBasedGTUCharacteristicsGenerator.getSimulator().scheduleEventAbs(startTime, this, this,
+            "generateCharacteristics", new Object[] {});
     }
 
     /**
      * Generate the characteristics of the next GTU.
+     * @param gtu GTU
      * @throws ProbabilityException when something is wrongly defined in the LaneBasedTemplateGTUType
      * @throws SimRuntimeException when this method fails to re-schedule itself or the call to the method that tries to place a
      *             GTU on the road
      * @throws ParameterException in case of a parameter problem
+     * @throws GTUException if strategical planner cannot generate a plan
      */
     @SuppressWarnings("unused")
-    private void generateCharacteristics() throws ProbabilityException, SimRuntimeException, ParameterException
+    private void generateCharacteristics(final LaneBasedGTU gtu) throws ProbabilityException, SimRuntimeException,
+        ParameterException, GTUException
     {
         OTSDEVSSimulatorInterface simulator = this.laneBasedGTUCharacteristicsGenerator.getSimulator();
         if (this.generatedGTUs >= this.maxGTUs
-                || this.laneBasedGTUCharacteristicsGenerator.getSimulator().getSimulatorTime().get().ge(this.endTime))
+            || this.laneBasedGTUCharacteristicsGenerator.getSimulator().getSimulatorTime().get().ge(this.endTime))
         {
             return; // Do not reschedule
         }
         synchronized (this.unplacedTemplates)
         {
             this.generatedGTUs++;
-            this.unplacedTemplates.add(this.laneBasedGTUCharacteristicsGenerator.draw());
+            this.unplacedTemplates.add(this.laneBasedGTUCharacteristicsGenerator.draw(gtu));
             if (this.unplacedTemplates.size() == 1)
             {
                 simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] {});
@@ -148,7 +151,7 @@ public class LaneBasedGTUGenerator implements Serializable
         if (this.generatedGTUs < this.maxGTUs)
         {
             simulator.scheduleEventRel(this.interarrivelTimeGenerator.draw(), this, this, "generateCharacteristics",
-                    new Object[] {});
+                new Object[] {});
         }
     }
 
@@ -166,7 +169,7 @@ public class LaneBasedGTUGenerator implements Serializable
      */
     @SuppressWarnings("unused")
     private void tryToPlaceGTU() throws SimRuntimeException, GTUException, NamingException, NetworkException,
-            OTSGeometryException, ProbabilityException
+        OTSGeometryException, ProbabilityException
     {
         // System.out.println("entered tryToPlaceGTU");
         LaneBasedGTUCharacteristics characteristics;
@@ -186,8 +189,8 @@ public class LaneBasedGTUGenerator implements Serializable
             Lane lane = dlp.getLane();
             // GOTCHA look for the first GTU with FRONT after the start position (not REAR)
             LaneBasedGTU leader =
-                    lane.getGtuAhead(dlp.getPosition(), dlp.getGtuDirection(), RelativePosition.FRONT, simulator
-                            .getSimulatorTime().getTime());
+                lane.getGtuAhead(dlp.getPosition(), dlp.getGtuDirection(), RelativePosition.FRONT, simulator
+                    .getSimulatorTime().getTime());
             if (null != leader)
             {
                 Length headway = leader.position(lane, leader.getRear()).minus(dlp.getPosition());
@@ -223,9 +226,9 @@ public class LaneBasedGTUGenerator implements Serializable
                 }
                 String gtuId = null == characteristics.getIdGenerator() ? null : characteristics.getIdGenerator().nextId();
                 LaneBasedIndividualGTU gtu =
-                        new LaneBasedIndividualGTU(gtuId, characteristics.getGTUType(), characteristics.getLength(),
-                                characteristics.getWidth(), characteristics.getMaximumSpeed(), simulator,
-                                DefaultCarAnimation.class, this.gtuColorer, characteristics.getNetwork());
+                    new LaneBasedIndividualGTU(gtuId, characteristics.getGTUType(), characteristics.getLength(),
+                        characteristics.getWidth(), characteristics.getMaximumSpeed(), simulator, DefaultCarAnimation.class,
+                        this.gtuColorer, characteristics.getNetwork());
                 gtu.init(characteristics.getStrategicalPlanner(), this.initialLongitudinalPositions, safeSpeed);
 
                 // System.out.println("tryToPlace: Constructed GTU on " + this.initialLongitudinalPositions);
@@ -235,14 +238,14 @@ public class LaneBasedGTUGenerator implements Serializable
         if (queueLength != this.lastReportedQueueLength)
         {
             System.out.println("Generator " + this.id + ": queue length is " + queueLength + " at time "
-                    + simulator.getSimulatorTime().get());
+                + simulator.getSimulatorTime().get());
             this.lastReportedQueueLength = queueLength;
         }
         if (queueLength > 0)
         {
             // System.out.println("Re-scheduling tryToPlace, queue length is " + this.unplacedTemplates.size());
             this.laneBasedGTUCharacteristicsGenerator.getSimulator().scheduleEventRel(this.reTryInterval, this, this,
-                    "tryToPlaceGTU", new Object[] {});
+                "tryToPlaceGTU", new Object[] {});
         }
     }
 
@@ -322,7 +325,7 @@ public class LaneBasedGTUGenerator implements Serializable
          * @throws NetworkException this method may throw a NetworkException if it encounters an error in the network structure
          */
         public Speed canPlace(final Speed leaderSpeed, final Length headway,
-                final LaneBasedGTUCharacteristics laneBasedGTUCharacteristics) throws NetworkException;
+            final LaneBasedGTUCharacteristics laneBasedGTUCharacteristics) throws NetworkException;
     }
 
 }

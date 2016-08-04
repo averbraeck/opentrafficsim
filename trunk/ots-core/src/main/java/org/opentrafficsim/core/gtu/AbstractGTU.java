@@ -146,6 +146,8 @@ public abstract class AbstractGTU implements GTU
         Throw.when(Double.isNaN(initialLocation.x) || Double.isNaN(initialLocation.y) || Double.isNaN(initialLocation.z),
                 GTUException.class, "initialLocation %s invalid for GTU with id %s", initialLocation, this.id);
         Throw.when(initialSpeed == null, GTUException.class, "initialSpeed is null for GTU with id %s", this.id);
+        Throw.when(!getId().equals(strategicalPlanner.getGtu().getId()), GTUException.class,
+            "GTU %s is initialized with a strategical planner for GTU %s", getId(), strategicalPlanner.getGtu().getId());
 
         this.strategicalPlanner = strategicalPlanner;
         Time now = this.simulator.getSimulatorTime().getTime();

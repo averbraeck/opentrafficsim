@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 
 /**
@@ -22,7 +23,7 @@ public class LaneBasedTemplateGTUTypeDistribution implements LaneBasedGTUCharact
 
     /** */
     private static final long serialVersionUID = 20160000L;
-    
+
     /** The Distribution of lane based template GTU types. */
     private final Distribution<LaneBasedTemplateGTUType> distribution;
 
@@ -31,16 +32,17 @@ public class LaneBasedTemplateGTUTypeDistribution implements LaneBasedGTUCharact
      * @param distributionOfLanebasedTemplateGTUType the distribution of LaneBasedTemplateGTUTypes
      */
     public LaneBasedTemplateGTUTypeDistribution(
-            final Distribution<LaneBasedTemplateGTUType> distributionOfLanebasedTemplateGTUType)
+        final Distribution<LaneBasedTemplateGTUType> distributionOfLanebasedTemplateGTUType)
     {
         this.distribution = distributionOfLanebasedTemplateGTUType;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException
+    public final LaneBasedGTUCharacteristics draw(final LaneBasedGTU gtu) throws ProbabilityException, ParameterException,
+        GTUException
     {
-        return this.distribution.draw().draw();
+        return this.distribution.draw().draw(gtu);
     }
 
     /** {@inheritDoc} */

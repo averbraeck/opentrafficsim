@@ -1,10 +1,12 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
 /**
+ * Super class for all perception categories that use a {@code LaneBasedGTU}.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -26,12 +28,9 @@ public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPercep
         super(perception);
     }
 
-    /**
-     * Returns the connected GTU.
-     * @return connected GTU
-     */
+    /** {@inheritDoc} */
     @Override
-    public final LaneBasedGTU getGtu()
+    public final LaneBasedGTU getGtu() throws GTUException
     {
         return ((LanePerception) getPerception()).getGtu();
     }

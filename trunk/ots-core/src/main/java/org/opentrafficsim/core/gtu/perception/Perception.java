@@ -1,14 +1,12 @@
 package org.opentrafficsim.core.gtu.perception;
 
 import java.io.Serializable;
-import java.util.Collection;
 
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.perception.PerceivedObject;
 
 /**
  * The perception module of a GTU. It is responsible for perceiving (sensing) the environment of the GTU, which includes the
@@ -35,8 +33,9 @@ public interface Perception extends Serializable
     /**
      * Return the GTU of this perception.
      * @return GTU of this perception
+     * @throws GTUException if the GTU has not been initialized
      */
-    GTU getGtu();
+    GTU getGtu() throws GTUException;
 
     /**
      * Adds given perception category to the perception.

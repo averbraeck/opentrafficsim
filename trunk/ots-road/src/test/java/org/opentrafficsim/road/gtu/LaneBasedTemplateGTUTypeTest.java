@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import javax.naming.NamingException;
+
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistConstant;
@@ -28,15 +30,20 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedTemplateGTUType;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
@@ -96,13 +103,16 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                     {
                         return pcMaximumSpeed.draw();
                     }
-                }, simulator, new Generator<LaneBasedStrategicalPlanner>()
+                }, simulator, new DummyStrategicalPlannerFactory(), 
+                /*-new Generator<LaneBasedStrategicalPlanner>()
                 {
                     public LaneBasedStrategicalPlanner draw()
                     {
                         return null;
                     }
-                }, initialLongitudinalPositions, new Generator<Speed>()
+                }, 
+                */
+                initialLongitudinalPositions, new Generator<Speed>()
                 {
                     public Speed draw()
                     {
@@ -140,13 +150,16 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                     {
                         return truckMaximumSpeed.draw();
                     }
-                }, truckSimulator, new Generator<LaneBasedStrategicalPlanner>()
+                }, truckSimulator, new DummyStrategicalPlannerFactory(), 
+                /*-new Generator<LaneBasedStrategicalPlanner>()
                 {
                     public LaneBasedStrategicalPlanner draw()
                     {
                         return null;
                     }
-                }, initialLongitudinalPositions, new Generator<Speed>()
+                },
+                */
+                initialLongitudinalPositions, new Generator<Speed>()
                 {
                     public Speed draw()
                     {
@@ -154,6 +167,50 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                     }
                 }, network);
         verifyFields(truck, truckType, truckLength, truckWidth, truckMaximumSpeed, truckInitialSpeed, truckSimulator);
+    }
+    
+    /**
+     * Dummy strategical planner factory.
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version Aug 2, 2016 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    private class DummyStrategicalPlannerFactory implements LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner>
+    {
+
+        /**
+         * 
+         */
+        public DummyStrategicalPlannerFactory()
+        {
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public BehavioralCharacteristics getDefaultBehavioralCharacteristics()
+        {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void setBehavioralCharacteristics(final BehavioralCharacteristics behavioralCharacteristics)
+        {
+            //
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public LaneBasedStrategicalPlanner create(final LaneBasedGTU gtu) throws GTUException
+        {
+            return null;
+        }
+        
     }
 
     /**
@@ -261,16 +318,18 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
      * @param simulator OTSDEVSSimulatorInterface; the expected simulator
      * @throws ProbabilityException in case of probability drawing exception
      * @throws ParameterException in case of a parameter problem.
+     * @throws GTUException in case of a GTU exception
+     * @throws NamingException in case of a naming exception
      */
     private void verifyFields(final LaneBasedTemplateGTUType templateGTUType, final GTUType gtuType,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> length,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> width,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeed,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeed, final OTSDEVSSimulatorInterface simulator)
-            throws ProbabilityException, ParameterException
+            throws ProbabilityException, ParameterException, NamingException, GTUException
     {
         assertTrue("Type should be " + gtuType, gtuType.equals(templateGTUType.getGTUType()));
-        LaneBasedGTUCharacteristics characteristics = templateGTUType.draw();
+        LaneBasedGTUCharacteristics characteristics = templateGTUType.draw(null);
         assertEquals("Length should be " + length, length.draw().getSI(), characteristics.getLength().getSI(), 0.0001);
         assertEquals("Width should be " + width, width.draw().getSI(), characteristics.getWidth().getSI(), 0.0001);
         assertEquals("Maximum speed should be " + maximumSpeed, maximumSpeed.draw().getSI(), characteristics.getMaximumSpeed()

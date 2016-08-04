@@ -13,11 +13,13 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultAlexander;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
-import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlannerOld;
+import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGTUFollowingModelMobil;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -40,13 +42,13 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
     private static Acceleration extraThreshold = new Acceleration(0.000001, AccelerationUnit.SI);
 
     /** the perception. */
-    private final LanePerceptionFull perception;
+    private final LanePerception perception;
 
     /**
      * Construct a DirectedLaneChangeModel.
      * @param perception the perception.
      */
-    public AbstractDirectedLaneChangeModel(final LanePerceptionFull perception)
+    public AbstractDirectedLaneChangeModel(final LanePerception perception)
     {
         this.perception = perception;
     }
@@ -54,34 +56,36 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
     /** {@inheritDoc} */
     @Override
     public final DirectedLaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
-            final LateralDirectionality direction, final Collection<Headway> sameLaneGTUs,
-            final Collection<Headway> otherLaneGTUs, final Length maxDistance, final Speed speedLimit,
-            final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold, final Duration laneChangeTime)
-            throws GTUException, ParameterException
+        final LateralDirectionality direction, final Collection<Headway> sameLaneGTUs,
+        final Collection<Headway> otherLaneGTUs, final Length maxDistance, final Speed speedLimit,
+        final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold, final Duration laneChangeTime)
+        throws GTUException, ParameterException, OperationalPlanException
     {
         Map<Lane, Length> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
         Lane lane = positions.keySet().iterator().next();
         Length longitudinalPosition = positions.get(lane);
-        Lane otherLane = getPerception().bestAccessibleAdjacentLane(lane, direction, longitudinalPosition);
+        Lane otherLane =
+            getPerception().getPerceptionCategory(DefaultAlexander.class).bestAccessibleAdjacentLane(lane, direction,
+                longitudinalPosition);
         GTUFollowingModelOld gtuFollowingModel =
-                (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlannerOld) gtu.getTacticalPlanner()).getCarFollowingModel();
+            (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner()).getCarFollowingModel();
         if (null == gtuFollowingModel)
         {
             throw new Error(gtu + " has null GTUFollowingModel");
         }
         DualAccelerationStep thisLaneAccelerationSteps =
-                gtuFollowingModel.computeDualAccelerationStep(gtu, sameLaneGTUs, maxDistance, speedLimit, laneChangeTime);
+            gtuFollowingModel.computeDualAccelerationStep(gtu, sameLaneGTUs, maxDistance, speedLimit, laneChangeTime);
         if (thisLaneAccelerationSteps.getLeaderAcceleration().getSI() < -9999)
         {
             System.out.println(gtu + " has a problem: straightAccelerationSteps.getLeaderAcceleration().getSI() < -9999");
         }
         Acceleration straightA = applyDriverPersonality(thisLaneAccelerationSteps).plus(laneChangeThreshold);
         DualAccelerationStep otherLaneAccelerationSteps =
-                null == otherLane ? null : gtuFollowingModel.computeDualAccelerationStep(gtu, otherLaneGTUs, maxDistance,
-                        speedLimit, laneChangeTime);
+            null == otherLane ? null : gtuFollowingModel.computeDualAccelerationStep(gtu, otherLaneGTUs, maxDistance,
+                speedLimit, laneChangeTime);
         if (null != otherLaneAccelerationSteps
-                && otherLaneAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getBehavioralCharacteristics()
-                        .getParameter(ParameterTypes.B).getSI())
+            && otherLaneAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getBehavioralCharacteristics()
+                .getParameter(ParameterTypes.B).getSI())
         {
             otherLaneAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;
         }
@@ -116,7 +120,7 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
 
     /** {@inheritDoc} */
     @Override
-    public final LanePerceptionFull getPerception()
+    public final LanePerception getPerception()
     {
         return this.perception;
     }

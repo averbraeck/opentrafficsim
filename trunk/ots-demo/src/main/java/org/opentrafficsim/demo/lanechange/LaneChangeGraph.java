@@ -52,6 +52,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -59,7 +60,6 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
@@ -137,9 +137,10 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
      * @throws NamingException on ???
      * @throws OTSGeometryException
      * @throws ParameterException in case of a parameter problem.
+     * @throws OperationalPlanException 
      */
     public static void main(final String[] args) throws NamingException, NetworkException, SimRuntimeException,
-        GTUException, OTSGeometryException, ParameterException
+        GTUException, OTSGeometryException, ParameterException, OperationalPlanException
     {
         try
         {
@@ -272,14 +273,15 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
      * @throws GTUException on error during GTU construction
      * @throws OTSGeometryException
      * @throws ParameterException in case of a parameter problem.
+     * @throws OperationalPlanException 
      */
     private Length findDecisionPoint(Length low, Length high, final Speed referenceSpeed, final Speed speedDifference,
         final LaneChangeModel laneChangeModel, final boolean mergeRight) throws NamingException, NetworkException,
-        SimRuntimeException, GTUException, OTSGeometryException, ParameterException
+        SimRuntimeException, GTUException, OTSGeometryException, ParameterException, OperationalPlanException
     {
         // Set up the network
         GTUType gtuType = new GTUType("car");
-        Set<GTUType> compatibility = new HashSet<GTUType>();
+        Set<GTUType> compatibility = new HashSet<>();
         compatibility.add(gtuType);
         LaneType laneType = new LaneType("CarLane", compatibility);
         final Speed speedLimit = new Speed(120, KM_PER_HOUR);
@@ -305,15 +307,13 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
                 METER), new Duration(1, SECOND), 1d);
 
         BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
-        // LaneBasedBehavioralCharacteristics drivingCharacteristics =
-        // new LaneBasedBehavioralCharacteristics(this.carFollowingModel, laneChangeModel);
+        LaneBasedIndividualGTU referenceCar =
+            new LaneBasedIndividualGTU("ReferenceCar", gtuType, new Length(4, METER), new Length(2, METER), new Speed(150,
+                KM_PER_HOUR), simpleSimulator, this.network);
         LaneBasedStrategicalPlanner strategicalPlanner =
             new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
-                this.carFollowingModel, laneChangeModel));
-        LaneBasedIndividualGTU referenceCar =
-            new LaneBasedIndividualGTU("ReferenceCar", gtuType, initialLongitudinalPositions, referenceSpeed, new Length(4,
-                METER), new Length(2, METER), new Speed(150, KM_PER_HOUR), simpleSimulator, strategicalPlanner,
-                new LanePerceptionFull(), this.network);
+                this.carFollowingModel, laneChangeModel, referenceCar), referenceCar);
+        referenceCar.init(strategicalPlanner, initialLongitudinalPositions, referenceSpeed);
         Collection<Headway> sameLaneGTUs = new LinkedHashSet<>();
         sameLaneGTUs.add(new HeadwayGTUSimple(referenceCar.getId(), referenceCar.getGTUType(), Length.ZERO, referenceCar
             .getLength(), referenceCar.getSpeed(), null));
@@ -376,26 +376,25 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
      * @throws GTUException on error during GTU construction
      * @throws OTSGeometryException when the initial position is outside the lane's center line
      * @throws ParameterException in case of a parameter problem.
+     * @throws OperationalPlanException 
      */
     private LaneMovementStep computeLaneChange(final LaneBasedIndividualGTU referenceCar,
         final Collection<Headway> sameLaneGTUs, final Speed speedLimit, final LaneChangeModel laneChangeModel,
         final Length otherCarPosition, final Lane otherCarLane, final Speed deltaV, final boolean mergeRight)
         throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException,
-        ParameterException
+        ParameterException, OperationalPlanException
     {
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions
             .add(new DirectedLanePosition(otherCarLane, otherCarPosition, GTUDirectionality.DIR_PLUS));
         BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
-        // LaneBasedBehavioralCharacteristics drivingCharacteristics =
-        // new LaneBasedBehavioralCharacteristics(this.carFollowingModel, laneChangeModel);
+        LaneBasedIndividualGTU otherCar =
+            new LaneBasedIndividualGTU("otherCar", referenceCar.getGTUType(), new Length(4, METER), new Length(2, METER),
+                new Speed(150, KM_PER_HOUR), referenceCar.getSimulator(), this.network);
         LaneBasedStrategicalPlanner strategicalPlanner =
             new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
-                this.carFollowingModel, laneChangeModel));
-        LaneBasedIndividualGTU otherCar =
-            new LaneBasedIndividualGTU("otherCar", referenceCar.getGTUType(), initialLongitudinalPositions, referenceCar
-                .getSpeed().plus(deltaV), new Length(4, METER), new Length(2, METER), new Speed(150, KM_PER_HOUR),
-                referenceCar.getSimulator(), strategicalPlanner, new LanePerceptionFull(), this.network);
+                this.carFollowingModel, laneChangeModel, otherCar), otherCar);
+        otherCar.init(strategicalPlanner, initialLongitudinalPositions, referenceCar.getSpeed().plus(deltaV));
         Collection<Headway> preferredLaneGTUs = new LinkedHashSet<>();
         Collection<Headway> nonPreferredLaneGTUs = new LinkedHashSet<>();
         Length referenceCarPosition =
@@ -477,13 +476,13 @@ class ChartData implements XYDataset
 {
 
     /** The X values. */
-    private ArrayList<ArrayList<Double>> xValues = new ArrayList<ArrayList<Double>>();
+    private ArrayList<ArrayList<Double>> xValues = new ArrayList<>();
 
     /** The Y values. */
-    private ArrayList<ArrayList<Double>> yValues = new ArrayList<ArrayList<Double>>();
+    private ArrayList<ArrayList<Double>> yValues = new ArrayList<>();
 
     /** The names of the series. */
-    private ArrayList<String> seriesKeys = new ArrayList<String>();
+    private ArrayList<String> seriesKeys = new ArrayList<>();
 
     /** List of parties interested in changes of this ContourPlot. */
     private transient EventListenerList listenerList = new EventListenerList();

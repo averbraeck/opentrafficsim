@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.directedlanechange;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
 
 /**
@@ -20,7 +20,7 @@ public class DirectedAltruistic extends AbstractDirectedLaneChangeModel
     /**
      * @param perception the perception to use
      */
-    public DirectedAltruistic(final LanePerceptionFull perception)
+    public DirectedAltruistic(final LanePerception perception)
     {
         super(perception);
     }

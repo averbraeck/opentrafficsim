@@ -1,10 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
 import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -12,8 +10,6 @@ import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
-import org.opentrafficsim.road.network.speed.SpeedLimitTypeSpeedLegal;
-import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
 /**
  * Default implementation where desired speed and headway are pre-calculated for car-following.
@@ -51,7 +47,7 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
         Throw.whenNull(speedLimitInfo, "Speed limit info may not be null.");
         Throw.whenNull(leaders, "Leaders may not be null.");
         // Catch negative headway
-        if (leaders.firstKey().si <= 0)
+        if (!leaders.isEmpty() && leaders.firstKey().si <= 0)
         {
             return new Acceleration(Double.NEGATIVE_INFINITY, AccelerationUnit.SI);
         }

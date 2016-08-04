@@ -5,7 +5,10 @@ import java.util.Map;
 
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.core.network.NetworkException;
 
 /**
  * <p>
@@ -80,4 +83,30 @@ public abstract class AbstractPerception implements Perception
         this.perceptionCategories.remove(perceptionCategory.getClass());
     }
 
+    /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:designforextension")
+    public void perceive() throws GTUException, NetworkException, ParameterException
+    {
+        for (AbstractPerceptionCategory category : this.perceptionCategories.values())
+        {
+            category.updateAll();
+        }
+    }
+    
+    /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        StringBuilder s = new StringBuilder("Perception [");
+        String sep = "";
+        for (AbstractPerceptionCategory cat : this.perceptionCategories.values())
+        {
+            s.append(sep);
+            s.append(cat);
+            sep = ", ";
+        }
+        s.append("]");
+        return s.toString();
+    }
+    
 }

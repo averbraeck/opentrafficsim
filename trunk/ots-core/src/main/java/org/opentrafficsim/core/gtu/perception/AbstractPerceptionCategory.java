@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.gtu.perception;
 
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.Type;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -43,16 +44,31 @@ public abstract class AbstractPerceptionCategory extends Type<AbstractPerception
     /**
      * Returns the connected GTU.
      * @return connected GTU
+     * @throws GTUException if the GTU has not been initialized
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public GTU getGtu()
+    public GTU getGtu() throws GTUException
     {
         return this.perception.getGtu();
     }
     
     /**
+     * Returns the current time.
+     * @return current time
+     * @throws GTUException if the GTU has not been initialized
+     */
+    public final Time getTimestamp() throws GTUException
+    {
+        if (getGtu() == null)
+        {
+            throw new GTUException("gtu value has not been initialized for LanePerception when perceiving.");
+        }
+        return getGtu().getSimulator().getSimulatorTime().getTime();
+    }
+    
+    /**
      * Updates all information in the category.
-     * @throws GTUException 
+     * @throws GTUException if the GTU was not initialized
      * @throws NetworkException 
      * @throws ParameterException 
      */

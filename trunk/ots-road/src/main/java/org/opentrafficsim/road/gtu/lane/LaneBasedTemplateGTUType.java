@@ -8,12 +8,14 @@ import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
 /**
@@ -32,8 +34,8 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
     /** */
     private static final long serialVersionUID = 20160101L;
 
-    /** Generator for the strategical planner. */
-    private final Generator<LaneBasedStrategicalPlanner> strategicalPlannerGenerator;
+    /** Factory for the strategical planner. */
+    private final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory;
 
     /** Generator for the initial speed of the next GTU. */
     private Generator<Speed> initialSpeedGenerator;
@@ -52,8 +54,7 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
      * @param maximumSpeedGenerator Generator&lt;Speed&gt;; generator for the maximum speed of the GTU type (in the driving
      *            direction).
      * @param simulator the simulator.
-     * @param strategicalPlannerGenerator Generator&lt;LaneBasedStrategicalPlanner&gt;; generator for the strategical planner
-     *            (e.g., route determination)
+     * @param strategicalPlannerFactory Factory for the strategical planner (e.g., route determination)
      * @param initialLongitudinalPositions Set&lt;DirectedLanePosition&gt;; the initial lanes, directions and positions of
      *            generated GTUs
      * @param initialSpeedGenerator Generator&lt;Speed&gt;; the generator for the initial speed of generated GTUs
@@ -62,31 +63,35 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedTemplateGTUType(final GTUType gtuType, final IdGenerator idGenerator,
-            final Generator<Length> lengthGenerator, final Generator<Length> widthGenerator,
-            final Generator<Speed> maximumSpeedGenerator, final OTSDEVSSimulatorInterface simulator,
-            final Generator<LaneBasedStrategicalPlanner> strategicalPlannerGenerator,
-            final Set<DirectedLanePosition> initialLongitudinalPositions, final Generator<Speed> initialSpeedGenerator,
-            final OTSNetwork network) throws NullPointerException
+        final Generator<Length> lengthGenerator, final Generator<Length> widthGenerator,
+        final Generator<Speed> maximumSpeedGenerator, final OTSDEVSSimulatorInterface simulator,
+        final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory,
+        final Set<DirectedLanePosition> initialLongitudinalPositions, final Generator<Speed> initialSpeedGenerator,
+        final OTSNetwork network) throws NullPointerException
     {
         super(gtuType, idGenerator, lengthGenerator, widthGenerator, maximumSpeedGenerator, simulator, network);
-        Throw.whenNull(strategicalPlannerGenerator, "strategicalPlannerGenerator is null");
+        Throw.whenNull(strategicalPlannerFactory, "strategicalPlannerFactory is null");
         Throw.whenNull(initialLongitudinalPositions, "initialLongitudinalPositions is null");
         Throw.whenNull(initialSpeedGenerator, "initialSpeedGenerator is null");
-        this.strategicalPlannerGenerator = strategicalPlannerGenerator;
+        this.strategicalPlannerFactory = strategicalPlannerFactory;
         this.initialLongitudinalPositions = initialLongitudinalPositions;
         this.initialSpeedGenerator = initialSpeedGenerator;
     }
 
     /**
      * Generate the properties of the next GTU.
+     * @param gtu GTU
      * @return the LaneBasedGTUCharacteristics with a drawn perception, strategical planner, and initial speed.
      * @throws ProbabilityException when a generator is improperly configured
      * @throws ParameterException in case of a parameter problem.
+     * @throws GTUException if strategical planner cannot be created
      */
-    public final LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException
+    @Override
+    public final LaneBasedGTUCharacteristics draw(final LaneBasedGTU gtu) throws ProbabilityException, ParameterException,
+        GTUException
     {
-        return new LaneBasedGTUCharacteristics(super.draw(), this.strategicalPlannerGenerator.draw(),
-                this.initialSpeedGenerator.draw(), this.initialLongitudinalPositions);
+        return new LaneBasedGTUCharacteristics(super.draw(gtu), this.strategicalPlannerFactory.create(gtu),
+            this.initialSpeedGenerator.draw(), this.initialLongitudinalPositions);
     }
 
     /** {@inheritDoc} */
@@ -95,7 +100,7 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
     public String toString()
     {
         return String.format("LaneBasedGTUTemplate [%s, %s, %s, %s]", this.initialLongitudinalPositions,
-                this.strategicalPlannerGenerator, this.initialSpeedGenerator, super.toString());
+            this.strategicalPlannerFactory, this.initialSpeedGenerator, super.toString());
     }
 
 }

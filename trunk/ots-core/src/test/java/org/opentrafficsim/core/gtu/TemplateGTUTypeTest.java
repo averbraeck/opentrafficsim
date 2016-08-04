@@ -132,8 +132,8 @@ public class TemplateGTUTypeTest implements OTSModelInterface
                 simulatorB, networkB);
         assertEquals("typenameA", gtuTypeA.getId(), templateA.getGTUType().getId());
         assertEquals("typenameB", gtuTypeB.getId(), templateB.getGTUType().getId());
-        GTUCharacteristics characteristicsA = templateA.draw();
-        GTUCharacteristics characteristicsB = templateB.draw();
+        GTUCharacteristics characteristicsA = templateA.draw(null);
+        GTUCharacteristics characteristicsB = templateB.draw(null);
         assertEquals("typenameA", gtuTypeA.getId(), characteristicsA.getGTUType().getId());
         assertEquals("typenameB", gtuTypeB.getId(), characteristicsB.getGTUType().getId());
         assertEquals("idGeneratorA", idGeneratorA, templateA.getIdGenerator());

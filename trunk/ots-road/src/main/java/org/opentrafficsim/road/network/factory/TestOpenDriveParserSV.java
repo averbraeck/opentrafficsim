@@ -62,12 +62,7 @@ import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.perceptionold.LanePerceptionFull;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
-import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.opendrive.GeneratorAnimation;
 import org.opentrafficsim.road.network.factory.opendrive.OpenDriveNetworkLaneParser;
 import org.opentrafficsim.road.network.factory.opendrive.communicationRTI.RTICars;
@@ -205,7 +200,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
 
-            this.rtiCars = new ArrayList<LaneBasedIndividualGTU>();
+            this.rtiCars = new ArrayList<>();
 
             // URL url = URLResource.getResource("/NASAames.xodr");
             URL url = URLResource.getResource("/testod.xodr");
@@ -402,7 +397,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
 
             CompleteRoute cr1 = null, cr2 = null, cr3 = null, cr4 = null, cr5 = null, cr6 = null;
 
-            List<Node> nodesVia1 = new ArrayList<Node>();
+            List<Node> nodesVia1 = new ArrayList<>();
             nodesVia1.add(link2.getStartNode());
             nodesVia1.add(link3.getEndNode());
             nodesVia1.add(link4.getStartNode());
@@ -420,7 +415,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                 exception.printStackTrace();
             }
 
-            List<Node> nodesVia2 = new ArrayList<Node>();
+            List<Node> nodesVia2 = new ArrayList<>();
             nodesVia2.add(link3.getEndNode());
             nodesVia2.add(link5.getEndNode());
             try
@@ -434,7 +429,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                 exception.printStackTrace();
             }
 
-            List<Node> nodesVia3 = new ArrayList<Node>();
+            List<Node> nodesVia3 = new ArrayList<>();
             nodesVia3.add(link7.getEndNode());
             nodesVia3.add(link8.getEndNode());
             try
@@ -529,7 +524,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                 {
                     exception1.printStackTrace();
                 }
-                Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition>();
+                Set<DirectedLanePosition> lanepositionSet = new HashSet<>();
                 lanepositionSet.add(directedLanePosition);
 
                 Length carLength = lengthDist.draw();
