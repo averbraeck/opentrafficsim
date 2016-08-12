@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util;
 
+import java.io.Serializable;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -23,8 +25,11 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public final class AnticipationInfo
+public final class AnticipationInfo implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20160811L;
 
     /** Duration of movement. */
     private final Duration duration;

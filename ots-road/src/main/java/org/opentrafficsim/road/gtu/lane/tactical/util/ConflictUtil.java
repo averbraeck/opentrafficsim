@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.util;
 import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.ATLEASTONE;
 import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.POSITIVE;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -555,8 +556,11 @@ public final class ConflictUtil
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    public static final class ConflictPlans
+    public static final class ConflictPlans implements Serializable
     {
+
+        /** */
+        private static final long serialVersionUID = 20160811L;
 
         /** Set of current plans. */
         private final Map<String, String> yieldPlans = new HashMap<>();

@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane.tatical;
+package org.opentrafficsim.core.gtu.perception;
 
 import static org.junit.Assert.fail;
 
@@ -12,9 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
-import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
-import org.opentrafficsim.core.gtu.perception.TimeStampedObject;
-import org.opentrafficsim.road.ClassList;
+import org.opentrafficsim.core.ClassList;
 
 /**
  * <p>

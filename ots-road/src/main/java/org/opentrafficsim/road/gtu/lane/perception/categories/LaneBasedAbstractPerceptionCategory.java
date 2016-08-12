@@ -20,6 +20,9 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPerceptionCategory
 {
 
+    /** */
+    private static final long serialVersionUID = 20160811L;
+
     /**
      * @param perception perception
      */
@@ -32,7 +35,14 @@ public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPercep
     @Override
     public final LaneBasedGTU getGtu() throws GTUException
     {
-        return ((LanePerception) getPerception()).getGtu();
+        return getPerception().getGtu();
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public final LanePerception getPerception()
+    {
+        return (LanePerception) super.getPerception();
     }
     
 }

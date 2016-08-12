@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
+import java.util.Map;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.TimeStampedObject;
@@ -22,19 +22,22 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class IntersectionCategory extends LaneBasedAbstractPerceptionCategory
+public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
 {
 
+    /** */
+    private static final long serialVersionUID = 20160811L;
+
     /** Set of traffic lights. */
-    private TimeStampedObject<SortedSet<HeadwayTrafficLight>> trafficLights;
+    private Map<RelativeLane, TimeStampedObject<SortedSet<HeadwayTrafficLight>>> trafficLights;
     
     /** Set of traffic lights. */
-    private TimeStampedObject<SortedSet<HeadwayConflict>> conflicts;
+    private Map<RelativeLane, TimeStampedObject<SortedSet<HeadwayConflict>>> conflicts;
     
     /**
      * @param perception perception
      */
-    public IntersectionCategory(final LanePerception perception)
+    public IntersectionPerception(final LanePerception perception)
     {
         super(perception);
     }
@@ -53,7 +56,7 @@ public class IntersectionCategory extends LaneBasedAbstractPerceptionCategory
      */
     public final void updateTrafficLights() throws GTUException
     {
-        this.trafficLights = new TimeStampedObject<>(new TreeSet<>(), getTimestamp());
+        //
     }
     
     /**
@@ -62,16 +65,17 @@ public class IntersectionCategory extends LaneBasedAbstractPerceptionCategory
      */
     public final void updateConflicts() throws GTUException
     {
-        this.conflicts = new TimeStampedObject<>(new TreeSet<>(), getTimestamp());
+        //
     }
     
     /**
      * Returns a set of traffic lights along the route. Traffic lights are sorted by headway value.
+     * @param lane lane
      * @return set of traffic lights along the route
      */
-    public final SortedSet<HeadwayTrafficLight> getTrafficLights()
+    public final SortedSet<HeadwayTrafficLight> getTrafficLights(final RelativeLane lane)
     {
-        return this.trafficLights.getObject();
+        return this.trafficLights.get(lane).getObject();
     }
     
     /**
@@ -81,25 +85,27 @@ public class IntersectionCategory extends LaneBasedAbstractPerceptionCategory
      */
     public final SortedSet<HeadwayConflict> getConflicts(final RelativeLane lane)
     {
-        return this.conflicts.getObject();
+        return this.conflicts.get(lane).getObject();
     }
     
     /**
      * Returns a time stamped set of traffic lights along the route. Traffic lights are sorted by headway value.
+     * @param lane lane
      * @return set of traffic lights along the route
      */
-    public final TimeStampedObject<SortedSet<HeadwayTrafficLight>> getTimeStampedTrafficLights()
+    public final TimeStampedObject<SortedSet<HeadwayTrafficLight>> getTimeStampedTrafficLights(final RelativeLane lane)
     {
-        return this.trafficLights;
+        return this.trafficLights.get(lane);
     }
     
     /**
      * Returns a time stamped set of traffic lights along the route. Traffic lights are sorted by headway value.
+     * @param lane lane
      * @return set of traffic lights along the route
      */
-    public final TimeStampedObject<SortedSet<HeadwayConflict>> getTimeStampedConflicts()
+    public final TimeStampedObject<SortedSet<HeadwayConflict>> getTimeStampedConflicts(final RelativeLane lane)
     {
-        return this.conflicts;
+        return this.conflicts.get(lane);
     }
     
     /** {@inheritDoc} */

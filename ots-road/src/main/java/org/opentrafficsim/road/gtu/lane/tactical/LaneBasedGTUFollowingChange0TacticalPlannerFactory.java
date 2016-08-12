@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
+import java.io.Serializable;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -22,9 +24,12 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
  */
 
 public class LaneBasedGTUFollowingChange0TacticalPlannerFactory implements
-    LaneBasedTacticalPlannerFactory<LaneBasedGTUFollowingChange0TacticalPlanner>
+    LaneBasedTacticalPlannerFactory<LaneBasedGTUFollowingChange0TacticalPlanner>, Serializable
 {
 
+    /** */
+    private static final long serialVersionUID = 20160811L;
+    
     /** The car following model. */
     private GTUFollowingModelOld carFollowingModel;
 

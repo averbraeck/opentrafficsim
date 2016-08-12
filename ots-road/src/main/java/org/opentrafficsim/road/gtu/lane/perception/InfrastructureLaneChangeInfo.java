@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
+import java.io.Serializable;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.Throw;
 
@@ -14,8 +16,11 @@ import org.opentrafficsim.core.Throw;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLaneChangeInfo>
+public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLaneChangeInfo>, Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20160811L;
 
     /** Required number of lane changes. */
     private final int requiredNumberOfLaneChanges;

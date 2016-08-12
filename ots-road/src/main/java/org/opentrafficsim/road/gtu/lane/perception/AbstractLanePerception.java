@@ -1,5 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.perception.AbstractPerception;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
@@ -20,11 +24,19 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
  * initial version Nov 15, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 public abstract class AbstractLanePerception extends AbstractPerception implements LanePerception
 {
+
     /** */
     private static final long serialVersionUID = 20151128L;
+
+    /** Lane structure to perform the perception with. */
+    private LaneStructure laneStructure = null;
+
+    /** Most recent update time of lane structure. */
+    private Time updateTime = null;
 
     /**
      * Create a new LanePerception module. Because the constructor is often called inside the constructor of a GTU, this
@@ -43,5 +55,35 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
     {
         return (LaneBasedGTU) super.getGtu();
     }
-    
+
+    /** {@inheritDoc} */
+    @Override
+    public final LaneStructure getLaneStructure() throws ParameterException
+    {
+        if (this.laneStructure == null || this.updateTime.lt(getGtu().getSimulator().getSimulatorTime().getTime()))
+        {
+            // downstream structure length
+            Length down = getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.PERCEPTION);
+            // upstream structure length
+            Length up = getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACK);
+            // structure length downstream of split on link not on route
+            Length downSplit = getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
+            // structure length upstream of merge on link not on route
+            Length upMerge = Length.max(up, downSplit);
+            if (this.laneStructure != null)
+            {
+                // TODO update lane structure
+                
+            }
+            else
+            {
+                // TODO create lane structure
+                
+            }
+            // TODO possibly optimize by using a 'singleton' lane structure source
+            this.updateTime = getGtu().getSimulator().getSimulatorTime().getTime();
+        }
+        return this.laneStructure;
+    }
+
 }

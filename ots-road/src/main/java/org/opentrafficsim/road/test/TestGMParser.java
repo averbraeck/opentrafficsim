@@ -36,6 +36,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.AccelerationGTUColorer;
@@ -44,12 +45,23 @@ import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SpeedGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
+import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
+import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.test.TestGMParser.WGS84ToRDNewTransform.Coords;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
@@ -213,23 +225,10 @@ public class TestGMParser extends AbstractWrappableAnimation
                             new SpeedGTUColorer(new Speed(100.0, SpeedUnit.KM_PER_HOUR)), new AccelerationGTUColorer(
                                     new Acceleration(-1.0, AccelerationUnit.METER_PER_SECOND_2), new Acceleration(1.0,
                                             AccelerationUnit.METER_PER_SECOND_2)));
-            GTUFollowingModelOld gtuFollowingModel = new IDMPlusOld();
-            BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
-            // LaneBasedBehavioralCharacteristics drivingCharacteristics =
-            // new LaneBasedBehavioralCharacteristics(gtuFollowingModel, null);
-            /*- TODO GENERATOR CODE CHANGES
-            LanePerceptionFull perception = new LanePerceptionFull();
-            TacticalPlanner fixedTacticalPlanner = new LaneBasedGTUFollowingTacticalPlanner(perception, gtuFollowingModel);
-            LaneBasedStrategicalPlanner strategicalPlanner;
-            try
-            {
-                strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, fixedTacticalPlanner);
-            }
-            catch (GTUException exception)
-            {
-                throw new SimRuntimeException(exception);
-            }
-            Class<LanePerceptionFull> perceptionClass = LanePerceptionFull.class;
+            
+            LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory =
+                    new LaneBasedStrategicalRoutePlannerFactory(
+                        new LaneBasedGTUFollowingTacticalPlannerFactory(new IDMPlusOld()));
 
             CrossSectionLink L2a = (CrossSectionLink) network.getLink("L2a");
             Lane L2a_A2 = (Lane) L2a.getCrossSectionElement("A2");
@@ -237,11 +236,11 @@ public class TestGMParser extends AbstractWrappableAnimation
             new GTUGeneratorIndividual("L2a_A2", this.simulator, carType, LaneBasedIndividualGTU.class,
                 initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
                 endTime, L2a_A2, new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
-                strategicalPlanner, perceptionClass, network);
+                strategicalPlannerFactory, network);
             new GTUGeneratorIndividual("L2a_A3", this.simulator, carType, LaneBasedIndividualGTU.class,
                 initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
                 endTime, L2a_A3, new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
-                strategicalPlanner, perceptionClass, network);
+                strategicalPlannerFactory, network);
 
             CrossSectionLink L49b = (CrossSectionLink) network.getLink("L49b");
             Lane L49b_A1 = (Lane) L49b.getCrossSectionElement("A1");
@@ -249,12 +248,11 @@ public class TestGMParser extends AbstractWrappableAnimation
             new GTUGeneratorIndividual("L49b_A1", this.simulator, carType, LaneBasedIndividualGTU.class,
                 initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
                 endTime, L49b_A1, new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
-                strategicalPlanner, perceptionClass, network);
+                strategicalPlannerFactory, network);
             new GTUGeneratorIndividual("L49b_A2", this.simulator, carType, LaneBasedIndividualGTU.class,
                 initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
                 endTime, L49b_A2, new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
-                strategicalPlanner, perceptionClass, network);
-             */
+                strategicalPlannerFactory, network);
         }
 
         /** {@inheritDoc} */

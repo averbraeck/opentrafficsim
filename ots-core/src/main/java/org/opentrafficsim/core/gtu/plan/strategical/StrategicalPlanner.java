@@ -8,6 +8,7 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.route.Route;
 
 /**
  * A strategicalPlanner is the planner responsible for the overall 'mission' of the GTU, usually indicating where it needs to
@@ -30,6 +31,12 @@ public interface StrategicalPlanner
      * @return GTU
      */
     GTU getGtu();
+    
+    /**
+     * Returns the route.
+     * @return route, may be null
+     */
+    Route getRoute();
     
     /**
      * Generate a new tactical planner for the GTU.

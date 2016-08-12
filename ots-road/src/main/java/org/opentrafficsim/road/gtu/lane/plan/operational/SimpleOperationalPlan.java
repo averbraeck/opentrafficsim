@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.plan.operational;
 
+import java.io.Serializable;
+
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.core.network.LateralDirectionality;
 
@@ -15,8 +17,11 @@ import org.opentrafficsim.core.network.LateralDirectionality;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class SimpleOperationalPlan
+public class SimpleOperationalPlan implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20160811L;
 
     /** Acceleration. */
     private Acceleration acceleration;

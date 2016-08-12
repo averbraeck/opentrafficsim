@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
 import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.UNITINTERVAL;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -27,15 +28,12 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructureCategory;
-import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsCategory;
+import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Desire;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.MandatoryIncentive;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
@@ -160,13 +158,13 @@ public final class LmrsUtil
         // obtain objects to get info
         perception.perceive();
         SpeedLimitProspect slp =
-            perception.getPerceptionCategory(InfrastructureCategory.class).getSpeedLimitProspect(RelativeLane.CURRENT);
+            perception.getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(RelativeLane.CURRENT);
         SpeedLimitInfo sli = slp.getSpeedLimitInfo(Length.ZERO);
         BehavioralCharacteristics bc = gtu.getBehavioralCharacteristics();
 
         // update T as response to new leader
         Set<AbstractHeadwayGTU> leaders =
-            perception.getPerceptionCategory(NeighborsCategory.class).getFirstLeaders(LateralDirectionality.NONE);
+            perception.getPerceptionCategory(NeighborsPerception.class).getFirstLeaders(LateralDirectionality.NONE);
         for (AbstractHeadwayGTU leader : leaders)
         {
             if (!lmrsStatus.getLastLeaders().contains(leader))
@@ -191,7 +189,7 @@ public final class LmrsUtil
         Speed speed = gtu.getSpeed();
         Acceleration a =
             CarFollowingUtil.followLeaders(carFollowingModel, bc, speed, sli, perception.getPerceptionCategory(
-                NeighborsCategory.class).getLeaders(RelativeLane.CURRENT));
+                NeighborsPerception.class).getLeaders(RelativeLane.CURRENT));
 
         // during a lane change, both leaders are followed
         LateralDirectionality initiatedLaneChange;
@@ -202,7 +200,7 @@ public final class LmrsUtil
             initiatedLaneChange = tar.getLateralDirectionality();
             Acceleration aTar =
                 CarFollowingUtil.followLeaders(carFollowingModel, bc, speed, sli, perception.getPerceptionCategory(
-                    NeighborsCategory.class).getLeaders(tar));
+                    NeighborsPerception.class).getLeaders(tar));
             a = Acceleration.min(a, aTar);
 
         }
@@ -212,7 +210,7 @@ public final class LmrsUtil
             exponentialHeadwayRelaxation(bc);
 
             // determine lane change desire based on incentives
-            Desire desire = getLaneChangeDesire(bc, perception, mandatoryIncentives, voluntaryIncentives);
+            Desire desire = getLaneChangeDesire(bc, perception, carFollowingModel, mandatoryIncentives, voluntaryIncentives);
 
             // gap acceptance
             boolean acceptLeft =
@@ -325,6 +323,7 @@ public final class LmrsUtil
      * negative mandatory desire may also dominate voluntary desire.
      * @param behavioralCharacteristics behavioral characteristics
      * @param perception perception
+     * @param carFollowingModel car-following model
      * @param mandatoryIncentives mandatory incentives
      * @param voluntaryIncentives voluntary incentives
      * @return lane change desire for gtu
@@ -333,7 +332,8 @@ public final class LmrsUtil
      * @throws OperationalPlanException perception exception
      */
     private static Desire getLaneChangeDesire(final BehavioralCharacteristics behavioralCharacteristics,
-        final LanePerception perception, final LinkedHashSet<MandatoryIncentive> mandatoryIncentives,
+        final LanePerception perception, final CarFollowingModel carFollowingModel,
+        final LinkedHashSet<MandatoryIncentive> mandatoryIncentives,
         final LinkedHashSet<VoluntaryIncentive> voluntaryIncentives) throws ParameterException, GTUException,
         OperationalPlanException
     {
@@ -347,7 +347,7 @@ public final class LmrsUtil
         Desire mandatoryDesire = new Desire(dLeftMandatory, dRightMandatory);
         for (MandatoryIncentive incentive : mandatoryIncentives)
         {
-            Desire d = incentive.determineDesire(behavioralCharacteristics, perception, mandatoryDesire);
+            Desire d = incentive.determineDesire(behavioralCharacteristics, perception, carFollowingModel, mandatoryDesire);
             dLeftMandatory = d.getLeft() > dLeftMandatory ? d.getLeft() : dLeftMandatory;
             dRightMandatory = d.getRight() > dRightMandatory ? d.getRight() : dRightMandatory;
             mandatoryDesire = new Desire(dLeftMandatory, dRightMandatory);
@@ -359,7 +359,9 @@ public final class LmrsUtil
         Desire voluntaryDesire = new Desire(dLeftVoluntary, dRightVoluntary);
         for (VoluntaryIncentive incentive : voluntaryIncentives)
         {
-            Desire d = incentive.determineDesire(behavioralCharacteristics, perception, mandatoryDesire, voluntaryDesire);
+            Desire d =
+                incentive.determineDesire(behavioralCharacteristics, perception, carFollowingModel, mandatoryDesire,
+                    voluntaryDesire);
             dLeftVoluntary += d.getLeft();
             dRightVoluntary += d.getRight();
             voluntaryDesire = new Desire(dLeftVoluntary, dRightVoluntary);
@@ -411,11 +413,11 @@ public final class LmrsUtil
         final LateralDirectionality lat) throws ParameterException, OperationalPlanException
     {
         Acceleration b = bc.getParameter(ParameterTypes.B);
-        if (perception.getPerceptionCategory(InfrastructureCategory.class).getLegalLaneChangePossibility(
+        if (perception.getPerceptionCategory(InfrastructurePerception.class).getLegalLaneChangePossibility(
             RelativeLane.CURRENT, LateralDirectionality.LEFT).si > 0)
         {
             Acceleration aFollow = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-            for (AbstractHeadwayGTU follower : perception.getPerceptionCategory(NeighborsCategory.class).getFirstFollowers(
+            for (AbstractHeadwayGTU follower : perception.getPerceptionCategory(NeighborsPerception.class).getFirstFollowers(
                 lat))
             {
                 Acceleration a =
@@ -424,7 +426,7 @@ public final class LmrsUtil
                 aFollow = Acceleration.min(aFollow, a);
             }
             Acceleration aSelf = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-            for (AbstractHeadwayGTU leader : perception.getPerceptionCategory(NeighborsCategory.class).getFirstLeaders(lat))
+            for (AbstractHeadwayGTU leader : perception.getPerceptionCategory(NeighborsPerception.class).getFirstLeaders(lat))
             {
                 Acceleration a = singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, bc, sli, cfm);
                 aSelf = Acceleration.min(aSelf, a);
@@ -454,7 +456,7 @@ public final class LmrsUtil
     {
         Acceleration b = bc.getParameter(ParameterTypes.B);
         Acceleration a = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-        for (AbstractHeadwayGTU leader : perception.getPerceptionCategory(NeighborsCategory.class).getFirstLeaders(lat))
+        for (AbstractHeadwayGTU leader : perception.getPerceptionCategory(NeighborsPerception.class).getFirstLeaders(lat))
         {
             Acceleration aSingle =
                 singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, bc, sli, cfm);
@@ -481,7 +483,7 @@ public final class LmrsUtil
     {
         Acceleration b = bc.getParameter(ParameterTypes.B);
         Acceleration a = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-        for (AbstractHeadwayGTU leader : perception.getPerceptionCategory(NeighborsCategory.class).getFirstLeaders(lat))
+        for (AbstractHeadwayGTU leader : perception.getPerceptionCategory(NeighborsPerception.class).getFirstLeaders(lat))
         {
             if ((lat == LateralDirectionality.LEFT && leader.isRightTurnIndicatorOn())
                 || (lat == LateralDirectionality.RIGHT && leader.isLeftTurnIndicatorOn()))
@@ -537,9 +539,12 @@ public final class LmrsUtil
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    public static class LmrsStatus
+    public static class LmrsStatus implements Serializable
     {
 
+        /** */
+        private static final long serialVersionUID = 20160811L;
+        
         /** Remembered leaders. */
         private Set<AbstractHeadwayGTU> lastLeaders = new HashSet<>();
 

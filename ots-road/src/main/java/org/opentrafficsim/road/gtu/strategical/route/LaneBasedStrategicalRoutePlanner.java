@@ -251,9 +251,8 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
             + ", but no link could be found connecting node " + node + " and node " + nextNode + " for route " + this.route);
     }
 
-    /**
-     * @return the route
-     */
+    /** {@inheritDoc} */
+    @Override
     public final Route getRoute()
     {
         return this.route;

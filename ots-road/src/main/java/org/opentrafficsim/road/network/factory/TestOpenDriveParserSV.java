@@ -60,9 +60,14 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
+import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.factory.opendrive.GeneratorAnimation;
 import org.opentrafficsim.road.network.factory.opendrive.OpenDriveNetworkLaneParser;
 import org.opentrafficsim.road.network.factory.opendrive.communicationRTI.RTICars;
@@ -111,7 +116,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                     TestOpenDriveParserSV xmlModel = new TestOpenDriveParserSV();
                     // 1 hour simulation run for testing
                     xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND), new Duration(
-                            60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
+                        60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -195,8 +200,8 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
         /** {@inheritDoc} */
         @Override
         public final void constructModel(
-                final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
-                throws SimRuntimeException
+            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
+            throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
 
@@ -212,7 +217,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                 network = nlp.build(url);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
-                    | GTUException | OTSGeometryException exception)
+                | GTUException | OTSGeometryException exception)
             {
                 exception.printStackTrace();
             }
@@ -240,20 +245,24 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
 
             // distributions
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist =
-                    new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 0.0), SpeedUnit.SI);
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 0.0), SpeedUnit.SI);
             ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> iatDist =
-                    new ContinuousDistDoubleScalar.Rel<>(new DistExponential(stream, 30.0), TimeUnit.SECOND);
+                new ContinuousDistDoubleScalar.Rel<>(new DistExponential(stream, 30.0), TimeUnit.SECOND);
             ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist =
-                    new ContinuousDistDoubleScalar.Rel<>(new DistUniform(stream, 4.0, 5.0), LengthUnit.METER);
+                new ContinuousDistDoubleScalar.Rel<>(new DistUniform(stream, 4.0, 5.0), LengthUnit.METER);
             ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDist =
-                    new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 2.0), LengthUnit.METER);
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 2.0), LengthUnit.METER);
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maxSpeedDist =
-                    new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(stream, 30.0, 35.0, 40.0), SpeedUnit.MILE_PER_HOUR);
+                new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(stream, 30.0, 35.0, 40.0), SpeedUnit.MILE_PER_HOUR);
 
             ContinuousDistDoubleScalar.Rel<Length, LengthUnit> initialPosDist =
-                    new ContinuousDistDoubleScalar.Rel<>(new DistUniform(stream, 0.0, 1.0), LengthUnit.METER);
+                new ContinuousDistDoubleScalar.Rel<>(new DistUniform(stream, 0.0, 1.0), LengthUnit.METER);
 
             // default colorer
+
+            LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory =
+                new LaneBasedStrategicalRoutePlannerFactory(
+                    new LaneBasedGTUFollowingTacticalPlannerFactory(new IDMPlusOld()));
 
             // put some generators and sinks on the outer edges of the network
             for (Link link : network.getLinkMap().values())
@@ -275,27 +284,10 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                                 Time endTime = new Time(Double.MAX_VALUE, TimeUnit.SI);
                                 Length position = lane.getLength().lt(m25) ? m0 : m25;
                                 String id = lane.getParentLink().getId() + "." + lane.getId();
-                                BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
-                                // LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                                // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
-                                /*- TODO GENERATOR CODE CHANGES
-                                try
-                                {
-                                    LanePerceptionFull perception = new LanePerceptionFull();
-                                    LaneBasedStrategicalPlanner strategicalPlanner =
-                                            new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
-                                                    new LaneBasedCFLCTacticalPlanner(perception, new IDMPlusOld(),
-                                                            new Altruistic()));
-                                }
-                                catch (GTUException exception1)
-                                {
-                                    throw new SimRuntimeException(exception1);
-                                }
-                                */
-                                // new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
-                                // initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
-                                // startTime, endTime, lane, position, GTUDirectionality.DIR_PLUS,
-                                // makeSwitchableGTUColorer(), strategicalPlanner, perception);
+                                new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualGTU.class,
+                                    initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
+                                    startTime, endTime, lane, position, GTUDirectionality.DIR_PLUS,
+                                    makeSwitchableGTUColorer(), strategicalPlannerFactory, network);
                                 try
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);
@@ -337,27 +329,10 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                                 Time endTime = new Time(Double.MAX_VALUE, TimeUnit.SI);
                                 Length position = lane.getLength().lt(m25) ? lane.getLength() : lane.getLength().minus(m25);
                                 String id = lane.getParentLink().getId() + "." + lane.getId();
-                                BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
-                                // LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                                // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
-                                /*- TODO GENERATOR CODE CHANGES
-                                try
-                                {
-                                    LanePerceptionFull perception = new LanePerceptionFull();
-                                    LaneBasedStrategicalPlanner strategicalPlanner =
-                                            new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
-                                                    new LaneBasedCFLCTacticalPlanner(perception, new IDMPlusOld(),
-                                                            new Altruistic()));
-                                }
-                                catch (GTUException exception1)
-                                {
-                                    throw new SimRuntimeException(exception1);
-                                }
-                                */
-                                // new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
-                                // initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
-                                // startTime, endTime, lane, position, GTUDirectionality.DIR_MINUS,
-                                // makeSwitchableGTUColorer(), strategicalPlanner, perception);
+                                new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualGTU.class,
+                                    initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
+                                    startTime, endTime, lane, position, GTUDirectionality.DIR_MINUS,
+                                    makeSwitchableGTUColorer(), strategicalPlannerFactory, network);
                                 try
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);
@@ -480,8 +455,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                 while (true)
                 {
                     CrossSectionElement cse =
-                            link.getCrossSectionElementList()
-                                    .get(routeRandom.nextInt(link.getCrossSectionElementList().size()));
+                        link.getCrossSectionElementList().get(routeRandom.nextInt(link.getCrossSectionElementList().size()));
                     if (cse instanceof Lane && !(cse instanceof NoTrafficLane))
                     {
                         lane = (Lane) cse;
@@ -495,30 +469,12 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                     dir = GTUDirectionality.DIR_MINUS;
                 }
 
-                BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
-                // LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
-                LaneBasedStrategicalPlanner sPlanner;
-                /*- TODO GENERATOR CODE CHANGES
-                try
-                {
-                    LanePerceptionFull perception = new LanePerceptionFull();
-                    sPlanner =
-                            new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
-                                    perception, new IDMPlusOld(), new Altruistic()));
-                }
-                catch (GTUException exception2)
-                {
-                    throw new SimRuntimeException(exception2);
-                }
-*/
-                
                 DirectedLanePosition directedLanePosition = null;
                 try
                 {
                     directedLanePosition =
-                            new DirectedLanePosition(lane,
-                                    initialPosDist.draw().multiplyBy(lane.getCenterLine().getLengthSI()), dir);
+                        new DirectedLanePosition(lane, initialPosDist.draw().multiplyBy(lane.getCenterLine().getLengthSI()),
+                            dir);
                 }
                 catch (GTUException exception1)
                 {
@@ -556,7 +512,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                         exception.printStackTrace();
                     }
                     if ((frontNew >= rearGTU && frontNew <= frontGTU) || (rearNew >= rearGTU && rearNew <= frontGTU)
-                            || (frontGTU >= rearNew && frontGTU <= frontNew) || (rearGTU >= rearNew && rearGTU <= frontNew))
+                        || (frontGTU >= rearNew && frontGTU <= frontNew) || (rearGTU >= rearNew && rearGTU <= frontNew))
                     {
                         isEnoughSpace = false;
                     }
@@ -567,8 +523,8 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                     try
                     {
                         RTICars car =
-                                new RTICars(String.valueOf(i), carType, carLength, widthDist.draw(), maxSpeedDist.draw(),
-                                        this.simulator, network);
+                            new RTICars(String.valueOf(i), carType, carLength, widthDist.draw(), maxSpeedDist.draw(),
+                                this.simulator, network);
                         this.rtiCars.add(car);
 
                     }
@@ -623,11 +579,11 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
         private final GTUColorer makeSwitchableGTUColorer()
         {
             GTUColorer[] gtuColorers =
-                    new GTUColorer[] {
-                            new IDGTUColorer(),
-                            new SpeedGTUColorer(new Speed(100.0, SpeedUnit.KM_PER_HOUR)),
-                            new AccelerationGTUColorer(new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2),
-                                    new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2)) };
+                new GTUColorer[] {
+                    new IDGTUColorer(),
+                    new SpeedGTUColorer(new Speed(100.0, SpeedUnit.KM_PER_HOUR)),
+                    new AccelerationGTUColorer(new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2), new Acceleration(
+                        1.0, AccelerationUnit.METER_PER_SECOND_2))};
             return new SwitchableGTUColorer(0, gtuColorers);
         }
 

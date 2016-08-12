@@ -16,12 +16,17 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
 import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
+import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.factory.xml.CrossSectionElementTag.ElementType;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.w3c.dom.NamedNodeMap;
@@ -111,8 +116,8 @@ class GeneratorTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseGenerator(final Node node, final XmlNetworkLaneParser parser, final LinkTag linkTag) throws SAXException,
-            NetworkException
+    static void parseGenerator(final Node node, final XmlNetworkLaneParser parser, final LinkTag linkTag)
+        throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         GeneratorTag generatorTag = new GeneratorTag();
@@ -125,10 +130,10 @@ class GeneratorTag implements Serializable
         CrossSectionElementTag cseTag = linkTag.roadTypeTag.cseTags.get(laneName);
         if (cseTag == null)
             throw new NetworkException("GENERATOR: LANE " + laneName + " not found in elements of link " + linkTag.name
-                    + " - roadtype " + linkTag.roadTypeTag.name);
+                + " - roadtype " + linkTag.roadTypeTag.name);
         if (cseTag.elementType != ElementType.LANE)
             throw new NetworkException("GENERATOR: LANE " + laneName + " not a real GTU lane for link " + linkTag.name
-                    + " - roadtype " + linkTag.roadTypeTag.name);
+                + " - roadtype " + linkTag.roadTypeTag.name);
         if (linkTag.generatorTags.containsKey(laneName))
             throw new SAXException("GENERATOR for LANE with NAME " + laneName + " defined twice");
         generatorTag.laneName = laneName;
@@ -136,7 +141,7 @@ class GeneratorTag implements Serializable
         Node position = attributes.getNamedItem("POSITION");
         if (position == null)
             throw new NetworkException("GENERATOR: POSITION element not found in elements of link " + linkTag.name
-                    + " - roadtype " + linkTag.roadTypeTag.name);
+                + " - roadtype " + linkTag.roadTypeTag.name);
         generatorTag.positionStr = position.getNodeValue().trim();
 
         /*-
@@ -153,7 +158,7 @@ class GeneratorTag implements Serializable
             String gtuName = attributes.getNamedItem("GTU").getNodeValue().trim();
             if (!parser.gtuTags.containsKey(gtuName))
                 throw new NetworkException("GENERATOR: LANE " + laneName + " GTU " + gtuName + " in link " + linkTag.name
-                        + " not defined");
+                    + " not defined");
             generatorTag.gtuTag = parser.gtuTags.get(gtuName);
         }
 
@@ -161,18 +166,18 @@ class GeneratorTag implements Serializable
         {
             String gtuMixName = attributes.getNamedItem("GTUMIX").getNodeValue().trim();
             if (!parser.gtuMixTags.containsKey(gtuMixName))
-                throw new NetworkException("GENERATOR: LANE " + laneName + " GTUMIX " + gtuMixName + " in link " + linkTag.name
-                        + " not defined");
+                throw new NetworkException("GENERATOR: LANE " + laneName + " GTUMIX " + gtuMixName + " in link "
+                    + linkTag.name + " not defined");
             generatorTag.gtuMixTag = parser.gtuMixTags.get(gtuMixName);
         }
 
         if (generatorTag.gtuTag == null && generatorTag.gtuMixTag == null)
             throw new SAXException("GENERATOR: missing attribute GTU or GTUMIX for Lane with NAME " + laneName + " of link "
-                    + linkTag.name);
+                + linkTag.name);
 
         if (generatorTag.gtuTag != null && generatorTag.gtuMixTag != null)
             throw new SAXException("GENERATOR: both attribute GTU and GTUMIX defined for Lane with NAME " + laneName
-                    + " of link " + linkTag.name);
+                + " of link " + linkTag.name);
 
         Node iat = attributes.getNamedItem("IAT");
         if (iat == null)
@@ -199,8 +204,8 @@ class GeneratorTag implements Serializable
         {
             String routeName = attributes.getNamedItem("ROUTE").getNodeValue().trim();
             if (!parser.routeTags.containsKey(routeName))
-                throw new NetworkException("GENERATOR: LANE " + laneName + " ROUTE " + routeName + " in link " + linkTag.name
-                        + " not defined");
+                throw new NetworkException("GENERATOR: LANE " + laneName + " ROUTE " + routeName + " in link "
+                    + linkTag.name + " not defined");
             generatorTag.routeTag = parser.routeTags.get(routeName);
             numberRouteTags++;
         }
@@ -210,7 +215,7 @@ class GeneratorTag implements Serializable
             String routeMixName = attributes.getNamedItem("ROUTEMIX").getNodeValue().trim();
             if (!parser.routeMixTags.containsKey(routeMixName))
                 throw new NetworkException("GENERATOR: LANE " + laneName + " ROUTEMIX " + routeMixName + " in link "
-                        + linkTag.name + " not defined");
+                    + linkTag.name + " not defined");
             generatorTag.routeMixTag = parser.routeMixTags.get(routeMixName);
             numberRouteTags++;
         }
@@ -219,8 +224,8 @@ class GeneratorTag implements Serializable
         {
             String shortestRouteName = attributes.getNamedItem("SHORTESTROUTE").getNodeValue().trim();
             if (!parser.shortestRouteTags.containsKey(shortestRouteName))
-                throw new NetworkException("GENERATOR: LANE " + laneName + " SHORTESTROUTE " + shortestRouteName + " in link "
-                        + linkTag.name + " not defined");
+                throw new NetworkException("GENERATOR: LANE " + laneName + " SHORTESTROUTE " + shortestRouteName
+                    + " in link " + linkTag.name + " not defined");
             generatorTag.shortestRouteTag = parser.shortestRouteTags.get(shortestRouteName);
             numberRouteTags++;
         }
@@ -230,18 +235,18 @@ class GeneratorTag implements Serializable
             String shortestRouteMixName = attributes.getNamedItem("SHORTESTROUTEMIX").getNodeValue().trim();
             if (!parser.shortestRouteMixTags.containsKey(shortestRouteMixName))
                 throw new NetworkException("GENERATOR: LANE " + laneName + " SHORTESTROUTEMIX " + shortestRouteMixName
-                        + " in link " + linkTag.name + " not defined");
+                    + " in link " + linkTag.name + " not defined");
             generatorTag.shortestRouteMixTag = parser.shortestRouteMixTags.get(shortestRouteMixName);
             numberRouteTags++;
         }
 
         if (numberRouteTags > 1)
             throw new SAXException("GENERATOR: multiple ROUTE tags defined for Lane with NAME " + laneName + " of link "
-                    + linkTag.name);
+                + linkTag.name);
 
         if (numberRouteTags == 0)
             throw new SAXException("GENERATOR: no ROUTE tags defined for Lane with NAME " + laneName + " of link "
-                    + linkTag.name);
+                + linkTag.name);
 
         Node gtuColorerNode = attributes.getNamedItem("GTUCOLORER");
         if (gtuColorerNode == null)
@@ -261,7 +266,7 @@ class GeneratorTag implements Serializable
      * @throws GTUException when construction of the Strategical Planner failed
      */
     static void makeGenerators(final LinkTag linkTag, final XmlNetworkLaneParser parser,
-            final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, NetworkException, GTUException
+        final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, NetworkException, GTUException
     {
         for (GeneratorTag generatorTag : linkTag.generatorTags.values())
         {
@@ -280,7 +285,7 @@ class GeneratorTag implements Serializable
      * @throws GTUException when construction of the Strategical Planner failed
      */
     static void makeGenerator(final GeneratorTag generatorTag, final XmlNetworkLaneParser parser, final LinkTag linkTag,
-            final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, NetworkException, GTUException
+        final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, NetworkException, GTUException
     {
         Lane lane = linkTag.lanes.get(generatorTag.laneName);
         Class<?> gtuClass = LaneBasedIndividualGTU.class;
@@ -292,24 +297,18 @@ class GeneratorTag implements Serializable
         Time startTime = generatorTag.startTime != null ? generatorTag.startTime : Time.ZERO;
         Time endTime = generatorTag.endTime != null ? generatorTag.endTime : new Time(Double.MAX_VALUE, TimeUnit.SI);
         Length position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, lane);
-        BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
-        // LaneBasedBehavioralCharacteristics drivingCharacteristics =
-        // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
-        /*- TODO GENERATOR CODE CHANGES
-        LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedGTUFollowingTacticalPlanner(
-                        perception, new IDMPlusOld()), generatorTag.routeTag.route);
+        LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory =
+            new LaneBasedStrategicalRoutePlannerFactory(new LaneBasedGTUFollowingTacticalPlannerFactory(new IDMPlusOld()));
         new GTUGeneratorIndividual(linkTag.name + "." + generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType,
-                gtuClass, generatorTag.initialSpeedDist, generatorTag.iatDist, generatorTag.gtuTag.lengthDist,
-                generatorTag.gtuTag.widthDist, generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime,
-                lane, position, generatorTag.gtuDirection, generatorTag.gtuColorer, strategicalPlanner,
-                LanePerceptionFull.class, parser.network);
-         */
+            gtuClass, generatorTag.initialSpeedDist, generatorTag.iatDist, generatorTag.gtuTag.lengthDist,
+            generatorTag.gtuTag.widthDist, generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime, lane,
+            position, generatorTag.gtuDirection, generatorTag.gtuColorer, strategicalPlannerFactory, parser.network);
 
         // TODO GTUMix
         // TODO RouteMix
         // TODO ShortestRoute
         // TODO ShortestRouteMix
+        // TODO Different strategical planner factories
     }
 
     /** {@inheritDoc} */
@@ -317,11 +316,11 @@ class GeneratorTag implements Serializable
     public final String toString()
     {
         return "GeneratorTag [laneName=" + this.laneName + ", positionStr=" + this.positionStr + ", gtuDirection="
-                + this.gtuDirection + ", gtuTag=" + this.gtuTag + ", gtuMixTag=" + this.gtuMixTag + ", iatDist=" + this.iatDist
-                + ", initialSpeedDist=" + this.initialSpeedDist + ", maxGTUs=" + this.maxGTUs + ", startTime=" + this.startTime
-                + ", endTime=" + this.endTime + ", routeTag=" + this.routeTag + ", routeMixTag=" + this.routeMixTag
-                + ", shortestRouteTag=" + this.shortestRouteTag + ", shortestRouteMixTag=" + this.shortestRouteMixTag
-                + ", gtuColorer=" + this.gtuColorer + "]";
+            + this.gtuDirection + ", gtuTag=" + this.gtuTag + ", gtuMixTag=" + this.gtuMixTag + ", iatDist=" + this.iatDist
+            + ", initialSpeedDist=" + this.initialSpeedDist + ", maxGTUs=" + this.maxGTUs + ", startTime=" + this.startTime
+            + ", endTime=" + this.endTime + ", routeTag=" + this.routeTag + ", routeMixTag=" + this.routeMixTag
+            + ", shortestRouteTag=" + this.shortestRouteTag + ", shortestRouteMixTag=" + this.shortestRouteMixTag
+            + ", gtuColorer=" + this.gtuColorer + "]";
     }
 
 }
