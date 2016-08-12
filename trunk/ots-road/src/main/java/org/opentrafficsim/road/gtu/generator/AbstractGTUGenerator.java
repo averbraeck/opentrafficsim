@@ -36,6 +36,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -98,11 +99,8 @@ public abstract class AbstractGTUGenerator implements Serializable
     /** GTUColorer to use. */
     private final GTUColorer gtuColorer;
 
-    /** The lane-based strategical planner to use. */
-    private final LaneBasedStrategicalPlanner strategicalPlanner;
-
-    /** The LanePerception to use. */
-    private final Class<? extends LanePerception> perceptionClass;
+    /** The lane-based strategical planner factory to use. */
+    private final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory;
 
     /** The network. */
     private final OTSNetwork network;
@@ -128,8 +126,7 @@ public abstract class AbstractGTUGenerator implements Serializable
      * @param position position on the lane, relative to the design line of the link
      * @param direction the direction on the lane in which the GTU has to be generated (DIR_PLUS, or DIR_MINUS)
      * @param gtuColorer the GTUColorer to use
-     * @param strategicalPlanner the lane-based strategical planner to use (pretty much stateless, so can be shared)
-     * @param perceptionClass the LanePerception class to use (stateful, so has to be class-based)
+     * @param strategicalPlannerFactory the lane-based strategical planner factory to use
      * @param network the network to register the generated GTUs into
      * @throws SimRuntimeException when simulation scheduling fails
      */
@@ -139,7 +136,7 @@ public abstract class AbstractGTUGenerator implements Serializable
             final ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> interarrivelTimeDist, final long maxGTUs,
             final Time startTime, final Time endTime, final Lane lane, final Length position,
             final GTUDirectionality direction, final GTUColorer gtuColorer,
-            final LaneBasedStrategicalPlanner strategicalPlanner, final Class<? extends LanePerception> perceptionClass,
+            final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory,
             final OTSNetwork network) throws SimRuntimeException
     {
         super();
@@ -155,8 +152,7 @@ public abstract class AbstractGTUGenerator implements Serializable
         this.position = position;
         this.direction = direction;
         this.gtuColorer = gtuColorer;
-        this.strategicalPlanner = strategicalPlanner;
-        this.perceptionClass = perceptionClass;
+        this.strategicalPlannerFactory = strategicalPlannerFactory;
         this.network = network;
 
         simulator.scheduleEventAbs(startTime, this, this, "generate", null);
@@ -200,14 +196,13 @@ public abstract class AbstractGTUGenerator implements Serializable
             initialLongitudinalPositions.add(new DirectedLanePosition(this.lane, this.position, this.direction));
             carBuilder.setInitialLongitudinalPositions(initialLongitudinalPositions);
             carBuilder.setAnimationClass(DefaultCarAnimation.class);
-            carBuilder.setStrategicalPlanner(getStrategicalPlanner()); // TODO same instance? clone?
             carBuilder.setGtuColorer(this.gtuColorer);
             carBuilder.setNetwork(this.network);
             this.generatedGTUs++;
 
             if (enoughSpace(carBuilder))
             {
-                carBuilder.build();
+                carBuilder.build(this.strategicalPlannerFactory);
             }
             else
             {
@@ -471,7 +466,7 @@ public abstract class AbstractGTUGenerator implements Serializable
             if (enoughSpace(carBuilder))
             {
                 this.carBuilderList.remove(0);
-                carBuilder.build();
+                carBuilder.build(this.strategicalPlannerFactory);
             }
         }
 
@@ -569,17 +564,9 @@ public abstract class AbstractGTUGenerator implements Serializable
     /**
      * @return strategicalPlanner
      */
-    public final LaneBasedStrategicalPlanner getStrategicalPlanner()
+    public final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> getStrategicalPlannerFactory()
     {
-        return this.strategicalPlanner;
-    }
-
-    /**
-     * @return perception
-     */
-    public final Class<? extends LanePerception> getPerceptionClass()
-    {
-        return this.perceptionClass;
+        return this.strategicalPlannerFactory;
     }
 
 }

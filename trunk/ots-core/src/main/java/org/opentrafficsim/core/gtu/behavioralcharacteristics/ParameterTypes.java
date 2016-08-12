@@ -84,6 +84,9 @@ public class ParameterTypes
 
     /** Regular lane change duration. */
     public static final ParameterTypeDuration LCDUR;
+    
+    /** Length of mental map ahead. */
+    public static final ParameterTypeLength PERCEPTION;
 
     static
     {
@@ -150,6 +153,9 @@ public class ParameterTypes
             new Speed(60, SpeedUnit.KM_PER_HOUR), POSITIVE);
 
         LCDUR = new ParameterTypeDuration("lcDur", "Regular lane change duration.", new Duration(3, TimeUnit.SI), POSITIVE);
+        
+        PERCEPTION = new ParameterTypeLength("mapLength", "Mental map length", new Length(2.0, LengthUnit.KILOMETER), POSITIVE);
+        
     }
 
 }

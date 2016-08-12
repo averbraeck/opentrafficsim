@@ -48,6 +48,9 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
 public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
 {
 
+    /** */
+    private static final long serialVersionUID = 20160811L;
+
     /** The forward headway and (leader) object. */
     private TimeStampedObject<Headway> forwardHeadway;
 

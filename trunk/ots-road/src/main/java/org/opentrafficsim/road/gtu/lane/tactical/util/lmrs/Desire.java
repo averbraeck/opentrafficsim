@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
+package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
 import java.io.Serializable;
 

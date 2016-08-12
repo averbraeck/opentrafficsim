@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu.perception;
 
+import java.io.Serializable;
+
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.Type;
 import org.opentrafficsim.core.gtu.GTU;
@@ -17,9 +19,12 @@ import org.opentrafficsim.core.network.NetworkException;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class AbstractPerceptionCategory extends Type<AbstractPerceptionCategory>
+public abstract class AbstractPerceptionCategory extends Type<AbstractPerceptionCategory> implements Serializable
 {
 
+    /** */
+    private static final long serialVersionUID = 20160811L;
+    
     /** Connected perception. */
     private final Perception perception;
     
@@ -36,7 +41,8 @@ public abstract class AbstractPerceptionCategory extends Type<AbstractPerception
      * Returns the connected perception.
      * @return connected perception
      */
-    public final Perception getPerception()
+    @SuppressWarnings("checkstyle:designforextension")
+    public Perception getPerception()
     {
         return this.perception;
     }

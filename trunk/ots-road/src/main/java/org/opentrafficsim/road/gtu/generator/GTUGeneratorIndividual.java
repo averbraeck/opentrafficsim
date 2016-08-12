@@ -17,8 +17,8 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -66,8 +66,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
      * @param position position on the lane, relative to the design line of the link
      * @param direction the direction on the lane in which the GTU has to be generated (DIR_PLUS, or DIR_MINUS)
      * @param gtuColorer the GTUColorer to use
-     * @param strategicalPlanner the lane-based strategical planner to use
-     * @param perceptionClass the LanePerception class to use (stateful, so has to be class-based)
+     * @param strategicalPlannerFactory the lane-based strategical planner factory to use
      * @param network the network to register the GTU into
      * @throws SimRuntimeException when simulation scheduling fails
      */
@@ -80,11 +79,11 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
         final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist, final long maxGTUs,
         final Time startTime, final Time endTime, final Lane lane, final Length position,
         final GTUDirectionality direction, final GTUColorer gtuColorer,
-        final LaneBasedStrategicalPlanner strategicalPlanner, final Class<? extends LanePerception> perceptionClass,
+        final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory,
         final OTSNetwork network) throws SimRuntimeException
     {
         super(name, simulator, gtuType, gtuClass, initialSpeedDist, interarrivelTimeDist, maxGTUs, startTime, endTime,
-            lane, position, direction, gtuColorer, strategicalPlanner, perceptionClass, network);
+            lane, position, direction, gtuColorer, strategicalPlannerFactory, network);
         this.simulator = simulator;
         this.lengthDist = lengthDist;
         this.widthDist = widthDist;

@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.plan.operational;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -424,8 +425,11 @@ public final class LaneOperationalPlanBuilder
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    public static class LaneChange
+    public static class LaneChange implements Serializable
     {
+
+        /** */
+        private static final long serialVersionUID = 20160811L;
 
         /** Lane change progress. */
         private Duration laneChangeProgress;

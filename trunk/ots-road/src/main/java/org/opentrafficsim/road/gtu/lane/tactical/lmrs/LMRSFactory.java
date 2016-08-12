@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -23,8 +24,11 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>
+public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20160811L;
 
     /** Constructor for the car-following model. */
     private final Constructor<? extends CarFollowingModel> carFollowingModelConstructor;

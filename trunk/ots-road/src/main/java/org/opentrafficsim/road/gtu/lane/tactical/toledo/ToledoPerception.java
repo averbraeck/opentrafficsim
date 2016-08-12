@@ -12,7 +12,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructureCategory;
+import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 
 /**
@@ -29,22 +29,22 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 // TODO updateInfrastructureLaneChangeInfo with split number
-public class ToledoPerceptionCategory extends AbstractPerceptionCategory
+public class ToledoPerception extends AbstractPerceptionCategory
 {
 
     /** Infrastructure lane change info per relative lane. */
     private Map<RelativeLane, TimeStampedObject<SortedSet<InfrastructureLaneChangeInfoToledo>>> infrastructureLaneChangeInfo;
 
     /** Wrapped regular infrastructureCategory. */
-    private final InfrastructureCategory infrastructureCategory;
+    private final InfrastructurePerception infrastructureCategory;
 
     /**
      * @param perception perception
      */
-    public ToledoPerceptionCategory(final LanePerception perception)
+    public ToledoPerception(final LanePerception perception)
     {
         super(perception);
-        this.infrastructureCategory = new InfrastructureCategory(perception);
+        this.infrastructureCategory = new InfrastructurePerception(perception);
     }
 
     /**
@@ -115,8 +115,9 @@ public class ToledoPerceptionCategory extends AbstractPerceptionCategory
      * Updates the speed limit prospect.
      * @param lane relative lateral lane
      * @throws GTUException if the GTU was not initialized
+     * @throws ParameterException if a parameter is not defined
      */
-    public final void updateSpeedLimitProspect(final RelativeLane lane) throws GTUException
+    public final void updateSpeedLimitProspect(final RelativeLane lane) throws GTUException, ParameterException
     {
         this.infrastructureCategory.updateSpeedLimitProspect(lane);
     }
@@ -126,9 +127,10 @@ public class ToledoPerceptionCategory extends AbstractPerceptionCategory
      * @param fromLane lane from which the lane change possibility is requested
      * @param lat LEFT or RIGHT, null not allowed
      * @throws GTUException if the GTU was not initialized
+     * @throws ParameterException if a parameter is not defined
      */
     public final void updateLegalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
-        throws GTUException
+        throws GTUException, ParameterException
     {
         this.infrastructureCategory.updateLegalLaneChangePossibility(fromLane, lat);
     }
@@ -138,9 +140,10 @@ public class ToledoPerceptionCategory extends AbstractPerceptionCategory
      * @param fromLane lane from which the lane change possibility is requested
      * @param lat LEFT or RIGHT, null not allowed
      * @throws GTUException if the GTU was not initialized
+     * @throws ParameterException if a parameter is not defined
      */
     public final void updatePhysicalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
-        throws GTUException
+        throws GTUException, ParameterException
     {
         this.infrastructureCategory.updatePhysicalLaneChangePossibility(fromLane, lat);
     }
@@ -148,8 +151,9 @@ public class ToledoPerceptionCategory extends AbstractPerceptionCategory
     /**
      * Updates a set of relative lanes representing the cross section.
      * @throws GTUException if the GTU was not initialized
+     * @throws ParameterException if a parameter is not defined
      */
-    public final void updateCrossSection() throws GTUException
+    public final void updateCrossSection() throws GTUException, ParameterException
     {
         this.infrastructureCategory.updateCrossSection();
     }

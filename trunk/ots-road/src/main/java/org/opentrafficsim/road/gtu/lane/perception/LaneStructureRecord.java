@@ -1,9 +1,13 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -38,11 +42,23 @@ public class LaneStructureRecord implements Serializable
     /** The right LSR or null if not available. Left and right are relative to the <b>driving</b> direction. */
     private LaneStructureRecord right;
 
+    /** Whether this lane has no next records as the lane structure was cut-off. */
+    private boolean cutOffEnd = false;
+
+    /** Whether this lane has no previous records as the lane structure was cut-off. */
+    private boolean cutOffStart = false;
+
     /**
      * The next LSRs. The list is empty if no LSRs are available. Next is relative to the driving direction, not to the design
      * line direction.
      */
     private List<LaneStructureRecord> nextList;
+
+    /**
+     * The previous LSRs. The list is empty if no LSRs are available. Previous is relative to the driving direction, not to the
+     * design line direction.
+     */
+    private List<LaneStructureRecord> prevList;
 
     /**
      * @param lane the lane of the LSR
@@ -74,32 +90,56 @@ public class LaneStructureRecord implements Serializable
      * @return whether the link to which this lane belongs splits, i.e. some of the parallel, connected lanes lead to a
      *         different destination than others
      */
-    public boolean isLinkSplit()
+    public final boolean isLinkSplit()
     {
-        Node toNode = getToNode();
-        boolean hasLeft = this.left != null;
+        Set<Node> toNodes = new HashSet<>();
         LaneStructureRecord lsr = this;
-        while (hasLeft)
+        while (lsr != null)
         {
+            for (LaneStructureRecord next : lsr.getNext())
+            {
+                toNodes.add(next.getToNode());
+            }
             lsr = lsr.getLeft();
-            if (!lsr.getToNode().equals(toNode))
-            {
-                return false;
-            }
-            hasLeft = lsr.getLeft() != null;
         }
-        boolean hasRight = this.right != null;
-        lsr = this;
-        while (hasRight)
+        lsr = this.getRight();
+        while (lsr != null)
         {
-            lsr = lsr.getRight();
-            if (!lsr.getToNode().equals(toNode))
+            for (LaneStructureRecord next : lsr.getNext())
             {
-                return false;
+                toNodes.add(next.getToNode());
             }
-            hasRight = lsr.getRight() != null;
+            lsr = lsr.getRight();
         }
-        return true;
+        return toNodes.size() > 1;
+    }
+
+    /**
+     * @return whether the link to which this lane belongs merges, i.e. some of the parallel, connected lanes follow from a
+     *         different origin than others
+     */
+    public final boolean isLinkMerge()
+    {
+        Set<Node> fromNodes = new HashSet<>();
+        LaneStructureRecord lsr = this;
+        while (lsr != null)
+        {
+            for (LaneStructureRecord prev : lsr.getPrev())
+            {
+                fromNodes.add(prev.getFromNode());
+            }
+            lsr = lsr.getLeft();
+        }
+        lsr = this.getRight();
+        while (lsr != null)
+        {
+            for (LaneStructureRecord prev : lsr.getPrev())
+            {
+                fromNodes.add(prev.getFromNode());
+            }
+            lsr = lsr.getRight();
+        }
+        return fromNodes.size() > 1;
     }
 
     /**
@@ -146,18 +186,96 @@ public class LaneStructureRecord implements Serializable
     /**
      * @param nextList set the next LSRs. The list is empty if no LSRs are available. Next is relative to the driving direction,
      *            not to the design line direction.
+     * @throws GTUException if the records is cut-off at the end
      */
-    public final void setNext(final List<LaneStructureRecord> nextList)
+    public final void setNextList(final List<LaneStructureRecord> nextList)  throws GTUException
     {
+        Throw.when(this.cutOffEnd && !nextList.isEmpty(), GTUException.class,
+                "Cannot set next records to a record that was cut-off at the end.");
         this.nextList = nextList;
     }
 
     /**
      * @param next a next LSRs to add. Next is relative to the driving direction, not to the design line direction.
+     * @throws GTUException if the records is cut-off at the end
      */
-    public final void addNext(final LaneStructureRecord next)
+    public final void addNext(final LaneStructureRecord next) throws GTUException
     {
+        Throw.when(this.cutOffEnd, GTUException.class,
+                "Cannot add next records to a record that was cut-off at the end.");
         this.nextList.add(next);
+    }
+
+    /**
+     * @return the previous LSRs. The list is empty if no LSRs are available. Previous is relative to the driving direction, not
+     *         to the design line direction.
+     */
+    public final List<LaneStructureRecord> getPrev()
+    {
+        return this.prevList;
+    }
+
+    /**
+     * @param prevList set the next LSRs. The list is empty if no LSRs are available. Previous is relative to the driving
+     *            direction, not to the design line direction.
+     * @throws GTUException if the records is cut-off at the start
+     */
+    public final void setPrevList(final List<LaneStructureRecord> prevList) throws GTUException
+    {
+        Throw.when(this.cutOffStart && !prevList.isEmpty(), GTUException.class,
+                "Cannot set previous records to a record that was cut-off at the start.");
+        this.prevList = prevList;
+    }
+
+    /**
+     * @param prev a previous LSRs to add. Previous is relative to the driving direction, not to the design line direction.
+     * @throws GTUException if the records is cut-off at the start
+     */
+    public final void addPrev(final LaneStructureRecord prev) throws GTUException
+    {
+        Throw.when(this.cutOffStart, GTUException.class,
+            "Cannot add previous records to a record that was cut-off at the start.");
+        this.prevList.add(prev);
+    }
+
+    /**
+     * Sets this record as being cut-off, i.e. there are no next records due to cut-off.
+     * @throws GTUException if there are next records
+     */
+    public final void setCutOffEnd() throws GTUException
+    {
+        Throw.when(!this.nextList.isEmpty(), GTUException.class,
+            "Setting lane record as cut-off end, but there are next records.");
+        this.cutOffEnd = true;
+    }
+
+    /**
+     * Sets this record as being cut-off, i.e. there are no previous records due to cut-off.
+     * @throws GTUException if there are previous records
+     */
+    public final void setCutOffStart() throws GTUException
+    {
+        Throw.when(!this.prevList.isEmpty(), GTUException.class,
+            "Setting lane record as cut-off start, but there are previous records.");
+        this.cutOffStart = true;
+    }
+    
+    /**
+     * Returns whether this lane has no next records as the lane structure was cut-off.
+     * @return whether this lane has no next records as the lane structure was cut-off
+     */
+    public final boolean isCutOffEnd()
+    {
+        return this.cutOffEnd;
+    }
+    
+    /**
+     * Returns whether this lane has no previous records as the lane structure was cut-off.
+     * @return whether this lane has no previous records as the lane structure was cut-off
+     */
+    public final boolean isCutOffStart()
+    {
+        return this.cutOffStart;
     }
 
     /**
@@ -180,8 +298,8 @@ public class LaneStructureRecord implements Serializable
     @Override
     public final String toString()
     {
-        return "LaneStructureRecord [lane=" + this.lane + ", direction=" + this.direction + ", left=" + this.left + ", right="
-                + this.right + ", nextList=" + this.nextList + "]";
+        return "LaneStructureRecord [lane=" + this.lane + ", direction=" + this.direction + ", left=" + this.left
+            + ", right=" + this.right + ", nextList=" + this.nextList + "]";
     }
 
 }

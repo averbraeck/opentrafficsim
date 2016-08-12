@@ -36,6 +36,7 @@ import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.PerceivableContext;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
@@ -107,6 +108,12 @@ public class GTUTest implements OTSModelInterface
 
             @Override
             public TacticalPlanner generateTacticalPlanner()
+            {
+                return null;
+            }
+
+            @Override
+            public Route getRoute()
             {
                 return null;
             }

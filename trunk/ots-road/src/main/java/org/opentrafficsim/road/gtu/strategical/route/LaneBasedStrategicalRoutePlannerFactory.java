@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.strategical.route;
 
+import java.io.Serializable;
+
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.route.Route;
@@ -22,8 +24,11 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
  */
 
 public class LaneBasedStrategicalRoutePlannerFactory implements
-    LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner>
+    LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner>, Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20160811L;
 
     /** Route for the next strategical planner. */
     private Route route;

@@ -27,9 +27,9 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultAlexander;
-import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructureCategory;
-import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionCategory;
-import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsCategory;
+import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
@@ -78,9 +78,9 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         this.gtu = gtu;
         CategorialLanePerception perception = new CategorialLanePerception(gtu);
         perception.addPerceptionCategory(new DefaultAlexander(perception));
-        perception.addPerceptionCategory(new InfrastructureCategory(perception));
-        perception.addPerceptionCategory(new NeighborsCategory(perception));
-        perception.addPerceptionCategory(new IntersectionCategory(perception));
+        perception.addPerceptionCategory(new InfrastructurePerception(perception));
+        perception.addPerceptionCategory(new NeighborsPerception(perception));
+        perception.addPerceptionCategory(new IntersectionPerception(perception));
         this.lanePerception = perception;
     }
 

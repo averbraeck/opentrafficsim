@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.toledo;
 
+import java.io.Serializable;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -16,9 +18,12 @@ import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class InfrastructureLaneChangeInfoToledo extends InfrastructureLaneChangeInfo
+public class InfrastructureLaneChangeInfoToledo extends InfrastructureLaneChangeInfo implements Serializable
 {
 
+    /** */
+    private static final long serialVersionUID = 20160811L;
+    
     /** Split number, 0 if this info does not regard a split. */
     private final int splitNumber;
 

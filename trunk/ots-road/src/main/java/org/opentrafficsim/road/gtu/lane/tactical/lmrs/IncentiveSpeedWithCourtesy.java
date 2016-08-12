@@ -16,11 +16,13 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructureCategory;
-import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsCategory;
+import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 
 /**
  * Determines lane change desire for speed. The anticipation speed in the current and adjacent lanes are compared. The larger
@@ -54,31 +56,30 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
     /** {@inheritDoc} */
     @Override
     public final Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics,
-        final LanePerception perception, final Desire mandatoryDesire, final Desire voluntaryDesire)
-        throws ParameterException, OperationalPlanException
+        final LanePerception perception, final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
+        final Desire voluntaryDesire) throws ParameterException, OperationalPlanException
     {
 
         // zero if no lane change is possible
-        if (perception.getPerceptionCategory(InfrastructureCategory.class).getLegalLaneChangePossibility(
+        if (perception.getPerceptionCategory(InfrastructurePerception.class).getLegalLaneChangePossibility(
             RelativeLane.CURRENT, LateralDirectionality.LEFT).si == 0
-            && perception.getPerceptionCategory(InfrastructureCategory.class).getLegalLaneChangePossibility(
+            && perception.getPerceptionCategory(InfrastructurePerception.class).getLegalLaneChangePossibility(
                 RelativeLane.CURRENT, LateralDirectionality.RIGHT).si == 0)
         {
             return new Desire(0, 0);
         }
 
         // gather some info
-        CarFollowingModel cfm = null; // ((AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner()).getCarFollowingModel();
-        Speed vCur = anticipationSpeed(RelativeLane.CURRENT, behavioralCharacteristics, perception, cfm);
+        Speed vCur = anticipationSpeed(RelativeLane.CURRENT, behavioralCharacteristics, perception, carFollowingModel);
         Speed vGain = behavioralCharacteristics.getParameter(VGAIN);
 
         // calculate aGain (default 1; lower as acceleration is higher than 0)
         Dimensionless aGain;
         Acceleration aCur =
-            CarFollowingUtil.followLeaders(cfm, behavioralCharacteristics, perception.getPerceptionCategory(
-                EgoPerception.class).getSpeed(), perception.getPerceptionCategory(InfrastructureCategory.class)
+            CarFollowingUtil.followLeaders(carFollowingModel, behavioralCharacteristics, perception.getPerceptionCategory(
+                EgoPerception.class).getSpeed(), perception.getPerceptionCategory(InfrastructurePerception.class)
                 .getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO), perception
-                .getPerceptionCategory(NeighborsCategory.class).getLeaders(RelativeLane.CURRENT));
+                .getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT));
         if (aCur.si > 0)
         {
             Acceleration a = behavioralCharacteristics.getParameter(ParameterTypes.A);
@@ -91,9 +92,9 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
 
         // left desire
         Dimensionless dLeft;
-        if (perception.getPerceptionCategory(InfrastructureCategory.class).getCrossSection().contains(RelativeLane.LEFT))
+        if (perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection().contains(RelativeLane.LEFT))
         {
-            Speed vLeft = anticipationSpeed(RelativeLane.LEFT, behavioralCharacteristics, perception, cfm);
+            Speed vLeft = anticipationSpeed(RelativeLane.LEFT, behavioralCharacteristics, perception, carFollowingModel);
             dLeft = aGain.multiplyBy(vLeft.minus(vCur)).divideBy(vGain);
         }
         else
@@ -103,9 +104,9 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
 
         // right desire
         Dimensionless dRight;
-        if (perception.getPerceptionCategory(InfrastructureCategory.class).getCrossSection().contains(RelativeLane.LEFT))
+        if (perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection().contains(RelativeLane.LEFT))
         {
-            Speed vRight = anticipationSpeed(RelativeLane.RIGHT, behavioralCharacteristics, perception, cfm);
+            Speed vRight = anticipationSpeed(RelativeLane.RIGHT, behavioralCharacteristics, perception, carFollowingModel);
             dRight = aGain.multiplyBy(vRight.minus(vCur)).divideBy(vGain);
         }
         else
@@ -132,15 +133,15 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
     {
 
         Speed anticipationSpeed =
-            cfm.desiredSpeed(bc, perception.getPerceptionCategory(InfrastructureCategory.class).getSpeedLimitProspect(lane)
+            cfm.desiredSpeed(bc, perception.getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(lane)
                 .getSpeedLimitInfo(Length.ZERO));
         Speed desiredSpeed = new Speed(anticipationSpeed);
         Length x0 = bc.getParameter(ParameterTypes.LOOKAHEAD);
 
         // leaders with right indicators on left lane of considered lane
-        if (perception.getPerceptionCategory(InfrastructureCategory.class).getCrossSection().contains(lane.getLeft()))
+        if (perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection().contains(lane.getLeft()))
         {
-            for (AbstractHeadwayGTU headwayGTU : perception.getPerceptionCategory(NeighborsCategory.class).getLeaders(
+            for (AbstractHeadwayGTU headwayGTU : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(
                 lane.getLeft()))
             {
                 // leaders on the current lane with indicator to an adjacent lane are not considered
@@ -152,9 +153,9 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
         }
 
         // leaders with left indicators on right lane of considered lane
-        if (perception.getPerceptionCategory(InfrastructureCategory.class).getCrossSection().contains(lane.getRight()))
+        if (perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection().contains(lane.getRight()))
         {
-            for (AbstractHeadwayGTU headwayGTU : perception.getPerceptionCategory(NeighborsCategory.class).getLeaders(
+            for (AbstractHeadwayGTU headwayGTU : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(
                 lane.getRight()))
             {
                 // leaders on the current lane with indicator to an adjacent lane are not considered
@@ -166,7 +167,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
         }
 
         // leaders in the considered lane
-        for (AbstractHeadwayGTU headwayGTU : perception.getPerceptionCategory(NeighborsCategory.class).getLeaders(lane))
+        for (AbstractHeadwayGTU headwayGTU : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane))
         {
             anticipationSpeed = anticipateSingle(anticipationSpeed, desiredSpeed, x0, headwayGTU);
         }

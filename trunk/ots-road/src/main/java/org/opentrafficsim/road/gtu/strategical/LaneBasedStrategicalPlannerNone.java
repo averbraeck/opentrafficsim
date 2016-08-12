@@ -10,6 +10,7 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
 /**
@@ -69,6 +70,13 @@ public class LaneBasedStrategicalPlannerNone extends AbstractLaneBasedStrategica
     /** {@inheritDoc} */
     @Override
     public LinkDirection nextLinkDirection(Node node, Link previousLink, GTUType gtuType) throws NetworkException
+    {
+        return null;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public Route getRoute()
     {
         return null;
     }

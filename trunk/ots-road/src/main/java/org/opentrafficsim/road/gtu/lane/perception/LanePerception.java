@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
@@ -14,11 +15,18 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
  * initial version Jan 30, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 public interface LanePerception extends Perception
 {
 
     /** {@inheritDoc} */
     LaneBasedGTU getGtu() throws GTUException;
+    
+    /**
+     * @return lane structure to perform perception 
+     * @throws ParameterException if parameter is not defined 
+     */
+    LaneStructure getLaneStructure() throws ParameterException;
     
 }

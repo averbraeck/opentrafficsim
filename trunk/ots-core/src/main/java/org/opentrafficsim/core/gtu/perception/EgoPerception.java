@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.gtu.perception;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
@@ -19,8 +20,17 @@ import org.opentrafficsim.core.network.NetworkException;
 public class EgoPerception extends AbstractPerceptionCategory
 {
 
+    /** */
+    private static final long serialVersionUID = 20160811L;
+
     /** Speed. */
     private TimeStampedObject<Speed> speed;
+    
+    /** Length. */
+    private TimeStampedObject<Length> length;
+    
+    /** Width. */
+    private TimeStampedObject<Length> width;
     
     /**
      * @param perception perception
@@ -32,10 +42,29 @@ public class EgoPerception extends AbstractPerceptionCategory
 
     /**
      * Update speed.
+     * @throws GTUException if the GTU has not been initialized
      */
-    public void updateSpeed()
+    public final void updateSpeed() throws GTUException
     {
-        //
+        this.speed = new TimeStampedObject<>(getGtu().getSpeed(), getTimestamp());
+    }
+    
+    /**
+     * Update length.
+     * @throws GTUException if the GTU has not been initialized
+     */
+    public final void updateLength() throws GTUException
+    {
+        this.length = new TimeStampedObject<>(getGtu().getLength(), getTimestamp());
+    }
+    
+    /**
+     * Update width.
+     * @throws GTUException if the GTU has not been initialized
+     */
+    public final void updateWidth() throws GTUException
+    {
+        this.width = new TimeStampedObject<>(getGtu().getWidth(), getTimestamp());
     }
     
     /**
@@ -48,12 +77,48 @@ public class EgoPerception extends AbstractPerceptionCategory
     }
     
     /**
+     * Returns the length.
+     * @return length
+     */
+    public final Length getLength()
+    {
+        return this.length.getObject();
+    }
+    
+    /**
+     * Returns the width.
+     * @return width
+     */
+    public final Length getWidth()
+    {
+        return this.width.getObject();
+    }
+    
+    /**
      * Return the time stamped speed.
      * @return time stamped speed
      */
     public final TimeStampedObject<Speed> getTimeStampedSpeed()
     {
         return this.speed;
+    }
+    
+    /**
+     * Return the time stamped length.
+     * @return time stamped length
+     */
+    public final TimeStampedObject<Length> getTimeStampedLength()
+    {
+        return this.length;
+    }
+    
+    /**
+     * Return the time stamped width.
+     * @return time stamped width
+     */
+    public final TimeStampedObject<Length> getTimeStampedWidth()
+    {
+        return this.width;
     }
     
     /** {@inheritDoc} */
