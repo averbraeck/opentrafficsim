@@ -789,7 +789,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
      * @param maximumSpeedDistribution
      * @param initialSpeedDistribution
      * @param initialPositions
-     * @param tacticalPlanner
+     * @param strategicalPlannerFactory x
      * @return x
      * @throws GTUException
      */
