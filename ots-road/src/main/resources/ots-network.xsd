@@ -48,6 +48,7 @@
               <xsd:attribute name="DIRECTION" type="LEFTRIGHTTYPE" use="required"></xsd:attribute>
             </xsd:complexType>
           </xsd:element>
+          <xsd:element name="COORDINATES" type="COORDINATELISTTYPE" />
         </xsd:choice>
 
         <xsd:element ref="ROADTYPE" minOccurs="0" maxOccurs="1" />

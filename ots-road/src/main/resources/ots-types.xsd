@@ -67,9 +67,13 @@
   <xsd:simpleType name="COORDINATETYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern
-        value="\(\s*(\-|\+){0,1}\d+[\.]{0,1}\d*\s*\,\s*(\-|\+){0,1}\d+[\.]{0,1}\d*(\s*,\s*(\-|\+){0,1}\d+[\.]{0,1}\d*){0,1}\)">
+        value="\(\s*(\-|\+){0,1}\d+[\.]{0,1}\d*\s*\,\s*(\-|\+){0,1}\d+[\.]{0,1}\d*(\s*,\s*(\-|\+){0,1}\d+[\.]{0,1}\d*){0,1}\s*\)">
       </xsd:pattern>
     </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="COORDINATELISTTYPE">
+    <xsd:list itemType="COORDINATETYPE" />
   </xsd:simpleType>
 
   <xsd:simpleType name="LEFTRIGHTTYPE">
