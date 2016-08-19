@@ -20,7 +20,8 @@ import org.xml.sax.SAXException;
  * initial version Jul 24, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class PolyLineTag implements Serializable {
+class PolyLineTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150724L;
 
@@ -32,7 +33,7 @@ class PolyLineTag implements Serializable {
 
     /**
      * Parse the LINK.POLYLINE tag.
-     * @param polyLineNode the XML-node to parse
+     * @param polyLine the XML-node to parse
      * @param parser the parser with the lists of information
      * @param linkTag the parent link tag
      * @throws SAXException when parsing of the tag fails
@@ -40,22 +41,23 @@ class PolyLineTag implements Serializable {
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parsePolyLine(final Node polyLine, final XmlNetworkLaneParser parser, final LinkTag linkTag)
-        throws SAXException, NetworkException {
+            throws SAXException, NetworkException
+    {
         NamedNodeMap polyLineAttributes = polyLine.getAttributes();
         linkTag.polyLineTag = new PolyLineTag();
 
         if (polyLineAttributes.getNamedItem("INTERMEDIATEPOINTS") != null)
-            linkTag.polyLineTag.coordinates = Coordinates.parseCoordinates(polyLineAttributes.getNamedItem(
-                "INTERMEDIATEPOINTS").getNodeValue());
+            linkTag.polyLineTag.coordinates =
+                    Coordinates.parseCoordinates(polyLineAttributes.getNamedItem("INTERMEDIATEPOINTS").getNodeValue());
         if (polyLineAttributes.getNamedItem("LENGTH") != null)
-            linkTag.polyLineTag.length = LengthUnits.parseLengthRel(polyLineAttributes.getNamedItem("LENGTH")
-                .getNodeValue());
+            linkTag.polyLineTag.length = LengthUnits.parseLengthRel(polyLineAttributes.getNamedItem("LENGTH").getNodeValue());
 
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String toString() {
+    public final String toString()
+    {
         return "PolyLineTag [length=" + this.length + "]";
     }
 }
