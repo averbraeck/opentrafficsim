@@ -54,3 +54,4 @@ serializable
 stateful
 fallback
 magenta
+payload
