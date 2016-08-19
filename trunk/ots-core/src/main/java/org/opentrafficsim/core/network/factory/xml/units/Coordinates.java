@@ -11,11 +11,9 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public final class Coordinates
-{
+public final class Coordinates {
     /** Utility class. */
-    private Coordinates()
-    {
+    private Coordinates() {
         // do not instantiate
     }
 
@@ -24,8 +22,26 @@ public final class Coordinates
      * @param cs the string containing the coordinate.
      * @return a Point3d contaiing the x,y or x,y,z values.
      */
-    public static OTSPoint3D parseCoordinate(final String cs)
-    {
+    public static OTSPoint3D[] parseCoordinates(final String cs) {
+        String cs1 = cs.replaceAll("\\s+", "");
+        String c = cs1.replace(")(", ")split(");
+        String[] cc = c.split("split");
+        OTSPoint3D[] coords = new OTSPoint3D[cc.length];
+        int i = 0;
+        for (String coord : cc) {
+            coords[i] = parseCoordinate(coord);
+            i++;
+        }
+        return coords;
+
+    }
+
+    /**
+     * Parse a coordinate with (x,y) or (x,y,z).
+     * @param cs the string containing the coordinate.
+     * @return a Point3d contaiing the x,y or x,y,z values.
+     */
+    public static OTSPoint3D parseCoordinate(final String cs) {
         String c = cs.replace("(", "");
         c = c.replace(")", "");
         String[] cc = c.split(",");
