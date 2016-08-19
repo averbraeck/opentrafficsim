@@ -90,12 +90,11 @@ public class IMBChat
      * @param aName String; name of sender
      * @param aMessage String; the message that was sent
      */
-    void AddMessage(Date aDateTime, String aName, String aMessage)
+    void AddMessage(final Date aDateTime, final String aName, final String aMessage)
     {
         final JTextField tf = this.listboxMessages;
         SwingUtilities.invokeLater(new Runnable()
         {
-
             @Override
             public void run()
             {
