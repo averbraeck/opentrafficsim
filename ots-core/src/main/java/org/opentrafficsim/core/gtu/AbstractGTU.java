@@ -1,5 +1,8 @@
 package org.opentrafficsim.core.gtu;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -24,6 +27,7 @@ import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.observers.Observer;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
 /**
@@ -84,6 +88,9 @@ public abstract class AbstractGTU implements GTU
 
     /** Is this GTU destroyed? */
     private boolean destroyed = false;
+
+    /** Observers that want to see this GTU move. */
+    private List<Observer> observers = null;
 
     /**
      * @param id String; the id of the GTU
@@ -147,7 +154,7 @@ public abstract class AbstractGTU implements GTU
                 GTUException.class, "initialLocation %s invalid for GTU with id %s", initialLocation, this.id);
         Throw.when(initialSpeed == null, GTUException.class, "initialSpeed is null for GTU with id %s", this.id);
         Throw.when(!getId().equals(strategicalPlanner.getGtu().getId()), GTUException.class,
-            "GTU %s is initialized with a strategical planner for GTU %s", getId(), strategicalPlanner.getGtu().getId());
+                "GTU %s is initialized with a strategical planner for GTU %s", getId(), strategicalPlanner.getGtu().getId());
 
         this.strategicalPlanner = strategicalPlanner;
         Time now = this.simulator.getSimulatorTime().getTime();
@@ -207,6 +214,19 @@ public abstract class AbstractGTU implements GTU
     }
 
     /**
+     * Add an Observer.
+     * @param observer Observer; the observer that must be added
+     */
+    public final void addObserver(final Observer observer)
+    {
+        if (null == this.observers)
+        {
+            this.observers = new ArrayList<Observer>();
+        }
+        this.observers.add(observer);
+    }
+
+    /**
      * Move from the current location according to an operational plan to a location that will bring us nearer to reaching the
      * location provided by the strategical planner. <br>
      * This method can be overridden to carry out specific behavior during the execution of the plan (e.g., scheduling of
@@ -230,6 +250,22 @@ public abstract class AbstractGTU implements GTU
         if (this.operationalPlan != null)
         {
             this.odometer = this.odometer.plus(this.operationalPlan.getTraveledDistance(now));
+        }
+
+        if (null != this.observers)
+        {
+            DirectedPoint location = getLocation();
+            for (Observer observer : this.observers)
+            {
+                try
+                {
+                    observer.postMessage("GTU_moved", new Object[] { getId(), location.x, location.y, location.z });
+                }
+                catch (Exception exception)
+                {
+                    throw new GTUException(exception);
+                }
+            }
         }
 
         // Do we have an operational plan?
