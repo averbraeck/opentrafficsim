@@ -11,10 +11,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.language.io.URLResource;
-
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -33,6 +29,10 @@ import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
 import org.xml.sax.SAXException;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.io.URLResource;
+
 /**
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -42,29 +42,22 @@ import org.xml.sax.SAXException;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class TestXMLParser extends AbstractWrappableAnimation
-{
+public class TestXMLParser extends AbstractWrappableAnimation {
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
      * @throws SimRuntimeException should never happen
      */
-    public static void main(final String[] args) throws SimRuntimeException
-    {
-        SwingUtilities.invokeLater(new Runnable()
-        {
+    public static void main(final String[] args) throws SimRuntimeException {
+        SwingUtilities.invokeLater(new Runnable() {
             @Override
-            public void run()
-            {
-                try
-                {
+            public void run() {
+                try {
                     TestXMLParser xmlModel = new TestXMLParser();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
-                        new Duration(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
-                }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
-                {
+                    xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND), new Duration(
+                        60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
+                } catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception) {
                     exception.printStackTrace();
                 }
             }
@@ -73,50 +66,43 @@ public class TestXMLParser extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    public final String shortName()
-    {
+    public final String shortName() {
         return "TestXMLModel";
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String description()
-    {
+    public final String description() {
         return "TestXMLModel";
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void stopTimersThreads()
-    {
+    public final void stopTimersThreads() {
         super.stopTimersThreads();
     }
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts()
-    {
+    protected final JPanel makeCharts() {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer)
-    {
+    protected final OTSModelInterface makeModel(final GTUColorer colorer) {
         return new TestXMLModel();
     }
 
     /** {@inheritDoc} */
     @Override
-    protected final Double makeAnimationRectangle()
-    {
+    protected final Double makeAnimationRectangle() {
         return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String toString()
-    {
+    public final String toString() {
         return "TestXMLParser []";
     }
 
@@ -132,8 +118,7 @@ public class TestXMLParser extends AbstractWrappableAnimation
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class TestXMLModel implements OTSModelInterface
-    {
+    class TestXMLModel implements OTSModelInterface {
         /** */
         private static final long serialVersionUID = 20141121L;
 
@@ -142,33 +127,26 @@ public class TestXMLParser extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public final
-            void
-            constructModel(
-                final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
-                throws SimRuntimeException
-        {
+        public final void constructModel(
+            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
+                throws SimRuntimeException {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
             // URL url = URLResource.getResource("/PNH1.xml");
             // URL url = URLResource.getResource("/offset-example.xml");
             // URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
-            URL url = URLResource.getResource("/straight-road-new-gtu-example_2.xml");
+            URL url = URLResource.getResource("/straight-road-new-gtu-example_3.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
-            try
-            {
+            try {
                 nlp.build(url);
-            }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
-                | GTUException | OTSGeometryException exception)
-            {
+            } catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
+                | GTUException | OTSGeometryException exception) {
                 exception.printStackTrace();
             }
         }
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
-            getSimulator()
+        public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
 
         {
             return this.simulator;
@@ -176,8 +154,7 @@ public class TestXMLParser extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public final String toString()
-        {
+        public final String toString() {
             return "TestXMLModel [simulator=" + this.simulator + "]";
         }
 
