@@ -1370,4 +1370,12 @@ public class TConnection {
         Payload.qWrite(aEventFilters);
         return writeCommand(TEventEntry.IC_REQUEST_EVENT_NAMES, Payload.getBuffer());
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "TConnection [remoteHost=" + this.fremoteHost + ", remotePort=" + this.fremotePort + ", federation="
+                + this.ffederation + ", isConnected()=" + this.isConnected() + "]";
+    }
 }

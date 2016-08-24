@@ -210,6 +210,19 @@ public abstract class AbstractGTU implements GTU
             this.nextMoveEvent = null;
         }
 
+        if (null != this.observers)
+        {
+            DirectedPoint location = getLocation();
+            try
+            {
+                sendMessageToAllObservers(Observer.DELETE,
+                        new Object[] { getId(), location.x, location.y, location.z, location.getRotZ() });
+            }
+            catch (GTUException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
         this.destroyed = true;
     }
 
@@ -224,6 +237,38 @@ public abstract class AbstractGTU implements GTU
             this.observers = new ArrayList<Observer>();
         }
         this.observers.add(observer);
+        DirectedPoint location = getLocation();
+        try
+        {
+            observer.postMessage("GTU", Observer.NEW,
+                    new Object[] { getId(), location.x, location.y, location.z, location.getRotZ() });
+        }
+        catch (Exception exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+
+    /**
+     * Send a message to all registered observers.
+     * @param eventType int type of event (NEW, CHANGE, or DELETE)
+     * @param args Object[]; data to send
+     * @throws GTUException when something went wrong in the event transmission code
+     */
+    private void sendMessageToAllObservers(final int eventType, final Object[] args) throws GTUException
+    {
+        for (Observer observer : this.observers)
+        {
+            try
+            {
+                observer.postMessage("GTU", eventType, args);
+            }
+            catch (Exception exception)
+            {
+                throw new GTUException(exception);
+            }
+        }
+
     }
 
     /**
@@ -255,18 +300,8 @@ public abstract class AbstractGTU implements GTU
         if (null != this.observers)
         {
             DirectedPoint location = getLocation();
-            for (Observer observer : this.observers)
-            {
-                try
-                {
-                    observer.postMessage("GTU_moved",
-                            new Object[] { getId(), location.x, location.y, location.z, location.getRotZ() });
-                }
-                catch (Exception exception)
-                {
-                    throw new GTUException(exception);
-                }
-            }
+            sendMessageToAllObservers(Observer.CHANGE,
+                    new Object[] { getId(), location.x, location.y, location.z, location.getRotZ() });
         }
 
         // Do we have an operational plan?

@@ -425,7 +425,16 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
     public void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
-        this.observer = new IMBObserver(/*"192.168.1.10"*/ /*"app-usimb01.westeurope.cloudapp.azure.com"*/ "vps17642.public.cloudvps.com" /*"localhost"*/, 4000, "GTUObserver", 1, "OTS_RT");
+        try
+        {
+            this.observer = new IMBObserver("192.168.1.11" /*"app-usimb01.westeurope.cloudapp.azure.com"*/ 
+                    /*"vps17642.public.cloudvps.com"*/ /*"localhost"*/, 4000, "GTUObserver", 1, "OTS_RT");
+            System.out.println("Observer is " + this.observer);
+        }
+        catch (Exception exception1)
+        {
+            System.out.println("Observer creation failed; GTU movements will not be sent to observer");
+        }
         final int laneCount = 2;
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
         {

@@ -26,13 +26,14 @@ public class IMBObserver implements Observer
      * @param modelName String; local model name
      * @param modelId int; model id
      * @param federation String; federation on the IMB hub
+     * @throws Exception when a connection to the IMB hub could not be established
      */
-    public IMBObserver(final String host, final int port, final String modelName, final int modelId, final String federation)
+    public IMBObserver(final String host, final int port, final String modelName, final int modelId, final String federation) throws Exception
     {
         this.connection = new TConnection(host, port, modelName, modelId, federation);
         if (!this.connection.isConnected())
         {
-            System.err.println("No connection to broker");
+            throw new Exception("No connection to broker");
         }
     }
 
@@ -41,10 +42,11 @@ public class IMBObserver implements Observer
      * @throws Exception
      */
     @Override
-    public final boolean postMessage(final String eventName, final Object[] args) throws Exception
+    public final boolean postMessage(final String eventName, final int eventType, final Object[] args) throws Exception
     {
         TByteBuffer payload = new TByteBuffer();
         payload.writeStart(0);
+        payload.write(eventType);
         for (Object o : args)
         {
             String typeName = o.getClass().getName();
@@ -62,8 +64,12 @@ public class IMBObserver implements Observer
                     throw new ClassCastException("cannot pack object of type " + typeName + " in payload");
             }
         }
-        boolean result = this.connection.signalEvent(eventName, TEventEntry.EK_NORMAL_EVENT, payload) >= 0;
-        return result;
+        int result = this.connection.signalEvent(eventName, TEventEntry.EK_NORMAL_EVENT, payload);
+        if (result < 0)
+        {
+            System.err.println("IMB error in signalEvent code " + result);
+        }
+        return result >= 0;
     }
 
     /** {@inheritDoc} */
