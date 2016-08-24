@@ -1,14 +1,22 @@
 package demo;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
@@ -26,30 +34,48 @@ import nl.tno.imb.TEventEntry;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author Walter Lohman
  */
-public class IMBChat
+public class IMBChat extends JFrame
 {
 
-    protected JFrame mainform;
+    /** */
+    private static final long serialVersionUID = 1L;
 
-    private JLabel editName;
+    /** Name of this chat user. */
+    private JTextField editName;
 
+    /** IMB Federation. */
     private JTextField editFederation;
 
+    /** Message the the user is typing. */
     private JTextField editMessage;
 
-    private JTextField listboxMessages;
+    /** Messages that have been exchanged. */
+    private JTextArea messages;
 
-    private JButton btnConnect;
+    /** Initiate connection to the IMB hub. */
+    JButton btnConnect;
 
+    /** Connection to the IMB hub. */
     private static TConnection connection = null;
 
+    /** Message channel. */
     private static TEventEntry chatMessageEvent = null;
 
+    /**
+     * Convert a time.
+     * @param comTime double; the time in days since windows epoch
+     * @return Date
+     */
     static public Date convertWindowsTimeToDate(double comTime)
     {
         return new Date(convertWindowsTimeToMilliseconds(comTime));
     }
 
+    /**
+     * Convert a time.
+     * @param comTime double; the time in days since windows epoch
+     * @return double; java time in milliseconds
+     */
     static public long convertWindowsTimeToMilliseconds(double comTime)
     {
         long result = 0;
@@ -63,6 +89,11 @@ public class IMBChat
         return result;
     }
 
+    /**
+     * Convert a Date to windows time.
+     * @param javaDate Date; the date to convert
+     * @return double; time in milliseconds
+     */
     static public double convertDateToWindowsTime(Date javaDate)
     {
         if (javaDate == null)
@@ -72,6 +103,11 @@ public class IMBChat
         return convertMillisecondsToWindowsTime(javaDate.getTime());
     }
 
+    /**
+     * Convert a java time in milliseconds to windows time
+     * @param milliseconds long; the java time in milliseconds
+     * @return double; time in days since windows epoch
+     */
     static public double convertMillisecondsToWindowsTime(long milliseconds)
     {
         double result = 0.0;
@@ -92,13 +128,13 @@ public class IMBChat
      */
     void AddMessage(final Date aDateTime, final String aName, final String aMessage)
     {
-        final JTextField tf = this.listboxMessages;
+        final JTextArea ta = this.messages;
         SwingUtilities.invokeLater(new Runnable()
         {
             @Override
             public void run()
             {
-                tf.setText(aDateTime.toString() + " " + aName + ": " + aMessage);
+                ta.setText(aDateTime.toString() + " " + aName + ": " + aMessage);
             }
 
         });
@@ -116,7 +152,10 @@ public class IMBChat
             return false;
     }
 
-    private void Connect()
+    /**
+     * Connect to the hub.
+     */
+    void Connect()
     {
         String server = "localhost";
         int port = 4000;
@@ -163,6 +202,9 @@ public class IMBChat
             JOptionPane.showMessageDialog(null, "## Could not connect to hub ");
     }
 
+    /**
+     * Close the connection to the IMB hub.
+     */
     void Disconnect()
     {
         if (getConnected())
@@ -172,7 +214,10 @@ public class IMBChat
         }
     }
 
-    private void Send()
+    /**
+     * Send the message in the editMessage buffer to the IMB hub and clear the editMessage buffer.
+     */
+    void Send()
     {
         Date javaDateTime;
         double datetime;
@@ -202,15 +247,29 @@ public class IMBChat
     }
 
     /**
-     * Launch the application.
+     * Start up the application.
      * @param args
      */
     public static void main(String[] args)
     {
         try
         {
-            IMBChat window = new IMBChat();
-            window.open();
+            EventQueue.invokeAndWait(new Runnable()
+            {
+
+                public void run()
+                {
+                    try
+                    {
+                        new IMBChat();
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+
+            });
         }
         catch (Exception e)
         {
@@ -219,26 +278,12 @@ public class IMBChat
     }
 
     /**
-     * Open the window.
+     * Create the window.
      */
-    public void open()
+    public IMBChat()
     {
-        this.mainform = new JFrame("chat");
-        this.mainform.setVisible(true);
-        createContents();
-        // initial values
-        this.editName.setText(System.getProperty("user.name"));
-        this.editFederation.setText(TConnection.DEFAULT_FEDERATION);
-        // locate, add and connect hub
-        // XXXXX Connect();
-    }
-
-    /**
-     * Create contents of the window.
-     */
-    protected void createContents()
-    {
-        this.mainform.addWindowListener(new java.awt.event.WindowAdapter()
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter()
         {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent)
@@ -246,97 +291,89 @@ public class IMBChat
                 Disconnect();
             }
         });
-        this.mainform.setSize(693, 443);
-        this.mainform.setTitle("Chat - Java");
+        setPreferredSize(new Dimension(693, 443));
+        setTitle("Chat - Java");
         JPanel mainPanel = new JPanel(new BorderLayout());
-        this.mainform.getContentPane().add(mainPanel);
+        getContentPane().add(mainPanel);
+
         JPanel topPanel = new JPanel(new BorderLayout());
         mainPanel.add(topPanel, BorderLayout.NORTH);
-        JPanel topLeftPanel = new JPanel(new BorderLayout());
-        topLeftPanel.add(new JLabel("Name: "), BorderLayout.LINE_START);
-        this.editName = new JLabel("name of the user");
-        topLeftPanel.add(this.editName, BorderLayout.LINE_END);
-        topPanel.add(topLeftPanel, BorderLayout.LINE_START);
-        JPanel topCenterPanel = new JPanel (new BorderLayout());
-        topCenterPanel.add(new JLabel("Federation: "), BorderLayout.LINE_START);
-        topPanel.add(topCenterPanel, BorderLayout.CENTER);
-        topPanel.add(new JLabel(" topright "), BorderLayout.LINE_END);
-        mainPanel.add(new JLabel(" bottom "), BorderLayout.SOUTH);
-        mainPanel.add(new JLabel(" center "), BorderLayout.CENTER);
-        mainPanel.add(new JLabel(" left "), BorderLayout.LINE_START);
-        mainPanel.add(new JLabel(" right "), BorderLayout.LINE_END);
+        JPanel namePanel = new JPanel(new BorderLayout());
+        topPanel.add(namePanel, BorderLayout.LINE_START);
+        JLabel lblName = new JLabel("Name");
+        namePanel.add(lblName, BorderLayout.LINE_START);
+
+        this.editName = new JFormattedTextField(System.getProperty("user.name"));
+        this.editName.setPreferredSize(new Dimension(100, 20));
+        namePanel.add(this.editName, BorderLayout.LINE_END);
+
+        JPanel federationPanel = new JPanel(new BorderLayout());
+        topPanel.add(federationPanel, BorderLayout.CENTER);
+        JLabel lblFederation = new JLabel("Federation");
+        federationPanel.add(lblFederation, BorderLayout.LINE_START);
+
+        this.editFederation = new JFormattedTextField(TConnection.DEFAULT_FEDERATION);
+        federationPanel.add(this.editFederation, BorderLayout.LINE_END);
+
+        this.btnConnect = new JButton("Connect");
+        this.btnConnect.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                if (IMBChat.this.btnConnect.getText().compareTo("Connect") == 0)
+                    Connect();
+                else
+                    Disconnect();
+            }
+        });
         
-//        JLabel lblFederation = new JLabel("Federation");
-//        //lblFederation.setBounds(322, 10, 55, 15);
-//        mainpanel.add(lblFederation,gbc);
-//
-//        JLabel lblHubs = new JLabel("Hubs");
-//        //lblHubs.setBounds(10, 20, 55, 15);
-//        gbc.gridx++;
-//        mainpanel.add(lblHubs, gbc);
-//
-//        this.editFederation = new JTextField();
-//        this.editFederation.setText("federation");
-//        //this.editFederation.setBounds(383, 7, 147, 21);
-//
-//        this.btnConnect = new JButton("Connect");
-//        this.btnConnect.addActionListener(new ActionListener()
-//        {
-//            @Override
-//            public void actionPerformed(ActionEvent e)
-//            {
-//                if (IMBChat.this.btnConnect.getText().compareTo("Connect") == 0)
-//                    Connect();
-//                else
-//                    Disconnect();
-//            }
-//        });
-//        this.btnConnect.setBounds(592, 41, 75, 25);
-//
-//        this.listboxMessages = new JTextField("hier komen de messages");
-//        //this.listboxMessages.setBounds(10, 70, 657, 298);
-//        gbc.gridx = 0;
-//        gbc.gridy = 1;
-//        mainpanel.add(this.listboxMessages, gbc);
-//
-//        this.editMessage = new JTextField("");
-//        this.editMessage.addKeyListener(new KeyListener()
-//        {
-//
-//            @Override
-//            public void keyTyped(KeyEvent e)
-//            {
-//                if (e.getKeyChar() == 13)
-//                {
-//                    Send();
-//                }
-//            }
-//
-//            @Override
-//            public void keyPressed(KeyEvent e)
-//            {
-//                // ignore
-//            }
-//
-//            @Override
-//            public void keyReleased(KeyEvent e)
-//            {
-//                // ignore
-//            }
-//
-//        });
-//        this.editMessage.setBounds(10, 374, 565, 21);
-//
-//        JButton btnSend = new JButton("Send");
-//        btnSend.addActionListener(new ActionListener()
-//        {
-//            @Override
-//            public void actionPerformed(ActionEvent e)
-//            {
-//                Send();
-//            }
-//        });
-//        btnSend.setBounds(592, 370, 75, 25);
+        topPanel.add(this.btnConnect, BorderLayout.LINE_END);
         
+        this.messages = new JTextArea("hier komen de messages");
+        mainPanel.add(this.messages, BorderLayout.CENTER);
+        
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+        this.editMessage = new JTextField("");
+        this.editMessage.addKeyListener(new KeyListener()
+        {
+            @Override
+            public void keyTyped(KeyEvent e)
+            {
+                if (e.getKeyChar() == 13)
+                {
+                    Send();
+                }
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e)
+            {
+                // ignore
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e)
+            {
+                // ignore
+            }
+
+        });
+        bottomPanel.add(this.editMessage, BorderLayout.CENTER);
+
+        JButton btnSend = new JButton("Send");
+        btnSend.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Send();
+            }
+        });
+        bottomPanel.add(btnSend, BorderLayout.LINE_END);
+        this.pack();
+        this.setVisible(true);
     }
+
 }
