@@ -21,20 +21,5 @@ public interface Observer
      * @throws Exception when the event name is not a registered publication
      */
     boolean postMessage(String eventName, Object[] args) throws Exception;
-    
-    /**
-     * Add a publication.
-     * @param eventName String name of the publication
-     * @throws Exception when the name is invalid or already registered
-     */
-    void publish(final String eventName) throws Exception;
-
-    /**
-     * Cancel a publication.
-     * @param eventName String name of the publication
-     * @throws Exception when the name is invalid or not currently registered
-     */
-    void unPublish(final String eventName) throws Exception;
-
-    
+        
 }
