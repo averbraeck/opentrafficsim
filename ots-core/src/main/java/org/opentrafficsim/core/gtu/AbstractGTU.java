@@ -259,7 +259,8 @@ public abstract class AbstractGTU implements GTU
             {
                 try
                 {
-                    observer.postMessage("GTU_moved", new Object[] { getId(), location.x, location.y, location.z });
+                    observer.postMessage("GTU_moved",
+                            new Object[] { getId(), location.x, location.y, location.z, location.getRotZ() });
                 }
                 catch (Exception exception)
                 {
