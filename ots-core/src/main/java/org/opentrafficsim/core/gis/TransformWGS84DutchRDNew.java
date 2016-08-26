@@ -18,7 +18,7 @@ import java.util.Locale;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author Gert-Jan Stolk
  **/
-public class DutchRD implements WGS84Transformations
+public class TransformWGS84DutchRDNew
 {
 
     /** Western boundary of the Dutch RD system. */
@@ -106,7 +106,7 @@ public class DutchRD implements WGS84Transformations
      * @return Point2D; equivalent location in the WGS84 system
      * @throws IllegalArgumentException when the given coordinates are not within the area of the Dutch RD system
      */
-    public final Point2D rd2ellipsWGS84(final double rdX, final double rdY) throws IllegalArgumentException
+    private static Point2D rd2ellipsWGS84(final double rdX, final double rdY) throws IllegalArgumentException
     {
         if (rdX < RD_MINIMUM_X || rdX > RD_MAXIMUM_X || rdY < RD_MINIMUM_Y || rdY > RD_MAXIMUM_Y)
         {
@@ -154,54 +154,77 @@ public class DutchRD implements WGS84Transformations
         return new Point2D.Double(resultEast, resultNorth);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final Point2D toWGS84(final Point2D local) throws IllegalArgumentException
+    /**
+     * Convert a coordinate pair in the local system to WGS84 coordinates.
+     * @param local Point2D; coordinates in the local system.
+     * @return Point2D; the equivalent location in degrees in the WGS84 coordinate system
+     * @throws IllegalArgumentException when <cite>local</cite> is not valid in the local system
+     */
+    public static Point2D toWGS84(final Point2D local) throws IllegalArgumentException
     {
         return toWGS84(local.getX(), local.getY());
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final Point2D toWGS84(final double localX, final double localY) throws IllegalArgumentException
+    /**
+     * Convert a coordinate pair in the local system to WGS84 coordinates.
+     * @param localX double; X-coordinate in the local system
+     * @param localY double; Y-coordinate in the local system
+     * @return Point2D; the equivalent location in degrees in the WGS84 coordinate system
+     * @throws IllegalArgumentException when <cite>localX</cite>, <cite>localY</cite> is not valid in the local system
+     */
+    public static Point2D toWGS84(final double localX, final double localY) throws IllegalArgumentException
     {
         return rd2ellipsWGS84(localX, localY);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final Point2D fromWGS84(final Point2D wgs84) throws IllegalArgumentException
+    /**
+     * Convert a coordinate pair in WGS84 coordinates to local coordinates.
+     * @param wgs84 Point2D; coordinates in degrees in the WGS84 coordinate system
+     * @return Point2D; the equivalent location in the local coordinate system
+     * @throws IllegalArgumentException when <cite>wgs84</cite> is not valid in the local system
+     */
+    public static Point2D fromWGS84(final Point2D wgs84) throws IllegalArgumentException
     {
         return fromWGS84(wgs84.getX(), wgs84.getY());
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final Point2D fromWGS84(final double wgs84East, final double wgs84North) throws IllegalArgumentException
+    /**
+     * Convert a coordinate pair in WGS84 coordinates to local coordinates.
+     * @param wgs84East double; East coordinate in degrees in the WGS84 system (negative value indicates West)
+     * @param wgs84North double; North coordinate in degrees in the WGS84 system (negative value indicates South)
+     * @return Point2D; the equivalent location in the local coordinate system
+     * @throws IllegalArgumentException when <cite>wgs84</cite> is not valid in the local system
+     */
+    public static Point2D fromWGS84(final double wgs84East, final double wgs84North) throws IllegalArgumentException
     {
         return ellipswgs842rd(wgs84East, wgs84North);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final Rectangle2D fromWGS84Bounds()
+    /**
+     * Report the bounding box for conversion to the local coordinate system.<br>
+     * Conversions from WGS84 to the local coordinate system should fail for locations outside this bounding box. If the valid
+     * range is not adequately described by a rectangular bounding box, conversions for some areas within this bounding box may
+     * also fail (with an IllegalArgumentException). There is no guarantee that the result of a conversion lies within the
+     * bounding box for the reverse conversion.
+     * @return Rectangle2D; bounding box in WGS84 degrees
+     */
+    public static Rectangle2D fromWGS84Bounds()
     {
         return new Rectangle2D.Double(WGS84_WEST_LIMIT, WGS84_SOUTH_LIMIT, WGS84_EAST_LIMIT - WGS84_WEST_LIMIT,
                 WGS84_NORTH_LIMIT - WGS84_SOUTH_LIMIT);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final Rectangle2D toWGS84Bounds()
+    /**
+     * Report the bounding box for conversions from the local coordinate system. <br>
+     * Conversions from the local coordinate system to WGS84 should fail for locations outside this bounding box. If the valid
+     * range is not adequately described by a rectangular bounding box, conversions for some areas within this bounding box may
+     * also fail (with an IllegalArgumentException). There is no guarantee that the result of a conversion lies within the
+     * bounding box for the reverse conversion.
+     * @return Rectangle2D; bounding box of the local coordinate system
+     */
+    public static Rectangle2D toWGS84Bounds()
     {
         return new Rectangle2D.Double(RD_MINIMUM_X, RD_MINIMUM_Y, RD_MAXIMUM_X - RD_MINIMUM_X, RD_MAXIMUM_Y - RD_MINIMUM_Y);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String toString()
-    {
-        return "WGS84 coordinate convertor to and from the Dutch RD system";
     }
 
     /**
@@ -209,7 +232,7 @@ public class DutchRD implements WGS84Transformations
      * @param description String; description of the test
      * @param rdIn Point2D; location to test
      */
-    final void forwardReverseCompare(final String description, final Point2D rdIn)
+    private static void forwardReverseCompare(final String description, final Point2D rdIn)
     {
         System.out.println(description + ":");
         System.out.println(String.format(Locale.US, "in:         (%9.2f,%9.2f)", rdIn.getX(), rdIn.getY()));
@@ -227,16 +250,15 @@ public class DutchRD implements WGS84Transformations
      */
     public static void main(final String[] args)
     {
-        WGS84Transformations transformer = new DutchRD();
-        ((DutchRD) transformer).forwardReverseCompare("Westertoren Amsterdam", new Point2D.Double(120700.723, 487525.501));
-        ((DutchRD) transformer).forwardReverseCompare("Martinitoren Groningen", new Point2D.Double(233883.131, 582065.167));
+        forwardReverseCompare("Westertoren Amsterdam", new Point2D.Double(120700.723, 487525.501));
+        forwardReverseCompare("Martinitoren Groningen", new Point2D.Double(233883.131, 582065.167));
         Point2D rdIn = new Point2D.Double(155000, 463000);
-        ((DutchRD) transformer).forwardReverseCompare("OLV kerk Amersfoort", rdIn);
-        Point2D wgs = transformer.toWGS84(rdIn);
+        forwardReverseCompare("OLV kerk Amersfoort", rdIn);
+        Point2D wgs = toWGS84(rdIn);
         // Dutch RD detects wrong order of coordinates (we could even fix it)
         try
         {
-            transformer.toWGS84(new Point2D.Double(463000, 155000));
+            toWGS84(new Point2D.Double(463000, 155000));
             throw new Error("RD coordinates in wrong order should have thrown an IllegalArgumentException");
         }
         catch (IllegalArgumentException exception)
@@ -246,7 +268,7 @@ public class DutchRD implements WGS84Transformations
         // Valid WGS84 coordinates are never valid as Dutch RD coordinates
         try
         {
-            transformer.toWGS84(wgs);
+            toWGS84(wgs);
             throw new Error("Supplied WGS84 coordinates should have thrown an IllegalArgumentException");
         }
         catch (IllegalArgumentException exception)
@@ -256,7 +278,7 @@ public class DutchRD implements WGS84Transformations
         // Dutch RD coordinates are never valid as WGS84 coordinates
         try
         {
-            transformer.fromWGS84(rdIn);
+            fromWGS84(rdIn);
             throw new Error("Supplied RD coordinates should have thrown an IllegalArgumentException");
         }
         catch (IllegalArgumentException exception)
@@ -264,7 +286,7 @@ public class DutchRD implements WGS84Transformations
             // Ignore expected exception
         }
         // Check that attempts to convert coordinates slightly outside the bounding box do throw an exception
-        Rectangle2D boundingBox = transformer.fromWGS84Bounds();
+        Rectangle2D boundingBox = fromWGS84Bounds();
         double centerX = boundingBox.getCenterX();
         double centerY = boundingBox.getCenterY();
         double halfWidth = boundingBox.getWidth() / 2;
@@ -276,7 +298,7 @@ public class DutchRD implements WGS84Transformations
                 rdIn = new Point2D.Double(centerX + xFactor * 1.05 * halfWidth, centerY + yFactor * 1.05 * halfHeight);
                 try
                 {
-                    transformer.fromWGS84(rdIn);
+                    fromWGS84(rdIn);
                     if (xFactor != 0 || yFactor != 0)
                     {
                         throw new Error("Supplied RD coordinates (" + rdIn + ") should have thrown an "
@@ -293,7 +315,7 @@ public class DutchRD implements WGS84Transformations
                 }
             }
         }
-        boundingBox = transformer.toWGS84Bounds();
+        boundingBox = toWGS84Bounds();
         centerX = boundingBox.getCenterX();
         centerY = boundingBox.getCenterY();
         halfWidth = boundingBox.getWidth() / 1;
@@ -305,7 +327,7 @@ public class DutchRD implements WGS84Transformations
                 rdIn = new Point2D.Double(centerX + xFactor * 1.05 * halfWidth, centerY + yFactor * 1.05 * halfHeight);
                 try
                 {
-                    transformer.fromWGS84(rdIn);
+                    fromWGS84(rdIn);
                     if (xFactor != 0 || yFactor != 0)
                     {
                         throw new Error("Supplied RD coordinates should have thrown an IllegalArgumentException");
@@ -320,19 +342,11 @@ public class DutchRD implements WGS84Transformations
                 }
             }
         }
-        if (transformer.toString().length() < 10)
-        {
-            throw new Error("toString returns very short result");
-        }
         // Show precision at the corners of the bounding box
-        ((DutchRD) transformer).forwardReverseCompare("South West corner", new Point2D.Double(boundingBox.getMinX(),
-                boundingBox.getMinY()));
-        ((DutchRD) transformer).forwardReverseCompare("South East corner", new Point2D.Double(boundingBox.getMaxX(),
-                boundingBox.getMinY()));
-        ((DutchRD) transformer).forwardReverseCompare("North West corner", new Point2D.Double(boundingBox.getMinX(),
-                boundingBox.getMaxY()));
-        ((DutchRD) transformer).forwardReverseCompare("North East corner", new Point2D.Double(boundingBox.getMaxX(),
-                boundingBox.getMaxY()));
+        forwardReverseCompare("South West corner", new Point2D.Double(boundingBox.getMinX(), boundingBox.getMinY()));
+        forwardReverseCompare("South East corner", new Point2D.Double(boundingBox.getMaxX(), boundingBox.getMinY()));
+        forwardReverseCompare("North West corner", new Point2D.Double(boundingBox.getMinX(), boundingBox.getMaxY()));
+        forwardReverseCompare("North East corner", new Point2D.Double(boundingBox.getMaxX(), boundingBox.getMaxY()));
     }
 
 }
