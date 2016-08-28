@@ -3,14 +3,15 @@ package org.opentrafficsim.road.network.lane;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
-import nl.tudelft.simulation.language.d3.BoundingBox;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.RelativePosition;
+
+import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.language.d3.BoundingBox;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -22,7 +23,7 @@ import org.opentrafficsim.core.gtu.RelativePosition;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractSensor implements Sensor
+public abstract class AbstractSensor extends EventProducer implements Sensor
 {
     /** */
     private static final long serialVersionUID = 20141231L;

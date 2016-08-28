@@ -8,6 +8,7 @@ import java.util.List;
 import javax.media.j3d.Bounds;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -29,7 +30,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public abstract class CrossSectionElement implements Locatable, Serializable
+public abstract class CrossSectionElement extends EventProducer implements Locatable, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150826L;

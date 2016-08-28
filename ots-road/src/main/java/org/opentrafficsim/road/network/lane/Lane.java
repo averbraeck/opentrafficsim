@@ -31,6 +31,7 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+import nl.tudelft.simulation.event.EventType;
 
 /**
  * The Lane is the CrossSectionElement of a CrossSectionLink on which GTUs can drive. The Lane stores several important
@@ -80,7 +81,8 @@ public class Lane extends CrossSectionElement implements Serializable
      * If the speed limit is the same for all GTU types, GTUType.ALL will be used. This means that the settings can be used
      * additive, or subtractive. <br>
      * In <b>additive use</b>, do not set the speed limit for GTUType.ALL. Now, one by one, the allowed maximum speeds for each
-     * of the GTU Types have be added. Do this when there are few GTU types or the speed limits per TU type are very different. <br>
+     * of the GTU Types have be added. Do this when there are few GTU types or the speed limits per TU type are very different.
+     * <br>
      * In <b>subtractive use</b>, set the speed limit for GTUType.ALL to the most common one. Override the speed limit for
      * certain GTUTypes to a different value. An example is a lane on a highway where all vehicles, except truck (CAR, BUS,
      * MOTORCYCLE, etc.), can drive 120 km/h, but trucks are allowed only 90 km/h. In that case, set the speed limit for
@@ -125,12 +127,21 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     private Map<GTUType, Map<Lane, GTUDirectionality>> prevLanes = null;
 
-    /** List of graphs that want to sample GTUs on this Lane. */
-    // deprecated private ArrayList<LaneBasedGTUSampler> samplers = new ArrayList<LaneBasedGTUSampler>();
-
     /** The conditions for overtaking another GTU, viewed from this lane. */
     // TODO allow for direction-dependent overtaking conditions
     private final OvertakingConditions overtakingConditions;
+
+    /**
+     * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the lane. <br>
+     * Payload: Object[] {String gtuId, LaneBasedGTU gtu} 
+     */
+    public static final EventType GTU_ADD_EVENT = new EventType("GTU.ADD");
+
+    /**
+     * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the lane. <br>
+     * Payload: Object[] {String gtuId, LaneBasedGTU gtu}
+     */
+    public static final EventType GTU_REMOVE_EVENT = new EventType("GTU.REMOVE");
 
     /**
      * @param parentLink Cross Section Link to which the element belongs.
@@ -374,7 +385,8 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param gtuType the GTU type to check the accessibility for
      * @return whether another lane is adjacent to this lane and accessible for the given GTU type
      */
-    private boolean laterallyAdjacentAndAccessible(final Lane lane, final LateralDirectionality direction, final GTUType gtuType)
+    private boolean laterallyAdjacentAndAccessible(final Lane lane, final LateralDirectionality direction,
+            final GTUType gtuType)
     {
         if (!lane.getLaneType().isCompatible(gtuType) || gtuType.equals(GTUType.ALL) || gtuType.equals(GTUType.NONE))
         {
@@ -387,10 +399,10 @@ public class Lane extends CrossSectionElement implements Serializable
             // TODO take the cross section slices into account...
             if (Math.abs((getDesignLineOffsetAtBegin().getSI() + getBeginWidth().getSI() / 2.0)
                     - (lane.getDesignLineOffsetAtBegin().getSI() - lane.getBeginWidth().getSI() / 2.0)) < ADJACENT_MARGIN
-                        .getSI()
+                            .getSI()
                     && Math.abs((getDesignLineOffsetAtEnd().getSI() + getEndWidth().getSI() / 2.0)
                             - (lane.getDesignLineOffsetAtEnd().getSI() - lane.getEndWidth().getSI() / 2.0)) < ADJACENT_MARGIN
-                                .getSI())
+                                    .getSI())
             {
                 // look at stripes between the two lanes
                 for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
@@ -424,10 +436,10 @@ public class Lane extends CrossSectionElement implements Serializable
             // TODO take the cross section slices into account...
             if (Math.abs((getDesignLineOffsetAtBegin().getSI() - getBeginWidth().getSI() / 2.0)
                     - (lane.getDesignLineOffsetAtBegin().getSI() + lane.getBeginWidth().getSI() / 2.0)) < ADJACENT_MARGIN
-                        .getSI()
+                            .getSI()
                     && Math.abs((getDesignLineOffsetAtEnd().getSI() - getEndWidth().getSI() / 2.0)
                             - (lane.getDesignLineOffsetAtEnd().getSI() + lane.getEndWidth().getSI() / 2.0)) < ADJACENT_MARGIN
-                                .getSI())
+                                    .getSI())
             {
                 // look at stripes between the two lanes
                 for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
@@ -620,7 +632,8 @@ public class Lane extends CrossSectionElement implements Serializable
             {
                 for (RelativePosition relativePosition : gtu.getRelativePositions().values())
                 {
-                    // System.out.println("GTU relative position " + relativePosition + " sensor relative position " + sensor.getPositionType());
+                    // System.out.println("GTU relative position " + relativePosition + " sensor relative position " +
+                    // sensor.getPositionType());
                     if (sensor.getPositionType().equals(relativePosition.getType())
                             && referenceStartSI + relativePosition.getDx().getSI() <= sensor.getLongitudinalPositionSI()
                             && referenceStartSI + referenceMoveSI + relativePosition.getDx().getSI() > sensor
@@ -642,8 +655,8 @@ public class Lane extends CrossSectionElement implements Serializable
                             System.err.println("Time=" + gtu.getSimulator().getSimulatorTime().getTime().getSI()
                                     + " - Scheduling trigger at " + triggerTime.getSI() + "s. > " + oPlan.getEndTime().getSI()
                                     + "s. (nextEvalTime) for sensor " + sensor + " , gtu " + gtu);
-                            System.err.println("  v=" + gtu.getSpeed() + ", a=" + gtu.getAcceleration() + ", lane="
-                                    + toString() + ", refStartSI=" + referenceStartSI + ", moveSI=" + referenceMoveSI);
+                            System.err.println("  v=" + gtu.getSpeed() + ", a=" + gtu.getAcceleration() + ", lane=" + toString()
+                                    + ", refStartSI=" + referenceStartSI + ", moveSI=" + referenceMoveSI);
                             triggerTime =
                                     new Time(oPlan.getEndTime().getSI() - Math.ulp(oPlan.getEndTime().getSI()), TimeUnit.SI);
                             // gtu.timeAtDistance(new Length(-d, METER));
@@ -652,9 +665,8 @@ public class Lane extends CrossSectionElement implements Serializable
                         // System.out.println("Scheduling a trigger for relativePosition " + relativePosition);
                         // System.out.println("Time=" + gtu.getSimulator().getSimulatorTime().toString()
                         // + " - Scheduling trigger at " + triggerTime + " for sensor " + sensor + " , gtu " + gtu);
-                        SimEvent<OTSSimTimeDouble> event =
-                                new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(triggerTime), this, sensor, "trigger",
-                                        new Object[] { gtu });
+                        SimEvent<OTSSimTimeDouble> event = new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(triggerTime),
+                                this, sensor, "trigger", new Object[] { gtu });
                         gtu.getSimulator().scheduleEvent(event);
                         gtu.addTrigger(this, event);
                     }
@@ -730,6 +742,7 @@ public class Lane extends CrossSectionElement implements Serializable
             }
         }
         this.gtuList.add(index, gtu);
+        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] {gtu.getId(), gtu}, gtu.getSimulator().getSimulatorTime());
         return index;
     }
 
@@ -752,6 +765,7 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final void removeGTU(final LaneBasedGTU gtu)
     {
+        fireTimedEvent(Lane.GTU_REMOVE_EVENT, new Object[] {gtu.getId(), gtu}, gtu.getSimulator().getSimulatorTime());
         this.gtuList.remove(gtu);
     }
 
@@ -979,9 +993,8 @@ public class Lane extends CrossSectionElement implements Serializable
     public final Set<Lane> accessibleAdjacentLanes(final LateralDirectionality lateralDirection, final GTUType gtuType)
     {
         Set<Lane> candidates = new LinkedHashSet<>(1);
-        LateralDirectionality dir =
-                this.getDirectionality(gtuType).isForwardOrBoth() ? lateralDirection : lateralDirection.isLeft()
-                        ? LateralDirectionality.RIGHT : LateralDirectionality.LEFT;
+        LateralDirectionality dir = this.getDirectionality(gtuType).isForwardOrBoth() ? lateralDirection
+                : lateralDirection.isLeft() ? LateralDirectionality.RIGHT : LateralDirectionality.LEFT;
         for (Lane lane : neighbors(dir, gtuType))
         {
             if (lane.getDirectionality(gtuType).equals(LongitudinalDirectionality.DIR_BOTH)
@@ -992,46 +1005,6 @@ public class Lane extends CrossSectionElement implements Serializable
         }
         return candidates;
     }
-
-    // XXX: deprecated
-    /**
-     * Register a LaneBasedGTUSampler on this Lane.
-     * @param sampler LaneBasedGTUSampler; the sampler to register
-     */
-    /*-
-    public final void addSampler(final LaneBasedGTUSampler sampler)
-    {
-        this.samplers.add(sampler);
-    }
-    */
-    
-    /**
-     * Unregister a LaneBasedGTUSampler from this Lane.
-     * @param sampler LaneBasedGTUSampler; the sampler to unregister
-     */
-    /*-
-    public final void removeSampler(final LaneBasedGTUSampler sampler)
-    {
-        this.samplers.remove(sampler);
-    }
-    */
-
-    // XXX:deprecated
-    /**
-     * Add the movement of a GTU to all graphs that sample this Lane.
-     * @param gtu AbstractLaneBasedGTU; the GTU to sample
-     * @throws NetworkException on network inconsistency
-     * @throws GTUException on problems obtaining data from the GTU for the graph
-     */
-    /*-
-    public final void sample(final LaneBasedGTU gtu) throws NetworkException, GTUException
-    {
-        for (LaneBasedGTUSampler sampler : this.samplers)
-        {
-            sampler.addData(gtu, this);
-        }
-    }
-    */
 
     /**
      * Get the speed limit of this lane, which can differ per GTU type. E.g., cars might be allowed to drive 120 km/h and trucks
@@ -1058,7 +1031,8 @@ public class Lane extends CrossSectionElement implements Serializable
      * km/h. If the speed limit is the same for all GTU types, GTUType.ALL will be used. This means that the settings can be
      * used additive, or subtractive. <br>
      * In <b>additive use</b>, do not set the speed limit for GTUType.ALL. Now, one by one, the allowed maximum speeds for each
-     * of the GTU Types have be added. Do this when there are few GTU types or the speed limits per TU type are very different. <br>
+     * of the GTU Types have be added. Do this when there are few GTU types or the speed limits per TU type are very different.
+     * <br>
      * In <b>subtractive use</b>, set the speed limit for GTUType.ALL to the most common one. Override the speed limit for
      * certain GTUTypes to a different value. An example is a lane on a highway where all vehicles, except truck (CAR, BUS,
      * MOTORCYCLE, etc.), can drive 120 km/h, but trucks are allowed only 90 km/h. In that case, set the speed limit for
@@ -1245,7 +1219,8 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * The combination of GTUType and Sensor in one record.
      * <p>
-     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate: 2015-09-24 14:17:07 +0200 (Thu, 24 Sep 2015) $, @version $Revision: 1407 $, by $Author: averbraeck $,

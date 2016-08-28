@@ -6,9 +6,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Line2D;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,13 +21,10 @@ import javax.swing.event.EventListenerList;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djunits.value.vdouble.vector.LengthVector;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -39,10 +39,15 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
+
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.TimedEvent;
 
 /**
  * Trajectory plot.
@@ -54,19 +59,20 @@ import org.opentrafficsim.road.network.lane.Lane;
  * initial version Jul 24, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset, MultipleViewerChart, LaneBasedGTUSampler
+public class TrajectoryPlot extends JFrame
+        implements ActionListener, XYDataset, MultipleViewerChart, LaneBasedGTUSampler, EventListenerInterface
 
 {
     /** */
     private static final long serialVersionUID = 20140724L;
 
     /** Sample interval of this TrajectoryPlot. */
-    private final Duration sampleInterval;
+    private final double sampleInterval;
 
     /**
      * @return sampleInterval
      */
-    public final Duration getSampleInterval()
+    public final double getSampleInterval()
     {
         return this.sampleInterval;
     }
@@ -75,25 +81,16 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     private final ArrayList<Lane> path;
 
     /** The cumulative lengths of the elements of path. */
-    private final LengthVector cumulativeLengths;
+    private final double[] cumulativeLengths;
 
     /**
      * Retrieve the cumulative length of the sampled path at the end of a path element.
      * @param index int; the index of the path element; if -1, the total length of the path is returned
-     * @return Length; the cumulative length at the end of the specified path element
+     * @return double; the cumulative length at the end of the specified path element in meters (si)
      */
-    public final Length getCumulativeLength(final int index)
+    public final double getCumulativeLength(final int index)
     {
-        int useIndex = -1 == index ? this.cumulativeLengths.size() - 1 : index;
-        try
-        {
-            return new Length(this.cumulativeLengths.get(useIndex));
-        }
-        catch (ValueException exception)
-        {
-            exception.printStackTrace();
-        }
-        return null; // NOTREACHED
+        return index == -1 ? this.cumulativeLengths[this.cumulativeLengths.length - 1] : this.cumulativeLengths[index];
     }
 
     /** Maximum of the time axis. */
@@ -132,30 +129,85 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
      */
     public TrajectoryPlot(final String caption, final Duration sampleInterval, final List<Lane> path)
     {
-        this.sampleInterval = sampleInterval;
-        this.path = new ArrayList<Lane>(path); // make a copy
+        this.sampleInterval = sampleInterval.si;
+        this.path = new ArrayList<Lane>(path); // make a defensive copy
         double[] endLengths = new double[path.size()];
         double cumulativeLength = 0;
-        LengthVector lengths = null;
         for (int i = 0; i < path.size(); i++)
         {
             Lane lane = path.get(i);
-            lane.addSampler(this);
+            lane.addListener(this, Lane.GTU_ADD_EVENT, true);
+            lane.addListener(this, Lane.GTU_REMOVE_EVENT, true);
+            try
+            {
+                // register the current GTUs on the lanes (if any) for statistics sampling.
+                for (LaneBasedGTU gtu : lane.getGtuList())
+                {
+                    notify(new TimedEvent<OTSSimTimeDouble>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), gtu },
+                            gtu.getSimulator().getSimulatorTime()));
+                }
+            }
+            catch (RemoteException exception)
+            {
+                exception.printStackTrace();
+            }
             cumulativeLength += lane.getLength().getSI();
             endLengths[i] = cumulativeLength;
         }
-        try
-        {
-            lengths = new LengthVector(endLengths, LengthUnit.SI, StorageType.DENSE);
-        }
-        catch (ValueException exception)
-        {
-            exception.printStackTrace();
-        }
-        this.cumulativeLengths = lengths;
+        this.cumulativeLengths = endLengths;
         this.caption = caption;
         createChart(this);
         this.reGraph(); // fixes the domain axis
+    }
+
+    /** the GTUs that might be of interest to gather statistics about. */
+    private Set<LaneBasedGTU> gtusOfInterest = new HashSet<>();
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public void notify(final EventInterface event) throws RemoteException
+    {
+        LaneBasedGTU gtu;
+        if (event.getType().equals(Lane.GTU_ADD_EVENT))
+        {
+            Object[] content = (Object[]) event.getContent();
+            gtu = (LaneBasedGTU) content[1];
+            if (!this.gtusOfInterest.contains(gtu))
+            {
+                this.gtusOfInterest.add(gtu);
+                gtu.addListener(this, LaneBasedGTU.MOVE_EVENT);
+            }
+        }
+        else if (event.getType().equals(Lane.GTU_REMOVE_EVENT))
+        {
+            Object[] content = (Object[]) event.getContent();
+            gtu = (LaneBasedGTU) content[1];
+            boolean interest = false;
+            for (Lane lane : gtu.getLanes().keySet())
+            {
+                if (this.path.contains(lane))
+                {
+                    interest = true;
+                }
+            }
+            if (!interest)
+            {
+                this.gtusOfInterest.remove(gtu);
+                gtu.removeListener(this, LaneBasedGTU.MOVE_EVENT);
+            }
+        }
+        else if (event.getType().equals(LaneBasedGTU.MOVE_EVENT))
+        {
+            Object[] content = (Object[]) event.getContent();
+            Lane lane = (Lane) content[6];
+            Length posOnLane = (Length) content[7];
+            gtu = (LaneBasedGTU) event.getSource();
+            if (this.path.contains(lane))
+            {
+                addData(gtu, lane, posOnLane.si);
+            }
+        }
     }
 
     /**
@@ -184,7 +236,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         result.getXYPlot().setDomainAxis(xAxis);
         result.getXYPlot().setRangeAxis(yAxis);
         Length minimumPosition = Length.ZERO;
-        Length maximumPosition = getCumulativeLength(-1);
+        Length maximumPosition = new Length(getCumulativeLength(-1), LengthUnit.SI);
         configureAxis(result.getXYPlot().getRangeAxis(), DoubleScalar.minus(maximumPosition, minimumPosition).getSI());
         final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) result.getXYPlot().getRenderer();
         renderer.setBaseLinesVisible(true);
@@ -194,9 +246,6 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         cp.setMouseWheelEnabled(true);
         final PointerHandler ph = new PointerHandler()
         {
-            /** */
-            private static final long serialVersionUID = 20140000L;
-
             /** {@inheritDoc} */
             @Override
             void updateHint(final double domainValue, final double rangeValue)
@@ -337,38 +386,24 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     /** Quick access to the Nth trajectory. */
     private ArrayList<Trajectory> trajectoryIndices = new ArrayList<Trajectory>();
 
-    /** {@inheritDoc} */
-    public final void addData(final LaneBasedGTU car, final Lane lane) throws NetworkException, GTUException
+    /**
+     * Add data for a GTU on a lane to this graph.
+     * @param gtu the gtu to add the data for
+     * @param lane the lane on which the GTU is registered
+     * @param posOnLane the position on the lane as a double si Length
+     */
+    protected final void addData(final LaneBasedGTU gtu, final Lane lane, final double posOnLane)
     {
-        // final Time startTime = car.getLastEvaluationTime();
-        // System.out.println("addData car: " + car + ", lastEval: " + startTime);
-        // Convert the position of the car to a position on path.
-        // Find a (the first) lane that car is on that is in our path.
-        double lengthOffset = 0;
         int index = this.path.indexOf(lane);
-        if (index >= 0)
+        if (index < 0)
         {
-            if (index > 0)
-            {
-                try
-                {
-                    lengthOffset = this.cumulativeLengths.getSI(index - 1);
-                }
-                catch (ValueException exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
+            // error -- silently ignore for now. Graphs should not cause errors.
+            System.err.println("TrajectoryPlot: GTU " + gtu.getId() + " is not registered on lane " + lane.toString());
+            return;
         }
-        else
-        {
-            throw new Error("Car is not on any lane in the path");
-        }
-        // System.out.println("lane index is " + index + " car is " + car);
-        // final Length startPosition =
-        // DoubleScalar.plus(new Length(lengthOffset, LengthUnit.SI),
-        // car.position(lane, car.getReference(), startTime));
-        String key = car.getId().toString();
+        double lengthOffset = index == 0 ? 0 : this.cumulativeLengths[index - 1];
+
+        String key = gtu.getId();
         Trajectory carTrajectory = this.trajectories.get(key);
         if (null == carTrajectory)
         {
@@ -376,9 +411,17 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             carTrajectory = new Trajectory(key);
             this.trajectoryIndices.add(carTrajectory);
             this.trajectories.put(key, carTrajectory);
-            // System.out.println("Creating new trajectory for GTU " + key);
         }
-        carTrajectory.addSegment(car, lane, lengthOffset);
+        try
+        {
+            carTrajectory.addSegment(gtu, lane, lengthOffset, posOnLane);
+        }
+        catch (NetworkException | GTUException exception)
+        {
+            // error -- silently ignore for now. Graphs should not cause errors.
+            System.err.println("TrajectoryPlot: GTU " + gtu.getId() + " on lane " + lane.toString() + " caused exception "
+                    + exception.getMessage());
+        }
     }
 
     /**
@@ -395,7 +438,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         private Time currentEndTime;
 
         /**
-         * Retrieve the current end time of this Trajectory.
+         * Retrieve the last registered time of this Trajectory.
          * @return currentEndTime
          */
         public final Time getCurrentEndTime()
@@ -403,16 +446,16 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             return this.currentEndTime;
         }
 
-        /** Position of (current) end of trajectory. */
-        private Length currentEndPosition;
+        /** Last registered position in trajectory. */
+        private Double lastPosition;
 
         /**
          * Retrieve the current end position of this Trajectory.
          * @return currentEndPosition
          */
-        public final Length getCurrentEndPosition()
+        public final Double getLastPosition()
         {
-            return this.currentEndPosition;
+            return this.lastPosition;
         }
 
         /** ID of the GTU. */
@@ -437,37 +480,60 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
          * Construct a Trajectory.
          * @param id Object; Id of the new Trajectory
          */
-        public Trajectory(final Object id)
+        Trajectory(final Object id)
         {
             this.id = id;
         }
 
         /**
          * Add a trajectory segment and update the currentEndTime and currentEndPosition.
-         * @param car AbstractLaneBasedGTU; the GTU whose currently committed trajectory segment must be added
+         * @param gtu AbstractLaneBasedGTU; the GTU whose currently committed trajectory segment must be added
          * @param lane Lane; the Lane that the positionOffset is valid for
          * @param positionOffset double; offset needed to convert the position in the current Lane to a position on the
          *            trajectory
+         * @param posOnLane the position on the lane in meters (si)
          * @throws NetworkException when car is not on lane anymore
          * @throws GTUException on problems obtaining data from the GTU
          */
-        public final void addSegment(final LaneBasedGTU car, final Lane lane, final double positionOffset)
-                throws NetworkException, GTUException
+        public final void addSegment(final LaneBasedGTU gtu, final Lane lane, final double positionOffset,
+                final double posOnLane) throws NetworkException, GTUException
         {
-            // if ("4".equals(car.getId()) && "Lane lane.0 of FirstVia to SecondVia".equals(lane.toString()))
-            // {
-            // System.out.println("Enter. positions.size is " + this.positions.size() + ", currentEndPosition is "
-            // + this.currentEndPosition);
-            // }
+            // for now, just sample ONE data point.
+            Double position = posOnLane + positionOffset;
+            final int sample = (int) Math.ceil(gtu.getOperationalPlan().getStartTime().si / getSampleInterval());
+            if (this.positions.size() == 0)
+            {
+                this.firstSample = sample;
+            }
+            while (sample - this.firstSample > this.positions.size())
+            {
+                // insert nulls as place holders for unsampled data (usually because vehicle was in a parallel Lane)
+                this.positions.add(null);
+            }
+            if (this.lastPosition != null && Math.abs(this.lastPosition - position) > 0.9 * getCumulativeLength(-1))
+            {
+                // wrap around... probably circular lane.
+                position = null;
+            }
+            this.positions.add(position);
+            this.lastPosition = position;
+
+            this.currentEndTime = gtu.getOperationalPlan().getEndTime();
+            if (this.currentEndTime.gt(getMaximumTime()))
+            {
+                setMaximumTime(this.currentEndTime);
+            }
+
+            /*-
             try
             {
                 final int startSample =
-                        (int) Math.ceil(car.getOperationalPlan().getStartTime().getSI() / getSampleInterval().getSI());
+                        (int) Math.ceil(car.getOperationalPlan().getStartTime().getSI() / getSampleInterval());
                 final int endSample =
-                        (int) (Math.ceil(car.getOperationalPlan().getEndTime().getSI() / getSampleInterval().getSI()));
+                        (int) (Math.ceil(car.getOperationalPlan().getEndTime().getSI() / getSampleInterval()));
                 for (int sample = startSample; sample < endSample; sample++)
                 {
-                    Time sampleTime = new Time(sample * getSampleInterval().getSI(), TimeUnit.SI);
+                    Time sampleTime = new Time(sample * getSampleInterval(), TimeUnit.SI);
                     Double position = car.position(lane, car.getReference(), sampleTime).getSI() + positionOffset;
                     if (this.positions.size() > 0 && null != this.currentEndPosition
                             && position < this.currentEndPosition.getSI() - 0.001)
@@ -484,13 +550,6 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
                     {
                         this.firstSample = sample;
                     }
-                    /*-
-                    if (sample - this.firstSample > this.positions.size())
-                    {
-                        System.out.println("Inserting " + (sample - this.positions.size()) 
-                                + " nulls; this is trajectory number " + trajectoryIndices.indexOf(this));
-                    }
-                     */
                     while (sample - this.firstSample > this.positions.size())
                     {
                         // System.out.println("Inserting nulls");
@@ -505,9 +564,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
                     this.positions.add(position);
                 }
                 this.currentEndTime = car.getOperationalPlan().getEndTime();
-                this.currentEndPosition =
-                        new Length(car.position(lane, car.getReference(), this.currentEndTime).getSI() + positionOffset,
-                                LengthUnit.SI);
+                this.currentEndPosition = new Length(
+                        car.position(lane, car.getReference(), this.currentEndTime).getSI() + positionOffset, LengthUnit.SI);
                 if (car.getOperationalPlan().getEndTime().gt(getMaximumTime()))
                 {
                     setMaximumTime(car.getOperationalPlan().getEndTime());
@@ -519,6 +577,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
                 System.err.println("Trajectoryplot caught unexpected Exception: " + e.getMessage());
                 e.printStackTrace();
             }
+            */
         }
 
         /**
@@ -536,7 +595,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
          */
         public double getTime(final int item)
         {
-            return (item + this.firstSample) * getSampleInterval().getSI();
+            return (item + this.firstSample) * getSampleInterval();
         }
 
         /**
@@ -557,7 +616,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         @Override
         public final String toString()
         {
-            return "Trajectory [currentEndTime=" + this.currentEndTime + ", currentEndPosition=" + this.currentEndPosition
+            return "Trajectory [currentEndTime=" + this.currentEndTime + ", currentEndPosition=" + this.lastPosition
                     + ", id=" + this.id + ", positions.size=" + this.positions.size() + ", firstSample=" + this.firstSample
                     + "]";
         }
@@ -685,8 +744,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     @Override
     public String toString()
     {
-        return "TrajectoryPlot [sampleInterval=" + this.sampleInterval + ", path=" + this.path + ", cumulativeLengths.size="
-                + this.cumulativeLengths.size() + ", maximumTime=" + this.maximumTime + ", caption=" + this.caption
+        return "TrajectoryPlot [sampleInterval=" + this.sampleInterval + ", path=" + this.path + ", cumulativeLengths.length="
+                + this.cumulativeLengths.length + ", maximumTime=" + this.maximumTime + ", caption=" + this.caption
                 + ", trajectories.size=" + this.trajectories.size() + "]";
     }
 

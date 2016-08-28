@@ -101,7 +101,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
     private static final long serialVersionUID = 1L;
 
     /** The model. */
-    private RoadSimulationModelIMB model;
+    private RoadSimulationModel model;
 
     /**
      * Create a CircularRoad simulation.
@@ -116,7 +116,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                 + "the personal gain).</html>", new String[] {"Egoistic", "Altruistic"}, 0, false, 500));
         this.properties.add(new SelectionProperty("TacticalPlanner", "Tactical planner",
             "<html>The tactical planner determines if a lane change is desired and possible.</html>", new String[] {"MOBIL",
-                "Verbraeck", "Verbraeck0", "LMRS", "Toledo"}, 2, false, 600));
+                "Verbraeck", "Verbraeck0", "LMRS", "Toledo"}, 0, false, 600));
         this.properties.add(new IntegerProperty("TrackLength", "Track length", "Circumference of the track", 2000, 500,
             6000, "Track length %dm", false, 10));
         this.properties.add(new ContinuousProperty("MeanDensity", "Mean density", "Number of vehicles per km", 40.0, 5.0,
@@ -204,7 +204,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
     @Override
     protected final OTSModelInterface makeModel(final GTUColorer colorer)
     {
-        this.model = new RoadSimulationModelIMB(getSavedUserModifiedProperties(), colorer);
+        this.model = new RoadSimulationModel(getSavedUserModifiedProperties(), colorer);
         return this.model;
     }
 

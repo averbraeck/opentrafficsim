@@ -5,11 +5,14 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
@@ -41,11 +44,15 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYZDataset;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.TimedEvent;
 
 /**
  * Common code for a contour plot. <br>
@@ -58,8 +65,8 @@ import org.opentrafficsim.simulationengine.OTSSimulationException;
  * initial version Jul 16, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class ContourPlot extends JFrame implements ActionListener, XYZDataset, MultipleViewerChart,
-        LaneBasedGTUSampler, Serializable
+public abstract class ContourPlot extends JFrame
+        implements ActionListener, XYZDataset, MultipleViewerChart, LaneBasedGTUSampler, EventListenerInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20140716L;
@@ -133,7 +140,21 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         for (int i = 0; i < path.size(); i++)
         {
             Lane lane = path.get(i);
-            lane.addSampler(this);
+            lane.addListener(this, Lane.GTU_ADD_EVENT, true);
+            lane.addListener(this, Lane.GTU_REMOVE_EVENT, true);
+            try
+            {
+                // register the current GTUs on the lanes (if any) for statistics sampling.
+                for (LaneBasedGTU gtu : lane.getGtuList())
+                {
+                    notify(new TimedEvent<OTSSimTimeDouble>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), gtu },
+                            gtu.getSimulator().getSimulatorTime()));
+                }
+            }
+            catch (RemoteException exception)
+            {
+                exception.printStackTrace();
+            }
             cumulativeLength += lane.getLength().getSI();
             endLengths[i] = cumulativeLength;
         }
@@ -147,9 +168,8 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         }
         this.cumulativeLengths = lengths;
         this.xAxis = xAxis;
-        this.yAxis =
-                new Axis(new Length(0, LengthUnit.METER), getCumulativeLength(-1), STANDARDDISTANCEGRANULARITIES,
-                        STANDARDDISTANCEGRANULARITIES[STANDARDINITIALDISTANCEGRANULARITYINDEX], "", "Distance", "%.0fm");
+        this.yAxis = new Axis(new Length(0, LengthUnit.METER), getCumulativeLength(-1), STANDARDDISTANCEGRANULARITIES,
+                STANDARDDISTANCEGRANULARITIES[STANDARDINITIALDISTANCEGRANULARITYINDEX], "", "Distance", "%.0fm");
         this.legendStep = legendStep;
         this.legendFormat = legendFormat;
         extendXRange(xAxis.getMaximumValue());
@@ -158,6 +178,52 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         this.paintScale = new ContinuousColorPaintScale(valueFormat, boundaries, colorValues);
         createChart(this);
         reGraph();
+    }
+
+    /** the GTUs that might be of interest to gather statistics about. */
+    private Set<LaneBasedGTU> gtusOfInterest = new HashSet<>();
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public void notify(final EventInterface event) throws RemoteException
+    {
+        LaneBasedGTU gtu;
+        if (event.getType().equals(Lane.GTU_ADD_EVENT))
+        {
+            Object[] content = (Object[]) event.getContent();
+            gtu = (LaneBasedGTU) content[1];
+            if (!this.gtusOfInterest.contains(gtu))
+            {
+                this.gtusOfInterest.add(gtu);
+                gtu.addListener(this, LaneBasedGTU.MOVE_EVENT);
+            }
+        }
+        else if (event.getType().equals(Lane.GTU_REMOVE_EVENT))
+        {
+            Object[] content = (Object[]) event.getContent();
+            gtu = (LaneBasedGTU) content[1];
+            boolean interest = false;
+            for (Lane lane : gtu.getLanes().keySet())
+            {
+                if (this.path.contains(lane))
+                {
+                    interest = true;
+                }
+            }
+            if (!interest)
+            {
+                this.gtusOfInterest.remove(gtu);
+                gtu.removeListener(this, LaneBasedGTU.MOVE_EVENT);
+            }
+        }
+        else if (event.getType().equals(LaneBasedGTU.MOVE_EVENT))
+        {
+            Object[] content = (Object[]) event.getContent();
+            Lane lane = (Lane) content[6];
+            gtu = (LaneBasedGTU) event.getSource();
+            addData(gtu, lane);
+        }
     }
 
     /**
@@ -205,7 +271,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         }
         return result;
     }
-    
+
     /**
      * Create a XYBlockChart.
      * @param container JFrame; the JFrame that will be populated with the chart and the status label
@@ -283,9 +349,8 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
                     {
                         break;
                     }
-                    String format =
-                            ((ContinuousColorPaintScale) (((XYBlockRenderer) (plot.getRenderer(0))).getPaintScale()))
-                                    .getFormat();
+                    String format = ((ContinuousColorPaintScale) (((XYBlockRenderer) (plot.getRenderer(0))).getPaintScale()))
+                            .getFormat();
                     value = String.format(format, valueUnderMouse);
                 }
                 statusLabel.setText(String.format("time %.0fs, distance %.0fm, %s", roundedTime, roundedDistance, value));
@@ -299,12 +364,10 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         JPopupMenu popupMenu = cp.getPopupMenu();
         popupMenu.add(new JPopupMenu.Separator());
         popupMenu.add(StandAloneChartWindow.createMenuItem(this));
-        popupMenu.insert(
-                buildMenu("Distance granularity", "%.0f m", "setDistanceGranularity", this.yAxis.getGranularities(),
-                        this.yAxis.getCurrentGranularity()), 0);
-        popupMenu.insert(
-                buildMenu("Time granularity", "%.0f s", "setTimeGranularity", this.xAxis.getGranularities(),
-                        this.xAxis.getCurrentGranularity()), 1);
+        popupMenu.insert(buildMenu("Distance granularity", "%.0f m", "setDistanceGranularity", this.yAxis.getGranularities(),
+                this.yAxis.getCurrentGranularity()), 0);
+        popupMenu.insert(buildMenu("Time granularity", "%.0f s", "setTimeGranularity", this.xAxis.getGranularities(),
+                this.xAxis.getCurrentGranularity()), 1);
         return chart;
     }
 
@@ -563,9 +626,12 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         this.cachedYAxisBins = -1;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final void addData(final LaneBasedGTU car, final Lane lane) throws NetworkException, GTUException
+    /**
+     * Add data for a GTU on a lane to this graph.
+     * @param gtu the gtu to add the data for
+     * @param lane the lane on which the GTU is registered
+     */
+    protected final void addData(final LaneBasedGTU gtu, final Lane lane)
     {
         // System.out.println("addData car: " + car + ", lastEval: " + car.getSimulator().getSimulatorTime()
         // + " position of rear on lane " + lane + " is " + car.position(lane, car.getRear()));
@@ -582,109 +648,121 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
                 }
                 catch (ValueException exception)
                 {
-                    exception.printStackTrace();
+                    // error -- silently ignore for now. Graphs should not cause errors.
+                    System.err.println("ContourPlot: GTU " + gtu.getId() + " on lane " + lane.toString() + " caused exception "
+                            + exception.getMessage());
                 }
             }
         }
         else
         {
-            throw new RuntimeException("Cannot happen: Lane is not in the path");
+            // error -- silently ignore for now. Graphs should not cause errors.
+            System.err.println("ContouryPlot: GTU " + gtu.getId() + " is not registered on lane " + lane.toString());
         }
-        final Time fromTime = car.getOperationalPlan().getStartTime();
-        if (car.position(lane, car.getRear(), fromTime).getSI() < 0 && lengthOffset > 0)
-        {
-            return;
-        }
-        final Time toTime = car.getOperationalPlan().getEndTime();
-        if (toTime.getSI() > this.getXAxis().getMaximumValue().getSI())
-        {
-            extendXRange(toTime);
-            clearCachedValues();
-            this.getXAxis().adjustMaximumValue(toTime);
-        }
-        if (toTime.le(fromTime)) // degenerate sample???
-        {
-            return;
-        }
-        // The "relative" values are "counting" distance or time in the minimum bin size unit
-        final double relativeFromDistance =
-                (car.position(lane, car.getRear(), fromTime).getSI() + lengthOffset) / this.getYAxis().getGranularities()[0];
-        final double relativeToDistance =
-                (car.position(lane, car.getRear(), toTime).getSI() + lengthOffset) / this.getYAxis().getGranularities()[0];
-        double relativeFromTime =
-                (fromTime.getSI() - this.getXAxis().getMinimumValue().getSI()) / this.getXAxis().getGranularities()[0];
-        final double relativeToTime =
-                (toTime.getSI() - this.getXAxis().getMinimumValue().getSI()) / this.getXAxis().getGranularities()[0];
-        final int fromTimeBin = (int) Math.floor(relativeFromTime);
-        final int toTimeBin = (int) Math.floor(relativeToTime) + 1;
-        double relativeMeanSpeed = (relativeToDistance - relativeFromDistance) / (relativeToTime - relativeFromTime);
-        // The code for acceleration assumes that acceleration is constant (which is correct for IDM+, but may be
-        // wrong for other car following algorithms).
-        double acceleration = car.getAcceleration().getSI();
-        for (int timeBin = fromTimeBin; timeBin < toTimeBin; timeBin++)
-        {
-            if (timeBin < 0)
-            {
-                continue;
-            }
-            double binEndTime = timeBin + 1;
-            if (binEndTime > relativeToTime)
-            {
-                binEndTime = relativeToTime;
-            }
-            if (binEndTime <= relativeFromTime)
-            {
-                continue; // no time spent in this timeBin
-            }
-            double binDistanceStart =
-                    (car.position(lane, car.getRear(),
-                            new Time(relativeFromTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND)).getSI()
-                            - this.getYAxis().getMinimumValue().getSI() + lengthOffset)
-                            / this.getYAxis().getGranularities()[0];
-            double binDistanceEnd =
-                    (car.position(lane, car.getRear(),
-                            new Time(binEndTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND)).getSI()
-                            - this.getYAxis().getMinimumValue().getSI() + lengthOffset)
-                            / this.getYAxis().getGranularities()[0];
 
-            // Compute the time in each distanceBin
-            for (int distanceBin = (int) Math.floor(binDistanceStart); distanceBin <= binDistanceEnd; distanceBin++)
+        try
+        {
+            final Time fromTime = gtu.getOperationalPlan().getStartTime();
+            if (gtu.position(lane, gtu.getRear(), fromTime).getSI() < 0 && lengthOffset > 0)
             {
-                double relativeDuration = 1;
-                if (relativeFromTime > timeBin)
+                return;
+            }
+            final Time toTime = gtu.getOperationalPlan().getEndTime();
+            if (toTime.getSI() > this.getXAxis().getMaximumValue().getSI())
+            {
+                extendXRange(toTime);
+                clearCachedValues();
+                this.getXAxis().adjustMaximumValue(toTime);
+            }
+            if (toTime.le(fromTime)) // degenerate sample???
+            {
+                return;
+            }
+            // The "relative" values are "counting" distance or time in the minimum bin size unit
+            final double relativeFromDistance = (gtu.position(lane, gtu.getRear(), fromTime).getSI() + lengthOffset)
+                    / this.getYAxis().getGranularities()[0];
+            final double relativeToDistance =
+                    (gtu.position(lane, gtu.getRear(), toTime).getSI() + lengthOffset) / this.getYAxis().getGranularities()[0];
+            double relativeFromTime =
+                    (fromTime.getSI() - this.getXAxis().getMinimumValue().getSI()) / this.getXAxis().getGranularities()[0];
+            final double relativeToTime =
+                    (toTime.getSI() - this.getXAxis().getMinimumValue().getSI()) / this.getXAxis().getGranularities()[0];
+            final int fromTimeBin = (int) Math.floor(relativeFromTime);
+            final int toTimeBin = (int) Math.floor(relativeToTime) + 1;
+            double relativeMeanSpeed = (relativeToDistance - relativeFromDistance) / (relativeToTime - relativeFromTime);
+            // The code for acceleration assumes that acceleration is constant (which is correct for IDM+, but may be
+            // wrong for other car following algorithms).
+            double acceleration = gtu.getAcceleration().getSI();
+            for (int timeBin = fromTimeBin; timeBin < toTimeBin; timeBin++)
+            {
+                if (timeBin < 0)
                 {
-                    relativeDuration -= relativeFromTime - timeBin;
+                    continue;
                 }
-                if (distanceBin == (int) Math.floor(binDistanceEnd))
+                double binEndTime = timeBin + 1;
+                if (binEndTime > relativeToTime)
                 {
-                    // This GTU does not move out of this distanceBin before the binEndTime
-                    if (binEndTime < timeBin + 1)
+                    binEndTime = relativeToTime;
+                }
+                if (binEndTime <= relativeFromTime)
+                {
+                    continue; // no time spent in this timeBin
+                }
+                double binDistanceStart = (gtu
+                        .position(lane, gtu.getRear(),
+                                new Time(relativeFromTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND))
+                        .getSI() - this.getYAxis().getMinimumValue().getSI() + lengthOffset)
+                        / this.getYAxis().getGranularities()[0];
+                double binDistanceEnd = (gtu
+                        .position(lane, gtu.getRear(),
+                                new Time(binEndTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND))
+                        .getSI() - this.getYAxis().getMinimumValue().getSI() + lengthOffset)
+                        / this.getYAxis().getGranularities()[0];
+
+                // Compute the time in each distanceBin
+                for (int distanceBin = (int) Math.floor(binDistanceStart); distanceBin <= binDistanceEnd; distanceBin++)
+                {
+                    double relativeDuration = 1;
+                    if (relativeFromTime > timeBin)
                     {
-                        relativeDuration -= timeBin + 1 - binEndTime;
+                        relativeDuration -= relativeFromTime - timeBin;
                     }
+                    if (distanceBin == (int) Math.floor(binDistanceEnd))
+                    {
+                        // This GTU does not move out of this distanceBin before the binEndTime
+                        if (binEndTime < timeBin + 1)
+                        {
+                            relativeDuration -= timeBin + 1 - binEndTime;
+                        }
+                    }
+                    else
+                    {
+                        // This GTU moves out of this distanceBin before the binEndTime
+                        // Interpolate the time when this GTU crosses into the next distanceBin
+                        // Using f.i. Newton-Rhaphson interpolation would yield a slightly more precise result...
+                        double timeToBinBoundary = (distanceBin + 1 - binDistanceStart) / relativeMeanSpeed;
+                        double endTime = relativeFromTime + timeToBinBoundary;
+                        relativeDuration -= timeBin + 1 - endTime;
+                    }
+                    final double duration = relativeDuration * this.getXAxis().getGranularities()[0];
+                    final double distance = duration * relativeMeanSpeed * this.getYAxis().getGranularities()[0];
+                    // System.out.println(String.format(
+                    // "timeBin=%d, distanceBin=%d, duration=%f, distance=%f, timeBinSize=%f, distanceBinSize=%f", timeBin,
+                    // distanceBin, duration, distance, this.getYAxis().getGranularities()[0], this.getXAxis()
+                    // .getGranularities()[0]));
+                    incrementBinData(timeBin, distanceBin, duration, distance, acceleration);
+                    relativeFromTime += relativeDuration;
+                    binDistanceStart = distanceBin + 1;
                 }
-                else
-                {
-                    // This GTU moves out of this distanceBin before the binEndTime
-                    // Interpolate the time when this GTU crosses into the next distanceBin
-                    // Using f.i. Newton-Rhaphson interpolation would yield a slightly more precise result...
-                    double timeToBinBoundary = (distanceBin + 1 - binDistanceStart) / relativeMeanSpeed;
-                    double endTime = relativeFromTime + timeToBinBoundary;
-                    relativeDuration -= timeBin + 1 - endTime;
-                }
-                final double duration = relativeDuration * this.getXAxis().getGranularities()[0];
-                final double distance = duration * relativeMeanSpeed * this.getYAxis().getGranularities()[0];
-                // System.out.println(String.format(
-                // "timeBin=%d, distanceBin=%d, duration=%f, distance=%f, timeBinSize=%f, distanceBinSize=%f", timeBin,
-                // distanceBin, duration, distance, this.getYAxis().getGranularities()[0], this.getXAxis()
-                // .getGranularities()[0]));
-                incrementBinData(timeBin, distanceBin, duration, distance, acceleration);
-                relativeFromTime += relativeDuration;
-                binDistanceStart = distanceBin + 1;
+                relativeFromTime = timeBin + 1;
             }
-            relativeFromTime = timeBin + 1;
         }
-
+        catch (GTUException exception)
+        {
+            // error -- silently ignore for now. Graphs should not cause errors.
+            System.err.println("ContourPlot: GTU " + gtu.getId() + " on lane " + lane.toString() + " caused exception "
+                    + exception.getMessage());
+        }
     }
 
     /**
