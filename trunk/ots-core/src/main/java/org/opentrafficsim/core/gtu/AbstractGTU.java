@@ -1,12 +1,5 @@
 package org.opentrafficsim.core.gtu;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -27,8 +20,12 @@ import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.observers.Observer;
 import org.opentrafficsim.core.perception.PerceivableContext;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Implements the basic functionalities of any GTU: the ability to move on 3D-space according to a plan.
@@ -41,7 +38,7 @@ import org.opentrafficsim.core.perception.PerceivableContext;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractGTU implements GTU
+public abstract class AbstractGTU extends EventProducer implements GTU
 {
     /** */
     private static final long serialVersionUID = 20140822L;
@@ -88,9 +85,6 @@ public abstract class AbstractGTU implements GTU
 
     /** Is this GTU destroyed? */
     private boolean destroyed = false;
-
-    /** Observers that want to see this GTU move. */
-    private List<Observer> observers = null;
 
     /**
      * @param id String; the id of the GTU
@@ -174,6 +168,8 @@ public abstract class AbstractGTU implements GTU
                 this.operationalPlan = OperationalPlanBuilder.buildConstantSpeedPlan(this, path, now, initialSpeed);
             }
 
+            fireTimedEvent(GTU.INIT_EVENT, new Object[] { getId(), initialLocation, getLength(), getWidth() }, now);
+
             // and do the real move
             move(initialLocation);
         }
@@ -201,7 +197,8 @@ public abstract class AbstractGTU implements GTU
     @SuppressWarnings("checkstyle:designforextension")
     public void destroy()
     {
-        this.perceivableContext.removeGTU(this);
+        fireTimedEvent(GTU.DESTROY_EVENT, new Object[] { getId(), getLocation(), getOdometer() },
+                this.simulator.getSimulatorTime());
 
         // cancel the next move
         if (this.nextMoveEvent != null)
@@ -210,65 +207,8 @@ public abstract class AbstractGTU implements GTU
             this.nextMoveEvent = null;
         }
 
-        if (null != this.observers)
-        {
-            DirectedPoint location = getLocation();
-            try
-            {
-                sendMessageToAllObservers(Observer.DELETE,
-                        new Object[] { getId(), location.x, location.y, location.z, location.getRotZ() });
-            }
-            catch (GTUException exception)
-            {
-                exception.printStackTrace();
-            }
-        }
+        this.perceivableContext.removeGTU(this);
         this.destroyed = true;
-    }
-
-    /**
-     * Add an Observer.
-     * @param observer Observer; the observer that must be added
-     */
-    public final void addObserver(final Observer observer)
-    {
-        if (null == this.observers)
-        {
-            this.observers = new ArrayList<Observer>();
-        }
-        this.observers.add(observer);
-        DirectedPoint location = getLocation();
-        try
-        {
-            observer.postMessage("GTU", Observer.NEW,
-                    new Object[] { getId(), location.x, location.y, location.z, location.getRotZ() });
-        }
-        catch (Exception exception)
-        {
-            exception.printStackTrace();
-        }
-    }
-
-    /**
-     * Send a message to all registered observers.
-     * @param eventType int type of event (NEW, CHANGE, or DELETE)
-     * @param args Object[]; data to send
-     * @throws GTUException when something went wrong in the event transmission code
-     */
-    private void sendMessageToAllObservers(final int eventType, final Object[] args) throws GTUException
-    {
-        for (Observer observer : this.observers)
-        {
-            try
-            {
-                observer.postMessage("GTU", eventType, args);
-            }
-            catch (Exception exception)
-            {
-                throw new GTUException(exception);
-            }
-        }
-
     }
 
     /**
@@ -285,8 +225,8 @@ public abstract class AbstractGTU implements GTU
      * @throws ParameterException in there is a parameter problem
      */
     @SuppressWarnings("checkstyle:designforextension")
-    protected void move(final DirectedPoint fromLocation) throws SimRuntimeException, OperationalPlanException, GTUException,
-            NetworkException, ParameterException
+    protected void move(final DirectedPoint fromLocation)
+            throws SimRuntimeException, OperationalPlanException, GTUException, NetworkException, ParameterException
     {
         Time now = this.simulator.getSimulatorTime().getTime();
 
@@ -295,13 +235,6 @@ public abstract class AbstractGTU implements GTU
         if (this.operationalPlan != null)
         {
             this.odometer = this.odometer.plus(this.operationalPlan.getTraveledDistance(now));
-        }
-
-        if (null != this.observers)
-        {
-            DirectedPoint location = getLocation();
-            sendMessageToAllObservers(Observer.CHANGE,
-                    new Object[] { getId(), location.x, location.y, location.z, location.getRotZ() });
         }
 
         // Do we have an operational plan?
@@ -315,10 +248,13 @@ public abstract class AbstractGTU implements GTU
 
         // schedule the next move at the end of the current operational plan
         // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
-        this.nextMoveEvent =
-                new SimEvent<>(new OTSSimTimeDouble(now.plus(this.operationalPlan.getTotalDuration())), this, this, "move",
-                        new Object[] { this.operationalPlan.getEndLocation() });
+        this.nextMoveEvent = new SimEvent<>(new OTSSimTimeDouble(now.plus(this.operationalPlan.getTotalDuration())), this, this,
+                "move", new Object[] { this.operationalPlan.getEndLocation() });
         this.simulator.scheduleEvent(this.nextMoveEvent);
+
+        fireTimedEvent(GTU.MOVE_EVENT,
+                new Object[] { getId(), fromLocation, getSpeed(), getAcceleration(), getTurnIndicatorStatus(), getOdometer() },
+                this.simulator.getSimulatorTime());
     }
 
     /**
@@ -332,8 +268,8 @@ public abstract class AbstractGTU implements GTU
      * @throws ParameterException when there is a problem with a parameter
      */
     @SuppressWarnings("checkstyle:designforextension")
-    protected void interruptMove() throws SimRuntimeException, OperationalPlanException, GTUException, NetworkException,
-            ParameterException
+    protected void interruptMove()
+            throws SimRuntimeException, OperationalPlanException, GTUException, NetworkException, ParameterException
     {
         this.simulator.cancelEvent(this.nextMoveEvent);
         move(this.operationalPlan.getLocation(this.simulator.getSimulatorTime().getTime()));
