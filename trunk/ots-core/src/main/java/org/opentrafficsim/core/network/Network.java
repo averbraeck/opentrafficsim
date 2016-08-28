@@ -239,28 +239,50 @@ public interface Network
     /***************************************************************************************/
 
     /**
-     * The event type for pub/sub indicating the addition of a Node. <br>
-     * Payload: [String nodeId, OTSPoint3D position]
+     * The (regular, not timed) event type for pub/sub indicating the addition of a Node. <br>
+     * Payload: String nodeId (not an array, just a String)
      */
     EventType NODE_ADD_EVENT = new EventType("NODE.ADD");
 
     /**
-     * The event type for pub/sub indicating the removal of a Node. <br>
-     * Payload: [String nodeId, OTSPoint3D position]
+     * The (regular, not timed) event type for pub/sub indicating the removal of a Node. <br>
+     * Payload: String nodeId (not an array, just a String)
      */
     EventType NODE_REMOVE_EVENT = new EventType("NODE.REMOVE");
     
-    // TODO same for Link, Route
+    /**
+     * The (regular, not timed) event type for pub/sub indicating the addition of a Link. <br>
+     * Payload: String linkId (not an array, just a String)
+     */
+    EventType LINK_ADD_EVENT = new EventType("LINK.ADD");
 
     /**
-     * The event type for pub/sub indicating the addition of a GTU to the network. <br>
-     * Payload: [String gtuId]
+     * The (regular, not timed) event type for pub/sub indicating the removal of a Link. <br>
+     * Payload: String linkId (not an array, just a String)
+     */
+    EventType LINK_REMOVE_EVENT = new EventType("LINK.REMOVE");
+    
+    /**
+     * The (regular, not timed) event type for pub/sub indicating the addition of a Route for a gtuType. <br>
+     * Payload: [String gtuId, String routeId]
+     */
+    EventType ROUTE_ADD_EVENT = new EventType("ROUTE.ADD");
+
+    /**
+     * The (regular, not timed) event type for pub/sub indicating the removal of a Route for a gtuType. <br>
+     * Payload: [String gtuId, String routeId]
+     */
+    EventType ROUTE_REMOVE_EVENT = new EventType("ROUTE.REMOVE");
+
+    /**
+     * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the network. <br>
+     * Payload: String gtuId (not an array, just a String)
      */
     EventType GTU_ADD_EVENT = new EventType("GTU.ADD");
 
     /**
-     * The event type for pub/sub indicating the removal of a GTU from the network. <br>
-     * Payload: [String gtuId]
+     * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the network. <br>
+     * Payload: String gtuId (not an array, just a String)
      */
     EventType GTU_REMOVE_EVENT = new EventType("GTU.REMOVE");
 
