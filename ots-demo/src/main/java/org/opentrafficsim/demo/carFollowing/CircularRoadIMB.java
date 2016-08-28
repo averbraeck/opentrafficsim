@@ -16,10 +16,6 @@ import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -35,6 +31,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -51,6 +48,7 @@ import org.opentrafficsim.graphs.FlowContourPlot;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
+import org.opentrafficsim.imb.observers.IMBTransmitter;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
@@ -85,17 +83,24 @@ import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionPro
 import org.opentrafficsim.simulationengine.properties.PropertyException;
 import org.opentrafficsim.simulationengine.properties.SelectionProperty;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.EventProducer;
+
 /**
  * Circular road simulation demo.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$,
+ * $LastChangedDate: 2016-08-24 13:50:36 +0200 (Wed, 24 Aug 2016) $, @version $Revision: 2144 $, by $Author: pknoppers $,
  * initial version 21 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CircularRoad extends AbstractWrappableAnimation implements UNITS
+public class CircularRoadIMB extends AbstractWrappableAnimation implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -107,39 +112,40 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
      * Create a CircularRoad simulation.
      * @throws PropertyException
      */
-    public CircularRoad() throws PropertyException
+    public CircularRoadIMB() throws PropertyException
     {
         this.properties.add(new SelectionProperty("LaneChanging", "Lane changing",
-            "<html>The lane change strategies vary in politeness.<br>"
-                + "Two types are implemented:<ul><li>Egoistic (looks only at personal gain).</li>"
-                + "<li>Altruistic (assigns effect on new and current follower the same weight as "
-                + "the personal gain).</html>", new String[] {"Egoistic", "Altruistic"}, 0, false, 500));
+                "<html>The lane change strategies vary in politeness.<br>"
+                        + "Two types are implemented:<ul><li>Egoistic (looks only at personal gain).</li>"
+                        + "<li>Altruistic (assigns effect on new and current follower the same weight as "
+                        + "the personal gain).</html>",
+                new String[] { "Egoistic", "Altruistic" }, 0, false, 500));
         this.properties.add(new SelectionProperty("TacticalPlanner", "Tactical planner",
-            "<html>The tactical planner determines if a lane change is desired and possible.</html>", new String[] {"MOBIL",
-                "Verbraeck", "Verbraeck0", "LMRS", "Toledo"}, 2, false, 600));
-        this.properties.add(new IntegerProperty("TrackLength", "Track length", "Circumference of the track", 2000, 500,
-            6000, "Track length %dm", false, 10));
-        this.properties.add(new ContinuousProperty("MeanDensity", "Mean density", "Number of vehicles per km", 40.0, 5.0,
-            45.0, "Density %.1f veh/km", false, 11));
+                "<html>The tactical planner determines if a lane change is desired and possible.</html>",
+                new String[] { "MOBIL", "Verbraeck", "Verbraeck0", "LMRS", "Toledo" }, 0, false, 600));
+        this.properties.add(new IntegerProperty("TrackLength", "Track length", "Circumference of the track", 2000, 500, 6000,
+                "Track length %dm", false, 10));
+        this.properties.add(new ContinuousProperty("MeanDensity", "Mean density", "Number of vehicles per km", 40.0, 5.0, 45.0,
+                "Density %.1f veh/km", false, 11));
         this.properties.add(new ContinuousProperty("DensityVariability", "Density variability",
-            "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, "%.1f", false, 12));
+                "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, "%.1f", false, 12));
         ArrayList<AbstractProperty<?>> outputProperties = new ArrayList<AbstractProperty<?>>();
         for (int lane = 1; lane <= 2; lane++)
         {
             String laneId = String.format("Lane %d ", lane);
-            outputProperties.add(new BooleanProperty(laneId + "Density", laneId + " Density", laneId
-                + "Density contour plot", true, false, 0));
-            outputProperties.add(new BooleanProperty(laneId + "Flow", laneId + " Flow", laneId + "Flow contour plot", true,
-                false, 1));
-            outputProperties.add(new BooleanProperty(laneId + "Speed", laneId + " Speed", laneId + "Speed contour plot",
-                true, false, 2));
-            outputProperties.add(new BooleanProperty(laneId + "Acceleration", laneId + " Acceleration", laneId
-                + "Acceleration contour plot", true, false, 3));
-            outputProperties.add(new BooleanProperty(laneId + "Trajectories", laneId + " Trajectories", laneId
-                + "Trajectory (time/distance) diagram", true, false, 4));
+            outputProperties.add(new BooleanProperty(laneId + "Density", laneId + " Density", laneId + "Density contour plot",
+                    true, false, 0));
+            outputProperties
+                    .add(new BooleanProperty(laneId + "Flow", laneId + " Flow", laneId + "Flow contour plot", true, false, 1));
+            outputProperties.add(
+                    new BooleanProperty(laneId + "Speed", laneId + " Speed", laneId + "Speed contour plot", true, false, 2));
+            outputProperties.add(new BooleanProperty(laneId + "Acceleration", laneId + " Acceleration",
+                    laneId + "Acceleration contour plot", true, false, 3));
+            outputProperties.add(new BooleanProperty(laneId + "Trajectories", laneId + " Trajectories",
+                    laneId + "Trajectory (time/distance) diagram", true, false, 4));
         }
         this.properties.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
-            outputProperties, true, 1000));
+                outputProperties, true, 1000));
     }
 
     /** {@inheritDoc} */
@@ -164,33 +170,34 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
             {
                 try
                 {
-                    CircularRoad circularRoad = new CircularRoad();
+                    CircularRoadIMB circularRoad = new CircularRoadIMB();
                     ArrayList<AbstractProperty<?>> propertyList = circularRoad.getProperties();
                     try
                     {
                         propertyList.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
-                            "<html>Mix of passenger cars and trucks</html>", new String[] {"passenger car", "truck"},
-                            new Double[] {0.8, 0.2}, false, 10));
+                                "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
+                                new Double[] { 0.8, 0.2 }, false, 10));
                     }
                     catch (PropertyException exception)
                     {
                         exception.printStackTrace();
                     }
                     propertyList.add(new SelectionProperty("CarFollowingModel", "Car following model",
-                        "<html>The car following model determines "
-                            + "the acceleration that a vehicle will make taking into account "
-                            + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
-                            + "curvature of the road) capabilities of the vehicle and personality "
-                            + "of the driver.</html>", new String[] {"IDM", "IDM+"}, 1, false, 1));
-                    propertyList.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car", new Acceleration(1.0,
-                        METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length(2.0, METER),
-                        new Duration(1.0, SECOND), 2));
-                    propertyList.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck", new Acceleration(0.5,
-                        METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER),
-                        new Duration(1.0, SECOND), 3));
+                            "<html>The car following model determines "
+                                    + "the acceleration that a vehicle will make taking into account "
+                                    + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
+                                    + "curvature of the road) capabilities of the vehicle and personality "
+                                    + "of the driver.</html>",
+                            new String[] { "IDM", "IDM+" }, 1, false, 1));
+                    propertyList.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car",
+                            new Acceleration(1.0, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
+                            new Length(2.0, METER), new Duration(1.0, SECOND), 2));
+                    propertyList.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck",
+                            new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2),
+                            new Length(2.0, METER), new Duration(1.0, SECOND), 3));
 
-                    circularRoad.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND),
-                        new Duration(3600.0, SECOND), propertyList, null, true);
+                    circularRoad.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND),
+                            propertyList, null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -325,11 +332,10 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
     @Override
     public final String description()
     {
-        return "<html><h1>Circular Road simulation</h1>"
-            + "Vehicles are unequally distributed over a two lane ring road.<br>"
-            + "When simulation starts, all vehicles begin driving, some lane changes will occurr and some "
-            + "shockwaves should develop.<br>"
-            + "Trajectories and contourplots are generated during the simulation for both lanes.</html>";
+        return "<html><h1>Circular Road simulation</h1>" + "Vehicles are unequally distributed over a two lane ring road.<br>"
+                + "When simulation starts, all vehicles begin driving, some lane changes will occurr and some "
+                + "shockwaves should develop.<br>"
+                + "Trajectories and contourplots are generated during the simulation for both lanes.</html>";
     }
 
 }
@@ -340,11 +346,11 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$,
+ * $LastChangedDate: 2016-08-24 13:50:36 +0200 (Wed, 24 Aug 2016) $, @version $Revision: 2144 $, by $Author: pknoppers $,
  * initial version 1 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-class RoadSimulationModel implements OTSModelInterface, UNITS
+class RoadSimulationModelIMB implements OTSModelInterface, UNITS
 {
     /** */
     private static final long serialVersionUID = 20141121L;
@@ -397,11 +403,17 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
     /** Strategical planner generator for cars. */
     private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorTrucks = null;
 
+    /** */
+    private final CarListener carListener = new CarListener();
+
+    /** */
+    private final IMBTransmitter imbTransmitter = new IMBTransmitter();
+
     /**
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
      * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
      */
-    public RoadSimulationModel(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer)
+    public RoadSimulationModelIMB(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer)
     {
         this.properties = properties;
         this.gtuColorer = gtuColorer;
@@ -419,7 +431,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
     /** {@inheritDoc} */
     @Override
     public void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-        throws SimRuntimeException, RemoteException
+            throws SimRuntimeException, RemoteException
     {
         final int laneCount = 2;
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
@@ -452,7 +464,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
 
             // Get car-following model parameter
             Iterator<AbstractProperty<List<AbstractProperty<?>>>> iterator =
-                new CompoundProperty("", "", "", this.properties, false, 0).iterator();
+                    new CompoundProperty("", "", "", this.properties, false, 0).iterator();
             while (iterator.hasNext())
             {
                 AbstractProperty<?> ap = iterator.next();
@@ -536,29 +548,24 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
                         String tacticalPlannerName = sp.getValue();
                         if ("MOBIL".equals(tacticalPlannerName))
                         {
-                            this.strategicalPlannerGeneratorCars =
-                                new LaneBasedStrategicalRoutePlannerFactory(new LaneBasedCFLCTacticalPlannerFactory(
-                                    this.carFollowingModelCars, this.laneChangeModel));
+                            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LaneBasedCFLCTacticalPlannerFactory(this.carFollowingModelCars, this.laneChangeModel));
                             this.strategicalPlannerGeneratorTrucks =
-                                new LaneBasedStrategicalRoutePlannerFactory(new LaneBasedCFLCTacticalPlannerFactory(
-                                    this.carFollowingModelTrucks, this.laneChangeModel));
+                                    new LaneBasedStrategicalRoutePlannerFactory(new LaneBasedCFLCTacticalPlannerFactory(
+                                            this.carFollowingModelTrucks, this.laneChangeModel));
                         }
                         else if ("Verbraeck".equals(tacticalPlannerName))
                         {
-                            this.strategicalPlannerGeneratorCars =
-                                new LaneBasedStrategicalRoutePlannerFactory(
+                            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
                                     new LaneBasedGTUFollowingLaneChangeTacticalPlannerFactory(this.carFollowingModelCars));
-                            this.strategicalPlannerGeneratorTrucks =
-                                new LaneBasedStrategicalRoutePlannerFactory(
+                            this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                                     new LaneBasedGTUFollowingLaneChangeTacticalPlannerFactory(this.carFollowingModelTrucks));
                         }
                         else if ("Verbraeck0".equals(tacticalPlannerName))
                         {
-                            this.strategicalPlannerGeneratorCars =
-                                new LaneBasedStrategicalRoutePlannerFactory(
+                            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
                                     new LaneBasedGTUFollowingChange0TacticalPlannerFactory(this.carFollowingModelCars));
-                            this.strategicalPlannerGeneratorTrucks =
-                                new LaneBasedStrategicalRoutePlannerFactory(
+                            this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                                     new LaneBasedGTUFollowingChange0TacticalPlannerFactory(this.carFollowingModelTrucks));
                         }
                         else if ("LMRS".equals(tacticalPlannerName))
@@ -566,19 +573,17 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
                             // provide default parameters with the car-following model
                             BehavioralCharacteristics defaultBehavioralCFCharacteristics = new BehavioralCharacteristics();
                             defaultBehavioralCFCharacteristics.setDefaultParameters(AbstractIDM.class);
-                            this.strategicalPlannerGeneratorCars =
-                                new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(IDMPlus.class,
-                                    defaultBehavioralCFCharacteristics));
-                            this.strategicalPlannerGeneratorTrucks =
-                                new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(IDMPlus.class,
-                                    defaultBehavioralCFCharacteristics));
+                            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LMRSFactory(IDMPlus.class, defaultBehavioralCFCharacteristics));
+                            this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LMRSFactory(IDMPlus.class, defaultBehavioralCFCharacteristics));
                         }
                         else if ("Toledo".equals(tacticalPlannerName))
                         {
                             this.strategicalPlannerGeneratorCars =
-                                new LaneBasedStrategicalRoutePlannerFactory(new ToledoFactory());
+                                    new LaneBasedStrategicalRoutePlannerFactory(new ToledoFactory());
                             this.strategicalPlannerGeneratorTrucks =
-                                new LaneBasedStrategicalRoutePlannerFactory(new ToledoFactory());
+                                    new LaneBasedStrategicalRoutePlannerFactory(new ToledoFactory());
                         }
                         else
                         {
@@ -635,18 +640,16 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
                 double angle = Math.PI * (1 + i) / (1 + coordsHalf1.length);
                 coordsHalf1[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
-            Lane[] lanes1 =
-                LaneFactory.makeMultiLane("FirstHalf", start, halfway, coordsHalf1, laneCount, laneType, this.speedLimit,
-                    this.simulator, LongitudinalDirectionality.DIR_PLUS);
+            Lane[] lanes1 = LaneFactory.makeMultiLane("FirstHalf", start, halfway, coordsHalf1, laneCount, laneType,
+                    this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
             OTSPoint3D[] coordsHalf2 = new OTSPoint3D[127];
             for (int i = 0; i < coordsHalf2.length; i++)
             {
                 double angle = Math.PI + Math.PI * (1 + i) / (1 + coordsHalf2.length);
                 coordsHalf2[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
-            Lane[] lanes2 =
-                LaneFactory.makeMultiLane("SecondHalf", halfway, start, coordsHalf2, laneCount, laneType, this.speedLimit,
-                    this.simulator, LongitudinalDirectionality.DIR_PLUS);
+            Lane[] lanes2 = LaneFactory.makeMultiLane("SecondHalf", halfway, start, coordsHalf2, laneCount, laneType,
+                    this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
             for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
             {
                 this.paths.get(laneIndex).add(lanes1[laneIndex]);
@@ -675,7 +678,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(9.999, SECOND), this, this, "drawGraphs", null);
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException
-            | PropertyException exception)
+                | PropertyException exception)
         {
             exception.printStackTrace();
         }
@@ -693,8 +696,8 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
         // Re schedule this method
         try
         {
-            this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().get().getSI() + 10, SECOND), this,
-                this, "drawGraphs", null);
+            this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().get().getSI() + 10, SECOND), this, this,
+                    "drawGraphs", null);
         }
         catch (SimRuntimeException exception)
         {
@@ -715,15 +718,25 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
      * @throws OTSGeometryException when the initial position is outside the center line of the lane
      */
     protected final void generateCar(final Length initialPosition, final Lane lane, final GTUType gtuType)
-        throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
+            throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
     {
 
         // GTU itself
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
         LaneBasedIndividualGTU gtu =
-            new LaneBasedIndividualGTU("" + (++this.carsCreated), gtuType, vehicleLength, new Length(1.8, METER), new Speed(
-                200, KM_PER_HOUR), this.simulator, DefaultCarAnimation.class, this.gtuColorer, this.network);
+                new LaneBasedIndividualGTU("" + (++this.carsCreated), gtuType, vehicleLength, new Length(1.8, METER),
+                        new Speed(200, KM_PER_HOUR), this.simulator, DefaultCarAnimation.class, this.gtuColorer, this.network);
+
+        // add the car to a listener to test.
+        gtu.addListener(this.carListener, GTU.INIT_EVENT, true);
+        gtu.addListener(this.carListener, GTU.MOVE_EVENT, true);
+        gtu.addListener(this.carListener, GTU.DESTROY_EVENT, true);
+
+        // add the car to the IMB Transmitter.
+        gtu.addListener(this.imbTransmitter, GTU.INIT_EVENT, true);
+        gtu.addListener(this.imbTransmitter, GTU.MOVE_EVENT, true);
+        gtu.addListener(this.imbTransmitter, GTU.DESTROY_EVENT, true);
 
         // strategical planner
         LaneBasedStrategicalPlanner strategicalPlanner;
@@ -735,13 +748,12 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
         {
             strategicalPlanner = this.strategicalPlannerGeneratorTrucks.create(gtu);
         }
-        
+
         // init
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Speed initialSpeed = new Speed(0, KM_PER_HOUR);
         gtu.init(strategicalPlanner, initialPositions, initialSpeed);
-
     }
 
     /** {@inheritDoc} */
@@ -787,6 +799,41 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
             exception.printStackTrace();
         }
         throw new Error(errorMessage);
+    }
+
+    /** */
+    protected static class CarListener extends EventProducer implements EventListenerInterface
+    {
+        /** */
+        private static final long serialVersionUID = 1L;
+
+        /** */
+        /** {@inheritDoc} */
+        @Override
+        public void notify(final EventInterface event) throws RemoteException
+        {
+            if (event.getType().equals(GTU.INIT_EVENT))
+            {
+                Object[] initInfo = (Object[]) event.getContent();
+                System.out.println("GTU " + initInfo[0] + " created");
+            }
+            else if (event.getType().equals(GTU.MOVE_EVENT))
+            {
+                Object[] moveInfo = (Object[]) event.getContent();
+                System.out.println(
+                        "GTU " + moveInfo[0] + " moved to " + moveInfo[1] + ", v=" + moveInfo[2] + ", a=" + moveInfo[3]);
+            }
+            else if (event.getType().equals(GTU.DESTROY_EVENT))
+            {
+                Object[] destroyInfo = (Object[]) event.getContent();
+                System.out.println(
+                        "GTU " + destroyInfo[0] + " destroyed at position " + destroyInfo[1] + ", odometer=" + destroyInfo[2]);
+            }
+            else
+            {
+                System.err.println("Unrecognized event of type " + event.getType());
+            }
+        }
     }
 
 }
