@@ -26,11 +26,11 @@ OTS - Open Traffic Simulation
 	
 	* More information about IMB can be found at {{https://github.com/ecodistrict/IDSSFramework/wiki}}.
 	
-	* A PDF document with the design can be found 
-	  {{{http://ecodistr-ict.eu/wp-content/uploads/2014/06/ECODISTR-ICT-D4-234-IDSS-Technical-Design-+-GUI-+-KPIs.pdf}}at http://ecodistr-ict.eu}
+	* A PDF document with the design can be found at {{http://ecodistr-ict.eu/public-resources}}.
+	  Look for deliverable D4.234.
 	
-	* And a document with the first implementation at:
-	  {{{http://ecodistr-ict.eu/wp-content/uploads/2015/06/ECODISTR-ICT-D47.pdf}}http://ecodistr-ict.eu}.
+	* And a document with the first implementation atcan be found at {{http://ecodistr-ict.eu/public-resources}}.
+	  Look for deliverable D4.7.
 	
 	* In general, information about IMB is available at GitHub under {{https://github.com/ecodistrict}}. Note that we use IMB version
 	  3 in this project, where github shows the development of version 4. 
