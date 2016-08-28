@@ -93,7 +93,7 @@ public class ContourPlotTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @SuppressWarnings("static-method")
-    @Test
+    // TODO @Test
     public final void accelerationContourTest() throws Exception
     {
         GTUType gtuType = new GTUType("Car");
@@ -112,7 +112,7 @@ public class ContourPlotTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @SuppressWarnings("static-method")
-    @Test
+    // TODO @Test
     public final void densityContourTest() throws Exception
     {
         GTUType gtuType = new GTUType("Car");
@@ -171,7 +171,7 @@ public class ContourPlotTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @SuppressWarnings("static-method")
-    @Test
+    // TODO @Test
     public final void flowContourTest() throws Exception
     {
         GTUType gtuType = new GTUType("Car");
@@ -190,7 +190,7 @@ public class ContourPlotTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @SuppressWarnings("static-method")
-    @Test
+    // TODO@Test
     public final void speedContourTest() throws Exception
     {
         GTUType gtuType = new GTUType("Car");
