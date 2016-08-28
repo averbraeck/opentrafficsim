@@ -264,13 +264,13 @@ public interface Network
     
     /**
      * The (regular, not timed) event type for pub/sub indicating the addition of a Route for a gtuType. <br>
-     * Payload: [String gtuId, String routeId]
+     * Payload: [String gtuTypeId, String routeId]
      */
     EventType ROUTE_ADD_EVENT = new EventType("ROUTE.ADD");
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the removal of a Route for a gtuType. <br>
-     * Payload: [String gtuId, String routeId]
+     * Payload: [String gtuTypeId, String routeId]
      */
     EventType ROUTE_REMOVE_EVENT = new EventType("ROUTE.REMOVE");
 
