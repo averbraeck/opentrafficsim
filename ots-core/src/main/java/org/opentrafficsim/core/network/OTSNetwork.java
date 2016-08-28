@@ -93,6 +93,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             throw new NetworkException("Node with name " + node.getId() + " already registered in network " + this.id);
         }
         this.nodeMap.put(node.getId(), node);
+        fireEvent(Network.NODE_ADD_EVENT, node.getId());
     }
 
     /** {@inheritDoc} */
@@ -103,6 +104,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         {
             throw new NetworkException("Node " + node + " not registered in network " + this.id);
         }
+        fireEvent(Network.NODE_REMOVE_EVENT, node.getId());
         this.nodeMap.remove(node.getId());
     }
 
@@ -153,10 +155,11 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         }
         if (!containsNode(link.getStartNode()) || !containsNode(link.getEndNode()))
         {
-            throw new NetworkException("Start node or end node of Link " + link.getId() + " not registered in network "
-                    + this.id);
+            throw new NetworkException(
+                    "Start node or end node of Link " + link.getId() + " not registered in network " + this.id);
         }
         this.linkMap.put(link.getId(), link);
+        fireEvent(Network.LINK_ADD_EVENT, link.getId());
     }
 
     /** {@inheritDoc} */
@@ -167,6 +170,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         {
             throw new NetworkException("Link " + link + " not registered in network " + this.id);
         }
+        fireEvent(Network.LINK_REMOVE_EVENT, link.getId());
         this.linkMap.remove(link.getId());
     }
 
@@ -242,8 +246,8 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     {
         if (containsRoute(gtuType, route))
         {
-            throw new NetworkException("Route " + route + " for GTUType " + gtuType + " already registered in network "
-                    + this.id);
+            throw new NetworkException(
+                    "Route " + route + " for GTUType " + gtuType + " already registered in network " + this.id);
         }
         if (this.routeMap.containsKey(gtuType) && this.routeMap.get(gtuType).keySet().contains(route.getId()))
         {
@@ -263,6 +267,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             this.routeMap.put(gtuType, new HashMap<String, Route>());
         }
         this.routeMap.get(gtuType).put(route.getId(), route);
+        fireEvent(Network.ROUTE_ADD_EVENT, new Object[] { gtuType.getId(), route.getId() });
     }
 
     /** {@inheritDoc} */
@@ -273,6 +278,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         {
             throw new NetworkException("Route " + route + " for GTUType " + gtuType + " not registered in network " + this.id);
         }
+        fireEvent(Network.ROUTE_REMOVE_EVENT, new Object[] { gtuType.getId(), route.getId() });
         this.routeMap.get(gtuType).remove(route.getId());
     }
 
@@ -411,9 +417,8 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     public final CompleteRoute getShortestRouteBetween(final GTUType gtuType, final Node nodeFrom, final Node nodeTo,
             final List<Node> nodesVia) throws NetworkException
     {
-        CompleteRoute route =
-                new CompleteRoute(
-                        "Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo + " via " + nodesVia.toString(), gtuType);
+        CompleteRoute route = new CompleteRoute(
+                "Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo + " via " + nodesVia.toString(), gtuType);
         SimpleWeightedGraph<Node, LinkEdge<Link>> graph = this.linkGraphs.get(gtuType);
         if (graph == null)
         {
@@ -466,14 +471,14 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     public final void addGTU(final GTU gtu)
     {
         this.gtuMap.put(gtu.getId(), gtu);
-        fireTimedEvent(Network.GTU_ADD_EVENT, new Object[] {gtu.getId()}, gtu.getSimulator().getSimulatorTime());
+        fireTimedEvent(Network.GTU_ADD_EVENT, gtu.getId(), gtu.getSimulator().getSimulatorTime());
     }
 
     /** {@inheritDoc} */
     @Override
     public final void removeGTU(final GTU gtu)
     {
-        fireTimedEvent(Network.GTU_REMOVE_EVENT, new Object[] {gtu.getId()}, gtu.getSimulator().getSimulatorTime());
+        fireTimedEvent(Network.GTU_REMOVE_EVENT, gtu.getId(), gtu.getSimulator().getSimulatorTime());
         this.gtuMap.remove(gtu.getId());
     }
 
