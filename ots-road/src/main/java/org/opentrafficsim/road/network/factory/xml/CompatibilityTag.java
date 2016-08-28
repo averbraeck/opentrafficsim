@@ -45,8 +45,8 @@ class CompatibilityTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseCompatibilities(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException,
-        NetworkException
+    static void parseCompatibilities(final NodeList nodeList, final XmlNetworkLaneParser parser)
+            throws SAXException, NetworkException
     {
         for (Node node : XMLParser.getNodes(nodeList, "COMPATIBILITY"))
         {
@@ -57,38 +57,41 @@ class CompatibilityTag implements Serializable
                 throw new SAXException("COMPATIBILITY: missing attribute LANETYPE");
             compatibilityTag.laneTypeName = attributes.getNamedItem("LANETYPE").getNodeValue().trim();
             if (!parser.laneTypeTags.keySet().contains(compatibilityTag.laneTypeName))
-                throw new SAXException("COMPATIBILITY: LANETYPE " + compatibilityTag.laneTypeName
-                    + " not defined in LANETYPE element");
+                throw new SAXException(
+                        "COMPATIBILITY: LANETYPE " + compatibilityTag.laneTypeName + " not defined in LANETYPE element");
 
-            if (attributes.getNamedItem("GTULIST") == null)
-                throw new SAXException("COMPATIBILITY.LANETYPE: missing attribute GTULIST for LANETYPE="
-                    + compatibilityTag.laneTypeName);
-            compatibilityTag.gtuList = parseGTUList(attributes.getNamedItem("GTULIST").getNodeValue(), parser);
+            List<Node> gtuList = XMLParser.getNodes(node.getChildNodes(), "GTU");
+            if (gtuList.size() == 0)
+                throw new SAXException("GTUMIX: missing tag GTU");
+            for (Node gtuNode : gtuList)
+            {
+                parseCompatibilityGTUTag(gtuNode, parser, compatibilityTag);
+            }
 
             addLaneType(compatibilityTag, parser);
         }
     }
 
     /**
-     * @param gtuNames the GTU names as a space-separated String
+     * @param gtuNode the GTU node to parse
      * @param parser the parser with the lists of information
-     * @return a list of GTUTags
+     * @param compatibilityTag the parent tag for adding the gtus to the list
+     * @throws NetworkException when the parsing of the GTUs fails
      * @throws SAXException when node could not be found
      */
-    private static List<GTUTag> parseGTUList(final String gtuNames, final XmlNetworkLaneParser parser)
-        throws SAXException
+    @SuppressWarnings("checkstyle:needbraces")
+    private static void parseCompatibilityGTUTag(final Node gtuNode, final XmlNetworkLaneParser parser,
+            final CompatibilityTag compatibilityTag) throws NetworkException, SAXException
     {
-        List<GTUTag> gtuList = new ArrayList<>();
-        String[] ns = gtuNames.split("\\s");
-        for (String s : ns)
-        {
-            if (!parser.gtuTags.containsKey(s))
-            {
-                throw new SAXException("GTU " + s + " from GTU list [" + gtuNames + "] was not defined");
-            }
-            gtuList.add(parser.gtuTags.get(s));
-        }
-        return gtuList;
+        NamedNodeMap attributes = gtuNode.getAttributes();
+
+        Node gtuName = attributes.getNamedItem("NAME");
+        if (gtuName == null)
+            throw new NetworkException("COMPATIBILITY: No GTU NAME defined for lane type " + compatibilityTag.laneTypeName);
+        if (!parser.gtuTags.containsKey(gtuName.getNodeValue().trim()))
+            throw new NetworkException("COMPATIBILITY: For lane type " + compatibilityTag.laneTypeName + ", GTU "
+                    + gtuName.getNodeValue().trim() + " is not defined");
+        compatibilityTag.gtuList.add(parser.gtuTags.get(gtuName.getNodeValue().trim()));
     }
 
     /**
