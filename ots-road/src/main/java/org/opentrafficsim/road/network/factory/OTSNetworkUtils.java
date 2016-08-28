@@ -52,7 +52,7 @@ public final class OTSNetworkUtils
         xstream.omitField(OTSNetwork.class, "gtuMap"); // no GTUs
         xstream.omitField(EventProducer.class, "listeners"); // no listeners
         xstream.omitField(JVMContext.class, "atomicName"); // no JVMContext
-        xstream.omitField(JVMContext.class, "emements"); // no JVMContext
+        xstream.omitField(JVMContext.class, "elements"); // no JVMContext
         xstream.omitField(AbstractSensor.class, "simulator"); // no reference to a simulator
         return xstream.toXML(network);
     }
