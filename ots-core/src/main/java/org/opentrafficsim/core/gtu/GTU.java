@@ -7,6 +7,8 @@ import java.util.Set;
 import javax.media.j3d.Bounds;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.event.EventProducerInterface;
+import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -38,7 +40,7 @@ import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface GTU extends Locatable, Serializable
+public interface GTU extends Locatable, Serializable, EventProducerInterface
 {
     /** @return the id of the GTU */
     String getId();
@@ -75,7 +77,7 @@ public interface GTU extends Locatable, Serializable
 
     /** @return the center position of the GTU, relative to its reference point. */
     RelativePosition getCenter();
-    
+
     /** @return the contour points of the GTU. */
     Set<RelativePosition> getContourPoints();
 
@@ -127,4 +129,22 @@ public interface GTU extends Locatable, Serializable
     @Override
     Bounds getBounds();
 
+    /**
+     * The event type for pub/sub indicating a move. <br>
+     * Payload: [String id, DirectedPoint position, Speed speed, Acceleration acceleration, TurnIndicatorStatus
+     * turnIndicatorStatus, Length odometer]
+     */
+    EventType MOVE_EVENT = new EventType("GTU.MOVE");
+
+    /**
+     * The event type for pub/sub indicating the initialization of a new GTU. <br>
+     * Payload: [String id, DirectedPoint initialPosition, Length length, Length width]
+     */
+    EventType INIT_EVENT = new EventType("GTU.INIT");
+
+    /**
+     * The event type for pub/sub indicating destruction of the GTU. <br>
+     * Payload: [String id, DirectedPoint lastPosition, Length odometer]
+     */
+    EventType DESTROY_EVENT = new EventType("GTU.DESTROY");
 }

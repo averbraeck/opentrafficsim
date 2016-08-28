@@ -32,6 +32,13 @@ public interface PerceivableContext
     Set<GTU> getGTUs();
 
     /**
+     * Get a GTU in the model.
+     * @param gtuId the id of the GTU
+     * @return a GTU as registered in the current model, or null when the id could not be found.
+     */
+    GTU getGTU(String gtuId);
+
+    /**
      * Add a GTU to the network.
      * @param gtu the GTU to add
      */

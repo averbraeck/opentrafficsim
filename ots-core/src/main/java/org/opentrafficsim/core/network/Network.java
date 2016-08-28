@@ -8,6 +8,8 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
 
+import nl.tudelft.simulation.event.EventType;
+
 /**
  * Interface that defines what information a network should be able to provide about Nodes, Links and Routes.
  * <p>
@@ -231,4 +233,35 @@ public interface Network
      */
     CompleteRoute getShortestRouteBetween(GTUType gtuType, Node nodeFrom, Node nodeTo, List<Node> nodesVia)
         throws NetworkException;
+    
+    /***************************************************************************************/
+    /*************************************** EVENTS ****************************************/
+    /***************************************************************************************/
+
+    /**
+     * The event type for pub/sub indicating the addition of a Node. <br>
+     * Payload: [String nodeId, OTSPoint3D position]
+     */
+    EventType NODE_ADD_EVENT = new EventType("NODE.ADD");
+
+    /**
+     * The event type for pub/sub indicating the removal of a Node. <br>
+     * Payload: [String nodeId, OTSPoint3D position]
+     */
+    EventType NODE_REMOVE_EVENT = new EventType("NODE.REMOVE");
+    
+    // TODO same for Link, Route
+
+    /**
+     * The event type for pub/sub indicating the addition of a GTU to the network. <br>
+     * Payload: [String gtuId]
+     */
+    EventType GTU_ADD_EVENT = new EventType("GTU.ADD");
+
+    /**
+     * The event type for pub/sub indicating the removal of a GTU from the network. <br>
+     * Payload: [String gtuId]
+     */
+    EventType GTU_REMOVE_EVENT = new EventType("GTU.REMOVE");
+
 }

@@ -16,6 +16,8 @@ import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
+import nl.tudelft.simulation.event.EventProducer;
+
 /**
  * A Network consists of a set of links. Each link has, in its turn, a start node and an end node.
  * <p>
@@ -28,7 +30,7 @@ import org.opentrafficsim.core.perception.PerceivableContext;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class OTSNetwork implements Network, PerceivableContext, Serializable
+public class OTSNetwork extends EventProducer implements Network, PerceivableContext, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150722;
@@ -459,32 +461,34 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
     /**************************************** GTUs *****************************************/
     /***************************************************************************************/
 
-    /**
-     * Add a GTU to the network.
-     * @param gtu the GTU to add
-     */
+    /** {@inheritDoc} */
+    @Override
     public final void addGTU(final GTU gtu)
     {
         this.gtuMap.put(gtu.getId(), gtu);
+        fireTimedEvent(Network.GTU_ADD_EVENT, new Object[] {gtu.getId()}, gtu.getSimulator().getSimulatorTime());
     }
 
-    /**
-     * Remove a GTU from the network.
-     * @param gtu the GTU to remove
-     */
+    /** {@inheritDoc} */
+    @Override
     public final void removeGTU(final GTU gtu)
     {
+        fireTimedEvent(Network.GTU_REMOVE_EVENT, new Object[] {gtu.getId()}, gtu.getSimulator().getSimulatorTime());
         this.gtuMap.remove(gtu.getId());
     }
 
-    /**
-     * Test whether a GTU is registered in the network.
-     * @param gtu the GTU to search for
-     * @return whether the network contains this GTU
-     */
+    /** {@inheritDoc} */
+    @Override
     public final boolean containsGTU(final GTU gtu)
     {
         return this.gtuMap.containsValue(gtu);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final GTU getGTU(final String gtuId)
+    {
+        return this.gtuMap.get(gtuId);
     }
 
     /** {@inheritDoc} */
