@@ -14,6 +14,11 @@
       <item name="ots-base" href="http://opentrafficsim.org/docs/${version}/index.html" />
       <item name="ots-core" href="http://opentrafficsim.org/docs/${version}/ots-core/index.html" />
       <item name="ots-road" href="http://opentrafficsim.org/docs/${version}/ots-road/index.html" />
+      <item name="ots-parser-opendrive" href="http://opentrafficsim.org/docs/${version}/ots-parser-opendrive/index.html" />
+      <item name="ots-parser-osm" href="http://opentrafficsim.org/docs/${version}/ots-parser-osm/index.html" />
+      <item name="ots-parser-shape" href="http://opentrafficsim.org/docs/${version}/ots-parser-shape/index.html" />
+      <item name="ots-parser-vissim" href="http://opentrafficsim.org/docs/${version}/ots-parser-vissim/index.html" />
+      <item name="ots-imb" href="http://opentrafficsim.org/docs/${version}/ots-imb/index.html" />
       <item name="ots-rail" href="http://opentrafficsim.org/docs/${version}/ots-rail/index.html" />
       <item name="ots-water" href="http://opentrafficsim.org/docs/${version}/ots-water/index.html" />
       <item name="ots-demo" href="http://opentrafficsim.org/docs/${version}/ots-demo/index.html" />

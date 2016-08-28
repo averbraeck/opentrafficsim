@@ -3,11 +3,10 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude"
   xsi:schemaLocation="http://www.opentrafficsim.org/ots http://www.opentrafficsim.org/docs/ots-definitions.xsd">
 
-  <GLOBAL DEFAULTLANEWIDTH="3.6m" DEFAULTMAXSPEED="100km/h" />
+  <GLOBAL DEFAULTLANEWIDTH="3.6m" DEFAULTMAXSPEED="100km/h" DEFAULTLANEKEEPING="KEEPRIGHT"
+    DEFAULTOVERTAKING="LEFTSET([CAR, TRUCK] OVERTAKE [ALL]) RIGHTSPEED(40 km/h)" />
 
   <LANETYPE NAME="HIGHWAY" />
-  <LANETYPE NAME="NOTRUCK" />
-  <LANETYPE NAME="BICYCLEPATH" />
 
   <ROADTYPE NAME="r1">
     <SHOULDER WIDTH="2m" OFFSET="-7.1m" COLOR="GREEN" />

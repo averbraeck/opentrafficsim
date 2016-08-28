@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane;
 import java.util.Map;
 
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+import nl.tudelft.simulation.event.EventType;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
@@ -165,5 +166,25 @@ public interface LaneBasedGTU extends GTU
      * @param event SimeEvent&lt;OTSSimTimeDouble&gt; the event
      */
     void addTrigger(Lane lane, SimEvent<OTSSimTimeDouble> event);
+
+    /**
+     * The lane-based event type for pub/sub indicating a move. <br>
+     * Payload: [String id, DirectedPoint position, Speed speed, Acceleration acceleration, TurnIndicatorStatus
+     * turnIndicatorStatus, Length odometer, Lane referenceLane, Length positionOnReferenceLane]
+     */
+    EventType MOVE_EVENT = new EventType("LANEBASEDGTU.MOVE");
+
+    /**
+     * The lane-based event type for pub/sub indicating the initialization of a new GTU. <br>
+     * Payload: [String id, DirectedPoint initialPosition, Length length, Length width, Lane referenceLane, Length
+     * positionOnReferenceLane]
+     */
+    EventType INIT_EVENT = new EventType("LANEBASEDGTU.INIT");
+
+    /**
+     * The lane-based event type for pub/sub indicating destruction of the GTU. <br>
+     * Payload: [String id, DirectedPoint lastPosition, Length odometer, Lane referenceLane, Length positionOnReferenceLane]
+     */
+    EventType DESTROY_EVENT = new EventType("LANEBASEDGTU.DESTROY");
 
 }

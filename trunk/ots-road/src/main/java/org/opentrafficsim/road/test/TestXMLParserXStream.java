@@ -1,14 +1,20 @@
 package org.opentrafficsim.road.test;
 
+import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.TimeUnit;
@@ -20,14 +26,23 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.gui.OTSAnimationPanel;
+import org.opentrafficsim.gui.SimulatorFrame;
+import org.opentrafficsim.road.network.factory.OTSNetworkUtils;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.opentrafficsim.simulationengine.WrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
 import org.xml.sax.SAXException;
+
+import com.thoughtworks.xstream.XStream;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -42,8 +57,11 @@ import nl.tudelft.simulation.language.io.URLResource;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class TestXMLParser extends AbstractWrappableAnimation
+public class TestXMLParserXStream extends AbstractWrappableAnimation
 {
+    /** */
+    private static final long serialVersionUID = 1L;
+
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
@@ -58,7 +76,7 @@ public class TestXMLParser extends AbstractWrappableAnimation
             {
                 try
                 {
-                    TestXMLParser xmlModel = new TestXMLParser();
+                    TestXMLParserXStream xmlModel = new TestXMLParserXStream();
                     // 1 hour simulation run for testing
                     xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
                             new Duration(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
@@ -117,7 +135,7 @@ public class TestXMLParser extends AbstractWrappableAnimation
     @Override
     public final String toString()
     {
-        return "TestXMLParser []";
+        return "TestXMLParserXStream []";
     }
 
     /**
@@ -154,13 +172,53 @@ public class TestXMLParser extends AbstractWrappableAnimation
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
             {
-                nlp.build(url);
+                OTSNetwork network = nlp.build(url);
+
+                System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+                System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+                System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+                System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+                System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+                System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+                String xml = OTSNetworkUtils.toXml(network);
+
+                Files.write(Paths.get("e://temp/network.txt"), xml.getBytes());
+
+                this.simulator = makeNewAnimator();
+
+                XStream xstream = new XStream();
+                network = (OTSNetwork) xstream.fromXML(xml);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
-                    | OTSGeometryException exception)
+                    | OTSGeometryException | PropertyException exception)
             {
                 exception.printStackTrace();
             }
+        }
+
+        private SimpleAnimator makeNewAnimator() throws PropertyException, SimRuntimeException, NamingException
+        {
+            final SimpleAnimator animator = new SimpleAnimator(new Time(0.0, TimeUnit.SECOND),
+                    new Duration(0.0, TimeUnit.SECOND), new Duration(60.0, TimeUnit.MINUTE), this);
+            try
+            {
+                TestXMLParserXStream.this.panel = new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), animator,
+                        TestXMLParserXStream.this, new DefaultSwitchableGTUColorer());
+            }
+            catch (RemoteException exception)
+            {
+                throw new SimRuntimeException(exception);
+            }
+            JPanel charts = makeCharts();
+            if (null != charts)
+            {
+                TestXMLParserXStream.this.panel.getTabbedPane().addTab("statistics", charts);
+            }
+
+            SimulatorFrame frame = new SimulatorFrame(shortName(), TestXMLParserXStream.this.panel);
+            frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            return animator;
         }
 
         /** {@inheritDoc} */
