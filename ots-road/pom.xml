@@ -53,26 +53,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.openstreetmap.osmosis</groupId>
-			<artifactId>osmosis-core</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openstreetmap.osmosis</groupId>
-			<artifactId>osmosis-xml</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openstreetmap.osmosis</groupId>
-			<artifactId>osmosis-pbf</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openstreetmap.osmosis</groupId>
-			<artifactId>osmosis-osm-binary</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>com.google.code.findbugs</groupId>
 			<artifactId>annotations</artifactId>
 		</dependency>

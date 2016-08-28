@@ -10,9 +10,6 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Length;
@@ -29,9 +26,11 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 
 /**
  * The Lane is the CrossSectionElement of a CrossSectionLink on which GTUs can drive. The Lane stores several important
@@ -127,7 +126,7 @@ public class Lane extends CrossSectionElement implements Serializable
     private Map<GTUType, Map<Lane, GTUDirectionality>> prevLanes = null;
 
     /** List of graphs that want to sample GTUs on this Lane. */
-    private ArrayList<LaneBasedGTUSampler> samplers = new ArrayList<LaneBasedGTUSampler>();
+    // deprecated private ArrayList<LaneBasedGTUSampler> samplers = new ArrayList<LaneBasedGTUSampler>();
 
     /** The conditions for overtaking another GTU, viewed from this lane. */
     // TODO allow for direction-dependent overtaking conditions
@@ -994,30 +993,37 @@ public class Lane extends CrossSectionElement implements Serializable
         return candidates;
     }
 
+    // XXX: deprecated
     /**
      * Register a LaneBasedGTUSampler on this Lane.
      * @param sampler LaneBasedGTUSampler; the sampler to register
      */
+    /*-
     public final void addSampler(final LaneBasedGTUSampler sampler)
     {
         this.samplers.add(sampler);
     }
-
+    */
+    
     /**
      * Unregister a LaneBasedGTUSampler from this Lane.
      * @param sampler LaneBasedGTUSampler; the sampler to unregister
      */
+    /*-
     public final void removeSampler(final LaneBasedGTUSampler sampler)
     {
         this.samplers.remove(sampler);
     }
+    */
 
+    // XXX:deprecated
     /**
      * Add the movement of a GTU to all graphs that sample this Lane.
      * @param gtu AbstractLaneBasedGTU; the GTU to sample
      * @throws NetworkException on network inconsistency
      * @throws GTUException on problems obtaining data from the GTU for the graph
      */
+    /*-
     public final void sample(final LaneBasedGTU gtu) throws NetworkException, GTUException
     {
         for (LaneBasedGTUSampler sampler : this.samplers)
@@ -1025,6 +1031,7 @@ public class Lane extends CrossSectionElement implements Serializable
             sampler.addData(gtu, this);
         }
     }
+    */
 
     /**
      * Get the speed limit of this lane, which can differ per GTU type. E.g., cars might be allowed to drive 120 km/h and trucks

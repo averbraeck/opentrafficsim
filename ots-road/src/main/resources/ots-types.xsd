@@ -14,25 +14,25 @@
 
   <xsd:simpleType name="SPEEDTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\d+[\.]{0,1}\d*\s*(km/h|m/s|mi/h|y/s|ft/s)"></xsd:pattern>
+      <xsd:pattern value="\d+\.?\d*\s*(km/h|m/s|mi/h|y/s|ft/s)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="ACCELERATIONTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\d+[\.]{0,1}\d*\s*(km/h\^2|m/s\^2|mi/h\^2|y/s\^2|ft/s\^2)"></xsd:pattern>
+      <xsd:pattern value="\d+\.?\d*\s*(km/h\^2|m/s\^2|mi/h\^2|y/s\^2|ft/s\^2)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="LENGTHTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\d+[\.]{0,1}\d*\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)"></xsd:pattern>
+      <xsd:pattern value="\d+\.?\d*\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="PERLENGTHTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\d+[\.]{0,1}\d*\s*\/\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)"></xsd:pattern>
+      <xsd:pattern value="\d+\.?\d*\s*\/\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -40,40 +40,50 @@
   <xsd:simpleType name="LENGTHBEGINENDTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern
-        value="BEGIN|END|END\-(\d+[\.]{0,1}\d*\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft))|(\
-){0}(\d+[\.]{0,1}\d*\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)|(\
-){0}((\d(\.\d*){0,1})|(\d\d(\.\d*){0,1})|(100(\.\0*){0,1}))\s*\%)"></xsd:pattern>
+        value="BEGIN|END|END\-(\d+\.?\d*\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft))|(\
+){0}(\d+\.?\d*\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)|(\
+){0}((\d(\.\d*)?)|(\d\d(\.\d*)?)|(100(\.\0*)?))\s*\%)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="FRACTIONTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="((\d(\.\d*){0,1})|(\d\d(\.\d*){0,1})|(100(\.\0*){0,1}))\s*\%"></xsd:pattern>
+      <xsd:pattern value="((\d(\.\d*)?)|(\d\d(\.\d*)?)|(100(\.\0*)?))\s*\%"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="SIGNEDLENGTHTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(\-|\+){0,1}\d+[\.]{0,1}\d*\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)"></xsd:pattern>
+      <xsd:pattern value="[+-]?\d+\.?\d*\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="TIMETYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\d+[\.]{0,1}\d*\s*(ms|s|m|min|h|hr|d|day|wk|week)"></xsd:pattern>
+      <xsd:pattern value="\d+\.?\d*\s*(ms|s|m|min|h|hr|d|day|wk|week)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="COORDINATETYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern
-        value="\([\ ]*(\-|\+){0,1}\d+[\.]{0,1}\d*[\s]*\,[\s]*(\-|\+){0,1}\d+[\.]{0,1}\d*([\s]*,[\s]*(\-|\+){0,1}\d+[\.]{0,1}\d*){0,1}[\s]*\)">
+        value="\(\s*[+-]?\d+\.?\d*\s*,\s*[+-]?\d+\.?\d*(\s*,\s*[+-]?\d+\.?\d*)?\s*\)">
       </xsd:pattern>
+      <xsd:whiteSpace value="collapse" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="COORDINATENOSPACETYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern
+        value="\([+-]?\d+\.?\d*,[+-]?\d+\.?\d*(,[+-]?\d+\.?\d*)?\)">
+      </xsd:pattern>
+      <xsd:whiteSpace value="collapse" />
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="COORDINATELISTTYPE">
-    <xsd:list itemType="COORDINATETYPE" />
+    <xsd:list itemType="COORDINATENOSPACETYPE" />
   </xsd:simpleType>
 
   <xsd:simpleType name="LEFTRIGHTTYPE">
@@ -84,19 +94,19 @@
 
   <xsd:simpleType name="ANGLETYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(\-|\+){0,1}\d+[\.]{0,1}\d*\s*(deg|rad)"></xsd:pattern>
+      <xsd:pattern value="[+-]?\d+\.?\d*\s*(deg|rad)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="DISTANCECOSTTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\d+[\.]{0,1}\d*\s*\/\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)"></xsd:pattern>
+      <xsd:pattern value="\d+\.?\d*\s*\/\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="TIMECOSTTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\d+[\.]{0,1}\d*\s*\/\s*(ms|s|m|min|h|hr|d|day|wk|week)"></xsd:pattern>
+      <xsd:pattern value="\d+\.?\d*\s*\/\s*(ms|s|m|min|h|hr|d|day|wk|week)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -110,14 +120,14 @@
     <xsd:restriction base="xsd:string">
       <xsd:pattern
         value="LEFTONLY|RIGHTONLY|NONE|BOTH|(\
-{0})LEFTALWAYS\s+RIGHTSPEED\(\d+[\.]{0,1}\d*\s*(km/h|m/s|mi/h|y/s|ft/s)\)|(\
-{0})RIGHTALWAYS\s+LEFTSPEED\(\d+[\.]{0,1}\d*\s*(km/h|m/s|mi/h|y/s|ft/s)\)|(\
+{0})LEFTALWAYS\s+RIGHTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|y/s|ft/s)\)|(\
+{0})RIGHTALWAYS\s+LEFTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|y/s|ft/s)\)|(\
 {0})LEFTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)|(\
 {0})LEFTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)(\
-{0})\s*RIGHTSPEED\(\d+[\.]{0,1}\d*\s*(km/h|m/s|mi/h|y/s|ft/s)\)|(\
+{0})\s*RIGHTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|y/s|ft/s)\)|(\
 {0})RIGHTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)|(\
 {0})RIGHTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)(\
-{0})\s*LEFTSPEED\(\d+[\.]{0,1}\d*\s*(km/h|m/s|mi/h|y/s|ft/s)\)"></xsd:pattern>
+{0})\s*LEFTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|y/s|ft/s)\)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -173,18 +183,18 @@
     <xsd:restriction base="xsd:string">
       <xsd:pattern
         value="(\
-{0})(CONST|CONSTANT)\(\s*\d+[\.]{0,1}\d*\s*\)(\
-{0})|(EXPO|EXPONENTIAL)\(\s*\d+[\.]{0,1}\d*\s*\)(\
-{0})|(TRIA|TRIANGULAR)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)(\
-{0})|(NORM|NORMAL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)(\
-{0})|BETA\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)(\
-{0})|ERLANG\(\s*\d+\s*,\s*\d+[\.]{0,1}\d*\s*\)(\
-{0})|GAMMA\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)(\
-{0})|(LOGN|LOGNORMAL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)(\
-{0})|PEARSON5\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)(\
-{0})|PEARSON6\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)(\
-{0})|(UNIF|UNIFORM)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)(\
-{0})|(WEIB|WEIBULL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)">
+{0})(CONST|CONSTANT)\(\s*\d+\.?\d*\s*\)(\
+{0})|(EXPO|EXPONENTIAL)\(\s*\d+\.?\d*\s*\)(\
+{0})|(TRIA|TRIANGULAR)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
+{0})|(NORM|NORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
+{0})|BETA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
+{0})|ERLANG\(\s*\d+\s*,\s*\d+\.?\d*\s*\)(\
+{0})|GAMMA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
+{0})|(LOGN|LOGNORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
+{0})|PEARSON5\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
+{0})|PEARSON6\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
+{0})|(UNIF|UNIFORM)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
+{0})|(WEIB|WEIBULL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)">
       </xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
@@ -193,18 +203,18 @@
     <xsd:restriction base="xsd:string">
       <xsd:pattern
         value="(\
-{0})(CONST|CONSTANT)\(\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
-{0})|(EXPO|EXPONENTIAL)\(\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
-{0})|(TRIA|TRIANGULAR)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
-{0})|(NORM|NORMAL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
-{0})|BETA\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
-{0})|ERLANG\(\s*\d+\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
-{0})|GAMMA\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
-{0})|(LOGN|LOGNORMAL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
-{0})|PEARSON5\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
-{0})|PEARSON6\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
-{0})|(UNIF|UNIFORM)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
-{0})|(WEIB|WEIBULL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)">
+{0})(CONST|CONSTANT)\(\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|(EXPO|EXPONENTIAL)\(\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|(TRIA|TRIANGULAR)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|(NORM|NORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|BETA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|ERLANG\(\s*\d+\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|GAMMA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|(LOGN|LOGNORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|PEARSON5\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|PEARSON6\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|(UNIF|UNIFORM)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|(WEIB|WEIBULL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)">
       </xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
@@ -213,18 +223,18 @@
     <xsd:restriction base="xsd:string">
       <xsd:pattern
         value="(\
-{0})(CONST|CONSTANT)\(\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|(EXPO|EXPONENTIAL)\(\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|(TRIA|TRIANGULAR)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|(NORM|NORMAL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|BETA\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|ERLANG\(\s*\d+\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|GAMMA\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|(LOGN|LOGNORMAL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|PEARSON5\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|PEARSON6\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|(UNIF|UNIFORM)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|(WEIB|WEIBULL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)">
+{0})(CONST|CONSTANT)\(\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|(EXPO|EXPONENTIAL)\(\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|(TRIA|TRIANGULAR)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|(NORM|NORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|BETA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|ERLANG\(\s*\d+\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|GAMMA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|(LOGN|LOGNORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|PEARSON5\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|PEARSON6\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|(UNIF|UNIFORM)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|(WEIB|WEIBULL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)">
       </xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
@@ -233,18 +243,18 @@
     <xsd:restriction base="xsd:string">
       <xsd:pattern
         value="(\
-{0})(CONST|CONSTANT)\(\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
-{0})|(EXPO|EXPONENTIAL)\(\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
-{0})|(TRIA|TRIANGULAR)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
-{0})|(NORM|NORMAL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
-{0})|BETA\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
-{0})|ERLANG\(\s*\d+\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
-{0})|GAMMA\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
-{0})|(LOGN|LOGNORMAL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
-{0})|PEARSON5\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
-{0})|PEARSON6\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
-{0})|(UNIF|UNIFORM)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
-{0})|(WEIB|WEIBULL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)">
+{0})(CONST|CONSTANT)\(\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|(EXPO|EXPONENTIAL)\(\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|(TRIA|TRIANGULAR)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|(NORM|NORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|BETA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|ERLANG\(\s*\d+\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|GAMMA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|(LOGN|LOGNORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|PEARSON5\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|PEARSON6\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|(UNIF|UNIFORM)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|(WEIB|WEIBULL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)">
       </xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
