@@ -27,10 +27,13 @@ import nl.tudelft.simulation.event.EventListenerInterface;
  */
 public class DataSampler implements EventListenerInterface
 {
+    /** The (ordered) set of observed lanes. */
     private final List<Lane> lanes;
     
+    /** The OTS Network that knows about all the GTUs and Lanes. */
     private final OTSNetwork network;
     
+    /** The GTUs currently in the network. */
     private final Set<String> gtus = new HashSet<>();
 
     /**
@@ -66,8 +69,15 @@ public class DataSampler implements EventListenerInterface
         }
         else if (event.getType().equals(LaneBasedGTU.MOVE_EVENT))
         {
-            
+            // Ignored.
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "DataSampler [lanes=" + this.lanes + ", network=" + this.network + ", #gtus=" + this.gtus.size() + "]";
     }
 
 }
