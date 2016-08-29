@@ -618,6 +618,10 @@
         <configuration>
           <escapeHTML>false</escapeHTML>
           <xmlPath>../ots-base/src/changes/changes.xml</xmlPath>
+          <issueManagementSystems>
+            <issueManagementSystem>jira</issueManagementSystem>
+          </issueManagementSystems>
+          <issueLinkTemplate>%URL%/%ISSUE%</issueLinkTemplate>
         </configuration>
         <reportSets>
           <reportSet>
@@ -1024,6 +1028,11 @@
   </contributors>
 
   <!-- Environment Settings -->
+
+  <issueManagement>
+    <system>jira</system>
+    <url>http://simulation.tudelft.nl:8085/browse/</url>
+  </issueManagement>
 
   <distributionManagement>
     <downloadUrl>http://opentrafficsim.org/maven</downloadUrl>
