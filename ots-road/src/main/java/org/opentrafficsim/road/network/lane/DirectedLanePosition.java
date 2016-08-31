@@ -6,10 +6,12 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.Throw;
+import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 
 /**
+ * Store one position, direction and lane of a GTU.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -80,8 +82,11 @@ public class DirectedLanePosition implements Serializable
      */
     public DirectedPoint getLocation()
     {
-        double fraction = this.position.si / this.lane.getParentLink().getLength().si;
-        DirectedPoint p = this.lane.getCenterLine().getLocationFractionExtended(fraction);
+        //double fraction = this.position.si / this.lane.getParentLink().getLength().si;
+        OTSLine3D centerLine = this.lane.getCenterLine();
+        double centerLineLength = centerLine.getLengthSI();
+        double fraction = this.position.si / centerLineLength;
+        DirectedPoint p = centerLine.getLocationFractionExtended(fraction);
         if (this.gtuDirection.equals(GTUDirectionality.DIR_PLUS))
         {
             return p;

@@ -129,12 +129,16 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @throws OTSGeometryException when the initial path is wrong
      */
     public final void init(final LaneBasedStrategicalPlanner strategicalPlanner,
-            final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed)
-            throws NetworkException, SimRuntimeException, GTUException, OTSGeometryException
+            final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed) throws NetworkException,
+            SimRuntimeException, GTUException, OTSGeometryException
     {
         Throw.when(null == initialLongitudinalPositions, GTUException.class, "InitialLongitudinalPositions is null");
         Throw.when(0 == initialLongitudinalPositions.size(), GTUException.class, "InitialLongitudinalPositions is empty set");
 
+        // if ("114".equals(this.getId()))
+        // {
+        // System.out.println("let op");
+        // }
         DirectedPoint lastPoint = null;
         for (DirectedLanePosition pos : initialLongitudinalPositions)
         {
@@ -162,8 +166,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
         // TODO: LaneBasedGTU should KNOW its reference lane!
         Lane referenceLane = getLanes().keySet().iterator().next();
-        fireTimedEvent(LaneBasedGTU.INIT_EVENT, new Object[] { getId(), initialLocation, getLength(), getWidth(), referenceLane,
-                position(referenceLane, getReference()) }, getSimulator().getSimulatorTime());
+        fireTimedEvent(LaneBasedGTU.INIT_EVENT, new Object[] { getId(), initialLocation, getLength(), getWidth(),
+                referenceLane, position(referenceLane, getReference()) }, getSimulator().getSimulatorTime());
 
     }
 
@@ -259,8 +263,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    protected final void move(final DirectedPoint fromLocation)
-            throws SimRuntimeException, GTUException, OperationalPlanException, NetworkException, ParameterException
+    protected final void move(final DirectedPoint fromLocation) throws SimRuntimeException, GTUException,
+            OperationalPlanException, NetworkException, ParameterException
     {
         if (MOVEMENT_LANE_BASED)
         {
@@ -272,6 +276,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                 return; // Done; do not re-schedule execution of this move method.
             }
 
+            DirectedPoint before = this.getLocation();
             for (Link link : this.fractionalLinkPositions.keySet())
             {
                 double d = this.fractionalLinkPositions.get(link);
@@ -297,15 +302,16 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             {
                 newLinkPositions.put(lane.getParentLink(), lane.fraction(position(lane, getReference())));
             }
-
             // generate the next operational plan and carry it out
             super.move(fromLocation);
 
+            // update the positions on the lanes we are registered on
+            this.fractionalLinkPositions = newLinkPositions;
+
             // TODO: LaneBasedGTU should KNOW its reference lane!
             Lane referenceLane = getLanes().keySet().iterator().next();
-            fireTimedEvent(LaneBasedGTU.MOVE_EVENT,
-                    new Object[] { getId(), fromLocation, getSpeed(), getAcceleration(), getTurnIndicatorStatus(),
-                            getOdometer(), referenceLane, position(referenceLane, getReference()) },
+            fireTimedEvent(LaneBasedGTU.MOVE_EVENT, new Object[] { getId(), fromLocation, getSpeed(), getAcceleration(),
+                    getTurnIndicatorStatus(), getOdometer(), referenceLane, position(referenceLane, getReference()) },
                     getSimulator().getSimulatorTime());
 
             if (getOperationalPlan().getAcceleration(Duration.ZERO).si < -10)
@@ -314,10 +320,17 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             }
 
             // update the positions on the lanes we are registered on
-            this.fractionalLinkPositions = newLinkPositions;
+            // XXX That was too late... this.fractionalLinkPositions = newLinkPositions;
 
             // schedule triggers and determine when to enter lanes with front and leave lanes with rear
             scheduleTriggers();
+            DirectedPoint after = this.getLocation();
+            if (before.distance(after) > 15)
+            {
+                System.err.println("Position jump by " + before.distance(after) + ": before move position was " + before
+                        + " after " + after);
+                this.getLocation();
+            }
         }
 
         else
@@ -467,13 +480,15 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             {
                 if (this.lanes.get(lane).equals(GTUDirectionality.DIR_PLUS))
                 {
-                    loc = longitudinalPosition.plus(getOperationalPlan().getTraveledDistance(when))
-                            .plus(relativePosition.getDx());
+                    loc =
+                            longitudinalPosition.plus(getOperationalPlan().getTraveledDistance(when)).plus(
+                                    relativePosition.getDx());
                 }
                 else
                 {
-                    loc = longitudinalPosition.minus(getOperationalPlan().getTraveledDistance(when))
-                            .minus(relativePosition.getDx());
+                    loc =
+                            longitudinalPosition.minus(getOperationalPlan().getTraveledDistance(when)).minus(
+                                    relativePosition.getDx());
                 }
             }
             catch (Exception e)
@@ -557,7 +572,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                     else if (direction.equals(GTUDirectionality.DIR_MINUS))
                     {
                         Length refPosAtLastTimestep =
-                                new Length(nextLane.getLength().si + (lane.getLength().si - frontPosSI) + getFront().getDx().si,
+                                new Length(
+                                        nextLane.getLength().si + (lane.getLength().si - frontPosSI) + getFront().getDx().si,
                                         LengthUnit.SI);
                         enterLane(nextLane, refPosAtLastTimestep, direction);
                         // schedule any sensor triggers on this lane for the remainder time
@@ -603,16 +619,16 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                     }
                     else
                     {
-                        throw new NetworkException("scheduleTriggers DIR_MINUS for GTU " + toString() + ", prevLane " + prevLane
-                                + ", direction not DIR_PLUS or DIR_MINUS");
+                        throw new NetworkException("scheduleTriggers DIR_MINUS for GTU " + toString() + ", prevLane "
+                                + prevLane + ", direction not DIR_PLUS or DIR_MINUS");
                     }
                 }
             }
 
             else
             {
-                throw new NetworkException(
-                        "scheduleTriggers for GTU " + toString() + ", lane " + lane + ", direction not DIR_PLUS or DIR_MINUS");
+                throw new NetworkException("scheduleTriggers for GTU " + toString() + ", lane " + lane
+                        + ", direction not DIR_PLUS or DIR_MINUS");
             }
         }
 
@@ -631,8 +647,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                 {
                     double distanceToLeave = lane.getLength().si - rearPosSI;
                     Time exitTime = getOperationalPlan().timeAtDistance(new Length(distanceToLeave, LengthUnit.SI));
-                    SimEvent<OTSSimTimeDouble> event = new SimEvent<>(new OTSSimTimeDouble(exitTime), this, this, "leaveLane",
-                            new Object[] { lane, new Boolean(false) });
+                    SimEvent<OTSSimTimeDouble> event =
+                            new SimEvent<>(new OTSSimTimeDouble(exitTime), this, this, "leaveLane", new Object[] { lane,
+                                    new Boolean(false) });
                     getSimulator().scheduleEvent(event);
                     addTrigger(lane, event);
                     // XXXXXXXXXXXXXXXXXX Minus one ULP is not safe if you want to add the current time
@@ -647,8 +664,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                 {
                     double distanceToLeave = rearPosSI;
                     Time exitTime = getOperationalPlan().timeAtDistance(new Length(distanceToLeave, LengthUnit.SI));
-                    SimEvent<OTSSimTimeDouble> event = new SimEvent<>(new OTSSimTimeDouble(exitTime), this, this, "leaveLane",
-                            new Object[] { lane, new Boolean(false) });
+                    SimEvent<OTSSimTimeDouble> event =
+                            new SimEvent<>(new OTSSimTimeDouble(exitTime), this, this, "leaveLane", new Object[] { lane,
+                                    new Boolean(false) });
                     getSimulator().scheduleEvent(event);
                     addTrigger(lane, event);
 
@@ -683,8 +701,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             {
                 throw new GTUException(this + " reaches branch but has no route navigator");
             }
-            Node nextNode = ((LaneBasedStrategicalRoutePlanner) getStrategicalPlanner()).nextNode(lane.getParentLink(),
-                    GTUDirectionality.DIR_PLUS, getGTUType());
+            Node nextNode =
+                    ((LaneBasedStrategicalRoutePlanner) getStrategicalPlanner()).nextNode(lane.getParentLink(),
+                            GTUDirectionality.DIR_PLUS, getGTUType());
             if (null == nextNode)
             {
                 throw new GTUException(this + " reaches branch and the route returns null as nextNodeToVisit");
@@ -711,9 +730,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             }
             if (continuingLaneCount > 1)
             {
-                throw new NetworkException(
-                        this + " reached branch and the route specifies multiple lanes to continue on at this branch ("
-                                + lane.getParentLink().getEndNode() + "). This is not yet supported");
+                throw new NetworkException(this
+                        + " reached branch and the route specifies multiple lanes to continue on at this branch ("
+                        + lane.getParentLink().getEndNode() + "). This is not yet supported");
             }
         }
         return nextLane;
@@ -743,8 +762,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             {
                 throw new GTUException(this + " reaches branch but has no route navigator");
             }
-            Node prevNode = ((LaneBasedStrategicalRoutePlanner) getStrategicalPlanner()).nextNode(lane.getParentLink(),
-                    GTUDirectionality.DIR_MINUS, getGTUType());
+            Node prevNode =
+                    ((LaneBasedStrategicalRoutePlanner) getStrategicalPlanner()).nextNode(lane.getParentLink(),
+                            GTUDirectionality.DIR_MINUS, getGTUType());
             if (null == prevNode)
             {
                 throw new GTUException(this + " reaches branch and the route returns null as nextNodeToVisit");
@@ -771,9 +791,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             }
             if (continuingLaneCount > 1)
             {
-                throw new NetworkException(
-                        this + " reached branch and the route specifies multiple lanes to continue on at this branch ("
-                                + lane.getParentLink().getStartNode() + "). This is not yet supported");
+                throw new NetworkException(this
+                        + " reached branch and the route specifies multiple lanes to continue on at this branch ("
+                        + lane.getParentLink().getStartNode() + "). This is not yet supported");
             }
         }
         return prevLane;
@@ -870,8 +890,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         if (referenceLane == null)
         {
             fireTimedEvent(LaneBasedGTU.DESTROY_EVENT,
-                    new Object[] { getId(), getLocation(), getOdometer(), null, Length.ZERO },
-                    getSimulator().getSimulatorTime());
+                    new Object[] { getId(), getLocation(), getOdometer(), null, Length.ZERO }, getSimulator()
+                            .getSimulatorTime());
         }
 
         synchronized (this.lock)
