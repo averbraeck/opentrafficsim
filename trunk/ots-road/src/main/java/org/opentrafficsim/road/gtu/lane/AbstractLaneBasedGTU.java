@@ -325,7 +325,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             // schedule triggers and determine when to enter lanes with front and leave lanes with rear
             scheduleTriggers();
             DirectedPoint after = this.getLocation();
-            if (before.distance(after) > 15)
+            if (before.distance(after) > 6)
             {
                 System.err.println("Position jump by " + before.distance(after) + ": before move position was " + before
                         + " after " + after);
