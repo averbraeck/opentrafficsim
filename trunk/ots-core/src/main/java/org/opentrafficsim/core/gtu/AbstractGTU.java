@@ -170,6 +170,10 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
             fireTimedEvent(GTU.INIT_EVENT, new Object[] { getId(), initialLocation, getLength(), getWidth() }, now);
 
+            // if ("114".equals(getId()))
+            // {
+            // System.out.println("komt ie");
+            // }
             // and do the real move
             move(initialLocation);
         }
