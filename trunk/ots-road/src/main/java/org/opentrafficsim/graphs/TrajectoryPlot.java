@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JFrame;
@@ -18,6 +19,11 @@ import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 import javax.swing.event.EventListenerList;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.TimedEvent;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
@@ -39,15 +45,12 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
-
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.TimedEvent;
 
 /**
  * Trajectory plot.
@@ -59,20 +62,24 @@ import nl.tudelft.simulation.event.TimedEvent;
  * initial version Jul 24, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrajectoryPlot extends JFrame
-        implements ActionListener, XYDataset, MultipleViewerChart, LaneBasedGTUSampler, EventListenerInterface
+public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset, MultipleViewerChart, LaneBasedGTUSampler,
+        EventListenerInterface
 
 {
     /** */
     private static final long serialVersionUID = 20140724L;
 
     /** Sample interval of this TrajectoryPlot. */
-    private final double sampleInterval;
+    private final Duration sampleInterval;
+
+    /** The simulator. */
+    private final OTSDEVSSimulatorInterface simulator;
 
     /**
-     * @return sampleInterval
+     * @return sampleInterval if this TrajectoryPlot samples at a fixed rate, or null if this TrajectoryPlot samples on the GTU
+     *         move events
      */
-    public final double getSampleInterval()
+    public final Duration getSampleInterval()
     {
         return this.sampleInterval;
     }
@@ -124,12 +131,16 @@ public class TrajectoryPlot extends JFrame
     /**
      * Create a new TrajectoryPlot.
      * @param caption String; the text to show above the TrajectoryPlot
-     * @param sampleInterval DoubleScalarRel&lt;TimeUnit&gt;; the time between samples of this TrajectoryPlot
+     * @param sampleInterval DoubleScalarRel&lt;TimeUnit&gt;; the time between samples of this TrajectoryPlot, or null in which
+     *            case the GTUs are sampled whenever they fire a MOVE_EVENT
      * @param path ArrayList&lt;Lane&gt;; the series of Lanes that will provide the data for this TrajectoryPlot
+     * @param simulator OTSDEVSSimulatorInterface; the simulator
      */
-    public TrajectoryPlot(final String caption, final Duration sampleInterval, final List<Lane> path)
+    public TrajectoryPlot(final String caption, final Duration sampleInterval, final List<Lane> path,
+            final OTSDEVSSimulatorInterface simulator)
     {
-        this.sampleInterval = sampleInterval.si;
+        this.sampleInterval = sampleInterval;
+        this.simulator = simulator;
         this.path = new ArrayList<Lane>(path); // make a defensive copy
         double[] endLengths = new double[path.size()];
         double cumulativeLength = 0;
@@ -140,11 +151,11 @@ public class TrajectoryPlot extends JFrame
             lane.addListener(this, Lane.GTU_REMOVE_EVENT, true);
             try
             {
-                // register the current GTUs on the lanes (if any) for statistics sampling.
+                // Register the GTUs currently (i.e. already) on the lane (if any) for statistics sampling.
                 for (LaneBasedGTU gtu : lane.getGtuList())
                 {
-                    notify(new TimedEvent<OTSSimTimeDouble>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), gtu },
-                            gtu.getSimulator().getSimulatorTime()));
+                    notify(new TimedEvent<OTSSimTimeDouble>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), gtu }, gtu
+                            .getSimulator().getSimulatorTime()));
                 }
             }
             catch (RemoteException exception)
@@ -158,9 +169,65 @@ public class TrajectoryPlot extends JFrame
         this.caption = caption;
         createChart(this);
         this.reGraph(); // fixes the domain axis
+        if (null != this.sampleInterval)
+        {
+            try
+            {
+                this.simulator.scheduleEventRel(Duration.ZERO, this, this, "sample", null);
+            }
+            catch (SimRuntimeException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
     }
 
-    /** the GTUs that might be of interest to gather statistics about. */
+    /**
+     * Sample all the GTUs on the observed lanes.
+     */
+    public void sample()
+    {
+        Time now = this.simulator.getSimulatorTime().getTime();
+        for (LaneBasedGTU gtu : this.gtusOfInterest)
+        {
+            try
+            {
+                Map<Lane, Length> positions = gtu.positions(gtu.getReference(), now);
+                int hits = 0;
+                for (Lane lane : positions.keySet())
+                {
+                    if (this.path.contains(lane))
+                    {
+                        Length position = positions.get(lane);
+                        if (position.si >= 0 && position.si < lane.getLength().si)
+                        {
+                            addData(gtu, lane, positions.get(lane).si);
+                            hits++;
+                        }
+                    }
+                }
+                if (1 != hits)
+                {
+                    System.err.println("GTU " + gtu + " scored " + hits + " (expected 1 hit)");
+                }
+            }
+            catch (GTUException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+        // Schedule the next sample
+        try
+        {
+            this.simulator.scheduleEventRel(this.sampleInterval, this, this, "sample", null);
+        }
+        catch (SimRuntimeException exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+
+    /** The GTUs that might be of interest to gather statistics about. */
     private Set<LaneBasedGTU> gtusOfInterest = new HashSet<>();
 
     /** {@inheritDoc} */
@@ -176,7 +243,10 @@ public class TrajectoryPlot extends JFrame
             if (!this.gtusOfInterest.contains(gtu))
             {
                 this.gtusOfInterest.add(gtu);
-                gtu.addListener(this, LaneBasedGTU.MOVE_EVENT);
+                if (null == this.sampleInterval)
+                {
+                    gtu.addListener(this, LaneBasedGTU.MOVE_EVENT);
+                }
             }
         }
         else if (event.getType().equals(Lane.GTU_REMOVE_EVENT))
@@ -194,7 +264,19 @@ public class TrajectoryPlot extends JFrame
             if (!interest)
             {
                 this.gtusOfInterest.remove(gtu);
-                gtu.removeListener(this, LaneBasedGTU.MOVE_EVENT);
+                if (null != this.sampleInterval)
+                {
+                    gtu.removeListener(this, LaneBasedGTU.MOVE_EVENT);
+                }
+                else
+                {
+                    String key = gtu.getId();
+                    VariableSampleRateTrajectory carTrajectory = (VariableSampleRateTrajectory) this.trajectories.get(key);
+                    if (null != carTrajectory)
+                    {
+                        carTrajectory.recordGTULeftTrajectoryEvent();
+                    }
+                }
             }
         }
         else if (event.getType().equals(LaneBasedGTU.MOVE_EVENT))
@@ -408,13 +490,14 @@ public class TrajectoryPlot extends JFrame
         if (null == carTrajectory)
         {
             // Create a new Trajectory for this GTU
-            carTrajectory = new Trajectory(key);
+            carTrajectory =
+                    null == this.sampleInterval ? new VariableSampleRateTrajectory(key) : new FixedSampleRateTrajectory(key);
             this.trajectoryIndices.add(carTrajectory);
             this.trajectories.put(key, carTrajectory);
         }
         try
         {
-            carTrajectory.addSegment(gtu, lane, lengthOffset, posOnLane);
+            carTrajectory.addSample(gtu, lane, lengthOffset + posOnLane);
         }
         catch (NetworkException | GTUException exception)
         {
@@ -425,11 +508,66 @@ public class TrajectoryPlot extends JFrame
     }
 
     /**
-     * Store trajectory data.
+     * Common interface for both (all?) types of trajectories.
+     */
+    interface Trajectory
+    {
+        /**
+         * Retrieve the time of the last stored event.
+         * @return Time; the time of the last stored event
+         */
+        Time getCurrentEndTime();
+
+        /**
+         * Retrieve the last recorded non-null position, or null if no non-null positions have been recorded yet.
+         * @return Double; the last recorded position of this Trajectory in meters
+         */
+        Double getLastPosition();
+
+        /**
+         * Retrieve the id of this Trajectory.
+         * @return Object; the id of this Trajectory
+         */
+        String getId();
+
+        /**
+         * Add a trajectory segment sample and update the currentEndTime and currentEndPosition.
+         * @param gtu AbstractLaneBasedGTU; the GTU whose currently committed trajectory segment must be added
+         * @param lane Lane; the Lane that the positionOffset is valid for
+         * @param position Double; distance in meters from the start of the trajectory
+         * @throws NetworkException when car is not on lane anymore
+         * @throws GTUException on problems obtaining data from the GTU
+         */
+        void addSample(LaneBasedGTU gtu, Lane lane, double position) throws NetworkException, GTUException;
+
+        /**
+         * Retrieve the number of stored samples in this Trajectory.
+         * @return int; number of stored samples
+         */
+        int size();
+
+        /**
+         * Return the time of the Nth stored sample.
+         * @param item int; the index of the sample
+         * @return double; the time of the sample
+         */
+        double getTime(int item);
+
+        /**
+         * Return the distance of the Nth stored sample.
+         * @param item int; the index of the sample
+         * @return double; the distance of the sample
+         */
+        double getDistance(int item);
+
+    }
+
+    /**
+     * Store trajectory data for use with a variable sample rate.
      * <p>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class Trajectory implements Serializable
+    class VariableSampleRateTrajectory implements Trajectory, Serializable
     {
         /** */
         private static final long serialVersionUID = 20140000L;
@@ -437,71 +575,219 @@ public class TrajectoryPlot extends JFrame
         /** Time of (current) end of trajectory. */
         private Time currentEndTime;
 
+        /** ID of the GTU. */
+        private final String id;
+
+        /** Storage for the samples of the GTU. */
+        private ArrayList<DistanceAndTime> samples = new ArrayList<DistanceAndTime>();
+
         /**
-         * Retrieve the last registered time of this Trajectory.
-         * @return currentEndTime
+         * Construct a new VariableSamplerateTrajectory.
+         * @param id String; id of the new Trajectory (id of the GTU)
          */
+        public VariableSampleRateTrajectory(final String id)
+        {
+            this.id = id;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Time getCurrentEndTime()
+        {
+            return this.currentEndTime;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Double getLastPosition()
+        {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String getId()
+        {
+            return this.id;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void addSample(LaneBasedGTU gtu, Lane lane, double position) throws NetworkException, GTUException
+        {
+            if (this.samples.size() > 0)
+            {
+                DistanceAndTime lastSample = this.samples.get(this.samples.size() - 1);
+                if (null != lastSample)
+                {
+                    Double lastPosition = lastSample.getDistance();
+                    if (null != lastPosition && Math.abs(lastPosition - position) > 0.9 * getCumulativeLength(-1))
+                    {
+                        // wrap around... probably circular lane, insert a GTU left trajectory event.
+                        recordGTULeftTrajectoryEvent();
+                    }
+                }
+            }
+            this.currentEndTime = gtu.getSimulator().getSimulatorTime().getTime();
+            this.samples.add(new DistanceAndTime(position, this.currentEndTime.si));
+        }
+
+        /**
+         * Store that the GTU went off of the trajectory.
+         */
+        public void recordGTULeftTrajectoryEvent()
+        {
+            this.samples.add(null);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int size()
+        {
+            return this.samples.size();
+        }
+
+        /**
+         * Retrieve the Nth sample.
+         * @param item int; the number of the sample
+         * @return DistanceAndTime; the Nth sample (samples can be null to indicate that GTU went off the trajectory).
+         */
+        private DistanceAndTime getSample(int item)
+        {
+            return this.samples.get(item);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public double getTime(int item)
+        {
+            DistanceAndTime sample = getSample(item);
+            if (null == sample)
+            {
+                return Double.NaN;
+            }
+            return this.samples.get(item).getTime();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public double getDistance(int item)
+        {
+            DistanceAndTime sample = getSample(item);
+            if (null == sample)
+            {
+                return Double.NaN;
+            }
+            return sample.getDistance();
+        }
+
+        /**
+         * Store a position and a time.
+         */
+        class DistanceAndTime
+        {
+            /** The position [m]. */
+            final double distance;
+
+            /** The time [s]. */
+            final double time;
+
+            /**
+             * Construct a new DistanceAndTime object.
+             * @param distance double; the position
+             * @param time double; the time
+             */
+            public DistanceAndTime(final double distance, final double time)
+            {
+                this.distance = distance;
+                this.time = time;
+            }
+
+            /**
+             * Retrieve the position.
+             * @return double; the position
+             */
+            public double getDistance()
+            {
+                return this.distance;
+            }
+
+            /**
+             * Retrieve the time.
+             * @return double; the time
+             */
+            public double getTime()
+            {
+                return this.time;
+            }
+
+        }
+
+    }
+
+    /**
+     * Store trajectory data for use with a fixed sample rate.
+     * <p>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     */
+    class FixedSampleRateTrajectory implements Trajectory, Serializable
+    {
+        /** */
+        private static final long serialVersionUID = 20140000L;
+
+        /** Time of (current) end of trajectory. */
+        private Time currentEndTime;
+
+        /** ID of the GTU. */
+        private final String id;
+
+        /** Storage for the position of the GTU. */
+        private ArrayList<Double> positions = new ArrayList<Double>();
+
+        /** Sample number of sample with index 0 in positions (following entries will each be one sampleTime later). */
+        private int firstSample;
+
+        /**
+         * Construct a FixedSampleRateTrajectory.
+         * @param id String; id of the new Trajectory (id of the GTU)
+         */
+        FixedSampleRateTrajectory(final String id)
+        {
+            this.id = id;
+        }
+
+        /** {@inheritDoc} */
         public final Time getCurrentEndTime()
         {
             return this.currentEndTime;
         }
 
-        /** Last registered position in trajectory. */
-        private Double lastPosition;
-
-        /**
-         * Retrieve the current end position of this Trajectory.
-         * @return currentEndPosition
-         */
+        /** {@inheritDoc} */
         public final Double getLastPosition()
         {
-            return this.lastPosition;
+            for (int i = this.positions.size(); --i >= 0;)
+            {
+                Double result = this.positions.get(i);
+                if (null != result)
+                {
+                    return result;
+                }
+            }
+            return null;
         }
 
-        /** ID of the GTU. */
-        private final Object id;
-
-        /**
-         * Retrieve the id of this Trajectory.
-         * @return Object; the id of this Trajectory
-         */
-        public final Object getId()
+        /** {@inheritDoc} */
+        public final String getId()
         {
             return this.id;
         }
 
-        /** Storage for the position of the car. */
-        private ArrayList<Double> positions = new ArrayList<Double>();
-
-        /** Time sample of first sample in positions (successive entries will each be one sampleTime later). */
-        private int firstSample;
-
-        /**
-         * Construct a Trajectory.
-         * @param id Object; Id of the new Trajectory
-         */
-        Trajectory(final Object id)
+        /** {@inheritDoc} */
+        public final void addSample(final LaneBasedGTU gtu, final Lane lane, final double position) throws NetworkException,
+                GTUException
         {
-            this.id = id;
-        }
-
-        /**
-         * Add a trajectory segment and update the currentEndTime and currentEndPosition.
-         * @param gtu AbstractLaneBasedGTU; the GTU whose currently committed trajectory segment must be added
-         * @param lane Lane; the Lane that the positionOffset is valid for
-         * @param positionOffset double; offset needed to convert the position in the current Lane to a position on the
-         *            trajectory
-         * @param posOnLane the position on the lane in meters (si)
-         * @throws NetworkException when car is not on lane anymore
-         * @throws GTUException on problems obtaining data from the GTU
-         */
-        public final void addSegment(final LaneBasedGTU gtu, final Lane lane, final double positionOffset,
-                final double posOnLane) throws NetworkException, GTUException
-        {
-            // for now, just sample ONE data point.
-            Double position = posOnLane + positionOffset;
-            final int sample = (int) Math.ceil(gtu.getOperationalPlan().getStartTime().si / getSampleInterval());
-            if (this.positions.size() == 0)
+            final int sample = (int) Math.ceil(gtu.getOperationalPlan().getStartTime().si / getSampleInterval().si);
+            if (0 == this.positions.size())
             {
                 this.firstSample = sample;
             }
@@ -510,19 +796,16 @@ public class TrajectoryPlot extends JFrame
                 // insert nulls as place holders for unsampled data (usually because vehicle was in a parallel Lane)
                 this.positions.add(null);
             }
-            if (this.lastPosition != null && Math.abs(this.lastPosition - position) > 0.9 * getCumulativeLength(-1))
+            Double adjustedPosition = position;
+            Double lastPosition = this.positions.size() > 0 ? this.positions.get(this.positions.size() - 1) : null;
+            if (null != lastPosition && Math.abs(lastPosition - position) > 0.9 * getCumulativeLength(-1))
             {
                 // wrap around... probably circular lane.
-                position = null;
+                adjustedPosition = null;
             }
-            this.positions.add(position);
-            this.lastPosition = position;
+            this.positions.add(adjustedPosition);
 
-            this.currentEndTime = gtu.getOperationalPlan().getEndTime();
-            if (this.currentEndTime.gt(getMaximumTime()))
-            {
-                setMaximumTime(this.currentEndTime);
-            }
+            this.currentEndTime = gtu.getSimulator().getSimulatorTime().getTime();
 
             /*-
             try
@@ -577,25 +860,19 @@ public class TrajectoryPlot extends JFrame
                 System.err.println("Trajectoryplot caught unexpected Exception: " + e.getMessage());
                 e.printStackTrace();
             }
-            */
+             */
         }
 
-        /**
-         * Retrieve the number of samples in this Trajectory.
-         * @return Integer; number of positions in this Trajectory
-         */
+        /** {@inheritDoc} */
         public int size()
         {
             return this.positions.size();
         }
 
-        /**
-         * @param item Integer; the sample number
-         * @return Double; the time of the sample indexed by item
-         */
+        /** {@inheritDoc} */
         public double getTime(final int item)
         {
-            return (item + this.firstSample) * getSampleInterval();
+            return (item + this.firstSample) * getSampleInterval().si;
         }
 
         /**
@@ -616,10 +893,10 @@ public class TrajectoryPlot extends JFrame
         @Override
         public final String toString()
         {
-            return "Trajectory [currentEndTime=" + this.currentEndTime + ", currentEndPosition=" + this.lastPosition
-                    + ", id=" + this.id + ", positions.size=" + this.positions.size() + ", firstSample=" + this.firstSample
-                    + "]";
+            return "FixedSampleRateTrajectory [currentEndTime=" + this.currentEndTime + ", id=" + this.id + ", positions.size="
+                    + this.positions.size() + ", firstSample=" + this.firstSample + "]";
         }
+
     }
 
     /** {@inheritDoc} */

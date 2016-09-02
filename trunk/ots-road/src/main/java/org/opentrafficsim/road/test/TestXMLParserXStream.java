@@ -37,6 +37,7 @@ import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
@@ -112,7 +113,7 @@ public class TestXMLParserXStream extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts()
+    protected final JPanel makeCharts(SimpleSimulatorInterface simulator)
     {
         return null;
     }
@@ -209,7 +210,7 @@ public class TestXMLParserXStream extends AbstractWrappableAnimation
             {
                 throw new SimRuntimeException(exception);
             }
-            JPanel charts = makeCharts();
+            JPanel charts = makeCharts(simulator);
             if (null != charts)
             {
                 TestXMLParserXStream.this.panel.getTabbedPane().addTab("statistics", charts);
