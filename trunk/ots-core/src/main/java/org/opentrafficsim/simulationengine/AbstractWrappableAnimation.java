@@ -96,7 +96,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         {
             throw new SimRuntimeException(exception);
         }
-        JPanel charts = makeCharts();
+        JPanel charts = makeCharts(simulator);
         if (null != charts)
         {
             this.panel.getTabbedPane().addTab("statistics", charts);
@@ -118,12 +118,14 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     }
 
     /**
+     * Make the chart panel.
+     * @param simulator SimpleSimulatorInterface; the simulator
      * @return the JPanel with the charts; the result will be put in the statistics tab. May return null; this causes no
      *         statistics tab to be created.
      * @throws OTSSimulationException in case the chart, axes or legend cannot be generated
      * @throws PropertyException when one of the user modified properties has the empty string as key
      */
-    protected abstract JPanel makeCharts() throws OTSSimulationException, PropertyException;
+    protected abstract JPanel makeCharts(SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException;
 
     /**
      * @param colorer the GTU colorer to use.
