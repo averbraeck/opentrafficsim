@@ -65,11 +65,33 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     /** Save the runLength for restarting the simulation. */
     private Duration savedRunLength;
 
+    /**
+     * Build the animator.
+     * @param startTime Time; the start time
+     * @param warmupPeriod Duration; the warm up period
+     * @param runLength Duration; the duration of the simulation / animation
+     * @param model OTSModelInterface; the simulation model
+     * @return SimpleAnimator; a newly constructed animator
+     * @throws SimRuntimeException on ???
+     * @throws NetworkException on Network inconsistency
+     * @throws NamingException when context for the animation cannot be created
+     * @throws OTSSimulationException when the construction of the simulation, the control panel, the animation, or the charts
+     *             fails
+     * @throws PropertyException when one of the user modified properties has the empty string as key
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    protected SimpleAnimator buildSimpleAnimator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
+            final OTSModelInterface model) throws SimRuntimeException, NamingException, PropertyException
+    {
+        return new SimpleAnimator(startTime, warmupPeriod, runLength, model);
+    }
+
     /** {@inheritDoc} */
     @Override
-    public final SimpleAnimator buildAnimator(final Time startTime, final Duration warmupPeriod,
-        final Duration runLength, final ArrayList<AbstractProperty<?>> userModifiedProperties, final Rectangle rect,
-        final boolean eoc) throws SimRuntimeException, NamingException, OTSSimulationException, PropertyException
+    @SuppressWarnings("checkstyle:designforextension")
+    public SimpleAnimator buildAnimator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
+            final ArrayList<AbstractProperty<?>> userModifiedProperties, final Rectangle rect, final boolean eoc)
+            throws SimRuntimeException, NamingException, OTSSimulationException, PropertyException
     {
         this.savedUserModifiedProperties = userModifiedProperties;
         this.exitOnClose = eoc;
@@ -86,11 +108,10 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
             return null; // Happens when the user cancels the file open dialog in the OpenStreetMap demo.
         }
 
-        final SimpleAnimator simulator = new SimpleAnimator(startTime, warmupPeriod, runLength, model);
+        final SimpleAnimator simulator = buildSimpleAnimator(startTime, warmupPeriod, runLength, model);
         try
         {
-            this.panel =
-                new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), simulator, this, colorer);
+            this.panel = new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), simulator, this, colorer);
         }
         catch (RemoteException exception)
         {
@@ -112,8 +133,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
             frame.setExtendedState(Frame.MAXIMIZED_BOTH);
         }
 
-        frame.setDefaultCloseOperation(this.exitOnClose ? WindowConstants.EXIT_ON_CLOSE
-            : WindowConstants.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(this.exitOnClose ? WindowConstants.EXIT_ON_CLOSE : WindowConstants.DISPOSE_ON_CLOSE);
         return simulator;
     }
 
@@ -148,11 +168,11 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /** {@inheritDoc} */
     @Override
-    public final SimpleSimulatorInterface rebuildSimulator(final Rectangle rect) throws SimRuntimeException,
-        NetworkException, NamingException, OTSSimulationException, PropertyException
+    public final SimpleSimulatorInterface rebuildSimulator(final Rectangle rect) throws SimRuntimeException, NetworkException,
+            NamingException, OTSSimulationException, PropertyException
     {
         return buildAnimator(this.savedStartTime, this.savedWarmupPeriod, this.savedRunLength,
-            this.savedUserModifiedProperties, rect, this.exitOnClose);
+                this.savedUserModifiedProperties, rect, this.exitOnClose);
     }
 
     /** {@inheritDoc} */

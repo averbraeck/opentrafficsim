@@ -10,6 +10,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 
 /**
@@ -26,19 +27,38 @@ public abstract class AbstractWrappableSimulation implements WrappableSimulation
 {
     /** */
     private static final long serialVersionUID = 20150000L;
-    
+
     /** The properties exhibited by this simulation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected ArrayList<AbstractProperty<?>> properties = new ArrayList<AbstractProperty<?>>();
 
+    /**
+     * Build the simulator.
+     * @param startTime Time; the start time
+     * @param warmupPeriod Duration; the warm up period
+     * @param runLength Duration; the duration of the simulation / animation
+     * @param model OTSModelInterface; the simulation model
+     * @return SimpleSimulator; the newly constructed simulator
+     * @throws SimRuntimeException on ???
+     * @throws NetworkException on Network inconsistency
+     * @throws NamingException when context for the animation cannot be created
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    protected SimpleSimulator buildSimpleSimulator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
+            final OTSModelInterface model) throws SimRuntimeException, NamingException
+    {
+        return new SimpleSimulator(startTime, warmupPeriod, runLength, model);
+    }
+
     /** {@inheritDoc} */
     @Override
-    public final SimpleSimulator buildSimulator(final Time startTime, final Duration warmupPeriod,
-        final Duration runLength, final ArrayList<AbstractProperty<?>> userModifiedProperties)
-        throws SimRuntimeException, NamingException, OTSSimulationException
+    @SuppressWarnings("checkstyle:designforextension")
+    public SimpleSimulator buildSimulator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
+            final ArrayList<AbstractProperty<?>> userModifiedProperties) throws SimRuntimeException, NamingException,
+            OTSSimulationException
     {
         OTSModelInterface model = makeModel();
-        final SimpleSimulator simulator = new SimpleSimulator(startTime, warmupPeriod, runLength, model);
+        final SimpleSimulator simulator = buildSimpleSimulator(startTime, warmupPeriod, runLength, model);
         return simulator;
     }
 
