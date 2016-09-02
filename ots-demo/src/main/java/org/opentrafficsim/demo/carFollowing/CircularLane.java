@@ -65,6 +65,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.BooleanProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
@@ -191,7 +192,7 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts() throws OTSSimulationException, PropertyException
+    protected final JPanel makeCharts(SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
     {
         // Make the tab with the plots
         AbstractProperty<?> output =
@@ -232,7 +233,7 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
             LaneBasedGTUSampler graph;
             if (graphName.equals("TrajectorPlot"))
             {
-                TrajectoryPlot tp = new TrajectoryPlot("TrajectoryPlot", new Duration(0.5, SECOND), this.model.getPath());
+                TrajectoryPlot tp = new TrajectoryPlot("TrajectoryPlot", new Duration(0.5, SECOND), this.model.getPath(), simulator);
                 tp.setTitle("Trajectory Graph");
                 tp.setExtendedState(Frame.MAXIMIZED_BOTH);
                 graph = tp;

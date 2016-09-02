@@ -48,6 +48,7 @@ import org.opentrafficsim.road.network.factory.osm.input.ReadOSMFile;
 import org.opentrafficsim.road.network.factory.osm.output.Convert;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.IDMPropertySet;
 import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionProperty;
@@ -265,7 +266,7 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected JPanel makeCharts()
+    protected JPanel makeCharts(SimpleSimulatorInterface simulator)
     {
         return null;
     }
