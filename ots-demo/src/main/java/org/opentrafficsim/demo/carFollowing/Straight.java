@@ -54,6 +54,7 @@ import org.opentrafficsim.graphs.FlowContourPlot;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
+import org.opentrafficsim.imb.simulators.AbstractWrappableIMBAnimation;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
@@ -70,7 +71,6 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Sensor;
 import org.opentrafficsim.road.network.lane.SinkSensor;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
@@ -91,7 +91,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  * initial version 12 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class Straight extends AbstractWrappableAnimation implements UNITS
+public class Straight extends AbstractWrappableIMBAnimation implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -186,7 +186,7 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
     @Override
     protected final OTSModelInterface makeModel(final GTUColorer colorer)
     {
-        this.model = new StraightModel(this.savedUserModifiedProperties, colorer);
+        this.model = new StraightModel(this.savedUserModifiedProperties, colorer, createNetwork());
         return this.model;
     }
 
@@ -352,7 +352,7 @@ class StraightModel implements OTSModelInterface, UNITS
     private OTSDEVSSimulatorInterface simulator;
 
     /** The network. */
-    private OTSNetwork network = new OTSNetwork("network");
+    private final OTSNetwork network;
 
     /** The headway (inter-vehicle time). */
     private Duration headway;
@@ -400,10 +400,11 @@ class StraightModel implements OTSModelInterface, UNITS
      * @param properties the user settable properties
      * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
      */
-    public StraightModel(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer)
+    public StraightModel(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer, final OTSNetwork network)
     {
         this.properties = properties;
         this.gtuColorer = gtuColorer;
+        this.network = network;
     }
 
     /** The sequence of Lanes that all vehicles will follow. */

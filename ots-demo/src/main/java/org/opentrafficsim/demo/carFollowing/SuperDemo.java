@@ -29,11 +29,14 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -47,8 +50,9 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.gui.LabeledPanel;
 import org.opentrafficsim.gui.ProbabilityDistributionEditor;
 import org.opentrafficsim.gui.SimulatorFrame;
+import org.opentrafficsim.imb.observers.IMBTransmitter;
+import org.opentrafficsim.imb.simulators.WrappableIMBAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.WrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.BooleanProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
@@ -58,6 +62,7 @@ import org.opentrafficsim.simulationengine.properties.IntegerProperty;
 import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
 import org.opentrafficsim.simulationengine.properties.SelectionProperty;
+import org.opentrafficsim.simulationengine.properties.StringProperty;
 
 /**
  * Several demos in one application.
@@ -81,6 +86,12 @@ public class SuperDemo implements UNITS
     /** Properties of the currently selected demonstration. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected ArrayList<AbstractProperty<?>> activeProperties = null;
+
+    /** The properties of the connection to an IMB hub. */
+    private CompoundProperty imbProperties;
+
+    /** Panel with the description of the currently selected demonstration. */
+    LabeledPanel descriptionPanel;
 
     /**
      * Start the application.
@@ -124,13 +135,13 @@ public class SuperDemo implements UNITS
         final JPanel mainPanel = new JPanel(new BorderLayout());
         // Ensure that the window does not shrink into (almost) nothingness when un-maximized
         mainPanel.setPreferredSize(new Dimension(800, 800));
-        final ArrayList<WrappableAnimation> demonstrations = new ArrayList<WrappableAnimation>();
+        final ArrayList<WrappableIMBAnimation> demonstrations = new ArrayList<>();
         demonstrations.add(new Straight());
-        demonstrations.add(new SequentialLanes());
-        demonstrations.add(new CircularLane());
+        // demonstrations.add(new SequentialLanes());
+        // demonstrations.add(new CircularLane());
         demonstrations.add(new CircularRoad());
-        demonstrations.add(new XMLNetworks());
-        demonstrations.add(new OpenStreetMap());
+        // demonstrations.add(new XMLNetworks());
+        // demonstrations.add(new OpenStreetMap());
         // final JPanel left = new LabeledPanel("Simulation Settings");
         this.simulationSelection = new LabeledPanel("Network");
         this.simulationSelection.setLayout(new GridBagLayout());
@@ -148,15 +159,22 @@ public class SuperDemo implements UNITS
         gbcLeft.weighty = 0;
         gbcLeft.fill = GridBagConstraints.HORIZONTAL;
         final JLabel description = new JLabel("Please select a demonstration from the buttons on the left");
+        final JPanel centerPanel = new JPanel(new BorderLayout());
+        final JPanel imbControls = new LabeledPanel("IMB control");
+        this.imbProperties = IMBTransmitter.standardIMBProperties(0);
+        imbControls.add(makePropertyEditor(this.imbProperties));
+        centerPanel.add(imbControls, BorderLayout.NORTH);
         this.propertyPanel = new JPanel();
         this.propertyPanel.setLayout(new BoxLayout(this.propertyPanel, BoxLayout.Y_AXIS));
         rebuildPropertyPanel(new ArrayList<AbstractProperty<?>>());
-        final JPanel descriptionPanel = new LabeledPanel("Description");
-        descriptionPanel.add(description);
-        mainPanel.add(descriptionPanel, BorderLayout.CENTER);
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
+        this.descriptionPanel = new LabeledPanel("Description");
+        this.descriptionPanel.setLayout(new BorderLayout());
+        this.descriptionPanel.add(description);
+        centerPanel.add(this.descriptionPanel, BorderLayout.CENTER);
         final JButton startButton = new JButton("Start simulation");
         ButtonGroup buttonGroup = new ButtonGroup();
-        for (final WrappableAnimation demo : demonstrations)
+        for (final WrappableIMBAnimation demo : demonstrations)
         {
             CleverRadioButton button = new CleverRadioButton(demo);
             // button.setPreferredSize(new Dimension(Integer.MAX_VALUE, button.getPreferredSize().height));
@@ -166,9 +184,6 @@ public class SuperDemo implements UNITS
                 public void actionPerformed(final ActionEvent e)
                 {
                     // System.out.println("selected " + demo.shortName());
-                    // Clear out the main panel and put the description of the selected simulator in it.
-                    mainPanel.remove(((BorderLayout) mainPanel.getLayout()).getLayoutComponent(BorderLayout.CENTER));
-                    mainPanel.add(description, BorderLayout.CENTER);
                     description.setText(demo.description());
                     startButton.setEnabled(true);
                     startButton.setVisible(true);
@@ -190,7 +205,8 @@ public class SuperDemo implements UNITS
             @Override
             public void actionPerformed(final ActionEvent e)
             {
-                WrappableAnimation simulation = null;
+                System.out.println("Starting simulation");
+                WrappableIMBAnimation simulation = null;
                 for (Component c : SuperDemo.this.simulationSelection.getComponents())
                 {
                     if (c instanceof CleverRadioButton)
@@ -317,6 +333,7 @@ public class SuperDemo implements UNITS
             }
             simulationSettings.remove(dummy);
             SuperDemo.this.activeProperties = properties;
+            SuperDemo.this.activeProperties.add(this.imbProperties);
         }
         catch (PropertyException exception)
         {
@@ -523,12 +540,65 @@ public class SuperDemo implements UNITS
                 result.add(makePropertyEditor(subProperty));
             }
         }
+        else if (ap instanceof StringProperty)
+        {
+            StringProperty sp = (StringProperty) ap;
+            result = new LabeledPanel(sp.getShortName());
+            result.setLayout(new BorderLayout());
+            JTextField textField = new JTextField(sp.getValue(), 30);
+            // TODO add a listener that detects editing
+            textField.getDocument().addDocumentListener(new DocumentListener()
+            {
+
+                @Override
+                public void insertUpdate(DocumentEvent e)
+                {
+                    try
+                    {
+                        sp.setValue(textField.getText());
+                    }
+                    catch (PropertyException exception)
+                    {
+                        exception.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e)
+                {
+                    try
+                    {
+                        sp.setValue(textField.getText());
+                    }
+                    catch (PropertyException exception)
+                    {
+                        exception.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent e)
+                {
+                    try
+                    {
+                        sp.setValue(textField.getText());
+                    }
+                    catch (PropertyException exception)
+                    {
+                        exception.printStackTrace();
+                    }
+                }
+
+            });
+            result.add(textField, BorderLayout.CENTER);
+        }
         else
         {
             throw new Error("Unhandled property: " + ap.getDescription());
         }
         return result;
     }
+
 }
 
 /** JRadioButton that also stores a WrappableAnimation. */
@@ -538,14 +608,14 @@ class CleverRadioButton extends JRadioButton
     private static final long serialVersionUID = 20141217L;
 
     /** The WrappableAnimation. */
-    private final WrappableAnimation simulation;
+    private final WrappableIMBAnimation simulation;
 
     /**
      * Construct a JRadioButton that also stores a WrappableAnimation.
      * @param animation WrappableAnimation; the simulation to run if this radio button is selected and the start simulation
      *            button is clicked
      */
-    CleverRadioButton(final WrappableAnimation animation)
+    CleverRadioButton(final WrappableIMBAnimation animation)
     {
         super(animation.shortName());
         this.simulation = animation;
@@ -555,7 +625,7 @@ class CleverRadioButton extends JRadioButton
      * Retrieve the simulation.
      * @return WrappableAnimation
      */
-    public final WrappableAnimation getAnimation()
+    public final WrappableIMBAnimation getAnimation()
     {
         return this.simulation;
     }
