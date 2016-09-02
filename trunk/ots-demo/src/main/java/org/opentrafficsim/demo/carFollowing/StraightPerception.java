@@ -89,6 +89,7 @@ import org.opentrafficsim.road.network.lane.SinkSensor;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.BooleanProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
@@ -231,7 +232,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts() throws OTSSimulationException, PropertyException
+    protected final JPanel makeCharts(SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
     {
 
         // Make the tab with the plots
@@ -274,7 +275,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
             {
                 List<Lane> path = new ArrayList<>();
                 path.add(this.model.getLane());
-                TrajectoryPlot tp = new TrajectoryPlot("TrajectoryPlot", new Duration(0.5, SECOND), path);
+                TrajectoryPlot tp = new TrajectoryPlot("TrajectoryPlot", new Duration(0.5, SECOND), path, simulator);
                 tp.setTitle("Trajectory Graph");
                 tp.setExtendedState(Frame.MAXIMIZED_BOTH);
                 graph = tp;

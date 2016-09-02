@@ -73,6 +73,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.BooleanProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
@@ -232,7 +233,7 @@ public class CircularRoadIMB extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts() throws OTSSimulationException, PropertyException
+    protected final JPanel makeCharts(SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
     {
         // Make the tab with the plots
         AbstractProperty<?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
@@ -277,7 +278,7 @@ public class CircularRoadIMB extends AbstractWrappableAnimation implements UNITS
 
             if (graphName.contains("Trajectories"))
             {
-                TrajectoryPlot tp = new TrajectoryPlot(graphName, new Duration(0.5, SECOND), this.model.getPath(lane));
+                TrajectoryPlot tp = new TrajectoryPlot(graphName, new Duration(0.5, SECOND), this.model.getPath(lane), simulator);
                 tp.setTitle("Trajectory Graph");
                 tp.setExtendedState(Frame.MAXIMIZED_BOTH);
                 graph = tp;
@@ -729,9 +730,9 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
                         new Speed(200, KM_PER_HOUR), this.simulator, DefaultCarAnimation.class, this.gtuColorer, this.network);
 
         // add the car to a listener to test.
-        gtu.addListener(this.carListener, GTU.INIT_EVENT, true);
-        gtu.addListener(this.carListener, GTU.MOVE_EVENT, true);
-        gtu.addListener(this.carListener, GTU.DESTROY_EVENT, true);
+        // gtu.addListener(this.carListener, GTU.INIT_EVENT, true);
+        // gtu.addListener(this.carListener, GTU.MOVE_EVENT, true);
+        // gtu.addListener(this.carListener, GTU.DESTROY_EVENT, true);
 
         // add the car to the IMB Transmitter.
         gtu.addListener(this.imbTransmitter, GTU.INIT_EVENT, true);

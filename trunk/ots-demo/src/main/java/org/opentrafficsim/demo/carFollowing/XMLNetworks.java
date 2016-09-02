@@ -97,6 +97,7 @@ import org.opentrafficsim.road.network.lane.Sensor;
 import org.opentrafficsim.road.network.lane.SinkSensor;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
 import org.opentrafficsim.simulationengine.properties.ContinuousProperty;
@@ -166,7 +167,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts()
+    protected final JPanel makeCharts(SimpleSimulatorInterface simulator)
     {
         int graphCount = this.model.pathCount();
         int columns = 1;
@@ -176,7 +177,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
         {
             TrajectoryPlot tp =
                 new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), new Duration(0.5, SECOND), this.model
-                    .getPath(graphIndex));
+                    .getPath(graphIndex), simulator);
             tp.setTitle("Trajectory Graph");
             tp.setExtendedState(Frame.MAXIMIZED_BOTH);
             LaneBasedGTUSampler graph = tp;

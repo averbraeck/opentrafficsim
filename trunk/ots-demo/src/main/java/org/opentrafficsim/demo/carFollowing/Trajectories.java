@@ -59,6 +59,7 @@ import org.opentrafficsim.road.network.lane.SinkSensor;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
@@ -155,13 +156,13 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts() throws OTSSimulationException
+    protected final JPanel makeCharts(SimpleSimulatorInterface simulator) throws OTSSimulationException
     {
         TablePanel charts = new TablePanel(1, 1);
         Duration sampleInterval = new Duration(0.5, SECOND);
         List<Lane> path = new ArrayList<>();
         path.add(this.model.getLane());
-        TrajectoryPlot tp = new TrajectoryPlot("Trajectory Plot", sampleInterval, path);
+        TrajectoryPlot tp = new TrajectoryPlot("Trajectory Plot", sampleInterval, path, simulator);
         tp.setTitle("Density Contour Graph");
         tp.setExtendedState(Frame.MAXIMIZED_BOTH);
         this.model.setTrajectoryPlot(tp);

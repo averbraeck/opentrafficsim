@@ -58,6 +58,7 @@ import org.opentrafficsim.road.network.lane.SinkSensor;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
@@ -154,7 +155,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts() throws OTSSimulationException
+    protected final JPanel makeCharts(SimpleSimulatorInterface simulator) throws OTSSimulationException
     {
         final int panelsPerRow = 3;
         TablePanel charts = new TablePanel(4, panelsPerRow);
