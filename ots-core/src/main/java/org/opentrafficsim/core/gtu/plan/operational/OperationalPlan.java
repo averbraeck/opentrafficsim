@@ -62,7 +62,7 @@ public class OperationalPlan implements Serializable
 
     /** Is this operational plan a wait plan? */
     private final boolean waitPlan;
-    
+
     /** GTU for debugging purposes. */
     private final GTU gtu;
 
@@ -92,7 +92,7 @@ public class OperationalPlan implements Serializable
      * @throws OperationalPlanException when the path is too short for the operation
      */
     public OperationalPlan(final GTU gtu, final OTSLine3D path, final Time startTime, final Speed startSpeed,
-        final List<Segment> operationalPlanSegmentList) throws OperationalPlanException
+            final List<Segment> operationalPlanSegmentList) throws OperationalPlanException
     {
         this.waitPlan = false;
         this.gtu = gtu;
@@ -142,7 +142,7 @@ public class OperationalPlan implements Serializable
      * @throws OperationalPlanException when construction of a waiting path fails
      */
     public OperationalPlan(final GTU gtu, final DirectedPoint waitPoint, final Time startTime, final Duration duration)
-        throws OperationalPlanException
+            throws OperationalPlanException
     {
         this.waitPlan = true;
         this.gtu = gtu;
@@ -153,8 +153,8 @@ public class OperationalPlan implements Serializable
 
         // make a path
         OTSPoint3D p2 =
-            new OTSPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
-                waitPoint.z);
+                new OTSPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
+                        waitPoint.z);
         try
         {
             this.path = new OTSLine3D(new OTSPoint3D(waitPoint), p2);
@@ -331,7 +331,7 @@ public class OperationalPlan implements Serializable
         public final String toString()
         {
             return String.format("SegmentProgress segment=%s startpos.rel=%s starttime.abs=%s", this.segment,
-                this.segmentStartPosition, this.segmentStartTime);
+                    this.segmentStartPosition, this.segmentStartTime);
         }
     }
 
@@ -347,8 +347,8 @@ public class OperationalPlan implements Serializable
         if (time.lt(this.startTime))
         {
             throw new OperationalPlanException(this.gtu + ", t = " + time
-                + "SegmentProgress cannot be determined for time before startTime " + getStartTime()
-                + " of this OperationalPlan");
+                    + "SegmentProgress cannot be determined for time before startTime " + getStartTime()
+                    + " of this OperationalPlan");
         }
         double cumulativeDistance = 0;
         for (int i = 0; i < this.segmentStartTimesRelSI.length - 1; i++)
@@ -356,12 +356,11 @@ public class OperationalPlan implements Serializable
             if (this.startTime.si + this.segmentStartTimesRelSI[i + 1] >= time.si)
             {
                 return new SegmentProgress(this.operationalPlanSegmentList.get(i), new Time(this.startTime.si
-                    + this.segmentStartTimesRelSI[i], TimeUnit.SI), new Length(cumulativeDistance, LengthUnit.SI));
+                        + this.segmentStartTimesRelSI[i], TimeUnit.SI), new Length(cumulativeDistance, LengthUnit.SI));
             }
         }
         throw new OperationalPlanException(this.gtu + ", t = " + time
-            + " SegmentProgress cannot be determined for time after endTime " + getEndTime()
-            + " of this OperationalPlan");
+                + " SegmentProgress cannot be determined for time after endTime " + getEndTime() + " of this OperationalPlan");
     }
 
     /**
@@ -379,7 +378,7 @@ public class OperationalPlan implements Serializable
             if (distanceOfSegment > remainingDistanceSI)
             {
                 return new Time(timeAtStartOfSegment
-                    + segment.timeAtDistance(new Length(remainingDistanceSI, LengthUnit.SI)).si, TimeUnit.SI);
+                        + segment.timeAtDistance(new Length(remainingDistanceSI, LengthUnit.SI)).si, TimeUnit.SI);
             }
             remainingDistanceSI -= distanceOfSegment;
             timeAtStartOfSegment += segment.getDurationSI();
@@ -396,9 +395,14 @@ public class OperationalPlan implements Serializable
     public final DirectedPoint getLocation(final Time time) throws OperationalPlanException
     {
         SegmentProgress sp = getSegmentProgress(time);
-        double fraction =
-            (sp.getSegmentStartPosition().si + sp.getSegment().distanceSI(time.minus(sp.getSegmentStartTime()).si))
-                / this.path.getLengthSI();
+        Segment segment = sp.getSegment();
+        Duration deltaT = time.minus(sp.getSegmentStartTime());
+        double distanceTraveledInSegment = segment.distanceSI(deltaT.si);
+        double startDistance = sp.getSegmentStartPosition().si; 
+        double fraction = (startDistance + distanceTraveledInSegment) / this.path.getLengthSI();
+        // double fraction =
+        // (sp.getSegmentStartPosition().si + sp.getSegment().distanceSI(time.minus(sp.getSegmentStartTime()).si))
+        // / this.path.getLengthSI();
         // System.out.println(fraction);
         DirectedPoint p = new DirectedPoint();
         try
@@ -457,8 +461,7 @@ public class OperationalPlan implements Serializable
     public final Acceleration getAcceleration(final Time time) throws OperationalPlanException
     {
         SegmentProgress sp = getSegmentProgress(time);
-        return new Acceleration(sp.getSegment().accelerationSI(time.minus(sp.getSegmentStartTime()).si),
-            AccelerationUnit.SI);
+        return new Acceleration(sp.getSegment().accelerationSI(time.minus(sp.getSegmentStartTime()).si), AccelerationUnit.SI);
     }
 
     /**
@@ -528,9 +531,7 @@ public class OperationalPlan implements Serializable
     {
         final int prime = 31;
         int result = 1;
-        result =
-            prime * result
-                + ((this.operationalPlanSegmentList == null) ? 0 : this.operationalPlanSegmentList.hashCode());
+        result = prime * result + ((this.operationalPlanSegmentList == null) ? 0 : this.operationalPlanSegmentList.hashCode());
         result = prime * result + ((this.path == null) ? 0 : this.path.hashCode());
         result = prime * result + ((this.startSpeed == null) ? 0 : this.startSpeed.hashCode());
         result = prime * result + ((this.startTime == null) ? 0 : this.startTime.hashCode());
@@ -538,7 +539,7 @@ public class OperationalPlan implements Serializable
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
+    @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:designforextension" })
     @Override
     public boolean equals(final Object obj)
     {
@@ -585,10 +586,10 @@ public class OperationalPlan implements Serializable
     @Override
     public String toString()
     {
-        return "OperationalPlan [path=" + this.path + ", startTime=" + this.startTime + ", startSpeed="
-            + this.startSpeed + ", operationalPlanSegmentList=" + this.operationalPlanSegmentList + ", totalDuration="
-            + this.totalDuration + ", segmentStartTimesSI=" + Arrays.toString(this.segmentStartTimesRelSI)
-            + ", endSpeed = " + this.endSpeed + "]";
+        return "OperationalPlan [path=" + this.path + ", startTime=" + this.startTime + ", startSpeed=" + this.startSpeed
+                + ", operationalPlanSegmentList=" + this.operationalPlanSegmentList + ", totalDuration=" + this.totalDuration
+                + ", segmentStartTimesSI=" + Arrays.toString(this.segmentStartTimesRelSI) + ", endSpeed = " + this.endSpeed
+                + "]";
     }
 
     /****************************************************************************************************************/
@@ -711,7 +712,7 @@ public class OperationalPlan implements Serializable
         }
 
         /** {@inheritDoc} */
-        @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
+        @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:designforextension" })
         @Override
         public boolean equals(final Object obj)
         {
