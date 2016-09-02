@@ -35,5 +35,5 @@ public interface SimpleSimulatorInterface extends OTSDEVSSimulatorInterface
      */
     SimEvent<OTSSimTimeDouble> scheduleEvent(final Time executionTime, final short priority, final Object source,
         final Object target, final String method, final Object[] args) throws SimRuntimeException;
-
+    
 }
