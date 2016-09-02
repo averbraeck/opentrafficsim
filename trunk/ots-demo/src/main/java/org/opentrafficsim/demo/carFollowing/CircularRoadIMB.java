@@ -408,8 +408,25 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
     private final CarListener carListener = new CarListener();
 
     /** */
-    private final IMBTransmitter imbTransmitter = new IMBTransmitter();
+    private final IMBTransmitter imbTransmitter = forgivingIMBTransmitter();
 
+    /**
+     * Try to connect to the IMB hub, return null on failure.
+     * @return IMBTransmitter, or null
+     */
+    private IMBTransmitter forgivingIMBTransmitter()
+    {
+        try
+        {
+            return new IMBTransmitter();
+        }
+        catch (Exception e)
+        {
+            System.err.println("Could not establish a connection to the IMB hub");
+        }
+        return null;
+    }
+    
     /**
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
      * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.

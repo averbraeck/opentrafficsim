@@ -19,9 +19,7 @@ import javax.swing.SwingUtilities;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
-import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -53,6 +51,7 @@ import org.opentrafficsim.graphs.FlowContourPlot;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
+import org.opentrafficsim.imb.simulators.AbstractWrappableIMBAnimation;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
@@ -75,7 +74,6 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
@@ -98,7 +96,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  * initial version 21 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CircularRoad extends AbstractWrappableAnimation implements UNITS
+public class CircularRoad extends AbstractWrappableIMBAnimation implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -140,8 +138,8 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                     + "Acceleration contour plot", true, false, 3));
             outputProperties.add(new BooleanProperty(laneId + "Fixed Sample Rate Trajectories", laneId + " FSR Trajectories",
                     laneId + "Trajectory (time/distance) diagram", true, false, 4));
-            outputProperties.add(new BooleanProperty(laneId + "Variable Sample Rate Trajectories", laneId + " VSR Trajectories",
-                    laneId + "Trajectory (time/distance) diagram", true, false, 5));
+            outputProperties.add(new BooleanProperty(laneId + "Variable Sample Rate Trajectories",
+                    laneId + " VSR Trajectories", laneId + "Trajectory (time/distance) diagram", true, false, 5));
         }
         this.properties.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
                 outputProperties, true, 1000));
@@ -209,7 +207,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
     @Override
     protected final OTSModelInterface makeModel(final GTUColorer colorer)
     {
-        this.model = new RoadSimulationModel(getSavedUserModifiedProperties(), colorer);
+        this.model = new RoadSimulationModel(getSavedUserModifiedProperties(), colorer, createNetwork());
         return this.model;
     }
 
@@ -276,8 +274,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
             if (graphName.contains("Trajectories"))
             {
                 Duration sampleInterval = graphName.contains("Variable Sample Rate") ? null : new Duration(0.2, SECOND);
-                TrajectoryPlot tp =
-                        new TrajectoryPlot(graphName, sampleInterval, this.model.getPath(lane), simulator);
+                TrajectoryPlot tp = new TrajectoryPlot(graphName, sampleInterval, this.model.getPath(lane), simulator);
                 tp.setTitle("Trajectory Graph");
                 tp.setExtendedState(Frame.MAXIMIZED_BOTH);
                 graph = tp;
@@ -358,9 +355,6 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
     /** The simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
-    /** The network. */
-    private OTSNetwork network = new OTSNetwork("network");
-
     /** Number of cars created. */
     private int carsCreated = 0;
 
@@ -403,14 +397,19 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
     /** Strategical planner generator for cars. */
     private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorTrucks = null;
 
+    /** The OTSNetwork. */
+    private final OTSNetwork network;
+
     /**
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
      * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
      */
-    public RoadSimulationModel(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer)
+    public RoadSimulationModel(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer,
+            final OTSNetwork network)
     {
         this.properties = properties;
         this.gtuColorer = gtuColorer;
+        this.network = network;
     }
 
     /**
