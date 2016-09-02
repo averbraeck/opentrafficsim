@@ -65,6 +65,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.test.TestGMParser.WGS84ToRDNewTransform.Coords;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
 import org.xml.sax.SAXException;
@@ -133,7 +134,7 @@ public class TestGMParser extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts()
+    protected final JPanel makeCharts(SimpleSimulatorInterface simulator)
     {
         return null;
     }
