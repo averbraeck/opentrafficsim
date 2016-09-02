@@ -2,11 +2,16 @@ package org.opentrafficsim.imb.observers;
 
 import java.rmi.RemoteException;
 
-import org.opentrafficsim.core.gtu.GTU;
-
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
+
+import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.simulationengine.properties.AbstractProperty;
+import org.opentrafficsim.simulationengine.properties.CompoundProperty;
+import org.opentrafficsim.simulationengine.properties.IntegerProperty;
+import org.opentrafficsim.simulationengine.properties.PropertyException;
+import org.opentrafficsim.simulationengine.properties.StringProperty;
 
 /**
  * <p>
@@ -24,19 +29,92 @@ public class IMBTransmitter implements EventListenerInterface
     /** Observer for gtu move events. */
     private Observer observer = null;
 
-    /** */
-    public IMBTransmitter()
+    /** Key for compound property with IMB settings. */
+    public static String PROPERTY_KEY = "IMBProperties";
+
+    /**
+     * Create a new IMBTransmitter expecting IMB hub on localhost port 4000.
+     * @throws Exception when a connection to the IMB hub could not be established
+     */
+    public IMBTransmitter() throws Exception
+    {
+        this("localhost" /* "app-usimb01.westeurope.cloudapp.azure.com" */
+        /* "vps17642.public.cloudvps.com" *//* "localhost" */, 4000, "GTUObserver", 1, "OTS_RT");
+        // this.observer = new IMBObserver("localhost" /* "app-usimb01.westeurope.cloudapp.azure.com" */
+        // /* "vps17642.public.cloudvps.com" */ /* "localhost" */, 4000, "GTUObserver", 1, "OTS_RT");
+        // System.out.println("Observer is " + this.observer);
+    }
+
+    /**
+     * Create a new IMBTransmitter.
+     * @param hubHost String; the host that runs the IMB hub server
+     * @param hubPort int; the port number on the IMB hub host
+     * @param modelName String; the name used to register on the hub host
+     * @param modelId integer; usually 1
+     * @param federation string; usually "OTS_RT"
+     * @throws Exception when a connection to the IMB hub could not be established
+     */
+    public IMBTransmitter(final String hubHost, final int hubPort, final String modelName, final int modelId,
+            final String federation) throws Exception
+    {
+        this.observer = new IMBObserver(hubHost, hubPort, modelName, modelId, federation);
+    }
+
+    /**
+     * Construct a new IMBTransmitter from a CompoundProperty (preferably constructed with the
+     * <cite>standardIMBProperties</cite> method of this class.
+     * @param compoundProperty CompoundProperty; the compound property with the settings
+     * @throws Exception when a connection to the IMB hub could not be established
+     */
+    public IMBTransmitter(final CompoundProperty compoundProperty) throws Exception
+    {
+        String host = null;
+        int port = -1;
+
+        for (AbstractProperty<?> ap : compoundProperty)
+        {
+            switch (ap.getKey())
+            {
+                case "IMBHost":
+                    host = ((StringProperty) ap).getValue();
+                    break;
+
+                case "IMBPort":
+                    port = ((IntegerProperty) ap).getValue();
+                    break;
+
+                default:
+                    System.err.println("Ignoring property " + ap);
+            }
+        }
+        if (null == host)
+        {
+            return;
+        }
+        System.out.println("Connecting to " + host + ":" + port);
+        this.observer = new IMBObserver(host, port, "GTUObserver", 1, "OTS_RT");
+    }
+
+    /**
+     * Create a CompoundProperty with the settings for an IMB transmitter.
+     * @param displayPriority int; the displayPriority of the created CompoundProperty
+     * @return CompoundProperty
+     */
+    public static CompoundProperty standardIMBProperties(final int displayPriority)
     {
         try
         {
-            this.observer = new IMBObserver("localhost" /* "app-usimb01.westeurope.cloudapp.azure.com" */
-            /* "vps17642.public.cloudvps.com" */ /* "localhost" */, 4000, "GTUObserver", 1, "OTS_RT");
-            System.out.println("Observer is " + this.observer);
+            CompoundProperty result =
+                    new CompoundProperty("IMBProperties", "IMB properties", "IMB properties", null, false, displayPriority);
+            result.add(new StringProperty("IMBHost", "IMB hub host", "Name of the IMB hub", "localhost", false, 0));
+            result.add(new IntegerProperty("IMBPort", "IMB hub port", "Port on the IMB hub", 4000, 0, 65535, "%d", false, 1));
+            return result;
         }
-        catch (Exception exception1)
+        catch (PropertyException exception)
         {
-            System.out.println("Observer creation failed; GTU movements will not be sent to observer");
+            exception.printStackTrace();
         }
+        return null;
     }
 
     /** {@inheritDoc} */
@@ -54,8 +132,8 @@ public class IMBTransmitter implements EventListenerInterface
             DirectedPoint location = (DirectedPoint) moveInfo[1];
             try
             {
-                this.observer.postMessage("GTU", Observer.CHANGE,
-                        new Object[] { moveInfo[0].toString(), location.x, location.y, location.z, location.getRotZ() });
+                this.observer.postMessage("GTU", Observer.CHANGE, new Object[] { moveInfo[0].toString(), location.x,
+                        location.y, location.z, location.getRotZ() });
             }
             catch (Exception exception)
             {
@@ -68,8 +146,8 @@ public class IMBTransmitter implements EventListenerInterface
             DirectedPoint location = (DirectedPoint) destroyInfo[1];
             try
             {
-                this.observer.postMessage("GTU", Observer.DELETE,
-                        new Object[] { destroyInfo[0].toString(), location.x, location.y, location.z, location.getRotZ() });
+                this.observer.postMessage("GTU", Observer.DELETE, new Object[] { destroyInfo[0].toString(), location.x,
+                        location.y, location.z, location.getRotZ() });
             }
             catch (Exception exception)
             {
@@ -78,5 +156,3 @@ public class IMBTransmitter implements EventListenerInterface
         }
     }
 }
-
-
