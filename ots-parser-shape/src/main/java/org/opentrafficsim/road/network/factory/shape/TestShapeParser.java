@@ -32,6 +32,7 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
 
@@ -86,7 +87,7 @@ public class TestShapeParser extends AbstractWrappableAnimation {
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts() {
+    protected final JPanel makeCharts(SimpleSimulatorInterface simulator) {
         return null;
     }
 
