@@ -64,6 +64,7 @@ import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.TrajectoryPlot;
+import org.opentrafficsim.imb.simulators.AbstractWrappableIMBAnimation;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
@@ -96,7 +97,6 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Sensor;
 import org.opentrafficsim.road.network.lane.SinkSensor;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
@@ -116,7 +116,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
+public class XMLNetworks extends AbstractWrappableIMBAnimation implements UNITS
 {
     /** */
     private static final long serialVersionUID = 20160422L;
@@ -161,7 +161,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
     @Override
     protected final OTSModelInterface makeModel(final GTUColorer colorer)
     {
-        this.model = new XMLNetworkModel(this.savedUserModifiedProperties, colorer);
+        this.model = new XMLNetworkModel(this.savedUserModifiedProperties, colorer, createNetwork());
         return this.model;
     }
 
@@ -225,7 +225,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     private OTSDEVSSimulatorInterface simulator;
 
     /** The network. */
-    private OTSNetwork network = new OTSNetwork("network");
+    private final OTSNetwork network;
 
     /** The plots. */
     private ArrayList<LaneBasedGTUSampler> plots = new ArrayList<>();
@@ -291,7 +291,8 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
      * @param userModifiedProperties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user modified) properties
      * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
      */
-    XMLNetworkModel(final ArrayList<AbstractProperty<?>> userModifiedProperties, final GTUColorer gtuColorer)
+    XMLNetworkModel(final ArrayList<AbstractProperty<?>> userModifiedProperties, final GTUColorer gtuColorer,
+            final OTSNetwork network)
     {
         this.gtuColorer = gtuColorer;
         if (this.gtuColorer instanceof SwitchableGTUColorer)
@@ -300,7 +301,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             // It has not even been fully constructed yet; so we need a later opportunity to patch the gtuColorer
             // colorControlPanel.addItem(new DirectionGTUColorer());
         }
-
+        this.network = network;
         this.properties = userModifiedProperties;
     }
 

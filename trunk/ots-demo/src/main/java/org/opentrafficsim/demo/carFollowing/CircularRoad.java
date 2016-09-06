@@ -402,7 +402,8 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
 
     /**
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
-     * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
+     * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer
+     * @param network OTSNetwork; the network
      */
     public RoadSimulationModel(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer,
             final OTSNetwork network)
