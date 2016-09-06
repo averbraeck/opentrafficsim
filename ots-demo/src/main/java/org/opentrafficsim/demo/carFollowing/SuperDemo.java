@@ -137,11 +137,11 @@ public class SuperDemo implements UNITS
         mainPanel.setPreferredSize(new Dimension(800, 800));
         final ArrayList<WrappableIMBAnimation> demonstrations = new ArrayList<>();
         demonstrations.add(new Straight());
-        // demonstrations.add(new SequentialLanes());
-        // demonstrations.add(new CircularLane());
+        demonstrations.add(new SequentialLanes());
+        demonstrations.add(new CircularLane());
         demonstrations.add(new CircularRoad());
-        // demonstrations.add(new XMLNetworks());
-        // demonstrations.add(new OpenStreetMap());
+        demonstrations.add(new XMLNetworks());
+        demonstrations.add(new OpenStreetMap());
         // final JPanel left = new LabeledPanel("Simulation Settings");
         this.simulationSelection = new LabeledPanel("Network");
         this.simulationSelection.setLayout(new GridBagLayout());

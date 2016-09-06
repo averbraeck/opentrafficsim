@@ -51,6 +51,7 @@ import org.opentrafficsim.graphs.FlowContourPlot;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
+import org.opentrafficsim.imb.simulators.AbstractWrappableIMBAnimation;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
@@ -63,7 +64,6 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
@@ -86,7 +86,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  * initial version 21 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CircularLane extends AbstractWrappableAnimation implements UNITS
+public class CircularLane extends AbstractWrappableIMBAnimation implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -179,7 +179,7 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
     @Override
     protected final OTSModelInterface makeModel(final GTUColorer colorer)
     {
-        this.model = new LaneSimulationModel(this.savedUserModifiedProperties, colorer);
+        this.model = new LaneSimulationModel(this.savedUserModifiedProperties, colorer, createNetwork());
         return this.model;
     }
 
@@ -312,7 +312,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
     private static final long serialVersionUID = 20141121L;
 
     /** The network. */
-    private OTSNetwork network = new OTSNetwork("network");
+    private final OTSNetwork network;
 
     /** The simulator. */
     private OTSDEVSSimulatorInterface simulator;
@@ -365,11 +365,14 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
     /**
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the user modified properties for the model
      * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
+     * @param network OTSNetwork; the network
      */
-    public LaneSimulationModel(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer)
+    public LaneSimulationModel(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer,
+            final OTSNetwork network)
     {
         this.properties = properties;
         this.gtuColorer = gtuColorer;
+        this.network = network;
     }
 
     /** {@inheritDoc} */
