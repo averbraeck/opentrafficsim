@@ -70,6 +70,8 @@ public class IMBTransmitter implements EventListenerInterface
     {
         String host = null;
         int port = -1;
+        int modelId = 1;
+        String federation = "OTS_RT";
 
         for (AbstractProperty<?> ap : compoundProperty)
         {
@@ -83,6 +85,14 @@ public class IMBTransmitter implements EventListenerInterface
                     port = ((IntegerProperty) ap).getValue();
                     break;
 
+                case "IMBModelId":
+                    modelId = ((IntegerProperty) ap).getValue();
+                    break;
+
+                case "IMBFederation":
+                    federation = ((StringProperty) ap).getValue();
+                    break;
+
                 default:
                     System.err.println("Ignoring property " + ap);
             }
@@ -92,7 +102,7 @@ public class IMBTransmitter implements EventListenerInterface
             return;
         }
         System.out.println("Connecting to " + host + ":" + port);
-        this.observer = new IMBObserver(host, port, "GTUObserver", 1, "OTS_RT");
+        this.observer = new IMBObserver(host, port, "GTUObserver", modelId, federation);
     }
 
     /**
@@ -108,6 +118,8 @@ public class IMBTransmitter implements EventListenerInterface
                     new CompoundProperty("IMBProperties", "IMB properties", "IMB properties", null, false, displayPriority);
             result.add(new StringProperty("IMBHost", "IMB hub host", "Name of the IMB hub", "localhost", false, 0));
             result.add(new IntegerProperty("IMBPort", "IMB hub port", "Port on the IMB hub", 4000, 0, 65535, "%d", false, 1));
+            result.add(new IntegerProperty("IMBModelId", "IMB model id", "Model id", 1, 0, 9999, "%d", false, 2));
+            result.add(new StringProperty("IMBFederation", "IMB federation", "Federation on the IMB hub", "OTS_RT", false, 3));
             return result;
         }
         catch (PropertyException exception)
