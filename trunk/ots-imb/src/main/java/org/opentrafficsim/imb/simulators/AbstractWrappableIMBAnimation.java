@@ -45,6 +45,7 @@ public abstract class AbstractWrappableIMBAnimation extends AbstractWrappableAni
     /** The network. */
     private OTSNetwork network = null;
 
+    /** The animator. */
     private SimpleIMBAnimator animator;
 
     @Override
@@ -127,7 +128,7 @@ public abstract class AbstractWrappableIMBAnimation extends AbstractWrappableAni
     }
 
     /**
-     * @return OTSNetwork 
+     * @return OTSNetwork
      */
     public final OTSNetwork createNetwork()
     {
@@ -135,6 +136,10 @@ public abstract class AbstractWrappableIMBAnimation extends AbstractWrappableAni
         return this.network;
     }
 
+    /**
+     * Ensure that we get notified about newly created and destroyed GTUs and for each already existing GTU generate a
+     * GTU_ADD_EVENT.
+     */
     private void addListeners()
     {
         this.network.addListener(this, Network.GTU_ADD_EVENT);
