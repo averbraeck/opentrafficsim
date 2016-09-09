@@ -7,7 +7,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.imb.observers.IMBTransmitter;
+import org.opentrafficsim.imb.observers.OTSIMBConnector;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 /**
@@ -29,7 +29,7 @@ public class SimpleIMBSimulator extends SimpleSimulator implements IMBTransmitte
     private static final long serialVersionUID = 20160902L;
 
     /** The currently registered IMB transmitter. */
-    private IMBTransmitter imbTransmitter = null;
+    private OTSIMBConnector imbTransmitter = null;
 
     /**
      * @param startTime
@@ -47,14 +47,14 @@ public class SimpleIMBSimulator extends SimpleSimulator implements IMBTransmitte
 
     /** {@inheritDoc} */
     @Override
-    public final IMBTransmitter getIMBTransmitter()
+    public final OTSIMBConnector getIMBTransmitter()
     {
         return this.imbTransmitter;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void setIMBTransmitter(final IMBTransmitter newIMBTransmitter)
+    public final void setIMBTransmitter(final OTSIMBConnector newIMBTransmitter)
     {
         this.imbTransmitter = newIMBTransmitter;
     }

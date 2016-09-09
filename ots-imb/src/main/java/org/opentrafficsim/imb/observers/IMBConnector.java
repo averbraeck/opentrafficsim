@@ -1,5 +1,7 @@
 package org.opentrafficsim.imb.observers;
 
+import org.opentrafficsim.core.Throw;
+
 import nl.tno.imb.TByteBuffer;
 import nl.tno.imb.TConnection;
 import nl.tno.imb.TEventEntry;
@@ -14,7 +16,7 @@ import nl.tno.imb.TEventEntry;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class IMBObserver implements Observer
+public class IMBConnector implements Connector
 {
     /** Communication link to the observers. */
     private final TConnection connection;
@@ -26,15 +28,13 @@ public class IMBObserver implements Observer
      * @param modelName String; local model name
      * @param modelId int; model id
      * @param federation String; federation on the IMB hub
-     * @throws Exception when a connection to the IMB hub could not be established
+     * @throws IMBException when a connection to the IMB hub could not be established
      */
-    public IMBObserver(final String host, final int port, final String modelName, final int modelId, final String federation) throws Exception
+    public IMBConnector(final String host, final int port, final String modelName, final int modelId, final String federation)
+            throws IMBException
     {
         this.connection = new TConnection(host, port, modelName, modelId, federation);
-        if (!this.connection.isConnected())
-        {
-            throw new Exception("No connection to broker");
-        }
+        Throw.when(!this.connection.isConnected(), IMBException.class, "No connection to broker");
     }
 
     /**
@@ -42,11 +42,12 @@ public class IMBObserver implements Observer
      * @throws Exception
      */
     @Override
-    public final boolean postMessage(final String eventName, final int eventType, final Object[] args) throws Exception
+    public final boolean postMessage(final String eventName, final IMBEventType imbEventType, final Object[] args)
+            throws Exception
     {
         TByteBuffer payload = new TByteBuffer();
         payload.writeStart(0);
-        payload.write(eventType);
+        payload.write(imbEventType.getEventEntry());
         for (Object o : args)
         {
             String typeName = o.getClass().getName();
