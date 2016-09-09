@@ -50,13 +50,13 @@ public abstract class AbstractSensor extends EventProducer implements Sensor
     private final OTSDEVSSimulatorInterface simulator;
 
     /**
-     * @param lane The lane for which this is a sensor.
+     * @param lane Lane; the lane for which this is a sensor.
      * @param longitudinalPosition Length; the position (between 0.0 and the length of the Lane) of the sensor on the design
      *            line of the lane.
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the sensor.
-     * @param name the name of the sensor.
-     * @param simulator the simulator for being able to generate the animation.
+     * @param name String; the name of the sensor.
+     * @param simulator OTSDEVSSimulatorInterface; the simulator (needed to generate the animation).
      */
     public AbstractSensor(final Lane lane, final Length longitudinalPosition,
         final RelativePosition.TYPE positionType, final String name, final OTSDEVSSimulatorInterface simulator)

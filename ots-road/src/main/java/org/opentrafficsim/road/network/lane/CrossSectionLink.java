@@ -36,23 +36,24 @@ public class CrossSectionLink extends OTSLink implements Serializable
 
     /** List of lanes. */
     private final List<Lane> lanes = new ArrayList<>();
-    
+
     /** The policy to generally keep left, keep right, or keep lane. */
     private final LaneKeepingPolicy laneKeepingPolicy;
 
     /**
      * Construction of a cross section link.
-     * @param id the link id.
-     * @param startNode start node (directional).
-     * @param endNode end node (directional).
-     * @param linkType the linktype
-     * @param designLine the OTSLine3D design line of the Link
-     * @param directionalityMap the directions (FORWARD, BACKWARD, BOTH, NONE) that GTUtypes can traverse this link
-     * @param laneKeepingPolicy the policy to generally keep left, keep right, or keep lane
+     * @param id String; the link id.
+     * @param startNode OTSNode; the start node (directional).
+     * @param endNode OTSNode; the end node (directional).
+     * @param linkType LinkType; the link type
+     * @param designLine OTSLine3D; the design line of the Link
+     * @param directionalityMap Map&lt;GTUType, LongitudinalDirectionality&gt;; the directions (FORWARD, BACKWARD, BOTH, NONE)
+     *            that various GTUtypes can traverse this link
+     * @param laneKeepingPolicy LaneKeepingPolicy; the policy to generally keep left, keep right, or keep lane
      */
     public CrossSectionLink(final String id, final OTSNode startNode, final OTSNode endNode, final LinkType linkType,
-        final OTSLine3D designLine, final Map<GTUType, LongitudinalDirectionality> directionalityMap,
-        final LaneKeepingPolicy laneKeepingPolicy)
+            final OTSLine3D designLine, final Map<GTUType, LongitudinalDirectionality> directionalityMap,
+            final LaneKeepingPolicy laneKeepingPolicy)
     {
         super(id, startNode, endNode, linkType, designLine, directionalityMap);
         this.laneKeepingPolicy = laneKeepingPolicy;
@@ -61,17 +62,17 @@ public class CrossSectionLink extends OTSLink implements Serializable
     /**
      * Construction of a link, with a general directionality for GTUType.ALL. Other directionalities can be added with the
      * method addDirectionality(...) later.
-     * @param id the link id.
-     * @param startNode start node (directional).
-     * @param endNode end node (directional).
-     * @param linkType the linktype
-     * @param designLine the OTSLine3D design line of the Link
-     * @param directionality the default directionality for all GTUs
-     * @param laneKeepingPolicy the policy to generally keep left, keep right, or keep lane
+     * @param id String; the link id.
+     * @param startNode OTSnode; the start node (directional).
+     * @param endNode OTSNode; the end node (directional).
+     * @param linkType LinkType; the link type
+     * @param designLine OTSLine3D; the design line of the Link
+     * @param directionality LongitudinalDirectionality; the default directionality for all GTUs
+     * @param laneKeepingPolicy LaneKeepingPolicy; the policy to generally keep left, keep right, or keep lane
      */
     public CrossSectionLink(final String id, final OTSNode startNode, final OTSNode endNode, final LinkType linkType,
-        final OTSLine3D designLine, final LongitudinalDirectionality directionality,
-        final LaneKeepingPolicy laneKeepingPolicy)
+            final OTSLine3D designLine, final LongitudinalDirectionality directionality,
+            final LaneKeepingPolicy laneKeepingPolicy)
     {
         super(id, startNode, endNode, linkType, designLine, directionality);
         this.laneKeepingPolicy = laneKeepingPolicy;
@@ -80,24 +81,24 @@ public class CrossSectionLink extends OTSLink implements Serializable
     /**
      * Construction of a link, on which no traffic is allowed after construction of the link. Directionality for GTUTypes can be
      * added with the method addDirectionality(...) later.
-     * @param id the link id.
-     * @param startNode start node (directional).
-     * @param endNode end node (directional).
-     * @param linkType the linktype
-     * @param designLine the OTSLine3D design line of the Link
-     * @param laneKeepingPolicy the policy to generally keep left, keep right, or keep lane
+     * @param id String; the link id.
+     * @param startNode OTSNode; the start node (directional).
+     * @param endNode OTSNode; the end node (directional).
+     * @param linkType LinkType; the link type
+     * @param designLine OTSLine3D; the design line of the Link
+     * @param laneKeepingPolicy LaneKeepingPolicy; the policy to generally keep left, keep right, or keep lane
      */
     public CrossSectionLink(final String id, final OTSNode startNode, final OTSNode endNode, final LinkType linkType,
-        final OTSLine3D designLine, final LaneKeepingPolicy laneKeepingPolicy)
+            final OTSLine3D designLine, final LaneKeepingPolicy laneKeepingPolicy)
     {
         this(id, startNode, endNode, linkType, designLine, new HashMap<GTUType, LongitudinalDirectionality>(),
-            laneKeepingPolicy);
+                laneKeepingPolicy);
     }
 
     /**
      * Add a cross section element at the end of the list. <br>
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction.
-     * @param cse the cross section element to add.
+     * @param cse CrossSectionElement; the cross section element to add.
      */
     protected final void addCrossSectionElement(final CrossSectionElement cse)
     {
@@ -112,7 +113,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * Add a cross section element at specified index in the list.<br>
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction.
      * @param index the location to insert the element.
-     * @param cse the cross section element to add.
+     * @param cse CrossSectionelement; the cross section element to add.
      */
     protected final void addCrossSectionElement(final CrossSectionElement cse, final int index)
     {
@@ -124,7 +125,8 @@ public class CrossSectionLink extends OTSLink implements Serializable
     }
 
     /**
-     * @return crossSectionElementList.
+     * Retrieve the cross section element list.
+     * @return List&lt;CrossSectionElement&gt;; the cross section element list. This is NOT a deep copy!
      */
     public final List<CrossSectionElement> getCrossSectionElementList()
     {
@@ -132,16 +134,18 @@ public class CrossSectionLink extends OTSLink implements Serializable
     }
 
     /**
-     * @return laneKeepingPolicy
+     * Retrieve the lane keeping policy.
+     * @return LaneKeepingPolicy; the lane keeping policy on this CrossSectionLink
      */
     public final LaneKeepingPolicy getLaneKeepingPolicy()
     {
         return this.laneKeepingPolicy;
     }
-    
+
     /**
-     * @param id the cse.id to search for
-     * @return the cross section element with the given id, or null if not found
+     * Find a cross section element with a specified id.
+     * @param id String; the id to search for
+     * @return CrossSectionElement; the cross section element with the given id, or null if not found
      */
     public final CrossSectionElement getCrossSectionElement(final String id)
     {
@@ -156,7 +160,8 @@ public class CrossSectionLink extends OTSLink implements Serializable
     }
 
     /**
-     * @return lanes
+     * Return the list of lanes of this CrossSectionLink.
+     * @return List&lt;Lane&gt;; the list of lanes. This is not a deep copy!
      */
     public final List<Lane> getLanes()
     {
@@ -170,4 +175,5 @@ public class CrossSectionLink extends OTSLink implements Serializable
         return "CrossSectionLink [crossSectionElementList=" + this.crossSectionElementList + ", lanes=" + this.lanes
                 + ", laneKeepingPolicy=" + this.laneKeepingPolicy + "]";
     }
+    
 }

@@ -24,18 +24,18 @@ public abstract class Barrier extends RoadMarkerAlong
     /**
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
      * the StartNode towards the EndNode as the longitudinal direction.
-     * @param parentLink Cross Section Link to which the element belongs.
-     * @param beginCenterPosition the lateral start position compared to the linear geometry of the Cross Section Link.
-     * @param endCenterPosition the lateral end position compared to the linear geometry of the Cross Section Link.
-     * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
-     * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
+     * @param parentLink CrossSectionLink; the cross section link to which the element belongs.
+     * @param beginCenterPosition Length; the lateral start position compared to the linear geometry of the cross section link.
+     * @param endCenterPosition Length; the lateral end position compared to the linear geometry of the Cross Section Link.
+     * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the lateral start position.
+     * @param endWidth Length; end width, positioned <i>symmetrically around</i> the lateral end position.
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public Barrier(final CrossSectionLink parentLink, final Length beginCenterPosition,
-        final Length endCenterPosition, final Length beginWidth, final Length endWidth)
-        throws OTSGeometryException, NetworkException
+    public Barrier(final CrossSectionLink parentLink, final Length beginCenterPosition, final Length endCenterPosition,
+            final Length beginWidth, final Length endWidth) throws OTSGeometryException, NetworkException
     {
         super(parentLink, beginCenterPosition, endCenterPosition, beginWidth, endWidth);
     }
+    
 }

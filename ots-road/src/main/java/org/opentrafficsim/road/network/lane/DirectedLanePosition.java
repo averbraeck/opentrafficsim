@@ -36,13 +36,15 @@ public class DirectedLanePosition implements Serializable
     private final GTUDirectionality gtuDirection;
 
     /**
-     * @param lane the lane for the position
-     * @param position the position on the lane, relative to the cross section link (design line)
-     * @param gtuDirection the direction the vehicle is driving to -- either in the direction of the design line, or against it
+     * Construct a new DirectedLanePosition.
+     * @param lane Lane; the lane for the position
+     * @param position Length; the position on the lane, relative to the cross section link (design line)
+     * @param gtuDirection GTUDirectionality; the direction the vehicle is driving to -- either in the direction of the design
+     *            line, or against it
      * @throws GTUException when preconditions fail
      */
     public DirectedLanePosition(final Lane lane, final Length position, final GTUDirectionality gtuDirection)
-        throws GTUException
+            throws GTUException
     {
         super();
         Throw.when(lane == null, GTUException.class, "lane is null");
@@ -54,7 +56,8 @@ public class DirectedLanePosition implements Serializable
     }
 
     /**
-     * @return lane the lane for the position
+     * Retrieve the lane.
+     * @return Lane; the lane for the position
      */
     public final Lane getLane()
     {
@@ -62,7 +65,8 @@ public class DirectedLanePosition implements Serializable
     }
 
     /**
-     * @return position the position on the lane, relative to the cross section link (design line)
+     * Retrieve the position on the lane.
+     * @return Length; the position on the lane, relative to the cross section link (design line)
      */
     public final Length getPosition()
     {
@@ -70,7 +74,9 @@ public class DirectedLanePosition implements Serializable
     }
 
     /**
-     * @return gtuDirection the direction the vehicle is driving to -- either in the direction of the design line, or against it
+     * Retrieve the gtuDirection.
+     * @return GTUDirectionality; gtuDirection the direction the vehicle is driving to -- either in the direction of the design
+     *         line, or against it
      */
     public final GTUDirectionality getGtuDirection()
     {
@@ -78,11 +84,12 @@ public class DirectedLanePosition implements Serializable
     }
 
     /**
-     * @return the location of the GTU on the lane, in the right direction.
+     * Retrieve the location and direction of the GTU on the lane.
+     * @return DirectedPoint; the location and direction of the GTU on the lane
      */
     public DirectedPoint getLocation()
     {
-        //double fraction = this.position.si / this.lane.getParentLink().getLength().si;
+        // double fraction = this.position.si / this.lane.getParentLink().getLength().si;
         OTSLine3D centerLine = this.lane.getCenterLine();
         double centerLineLength = centerLine.getLengthSI();
         double fraction = this.position.si / centerLineLength;
@@ -141,7 +148,7 @@ public class DirectedLanePosition implements Serializable
     public String toString()
     {
         return "DirectedLanePosition [lane=" + this.lane + ", position=" + this.position + ", gtuDirection="
-            + this.gtuDirection + "]";
+                + this.gtuDirection + "]";
     }
 
 }
