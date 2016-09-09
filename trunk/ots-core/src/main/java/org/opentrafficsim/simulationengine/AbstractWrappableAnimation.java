@@ -73,10 +73,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
      * @param model OTSModelInterface; the simulation model
      * @return SimpleAnimator; a newly constructed animator
      * @throws SimRuntimeException on ???
-     * @throws NetworkException on Network inconsistency
      * @throws NamingException when context for the animation cannot be created
-     * @throws OTSSimulationException when the construction of the simulation, the control panel, the animation, or the charts
-     *             fails
      * @throws PropertyException when one of the user modified properties has the empty string as key
      */
     @SuppressWarnings("checkstyle:designforextension")

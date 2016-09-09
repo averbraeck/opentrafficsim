@@ -32,6 +32,7 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.event.TimedEvent;
 
 /**
  * The Lane is the CrossSectionElement of a CrossSectionLink on which GTUs can drive. The Lane stores several important
@@ -142,6 +143,18 @@ public class Lane extends CrossSectionElement implements Serializable
      * Payload: Object[] {String gtuId, LaneBasedGTU gtu}
      */
     public static final EventType GTU_REMOVE_EVENT = new EventType("GTU.REMOVE");
+
+    /**
+     * The <b>timed</b> event type for pub/sub indicating the addition of a sensor to the lane. <br>
+     * Payload: Object[] {String sensorId, Sensor sensor, GTUType gtuType} 
+     */
+    public static final EventType SENSOR_ADD_EVENT = new EventType("SENSOR.ADD");
+
+    /**
+     * The <b>timed</b> event type for pub/sub indicating the removal of a sensor from the lane. <br>
+     * Payload: Object[] {String sensorId, Sensor sensor, GTUType gtuType} 
+     */
+    public static final EventType SENSOR_REMOVE_EVENT = new EventType("SENSOR.REMOVE");
 
     /**
      * @param parentLink Cross Section Link to which the element belongs.
@@ -491,6 +504,8 @@ public class Lane extends CrossSectionElement implements Serializable
             this.sensors.put(position, sensorList);
         }
         sensorList.add(new GTUTypeSensor(gtuType, sensor));
+        fireEvent(new TimedEvent<OTSSimTimeDouble>(Lane.SENSOR_ADD_EVENT, this,
+                new Object[] { sensor.getName(), sensor, gtuType }, sensor.getSimulator().getSimulatorTime()));
     }
 
     /**
@@ -508,7 +523,12 @@ public class Lane extends CrossSectionElement implements Serializable
         List<GTUTypeSensor> sensorList2 = new ArrayList<GTUTypeSensor>(1);
         for (GTUTypeSensor gs : sensorList)
         {
-            if (!gs.getSensor().equals(sensor))
+            if (gs.getSensor().equals(sensor))
+            {
+                fireEvent(new TimedEvent<OTSSimTimeDouble>(Lane.SENSOR_REMOVE_EVENT, this,
+                        new Object[] { sensor.getName(), sensor, gs.getGtuType() }, sensor.getSimulator().getSimulatorTime()));
+            }
+            else
             {
                 sensorList2.add(gs);
             }

@@ -129,17 +129,15 @@ public abstract class AbstractSensor extends EventProducer implements Sensor
         return this.bounds;
     }
 
-    /**
-     * @return name.
-     */
+    /** {@inheritDoc} */
+    @Override
     public final String getName()
     {
         return this.name;
     }
 
-    /**
-     * @return simulator
-     */
+    /** {@inheritDoc} */
+    @Override
     public final OTSDEVSSimulatorInterface getSimulator()
     {
         return this.simulator;

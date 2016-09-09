@@ -399,6 +399,7 @@ class StraightModel implements OTSModelInterface, UNITS
     /**
      * @param properties the user settable properties
      * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
+     * @param network the network
      */
     public StraightModel(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer, final OTSNetwork network)
     {

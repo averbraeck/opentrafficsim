@@ -376,7 +376,8 @@ final class Links
     {
         NodeTag from = linkTag.nodeStartTag;
         OTSPoint3D startPoint = new OTSPoint3D(from.coordinate);
-        double startAngle = linkTag.rotationStart != null ? linkTag.rotationStart.si : from.angle.si;
+        // XXX: HACK!
+        double startAngle = linkTag.rotationStart != null ? linkTag.rotationStart.si : from.angle == null ? 0.0 : from.angle.si;
         if (linkTag.offsetStart != null && linkTag.offsetStart.si != 0.0)
         {
             // shift the start point perpendicular to the node direction or read from tag
@@ -390,7 +391,8 @@ final class Links
 
         NodeTag to = linkTag.nodeEndTag;
         OTSPoint3D endPoint = new OTSPoint3D(to.coordinate);
-        double endAngle = linkTag.rotationEnd != null ? linkTag.rotationEnd.si : to.angle.si;
+        // XXX: HACK!
+        double endAngle = linkTag.rotationEnd != null ? linkTag.rotationEnd.si : to.angle == null ? 0.0 : to.angle.si;
         if (linkTag.offsetEnd != null && linkTag.offsetEnd.si != 0.0)
         {
             // shift the start point perpendicular to the node direction or read from tag

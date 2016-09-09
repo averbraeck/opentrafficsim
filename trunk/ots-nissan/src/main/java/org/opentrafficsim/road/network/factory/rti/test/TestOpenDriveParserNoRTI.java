@@ -146,7 +146,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts(SimpleSimulatorInterface simulator)
+    protected final JPanel makeCharts(final SimpleSimulatorInterface simulator)
     {
         return null;
     }
