@@ -145,7 +145,7 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * Construct a new Lane.
      * @param parentLink CrossSectionLink; the link to which the new Lane will belong (must be constructed first)
-     * @param String; the id of this lane within the link; should be unique within the link.
+     * @param id String; the id of this lane within the link; should be unique within the link.
      * @param lateralOffsetAtStart Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
      *            design line of the parent Link at the start of the parent Link
      * @param lateralOffsetAtEnd Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
