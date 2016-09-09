@@ -34,7 +34,7 @@ public class LaneStructureRecord implements Serializable
     private final Lane lane;
 
     /** The direction in which we process this lane. */
-    private final GTUDirectionality direction;
+    private final GTUDirectionality gtuDirectionality;
 
     /** The left LSR or null if not available. Left and right are relative to the <b>driving</b> direction. */
     private LaneStructureRecord left;
@@ -67,7 +67,7 @@ public class LaneStructureRecord implements Serializable
     public LaneStructureRecord(final Lane lane, final GTUDirectionality direction)
     {
         this.lane = lane;
-        this.direction = direction;
+        this.gtuDirectionality = direction;
     }
 
     /**
@@ -75,7 +75,7 @@ public class LaneStructureRecord implements Serializable
      */
     public final Node getFromNode()
     {
-        return this.direction.isPlus() ? this.lane.getParentLink().getStartNode() : this.lane.getParentLink().getEndNode();
+        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getStartNode() : this.lane.getParentLink().getEndNode();
     }
 
     /**
@@ -83,7 +83,7 @@ public class LaneStructureRecord implements Serializable
      */
     public final Node getToNode()
     {
-        return this.direction.isPlus() ? this.lane.getParentLink().getEndNode() : this.lane.getParentLink().getStartNode();
+        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getEndNode() : this.lane.getParentLink().getStartNode();
     }
 
     /**
@@ -291,14 +291,14 @@ public class LaneStructureRecord implements Serializable
      */
     public final GTUDirectionality getDirection()
     {
-        return this.direction;
+        return this.gtuDirectionality;
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "LaneStructureRecord [lane=" + this.lane + ", direction=" + this.direction + ", left=" + this.left
+        return "LaneStructureRecord [lane=" + this.lane + ", direction=" + this.gtuDirectionality + ", left=" + this.left
             + ", right=" + this.right + ", nextList=" + this.nextList + "]";
     }
 

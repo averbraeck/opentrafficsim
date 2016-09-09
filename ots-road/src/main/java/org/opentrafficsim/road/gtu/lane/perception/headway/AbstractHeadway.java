@@ -41,7 +41,7 @@ public abstract class AbstractHeadway implements Headway
     /** The (perceived) length of the other object. Can be null if unknown. */
     private final Length length;
 
-    /** The (perceived) speed of the other object. Can be null if unknown. */
+    /** The (perceived) speed of the other object. v&gt;0 seen from driver chair. Can be null if unknown. */
     private final Speed speed;
 
     /** The (perceived) acceleration of the other object. Can be null if unknown. */

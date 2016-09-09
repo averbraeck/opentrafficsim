@@ -486,7 +486,7 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final void addSensor(final Sensor sensor, final GTUType gtuType) throws NetworkException
     {
-        double position = sensor.getLongitudinalPositionSI();
+        double position = sensor.getLongitudinalPosition().si;
         if (position < 0 || position > getLength().getSI())
         {
             throw new NetworkException("Illegal position for sensor " + position + " valid range is 0.." + getLength().getSI());
@@ -510,7 +510,7 @@ public class Lane extends CrossSectionElement implements Serializable
         List<GTUTypeSensor> sensorList = this.sensors.get(sensor.getLongitudinalPosition().getSI());
         if (null == sensorList)
         {
-            throw new NetworkException("No sensor at " + sensor.getLongitudinalPositionSI());
+            throw new NetworkException("No sensor at " + sensor.getLongitudinalPosition().si);
         }
         List<GTUTypeSensor> sensorList2 = new ArrayList<GTUTypeSensor>(1);
         for (GTUTypeSensor gs : sensorList)
@@ -642,14 +642,14 @@ public class Lane extends CrossSectionElement implements Serializable
                     // System.out.println("GTU relative position " + relativePosition + " sensor relative position " +
                     // sensor.getPositionType());
                     if (sensor.getPositionType().equals(relativePosition.getType())
-                            && referenceStartSI + relativePosition.getDx().getSI() <= sensor.getLongitudinalPositionSI()
+                            && referenceStartSI + relativePosition.getDx().getSI() <= sensor.getLongitudinalPosition().si
                             && referenceStartSI + referenceMoveSI + relativePosition.getDx().getSI() > sensor
-                                    .getLongitudinalPositionSI())
+                                    .getLongitudinalPosition().si)
                     {
                         // the exact time of triggering is based on the distance between the current position of the
                         // relative position on the GTU and the location of the sensor.
                         // TODO make sure triggering is done right when driving in DIR_MINUS direction
-                        double d = sensor.getLongitudinalPositionSI() - referenceStartSI - relativePosition.getDx().getSI();
+                        double d = sensor.getLongitudinalPosition().si - referenceStartSI - relativePosition.getDx().getSI();
                         if (d < 0)
                         {
                             throw new NetworkException("scheduleTriggers for gtu: " + gtu + ", d<0 d=" + d);

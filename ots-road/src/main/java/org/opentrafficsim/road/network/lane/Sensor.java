@@ -4,14 +4,12 @@ import java.io.Serializable;
 
 import javax.media.j3d.Bounds;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -23,17 +21,8 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface Sensor extends Serializable, Comparable<Sensor>, Locatable
+public interface Sensor extends Serializable, Comparable<Sensor>, LaneBasedObject
 {
-    /** @return The lane for which this is a sensor. */
-    Lane getLane();
-
-    /** @return the position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane. */
-    Length getLongitudinalPosition();
-
-    /** @return the position as a double in SI units for quick sorting and sensor triggering. */
-    double getLongitudinalPositionSI();
-
     /** @return the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the sensor. */
     RelativePosition.TYPE getPositionType();
 
