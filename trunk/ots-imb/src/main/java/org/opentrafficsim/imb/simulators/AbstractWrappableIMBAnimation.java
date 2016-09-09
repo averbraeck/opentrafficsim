@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.event.TimedEvent;
@@ -18,7 +19,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.imb.observers.IMBTransmitter;
+import org.opentrafficsim.imb.observers.OTSIMBConnector;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
@@ -71,7 +72,7 @@ public abstract class AbstractWrappableIMBAnimation extends AbstractWrappableAni
         CompoundProperty imbSettings = null;
         for (AbstractProperty<?> property : userModifiedProperties)
         {
-            if (property.getKey().equals(IMBTransmitter.PROPERTY_KEY))
+            if (property.getKey().equals(OTSIMBConnector.PROPERTY_KEY))
             {
                 imbSettings = (CompoundProperty) property;
             }
@@ -80,7 +81,8 @@ public abstract class AbstractWrappableIMBAnimation extends AbstractWrappableAni
         {
             try
             {
-                simulator.setIMBTransmitter(new IMBTransmitter(imbSettings));
+                simulator.setIMBTransmitter(new OTSIMBConnector(imbSettings));
+                new SimulatorConnector(simulator);
             }
             catch (Exception exception)
             {
@@ -106,7 +108,7 @@ public abstract class AbstractWrappableIMBAnimation extends AbstractWrappableAni
         {
             String gtuId = event.getContent().toString();
             GTU gtu = this.network.getGTU(gtuId);
-            IMBTransmitter transmitter = this.animator.getIMBTransmitter();
+            OTSIMBConnector transmitter = this.animator.getIMBTransmitter();
             if (null != transmitter)
             {
                 gtu.addListener(transmitter, GTU.INIT_EVENT, true);
@@ -118,7 +120,7 @@ public abstract class AbstractWrappableIMBAnimation extends AbstractWrappableAni
         {
             String gtuId = event.getContent().toString();
             GTU gtu = this.network.getGTU(gtuId);
-            IMBTransmitter transmitter = this.animator.getIMBTransmitter();
+            OTSIMBConnector transmitter = this.animator.getIMBTransmitter();
             if (null != transmitter)
             {
                 gtu.removeListener(transmitter, GTU.INIT_EVENT);
@@ -157,6 +159,13 @@ public abstract class AbstractWrappableIMBAnimation extends AbstractWrappableAni
             {
                 exception.printStackTrace();
             }
+        }
+        OTSIMBConnector transmitter = this.animator.getIMBTransmitter();
+        if (null != transmitter)
+        {
+            this.animator.addListener(transmitter, SimulatorInterface.START_EVENT);
+            this.animator.addListener(transmitter, SimulatorInterface.STOP_EVENT);
+            
         }
     }
 

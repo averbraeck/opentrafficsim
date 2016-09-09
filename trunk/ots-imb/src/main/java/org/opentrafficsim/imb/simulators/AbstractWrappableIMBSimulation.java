@@ -9,7 +9,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.imb.observers.IMBTransmitter;
+import org.opentrafficsim.imb.observers.OTSIMBConnector;
 import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
@@ -51,7 +51,7 @@ public abstract class AbstractWrappableIMBSimulation extends AbstractWrappableSi
         CompoundProperty imbSettings = null;
         for (AbstractProperty<?> property : userModifiedProperties)
         {
-            if (property.getKey().equals(IMBTransmitter.PROPERTY_KEY))
+            if (property.getKey().equals(OTSIMBConnector.PROPERTY_KEY))
             {
                 imbSettings = (CompoundProperty) property;
             }
@@ -60,7 +60,7 @@ public abstract class AbstractWrappableIMBSimulation extends AbstractWrappableSi
         {
             try
             {
-                simulator.setIMBTransmitter(new IMBTransmitter(imbSettings));
+                simulator.setIMBTransmitter(new OTSIMBConnector(imbSettings));
             }
             catch (Exception exception)
             {
