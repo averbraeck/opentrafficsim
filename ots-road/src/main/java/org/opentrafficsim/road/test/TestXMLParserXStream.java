@@ -157,7 +157,7 @@ public class TestXMLParserXStream extends AbstractWrappableAnimation
         private static final long serialVersionUID = 20141121L;
 
         /** The simulator. */
-        private OTSDEVSSimulatorInterface simulator;
+        private SimpleSimulatorInterface simulator;
 
         /** {@inheritDoc} */
         @Override
@@ -165,7 +165,7 @@ public class TestXMLParserXStream extends AbstractWrappableAnimation
                 final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
                 throws SimRuntimeException
         {
-            this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
+            this.simulator = (SimpleSimulatorInterface) pSimulator;
             // URL url = URLResource.getResource("/PNH1.xml");
             // URL url = URLResource.getResource("/offset-example.xml");
             // URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
@@ -210,7 +210,7 @@ public class TestXMLParserXStream extends AbstractWrappableAnimation
             {
                 throw new SimRuntimeException(exception);
             }
-            JPanel charts = makeCharts(simulator);
+            JPanel charts = makeCharts(this.simulator);
             if (null != charts)
             {
                 TestXMLParserXStream.this.panel.getTabbedPane().addTab("statistics", charts);

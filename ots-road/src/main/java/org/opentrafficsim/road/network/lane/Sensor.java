@@ -5,9 +5,11 @@ import java.io.Serializable;
 import javax.media.j3d.Bounds;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
@@ -45,6 +47,9 @@ public interface Sensor extends Serializable, Comparable<Sensor>, Locatable
     /** @return The name of the sensor. */
     String getName();
 
+    /** @return The simulator. */
+    OTSDEVSSimulatorInterface getSimulator();
+    
     /** {@inheritDoc} */
     @Override
     DirectedPoint getLocation();
@@ -52,5 +57,6 @@ public interface Sensor extends Serializable, Comparable<Sensor>, Locatable
     /** {@inheritDoc} */
     @Override
     Bounds getBounds();
+
 
 }

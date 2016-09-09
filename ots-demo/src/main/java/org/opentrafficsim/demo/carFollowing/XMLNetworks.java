@@ -290,6 +290,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     /**
      * @param userModifiedProperties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user modified) properties
      * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
+     * @param network the OTS network
      */
     XMLNetworkModel(final ArrayList<AbstractProperty<?>> userModifiedProperties, final GTUColorer gtuColorer,
             final OTSNetwork network)

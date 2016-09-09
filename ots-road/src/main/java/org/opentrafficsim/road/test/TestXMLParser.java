@@ -95,7 +95,7 @@ public class TestXMLParser extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts(SimpleSimulatorInterface simulator)
+    protected final JPanel makeCharts(final SimpleSimulatorInterface simulator)
     {
         return null;
     }
@@ -111,7 +111,8 @@ public class TestXMLParser extends AbstractWrappableAnimation
     @Override
     protected final Double makeAnimationRectangle()
     {
-        return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
+        // return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
+        return new Rectangle2D.Double(120000, 450000, 10000, 10000);
     }
 
     /** {@inheritDoc} */
@@ -151,7 +152,8 @@ public class TestXMLParser extends AbstractWrappableAnimation
             // URL url = URLResource.getResource("/PNH1.xml");
             // URL url = URLResource.getResource("/offset-example.xml");
             // URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
-            URL url = URLResource.getResource("/straight-road-new-gtu-example_2.xml");
+            //URL url = URLResource.getResource("/straight-road-new-gtu-example_2.xml");
+            URL url = URLResource.getResource("/Circuit.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
             {

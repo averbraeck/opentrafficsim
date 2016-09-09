@@ -63,6 +63,7 @@
     <ojalgo.version>38.2</ojalgo.version>
     <osm.version>0.43.1</osm.version>
     <findbugs.version>3.0.1u2</findbugs.version>
+    <jmockit.version>1.27</jmockit.version>
 
     <maven.compiler.version>3.3</maven.compiler.version>
     <maven.site.version>3.4</maven.site.version>
@@ -652,17 +653,25 @@
 
   <!-- dependency versions for all projects -->
 
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jmockit</groupId>
+      <artifactId>jmockit</artifactId>
+      <version>${jmockit.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <dependencyManagement>
     <dependencies>
-
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${junit.version}</version>
-        <scope>test</scope>
-        <optional>true</optional>
-      </dependency>
-
       <dependency>
         <groupId>java3d</groupId>
         <artifactId>vecmath</artifactId>
