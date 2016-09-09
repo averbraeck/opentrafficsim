@@ -30,9 +30,10 @@ public class CrossSectionSlice implements Serializable
     private final Length width;
 
     /**
-     * @param relativeLength the relative position from the start, measured along the design line of the parent link
-     * @param designLineOffset the lateral offset from the design line of the parentLink at the relative length
-     * @param width the width, positioned <i>symmetrically around</i> the position at the relative length
+     * Construct a new CrossSectionSlice.
+     * @param relativeLength Length; the relative position from the start, measured along the design line of the parent link
+     * @param designLineOffset Length; the lateral offset from the design line of the parentLink at the relative length
+     * @param width Length; the width, positioned <i>symmetrically around</i> the position at the relative length
      */
     public CrossSectionSlice(final Length relativeLength, final Length designLineOffset, final Length width)
     {
@@ -43,7 +44,8 @@ public class CrossSectionSlice implements Serializable
     }
 
     /**
-     * @return relativeLength
+     * Retrieve the relative length.
+     * @return Length; the relativeLength
      */
     public final Length getRelativeLength()
     {
@@ -51,7 +53,8 @@ public class CrossSectionSlice implements Serializable
     }
 
     /**
-     * @return designLineOffset
+     * Retrieve the design line offset.
+     * @return Length; designLineOffset
      */
     public final Length getDesignLineOffset()
     {
@@ -59,7 +62,8 @@ public class CrossSectionSlice implements Serializable
     }
 
     /**
-     * @return width
+     * Retrieve the width.
+     * @return Length; the width
      */
     public final Length getWidth()
     {

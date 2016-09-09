@@ -20,6 +20,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
+ * Cross section elements are used to compose a CrossSectionLink.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -61,21 +62,20 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
      * the StartNode towards the EndNode as the longitudinal direction.
      * @param id String; The id of the CrosssSectionElement. Should be unique within the parentLink.
      * @param parentLink CrossSectionLink; Link to which the element belongs.
-     * @param crossSectionSlices The offsets and widths at positions along the line, relative to the design line of the parent
-     *            link. If there is just one with and offset, there should just be one element in the list with Length = 0.
-     *            If there are more slices, the last one should be at the length of the design line. If not, a NetworkException
-     *            is thrown.
+     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; the offsets and widths at positions along the line, relative to
+     *            the design line of the parent link. If there is just one with and offset, there should just be one element in
+     *            the list with Length = 0. If there are more slices, the last one should be at the length of the design line.
+     *            If not, a NetworkException is thrown.
      * @throws OTSGeometryException when creation of the geometry fails
      * @throws NetworkException when id equal to null or not unique, or there are multiple slices and the last slice does not
      *             end at the length of the design line.
      */
     public CrossSectionElement(final CrossSectionLink parentLink, final String id,
-        final List<CrossSectionSlice> crossSectionSlices) throws OTSGeometryException, NetworkException
+            final List<CrossSectionSlice> crossSectionSlices) throws OTSGeometryException, NetworkException
     {
         if (parentLink == null)
         {
-            throw new NetworkException("Constructor of CrossSectionElement for id " + id
-                + ", parentLink cannot be null");
+            throw new NetworkException("Constructor of CrossSectionElement for id " + id + ", parentLink cannot be null");
         }
         if (id == null)
         {
@@ -85,8 +85,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
         {
             if (cse.getId().equals(id))
             {
-                throw new NetworkException("Constructor of CrossSectionElement -- id " + id
-                    + " not unique within the Link");
+                throw new NetworkException("Constructor of CrossSectionElement -- id " + id + " not unique within the Link");
             }
         }
         this.id = id;
@@ -100,21 +99,21 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
         if (this.crossSectionSlices.get(0).getRelativeLength().si != 0.0)
         {
             throw new NetworkException("CrossSectionElement " + id + " for " + parentLink
-                + " has a first slice with relativeLength is not equal to 0.0");
+                    + " has a first slice with relativeLength is not equal to 0.0");
         }
         if (this.crossSectionSlices.size() > 1
-            && this.crossSectionSlices.get(this.crossSectionSlices.size() - 1).getRelativeLength()
-                .ne(this.parentLink.getLength()))
+                && this.crossSectionSlices.get(this.crossSectionSlices.size() - 1).getRelativeLength()
+                        .ne(this.parentLink.getLength()))
         {
             throw new NetworkException("CrossSectionElement " + id + " for " + parentLink
-                + " has a last slice with relativeLength is not equal to the length of the parent link");
+                    + " has a last slice with relativeLength is not equal to the length of the parent link");
         }
 
         if (this.crossSectionSlices.size() <= 2)
         {
             this.centerLine =
-                this.getParentLink().getDesignLine()
-                    .offsetLine(getDesignLineOffsetAtBegin().getSI(), getDesignLineOffsetAtEnd().getSI());
+                    this.getParentLink().getDesignLine()
+                            .offsetLine(getDesignLineOffsetAtBegin().getSI(), getDesignLineOffsetAtEnd().getSI());
         }
         else
         {
@@ -122,8 +121,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             double[] offsets = new double[this.crossSectionSlices.size()];
             for (int i = 0; i < this.crossSectionSlices.size(); i++)
             {
-                relativeFractions[i] =
-                    this.crossSectionSlices.get(i).getRelativeLength().si / this.parentLink.getLength().si;
+                relativeFractions[i] = this.crossSectionSlices.get(i).getRelativeLength().si / this.parentLink.getLength().si;
                 offsets[i] = this.crossSectionSlices.get(i).getDesignLineOffset().si;
             }
             this.centerLine = this.getParentLink().getDesignLine().offsetLine(relativeFractions, offsets);
@@ -149,28 +147,28 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     }
 
     // TODO use throwIf
-    
+
     /**
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
      * the StartNode towards the EndNode as the longitudinal direction.
      * @param id String; The id of the CrosssSectionElement. Should be unique within the parentLink.
      * @param parentLink CrossSectionLink; Link to which the element belongs.
-     * @param lateralOffsetAtBegin Length; the lateral offset of the design line of the new CrossSectionLink with respect to
-     *            the design line of the parent Link at the start of the parent Link
-     * @param lateralOffsetAtEnd Length; the lateral offset of the design line of the new CrossSectionLink with respect to
-     *            the design line of the parent Link at the end of the parent Link
+     * @param lateralOffsetAtBegin Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
+     *            design line of the parent Link at the start of the parent Link
+     * @param lateralOffsetAtEnd Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
+     *            design line of the parent Link at the end of the parent Link
      * @param beginWidth Length; width at start, positioned <i>symmetrically around</i> the design line
      * @param endWidth Length; width at end, positioned <i>symmetrically around</i> the design line
      * @throws OTSGeometryException when creation of the geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public CrossSectionElement(final CrossSectionLink parentLink, final String id,
-        final Length lateralOffsetAtBegin, final Length lateralOffsetAtEnd, final Length beginWidth,
-        final Length endWidth) throws OTSGeometryException, NetworkException
+    public CrossSectionElement(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtBegin,
+            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth) throws OTSGeometryException,
+            NetworkException
     {
-        this(parentLink, id, Arrays.asList(new CrossSectionSlice[]{
-            new CrossSectionSlice(Length.ZERO, lateralOffsetAtBegin, beginWidth),
-            new CrossSectionSlice(parentLink.getLength(), lateralOffsetAtEnd, endWidth)}));
+        this(parentLink, id, Arrays.asList(new CrossSectionSlice[] {
+                new CrossSectionSlice(Length.ZERO, lateralOffsetAtBegin, beginWidth),
+                new CrossSectionSlice(parentLink.getLength(), lateralOffsetAtEnd, endWidth) }));
     }
 
     /**
@@ -178,17 +176,17 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
      * the StartNode towards the EndNode as the longitudinal direction.
      * @param id String; The id of the CrosssSectionElement. Should be unique within the parentLink.
      * @param parentLink CrossSectionLink; Link to which the element belongs.
-     * @param lateralOffset Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
-     *            design line of the parent Link
+     * @param lateralOffset Length; the lateral offset of the design line of the new CrossSectionLink with respect to the design
+     *            line of the parent Link
      * @param width Length; width, positioned <i>symmetrically around</i> the design line
      * @throws OTSGeometryException when creation of the geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     public CrossSectionElement(final CrossSectionLink parentLink, final String id, final Length lateralOffset,
-        final Length width) throws OTSGeometryException, NetworkException
+            final Length width) throws OTSGeometryException, NetworkException
     {
-        this(parentLink, id, Arrays.asList(new CrossSectionSlice[]{new CrossSectionSlice(Length.ZERO,
-            lateralOffset, width)}));
+        this(parentLink, id, Arrays
+                .asList(new CrossSectionSlice[] { new CrossSectionSlice(Length.ZERO, lateralOffset, width) }));
     }
 
     /**
@@ -202,7 +200,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     /**
      * Calculate the slice the fractional position is in.
      * @param fractionalPosition the fractional position between 0 and 1 compared to the design line
-     * @return the lower slice number between 0 and number of slices - 1.
+     * @return int; the lower slice number between 0 and number of slices - 1.
      */
     private int calculateSliceNumber(final double fractionalPosition)
     {
@@ -210,7 +208,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
         for (int i = 0; i < this.crossSectionSlices.size() - 1; i++)
         {
             if (fractionalPosition >= this.crossSectionSlices.get(i).getRelativeLength().si / linkLength
-                && fractionalPosition <= this.crossSectionSlices.get(i + 1).getRelativeLength().si / linkLength)
+                    && fractionalPosition <= this.crossSectionSlices.get(i + 1).getRelativeLength().si / linkLength)
             {
                 return i;
             }
@@ -221,7 +219,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     /**
      * Retrieve the lateral offset from the Link design line at the specified longitudinal position.
      * @param fractionalPosition double; fractional longitudinal position on this Lane
-     * @return Length the lateralCenterPosition at the specified longitudinal position
+     * @return Length; the lateralCenterPosition at the specified longitudinal position
      */
     public final Length getLateralCenterPosition(final double fractionalPosition)
     {
@@ -231,19 +229,18 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
         }
         if (this.crossSectionSlices.size() == 2)
         {
-            return Length.interpolate(this.getDesignLineOffsetAtBegin(), this.getDesignLineOffsetAtEnd(),
-                fractionalPosition);
+            return Length.interpolate(this.getDesignLineOffsetAtBegin(), this.getDesignLineOffsetAtEnd(), fractionalPosition);
         }
         int sliceNr = calculateSliceNumber(fractionalPosition);
         return Length.interpolate(this.crossSectionSlices.get(sliceNr).getDesignLineOffset(),
-            this.crossSectionSlices.get(sliceNr + 1).getDesignLineOffset(), fractionalPosition
-                - this.crossSectionSlices.get(sliceNr).getRelativeLength().si / this.parentLink.getLength().si);
+                this.crossSectionSlices.get(sliceNr + 1).getDesignLineOffset(), fractionalPosition
+                        - this.crossSectionSlices.get(sliceNr).getRelativeLength().si / this.parentLink.getLength().si);
     }
 
     /**
      * Retrieve the lateral offset from the Link design line at the specified longitudinal position.
      * @param longitudinalPosition Length; the longitudinal position on this Lane
-     * @return Length the lateralCenterPosition at the specified longitudinal position
+     * @return Length; the lateralCenterPosition at the specified longitudinal position
      */
     public final Length getLateralCenterPosition(final Length longitudinalPosition)
     {
@@ -276,11 +273,10 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             return Length.interpolate(this.getBeginWidth(), this.getEndWidth(), fractionalPosition);
         }
         int sliceNr = calculateSliceNumber(fractionalPosition);
-        return Length.interpolate(
-            this.crossSectionSlices.get(sliceNr).getWidth(),
-            this.crossSectionSlices.get(sliceNr + 1).getWidth(),
-            fractionalPosition - this.crossSectionSlices.get(sliceNr).getRelativeLength().si
-                / this.parentLink.getLength().si);
+        return Length.interpolate(this.crossSectionSlices.get(sliceNr).getWidth(), this.crossSectionSlices.get(sliceNr + 1)
+                .getWidth(),
+                fractionalPosition - this.crossSectionSlices.get(sliceNr).getRelativeLength().si
+                        / this.parentLink.getLength().si);
     }
 
     /**
@@ -293,7 +289,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     }
 
     /**
-     * @return designLineOffsetAtBegin.
+     * Retrieve the offset from the design line at the begin of the parent link.
+     * @return Length; the offset of this CrossSectionElement at the begin of the parent link
      */
     public final Length getDesignLineOffsetAtBegin()
     {
@@ -301,7 +298,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     }
 
     /**
-     * @return designLineOffsetAtEnd.
+     * Retrieve the offset from the design line at the end of the parent link.
+     * @return Length; the offset of this CrossSectionElement at the end of the parent link
      */
     public final Length getDesignLineOffsetAtEnd()
     {
@@ -309,7 +307,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     }
 
     /**
-     * @return beginWidth.
+     * Retrieve the width at the begin of the parent link.
+     * @return Length; the width of this CrossSectionElement at the begin of the parent link
      */
     public final Length getBeginWidth()
     {
@@ -317,7 +316,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     }
 
     /**
-     * @return endWidth.
+     * Retrieve the width at the end of the parent link.
+     * @return Length; the width of this CrossSectionElement at the end of the parent link
      */
     public final Length getEndWidth()
     {
@@ -325,12 +325,14 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     }
 
     /**
-     * @return the z-offset for drawing (what's on top, what's underneath).
+     * Retrieve the Z offset (used to determine what covers what when drawing).
+     * @return double; the Z-offset for drawing (what's on top, what's underneath).
      */
     protected abstract double getZ();
 
     /**
-     * @return centerLine.
+     * Retrieve the center line of this CrossSectionElement.
+     * @return OTSLine3D; the center line of this CrossSectionElement
      */
     public final OTSLine3D getCenterLine()
     {
@@ -338,7 +340,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     }
 
     /**
-     * @return contour.
+     * Retrieve the contour of this CrossSectionElement.
+     * @return OTSShape; the contour of this CrossSectionElement
      */
     public final OTSShape getContour()
     {
@@ -346,7 +349,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     }
 
     /**
-     * @return id
+     * Retrieve the id of this CrossSectionElement.
+     * @return String; the id of this CrossSectionElement
      */
     public final String getId()
     {
@@ -361,31 +365,29 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
      * @return Length
      */
     public final Length getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
-        final double fractionalLongitudinalPosition)
+            final double fractionalLongitudinalPosition)
     {
         Length designLineOffset;
         Length halfWidth;
         if (this.crossSectionSlices.size() <= 2)
         {
             designLineOffset =
-                Length.interpolate(getDesignLineOffsetAtBegin(), getDesignLineOffsetAtEnd(),
-                    fractionalLongitudinalPosition);
-            halfWidth =
-                Length.interpolate(getBeginWidth(), getEndWidth(), fractionalLongitudinalPosition).multiplyBy(0.5);
+                    Length.interpolate(getDesignLineOffsetAtBegin(), getDesignLineOffsetAtEnd(), fractionalLongitudinalPosition);
+            halfWidth = Length.interpolate(getBeginWidth(), getEndWidth(), fractionalLongitudinalPosition).multiplyBy(0.5);
         }
         else
         {
             int sliceNr = calculateSliceNumber(fractionalLongitudinalPosition);
             double startFractionalPosition =
-                this.crossSectionSlices.get(sliceNr).getRelativeLength().si / this.parentLink.getLength().si;
+                    this.crossSectionSlices.get(sliceNr).getRelativeLength().si / this.parentLink.getLength().si;
             designLineOffset =
-                Length.interpolate(this.crossSectionSlices.get(sliceNr).getDesignLineOffset(),
-                    this.crossSectionSlices.get(sliceNr + 1).getDesignLineOffset(), fractionalLongitudinalPosition
-                        - startFractionalPosition);
+                    Length.interpolate(this.crossSectionSlices.get(sliceNr).getDesignLineOffset(),
+                            this.crossSectionSlices.get(sliceNr + 1).getDesignLineOffset(), fractionalLongitudinalPosition
+                                    - startFractionalPosition);
             halfWidth =
-                Length.interpolate(this.crossSectionSlices.get(sliceNr).getWidth(),
-                    this.crossSectionSlices.get(sliceNr + 1).getWidth(),
-                    fractionalLongitudinalPosition - startFractionalPosition).multiplyBy(0.5);
+                    Length.interpolate(this.crossSectionSlices.get(sliceNr).getWidth(),
+                            this.crossSectionSlices.get(sliceNr + 1).getWidth(),
+                            fractionalLongitudinalPosition - startFractionalPosition).multiplyBy(0.5);
         }
 
         switch (lateralDirection)
@@ -407,7 +409,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
      * @return Length
      */
     public final Length getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
-        final Length longitudinalPosition)
+            final Length longitudinalPosition)
     {
         return getLateralBoundaryPosition(lateralDirection, longitudinalPosition.getSI() / getLength().getSI());
     }
@@ -415,25 +417,24 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     /**
      * Construct a buffer geometry by offsetting the linear geometry line with a distance and constructing a so-called "buffer"
      * around it.
-     * @param cse the CrossSectionElement to construct the contour for
-     * @return the geometry belonging to this CrossSectionElement.
+     * @param cse CrossSectionElement; the cross section element to construct the contour for
+     * @return OTSShape; the geometry belonging to this CrossSectionElement.
      * @throws OTSGeometryException when construction of the geometry fails
      * @throws NetworkException when the resulting contour is degenerate (cannot happen; we hope)
      */
-    public static OTSShape constructContour(final CrossSectionElement cse) throws OTSGeometryException,
-        NetworkException
+    public static OTSShape constructContour(final CrossSectionElement cse) throws OTSGeometryException, NetworkException
     {
         OTSPoint3D[] result = null;
 
         if (cse.crossSectionSlices.size() <= 2)
         {
             OTSLine3D crossSectionDesignLine =
-                cse.getParentLink().getDesignLine()
-                    .offsetLine(cse.getDesignLineOffsetAtBegin().getSI(), cse.getDesignLineOffsetAtEnd().getSI());
+                    cse.getParentLink().getDesignLine()
+                            .offsetLine(cse.getDesignLineOffsetAtBegin().getSI(), cse.getDesignLineOffsetAtEnd().getSI());
             OTSLine3D rightBoundary =
-                crossSectionDesignLine.offsetLine(-cse.getBeginWidth().getSI() / 2, -cse.getEndWidth().getSI() / 2);
+                    crossSectionDesignLine.offsetLine(-cse.getBeginWidth().getSI() / 2, -cse.getEndWidth().getSI() / 2);
             OTSLine3D leftBoundary =
-                crossSectionDesignLine.offsetLine(cse.getBeginWidth().getSI() / 2, cse.getEndWidth().getSI() / 2);
+                    crossSectionDesignLine.offsetLine(cse.getBeginWidth().getSI() / 2, cse.getEndWidth().getSI() / 2);
             result = new OTSPoint3D[rightBoundary.size() + leftBoundary.size() + 1];
             int resultIndex = 0;
             for (int index = 0; index < rightBoundary.size(); index++)
@@ -461,7 +462,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
                 double sf = cse.crossSectionSlices.get(i).getRelativeLength().si / plLength;
                 double ef = cse.crossSectionSlices.get(i + 1).getRelativeLength().si / plLength;
                 OTSLine3D crossSectionDesignLine =
-                    cse.getParentLink().getDesignLine().extractFractional(sf, ef).offsetLine(so, eo);
+                        cse.getParentLink().getDesignLine().extractFractional(sf, ef).offsetLine(so, eo);
                 OTSLine3D rightBoundary = crossSectionDesignLine.offsetLine(-sw2, -ew2);
                 OTSLine3D leftBoundary = crossSectionDesignLine.offsetLine(sw2, ew2);
                 for (int index = 0; index < rightBoundary.size(); index++)
@@ -475,9 +476,9 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             }
             // close the contour if needed
             resultList.add(resultList.get(0));
-            result = resultList.toArray(new OTSPoint3D[]{});
+            result = resultList.toArray(new OTSPoint3D[] {});
         }
-        
+
         return OTSShape.createAndCleanOTSShape(result);
     }
 
@@ -504,7 +505,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     public String toString()
     {
         return String.format("CSE offset %.2fm..%.2fm, width %.2fm..%.2fm", getDesignLineOffsetAtBegin().getSI(),
-            getDesignLineOffsetAtEnd().getSI(), getBeginWidth().getSI(), getEndWidth().getSI());
+                getDesignLineOffsetAtEnd().getSI(), getBeginWidth().getSI(), getEndWidth().getSI());
     }
 
     /** {@inheritDoc} */
@@ -520,7 +521,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
     @Override
     public boolean equals(final Object obj)
     {
