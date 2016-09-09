@@ -16,6 +16,7 @@ import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
 
 /**
+ * Simulator that instruments all GTUs to report their INIT, MOVE and DESTROY events to an IMB hub.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.

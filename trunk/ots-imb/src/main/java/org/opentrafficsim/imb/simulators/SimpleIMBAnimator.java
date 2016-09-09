@@ -12,6 +12,7 @@ import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
 
 /**
+ * SimpleAnimator plus IMB transmitter.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
