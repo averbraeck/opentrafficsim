@@ -58,7 +58,7 @@ public class HeadwayGTUReal extends AbstractHeadwayGTU
      */
     public HeadwayGTUReal(final LaneBasedGTU gtu, final Length distance, final GTUStatus... gtuStatus) throws GTUException
     {
-        super(gtu.getId(), gtu.getGTUType(), distance, gtu.getLength(), gtu.getSpeed(), gtu.getAcceleration(), gtuStatus);
+        super(gtu.getId(), gtu.getGTUType(), distance, true, gtu.getLength(), gtu.getSpeed(), gtu.getAcceleration(), gtuStatus);
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
         this.behavioralCharacteristics = gtu.getBehavioralCharacteristics();
         this.speedLimitInfo = null; // TODO obtain speed limit info from GTU
@@ -75,7 +75,7 @@ public class HeadwayGTUReal extends AbstractHeadwayGTU
     public HeadwayGTUReal(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap, final Length overlapRear)
         throws GTUException
     {
-        super(gtu.getId(), gtu.getGTUType(), overlapFront, overlap, overlapRear, gtu.getLength(), gtu.getSpeed(), gtu
+        super(gtu.getId(), gtu.getGTUType(), overlapFront, overlap, overlapRear, true, gtu.getLength(), gtu.getSpeed(), gtu
             .getAcceleration());
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
         this.behavioralCharacteristics = gtu.getBehavioralCharacteristics();

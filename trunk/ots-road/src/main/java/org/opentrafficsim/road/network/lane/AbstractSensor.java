@@ -3,7 +3,6 @@ package org.opentrafficsim.road.network.lane;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
-import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -31,8 +30,8 @@ public abstract class AbstractSensor extends EventProducer implements Sensor
     /** The lane for which this is a sensor. */
     private final Lane lane;
 
-    /** The position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane in SI units. */
-    private final double longitudinalPositionSI;
+    /** The position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane. */
+    private final Length longitudinalPosition;
 
     /** The relative position of the vehicle that triggers the sensor. */
     private final RelativePosition.TYPE positionType;
@@ -62,7 +61,7 @@ public abstract class AbstractSensor extends EventProducer implements Sensor
         final RelativePosition.TYPE positionType, final String name, final OTSDEVSSimulatorInterface simulator)
     {
         this.lane = lane;
-        this.longitudinalPositionSI = longitudinalPosition.getSI();
+        this.longitudinalPosition = longitudinalPosition;
         this.positionType = positionType;
         this.name = name;
         this.simulator = simulator;
@@ -79,7 +78,7 @@ public abstract class AbstractSensor extends EventProducer implements Sensor
     @Override
     public final Length getLongitudinalPosition()
     {
-        return new Length(this.longitudinalPositionSI, LengthUnit.METER);
+        return this.longitudinalPosition;
     }
 
     /** {@inheritDoc} */
@@ -91,20 +90,13 @@ public abstract class AbstractSensor extends EventProducer implements Sensor
 
     /** {@inheritDoc} */
     @Override
-    public final double getLongitudinalPositionSI()
-    {
-        return this.longitudinalPositionSI;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final DirectedPoint getLocation()
     {
         if (this.location == null)
         {
             try
             {
-                this.location = this.lane.getCenterLine().getLocationSI(this.longitudinalPositionSI);
+                this.location = this.lane.getCenterLine().getLocationSI(this.longitudinalPosition.si);
                 this.location.z = this.lane.getLocation().z + 0.01;
             }
             catch (OTSGeometryException exception)
@@ -152,7 +144,7 @@ public abstract class AbstractSensor extends EventProducer implements Sensor
         int result = 1;
         result = prime * result + ((this.lane == null) ? 0 : this.lane.hashCode());
         long temp;
-        temp = Double.doubleToLongBits(this.longitudinalPositionSI);
+        temp = Double.doubleToLongBits(this.longitudinalPosition.si);
         result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + ((this.positionType == null) ? 0 : this.positionType.hashCode());
         return result;
@@ -177,8 +169,8 @@ public abstract class AbstractSensor extends EventProducer implements Sensor
         }
         else if (!this.lane.equals(other.lane))
             return false;
-        if (Double.doubleToLongBits(this.longitudinalPositionSI) != Double
-            .doubleToLongBits(other.longitudinalPositionSI))
+        if (Double.doubleToLongBits(this.longitudinalPosition.si) != Double
+            .doubleToLongBits(other.longitudinalPosition.si))
             return false;
         if (this.positionType == null)
         {
@@ -199,9 +191,9 @@ public abstract class AbstractSensor extends EventProducer implements Sensor
         {
             return this.lane.hashCode() < o.getLane().hashCode() ? -1 : 1;
         }
-        if (this.longitudinalPositionSI != o.getLongitudinalPositionSI())
+        if (this.longitudinalPosition.si != o.getLongitudinalPosition().si)
         {
-            return this.longitudinalPositionSI < o.getLongitudinalPositionSI() ? -1 : 1;
+            return this.longitudinalPosition.si < o.getLongitudinalPosition().si ? -1 : 1;
         }
         if (!this.positionType.equals(o.getPositionType()))
         {

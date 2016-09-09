@@ -61,7 +61,7 @@ public class HeadwayGTUType extends AbstractHeadwayGTU
         final Length distance, final Length length, final Speed speed, final Acceleration acceleration,
         final GTUStatus... gtuStatus) throws GTUException
     {
-        super(id, gtuType, distance, length, speed, acceleration, gtuStatus);
+        super(id, gtuType, distance, true, length, speed, acceleration, gtuStatus);
         this.gtuTypeAssumptions = gtuTypeAssumptions;
     }
 
@@ -77,7 +77,7 @@ public class HeadwayGTUType extends AbstractHeadwayGTU
     public HeadwayGTUType(final String id, final GTUType gtuType, final GTUTypeAssumptions gtuTypeAssumptions,
         final Length distance, final Length length) throws GTUException
     {
-        super(id, gtuType, distance, length);
+        super(id, gtuType, distance, true, length);
         this.gtuTypeAssumptions = gtuTypeAssumptions;
     }
 
@@ -99,7 +99,7 @@ public class HeadwayGTUType extends AbstractHeadwayGTU
         final Length overlapFront, final Length overlap, final Length overlapRear, final Length length, final Speed speed,
         final Acceleration acceleration) throws GTUException
     {
-        super(id, gtuType, overlapFront, overlap, overlapRear, length, speed, acceleration);
+        super(id, gtuType, overlapFront, overlap, overlapRear, true, length, speed, acceleration);
         this.gtuTypeAssumptions = gtuTypeAssumptions;
     }
 
@@ -117,7 +117,7 @@ public class HeadwayGTUType extends AbstractHeadwayGTU
     public HeadwayGTUType(final String id, final GTUType gtuType, final GTUTypeAssumptions gtuTypeAssumptions,
         final Length overlapFront, final Length overlap, final Length overlapRear, final Length length) throws GTUException
     {
-        super(id, gtuType, overlapFront, overlap, overlapRear, length);
+        super(id, gtuType, overlapFront, overlap, overlapRear, true, length);
         this.gtuTypeAssumptions = gtuTypeAssumptions;
     }
 

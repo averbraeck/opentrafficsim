@@ -54,7 +54,7 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
     public HeadwayGTUSimple(final String id, final GTUType gtuType, final Length distance, final Length length,
         final Speed speed, final Acceleration acceleration, final GTUStatus... gtuStatus) throws GTUException
     {
-        super(id, gtuType, distance, length, speed, acceleration, gtuStatus);
+        super(id, gtuType, distance, true, length, speed, acceleration, gtuStatus);
     }
 
     /**
@@ -68,7 +68,7 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
     public HeadwayGTUSimple(final String id, final GTUType gtuType, final Length distance, final Length length)
         throws GTUException
     {
-        super(id, gtuType, distance, length);
+        super(id, gtuType, distance, true, length);
     }
 
     /**
@@ -88,7 +88,7 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
         final Length overlapRear, final Length length, final Speed speed, final Acceleration acceleration)
         throws GTUException
     {
-        super(id, gtuType, overlapFront, overlap, overlapRear, length, speed, acceleration);
+        super(id, gtuType, overlapFront, overlap, overlapRear, true, length, speed, acceleration);
     }
 
     /**
@@ -104,7 +104,7 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
     public HeadwayGTUSimple(final String id, final GTUType gtuType, final Length overlapFront, final Length overlap,
         final Length overlapRear, final Length length) throws GTUException
     {
-        super(id, gtuType, overlapFront, overlap, overlapRear, length);
+        super(id, gtuType, overlapFront, overlap, overlapRear, true, length);
     }
 
     /** {@inheritDoc} */
