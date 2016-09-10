@@ -93,8 +93,9 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     private ArrayList<Sample> samples = new ArrayList<Sample>();
 
     /** Definition of the density axis. */
-    private Axis densityAxis = new Axis(new LinearDensity(0, LinearDensityUnit.PER_KILOMETER), new LinearDensity(200,
-            LinearDensityUnit.PER_KILOMETER), null, 0d, "Density [veh/km]", "Density", "density %.1f veh/km");
+    private Axis densityAxis = new Axis(new LinearDensity(0, LinearDensityUnit.PER_KILOMETER),
+            new LinearDensity(200, LinearDensityUnit.PER_KILOMETER), null, 0d, "Density [veh/km]", "Density",
+            "density %.1f veh/km");
 
     /**
      * @return densityAxis
@@ -578,7 +579,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     /**
      * Internal Sensor class.
      * <p>
-     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
@@ -600,7 +602,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         public FundamentalDiagramSensor(final Lane lane, final Length longitudinalPosition,
                 final OTSDEVSSimulatorInterface simulator) throws NetworkException
         {
-            super(lane, longitudinalPosition, RelativePosition.REFERENCE, "FUNDAMENTAL_DIAGRAM_SENSOR@" + lane.toString(),
+            super("FUNDAMENTAL_DIAGRAM_SENSOR@" + lane.toString(), lane, longitudinalPosition, RelativePosition.REFERENCE,
                     simulator);
             lane.addSensor(this, GTUType.ALL);
             // System.out.println("Added sensor " + this + " to lane " + lane);
@@ -608,7 +610,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
         /** {@inheritDoc} */
         @Override
-        public void trigger(final LaneBasedGTU gtu)
+        public void triggerResponse(final LaneBasedGTU gtu)
         {
             try
             {

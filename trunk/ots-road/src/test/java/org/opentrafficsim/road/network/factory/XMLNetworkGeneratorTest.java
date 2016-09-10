@@ -12,10 +12,6 @@ import java.util.Set;
 import javax.naming.NamingException;
 import javax.xml.parsers.ParserConfigurationException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.language.io.URLResource;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
@@ -47,6 +43,10 @@ import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
 import org.xml.sax.SAXException;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.io.URLResource;
+
 /**
  * Test of the XML Parser.
  * <p>
@@ -75,7 +75,7 @@ public class XMLNetworkGeneratorTest implements UNITS
         {
             TestXMLModel model = new TestXMLModel();
             final SimpleAnimator simulator =
-                new SimpleAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(120.0, SECOND), model);
+                    new SimpleAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(120.0, SECOND), model);
 
             // get nodes, links, and the lanes.
             Node n1 = model.getNetwork().getNodeMap().get("N1");
@@ -101,8 +101,8 @@ public class XMLNetworkGeneratorTest implements UNITS
             assertNotNull(lane23);
 
             // add a sensor to check the time the vehicles pass
-            lane23.addSensor(new ReportingSensor(lane23, new Length(1E-4, LengthUnit.SI), RelativePosition.REFERENCE,
-                "LANE23.START", simulator), GTUType.ALL);
+            lane23.addSensor(new ReportingSensor("LANE23.START", lane23, new Length(1E-4, LengthUnit.SI), RelativePosition.REFERENCE,
+                    simulator), GTUType.ALL);
 
             simulator.setSpeedFactor(1000);
             simulator.start();
@@ -128,7 +128,8 @@ public class XMLNetworkGeneratorTest implements UNITS
                         {
                             // TODO repair headway in such a way that vehicle does not have to brake (safe distance)
                             System.err.println("Speed of GTU " + gtu + "<> 10 m/s: " + gtu.getSpeed() + ", headway = "
-                                + gtu.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class).getForwardHeadway().getDistance());
+                                    + gtu.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
+                                            .getForwardHeadway().getDistance());
                             // fail("Speed of GTU " + gtu + "<> 10 m/s: " + gtu.getSpeed() + ", headway = "
                             // + gtu.headway(new Length(250.0, METER)));
                         }
@@ -169,23 +170,23 @@ public class XMLNetworkGeneratorTest implements UNITS
          * @param positionType the type of trigger (REAR, FRONT, etc.)
          * @param id the sensor id
          * @param simulator the simulator
+         * @throws NetworkException
          */
-        public ReportingSensor(final Lane lane, final Length longitudinalPosition, final TYPE positionType,
-            final String id, final OTSDEVSSimulatorInterface simulator)
+        public ReportingSensor(final String id, final Lane lane, final Length longitudinalPosition, final TYPE positionType,
+                final OTSDEVSSimulatorInterface simulator) throws NetworkException
         {
-            super(lane, longitudinalPosition, positionType, "REPORT@" + lane.toString(), simulator);
+            super("REPORT@" + lane.toString(), lane, longitudinalPosition, positionType, simulator);
             this.id = id;
             this.simulator = simulator;
         }
 
         /** {@inheritDoc} */
         @Override
-        public void trigger(final LaneBasedGTU gtu) 
+        public void triggerResponse(final LaneBasedGTU gtu)
         {
             try
             {
-                int gtuNumber =
-                    Integer.parseInt(gtu.getId().toString().substring(gtu.getId().toString().indexOf(':') + 1)) - 1;
+                int gtuNumber = Integer.parseInt(gtu.getId().toString().substring(gtu.getId().toString().indexOf(':') + 1)) - 1;
                 double simTimeSec = this.simulator.getSimulatorTime().getTime().doubleValue();
                 if ("LANE23.START".equals(this.id))
                 {
@@ -201,7 +202,7 @@ public class XMLNetworkGeneratorTest implements UNITS
                     {
                         System.out.println("IAT for " + gtu + " is " + (simTimeSec - this.lastSimTimeCheck) + " s");
                         Assert.assertTrue("IAT for " + gtu + " is " + (simTimeSec - this.lastSimTimeCheck) + " s",
-                            simTimeSec - this.lastSimTimeCheck > 1.0);
+                                simTimeSec - this.lastSimTimeCheck > 1.0);
                         this.lastSimTimeCheck = simTimeSec;
                     }
                 }
@@ -253,8 +254,8 @@ public class XMLNetworkGeneratorTest implements UNITS
         @SuppressWarnings("unchecked")
         @Override
         public final void constructModel(
-            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
-            throws SimRuntimeException
+                final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
+                throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
             URL url = URLResource.getResource("/org/opentrafficsim/core/network/factory/gen-overlap-test.xml");
@@ -263,8 +264,8 @@ public class XMLNetworkGeneratorTest implements UNITS
             {
                 this.network = nlp.build(url);
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
-                | GTUException | OTSGeometryException exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
+                    | OTSGeometryException exception)
             {
                 exception.printStackTrace();
             }
@@ -273,7 +274,7 @@ public class XMLNetworkGeneratorTest implements UNITS
         /** {@inheritDoc} */
         @Override
         public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-            
+
         {
             return this.simulator;
         }

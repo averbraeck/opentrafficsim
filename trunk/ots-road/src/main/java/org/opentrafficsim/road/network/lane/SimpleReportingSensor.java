@@ -7,7 +7,9 @@ import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
 /**
@@ -32,16 +34,20 @@ public class SimpleReportingSensor extends AbstractSensor
      * @param position the position of the sensor
      * @param triggerPosition RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the sensor.
-     * @param name the name of the sensor.
+     * @param id the id of the sensor.
      * @param simulator the simulator to enable animation.
+     * @param length Length; The length of the object in the longitudinal direction, on the center line of the lane
+     * @param geometry the geometry of the object, which provides its location and bounds as well
+     * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
-    public SimpleReportingSensor(final Lane lane, final Length position,
-        final RelativePosition.TYPE triggerPosition, final String name, final OTSDEVSSimulatorInterface simulator)
+    public SimpleReportingSensor(final String id, final Lane lane, final Length position,
+        final RelativePosition.TYPE triggerPosition, final OTSDEVSSimulatorInterface simulator, final Length length,
+        final OTSLine3D geometry) throws NetworkException
     {
-        super(lane, position, triggerPosition, name, simulator);
+        super(id, lane, position, triggerPosition, simulator, length, geometry);
         try
         {
-            new SensorAnimation(this, simulator, Color.YELLOW);
+            new SensorAnimation(this, position, simulator, Color.YELLOW);
         }
         catch (RemoteException | NamingException exception)
         {
@@ -51,14 +57,14 @@ public class SimpleReportingSensor extends AbstractSensor
 
     /** {@inheritDoc} */
     @Override
-    public void trigger(final LaneBasedGTU gtu)
+    public final void triggerResponse(final LaneBasedGTU gtu)
     {
-        System.out.println(this + " triggered by FRONT of " + gtu);
+        System.out.println(this + " triggered by " + getPositionType().getName() + " of " + gtu);
     }
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "Sensor [Lane=" + this.getLane() + "]";
     }

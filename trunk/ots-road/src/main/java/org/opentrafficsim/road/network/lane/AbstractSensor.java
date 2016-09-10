@@ -1,15 +1,15 @@
 package org.opentrafficsim.road.network.lane;
 
-import javax.media.j3d.Bounds;
-import javax.vecmath.Point3d;
-
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
-import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -22,64 +22,100 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractSensor extends EventProducer implements Sensor
+public abstract class AbstractSensor extends AbstractLaneBasedObject implements Sensor
 {
     /** */
     private static final long serialVersionUID = 20141231L;
 
-    /** The lane for which this is a sensor. */
-    private final Lane lane;
-
-    /** The position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane. */
-    private final Length longitudinalPosition;
+    /** The id of the sensor. */
+    private final String id;
 
     /** The relative position of the vehicle that triggers the sensor. */
     private final RelativePosition.TYPE positionType;
-
-    /** The name of the sensor. */
-    private final String name;
-
-    /** The cached location for animation. */
-    private DirectedPoint location = null;
-
-    /** The cached bounds for animation. */
-    private Bounds bounds = null;
 
     /** The simulator for being able to generate an animation. */
     private final OTSDEVSSimulatorInterface simulator;
 
     /**
+     * Create a sensor on a lane at a position on that lane.
+     * @param id String; the id of the sensor.
      * @param lane Lane; the lane for which this is a sensor.
      * @param longitudinalPosition Length; the position (between 0.0 and the length of the Lane) of the sensor on the design
      *            line of the lane.
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the sensor.
-     * @param name String; the name of the sensor.
      * @param simulator OTSDEVSSimulatorInterface; the simulator (needed to generate the animation).
+     * @param length Length; The length of the object in the longitudinal direction, on the center line of the lane
+     * @param geometry the geometry of the object, which provides its location and bounds as well
+     * @throws NetworkException when the position on the lane is out of bounds
      */
-    public AbstractSensor(final Lane lane, final Length longitudinalPosition,
-        final RelativePosition.TYPE positionType, final String name, final OTSDEVSSimulatorInterface simulator)
+    public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
+            final RelativePosition.TYPE positionType, final OTSDEVSSimulatorInterface simulator, final Length length,
+            final OTSLine3D geometry) throws NetworkException
     {
-        this.lane = lane;
-        this.longitudinalPosition = longitudinalPosition;
+        super(lane, longitudinalPosition, length, geometry);
+        Throw.when(simulator == null, NullPointerException.class, "simulator is null");
+        Throw.when(positionType == null, NullPointerException.class, "positionType is null");
+        Throw.when(id == null, NullPointerException.class, "id is null");
         this.positionType = positionType;
-        this.name = name;
+        this.id = id;
         this.simulator = simulator;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final Lane getLane()
+    /**
+     * @param id String; the id of the sensor.
+     * @param lane Lane; the lane for which this is a sensor.
+     * @param longitudinalPosition Length; the position (between 0.0 and the length of the Lane) of the sensor on the design
+     *            line of the lane.
+     * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
+     *            the sensor.
+     * @param simulator OTSDEVSSimulatorInterface; the simulator (needed to generate the animation).
+     * @throws NetworkException when the position on the lane is out of bounds
+     */
+    public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
+            final RelativePosition.TYPE positionType, final OTSDEVSSimulatorInterface simulator) throws NetworkException
     {
-        return this.lane;
+        this(id, lane, longitudinalPosition, positionType, simulator, Length.ZERO, makeGeometry(lane, longitudinalPosition));
+    }
+
+    /**
+     * Make a geometry perpendicular to the center line of the lane with a length of 90% of the width of the lane.
+     * @param lane the lane for which to make a perpendicular geometry
+     * @param longitudinalPosition the position on the lane
+     * @return an OTSLine3D that describes the line
+     * @throws NetworkException in case the sensor point on the center line of the lane cannot be found
+     */
+    private static OTSLine3D makeGeometry(final Lane lane, final Length longitudinalPosition) throws NetworkException
+    {
+        try
+        {
+            double w45 = lane.getWidth(longitudinalPosition).si * 0.45;
+            DirectedPoint c = lane.getCenterLine().getLocation(longitudinalPosition);
+            double a = c.getRotZ();
+            OTSPoint3D p1 = new OTSPoint3D(c.x + w45 * Math.cos(a + Math.PI / 2), c.y - w45 * Math.sin(a + Math.PI / 2), c.z);
+            OTSPoint3D p2 = new OTSPoint3D(c.x - w45 * Math.cos(a + Math.PI / 2), c.y + w45 * Math.sin(a + Math.PI / 2), c.z);
+            return new OTSLine3D(p1, p2);
+        }
+        catch (OTSGeometryException exception)
+        {
+            throw new NetworkException(exception);
+        }
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Length getLongitudinalPosition()
+    public final void trigger(final LaneBasedGTU gtu)
     {
-        return this.longitudinalPosition;
+        fireTimedEvent(Sensor.SENSOR_TRIGGER_EVENT, new Object[] { this.id, this, gtu, this.positionType },
+                getSimulator().getSimulatorTime());
+        triggerResponse(gtu);
     }
+
+    /**
+     * Implementation of the response to a trigger of this sensor by a GTU.
+     * @param gtu LaneBasedGTU; the lane based GTU that triggered this sensor.
+     */
+    protected abstract void triggerResponse(final LaneBasedGTU gtu);
 
     /** {@inheritDoc} */
     @Override
@@ -90,42 +126,9 @@ public abstract class AbstractSensor extends EventProducer implements Sensor
 
     /** {@inheritDoc} */
     @Override
-    public final DirectedPoint getLocation()
+    public final String getId()
     {
-        if (this.location == null)
-        {
-            try
-            {
-                this.location = this.lane.getCenterLine().getLocationSI(this.longitudinalPosition.si);
-                this.location.z = this.lane.getLocation().z + 0.01;
-            }
-            catch (OTSGeometryException exception)
-            {
-                exception.printStackTrace();
-                return null;
-            }
-        }
-        return this.location;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final Bounds getBounds()
-    {
-        if (this.bounds == null)
-        {
-            this.bounds =
-                new BoundingBox(new Point3d(-0.4, -this.lane.getWidth(0.0).getSI() * 0.4, 0.0), new Point3d(0.4,
-                    this.lane.getWidth(0.0).getSI() * 0.4, this.lane.getLocation().z + 0.01));
-        }
-        return this.bounds;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String getName()
-    {
-        return this.name;
+        return this.id;
     }
 
     /** {@inheritDoc} */
@@ -142,16 +145,16 @@ public abstract class AbstractSensor extends EventProducer implements Sensor
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.lane == null) ? 0 : this.lane.hashCode());
+        result = prime * result + ((getLane() == null) ? 0 : getLane().hashCode());
         long temp;
-        temp = Double.doubleToLongBits(this.longitudinalPosition.si);
+        temp = Double.doubleToLongBits(getLongitudinalPosition().si);
         result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + ((this.positionType == null) ? 0 : this.positionType.hashCode());
         return result;
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
+    @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:designforextension" })
     @Override
     public boolean equals(final Object obj)
     {
@@ -162,15 +165,15 @@ public abstract class AbstractSensor extends EventProducer implements Sensor
         if (getClass() != obj.getClass())
             return false;
         AbstractSensor other = (AbstractSensor) obj;
-        if (this.lane == null)
+        if (this.getLane() == null)
         {
-            if (other.lane != null)
+            if (other.getLane() != null)
                 return false;
         }
-        else if (!this.lane.equals(other.lane))
+        else if (!this.getLane().equals(other.getLane()))
             return false;
-        if (Double.doubleToLongBits(this.longitudinalPosition.si) != Double
-            .doubleToLongBits(other.longitudinalPosition.si))
+        if (Double.doubleToLongBits(this.getLongitudinalPosition().si) != Double
+                .doubleToLongBits(other.getLongitudinalPosition().si))
             return false;
         if (this.positionType == null)
         {
@@ -187,13 +190,13 @@ public abstract class AbstractSensor extends EventProducer implements Sensor
     @Override
     public int compareTo(final Sensor o)
     {
-        if (this.lane != o.getLane())
+        if (this.getLane() != o.getLane())
         {
-            return this.lane.hashCode() < o.getLane().hashCode() ? -1 : 1;
+            return this.getLane().hashCode() < o.getLane().hashCode() ? -1 : 1;
         }
-        if (this.longitudinalPosition.si != o.getLongitudinalPosition().si)
+        if (this.getLongitudinalPosition().si != o.getLongitudinalPosition().si)
         {
-            return this.longitudinalPosition.si < o.getLongitudinalPosition().si ? -1 : 1;
+            return this.getLongitudinalPosition().si < o.getLongitudinalPosition().si ? -1 : 1;
         }
         if (!this.positionType.equals(o.getPositionType()))
         {

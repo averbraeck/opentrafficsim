@@ -1,5 +1,8 @@
 package org.opentrafficsim.core.object;
 
+import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.geometry.OTSLine3D;
+
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
 /**
@@ -15,5 +18,9 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  */
 public interface ObjectInterface extends Locatable
 {
-    // nothing for now
+    /** @return the outline geometry of the object. */
+    OTSLine3D getGeometry();
+    
+    /** @return the height of the object (can be Length.ZERO). */
+    Length getHeight();
 }

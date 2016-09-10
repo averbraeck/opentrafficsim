@@ -7,6 +7,7 @@ import javax.naming.NamingException;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
 /**
@@ -30,10 +31,11 @@ public class SinkSensor extends AbstractSensor
      * @param lane the lane that triggers the deletion of the GTU.
      * @param position the position of the sensor
      * @param simulator the simulator to enable animation.
+     * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
-    public SinkSensor(final Lane lane, final Length position, final OTSDEVSSimulatorInterface simulator)
+    public SinkSensor(final Lane lane, final Length position, final OTSDEVSSimulatorInterface simulator) throws NetworkException
     {
-        super(lane, position, RelativePosition.FRONT, "SINK@" + lane.toString(), simulator);
+        super("SINK@" + lane.toString(), lane, position, RelativePosition.FRONT, simulator);
         try
         {
             new SinkAnimation(this, simulator);
@@ -46,14 +48,14 @@ public class SinkSensor extends AbstractSensor
 
     /** {@inheritDoc} */
     @Override
-    public void trigger(final LaneBasedGTU gtu)
+    public final void triggerResponse(final LaneBasedGTU gtu)
     {
         gtu.destroy();
     }
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "SinkSensor [Lane=" + this.getLane() + "]";
     }

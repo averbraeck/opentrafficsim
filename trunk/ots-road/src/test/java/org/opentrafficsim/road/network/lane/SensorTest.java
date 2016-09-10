@@ -26,6 +26,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.DefaultTestParameters;
@@ -168,16 +169,17 @@ class TriggerSensor extends AbstractSensor
      * @param positionType
      * @param name
      * @param simulator
+     * @throws NetworkException 
      */
     public TriggerSensor(final Lane lane, final Length longitudinalPosition, final RelativePosition.TYPE positionType,
-            final String name, OTSDEVSSimulatorInterface simulator)
+            final String name, OTSDEVSSimulatorInterface simulator) throws NetworkException
     {
-        super(lane, longitudinalPosition, positionType, name, simulator);
+        super(name, lane, longitudinalPosition, positionType, simulator);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void trigger(final LaneBasedGTU gtu)
+    public void triggerResponse(final LaneBasedGTU gtu)
     {
         // TODO check that the sensor is triggered at the right time.
     }
