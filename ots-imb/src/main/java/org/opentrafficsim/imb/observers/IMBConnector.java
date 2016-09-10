@@ -1,6 +1,7 @@
 package org.opentrafficsim.imb.observers;
 
 import org.opentrafficsim.core.Throw;
+import org.opentrafficsim.imb.IMBException;
 
 import nl.tno.imb.TByteBuffer;
 import nl.tno.imb.TConnection;

@@ -82,7 +82,7 @@ public abstract class AbstractWrappableIMBAnimation extends AbstractWrappableAni
             try
             {
                 simulator.setIMBTransmitter(new OTSIMBConnector(imbSettings));
-                new SimulatorConnector(simulator);
+                // TODO new SimulatorTransceiver(simulator);
             }
             catch (Exception exception)
             {
