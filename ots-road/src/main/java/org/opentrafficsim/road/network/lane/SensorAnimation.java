@@ -11,6 +11,7 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 
 /**
@@ -39,16 +40,17 @@ public class SensorAnimation extends Renderable2D implements Serializable
     /**
      * Construct the DefaultCarAnimation for a LaneBlock (road block).
      * @param source the Car to draw
+     * @param sensorPosition the position of the sensor on the lane to deterine the width of the lane at that point
      * @param simulator the simulator to schedule on
      * @param color the display color of the sensor
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public SensorAnimation(final Sensor source, final OTSSimulatorInterface simulator, final Color color)
-        throws NamingException, RemoteException
+    public SensorAnimation(final Sensor source, final Length sensorPosition, final OTSSimulatorInterface simulator,
+            final Color color) throws NamingException, RemoteException
     {
         super(source, simulator);
-        this.halfWidth = 0.4 * source.getLane().getWidth(0.0).getSI();
+        this.halfWidth = 0.45 * source.getLane().getWidth(sensorPosition).getSI();
         this.color = color;
     }
 

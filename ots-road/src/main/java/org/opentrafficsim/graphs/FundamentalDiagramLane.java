@@ -575,15 +575,16 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
 
         /**
          * @param lane the lane for which to build the flowSensor
+         * @throws NetworkException 
          */
-        public FlowSensor(final Lane lane)
+        public FlowSensor(final Lane lane) throws NetworkException
         {
-            super(lane, lane.getLength().divideBy(2.0), RelativePosition.FRONT, "FLOW", null);
+            super("FLOW", lane, lane.getLength().divideBy(2.0), RelativePosition.FRONT, null);
         }
 
         /** {@inheritDoc} */
         @Override
-        public void trigger(final LaneBasedGTU gtu)
+        public void triggerResponse(final LaneBasedGTU gtu)
         {
             FundamentalDiagramLane.this.flow += 1;
         }

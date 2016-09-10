@@ -111,14 +111,14 @@ public class XMLNetworkSensorTest implements UNITS
                 assertNotNull(lane23);
 
                 // add the sensors
-                lane12.addSensor(new ReportingSensor(lane12, new Length(lane12.getLength().getSI() - 1E-4,
-                    LengthUnit.SI), RelativePosition.FRONT, "12.E.F", simulator), GTUType.ALL);
-                lane12.addSensor(new ReportingSensor(lane12, new Length(lane12.getLength().getSI() - 1E-4,
-                    LengthUnit.SI), RelativePosition.REAR, "12.E.R", simulator), GTUType.ALL);
-                lane23.addSensor(new ReportingSensor(lane23, new Length(Math.ulp(0.0), LengthUnit.SI),
-                    RelativePosition.FRONT, "23.B.F", simulator), GTUType.ALL);
-                lane23.addSensor(new ReportingSensor(lane23, new Length(Math.ulp(0.0), LengthUnit.SI),
-                    RelativePosition.REAR, "23.B.R", simulator), GTUType.ALL);
+                lane12.addSensor(new ReportingSensor("12.E.F", lane12, new Length(lane12.getLength().getSI() - 1E-4,
+                    LengthUnit.SI), RelativePosition.FRONT, simulator), GTUType.ALL);
+                lane12.addSensor(new ReportingSensor("12.E.R", lane12, new Length(lane12.getLength().getSI() - 1E-4,
+                    LengthUnit.SI), RelativePosition.REAR, simulator), GTUType.ALL);
+                lane23.addSensor(new ReportingSensor("23.B.F", lane23, new Length(Math.ulp(0.0), LengthUnit.SI),
+                    RelativePosition.FRONT, simulator), GTUType.ALL);
+                lane23.addSensor(new ReportingSensor("23.B.R", lane23, new Length(Math.ulp(0.0), LengthUnit.SI),
+                    RelativePosition.REAR, simulator), GTUType.ALL);
 
                 simulator.setSpeedFactor(speedFactor);
                 simulator.start();
@@ -181,18 +181,19 @@ public class XMLNetworkSensorTest implements UNITS
          * @param positionType the type of trigger (REAR, FRONT, etc.)
          * @param id the sensor id
          * @param simulator the simulator
+         * @throws NetworkException 
          */
-        public ReportingSensor(final Lane lane, final Length longitudinalPosition, final TYPE positionType,
-            final String id, final OTSDEVSSimulatorInterface simulator)
+        public ReportingSensor(final String id, final Lane lane, final Length longitudinalPosition, final TYPE positionType,
+            final OTSDEVSSimulatorInterface simulator) throws NetworkException
         {
-            super(lane, longitudinalPosition, positionType, "REPORT@" + lane.toString(), simulator);
+            super("REPORT@" + lane.toString(), lane, longitudinalPosition, positionType, simulator);
             this.id = id;
             this.simulator = simulator;
         }
 
         /** {@inheritDoc} */
         @Override
-        public void trigger(final LaneBasedGTU gtu)
+        protected void triggerResponse(final LaneBasedGTU gtu)
         {
             try
             {

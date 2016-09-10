@@ -5,13 +5,15 @@ import java.rmi.RemoteException;
 
 import javax.media.j3d.Bounds;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 
+import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 /**
- * A static object that a GTU might have to avoid, or which can cause occlusion for perception.
+ * A static object with a height that a GTU might have to avoid, or which can cause occlusion for perception. All objects are
+ * potential event producers, which allows them to signal that their state has changed.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -21,7 +23,7 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class StaticObject implements ObjectInterface, Serializable
+public class StaticObject extends EventProducer implements ObjectInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20160400L;
@@ -44,16 +46,22 @@ public class StaticObject implements ObjectInterface, Serializable
     }
 
     /**
-     * @return geometry
+     * @param geometry the top-level 2D outline of the object
      */
+    public StaticObject(final OTSLine3D geometry)
+    {
+        this(geometry, Length.ZERO);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public final OTSLine3D getGeometry()
     {
         return this.geometry;
     }
 
-    /**
-     * @return height
-     */
+    /** {@inheritDoc} */
+    @Override
     public final Length getHeight()
     {
         return this.height;
@@ -75,9 +83,10 @@ public class StaticObject implements ObjectInterface, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final String toString()
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
     {
-        return "StaticObject [geometry=" + this.geometry + ", height=" + this.height + "]";
+        return "StaticObject3D [geometry=" + getGeometry() + ", height=" + this.height + "]";
     }
 
 }

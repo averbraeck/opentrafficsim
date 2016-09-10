@@ -2,16 +2,15 @@ package org.opentrafficsim.road.network.lane;
 
 import java.io.Serializable;
 
-import javax.media.j3d.Bounds;
-
-import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
+import nl.tudelft.simulation.event.EventType;
 
 /**
+ * A sensor is a lane-based object that can be triggered by a relative position of the GTU (e.g., front, back) when that
+ * relative position passes over the sensor location on the lane.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -33,19 +32,16 @@ public interface Sensor extends Serializable, Comparable<Sensor>, LaneBasedObjec
      */
     void trigger(LaneBasedGTU gtu);
 
-    /** @return The name of the sensor. */
-    String getName();
+    /** @return The id of the sensor. */
+    String getId();
 
     /** @return The simulator. */
     OTSDEVSSimulatorInterface getSimulator();
-    
-    /** {@inheritDoc} */
-    @Override
-    DirectedPoint getLocation();
 
-    /** {@inheritDoc} */
-    @Override
-    Bounds getBounds();
-
+    /**
+     * The <b>timed</b> event type for pub/sub indicating the triggering of a Sensor on a lane. <br>
+     * Payload: Object[] {String sensorId, Sensor sensor, LaneBasedGTU gtu, RelativePosition.TYPE relativePosition}
+     */
+    EventType SENSOR_TRIGGER_EVENT = new EventType("SENSOR.TRIGGER");
 
 }
