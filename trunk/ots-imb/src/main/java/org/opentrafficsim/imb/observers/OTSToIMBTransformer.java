@@ -1,8 +1,9 @@
-package org.opentrafficsim.imb.simulators;
+package org.opentrafficsim.imb.observers;
 
-import org.opentrafficsim.imb.observers.AbstractConnector;
+import nl.tudelft.simulation.event.EventInterface;
 
 /**
+ * Convert an OTS/DSOL event received to an equivalent event for IMB.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -13,7 +14,13 @@ import org.opentrafficsim.imb.observers.AbstractConnector;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class SimulatorConnector extends AbstractConnector
+public interface OTSToIMBTransformer
 {
+    /**
+     * Transform an IMB payload to an OTS (DSOL) event.
+     * @param event EventInterface; the OTS (DSOL) event
+     * @return Object[]; the IMB payload
+     */
+    Object[] transform(EventInterface event);
     
 }
