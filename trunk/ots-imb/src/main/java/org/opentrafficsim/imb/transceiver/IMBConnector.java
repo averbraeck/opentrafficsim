@@ -91,10 +91,6 @@ public class IMBConnector implements Connector
                     // TODO error handling
                     exception.printStackTrace();
                 }
-
-                // double datetime = aPayload.readDouble();
-                // final String name = aPayload.readString();
-                // final String message = aPayload.readString();
             }
         };
 
