@@ -1,6 +1,6 @@
 package org.opentrafficsim.imb.simulators;
 
-import org.opentrafficsim.imb.observers.OTSIMBConnector;
+import org.opentrafficsim.imb.transceiver.OTSIMBConnector;
 
 /**
  * Ability to set, get an IMBTransmitter.

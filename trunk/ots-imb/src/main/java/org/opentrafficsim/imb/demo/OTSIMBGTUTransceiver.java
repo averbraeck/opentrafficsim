@@ -8,8 +8,8 @@ import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.imb.observers.Connector;
-import org.opentrafficsim.imb.observers.IMBConnector;
+import org.opentrafficsim.imb.transceiver.Connector;
+import org.opentrafficsim.imb.transceiver.IMBConnector;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
 import org.opentrafficsim.simulationengine.properties.IntegerProperty;

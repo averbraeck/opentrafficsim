@@ -7,7 +7,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.imb.observers.OTSIMBConnector;
+import org.opentrafficsim.imb.transceiver.OTSIMBConnector;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
 
