@@ -1,5 +1,7 @@
 package org.opentrafficsim.imb.observers;
 
+import org.opentrafficsim.imb.IMBException;
+
 import nl.tno.imb.TEventEntry;
 
 /**
@@ -21,10 +23,19 @@ public interface Connector
      * @param imbEventType IMBEventType; one of NEW, CHANGE, or DELETE
      * @param args Object[]; the objects to send
      * @return boolean; true on success, false on failure
-     * @throws Exception when the event name is not a registered publication
+     * @throws IMBException when the event name is not a registered publication
      */
-    boolean postMessage(String IMBEventName, IMBEventType imbEventType, Object[] args) throws Exception;
+    boolean postIMBMessage(String IMBEventName, IMBEventType imbEventType, Object[] args) throws IMBException;
 
+    /**
+     * Register the transceiver as the interested party when an IMB message identified by the imbEventName is received. When an IMB messsage
+     * with that imbEventName is received, the postOTSMessage method on the transceiver is called.
+     * @param imbEventName 
+     * @param transceiver 
+     * @throws IMBException 
+     */
+    void register(String imbEventName, Transceiver transceiver) throws IMBException;
+    
     /**
      * Enum for IMB event types.
      * <p>

@@ -1,5 +1,8 @@
 package org.opentrafficsim.imb.observers;
 
+import org.opentrafficsim.imb.IMBException;
+
+import nl.tno.imb.TByteBuffer;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.event.EventProducerInterface;
 
@@ -18,9 +21,23 @@ import nl.tudelft.simulation.event.EventProducerInterface;
 public interface Transceiver extends EventListenerInterface, EventProducerInterface
 {
     /**
+     * Retrieve the id for the Transceiver channel, e.g. "GTU" or "Simulator Control".
+     * @return String; the id for the Transceiver channel, e.g. "GTU" or "Simulator Control".
+     */
+    String getId();
+
+    /**
      * Retrieve the IMB connector.
-     * @return Connector
+     * @return Connector the IMB connector.
      */
     Connector getConnector();
+    
+    /**
+     * Handle an IMB message sent to OTS.
+     * @param imbEventName String; the IMB event name of the message that was received from IMB 
+     * @param imbPayload TByteBuffer; the packed IMB message payload
+     * @throws IMBException in case the IMB event cannot be handled by this Transceiver
+     */
+    void handleMessageFromIMB(String imbEventName, TByteBuffer imbPayload) throws IMBException;
     
 }
