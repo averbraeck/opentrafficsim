@@ -15,9 +15,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -35,7 +32,6 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.imb.simulators.AbstractWrappableIMBAnimation;
 import org.opentrafficsim.road.network.factory.osm.OSMLink;
 import org.opentrafficsim.road.network.factory.osm.OSMNetwork;
 import org.opentrafficsim.road.network.factory.osm.OSMNode;
@@ -48,12 +44,16 @@ import org.opentrafficsim.road.network.factory.osm.events.WarningListenerImpl;
 import org.opentrafficsim.road.network.factory.osm.input.ReadOSMFile;
 import org.opentrafficsim.road.network.factory.osm.output.Convert;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.IDMPropertySet;
 import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
 import org.opentrafficsim.simulationengine.properties.SelectionProperty;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -65,7 +65,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author Moritz Bergmann
  */
-public class OpenStreetMap extends AbstractWrappableIMBAnimation implements UNITS
+public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -266,14 +266,14 @@ public class OpenStreetMap extends AbstractWrappableIMBAnimation implements UNIT
 
     /** {@inheritDoc} */
     @Override
-    protected JPanel makeCharts(SimpleSimulatorInterface simulator)
+    protected final JPanel makeCharts(final SimpleSimulatorInterface simulator)
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected java.awt.geom.Rectangle2D.Double makeAnimationRectangle()
+    protected final java.awt.geom.Rectangle2D.Double makeAnimationRectangle()
     {
         return new Rectangle2D.Double(this.rectangle.getX(), this.rectangle.getY(), this.rectangle.getWidth(),
             this.rectangle.getHeight());
