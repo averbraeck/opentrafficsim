@@ -3,7 +3,7 @@ package org.opentrafficsim.imb.simulators;
 import org.opentrafficsim.imb.transceiver.OTSIMBConnector;
 
 /**
- * Ability to set, get an IMBTransmitter.
+ * Ability to set, get an IMBConnector.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -14,18 +14,18 @@ import org.opentrafficsim.imb.transceiver.OTSIMBConnector;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface IMBTransmitterInterface
+public interface IMBConnectability
 {
     /**
-     * Retrieve the IMB transmitter.
-     * @return IMBTransmitter (or null if no IMBTransmitter is registered)
+     * Retrieve the IMB connector.
+     * @return IMBConnector (or null if no IMBConnector is registered)
      */
-    OTSIMBConnector getIMBTransmitter();
+    OTSIMBConnector getIMBConnector();
     
     /**
-     * Set (or update/replace) the IMB transmitter.
-     * @param newIMBTransmitter IMBTransmitter (or null to unregister a currently registered IMB transmitter)
+     * Set (or update/replace) the IMB connector.
+     * @param newIMBConnector IMBConnector (or null to unregister a currently registered IMB connector)
      */
-    void setIMBTransmitter(OTSIMBConnector newIMBTransmitter);
+    void setIMBConnector(OTSIMBConnector newIMBConnector);
 
 }

@@ -1,13 +1,7 @@
 package org.opentrafficsim.imb.transceiver;
 
-import java.rmi.RemoteException;
-
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.Throw;
+import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
 import org.opentrafficsim.simulationengine.properties.IntegerProperty;
@@ -25,49 +19,46 @@ import org.opentrafficsim.simulationengine.properties.StringProperty;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class OTSIMBConnector implements EventListenerInterface
+public class OTSIMBConnector extends IMBConnector
 {
-    /** Observer for gtu move events. */
-    private Connector connector = null;
-
     /** Key for compound property with IMB settings. */
     public static String PROPERTY_KEY = "IMBProperties";
 
     /**
-     * Create a new IMBTransmitter expecting IMB hub on localhost port 4000.
-     * @throws Exception when a connection to the IMB hub could not be established
-     */
-    public OTSIMBConnector() throws Exception
-    {
-        this("localhost" /* "app-usimb01.westeurope.cloudapp.azure.com" */
-        /* "vps17642.public.cloudvps.com" *//* "localhost" */, 4000, "GTUObserver", 1, "OTS_RT");
-        // this.observer = new IMBObserver("localhost" /* "app-usimb01.westeurope.cloudapp.azure.com" */
-        // /* "vps17642.public.cloudvps.com" */ /* "localhost" */, 4000, "GTUObserver", 1, "OTS_RT");
-        // System.out.println("Observer is " + this.observer);
-    }
-
-    /**
-     * Create a new IMBTransmitter.
-     * @param hubHost String; the host that runs the IMB hub server
-     * @param hubPort int; the port number on the IMB hub host
+     * Create a new OTSIMBConnector by specifying all the details.
+     * @param host String; the host that runs the IMB hub server
+     * @param port int; the port number on the IMB hub host
      * @param modelName String; the name used to register on the hub host
      * @param modelId integer; usually 1
      * @param federation string; usually "OTS_RT"
-     * @throws Exception when a connection to the IMB hub could not be established
+     * @throws IMBException when a connection to the IMB hub could not be established
      */
-    public OTSIMBConnector(final String hubHost, final int hubPort, final String modelName, final int modelId,
-            final String federation) throws Exception
+    public OTSIMBConnector(final String host, final int port, final String modelName, final int modelId,
+            final String federation) throws IMBException
     {
-        this.connector = new IMBConnector(hubHost, hubPort, modelName, modelId, federation);
+        super(host, port, modelName, modelId, federation);
     }
 
     /**
-     * Construct a new IMBTransmitter from a CompoundProperty (preferably constructed with the
+     * Create a new OTSIMBConnector expecting the IMB hub on localhost port 4000.
+     * @param modelName String; the name used to register on the hub host
+     * @return OTSIMBConnector; a new OTSIMBConnector expecting the IMB hub on localhost port 4000.
+     * @throws IMBException when a connection to the IMB hub could not be established
+     */
+    public static OTSIMBConnector create(final String modelName) throws IMBException
+    {
+        return new OTSIMBConnector("localhost", 4000, modelName, 1, "OTS_RT");
+    }
+
+    /**
+     * Construct a new OTSIMBConnector from a CompoundProperty (preferably constructed with the
      * <cite>standardIMBProperties</cite> method of this class.
      * @param compoundProperty CompoundProperty; the compound property with the settings
-     * @throws Exception when a connection to the IMB hub could not be established
+     * @param modelName String; the name used to register on the hub host
+     * @return OTSIMBConnector; a new OTSIMBConnector expecting the IMB hub on localhost port 4000.
+     * @throws IMBException when a connection to the IMB hub could not be established
      */
-    public OTSIMBConnector(final CompoundProperty compoundProperty) throws Exception
+    public static OTSIMBConnector create(final CompoundProperty compoundProperty, final String modelName) throws IMBException
     {
         String host = null;
         int port = -1;
@@ -98,18 +89,15 @@ public class OTSIMBConnector implements EventListenerInterface
                     System.err.println("Ignoring property " + ap);
             }
         }
-        if (null == host)
-        {
-            return;
-        }
+        Throw.when(host == null, IMBException.class, "host could not be resolved");
         System.out.println("Connecting to " + host + ":" + port);
-        this.connector = new IMBConnector(host, port, "GTUObserver", modelId, federation);
+        return new OTSIMBConnector(host, port, modelName, modelId, federation);
     }
 
     /**
-     * Create a CompoundProperty with the settings for an IMB transmitter.
+     * Create a CompoundProperty with the settings for an IMB connection.
      * @param displayPriority int; the displayPriority of the created CompoundProperty
-     * @return CompoundProperty
+     * @return CompoundProperty the default settings
      */
     public static CompoundProperty standardIMBProperties(final int displayPriority)
     {
@@ -128,66 +116,5 @@ public class OTSIMBConnector implements EventListenerInterface
             exception.printStackTrace();
         }
         return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void notify(final EventInterface event) throws RemoteException
-    {
-        if (this.connector == null)
-        {
-            return;
-        }
-
-        if (event.getType().equals(GTU.MOVE_EVENT))
-        {
-            Object[] moveInfo = (Object[]) event.getContent();
-            DirectedPoint location = (DirectedPoint) moveInfo[1];
-            try
-            {
-                this.connector.postIMBMessage("GTU", Connector.CHANGE, new Object[] { moveInfo[0].toString(), location.x,
-                        location.y, location.z, location.getRotZ() });
-            }
-            catch (Exception exception)
-            {
-                exception.printStackTrace();
-            }
-        }
-        else if (event.getType().equals(GTU.DESTROY_EVENT))
-        {
-            Object[] destroyInfo = (Object[]) event.getContent();
-            DirectedPoint location = (DirectedPoint) destroyInfo[1];
-            try
-            {
-                this.connector.postIMBMessage("GTU", Connector.DELETE, new Object[] { destroyInfo[0].toString(), location.x,
-                        location.y, location.z, location.getRotZ() });
-            }
-            catch (Exception exception)
-            {
-                exception.printStackTrace();
-            }
-        }
-        else if (event.getType().equals(SimulatorInterface.START_EVENT))
-        {
-            try
-            {
-                this.connector.postIMBMessage("SIM_Start", Connector.CHANGE, new Object[] {});
-            }
-            catch (Exception exception)
-            {
-                exception.printStackTrace();
-            }
-        }
-        else if (event.getType().equals(SimulatorInterface.STOP_EVENT))
-        {
-            try
-            {
-                this.connector.postIMBMessage("SIM_Stop", Connector.CHANGE, new Object[] {});
-            }
-            catch (Exception exception)
-            {
-                exception.printStackTrace();
-            }
-        }
     }
 }

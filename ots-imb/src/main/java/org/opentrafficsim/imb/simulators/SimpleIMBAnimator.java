@@ -12,7 +12,7 @@ import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
 
 /**
- * SimpleAnimator plus IMB transmitter.
+ * SimpleAnimator plus IMB connector.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -22,14 +22,13 @@ import org.opentrafficsim.simulationengine.properties.PropertyException;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class SimpleIMBAnimator extends SimpleAnimator implements IMBTransmitterInterface
+public class SimpleIMBAnimator extends SimpleAnimator implements IMBConnectability
 {
-
     /** */
     private static final long serialVersionUID = 20160902L;
 
     /** The currently registered IMB transmitter. */
-    private OTSIMBConnector imbTransmitter = null;
+    private OTSIMBConnector imbConnector = null;
 
     /**
      * @param startTime
@@ -48,16 +47,16 @@ public class SimpleIMBAnimator extends SimpleAnimator implements IMBTransmitterI
 
     /** {@inheritDoc} */
     @Override
-    public final OTSIMBConnector getIMBTransmitter()
+    public final OTSIMBConnector getIMBConnector()
     {
-        return this.imbTransmitter;
+        return this.imbConnector;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void setIMBTransmitter(final OTSIMBConnector newIMBTransmitter)
+    public final void setIMBConnector(final OTSIMBConnector newIMBConnector)
     {
-        this.imbTransmitter = newIMBTransmitter;
+        this.imbConnector = newIMBConnector;
     }
 
 }
