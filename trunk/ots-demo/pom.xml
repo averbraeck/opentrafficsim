@@ -21,10 +21,6 @@
       <artifactId>ots-parser-osm</artifactId>
     </dependency>
     <dependency>
-      <groupId>opentrafficsim</groupId>
-      <artifactId>ots-imb</artifactId>
-    </dependency>
-    <dependency>
       <groupId>dsol</groupId>
       <artifactId>dsol-swing</artifactId>
     </dependency>
