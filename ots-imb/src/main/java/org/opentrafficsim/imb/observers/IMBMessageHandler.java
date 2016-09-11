@@ -1,9 +1,11 @@
 package org.opentrafficsim.imb.observers;
 
+import org.opentrafficsim.imb.IMBException;
+
 import nl.tno.imb.TByteBuffer;
 
 /**
- * Convert an event received over IMB to an equivalent event for OTS (DSOL).
+ * Handle a message received over IMB for OTS.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -14,13 +16,18 @@ import nl.tno.imb.TByteBuffer;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface IMBToOTSTransformer
+public interface IMBMessageHandler
 {
     /**
-     * Transform an IMB payload to a combination of an OTS (DSOL) event content and an identified listener.
+     * Handle an IMB payload for OTS. 
      * @param imbPayload TByteBuffer; the IMB payload
-     * @return IMBTransformResult; a combination of an OTS (DSOL) event content and an identified listener
+     * @throws IMBException in case the message cannot be handled
      */
-    IMBTransformResult transform(TByteBuffer imbPayload);
+    void handle(TByteBuffer imbPayload) throws IMBException;
     
+    /**
+     * Return the IMB event name for which this hander is registered.
+     * @return the IMB event name for which this hander is registered.
+     */
+    String getIMBEventName();
 }

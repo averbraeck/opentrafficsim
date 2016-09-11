@@ -1,5 +1,8 @@
 package org.opentrafficsim.imb.observers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.imb.IMBException;
 
@@ -8,6 +11,7 @@ import nl.tno.imb.TConnection;
 import nl.tno.imb.TEventEntry;
 
 /**
+ * Make a connection to the IMB bus, allow messages to be posted, and register callbacks from IMB to OTS.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -22,8 +26,11 @@ public class IMBConnector implements Connector
     /** Communication link to the observers. */
     private final TConnection connection;
 
+    /** Registration of callback ids from IMB to OTS. */
+    protected Map<String, Transceiver> imbTransceiverMap = new HashMap<>();
+
     /**
-     * Construct a new connection for sending events to IMB.
+     * Construct a new connection for sending events to IMB
      * @param host String; name of the IMB hub
      * @param port int; port number of the IMB hub
      * @param modelName String; local model name
@@ -34,42 +41,99 @@ public class IMBConnector implements Connector
     public IMBConnector(final String host, final int port, final String modelName, final int modelId, final String federation)
             throws IMBException
     {
+        Throw.whenNull(host, "host cannot be null");
+        Throw.whenNull(modelName, "modelName cannot be null");
+        Throw.whenNull(modelId, "modelId cannot be null");
+        Throw.whenNull(federation, "federation cannot be null");
+        Throw.when(port <= 0 || port > 65535, IMBException.class, "port should be beween 1 and 65535");
+
         this.connection = new TConnection(host, port, modelName, modelId, federation);
         Throw.when(!this.connection.isConnected(), IMBException.class, "No connection to broker");
     }
 
-    /**
-     * {@inheritDoc}
-     * @throws Exception
-     */
+    /** {@inheritDoc} */
     @Override
-    public final boolean postMessage(final String eventName, final IMBEventType imbEventType, final Object[] args)
-            throws Exception
+    public void register(final String imbEventName, final Transceiver transceiver) throws IMBException
+    {
+        Throw.whenNull(imbEventName, "imbEventName cannot be null");
+        Throw.whenNull(transceiver, "transceiver cannot be null");
+
+        // Already registered?
+        if (this.imbTransceiverMap.containsKey(imbEventName))
+        {
+            Throw.when(!this.imbTransceiverMap.get(imbEventName).equals(transceiver), IMBException.class,
+                    "Cannot switch transceiver for imbEventName " + imbEventName);
+            return;
+        }
+        this.imbTransceiverMap.put(imbEventName, transceiver);
+
+        // Link to the listening thread for incoming IMB messages.
+        TEventEntry messageEvent = this.connection.subscribe(imbEventName);
+        messageEvent.onNormalEvent = new TEventEntry.TOnNormalEvent()
+        {
+            @Override
+            public void dispatch(TEventEntry aEvent, TByteBuffer aPayload)
+            {
+                System.out.println(aEvent.getEventName() + " -> " + aPayload);
+
+                if (!IMBConnector.this.imbTransceiverMap.containsKey(aEvent.getEventName()))
+                {
+                    // TODO error handling
+                    System.err.println("Could not find imbEventName " + aEvent.getEventName() + " in imbTransceiverMap");
+                }
+                try
+                {
+                    IMBConnector.this.imbTransceiverMap.get(aEvent.getEventName()).handleMessageFromIMB(aEvent.getEventName(),
+                            aPayload);
+                }
+                catch (IMBException exception)
+                {
+                    // TODO error handling
+                    exception.printStackTrace();
+                }
+
+                // double datetime = aPayload.readDouble();
+                // final String name = aPayload.readString();
+                // final String message = aPayload.readString();
+            }
+        };
+
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean postIMBMessage(final String eventName, final IMBEventType imbEventType, final Object[] args)
+            throws IMBException
     {
         TByteBuffer payload = new TByteBuffer();
         payload.writeStart(0);
         payload.write(imbEventType.getEventEntry());
         for (Object o : args)
         {
-            String typeName = o.getClass().getName();
-            switch (typeName)
-            {
-                case "java.lang.String":
-                    payload.write((String) o);
-                    break;
-
-                case "java.lang.Double":
-                    payload.write((Double) o);
-                    break;
-
-                default:
-                    throw new ClassCastException("cannot pack object of type " + typeName + " in payload");
-            }
+            Class<?> objectClass = o.getClass();
+            if (objectClass.equals(String.class))
+                payload.write((String) o);
+            else if (objectClass.equals(Double.class))
+                payload.write(((Double) o).doubleValue());
+            else if (objectClass.equals(Float.class))
+                payload.write(((Float) o).floatValue());
+            else if (objectClass.equals(Integer.class))
+                payload.write(((Integer) o).intValue());
+            else if (objectClass.equals(Long.class))
+                payload.write(((Long) o).longValue());
+            else if (objectClass.equals(Byte.class))
+                payload.write(((Byte) o).byteValue());
+            else if (objectClass.equals(Character.class))
+                payload.write(((Character) o).charValue());
+            else if (objectClass.equals(Boolean.class))
+                payload.write(((Boolean) o).booleanValue());
+            else
+                throw new IMBException("cannot pack object of type " + objectClass.toString() + " in payload");
         }
         int result = this.connection.signalEvent(eventName, TEventEntry.EK_NORMAL_EVENT, payload);
         if (result < 0)
         {
-            System.err.println("IMB error in signalEvent code " + result);
+            throw new IMBException("IMB error in signalEvent code " + result);
         }
         return result >= 0;
     }
@@ -78,7 +142,7 @@ public class IMBConnector implements Connector
     @Override
     public final String toString()
     {
-        return "IMBObserver [connection=" + this.connection + "]";
+        return "IMBConnector [connection=" + this.connection + "]";
     }
 
 }

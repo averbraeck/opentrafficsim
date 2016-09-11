@@ -8,6 +8,8 @@ import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.imb.observers.Connector;
+import org.opentrafficsim.imb.observers.IMBConnector;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
 import org.opentrafficsim.simulationengine.properties.IntegerProperty;
@@ -145,7 +147,7 @@ public class OTSIMBGTUTransceiver implements EventListenerInterface
             DirectedPoint location = (DirectedPoint) moveInfo[1];
             try
             {
-                this.connector.postMessage("GTU", Connector.CHANGE, new Object[] { moveInfo[0].toString(), location.x,
+                this.connector.postIMBMessage("GTU", Connector.CHANGE, new Object[] { moveInfo[0].toString(), location.x,
                         location.y, location.z, location.getRotZ() });
             }
             catch (Exception exception)
@@ -159,7 +161,7 @@ public class OTSIMBGTUTransceiver implements EventListenerInterface
             DirectedPoint location = (DirectedPoint) destroyInfo[1];
             try
             {
-                this.connector.postMessage("GTU", Connector.DELETE, new Object[] { destroyInfo[0].toString(), location.x,
+                this.connector.postIMBMessage("GTU", Connector.DELETE, new Object[] { destroyInfo[0].toString(), location.x,
                         location.y, location.z, location.getRotZ() });
             }
             catch (Exception exception)
@@ -171,7 +173,7 @@ public class OTSIMBGTUTransceiver implements EventListenerInterface
         {
             try
             {
-                this.connector.postMessage("SIM_Start", Connector.CHANGE, new Object[] {});
+                this.connector.postIMBMessage("SIM_Start", Connector.CHANGE, new Object[] {});
             }
             catch (Exception exception)
             {
@@ -182,7 +184,7 @@ public class OTSIMBGTUTransceiver implements EventListenerInterface
         {
             try
             {
-                this.connector.postMessage("SIM_Stop", Connector.CHANGE, new Object[] {});
+                this.connector.postIMBMessage("SIM_Stop", Connector.CHANGE, new Object[] {});
             }
             catch (Exception exception)
             {
