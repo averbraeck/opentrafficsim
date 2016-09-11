@@ -1,4 +1,4 @@
-package org.opentrafficsim.imb.observers;
+package org.opentrafficsim.imb.transceiver;
 
 import java.util.HashMap;
 import java.util.Map;

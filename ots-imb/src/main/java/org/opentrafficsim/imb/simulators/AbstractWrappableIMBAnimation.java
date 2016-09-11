@@ -19,7 +19,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.imb.observers.OTSIMBConnector;
+import org.opentrafficsim.imb.transceiver.OTSIMBConnector;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
