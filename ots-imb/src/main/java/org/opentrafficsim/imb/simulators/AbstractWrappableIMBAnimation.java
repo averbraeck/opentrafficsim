@@ -76,7 +76,7 @@ public abstract class AbstractWrappableIMBAnimation extends AbstractWrappableAni
             {
                 simulator.setIMBConnector(OTSIMBConnector.create(imbSettings, "OTS"));
                 new GTUTransceiver(simulator.getIMBConnector(), simulator, getNetwork());
-                // new SimulatorTransceiver();
+                new SimulatorTransceiver(simulator.getIMBConnector(), simulator);
             }
             catch (Exception exception)
             {
