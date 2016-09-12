@@ -87,7 +87,7 @@ public class OTSDEVSSimulator extends DEVSSimulator<DoubleScalar.Abs<TimeUnit>, 
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public void start() throws SimRuntimeException
+    public void start(final boolean fireStartEvent) throws SimRuntimeException
     {
         if (this.isRunning())
         {
@@ -104,7 +104,10 @@ public class OTSDEVSSimulator extends DEVSSimulator<DoubleScalar.Abs<TimeUnit>, 
         synchronized (this.semaphore)
         {
             this.running = true;
-            this.fireEvent(START_EVENT);
+            if (fireStartEvent)
+            {
+                this.fireEvent(START_EVENT);
+            }
             this.fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, this.simulatorTime, this.simulatorTime);
             this.worker.interrupt();
         }
