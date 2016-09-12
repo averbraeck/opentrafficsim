@@ -30,12 +30,42 @@ public interface Connector
     /**
      * Register the transceiver as the interested party when an IMB message identified by the imbEventName is received. When an IMB messsage
      * with that imbEventName is received, the postOTSMessage method on the transceiver is called.
-     * @param imbEventName 
-     * @param transceiver 
-     * @throws IMBException 
+     * @param fullIMBEventName the IMB Event name including the federation prefix, e.g. OTS_RT.SIM_Start
+     * @param transceiver the transceiver to handle the incoming event
+     * @throws IMBException in case the transceiver is switched to a new one for an event
      */
-    void register(String imbEventName, Transceiver transceiver) throws IMBException;
+    void register(String fullIMBEventName, Transceiver transceiver) throws IMBException;
     
+    /**
+     * Return the host of the connection, e.g. localhost, or 192,168.1.11
+     * @return String; the host of the connection
+     */
+    String getHost();
+    
+    /**
+     * Return the port of the connection, e.g. 4000
+     * @return int; the port of the connection
+     */
+    int getPort();
+    
+    /**
+     * Return the model name (owner name) of the connection, e.g. OTS
+     * @return String; the model name (owner name) of the connection
+     */
+    String getModelName();
+    
+    /**
+     * Return the model id (owner id) of the connection, e.g. 1
+     * @return String; the model id (owner id) of the connection
+     */
+    int getModelId();
+    
+    /**
+     * Return the federation name of the connection, e.g. OTS_RT
+     * @return String; the federation name of the connection
+     */
+    String getFederation();
+
     /**
      * Enum for IMB event types.
      * <p>

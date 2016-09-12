@@ -5,8 +5,12 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
 import org.opentrafficsim.imb.transceiver.Connector;
+import org.opentrafficsim.imb.transceiver.IMBMessageHandler;
 import org.opentrafficsim.imb.transceiver.OTSToIMBTransformer;
 
+import nl.tno.imb.TByteBuffer;
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 
@@ -51,13 +55,77 @@ public class SimulatorTransceiver extends AbstractTransceiver
         super("Simulator Control", connector, simulator);
 
         // register the OTS to IMB updates for the simulator
-        OTSDEVSRealTimeClock animator = (OTSDEVSRealTimeClock) simulator;
+        final OTSDEVSRealTimeClock animator = (OTSDEVSRealTimeClock) simulator;
         addOTSToIMBChannel(animator, SimulatorInterface.START_EVENT, "Sim_Start", new Object[] {}, this.emptyTransformer);
         addOTSToIMBChannel(animator, SimulatorInterface.STOP_EVENT, "Sim_Stop", new Object[] {}, this.emptyTransformer);
-        addOTSToIMBChannel(animator, SimpleIMBAnimator.CHANGE_SPEED_FACTOR_EVENT, "Sim_Speed",
-                new Object[] { new Float(1.0) }, this.speedTransformer);
+        addOTSToIMBChannel(animator, DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT, "Sim_Speed", new Object[] { new Double(1.0) },
+                this.speedTransformer);
+
+        // register the IMB to OTS updates for the simulator
+        final IMBMessageHandler startHandler = new IMBMessageHandler()
+        {
+            @Override
+            public void handle(TByteBuffer imbPayload) throws IMBException
+            {
+                try
+                {
+                    if (!animator.isRunning()) // to break message cycle between OTS and IMB
+                    {
+                        animator.start(true);
+                    }
+                }
+                catch (SimRuntimeException exception)
+                {
+                    throw new IMBException(exception);
+                }
+            }
+
+            @Override
+            public String getIMBEventName()
+            {
+                return "Sim_Start";
+            }
+        };
+        addIMBtoOTSChannel("Sim_Start", startHandler);
+
+        final IMBMessageHandler stopHandler = new IMBMessageHandler()
+        {
+            @Override
+            public void handle(TByteBuffer imbPayload) throws IMBException
+            {
+                if (animator.isRunning()) // to break message cycle between OTS and IMB
+                {
+                    animator.stop(true);
+                }
+            }
+
+            @Override
+            public String getIMBEventName()
+            {
+                return "Sim_Start";
+            }
+        };
+        addIMBtoOTSChannel("Sim_Stop", stopHandler);
         
-        
+        final IMBMessageHandler speedHandler = new IMBMessageHandler()
+        {
+            @Override
+            public void handle(TByteBuffer imbPayload) throws IMBException
+            {
+                double speed = imbPayload.readDouble();
+                if (speed != animator.getSpeedFactor()) // to break message cycle between OTS and IMB
+                {
+                    animator.setSpeedFactor(speed, false); // TODO callback for speed not 100% ok yet...
+                }
+            }
+
+            @Override
+            public String getIMBEventName()
+            {
+                return "Sim_Speed";
+            }
+        };
+        addIMBtoOTSChannel("Sim_Speed", speedHandler);
     }
 
     /**
@@ -102,7 +170,7 @@ public class SimulatorTransceiver extends AbstractTransceiver
         @Override
         public Object[] transform(final EventInterface event)
         {
-            float speed = ((Double) event.getContent()).floatValue();
+            Double speed = ((Double) event.getContent());
             return new Object[] { speed };
         }
     }

@@ -65,6 +65,7 @@ public class IMBConnector implements Connector
                     "Cannot switch transceiver for imbEventName " + imbEventName);
             return;
         }
+        // we receive messages including the federation name
         this.imbTransceiverMap.put(imbEventName, transceiver);
 
         // Link to the listening thread for incoming IMB messages.
@@ -74,16 +75,17 @@ public class IMBConnector implements Connector
             @Override
             public void dispatch(TEventEntry aEvent, TByteBuffer aPayload)
             {
-                System.out.println(aEvent.getEventName() + " -> " + aPayload);
+                String shortIMBEventName = aEvent.getEventName().substring(aEvent.getEventName().indexOf('.') + 1);
+                System.out.println(shortIMBEventName + " -> " + aPayload);
 
-                if (!IMBConnector.this.imbTransceiverMap.containsKey(aEvent.getEventName()))
+                if (!IMBConnector.this.imbTransceiverMap.containsKey(shortIMBEventName))
                 {
                     // TODO error handling
-                    System.err.println("Could not find imbEventName " + aEvent.getEventName() + " in imbTransceiverMap");
+                    System.err.println("Could not find imbEventName " + shortIMBEventName + " in imbTransceiverMap");
                 }
                 try
                 {
-                    IMBConnector.this.imbTransceiverMap.get(aEvent.getEventName()).handleMessageFromIMB(aEvent.getEventName(),
+                    IMBConnector.this.imbTransceiverMap.get(shortIMBEventName).handleMessageFromIMB(shortIMBEventName,
                             aPayload);
                 }
                 catch (IMBException exception)
@@ -132,6 +134,41 @@ public class IMBConnector implements Connector
             throw new IMBException("IMB error in signalEvent code " + result);
         }
         return result >= 0;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String getHost()
+    {
+        return this.connection.getRemoteHost();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final int getPort()
+    {
+        return this.connection.getRemotePort();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String getModelName()
+    {
+        return this.connection.getOwnerName();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final int getModelId()
+    {
+        return this.connection.getOwnerID();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String getFederation()
+    {
+        return this.connection.getFederation();
     }
 
     /** {@inheritDoc} */
