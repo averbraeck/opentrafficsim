@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -780,7 +781,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                 .getLaneChangeDirection(), gtu.getLocation(), startTime, gtu.getSpeed(), simplePlan.getAcceleration(), bc
                 .getParameter(ParameterTypes.DT), laneChange);
         }
-        catch (OTSGeometryException exception)
+        catch (OTSGeometryException | RemoteException exception)
         {
             throw new OperationalPlanException(exception);
         }
