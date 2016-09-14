@@ -49,7 +49,7 @@ public class RelativePosition implements Serializable
     /** Standard relative position type DRIVER. */
     public static final TYPE DRIVER = new TYPE("DRIVER");
 
-    /** Standard relative position type CONTOUR. */
+    /** Standard relative position type CONTOUR. There can be multiple points of type CONTOUR for one GTU. */
     public static final TYPE CONTOUR = new TYPE("CONTOUR");
 
     /** The reference position (always 0, 0, 0). */

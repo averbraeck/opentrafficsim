@@ -196,7 +196,7 @@ public abstract class ContourPlot extends JFrame
             if (!this.gtusOfInterest.contains(gtu))
             {
                 this.gtusOfInterest.add(gtu);
-                gtu.addListener(this, LaneBasedGTU.MOVE_EVENT);
+                gtu.addListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
             }
         }
         else if (event.getType().equals(Lane.GTU_REMOVE_EVENT))
@@ -214,10 +214,10 @@ public abstract class ContourPlot extends JFrame
             if (!interest)
             {
                 this.gtusOfInterest.remove(gtu);
-                gtu.removeListener(this, LaneBasedGTU.MOVE_EVENT);
+                gtu.removeListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
             }
         }
-        else if (event.getType().equals(LaneBasedGTU.MOVE_EVENT))
+        else if (event.getType().equals(LaneBasedGTU.LANEBASED_MOVE_EVENT))
         {
             Object[] content = (Object[]) event.getContent();
             Lane lane = (Lane) content[6];

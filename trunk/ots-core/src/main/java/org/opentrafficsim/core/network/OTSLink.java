@@ -2,16 +2,20 @@ package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.media.j3d.Bounds;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
+
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * A standard implementation of a link between two OTSNodes.
@@ -24,7 +28,7 @@ import org.opentrafficsim.core.gtu.GTUType;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class OTSLink implements Link, Serializable, Locatable
+public class OTSLink extends EventProducer implements Link, Serializable, Locatable
 {
     /** */
     private static final long serialVersionUID = 20150101L;
@@ -43,6 +47,9 @@ public class OTSLink implements Link, Serializable, Locatable
 
     /** Design line of the link. */
     private final OTSLine3D designLine;
+
+    /** The GTUs on this Link. */
+    private final Set<GTU> gtus = new HashSet<>();
 
     /**
      * The direction in which vehicles can drive, i.e., in direction of geometry, reverse, or both. It might be that the link is
@@ -70,7 +77,7 @@ public class OTSLink implements Link, Serializable, Locatable
      * @param directionalityMap the directions (FORWARD, BACKWARD, BOTH, NONE) that GTUtypes can traverse this link
      */
     public OTSLink(final String id, final OTSNode startNode, final OTSNode endNode, final LinkType linkType,
-        final OTSLine3D designLine, final Map<GTUType, LongitudinalDirectionality> directionalityMap)
+            final OTSLine3D designLine, final Map<GTUType, LongitudinalDirectionality> directionalityMap)
     {
         this.id = id;
         this.startNode = startNode;
@@ -92,7 +99,7 @@ public class OTSLink implements Link, Serializable, Locatable
      * @param directionality the directionality for all GTUs
      */
     public OTSLink(final String id, final OTSNode startNode, final OTSNode endNode, final LinkType linkType,
-        final OTSLine3D designLine, final LongitudinalDirectionality directionality)
+            final OTSLine3D designLine, final LongitudinalDirectionality directionality)
     {
         this(id, startNode, endNode, linkType, designLine, new HashMap<GTUType, LongitudinalDirectionality>());
         addDirectionality(GTUType.ALL, directionality);
@@ -125,6 +132,44 @@ public class OTSLink implements Link, Serializable, Locatable
     public final void removeDirectionality(final GTUType gtuType)
     {
         this.directionalityMap.remove(gtuType);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void addGTU(final GTU gtu)
+    {
+        if (!this.gtus.contains(gtu))
+        {
+            this.gtus.add(gtu);
+            fireTimedEvent(Link.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() },
+                    gtu.getSimulator().getSimulatorTime());
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void removeGTU(final GTU gtu)
+    {
+        if (this.gtus.contains(gtu))
+        {
+            this.gtus.remove(gtu);
+            fireTimedEvent(Link.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() },
+                    gtu.getSimulator().getSimulatorTime());
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Set<GTU> getGTUs()
+    {
+        return new HashSet<GTU>(this.gtus);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final int getGTUCount()
+    {
+        return this.gtus.size();
     }
 
     /** {@inheritDoc} */
@@ -207,7 +252,7 @@ public class OTSLink implements Link, Serializable, Locatable
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
     public boolean equals(final Object obj)
     {
         if (this == obj)

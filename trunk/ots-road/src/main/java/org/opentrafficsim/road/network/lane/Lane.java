@@ -133,13 +133,13 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the lane. <br>
-     * Payload: Object[] {String gtuId, LaneBasedGTU gtu}
+     * Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_addition}
      */
     public static final EventType GTU_ADD_EVENT = new EventType("GTU.ADD");
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the lane. <br>
-     * Payload: Object[] {String gtuId, LaneBasedGTU gtu}
+     * Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_removal}
      */
     public static final EventType GTU_REMOVE_EVENT = new EventType("GTU.REMOVE");
 
@@ -767,7 +767,8 @@ public class Lane extends CrossSectionElement implements Serializable
             }
         }
         this.gtuList.add(index, gtu);
-        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu }, gtu.getSimulator().getSimulatorTime());
+        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size() },
+                gtu.getSimulator().getSimulatorTime());
         return index;
     }
 
@@ -790,8 +791,9 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final void removeGTU(final LaneBasedGTU gtu)
     {
-        fireTimedEvent(Lane.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu }, gtu.getSimulator().getSimulatorTime());
         this.gtuList.remove(gtu);
+        fireTimedEvent(Lane.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size() },
+                gtu.getSimulator().getSimulatorTime());
     }
 
     /**
