@@ -455,6 +455,45 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                 throw new Error("\"Lane changing\" property has wrong type");
             }
 
+            if (merge)
+            {
+                // provide a route -- at the merge point, the GTU can otherwise decide to "go back"
+                ArrayList<Node> mainRouteNodes = new ArrayList<>();
+                mainRouteNodes.add(firstVia);
+                mainRouteNodes.add(secondVia);
+                mainRouteNodes.add(end);
+                Route mainRoute = new Route("main", mainRouteNodes);
+                this.routeGenerator = new FixedRouteGenerator(mainRoute);
+            }
+            else
+            {
+                // determine the routes
+                List<FrequencyAndObject<Route>> routeProbabilities = new ArrayList<>();
+
+                ArrayList<Node> mainRouteNodes = new ArrayList<>();
+                mainRouteNodes.add(firstVia);
+                mainRouteNodes.add(secondVia);
+                mainRouteNodes.add(end);
+                Route mainRoute = new Route("main", mainRouteNodes);
+                routeProbabilities.add(new FrequencyAndObject<>(lanesOnMain, mainRoute));
+
+                ArrayList<Node> sideRouteNodes = new ArrayList<>();
+                sideRouteNodes.add(firstVia);
+                sideRouteNodes.add(secondVia);
+                sideRouteNodes.add(end2a);
+                sideRouteNodes.add(end2b);
+                Route sideRoute = new Route("side", sideRouteNodes);
+                routeProbabilities.add(new FrequencyAndObject<>(lanesOnBranch, sideRoute));
+                try
+                {
+                    this.routeGenerator = new ProbabilisticRouteGenerator(routeProbabilities, new MersenneTwister(1234));
+                }
+                catch (ProbabilityException exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+
             // Get remaining properties
             iterator = new CompoundProperty("", "", "", this.properties, false, 0).iterator();
             while (iterator.hasNext())
@@ -470,28 +509,32 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                         {
                             this.strategicalPlannerGeneratorCars =
                                 new LaneBasedStrategicalRoutePlannerFactory(new LaneBasedCFLCTacticalPlannerFactory(
-                                    this.carFollowingModelCars, this.laneChangeModel));
+                                    this.carFollowingModelCars, this.laneChangeModel), this.routeGenerator);
                             this.strategicalPlannerGeneratorTrucks =
                                 new LaneBasedStrategicalRoutePlannerFactory(new LaneBasedCFLCTacticalPlannerFactory(
-                                    this.carFollowingModelTrucks, this.laneChangeModel));
+                                    this.carFollowingModelTrucks, this.laneChangeModel), this.routeGenerator);
                         }
                         else if ("Verbraeck".equals(tacticalPlannerName))
                         {
                             this.strategicalPlannerGeneratorCars =
                                 new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LaneBasedGTUFollowingLaneChangeTacticalPlannerFactory(this.carFollowingModelCars));
+                                    new LaneBasedGTUFollowingLaneChangeTacticalPlannerFactory(this.carFollowingModelCars),
+                                    this.routeGenerator);
                             this.strategicalPlannerGeneratorTrucks =
                                 new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LaneBasedGTUFollowingLaneChangeTacticalPlannerFactory(this.carFollowingModelTrucks));
+                                    new LaneBasedGTUFollowingLaneChangeTacticalPlannerFactory(this.carFollowingModelTrucks),
+                                    this.routeGenerator);
                         }
                         else if ("Verbraeck0".equals(tacticalPlannerName))
                         {
                             this.strategicalPlannerGeneratorCars =
                                 new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LaneBasedGTUFollowingChange0TacticalPlannerFactory(this.carFollowingModelCars));
+                                    new LaneBasedGTUFollowingChange0TacticalPlannerFactory(this.carFollowingModelCars),
+                                    this.routeGenerator);
                             this.strategicalPlannerGeneratorTrucks =
                                 new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LaneBasedGTUFollowingChange0TacticalPlannerFactory(this.carFollowingModelTrucks));
+                                    new LaneBasedGTUFollowingChange0TacticalPlannerFactory(this.carFollowingModelTrucks),
+                                    this.routeGenerator);
                         }
                         else if ("LMRS".equals(tacticalPlannerName))
                         {
@@ -500,17 +543,17 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                             defaultBehavioralCFCharacteristics.setDefaultParameters(AbstractIDM.class);
                             this.strategicalPlannerGeneratorCars =
                                 new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(IDMPlus.class,
-                                    defaultBehavioralCFCharacteristics));
+                                    defaultBehavioralCFCharacteristics), this.routeGenerator);
                             this.strategicalPlannerGeneratorTrucks =
                                 new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(IDMPlus.class,
-                                    defaultBehavioralCFCharacteristics));
+                                    defaultBehavioralCFCharacteristics), this.routeGenerator);
                         }
                         else if ("Toledo".equals(tacticalPlannerName))
                         {
                             this.strategicalPlannerGeneratorCars =
-                                new LaneBasedStrategicalRoutePlannerFactory(new ToledoFactory());
+                                new LaneBasedStrategicalRoutePlannerFactory(new ToledoFactory(), this.routeGenerator);
                             this.strategicalPlannerGeneratorTrucks =
-                                new LaneBasedStrategicalRoutePlannerFactory(new ToledoFactory());
+                                new LaneBasedStrategicalRoutePlannerFactory(new ToledoFactory(), this.routeGenerator);
                         }
                         else
                         {
@@ -581,6 +624,25 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                     }
                 }
             }
+            
+            if (merge)
+            {
+                setupGenerator(LaneFactory.makeMultiLane("From2a to From2b", from2a, from2b, null, lanesOnBranch, 0,
+                    lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator,
+                    LongitudinalDirectionality.DIR_PLUS));
+                LaneFactory.makeMultiLaneBezier("From2b to FirstVia", from2a, from2b, firstVia, secondVia, lanesOnBranch,
+                    lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator,
+                    LongitudinalDirectionality.DIR_PLUS);
+            }
+            else
+            {
+                LaneFactory.makeMultiLaneBezier("SecondVia to end2a", firstVia, secondVia, end2a, end2b, lanesOnBranch,
+                    lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator,
+                    LongitudinalDirectionality.DIR_PLUS);
+                setupSink(LaneFactory.makeMultiLane("end2a to end2b", end2a, end2b, null, lanesOnBranch, lanesOnCommon
+                    - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS),
+                    laneType);
+            }
 
             Lane[] startLanes =
                 LaneFactory.makeMultiLane("From to FirstVia", from, firstVia, null, merge ? lanesOnMain
@@ -599,58 +661,6 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             }
             setupSink(LaneFactory.makeMultiLane("SecondVia to end", secondVia, end, null, merge ? lanesOnCommonCompressed
                 : lanesOnMain, laneType, this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS), laneType);
-            if (merge)
-            {
-                setupGenerator(LaneFactory.makeMultiLane("From2a to From2b", from2a, from2b, null, lanesOnBranch, 0,
-                    lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator,
-                    LongitudinalDirectionality.DIR_PLUS));
-                LaneFactory.makeMultiLaneBezier("From2b to FirstVia", from2a, from2b, firstVia, secondVia, lanesOnBranch,
-                    lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator,
-                    LongitudinalDirectionality.DIR_PLUS);
-
-                // provide a route -- at the merge point, the GTU can otherwise decide to "go back"
-                ArrayList<Node> mainRouteNodes = new ArrayList<>();
-                mainRouteNodes.add(firstVia);
-                mainRouteNodes.add(secondVia);
-                mainRouteNodes.add(end);
-                Route mainRoute = new Route("main", mainRouteNodes);
-                this.routeGenerator = new FixedRouteGenerator(mainRoute);
-            }
-            else
-            {
-                LaneFactory.makeMultiLaneBezier("SecondVia to end2a", firstVia, secondVia, end2a, end2b, lanesOnBranch,
-                    lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator,
-                    LongitudinalDirectionality.DIR_PLUS);
-                setupSink(LaneFactory.makeMultiLane("end2a to end2b", end2a, end2b, null, lanesOnBranch, lanesOnCommon
-                    - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS),
-                    laneType);
-
-                // determine the routes
-                List<FrequencyAndObject<Route>> routeProbabilities = new ArrayList<>();
-
-                ArrayList<Node> mainRouteNodes = new ArrayList<>();
-                mainRouteNodes.add(firstVia);
-                mainRouteNodes.add(secondVia);
-                mainRouteNodes.add(end);
-                Route mainRoute = new Route("main", mainRouteNodes);
-                routeProbabilities.add(new FrequencyAndObject<>(lanesOnMain, mainRoute));
-
-                ArrayList<Node> sideRouteNodes = new ArrayList<>();
-                sideRouteNodes.add(firstVia);
-                sideRouteNodes.add(secondVia);
-                sideRouteNodes.add(end2a);
-                sideRouteNodes.add(end2b);
-                Route sideRoute = new Route("side", sideRouteNodes);
-                routeProbabilities.add(new FrequencyAndObject<>(lanesOnBranch, sideRoute));
-                try
-                {
-                    this.routeGenerator = new ProbabilisticRouteGenerator(routeProbabilities, new MersenneTwister(1234));
-                }
-                catch (ProbabilityException exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
 
             for (int index = 0; index < lanesOnCommon; index++)
             {

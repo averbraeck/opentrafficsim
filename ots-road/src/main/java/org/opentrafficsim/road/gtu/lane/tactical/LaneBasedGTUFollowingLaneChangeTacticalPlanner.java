@@ -102,7 +102,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
     }
 
     /** Following model for this tactical planner. */
-    private GTUFollowingModelOld carFollowingModel;
+    // private GTUFollowingModelOld carFollowingModel;
 
     /**
      * Instantiated a tactical planner with just GTU following behavior and no lane changes.
@@ -293,8 +293,9 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
         Headway headway = perception.getPerceptionCategory(DefaultAlexander.class).getForwardHeadway();
         Length maxDistance = lanePathInfo.getPath().getLength().minus(laneBasedGTU.getLength().multiplyBy(2.0));
         accelerationStep =
-            this.carFollowingModel.computeAccelerationStep(laneBasedGTU, headway.getSpeed(), headway.getDistance(),
-                maxDistance, perception.getPerceptionCategory(DefaultAlexander.class).getSpeedLimit());
+            ((GTUFollowingModelOld) getCarFollowingModel())
+                .computeAccelerationStep(laneBasedGTU, headway.getSpeed(), headway.getDistance(), maxDistance, perception
+                    .getPerceptionCategory(DefaultAlexander.class).getSpeedLimit());
 
         // see if we have to continue standing still. In that case, generate a stand still plan
         if (accelerationStep.getAcceleration().si < 1E-6 && laneBasedGTU.getSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
@@ -590,6 +591,6 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
     public final String toString()
     {
         return "LaneBasedGTUFollowingLaneChangeTacticalPlanner [earliestNexLaneChangeTime=" + this.earliestNexLaneChangeTime
-            + ", carFollowingModel=" + this.carFollowingModel + "]";
+            + ", carFollowingModel=" + getCarFollowingModel() + "]";
     }
 }
