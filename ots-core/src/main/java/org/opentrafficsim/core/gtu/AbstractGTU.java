@@ -452,7 +452,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     {
         if (this.operationalPlan == null)
         {
-            System.err.println("No operational plan");
+            System.err.println("No operational plan for GTU " + this.id + " at t=" + this.getSimulator().getSimulatorTime().getTime());
             return new DirectedPoint(0, 0, 0);
         }
         try

@@ -199,7 +199,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
                     if (this.path.contains(lane))
                     {
                         Length position = positions.get(lane);
-                        if (position.si >= 0 && position.si < lane.getLength().si)
+                        if (position.si >= 0 && position.si <= lane.getLength().si)
                         {
                             addData(gtu, lane, positions.get(lane).si);
                             hits++;

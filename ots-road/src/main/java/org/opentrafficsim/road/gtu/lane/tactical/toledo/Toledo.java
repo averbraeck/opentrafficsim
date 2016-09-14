@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.toledo;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -300,7 +301,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
                     .getParameter(ToledoLaneChangeParameters.DT), this.laneChange);
             return plan;
         }
-        catch (OTSGeometryException exception)
+        catch (OTSGeometryException | RemoteException exception)
         {
             throw new OperationalPlanException(exception);
         }

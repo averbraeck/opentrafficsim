@@ -22,7 +22,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
  * initial version Jul 8, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class TemplateGTUType implements Serializable
+public class TemplateGTUType implements Serializable, Generator<GTUCharacteristics>
 {
     /** */
     private static final long serialVersionUID = 20141230L;
@@ -85,13 +85,12 @@ public class TemplateGTUType implements Serializable
 
     /**
      * Returns characteristics for the given GTU.
-     * @param gtu GTU
      * @return characteristics for the given GTU
      * @throws ProbabilityException in case of probability exception
      * @throws ParameterException in case of parameter exception
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public GTUCharacteristics draw(final GTU gtu) throws ProbabilityException, ParameterException
+    public GTUCharacteristics draw() throws ProbabilityException, ParameterException
     {
         return new GTUCharacteristics(this.gtuType, this.idGenerator, this.lengthGenerator.draw(), this.widthGenerator.draw(),
                 this.maximumSpeedGenerator.draw(), this.simulator, this.network);

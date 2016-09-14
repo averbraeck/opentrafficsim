@@ -563,8 +563,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             // Schedule regular updates of the graphs
             for (int t = 1; t <= 1800; t++)
             {
-                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<>(t - 0.001, SECOND), this, this, "drawGraphs",
-                    null);
+                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<>(t - 0.001, SECOND), this, this, "drawGraphs", null);
             }
         }
         catch (SimRuntimeException | NamingException | NetworkException | OTSGeometryException | PropertyException exception)
@@ -598,11 +597,12 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
 
             this.block =
                 new LaneBasedIndividualGTU("999999", this.gtuType, new Length(4, METER), new Length(1.8, METER), new Speed(
-                    0.0, KM_PER_HOUR), this.simulator, DefaultCarAnimation.class, this.gtuColorer, this.network);
+                    0.0, KM_PER_HOUR), this.simulator, this.network);
             LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new GTUFollowingTacticalPlannerNoPerceive(
                     this.carFollowingModelCars, this.block), this.block);
-            this.block.init(strategicalPlanner, initialPositions, new Speed(0.0, KM_PER_HOUR));
+            this.block.initWithAnimation(strategicalPlanner, initialPositions, new Speed(0.0, KM_PER_HOUR),
+                DefaultCarAnimation.class, this.gtuColorer);
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
         {
@@ -653,11 +653,12 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
             LaneBasedPerceivingCar car =
                 new LaneBasedPerceivingCar("" + (++this.carsCreated), this.gtuType, vehicleLength, new Length(1.8, METER),
-                    new Speed(200, KM_PER_HOUR), this.simulator, DefaultCarAnimation.class, this.gtuColorer, this.network);
+                    new Speed(200, KM_PER_HOUR), this.simulator, this.network);
             LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new GTUFollowingTacticalPlannerNoPerceive(
                     gtuFollowingModel, car), car);
-            car.init(strategicalPlanner, initialPositions, initialSpeed);
+            car.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
+                this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             car.setPerceptionInterval(new Duration(this.perceptionIntervalDist.draw(), TimeUnit.SECOND));
             car.getStrategicalPlanner().getBehavioralCharacteristics().setParameter(ParameterTypes.LOOKAHEAD,
@@ -742,36 +743,6 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             ParameterException
         {
             super(id, gtuType, length, width, maximumSpeed, simulator, network);
-            perceive();
-        }
-
-        /**
-         * Construct a new LaneBasedIndividualCar.
-         * @param id ID; the id of the GTU
-         * @param gtuType GTUTYpe; the type of GTU, e.g. TruckType, CarType, BusType
-         * @param length Length; the maximum length of the GTU (parallel with driving direction)
-         * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
-         * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
-         * @param simulator OTSDEVSSimulatorInterface; the simulator
-         * @param animationClass Class&lt;? extends Renderable2D&gt;; the class for animation or null if no animation
-         * @param gtuColorer GTUColorer; the GTUColorer that will be linked from the animation to determine the color (may be
-         *            null in which case a default will be used)
-         * @param network the network that the GTU is initially registered in
-         * @throws NamingException if an error occurs when adding the animation handler
-         * @throws NetworkException when the GTU cannot be placed on the given lane
-         * @throws SimRuntimeException when the move method cannot be scheduled
-         * @throws GTUException when a parameter is invalid
-         * @throws OTSGeometryException when the initial path is wrong
-         * @throws ParameterException in case of a parameter problem.
-         */
-        @SuppressWarnings("checkstyle:parameternumber")
-        LaneBasedPerceivingCar(final String id, final GTUType gtuType, final Length length, final Length width,
-            final Speed maximumSpeed, final OTSDEVSSimulatorInterface simulator,
-            final Class<? extends Renderable2D> animationClass, final GTUColorer gtuColorer, final OTSNetwork network)
-            throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException,
-            ParameterException
-        {
-            super(id, gtuType, length, width, maximumSpeed, simulator, animationClass, gtuColorer, network);
             perceive();
         }
 

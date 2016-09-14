@@ -19,13 +19,12 @@ public interface LaneBasedGTUCharacteristicsGenerator
 {
     /**
      * Generate a LaneBasedGTUCharacteristics object.
-     * @param gtu GTU
      * @return LaneBasedGTUCharacteristics
      * @throws ProbabilityException when the generator is improperly configured
      * @throws ParameterException in case of a parameter problem.
      * @throws GTUException if strategical planner cannot be created
      */
-    LaneBasedGTUCharacteristics draw(LaneBasedGTU gtu) throws ProbabilityException, ParameterException, GTUException;
+    LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException, GTUException;
 
     /**
      * Return the simulator.

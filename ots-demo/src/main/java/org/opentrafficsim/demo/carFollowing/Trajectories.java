@@ -373,8 +373,7 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
             // Schedule regular updates of the graph
             for (int t = 1; t <= 1800; t++)
             {
-                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<>(t - 0.001, SECOND), this, this, "drawGraph",
-                    null);
+                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<>(t - 0.001, SECOND), this, this, "drawGraph", null);
             }
         }
         catch (SimRuntimeException exception)
@@ -400,11 +399,12 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
         BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
         this.block =
             new LaneBasedIndividualGTU("999999", this.gtuType, new Length(4, METER), new Length(1.8, METER), new Speed(0.0,
-                KM_PER_HOUR), this.simulator, DefaultCarAnimation.class, this.gtuColorer, this.network);
+                KM_PER_HOUR), this.simulator, this.network);
         LaneBasedStrategicalPlanner strategicalPlanner =
             new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedGTUFollowingTacticalPlanner(
                 this.carFollowingModelCars, this.block), this.block);
-        this.block.init(strategicalPlanner, initialPositions, new Speed(0.0, KM_PER_HOUR));
+        this.block.initWithAnimation(strategicalPlanner, initialPositions, new Speed(0.0, KM_PER_HOUR),
+            DefaultCarAnimation.class, this.gtuColorer);
     }
 
     /**
@@ -438,11 +438,12 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
             BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
             LaneBasedIndividualGTU gtu =
                 new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength, new Length(1.8, METER),
-                    new Speed(200, KM_PER_HOUR), this.simulator, DefaultCarAnimation.class, this.gtuColorer, this.network);
+                    new Speed(200, KM_PER_HOUR), this.simulator, this.network);
             LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedGTUFollowingTacticalPlanner(
                     gtuFollowingModel, gtu), gtu);
-            gtu.init(strategicalPlanner, initialPositions, initialSpeed);
+            gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
+                this.gtuColorer);
             // Re-schedule this method after headway seconds
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
