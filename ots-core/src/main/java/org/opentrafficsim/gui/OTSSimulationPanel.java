@@ -117,6 +117,15 @@ public class OTSSimulationPanel extends JPanel
         return this.statusBar;
     }
 
+    /**
+     * Return the OTSControlPanel of this OTSSimulationPanel.
+     * @return OTSControlPanel; the OTS control panel
+     */
+    public final OTSControlPanel getOtsControlPanel()
+    {
+        return this.otsControlPanel;
+    }
+
     /** {@inheritDoc} */
     @Override
     public final String toString()
