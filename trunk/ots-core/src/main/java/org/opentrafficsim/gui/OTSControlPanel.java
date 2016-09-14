@@ -72,8 +72,8 @@ import org.opentrafficsim.simulationengine.WrappableAnimation;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class OTSControlPanel extends JPanel
-        implements ActionListener, PropertyChangeListener, WindowListener, EventListenerInterface
+public class OTSControlPanel extends JPanel implements ActionListener, PropertyChangeListener, WindowListener,
+        EventListenerInterface
 {
     /** */
     private static final long serialVersionUID = 20150617L;
@@ -189,8 +189,8 @@ public class OTSControlPanel extends JPanel
             final Object eventTarget, final String method, final Object[] args) throws SimRuntimeException
     {
         SimEvent<OTSSimTimeDouble> simEvent =
-                new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time(executionTime.getSI(), TimeUnit.SECOND)), priority,
-                        source, eventTarget, method, args);
+                new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time(executionTime.getSI(), TimeUnit.SECOND)),
+                        priority, source, eventTarget, method, args);
         this.simulator.scheduleEvent(simEvent);
         return simEvent;
     }
@@ -298,8 +298,9 @@ public class OTSControlPanel extends JPanel
                 // System.out.println("now is " + now);
                 try
                 {
-                    this.stopAtEvent = scheduleEvent(new Time(now, TimeUnit.SI), SimEventInterface.MIN_PRIORITY, this, this,
-                            "autoPauseSimulator", null);
+                    this.stopAtEvent =
+                            scheduleEvent(new Time(now, TimeUnit.SI), SimEventInterface.MIN_PRIORITY, this, this,
+                                    "autoPauseSimulator", null);
                 }
                 catch (SimRuntimeException exception)
                 {
@@ -452,8 +453,9 @@ public class OTSControlPanel extends JPanel
                 // System.out.println("Re-Scheduling at " + nextTick);
                 try
                 {
-                    this.stopAtEvent = scheduleEvent(new Time(nextTick, TimeUnit.SI), SimEventInterface.MAX_PRIORITY, this,
-                            this, "autoPauseSimulator", null);
+                    this.stopAtEvent =
+                            scheduleEvent(new Time(nextTick, TimeUnit.SI), SimEventInterface.MAX_PRIORITY, this, this,
+                                    "autoPauseSimulator", null);
                     getSimulator().start();
                 }
                 catch (SimRuntimeException exception)
@@ -528,8 +530,9 @@ public class OTSControlPanel extends JPanel
         {
             try
             {
-                this.stopAtEvent = scheduleEvent(new Time(stopTime, TimeUnit.SECOND), SimEventInterface.MAX_PRIORITY, this,
-                        this, "autoPauseSimulator", null);
+                this.stopAtEvent =
+                        scheduleEvent(new Time(stopTime, TimeUnit.SECOND), SimEventInterface.MAX_PRIORITY, this, this,
+                                "autoPauseSimulator", null);
             }
             catch (SimRuntimeException exception)
             {
@@ -792,6 +795,32 @@ public class OTSControlPanel extends JPanel
         {
             return "TimeWarpPanel [timeWarp=" + this.getFactor() + "]";
         }
+
+        /**
+         * Set the time warp factor to the best possible approximation of a given value.
+         * @param factor double; the requested speed factor
+         */
+        public void setSpeedFactor(final double factor)
+        {
+            int bestStep = -1;
+            double bestError = Double.MAX_VALUE;
+            for (int step = this.slider.getMinimum(); step < this.slider.getMaximum(); step++)
+            {
+                double ratio = getTickValues().get(step);// stepToFactor(step);
+                double logError = Math.abs(Math.log(factor / ratio));
+                if (logError < bestError)
+                {
+                    bestStep = step;
+                    bestError = logError;
+                }
+            }
+            System.out.println("setSpeedfactor: factor is " + factor + ", best slider value is " + bestStep
+                    + " current value is " + this.slider.getValue());
+            if (this.slider.getValue() != bestStep)
+            {
+                this.slider.setValue(bestStep);
+            }
+        }
     }
 
     /** JLabel that displays the simulation time. */
@@ -851,8 +880,9 @@ public class OTSControlPanel extends JPanel
                 double now = Math.round(getSimulator().getSimulatorTime().getTime().getSI() * 1000) / 1000d;
                 int seconds = (int) Math.floor(now);
                 int fractionalSeconds = (int) Math.floor(1000 * (now - seconds));
-                getClockLabel().setText(String.format("  %02d:%02d:%02d.%03d  ", seconds / 3600, seconds / 60 % 60,
-                        seconds % 60, fractionalSeconds));
+                getClockLabel().setText(
+                        String.format("  %02d:%02d:%02d.%03d  ", seconds / 3600, seconds / 60 % 60, seconds % 60,
+                                fractionalSeconds));
                 getClockLabel().repaint();
             }
 
@@ -990,6 +1020,10 @@ public class OTSControlPanel extends JPanel
                 || event.getType().equals(SimulatorInterface.STOP_EVENT)
                 || event.getType().equals(DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT))
         {
+            if (event.getType().equals(DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT))
+            {
+                this.timeWarpPanel.setSpeedFactor((Double) event.getContent());
+            }
             fixButtons();
         }
     }
