@@ -58,16 +58,16 @@ public class DataSampler implements EventListenerInterface
             Object[] addInfo = (Object[]) event.getContent();
             this.gtus.add(addInfo[0].toString());
             GTU gtu = this.network.getGTU(addInfo[0].toString());
-            gtu.addListener(this, LaneBasedGTU.MOVE_EVENT);
+            gtu.addListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
         }
         else if (event.getType().equals(Network.GTU_REMOVE_EVENT))
         {
             Object[] removeInfo = (Object[]) event.getContent();
             this.gtus.remove(removeInfo[0].toString());
             GTU gtu = this.network.getGTU(removeInfo[0].toString());
-            gtu.removeListener(this, LaneBasedGTU.MOVE_EVENT);
+            gtu.removeListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
         }
-        else if (event.getType().equals(LaneBasedGTU.MOVE_EVENT))
+        else if (event.getType().equals(LaneBasedGTU.LANEBASED_MOVE_EVENT))
         {
             // Ignored.
         }

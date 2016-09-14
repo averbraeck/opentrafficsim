@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu;
 
+import java.awt.Color;
+
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -12,6 +14,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanBuilder;
@@ -85,6 +88,9 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
     /** Is this GTU destroyed? */
     private boolean destroyed = false;
+
+    /** The cached base color. */
+    private Color baseColor = null;
 
     /**
      * @param id String; the id of the GTU
@@ -168,7 +174,8 @@ public abstract class AbstractGTU extends EventProducer implements GTU
                 this.operationalPlan = OperationalPlanBuilder.buildConstantSpeedPlan(this, path, now, initialSpeed);
             }
 
-            fireTimedEvent(GTU.INIT_EVENT, new Object[] { getId(), initialLocation, getLength(), getWidth() }, now);
+            fireTimedEvent(GTU.INIT_EVENT, new Object[] { getId(), initialLocation, getLength(), getWidth(), getBaseColor() },
+                    now);
 
             // if ("114".equals(getId()))
             // {
@@ -470,6 +477,40 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     public final void setTurnIndicatorStatus(final TurnIndicatorStatus turnIndicatorStatus)
     {
         this.turnIndicatorStatus = turnIndicatorStatus;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public Color getBaseColor()
+    {
+        if (this.baseColor == null)
+        {
+            String idString = "" + getId();
+            int firstDigit = idString.length();
+            while (firstDigit > 0)
+            {
+                if (Character.isDigit(idString.charAt(firstDigit - 1)))
+                {
+                    firstDigit--;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            int idKey;
+            if (firstDigit == idString.length())
+            {
+                idKey = idString.hashCode();
+            }
+            else
+            {
+                idKey = Integer.parseInt(idString.substring(firstDigit));
+            }
+            this.baseColor = IDGTUColorer.LEGEND.get(idKey % IDGTUColorer.LEGEND.size()).getColor();
+        }
+        return this.baseColor;
     }
 
     /**

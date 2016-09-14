@@ -1,15 +1,9 @@
 package org.opentrafficsim.core.gtu;
 
+import java.awt.Color;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
-
-import javax.media.j3d.Bounds;
-
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.event.EventProducerInterface;
-import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -19,6 +13,10 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacter
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
+
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.event.EventProducerInterface;
+import nl.tudelft.simulation.event.EventType;
 
 /**
  * Generalized Travel Unit. <br>
@@ -121,13 +119,17 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface
     /** Destroy the GTU from the simulation and animation. */
     void destroy();
 
-    /** {@inheritDoc} */
-    @Override
-    DirectedPoint getLocation();
+    /**
+     * Return the base color of the GTU (not the state-based color).
+     * @return Color; the base color of the GTU (not the state-based color)
+     */
+    Color getBaseColor();
 
-    /** {@inheritDoc} */
-    @Override
-    Bounds getBounds();
+    /**
+     * The event type for pub/sub indicating the initialization of a new GTU. <br>
+     * Payload: [String id, DirectedPoint initialPosition, Length length, Length width, Color gtuBaseColor]
+     */
+    EventType INIT_EVENT = new EventType("GTU.INIT");
 
     /**
      * The event type for pub/sub indicating a move. <br>
@@ -135,12 +137,6 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface
      * turnIndicatorStatus, Length odometer]
      */
     EventType MOVE_EVENT = new EventType("GTU.MOVE");
-
-    /**
-     * The event type for pub/sub indicating the initialization of a new GTU. <br>
-     * Payload: [String id, DirectedPoint initialPosition, Length length, Length width]
-     */
-    EventType INIT_EVENT = new EventType("GTU.INIT");
 
     /**
      * The event type for pub/sub indicating destruction of the GTU. <br>

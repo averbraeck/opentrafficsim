@@ -168,23 +168,50 @@ public interface LaneBasedGTU extends GTU
     void addTrigger(Lane lane, SimEvent<OTSSimTimeDouble> event);
 
     /**
-     * The lane-based event type for pub/sub indicating a move. <br>
-     * Payload: [String id, DirectedPoint position, Speed speed, Acceleration acceleration, TurnIndicatorStatus
-     * turnIndicatorStatus, Length odometer, Lane referenceLane, Length positionOnReferenceLane]
+     * The lane-based event type for pub/sub indicating the initialization of a new GTU. <br>
+     * Payload: [String gtuId, DirectedPoint initialPosition, Length length, Length width, Color gtuBaseColor, Lane
+     * referenceLane, Length positionOnReferenceLane]
      */
-    EventType MOVE_EVENT = new EventType("LANEBASEDGTU.MOVE");
+    EventType LANEBASED_INIT_EVENT = new EventType("LANEBASEDGTU.INIT");
 
     /**
-     * The lane-based event type for pub/sub indicating the initialization of a new GTU. <br>
-     * Payload: [String id, DirectedPoint initialPosition, Length length, Length width, Lane referenceLane, Length
-     * positionOnReferenceLane]
+     * The lane-based event type for pub/sub indicating a move. <br>
+     * Payload: [String gtuId, DirectedPoint position, Speed speed, Acceleration acceleration, TurnIndicatorStatus
+     * turnIndicatorStatus, Length odometer, Lane referenceLane, Length positionOnReferenceLane]
      */
-    EventType INIT_EVENT = new EventType("LANEBASEDGTU.INIT");
+    EventType LANEBASED_MOVE_EVENT = new EventType("LANEBASEDGTU.MOVE");
 
     /**
      * The lane-based event type for pub/sub indicating destruction of the GTU. <br>
-     * Payload: [String id, DirectedPoint lastPosition, Length odometer, Lane referenceLane, Length positionOnReferenceLane]
+     * Payload: [String gtuId, DirectedPoint lastPosition, Length odometer, Lane referenceLane, Length positionOnReferenceLane]
      */
-    EventType DESTROY_EVENT = new EventType("LANEBASEDGTU.DESTROY");
+    EventType LANEBASED_DESTROY_EVENT = new EventType("LANEBASEDGTU.DESTROY");
 
+    /**
+     * The event type for pub/sub indicating that the GTU entered a new link (with the FRONT position if driving forward; REAR
+     * if driving backward). <br>
+     * Payload: [String gtuId, Link link]
+     */
+    EventType LINK_ENTER_EVENT = new EventType("LINK.ENTER");
+
+    /**
+     * The event type for pub/sub indicating that the GTU exited a link (with the REAR position if driving forward; FRONT if
+     * driving backward). <br>
+     * Payload: [String gtuId, Link link]
+     */
+    EventType LINK_EXIT_EVENT = new EventType("LINK.EXIT");
+
+    /**
+     * The event type for pub/sub indicating that the GTU entered a new link (with the FRONT position if driving forward; REAR
+     * if driving backward). <br>
+     * Payload: [String gtuId, Lane lane]
+     */
+    EventType LANE_ENTER_EVENT = new EventType("LANE.ENTER");
+
+    /**
+     * The event type for pub/sub indicating that the GTU exited a link (with the REAR position if driving forward; FRONT if
+     * driving backward). <br>
+     * Payload: [String gtuId, Lane lane]
+     */
+    EventType LANE_EXIT_EVENT = new EventType("LANE.EXIT");
 }

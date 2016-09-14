@@ -1,15 +1,15 @@
 package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
-
-import javax.media.j3d.Bounds;
-
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
+import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
+
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.event.EventType;
 
 /**
  * Link as a connection between two Nodes.
@@ -79,11 +79,42 @@ public interface Link extends Locatable, Serializable
      */
     void removeDirectionality(final GTUType gtuType);
 
-    /** {@inheritDoc} */
-    @Override
-    DirectedPoint getLocation();
+    /**
+     * Add a GTU to this link (e.g., for statistical purposes, or for a model on macro level). It is safe to add a GTU again. No
+     * warning or error will be given. The GTU_ADD_EVENT will only be fired when the GTU was not already on the link.
+     * @param gtu GTU; the GTU to add.
+     */
+    void addGTU(GTU gtu);
 
-    /** {@inheritDoc} */
-    @Override
-    Bounds getBounds();
+    /**
+     * Remove a GTU from this link. It is safe to try to remove a GTU again. No warning or error will be given. The
+     * GTU_REMOVE_EVENT will only be fired when the GTU was on the link.
+     * @param gtu GTU; the GTU to remove.
+     */
+    void removeGTU(GTU gtu);
+
+    /**
+     * Provide a safe copy of the set of GTUs.
+     * @return Set&lt;GTU&gt;; a safe copy of the set of GTUs
+     */
+    Set<GTU> getGTUs();
+
+    /**
+     * Provide the number of GTUs on this link.
+     * @return int; the number of GTUs on this link
+     */
+    int getGTUCount();
+
+    /**
+     * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the lane. <br>
+     * Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_addition}
+     */
+    EventType GTU_ADD_EVENT = new EventType("GTU.ADD");
+
+    /**
+     * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the lane. <br>
+     * Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_removal}
+     */
+    EventType GTU_REMOVE_EVENT = new EventType("GTU.REMOVE");
+
 }

@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.gtu;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 /**
@@ -52,4 +53,18 @@ public abstract class AbstractLinkBasedGTU extends AbstractGTU
         this.network = network;
     }
 
+    /*
+     * Return the link on which the given position of the GTU currently is. Returns <b>null</b> if the GTU is not on a link with
+     * this position.
+     * @param referencePosition the position type (FRONT, BACK, etc.) for which we want to know the link
+     * @return Link; the link on which the position of the GTU currently is
+     */
+    // TODO public abstract Link getLink(final RelativePosition.TYPE referencePosition);
+
+    /**
+     * Return the link on which the REFERENCE position of the GTU currently is on. Returns <b>null</b> if the GTU is not on a
+     * link with its reference position.
+     * @return Link; the link on which the REFERENCE position of the GTU currently is on
+     */
+    public abstract Link getLink();
 }

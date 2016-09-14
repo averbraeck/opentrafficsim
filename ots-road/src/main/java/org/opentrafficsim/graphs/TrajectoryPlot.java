@@ -245,7 +245,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
                 this.gtusOfInterest.add(gtu);
                 if (null == this.sampleInterval)
                 {
-                    gtu.addListener(this, LaneBasedGTU.MOVE_EVENT);
+                    gtu.addListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
                 }
             }
         }
@@ -266,7 +266,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
                 this.gtusOfInterest.remove(gtu);
                 if (null != this.sampleInterval)
                 {
-                    gtu.removeListener(this, LaneBasedGTU.MOVE_EVENT);
+                    gtu.removeListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
                 }
                 else
                 {
@@ -279,7 +279,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
                 }
             }
         }
-        else if (event.getType().equals(LaneBasedGTU.MOVE_EVENT))
+        else if (event.getType().equals(LaneBasedGTU.LANEBASED_MOVE_EVENT))
         {
             Object[] content = (Object[]) event.getContent();
             Lane lane = (Lane) content[6];
