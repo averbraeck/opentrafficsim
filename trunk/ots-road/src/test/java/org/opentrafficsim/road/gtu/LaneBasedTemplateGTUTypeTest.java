@@ -329,7 +329,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
             throws ProbabilityException, ParameterException, NamingException, GTUException
     {
         assertTrue("Type should be " + gtuType, gtuType.equals(templateGTUType.getGTUType()));
-        LaneBasedGTUCharacteristics characteristics = templateGTUType.draw(null);
+        LaneBasedGTUCharacteristics characteristics = templateGTUType.draw();
         assertEquals("Length should be " + length, length.draw().getSI(), characteristics.getLength().getSI(), 0.0001);
         assertEquals("Width should be " + width, width.draw().getSI(), characteristics.getWidth().getSI(), 0.0001);
         assertEquals("Maximum speed should be " + maximumSpeed, maximumSpeed.draw().getSI(), characteristics.getMaximumSpeed()

@@ -99,9 +99,9 @@ public class ListGTUGenerator implements Serializable
      * @throws NetworkException on
      */
     public ListGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
-            final Speed initialSpeed, final Lane lane, final Length position, final GTUDirectionality direction,
-            final GTUColorer gtuColorer, final LaneBasedStrategicalPlanner strategicalPlanner, final OTSNetwork network,
-            final String fileName) throws SimRuntimeException, NetworkException
+        final Speed initialSpeed, final Lane lane, final Length position, final GTUDirectionality direction,
+        final GTUColorer gtuColorer, final LaneBasedStrategicalPlanner strategicalPlanner, final OTSNetwork network,
+        final String fileName) throws SimRuntimeException, NetworkException
     {
         if (null == lane)
         {
@@ -175,10 +175,10 @@ public class ListGTUGenerator implements Serializable
             initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
             Length vehicleLength = new Length(4, LengthUnit.METER);
             LaneBasedIndividualGTU gtu =
-                    new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength, new Length(1.8,
-                            LengthUnit.METER), new Speed(200, SpeedUnit.KM_PER_HOUR), this.simulator,
-                            DefaultCarAnimation.class, this.gtuColorer, this.network);
-            gtu.init(this.strategicalPlanner, initialPositions, this.initialSpeed);
+                new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength, new Length(1.8,
+                    LengthUnit.METER), new Speed(200, SpeedUnit.KM_PER_HOUR), this.simulator, this.network);
+            gtu.initWithAnimation(this.strategicalPlanner, initialPositions, this.initialSpeed, DefaultCarAnimation.class,
+                this.gtuColorer);
             scheduleNextVehicle();
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
@@ -191,8 +191,8 @@ public class ListGTUGenerator implements Serializable
     @Override
     public String toString()
     {
-        return "ListGTUGenerator [name=" + this.name + ", lane=" + this.lane + ", gtuType=" + this.gtuType + ", initialSpeed="
-                + this.initialSpeed + ", carsCreated=" + this.carsCreated + "]";
+        return "ListGTUGenerator [name=" + this.name + ", lane=" + this.lane + ", gtuType=" + this.gtuType
+            + ", initialSpeed=" + this.initialSpeed + ", carsCreated=" + this.carsCreated + "]";
     }
 
 }

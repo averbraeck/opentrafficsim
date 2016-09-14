@@ -5,6 +5,7 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUCharacteristics;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
 /**
@@ -22,8 +23,8 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
     /** */
     private static final long serialVersionUID = 1L;
 
-    /** The strategical planner of the GTU. */
-    private final LaneBasedStrategicalPlanner strategicalPlanner;
+    /** The strategical planner factory. */
+    private final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory;
 
     /** The maximum speed of the GTU. */
     private final Speed speed;
@@ -34,28 +35,28 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
     /**
      * Construct a new set of lane based GTU characteristics.
      * @param gtuCharacteristics GTUCharacteristics; characteristics of the super GTU type to be used for the GTU
-     * @param laneBasedStrategicalPlanner LaneBasedStrategicalPlanner; the strategical planner for the GTU
+     * @param laneBasedStrategicalPlannerFactory LaneBasedStrategicalPlannerFactory; the strategical planner for the GTU
      * @param speed Speed; the initial speed of the GTU
      * @param initialLongitudinalPositions Set&lt;DirectedLanePosition&gt;; the lane, initial position and direction of the GTU
      */
     public LaneBasedGTUCharacteristics(final GTUCharacteristics gtuCharacteristics, 
-            final LaneBasedStrategicalPlanner laneBasedStrategicalPlanner, final Speed speed,
+            final LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory, final Speed speed,
             final Set<DirectedLanePosition> initialLongitudinalPositions)
     {
         super(gtuCharacteristics.getGTUType(), gtuCharacteristics.getIdGenerator(), gtuCharacteristics.getLength(),
                 gtuCharacteristics.getWidth(), gtuCharacteristics.getMaximumSpeed(), gtuCharacteristics.getSimulator(),
                 gtuCharacteristics.getNetwork());
-        this.strategicalPlanner = laneBasedStrategicalPlanner;
+        this.strategicalPlannerFactory = laneBasedStrategicalPlannerFactory;
         this.speed = speed;
         this.initialLongitudinalPositions = initialLongitudinalPositions;
     }
 
     /**
-     * @return LaneBasedStrategicalPlanner; the strategical planner for the GTU
+     * @return LaneBasedStrategicalPlannerFactory; the strategical planner factory for the GTU
      */
-    public final LaneBasedStrategicalPlanner getStrategicalPlanner()
+    public final LaneBasedStrategicalPlannerFactory<?> getStrategicalPlannerFactory()
     {
-        return this.strategicalPlanner;
+        return this.strategicalPlannerFactory;
     }
 
     /**

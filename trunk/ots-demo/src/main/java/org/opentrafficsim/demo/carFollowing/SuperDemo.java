@@ -189,6 +189,7 @@ public class SuperDemo implements UNITS
         }
         JScrollPane scrollPane = new JScrollPane(left);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(10);
         mainPanel.add(scrollPane, BorderLayout.LINE_START);
         startButton.setEnabled(false);
         startButton.setVisible(false);

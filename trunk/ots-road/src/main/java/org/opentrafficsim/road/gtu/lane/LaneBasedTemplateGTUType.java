@@ -35,7 +35,7 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
     private static final long serialVersionUID = 20160101L;
 
     /** Factory for the strategical planner. */
-    private final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory;
+    private final LaneBasedStrategicalPlannerFactory strategicalPlannerFactory;
 
     /** Generator for the initial speed of the next GTU. */
     private Generator<Speed> initialSpeedGenerator;
@@ -65,7 +65,7 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
     public LaneBasedTemplateGTUType(final GTUType gtuType, final IdGenerator idGenerator,
         final Generator<Length> lengthGenerator, final Generator<Length> widthGenerator,
         final Generator<Speed> maximumSpeedGenerator, final OTSDEVSSimulatorInterface simulator,
-        final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory,
+        final LaneBasedStrategicalPlannerFactory strategicalPlannerFactory,
         final Set<DirectedLanePosition> initialLongitudinalPositions, final Generator<Speed> initialSpeedGenerator,
         final OTSNetwork network) throws NullPointerException
     {
@@ -80,17 +80,14 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
 
     /**
      * Generate the properties of the next GTU.
-     * @param gtu GTU
      * @return the LaneBasedGTUCharacteristics with a drawn perception, strategical planner, and initial speed.
      * @throws ProbabilityException when a generator is improperly configured
      * @throws ParameterException in case of a parameter problem.
-     * @throws GTUException if strategical planner cannot be created
      */
     @Override
-    public final LaneBasedGTUCharacteristics draw(final LaneBasedGTU gtu) throws ProbabilityException, ParameterException,
-        GTUException
+    public final LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException
     {
-        return new LaneBasedGTUCharacteristics(super.draw(gtu), this.strategicalPlannerFactory.create(gtu),
+        return new LaneBasedGTUCharacteristics(super.draw(), this.strategicalPlannerFactory,
             this.initialSpeedGenerator.draw(), this.initialLongitudinalPositions);
     }
 

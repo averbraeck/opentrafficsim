@@ -122,7 +122,6 @@ public class LaneBasedGTUGenerator implements Serializable
 
     /**
      * Generate the characteristics of the next GTU.
-     * @param gtu GTU
      * @throws ProbabilityException when something is wrongly defined in the LaneBasedTemplateGTUType
      * @throws SimRuntimeException when this method fails to re-schedule itself or the call to the method that tries to place a
      *             GTU on the road
@@ -130,8 +129,8 @@ public class LaneBasedGTUGenerator implements Serializable
      * @throws GTUException if strategical planner cannot generate a plan
      */
     @SuppressWarnings("unused")
-    private void generateCharacteristics(final LaneBasedGTU gtu) throws ProbabilityException, SimRuntimeException,
-        ParameterException, GTUException
+    private void generateCharacteristics() throws ProbabilityException, SimRuntimeException, ParameterException,
+        GTUException
     {
         OTSDEVSSimulatorInterface simulator = this.laneBasedGTUCharacteristicsGenerator.getSimulator();
         if (this.generatedGTUs >= this.maxGTUs
@@ -142,7 +141,7 @@ public class LaneBasedGTUGenerator implements Serializable
         synchronized (this.unplacedTemplates)
         {
             this.generatedGTUs++;
-            this.unplacedTemplates.add(this.laneBasedGTUCharacteristicsGenerator.draw(gtu));
+            this.unplacedTemplates.add(this.laneBasedGTUCharacteristicsGenerator.draw());
             if (this.unplacedTemplates.size() == 1)
             {
                 simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] {});
@@ -227,9 +226,10 @@ public class LaneBasedGTUGenerator implements Serializable
                 String gtuId = null == characteristics.getIdGenerator() ? null : characteristics.getIdGenerator().nextId();
                 LaneBasedIndividualGTU gtu =
                     new LaneBasedIndividualGTU(gtuId, characteristics.getGTUType(), characteristics.getLength(),
-                        characteristics.getWidth(), characteristics.getMaximumSpeed(), simulator, DefaultCarAnimation.class,
-                        this.gtuColorer, characteristics.getNetwork());
-                gtu.init(characteristics.getStrategicalPlanner(), this.initialLongitudinalPositions, safeSpeed);
+                        characteristics.getWidth(), characteristics.getMaximumSpeed(), simulator, characteristics
+                            .getNetwork());
+                gtu.initWithAnimation(characteristics.getStrategicalPlannerFactory().create(gtu),
+                    this.initialLongitudinalPositions, safeSpeed, DefaultCarAnimation.class, this.gtuColorer);
 
                 // System.out.println("tryToPlace: Constructed GTU on " + this.initialLongitudinalPositions);
             }

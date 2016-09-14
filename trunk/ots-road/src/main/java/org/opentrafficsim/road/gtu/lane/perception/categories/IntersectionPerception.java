@@ -31,7 +31,7 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
     /** Set of traffic lights. */
     private Map<RelativeLane, TimeStampedObject<SortedSet<HeadwayTrafficLight>>> trafficLights;
     
-    /** Set of traffic lights. */
+    /** Set of conflicts. */
     private Map<RelativeLane, TimeStampedObject<SortedSet<HeadwayConflict>>> conflicts;
     
     /**
