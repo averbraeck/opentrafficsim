@@ -110,27 +110,27 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
                     try
                     {
                         localProperties.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
-                            "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
-                            new Double[]{0.8, 0.2}, false, 10));
+                                "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
+                                new Double[] { 0.8, 0.2 }, false, 10));
                     }
                     catch (PropertyException exception)
                     {
                         exception.printStackTrace();
                     }
                     localProperties.add(new SelectionProperty("CarFollowingModel", "Car following model",
-                        "<html>The car following model determines "
-                            + "the acceleration that a vehicle will make taking into account "
-                            + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
-                            + "curvature of the road) capabilities of the vehicle and personality "
-                            + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
+                            "<html>The car following model determines "
+                                    + "the acceleration that a vehicle will make taking into account "
+                                    + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
+                                    + "curvature of the road) capabilities of the vehicle and personality "
+                                    + "of the driver.</html>", new String[] { "IDM", "IDM+" }, 1, false, 1));
                     localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car", new Acceleration(1.0,
-                        METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length(2.0, METER),
-                        new Duration(1.0, SECOND), 2));
+                            METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length(2.0, METER),
+                            new Duration(1.0, SECOND), 2));
                     localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck", new Acceleration(0.5,
-                        METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER),
-                        new Duration(1.0, SECOND), 3));
-                    osm.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND),
-                        new Duration(3600.0, SECOND), localProperties, null, true);
+                            METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER),
+                            new Duration(1.0, SECOND), 3));
+                    osm.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND),
+                            localProperties, null, true);
                 }
                 catch (Exception e)
                 {
@@ -210,7 +210,7 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
             {
                 try
                 {
-                    this.otsNetwork.addNode(converter.convertNode(osmNode));
+                    this.otsNetwork.addNode(converter.convertNode(this.otsNetwork, osmNode));
                 }
                 catch (NetworkException ne)
                 {
@@ -219,7 +219,7 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
             }
             for (OSMLink osmLink : this.osmNetwork.getLinks())
             {
-                Link link = converter.convertLink(osmLink);
+                Link link = converter.convertLink(this.otsNetwork, osmLink);
                 this.otsNetwork.addLink(link);
             }
             this.osmNetwork.makeLinks(this.warningListener, this.progressListener);
@@ -230,8 +230,8 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
             return null;
         }
         this.model =
-            new OSMModel(getUserModifiedProperties(), this.osmNetwork, this.warningListener, this.progressListener,
-                converter);
+                new OSMModel(getUserModifiedProperties(), this.osmNetwork, this.warningListener, this.progressListener,
+                        converter);
         Iterator<Node> count = this.otsNetwork.getNodeMap().values().iterator();
         Rectangle2D area = null;
         while (count.hasNext())
@@ -276,7 +276,7 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
     protected final java.awt.geom.Rectangle2D.Double makeAnimationRectangle()
     {
         return new Rectangle2D.Double(this.rectangle.getX(), this.rectangle.getY(), this.rectangle.getWidth(),
-            this.rectangle.getHeight());
+                this.rectangle.getHeight());
     }
 }
 
@@ -323,8 +323,8 @@ class OSMModel implements OTSModelInterface
      * @param pL ProgressListener; the receiver of progress events
      * @param converter Convert; the output converter
      */
-    public OSMModel(final ArrayList<AbstractProperty<?>> properties, final OSMNetwork osmNetwork,
-        final WarningListener wL, final ProgressListener pL, final Convert converter)
+    public OSMModel(final ArrayList<AbstractProperty<?>> properties, final OSMNetwork osmNetwork, final WarningListener wL,
+            final ProgressListener pL, final Convert converter)
     {
         this.osmNetwork = osmNetwork;
         this.warningListener = wL;
@@ -335,14 +335,14 @@ class OSMModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-        throws SimRuntimeException, RemoteException
+            throws SimRuntimeException, RemoteException
     {
         OTSNetwork otsNetwork = new OTSNetwork(this.osmNetwork.getName());
         for (OSMNode osmNode : this.osmNetwork.getNodes().values())
         {
             try
             {
-                otsNetwork.addNode(this.converter.convertNode(osmNode));
+                otsNetwork.addNode(this.converter.convertNode(otsNetwork, osmNode));
             }
             catch (Exception e)
             {
@@ -353,7 +353,7 @@ class OSMModel implements OTSModelInterface
         {
             try
             {
-                otsNetwork.addLink(this.converter.convertLink(osmLink));
+                otsNetwork.addLink(this.converter.convertLink(otsNetwork, osmLink));
             }
             catch (Exception e)
             {
@@ -362,7 +362,7 @@ class OSMModel implements OTSModelInterface
         }
         Convert.findSinksandSources(this.osmNetwork, this.progressListener);
         this.progressListener.progress(new ProgressEvent(this.osmNetwork, "Creation the lanes on "
-            + this.osmNetwork.getLinks().size() + " links"));
+                + this.osmNetwork.getLinks().size() + " links"));
         double total = this.osmNetwork.getLinks().size();
         double counter = 0;
         double nextPercentage = 5.0;
@@ -370,8 +370,8 @@ class OSMModel implements OTSModelInterface
         {
             try
             {
-                this.lanes.addAll(this.converter.makeLanes(link, (OTSDEVSSimulatorInterface) theSimulator,
-                    this.warningListener));
+                this.lanes.addAll(this.converter.makeLanes(otsNetwork, link, (OTSDEVSSimulatorInterface) theSimulator,
+                        this.warningListener));
             }
             catch (Exception e)
             {

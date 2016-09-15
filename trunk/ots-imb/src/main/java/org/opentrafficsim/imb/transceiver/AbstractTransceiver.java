@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.imb.IMBException;
 
 import nl.tno.imb.TByteBuffer;
@@ -125,8 +126,8 @@ public abstract class AbstractTransceiver extends EventProducer implements Trans
         Throw.whenNull(producer, "producer cannot be null");
         Throw.whenNull(eventType, "eventType cannot be null");
         Throw.whenNull(imbDeletePayload, "imbDeletePayload cannot be null");
-        Throw.when(!this.otsToIMBMap.containsKey(eventType), IMBException.class,
-                "EventType " + eventType + " for this channel was not registered with an addOTSToIMBChannel call");
+        Throw.when(!this.otsToIMBMap.containsKey(eventType), IMBException.class, "EventType " + eventType
+                + " for this channel was not registered with an addOTSToIMBChannel call");
 
         try
         {
@@ -147,6 +148,10 @@ public abstract class AbstractTransceiver extends EventProducer implements Trans
         String imbEventName = this.otsToIMBMap.get(event.getType());
         if (null != imbEventName)
         {
+            if (!event.getType().equals(GTU.MOVE_EVENT))
+            {
+                System.out.println("About to transmit to IMB event " + imbEventName + " " + event.getContent());
+            }
             try
             {
                 this.connector.postIMBMessage(imbEventName, Connector.IMBEventType.CHANGE,
@@ -176,8 +181,8 @@ public abstract class AbstractTransceiver extends EventProducer implements Trans
         Throw.whenNull(eventType, "eventType cannot be null");
         Throw.whenNull(imbToOTSTransformer, "imbToOTSTransformer cannot be null");
 
-        this.imbMessageHandlerMap.put(imbEventName,
-                new PubSubIMBMessageHandler(imbEventName, eventType, imbToOTSTransformer, this.simulator));
+        this.imbMessageHandlerMap.put(imbEventName, new PubSubIMBMessageHandler(imbEventName, eventType, imbToOTSTransformer,
+                this.simulator));
         this.connector.register(imbEventName, this); // tell the connector we are interested in this IMB event
     }
 
@@ -225,6 +230,15 @@ public abstract class AbstractTransceiver extends EventProducer implements Trans
     public String toString()
     {
         return "AbstractTransceiver [id=" + this.id + ", connector=" + this.connector + "]";
+    }
+
+    /**
+     * Retrieve the simulator.
+     * @return OTSDEVSSimulatorInterface simulator
+     */
+    public OTSDEVSSimulatorInterface getSimulator()
+    {
+        return this.simulator;
     }
 
 }

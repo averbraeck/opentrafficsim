@@ -112,10 +112,12 @@ public class SimulatorTransceiver extends AbstractTransceiver
             @Override
             public void handle(TByteBuffer imbPayload) throws IMBException
             {
+                System.out.println("About to read the new speed value");
                 double speed = imbPayload.readDouble();
+                System.out.println("Sim_Stop event handler: new speed is " + speed + " current speed is " + animator.getSpeedFactor());
                 if (speed != animator.getSpeedFactor()) // to break message cycle between OTS and IMB
                 {
-                    animator.setSpeedFactor(speed, false); // TODO callback for speed not 100% ok yet...
+                    animator.setSpeedFactor(speed, true); // TODO callback for speed not 100% ok yet...
                 }
             }
 
@@ -171,6 +173,7 @@ public class SimulatorTransceiver extends AbstractTransceiver
         public Object[] transform(final EventInterface event)
         {
             Double speed = ((Double) event.getContent());
+            System.out.println("Transmitting speed " + speed + " to IMB");
             return new Object[] { speed };
         }
     }

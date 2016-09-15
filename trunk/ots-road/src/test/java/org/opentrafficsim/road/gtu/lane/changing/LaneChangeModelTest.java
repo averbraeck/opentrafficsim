@@ -37,6 +37,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -77,19 +78,21 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
     private static final long serialVersionUID = 20150313;
 
     /** The network. */
-    private OTSNetwork network = new OTSNetwork("network");
+    private Network network = new OTSNetwork("lane change model test network");
 
     /**
      * Create a Link.
+     * @param network Network; the network
      * @param name String; name of the new Link
      * @param from Node; start node of the new Link
      * @param to Node; end node of the new Link
      * @param width Length; the width of the new Link
      * @return Link
      * @throws OTSGeometryException
+     * @throws NetworkException
      */
-    private static CrossSectionLink makeLink(final String name, final OTSNode from, final OTSNode to, final Length width)
-            throws OTSGeometryException
+    private static CrossSectionLink makeLink(final Network network, final String name, final OTSNode from, final OTSNode to,
+            final Length width) throws OTSGeometryException, NetworkException
     {
         // TODO create a LinkAnimation if the simulator is compatible with that.
         // FIXME The current LinkAnimation is too bad to use...
@@ -98,7 +101,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
                         new OTSPoint3D(to.getPoint().x, to.getPoint().y, 0) };
         OTSLine3D line = new OTSLine3D(coordinates);
         CrossSectionLink link =
-                new CrossSectionLink(name, from, to, LinkType.ALL, line, LongitudinalDirectionality.DIR_PLUS,
+                new CrossSectionLink(network, name, from, to, LinkType.ALL, line, LongitudinalDirectionality.DIR_PLUS,
                         LaneKeepingPolicy.KEEP_RIGHT);
         return link;
     }
@@ -131,6 +134,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
 
     /**
      * Create a simple straight road with the specified number of Lanes.
+     * @param network Network; the network
      * @param name String; name of the Link
      * @param from Node; starting node of the new Lane
      * @param to Node; ending node of the new Lane
@@ -139,11 +143,11 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws Exception when something goes wrong (should not happen)
      */
-    public static Lane[] makeMultiLane(final String name, final OTSNode from, final OTSNode to, final LaneType laneType,
-            final int laneCount) throws Exception
+    public static Lane[] makeMultiLane(final Network network, final String name, final OTSNode from, final OTSNode to,
+            final LaneType laneType, final int laneCount) throws Exception
     {
         Length width = new Length(laneCount * 4.0, METER);
-        final CrossSectionLink link = makeLink(name, from, to, width);
+        final CrossSectionLink link = makeLink(network, name, from, to, width);
         Lane[] result = new Lane[laneCount];
         width = new Length(4.0, METER);
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
@@ -168,8 +172,8 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         LaneType laneType = new LaneType("CarLane", compatibility);
         int laneCount = 2;
         Lane[] lanes =
-                makeMultiLane("Road with two lanes", new OTSNode("From", new OTSPoint3D(0, 0, 0)), new OTSNode("To",
-                        new OTSPoint3D(200, 0, 0)), laneType, laneCount);
+                makeMultiLane(this.network, "Road with two lanes", new OTSNode(this.network, "From", new OTSPoint3D(0, 0, 0)),
+                        new OTSNode(this.network, "To", new OTSPoint3D(200, 0, 0)), laneType, laneCount);
 
         // Let's see if adjacent lanes are accessible
         // lanes: | 0 : 1 : 2 | in case of three lanes
@@ -195,7 +199,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         // 1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d), laneChangeModel);
         LaneBasedIndividualGTU car =
                 new LaneBasedIndividualGTU("ReferenceCar", gtuType, new Length(4, METER), new Length(2, METER), new Speed(150,
-                        KM_PER_HOUR), simpleSimulator, this.network);
+                        KM_PER_HOUR), simpleSimulator, (OTSNetwork) this.network);
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
                         new IDMPlusOld(), laneChangeModel, car), car);
@@ -242,7 +246,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             // laneChangeModel);
             LaneBasedIndividualGTU collisionCar =
                     new LaneBasedIndividualGTU("LaneChangeBlockingCarAt" + pos, gtuType, vehicleLength, new Length(2, METER),
-                            new Speed(150, KM_PER_HOUR), simpleSimulator, this.network);
+                            new Speed(150, KM_PER_HOUR), simpleSimulator, (OTSNetwork) this.network);
             strategicalPlanner =
                     new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
                             new IDMPlusOld(), laneChangeModel, collisionCar), collisionCar);
@@ -281,7 +285,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             // laneChangeModel);
             LaneBasedIndividualGTU otherCar =
                     new LaneBasedIndividualGTU("OtherCarAt" + pos, gtuType, vehicleLength, new Length(2, METER), new Speed(150,
-                            KM_PER_HOUR), simpleSimulator, this.network);
+                            KM_PER_HOUR), simpleSimulator, (OTSNetwork) this.network);
             strategicalPlanner =
                     new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
                             new IDMPlusOld(), laneChangeModel, otherCar), otherCar);

@@ -26,6 +26,7 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -58,8 +59,7 @@ public class CurveTest
      * @throws GTUException
      */
     @Test
-    public void curveTest() throws OTSGeometryException, SimRuntimeException, NamingException, NetworkException,
-        GTUException
+    public void curveTest() throws OTSGeometryException, SimRuntimeException, NamingException, NetworkException, GTUException
     {
         final int laneCount = 1;
         GTUType gtuType = new GTUType("Car");
@@ -68,22 +68,22 @@ public class CurveTest
         LaneType laneType = new LaneType("CarLane", compatibility);
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
         OTSDEVSSimulatorInterface simulator = CarTest.makeSimulator();
-        OTSNode origin = new OTSNode("origin", new OTSPoint3D(10, 10, 0));
-        OTSNode curveStart = new OTSNode("curveStart", new OTSPoint3D(100, 10, 0));
-        OTSNode curveEnd = new OTSNode("curveEnd", new OTSPoint3D(150, 60, 0));
-        OTSNode destination = new OTSNode("destination", new OTSPoint3D(150, 150, 0));
+        Network network = new OTSNetwork("curve test network");
+        OTSNode origin = new OTSNode(network, "origin", new OTSPoint3D(10, 10, 0));
+        OTSNode curveStart = new OTSNode(network, "curveStart", new OTSPoint3D(100, 10, 0));
+        OTSNode curveEnd = new OTSNode(network, "curveEnd", new OTSPoint3D(150, 60, 0));
+        OTSNode destination = new OTSNode(network, "destination", new OTSPoint3D(150, 150, 0));
         Lane[] straight1 =
-            LaneFactory.makeMultiLane("straight1", origin, curveStart, null, laneCount, laneType, speedLimit,
-                simulator, LongitudinalDirectionality.DIR_PLUS);
+                LaneFactory.makeMultiLane(network, "straight1", origin, curveStart, null, laneCount, laneType, speedLimit,
+                        simulator, LongitudinalDirectionality.DIR_PLUS);
         Lane[] straight2 =
-            LaneFactory.makeMultiLane("straight2", curveEnd, destination, null, laneCount, laneType, speedLimit,
-                simulator, LongitudinalDirectionality.DIR_PLUS);
+                LaneFactory.makeMultiLane(network, "straight2", curveEnd, destination, null, laneCount, laneType, speedLimit,
+                        simulator, LongitudinalDirectionality.DIR_PLUS);
         OTSLine3D curveLine = LaneFactory.makeBezier(origin, curveStart, curveEnd, destination);
         Lane[] curve =
-            LaneFactory.makeMultiLane("straight2", curveStart, curveEnd, curveLine.getPoints(), laneCount, laneType,
-                speedLimit, simulator, LongitudinalDirectionality.DIR_PLUS);
-        Lane[][] laneSets = new Lane[][]{straight1, curve, straight2};
-        OTSNetwork network = new OTSNetwork("network");
+                LaneFactory.makeMultiLane(network, "straight2", curveStart, curveEnd, curveLine.getPoints(), laneCount,
+                        laneType, speedLimit, simulator, LongitudinalDirectionality.DIR_PLUS);
+        Lane[][] laneSets = new Lane[][] { straight1, curve, straight2 };
         Length initialPosition = new Length(5, LengthUnit.METER);
         Speed speed = new Speed(10, SpeedUnit.SI);
         for (int lane = 0; lane < laneCount; lane++)
@@ -93,15 +93,14 @@ public class CurveTest
             for (Lane[] set : laneSets)
             {
                 cumulativeLength += set[lane].getLength().si;
-                double timeAtEnd =
-                    simulator.getSimulatorTime().get().si + (cumulativeLength - initialPosition.si) / speed.si;
+                double timeAtEnd = simulator.getSimulatorTime().get().si + (cumulativeLength - initialPosition.si) / speed.si;
                 System.out.println("lane " + set[lane] + " length is " + set[lane].getLength()
-                    + " time for reference to get to end " + timeAtEnd);
+                        + " time for reference to get to end " + timeAtEnd);
             }
             LaneBasedIndividualGTU car =
-                CarTest.makeReferenceCar("car", gtuType, straight1[lane], initialPosition, speed,
-                    (OTSDEVSSimulator) simulator, new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI),
-                        new Duration(25, TimeUnit.SI)), new FixedLaneChangeModel(null), network);
+                    CarTest.makeReferenceCar("car", gtuType, straight1[lane], initialPosition, speed,
+                            (OTSDEVSSimulator) simulator, new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI),
+                                    new Duration(25, TimeUnit.SI)), new FixedLaneChangeModel(null), (OTSNetwork) network);
             printEventList(simulator);
             System.out.println("STEP");
             simulator.step();

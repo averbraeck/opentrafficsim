@@ -36,6 +36,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -85,7 +86,7 @@ public class CarTest implements UNITS
         compatibility.add(gtuType);
         LaneType laneType = new LaneType("CarLane", compatibility);
         OTSNetwork network = new OTSNetwork("network");
-        Lane lane = makeLane(laneType);
+        Lane lane = makeLane(network, laneType);
         Length initialPosition = new Length(12, METER);
         Speed initialSpeed = new Speed(34, KM_PER_HOUR);
         OTSDEVSSimulator simulator = makeSimulator();
@@ -169,18 +170,19 @@ public class CarTest implements UNITS
     }
 
     /**
+     * @param network Network; the network
      * @param laneType LaneType&lt;String&gt;; the type of the lane
      * @return a lane of 1000 m long.
      * @throws NetworkException on network error
      * @throws OTSGeometryException when center line or contour of a link or lane cannot be generated
      */
-    public static Lane makeLane(final LaneType laneType) throws NetworkException, OTSGeometryException
+    public static Lane makeLane(final Network network, final LaneType laneType) throws NetworkException, OTSGeometryException
     {
-        OTSNode n1 = new OTSNode("n1", new OTSPoint3D(0, 0));
-        OTSNode n2 = new OTSNode("n2", new OTSPoint3D(100000.0, 0.0));
+        OTSNode n1 = new OTSNode(network, "n1", new OTSPoint3D(0, 0));
+        OTSNode n2 = new OTSNode(network, "n2", new OTSPoint3D(100000.0, 0.0));
         OTSPoint3D[] coordinates = new OTSPoint3D[] { new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100000.0, 0.0) };
         CrossSectionLink link12 =
-                new CrossSectionLink("link12", n1, n2, LinkType.ALL, new OTSLine3D(coordinates),
+                new CrossSectionLink(network, "link12", n1, n2, LinkType.ALL, new OTSLine3D(coordinates),
                         LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
         Length latPos = new Length(0.0, METER);
         Length width = new Length(4.0, METER);

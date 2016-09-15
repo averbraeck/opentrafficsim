@@ -26,6 +26,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -58,11 +59,12 @@ public class SensorTest implements UNITS
     @Test
     public final void sensorTest() throws Exception
     {
+        Network network = new OTSNetwork("sensor test network");
         // First we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
-        OTSNode nodeAFrom = new OTSNode("AFrom", new OTSPoint3D(0, 0, 0));
-        OTSNode nodeATo = new OTSNode("ATo", new OTSPoint3D(1000, 0, 0));
-        OTSNode nodeBTo = new OTSNode("BTo", new OTSPoint3D(20000, 0, 0)); // so car won't run off lane B in 100 s.
+        OTSNode nodeAFrom = new OTSNode(network, "AFrom", new OTSPoint3D(0, 0, 0));
+        OTSNode nodeATo = new OTSNode(network, "ATo", new OTSPoint3D(1000, 0, 0));
+        OTSNode nodeBTo = new OTSNode(network, "BTo", new OTSPoint3D(20000, 0, 0)); // so car won't run off lane B in 100 s.
         GTUType gtuType = new GTUType("Car");
         Set<GTUType> compatibility = new HashSet<GTUType>();
         compatibility.add(gtuType);
@@ -72,11 +74,11 @@ public class SensorTest implements UNITS
         final SimpleSimulator simulator =
                 new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND), model);
         Lane[] lanesA =
-                LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new Speed(100, KM_PER_HOUR), simulator,
-                        LongitudinalDirectionality.DIR_PLUS);
+                LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType, new Speed(100, KM_PER_HOUR),
+                        simulator, LongitudinalDirectionality.DIR_PLUS);
         Lane[] lanesB =
-                LaneFactory.makeMultiLane("B", nodeATo, nodeBTo, null, 3, laneType, new Speed(100, KM_PER_HOUR), simulator,
-                        LongitudinalDirectionality.DIR_PLUS);
+                LaneFactory.makeMultiLane(network, "B", nodeATo, nodeBTo, null, 3, laneType, new Speed(100, KM_PER_HOUR),
+                        simulator, LongitudinalDirectionality.DIR_PLUS);
 
         // put a sensor on each of the lanes at the end of LaneA
         for (Lane lane : lanesA)
@@ -91,8 +93,6 @@ public class SensorTest implements UNITS
         Length positionA = new Length(100, METER);
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions.add(new DirectedLanePosition(lanesA[1], positionA, GTUDirectionality.DIR_PLUS));
-
-        OTSNetwork network = new OTSNetwork("network");
 
         // A Car needs an initial speed
         Speed initialSpeed = new Speed(50, KM_PER_HOUR);
@@ -109,14 +109,14 @@ public class SensorTest implements UNITS
                 new FixedAccelerationModel(new Acceleration(0.5, METER_PER_SECOND_2), new Duration(100, SECOND));
         // Now we can make a car (GTU) (and we don't even have to hold a pointer to it)
         BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create();
-        
+
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(fas, null);
         LaneBasedIndividualGTU car =
-                new LaneBasedIndividualGTU(carID, gtuType, carLength, carWidth, maximumSpeed, simulator, network);
+                new LaneBasedIndividualGTU(carID, gtuType, carLength, carWidth, maximumSpeed, simulator, (OTSNetwork) network);
         LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedGTUFollowingTacticalPlanner(
-                        fas, car), car);
+                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedGTUFollowingTacticalPlanner(fas,
+                        car), car);
         car.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
         simulator.runUpTo(new Time(1, SECOND));
         if (!simulator.isRunning())
@@ -169,7 +169,7 @@ class TriggerSensor extends AbstractSensor
      * @param positionType
      * @param name
      * @param simulator
-     * @throws NetworkException 
+     * @throws NetworkException
      */
     public TriggerSensor(final Lane lane, final Length longitudinalPosition, final RelativePosition.TYPE positionType,
             final String name, OTSDEVSSimulatorInterface simulator) throws NetworkException

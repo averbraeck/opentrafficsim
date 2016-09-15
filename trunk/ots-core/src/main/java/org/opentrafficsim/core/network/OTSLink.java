@@ -83,9 +83,9 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    public OTSLink(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
-            final OTSLine3D designLine, final Map<GTUType, LongitudinalDirectionality> directionalityMap)
-            throws NetworkException
+    public OTSLink(final Network network, final String id, final Node startNode, final Node endNode,
+            final LinkType linkType, final OTSLine3D designLine,
+            final Map<GTUType, LongitudinalDirectionality> directionalityMap) throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
@@ -120,7 +120,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    public OTSLink(final Network network, final String id, final OTSNode startNode, final OTSNode endNode,
+    public OTSLink(final Network network, final String id, final Node startNode, final Node endNode,
             final LinkType linkType, final OTSLine3D designLine, final LongitudinalDirectionality directionality)
             throws NetworkException
     {
@@ -164,8 +164,8 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         if (!this.gtus.contains(gtu))
         {
             this.gtus.add(gtu);
-            fireTimedEvent(Link.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() },
-                    gtu.getSimulator().getSimulatorTime());
+            fireTimedEvent(Link.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() }, gtu.getSimulator()
+                    .getSimulatorTime());
         }
     }
 
@@ -176,8 +176,8 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         if (this.gtus.contains(gtu))
         {
             this.gtus.remove(gtu);
-            fireTimedEvent(Link.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() },
-                    gtu.getSimulator().getSimulatorTime());
+            fireTimedEvent(Link.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() }, gtu.getSimulator()
+                    .getSimulatorTime());
         }
     }
 

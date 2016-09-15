@@ -10,10 +10,12 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
+import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.DefaultTestParameters;
-import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
@@ -35,17 +37,19 @@ public class LaneBasedStrategicalRoutePlannerTest
     /**
      * Test the nextLinkDirection method.
      * @throws GTUException if not caught this test has failed
+     * @throws NetworkException  if not caught this test has failed
      */
     @Test
-    public final void nextLinkDirectionTest() throws GTUException
+    public final void nextLinkDirectionTest() throws GTUException, NetworkException
     {
+        Network network = new OTSNetwork("next link direction test");
         GTUType gtuType = new GTUType("car");
         // Build a really simple network
-        OTSNode fromNode = new OTSNode("from", new OTSPoint3D(0, 0, 0));
-        OTSNode toNode = new OTSNode("to", new OTSPoint3D(100, 0, 0));
+        OTSNode fromNode = new OTSNode(network, "from", new OTSPoint3D(0, 0, 0));
+        OTSNode toNode = new OTSNode(network, "to", new OTSPoint3D(100, 0, 0));
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new HashMap<GTUType, LongitudinalDirectionality>();
         directionalityMap.put(gtuType, LongitudinalDirectionality.DIR_PLUS); // Start with the easy cases
-        OTSLink link = new OTSLink("link", fromNode, toNode, LinkType.ALL, null, directionalityMap);
+        OTSLink link = new OTSLink(network, "link", fromNode, toNode, LinkType.ALL, null, directionalityMap);
         CarFollowingModel cfm = new IDMPlus();
         LaneBasedGTUFollowingLaneChangeTacticalPlanner tacticalPlanner =
                 new LaneBasedGTUFollowingLaneChangeTacticalPlanner(null, null);
