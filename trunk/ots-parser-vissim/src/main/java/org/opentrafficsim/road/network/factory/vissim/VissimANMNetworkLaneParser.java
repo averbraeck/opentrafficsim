@@ -188,19 +188,6 @@ public class VissimANMNetworkLaneParser implements Serializable
     private OTSNetwork makeNetwork(final String name) throws NetworkException
     {
         OTSNetwork network = new OTSNetwork(name);
-        // for (NodeTag nodeTag : this.nodeTags.values())
-        // {
-        // network.addNode(nodeTag.node);
-        // }
-        // for (LinkTag linkTag : this.linkTags.values())
-        // {
-        // network.addLink(linkTag.link);
-        // }
-        // for (RouteTag routeTag : this.routeTags.values())
-        // {
-        // // TODO Make routes GTU specific. See what to do with GTUType.ALL for routes
-        // network.addRoute(GTUType.ALL, routeTag.route);
-        // }
         return network;
     }
 

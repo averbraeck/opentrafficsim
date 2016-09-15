@@ -14,9 +14,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -30,6 +27,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 /**
  * <p>
@@ -128,9 +128,8 @@ public class OpenDriveNetworkLaneParser implements Serializable
         NodeList networkNodeList = document.getDocumentElement().getChildNodes();
 
         if (!document.getDocumentElement().getNodeName().equals("OpenDRIVE"))
-            throw new SAXException(
-                    "OpenDriveNetworkLaneParser.build: XML document does not start with an OpenDRIVE tag, found "
-                            + document.getDocumentElement().getNodeName() + " instead");
+            throw new SAXException("OpenDriveNetworkLaneParser.build: XML document does not start with an OpenDRIVE tag, found "
+                    + document.getDocumentElement().getNodeName() + " instead");
 
         this.network = new OTSNetwork(url.toString());
 
@@ -219,20 +218,6 @@ public class OpenDriveNetworkLaneParser implements Serializable
     private OTSNetwork makeNetwork(final String name) throws NetworkException
     {
         this.network = new OTSNetwork(name);
-        /*-
-        for (NodeTag nodeTag : this.nodeTags.values())
-        {
-            network.addNode(nodeTag.node);
-        }
-        for (LinkTag linkTag : this.linkTags.values())
-        {
-            network.addLink(linkTag.link);
-        }
-        for (RouteTag routeTag : this.routeTags.values())
-        {
-            network.addRoute(routeTag.route);
-        }
-         */
         return this.network;
     }
 
@@ -248,13 +233,12 @@ public class OpenDriveNetworkLaneParser implements Serializable
     @Override
     public final String toString()
     {
-        return "OpenDriveNetworkLaneParser [headerTag=" + this.headerTag + ", controllerTags.size="
-                + this.controllerTags.size() + ", junctionTags.size=" + this.junctionTags.size() + ", roadTags.size="
-                + this.roadTags.size() + ", gtuTypes.size=" + this.gtuTypes.size() + ", laneTypes.size="
-                + this.laneTypes.size() + ", simulator=" + this.simulator + ", network=" + this.network + ", signalTags.size="
-                + this.signalTags.size() + ", trafficLightsBySignals.size=" + this.trafficLightsBySignals.size()
-                + ", trafficLightsByLanes.size=" + this.trafficLightsByLanes.size() + ", animationMap.size="
-                + this.animationMap.size() + "]";
+        return "OpenDriveNetworkLaneParser [headerTag=" + this.headerTag + ", controllerTags.size=" + this.controllerTags.size()
+                + ", junctionTags.size=" + this.junctionTags.size() + ", roadTags.size=" + this.roadTags.size()
+                + ", gtuTypes.size=" + this.gtuTypes.size() + ", laneTypes.size=" + this.laneTypes.size() + ", simulator="
+                + this.simulator + ", network=" + this.network + ", signalTags.size=" + this.signalTags.size()
+                + ", trafficLightsBySignals.size=" + this.trafficLightsBySignals.size() + ", trafficLightsByLanes.size="
+                + this.trafficLightsByLanes.size() + ", animationMap.size=" + this.animationMap.size() + "]";
     }
 
 }
