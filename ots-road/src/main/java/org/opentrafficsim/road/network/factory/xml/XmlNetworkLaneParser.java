@@ -198,18 +198,10 @@ public class XmlNetworkLaneParser implements Serializable
      */
     private OTSNetwork makeNetwork() throws NetworkException
     {
-        for (NodeTag nodeTag : this.nodeTags.values())
-        {
-            this.network.addNode(nodeTag.node);
-        }
-        System.out.println(this.network.getNodeMap());
-        for (LinkTag linkTag : this.linkTags.values())
-        {
-            this.network.addLink(linkTag.link);
-        }
         for (RouteTag routeTag : this.routeTags.values())
         {
             // TODO Make routes GTU specific. See what to do with GTUType.ALL for routes
+            // TODO Automate addition of Routes to network 
             this.network.addRoute(GTUType.ALL, routeTag.route);
         }
         return this.network;

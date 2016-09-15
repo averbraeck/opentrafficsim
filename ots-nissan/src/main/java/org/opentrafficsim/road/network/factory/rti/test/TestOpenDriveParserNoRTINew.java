@@ -828,12 +828,11 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                 endWidth = eLane.getEndWidth();
             }
             OTSLine3D designLine = Bezier.cubic(64, sp, ep);
-            CrossSectionLink newLink = new CrossSectionLink(linkId, sNode, eNode, linkType, designLine, laneKeepingPolicy);
+            CrossSectionLink newLink = new CrossSectionLink(network, linkId, sNode, eNode, linkType, designLine, laneKeepingPolicy);
             newLink.addDirectionality(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
             Lane newLane =
                 new Lane(newLink, laneId, Length.ZERO, Length.ZERO, beginWidth, endWidth, sLane.getLaneType(),
                     LongitudinalDirectionality.DIR_PLUS, sLane.getSpeedLimit(GTUType.ALL), sLane.getOvertakingConditions());
-            network.addLink(newLink);
             return newLane;
         }
 
