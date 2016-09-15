@@ -23,6 +23,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
@@ -417,7 +418,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
     public static NextSplitInfo determineNextSplit(final LaneBasedGTU gtu, final Length maxHeadway) throws GTUException,
         NetworkException
     {
-        OTSNode nextSplitNode = null;
+        Node nextSplitNode = null;
         Set<Lane> correctCurrentLanes = new HashSet<>();
         Lane referenceLane = getReferenceLane(gtu);
         Link lastLink = referenceLane.getParentLink();
@@ -425,7 +426,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         GTUDirectionality referenceLaneDirectionality = lastGtuDir;
         Length lengthForward;
         Length position = gtu.position(referenceLane, gtu.getReference());
-        OTSNode lastNode;
+        Node lastNode;
         if (lastGtuDir.equals(GTUDirectionality.DIR_PLUS))
         {
             lengthForward = referenceLane.getLength().minus(position);
@@ -638,7 +639,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         linkList.add(new LinkDirection(lastLink, lastGtuDir));
         Length lengthForward;
         Length position = gtu.position(referenceLane, gtu.getReference());
-        OTSNode lastNode;
+        Node lastNode;
         if (lastGtuDir.equals(GTUDirectionality.DIR_PLUS))
         {
             lengthForward = referenceLane.getLength().minus(position);

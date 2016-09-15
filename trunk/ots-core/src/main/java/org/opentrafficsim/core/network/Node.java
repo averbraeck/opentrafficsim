@@ -3,14 +3,11 @@ package org.opentrafficsim.core.network;
 import java.io.Serializable;
 import java.util.Set;
 
-import javax.media.j3d.Bounds;
-
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.value.vdouble.scalar.Direction;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
+
+import nl.tudelft.simulation.dsol.animation.Locatable;
 
 /**
  * The Node is a point with an id. It is used in the network to connect Links.
@@ -26,6 +23,12 @@ import org.opentrafficsim.core.gtu.GTUType;
  */
 public interface Node extends Locatable, Serializable
 {
+    /**
+     * Return the network in which this link is registered. Cannot be null.
+     * @return Network; the network in which this link is registered
+     */
+    Network getNetwork();
+
     /** @return node id. */
     String getId();
 
@@ -73,11 +76,4 @@ public interface Node extends Locatable, Serializable
      */
     boolean isDirectionallyConnectedTo(GTUType gtuType, Node toNode);
 
-    /** {@inheritDoc} */
-    @Override
-    DirectedPoint getLocation();
-
-    /** {@inheritDoc} */
-    @Override
-    Bounds getBounds();
 }

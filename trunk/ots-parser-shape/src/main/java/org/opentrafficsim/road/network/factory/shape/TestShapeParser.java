@@ -29,6 +29,9 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
@@ -44,23 +47,30 @@ import com.vividsolutions.jts.geom.MultiLineString;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-public class TestShapeParser extends AbstractWrappableAnimation {
+public class TestShapeParser extends AbstractWrappableAnimation
+{
 
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
      * @throws SimRuntimeException should never happen
      */
-    public static void main(final String[] args) throws SimRuntimeException {
-        SwingUtilities.invokeLater(new Runnable() {
+    public static void main(final String[] args) throws SimRuntimeException
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
             @Override
-            public void run() {
-                try {
+            public void run()
+            {
+                try
+                {
                     TestShapeParser xmlModel = new TestShapeParser();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND), new Duration(
-                        60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
-                } catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception) {
+                    xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
+                }
+                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+                {
                     exception.printStackTrace();
                 }
             }
@@ -69,43 +79,50 @@ public class TestShapeParser extends AbstractWrappableAnimation {
 
     /** {@inheritDoc} */
     @Override
-    public final String shortName() {
+    public final String shortName()
+    {
         return "TestXMLModel";
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String description() {
+    public final String description()
+    {
         return "TestXMLModel";
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void stopTimersThreads() {
+    public final void stopTimersThreads()
+    {
         super.stopTimersThreads();
     }
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts(final SimpleSimulatorInterface simulator) {
+    protected final JPanel makeCharts(final SimpleSimulatorInterface simulator)
+    {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer) {
+    protected final OTSModelInterface makeModel(final GTUColorer colorer)
+    {
         return new GisNDWImport();
     }
 
     /** {@inheritDoc} */
     @Override
-    protected final java.awt.geom.Rectangle2D.Double makeAnimationRectangle() {
+    protected final java.awt.geom.Rectangle2D.Double makeAnimationRectangle()
+    {
         return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String toString() {
+    public final String toString()
+    {
         return "TestGISParser []";
     }
 
@@ -124,48 +141,62 @@ public class TestShapeParser extends AbstractWrappableAnimation {
     /**
      * @author P070518
      */
-    class GisNDWImport implements OTSModelInterface {
+    class GisNDWImport implements OTSModelInterface
+    {
         /** */
         private static final long serialVersionUID = 20141121L;
 
         /** The simulator. */
         private OTSDEVSSimulatorInterface simulator;
 
+        /** The network. */
+        private final Network network = new OTSNetwork("test network");
+
         /** {@inheritDoc} */
         @Override
         public final void constructModel(
-            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
-                throws SimRuntimeException {
+                final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
+                throws SimRuntimeException
+        {
 
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
 
-            // open the NWB basic shape file
-            Map<String, AbstractNWBRoadElement> roadMapNWB = getRoadMapNWB("A58", "NWB_A58", "NWB_wegvakken");
+            try
+            {
+                // open the NWB basic shape file
+                Map<String, AbstractNWBRoadElement> roadMapNWB = getRoadMapNWB("A58", "NWB_A58", "NWB_wegvakken");
 
-            // open the shape file with driving lane information
-            Map<String, AbstractNWBRoadElement> laneMapNWB = getRoadMapNWB("A58", "rijstroken_A58", "NWB_rijstroken");
+                // open the shape file with driving lane information
+                Map<String, AbstractNWBRoadElement> laneMapNWB = getRoadMapNWB("A58", "rijstroken_A58", "NWB_rijstroken");
 
-            // open the shape file with specific lane information such as on and off ramps and weaving areas
-            Map<String, AbstractNWBRoadElement> specialLaneMapNWB = getRoadMapNWB("A58", "mengstroken_A58",
-                "NWB_mengstroken");
+                // open the shape file with specific lane information such as on and off ramps and weaving areas
+                Map<String, AbstractNWBRoadElement> specialLaneMapNWB =
+                        getRoadMapNWB("A58", "mengstroken_A58", "NWB_mengstroken");
 
-            combineNWBMaps(roadMapNWB, laneMapNWB, specialLaneMapNWB);
+                combineNWBMaps(roadMapNWB, laneMapNWB, specialLaneMapNWB);
+            }
+            catch (NetworkException nwe)
+            {
+                nwe.printStackTrace();
+            }
 
         }
 
         /**
          * Combine the data (split road elements and add lane-attributes).
-         * @param roadMapNWB 
-         * @param laneMapNWB 
-         * @param specialLaneMapNWB 
+         * @param roadMapNWB
+         * @param laneMapNWB
+         * @param specialLaneMapNWB
          */
         private void combineNWBMaps(Map<String, AbstractNWBRoadElement> roadMapNWB,
-            Map<String, AbstractNWBRoadElement> laneMapNWB, Map<String, AbstractNWBRoadElement> specialLaneMapNWB) {
+                Map<String, AbstractNWBRoadElement> laneMapNWB, Map<String, AbstractNWBRoadElement> specialLaneMapNWB)
+        {
             // TODO : Alexander, de combinemaps moet verder worden uitgewerkt!
             // Here, a segment of the NWB wegvak is being extracted (for instance the first part of the wegvak has an on-ramp)
             // We should thus split this NWB-wegvak in two parts, the first part with the on-ramp (additional lane) and the
             // remainder with the original attributes
-            for (AbstractNWBRoadElement laneElement : laneMapNWB.values()) {
+            for (AbstractNWBRoadElement laneElement : laneMapNWB.values())
+            {
                 NWBDrivingLane lane = (NWBDrivingLane) laneElement;
                 NWBRoadElement road = (NWBRoadElement) roadMapNWB.get(lane.getRoadId());
                 List<LineString> lineSegmentList = splitRoad(road, lane);
@@ -178,7 +209,8 @@ public class TestShapeParser extends AbstractWrappableAnimation {
          * @param segment
          * @return list of linestrings
          */
-        private List<LineString> splitRoad(NWBRoadElement road, NWBDrivingLane segment) {
+        private List<LineString> splitRoad(NWBRoadElement road, NWBDrivingLane segment)
+        {
             MultiLineString lines = (MultiLineString) road.getMyGeom();
             LineString line = (LineString) lines.getGeometryN(0);
             List<LineString> lineSegmentList = new ArrayList<>();
@@ -186,10 +218,12 @@ public class TestShapeParser extends AbstractWrappableAnimation {
             // The getSubstring is copied from The JCS Conflation Suite (JCS): I assume it is not supported anymore, but can
             // still be found...
             lineSegmentList.add(SubstringLine.getSubstring(line, segment.getBeginDistance(), segment.getEndDistance()));
-            if (segment.getBeginDistance() > 0) {
+            if (segment.getBeginDistance() > 0)
+            {
                 lineSegmentList.add(SubstringLine.getSubstring(line, 0, segment.getBeginDistance()));
             }
-            if (segment.getEndDistance() < road.getEndDistance()) {
+            if (segment.getEndDistance() < road.getEndDistance())
+            {
                 lineSegmentList.add(SubstringLine.getSubstring(line, 0, segment.getBeginDistance()));
             }
             return lineSegmentList;
@@ -201,13 +235,18 @@ public class TestShapeParser extends AbstractWrappableAnimation {
          * @param fileName
          * @param shapeIdentifier
          * @return map of naames road elements
+         * @throws NetworkException
          */
-        private Map<String, AbstractNWBRoadElement> getRoadMapNWB(String initialDir, String fileName,
-            String shapeIdentifier) {
+        private Map<String, AbstractNWBRoadElement> getRoadMapNWB(String initialDir, String fileName, String shapeIdentifier)
+                throws NetworkException
+        {
             FileDataStore dataStoreLink = null;
-            try {
+            try
+            {
                 dataStoreLink = newDatastore(initialDir, fileName);
-            } catch (IOException e) {
+            }
+            catch (IOException e)
+            {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
@@ -225,8 +264,10 @@ public class TestShapeParser extends AbstractWrappableAnimation {
          * @return shapefile datastore
          * @throws IOException
          */
-        private FileDataStore newDatastore(String initialDir, final String fileName) throws IOException {
-            try {
+        private FileDataStore newDatastore(String initialDir, final String fileName) throws IOException
+        {
+            try
+            {
                 URL url = TestShapeParser.class.getResource("/");
                 File file = new File(url.getFile() + "../../Data/" + initialDir);
                 String fn = file.getCanonicalPath();
@@ -237,7 +278,9 @@ public class TestShapeParser extends AbstractWrappableAnimation {
                 FileDataStore dataStoreLink = FileDataStoreFinder.getDataStore(file);
                 return dataStoreLink;
 
-            } catch (IOException exception) {
+            }
+            catch (IOException exception)
+            {
                 exception.printStackTrace();
             }
             return null;
@@ -248,15 +291,19 @@ public class TestShapeParser extends AbstractWrappableAnimation {
          * @param dataStore
          * @return iterator
          */
-        private FeatureIterator getFeatureIterator(FileDataStore dataStore) {
-            try {
+        private FeatureIterator getFeatureIterator(FileDataStore dataStore)
+        {
+            try
+            {
                 String[] typeNameLink = dataStore.getTypeNames();
                 SimpleFeatureSource sourceLink;
                 sourceLink = dataStore.getFeatureSource(typeNameLink[0]);
                 SimpleFeatureCollection featuresLink = sourceLink.getFeatures();
                 return featuresLink.features();
 
-            } catch (IOException e) {
+            }
+            catch (IOException e)
+            {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
@@ -267,20 +314,28 @@ public class TestShapeParser extends AbstractWrappableAnimation {
          * @param feautureIterator
          * @param shapeIdentifier
          * @return feature attributes
+         * @throws NetworkException
          */
         private Map<String, AbstractNWBRoadElement> getFeatureAttributes(final FeatureIterator feautureIterator,
-            String shapeIdentifier) {
+                String shapeIdentifier) throws NetworkException
+        {
             Map<String, AbstractNWBRoadElement> roadMap = new HashMap<>();
-            while (feautureIterator.hasNext()) {
+            while (feautureIterator.hasNext())
+            {
                 Feature feature = feautureIterator.next();
                 // geometry is always first
-                if (shapeIdentifier.equals("NWB_wegvakken")) {
+                if (shapeIdentifier.equals("NWB_wegvakken"))
+                {
                     NWBRoadElement road = getPropertiesNWB(feature);
                     roadMap.put(road.getRoadId(), road);
-                } else if (shapeIdentifier.equals("NWB_rijstroken")) {
+                }
+                else if (shapeIdentifier.equals("NWB_rijstroken"))
+                {
                     NWBDrivingLane road = getPropertiesDrivingLanes(feature);
                     roadMap.put(road.getRoadId(), road);
-                } else if (shapeIdentifier.equals("NWB_mengstroken")) {
+                }
+                else if (shapeIdentifier.equals("NWB_mengstroken"))
+                {
                     NWBDrivingLane road = getPropertiesSpecialLanes(feature);
                     roadMap.put(road.getRoadId(), road);
                 }
@@ -291,8 +346,10 @@ public class TestShapeParser extends AbstractWrappableAnimation {
         /**
          * @param feature
          * @return one road element with properties
+         * @throws NetworkException
          */
-        private NWBRoadElement getPropertiesNWB(final Feature feature) {
+        private NWBRoadElement getPropertiesNWB(final Feature feature) throws NetworkException
+        {
             Geometry theGeom = (Geometry) feature.getDefaultGeometryProperty().getValue();
             Coordinate[] coordinates = theGeom.getCoordinates();
             Property property = feature.getProperty("WVK_ID");
@@ -314,17 +371,19 @@ public class TestShapeParser extends AbstractWrappableAnimation {
             property = feature.getProperty("ENDAFSTAND");
             Double endDistance = parseDouble(property);
 
-            OTSNode startNode = new OTSNode(junctionIdBegin, new OTSPoint3D(coordinates[0]));
-            OTSNode endNode = new OTSNode(junctionIdEnd, new OTSPoint3D(coordinates[coordinates.length - 1]));
+            OTSNode startNode = new OTSNode(this.network, junctionIdBegin, new OTSPoint3D(coordinates[0]));
+            OTSNode endNode = new OTSNode(this.network, junctionIdEnd, new OTSPoint3D(coordinates[coordinates.length - 1]));
             return new NWBRoadElement(theGeom, startNode, endNode, roadId, beginDistance, endDistance, junctionIdBegin,
-                junctionIdEnd, adminDirection, drivingDirection, beginKM, endKM);
+                    junctionIdEnd, adminDirection, drivingDirection, beginKM, endKM);
         }
 
         /**
          * @param feature
          * @return info on one driving lane
+         * @throws NetworkException 
          */
-        private NWBDrivingLane getPropertiesDrivingLanes(final Feature feature) {
+        private NWBDrivingLane getPropertiesDrivingLanes(final Feature feature) throws NetworkException
+        {
             Geometry theGeom = (Geometry) feature.getDefaultGeometryProperty().getValue();
             Coordinate[] coordinates = theGeom.getCoordinates();
 
@@ -348,17 +407,19 @@ public class TestShapeParser extends AbstractWrappableAnimation {
 
             String junctionIdBegin = roadId + "_" + beginDistance;
             String junctionIdEnd = roadId + "_" + endDistance;
-            OTSNode startNode = new OTSNode(junctionIdBegin, new OTSPoint3D(coordinates[0]));
-            OTSNode endNode = new OTSNode(junctionIdEnd, new OTSPoint3D(coordinates[coordinates.length - 1]));
+            OTSNode startNode = new OTSNode(this.network, junctionIdBegin, new OTSPoint3D(coordinates[0]));
+            OTSNode endNode = new OTSNode(this.network, junctionIdEnd, new OTSPoint3D(coordinates[coordinates.length - 1]));
             return new NWBDrivingLane(theGeom, startNode, endNode, roadId, beginDistance, endDistance, startNumberOfLanes,
-                endNumberOfLanes, sideCode);
+                    endNumberOfLanes, sideCode);
         }
 
         /**
          * @param feature
          * @return info on one special lane
+         * @throws NetworkException 
          */
-        private NWBDrivingLane getPropertiesSpecialLanes(final Feature feature) {
+        private NWBDrivingLane getPropertiesSpecialLanes(final Feature feature) throws NetworkException
+        {
             Geometry theGeom = (Geometry) feature.getDefaultGeometryProperty().getValue();
             Coordinate[] coordinates = theGeom.getCoordinates();
 
@@ -385,19 +446,22 @@ public class TestShapeParser extends AbstractWrappableAnimation {
 
             String junctionIdBegin = roadId + "_" + beginDistance;
             String junctionIdEnd = roadId + "_" + endDistance;
-            OTSNode startNode = new OTSNode(junctionIdBegin, new OTSPoint3D(coordinates[0]));
-            OTSNode endNode = new OTSNode(junctionIdEnd, new OTSPoint3D(coordinates[coordinates.length - 1]));
+            OTSNode startNode = new OTSNode(this.network, junctionIdBegin, new OTSPoint3D(coordinates[0]));
+            OTSNode endNode = new OTSNode(this.network, junctionIdEnd, new OTSPoint3D(coordinates[coordinates.length - 1]));
             return new NWBDrivingLane(theGeom, startNode, endNode, roadId, beginDistance, endDistance, startNumberOfLanes,
-                endNumberOfLanes, sideCode);
+                    endNumberOfLanes, sideCode);
         }
 
         /**
          * @param property
          * @return a double
          */
-        private Double parseDouble(Property property) {
-            if (property.getValue() != null) {
-                if (property.getValue().toString() != null) {
+        private Double parseDouble(Property property)
+        {
+            if (property.getValue() != null)
+            {
+                if (property.getValue().toString() != null)
+                {
                     return Double.parseDouble(property.getValue().toString());
                 }
             }
@@ -414,7 +478,8 @@ public class TestShapeParser extends AbstractWrappableAnimation {
 
         /** {@inheritDoc} */
         @Override
-        public final String toString() {
+        public final String toString()
+        {
             return "TestXMLModel [simulator=" + this.simulator + "]";
         }
 

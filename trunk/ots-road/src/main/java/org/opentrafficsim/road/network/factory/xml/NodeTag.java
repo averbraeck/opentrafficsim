@@ -138,7 +138,7 @@ class NodeTag implements Serializable
         String id = nodeTag.name;
         Direction angle = nodeTag.angle == null ? new Direction(0.0, AngleUnit.SI) : nodeTag.angle;
         Direction slope = nodeTag.slope == null ? new Direction(0.0, AngleUnit.SI) : nodeTag.slope;
-        OTSNode node = new OTSNode(id, nodeTag.coordinate, angle, slope);
+        OTSNode node = new OTSNode(parser.network, id, nodeTag.coordinate, angle, slope);
         nodeTag.node = node;
         return node;
     }

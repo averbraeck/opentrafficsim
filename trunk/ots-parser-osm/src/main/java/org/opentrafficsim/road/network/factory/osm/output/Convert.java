@@ -28,6 +28,7 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
@@ -109,19 +110,21 @@ public final class Convert
 
     /**
      * This method converts an OSM link to an OTS link.
+     * @param network the network
      * @param link OSM Link to be converted
      * @return OTS Link
      * @throws OTSGeometryException on failure
+     * @throws NetworkException 
      */
-    public CrossSectionLink convertLink(final OSMLink link) throws OTSGeometryException
+    public CrossSectionLink convertLink(final Network network, final OSMLink link) throws OTSGeometryException, NetworkException
     {
         if (null == link.getStart().getOtsNode())
         {
-            link.getStart().setOtsNode(convertNode(link.getStart()));
+            link.getStart().setOtsNode(convertNode(network, link.getStart()));
         }
         if (null == link.getEnd().getOtsNode())
         {
-            link.getEnd().setOtsNode(convertNode(link.getEnd()));
+            link.getEnd().setOtsNode(convertNode(network, link.getEnd()));
         }
         CrossSectionLink result;
         Coordinate[] coordinates;
@@ -140,17 +143,19 @@ public final class Convert
         // XXX How to figure out whether to keep left, right or keep lane?
         // XXX How to figure out if this is a lane in one or two directions? For now, two is assumed...
         result =
-                new CrossSectionLink(link.getId(), start, end, LinkType.ALL, designLine, LongitudinalDirectionality.DIR_BOTH,
+                new CrossSectionLink(network, link.getId(), start, end, LinkType.ALL, designLine, LongitudinalDirectionality.DIR_BOTH,
                         LaneKeepingPolicy.KEEP_RIGHT);
         return result;
     }
 
     /**
      * This method converts an OSM node to an OTS node.
+     * @param network 
      * @param node OSM Node to be converted
      * @return OTS Node
+     * @throws NetworkException 
      */
-    public OTSNode convertNode(final OSMNode node)
+    public OTSNode convertNode(final Network network, final OSMNode node) throws NetworkException
     {
         OSMTag tag = node.getTag("ele");
         if (null != tag)
@@ -183,7 +188,7 @@ public final class Convert
                 Coordinate coordWGS84 = new Coordinate(node.getLongitude(), node.getLatitude(), elevation);
                 try
                 {
-                    return new OTSNode(Objects.toString(node.getId()), new OTSPoint3D(transform(coordWGS84)));
+                    return new OTSNode(network, Objects.toString(node.getId()), new OTSPoint3D(transform(coordWGS84)));
                 }
                 catch (FactoryException | TransformException exception)
                 {
@@ -199,7 +204,7 @@ public final class Convert
         Coordinate coordWGS84 = new Coordinate(node.getLongitude(), node.getLatitude(), 0d);
         try
         {
-            return new OTSNode(Objects.toString(node.getId()), new OTSPoint3D(Convert.transform(coordWGS84)));
+            return new OTSNode(network, Objects.toString(node.getId()), new OTSPoint3D(Convert.transform(coordWGS84)));
         }
         catch (FactoryException | TransformException exception)
         {
@@ -594,6 +599,7 @@ public final class Convert
      * This method creates lanes out of an OSM link LaneTypes are not yet extensive and can be further increased through Tags
      * provided by OSM. The standard lane width of 3.05 is an estimation based on the European width limitation for vehicles
      * (2.55m) + 25cm each side.
+     * @param network the network
      * @param osmlink Link OSMLink; the OSM link to make lanes for
      * @param simulator OTSDEVSSimulatorInterface; the simulator that will animate the generates lanes (if it happens to be an
      *            instance of OTSAnimatorInterface)
@@ -603,10 +609,10 @@ public final class Convert
      * @throws NamingException on naming problems (in the animator)
      * @throws OTSGeometryException when lane contour or center line cannot be instantiated
      */
-    public List<Lane> makeLanes(final OSMLink osmlink, final OTSDEVSSimulatorInterface simulator,
+    public List<Lane> makeLanes(final Network network, final OSMLink osmlink, final OTSDEVSSimulatorInterface simulator,
             final WarningListener warningListener) throws NetworkException, NamingException, OTSGeometryException
     {
-        CrossSectionLink otslink = convertLink(osmlink);
+        CrossSectionLink otslink = convertLink(network, osmlink);
         List<Lane> lanes = new ArrayList<Lane>();
         Map<Double, LaneAttributes> structure = makeStructure(osmlink, warningListener);
 

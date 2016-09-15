@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical;
 import java.io.Serializable;
 import java.util.Set;
 
-import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -24,7 +24,7 @@ public class NextSplitInfo implements Serializable
     private static final long serialVersionUID = 20151231L;
 
     /** If the route splits, at what node does it split? */
-    private final OTSNode nextSplitNode;
+    private final Node nextSplitNode;
     
     /**
      * If the route splits, what are the lane(s) and/or adjacent lane(s) on which the reference point of the GTU is registered
@@ -37,7 +37,7 @@ public class NextSplitInfo implements Serializable
      * @param correctCurrentLanes the lane(s) and/or adjacent lane(s) on which the reference point of the GTU is registered that
      *            lead us in the direction of the route provided by the strategical planner.
      */
-    public NextSplitInfo(final OTSNode nextSplitNode, final Set<Lane> correctCurrentLanes)
+    public NextSplitInfo(final Node nextSplitNode, final Set<Lane> correctCurrentLanes)
     {
         super();
         this.nextSplitNode = nextSplitNode;
@@ -55,7 +55,7 @@ public class NextSplitInfo implements Serializable
     /**
      * @return nextSplitNode the first subsequent node at which the route splits.
      */
-    public final OTSNode getNextSplitNode()
+    public final Node getNextSplitNode()
     {
         return this.nextSplitNode;
     }

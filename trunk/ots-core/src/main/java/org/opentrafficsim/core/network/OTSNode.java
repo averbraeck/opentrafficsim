@@ -10,13 +10,13 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
-import org.djunits.unit.AngleUnit;
 import org.djunits.value.vdouble.scalar.Direction;
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
+
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * The Node is a point with an id. It is used in the network to connect Links.
@@ -34,6 +34,9 @@ public class OTSNode implements Node, Locatable, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150722L;
+
+    /** the Network. */
+    private final Network network;
 
     /** The node id. */
     private final String id;
@@ -60,27 +63,48 @@ public class OTSNode implements Node, Locatable, Serializable
 
     /**
      * Construction of a Node.
+     * @param network the network.
      * @param id the id of the Node.
      * @param point the point with usually an x and y setting.
      * @param direction the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians).
      * @param slope the slope as an angle. Horizontal is 0 degrees.
+     * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
-    public OTSNode(final String id, final OTSPoint3D point, final Direction direction, final Direction slope)
+    public OTSNode(final Network network, final String id, final OTSPoint3D point, final Direction direction,
+            final Direction slope) throws NetworkException
     {
+        Throw.whenNull(network, "network cannot be null");
+        Throw.whenNull(id, "id cannot be null");
+        Throw.whenNull(point, "point cannot be null");
+        Throw.whenNull(direction, "direction cannot be null");
+        Throw.whenNull(slope, "slope cannot be null");
+
+        this.network = network;
         this.id = id;
         this.point = point;
         this.direction = direction;
         this.slope = slope;
+
+        this.network.addNode(this);
     }
 
     /**
      * Construction of a Node.
+     * @param network the network.
      * @param id the id of the Node.
      * @param point the point with usually an x and y setting.
+     * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
-    public OTSNode(final String id, final OTSPoint3D point)
+    public OTSNode(final Network network, final String id, final OTSPoint3D point) throws NetworkException
     {
-        this(id, point, new Direction(0.0, AngleUnit.SI), new Direction(0.0, AngleUnit.SI));
+        this(network, id, point, Direction.ZERO, Direction.ZERO);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Network getNetwork()
+    {
+        return this.network;
     }
 
     /**
@@ -122,33 +146,33 @@ public class OTSNode implements Node, Locatable, Serializable
      * @throws NetworkException in case one of the links is not (correctly) connected to this Node
      */
     public final void addConnection(final GTUType gtuType, final Link incomingLink, final Link outgoingLink)
-        throws NetworkException
+            throws NetworkException
     {
         // ------------------------------------------- check consistency
         if (!this.links.contains(incomingLink))
         {
-            throw new NetworkException("addConnection: incoming link " + incomingLink + " for node " + this
-                + " not in links set");
+            throw new NetworkException(
+                    "addConnection: incoming link " + incomingLink + " for node " + this + " not in links set");
         }
 
         if (!this.links.contains(outgoingLink))
         {
-            throw new NetworkException("addConnection: outgoing link " + outgoingLink + " for node " + this
-                + " not in links set");
+            throw new NetworkException(
+                    "addConnection: outgoing link " + outgoingLink + " for node " + this + " not in links set");
         }
 
-        if (!(incomingLink.getEndNode().equals(this) && incomingLink.getDirectionality(gtuType).isForwardOrBoth() || incomingLink
-            .getStartNode().equals(this) && incomingLink.getDirectionality(gtuType).isBackwardOrBoth()))
+        if (!(incomingLink.getEndNode().equals(this) && incomingLink.getDirectionality(gtuType).isForwardOrBoth()
+                || incomingLink.getStartNode().equals(this) && incomingLink.getDirectionality(gtuType).isBackwardOrBoth()))
         {
-            throw new NetworkException("addConnection: incoming link " + incomingLink + " not connected to node "
-                + this + " for GTU type " + gtuType);
+            throw new NetworkException("addConnection: incoming link " + incomingLink + " not connected to node " + this
+                    + " for GTU type " + gtuType);
         }
 
-        if (!(outgoingLink.getStartNode().equals(this) && outgoingLink.getDirectionality(gtuType).isForwardOrBoth() || outgoingLink
-            .getEndNode().equals(this) && outgoingLink.getDirectionality(gtuType).isBackwardOrBoth()))
+        if (!(outgoingLink.getStartNode().equals(this) && outgoingLink.getDirectionality(gtuType).isForwardOrBoth()
+                || outgoingLink.getEndNode().equals(this) && outgoingLink.getDirectionality(gtuType).isBackwardOrBoth()))
         {
-            throw new NetworkException("addConnection: outgoing link " + outgoingLink + " not connected to node "
-                + this + " for GTU type " + gtuType);
+            throw new NetworkException("addConnection: outgoing link " + outgoingLink + " not connected to node " + this
+                    + " for GTU type " + gtuType);
         }
 
         // ------------------------------------------- make datasets if needed
@@ -181,36 +205,35 @@ public class OTSNode implements Node, Locatable, Serializable
      * @throws NetworkException in case one of the links is not (correctly) connected to this Node
      */
     public final void addConnections(final GTUType gtuType, final Link incomingLink, final Set<Link> outgoingLinks)
-        throws NetworkException
+            throws NetworkException
     {
         // ------------------------------------------- check consistency
         if (!this.links.contains(incomingLink))
         {
-            throw new NetworkException("addConnections: incoming link " + incomingLink + " for node " + this
-                + " not in links set");
+            throw new NetworkException(
+                    "addConnections: incoming link " + incomingLink + " for node " + this + " not in links set");
         }
 
         if (!this.links.containsAll(outgoingLinks))
         {
-            throw new NetworkException("addConnections: outgoing links " + outgoingLinks + " for node " + this
-                + " not all in links set");
+            throw new NetworkException(
+                    "addConnections: outgoing links " + outgoingLinks + " for node " + this + " not all in links set");
         }
 
-        if (!((incomingLink.getEndNode().equals(this) && incomingLink.getDirectionality(gtuType).isForwardOrBoth()) || (incomingLink
-            .getStartNode().equals(this) && incomingLink.getDirectionality(gtuType).isBackwardOrBoth())))
+        if (!((incomingLink.getEndNode().equals(this) && incomingLink.getDirectionality(gtuType).isForwardOrBoth())
+                || (incomingLink.getStartNode().equals(this) && incomingLink.getDirectionality(gtuType).isBackwardOrBoth())))
         {
-            throw new NetworkException("addConnections: incoming link " + incomingLink + " not connected to node "
-                + this + " for GTU type " + gtuType);
+            throw new NetworkException("addConnections: incoming link " + incomingLink + " not connected to node " + this
+                    + " for GTU type " + gtuType);
         }
 
         for (Link outgoingLink : outgoingLinks)
         {
-            if (!((outgoingLink.getStartNode().equals(this) && outgoingLink.getDirectionality(gtuType)
-                .isForwardOrBoth()) || (outgoingLink.getEndNode().equals(this) && outgoingLink.getDirectionality(
-                gtuType).isBackwardOrBoth())))
+            if (!((outgoingLink.getStartNode().equals(this) && outgoingLink.getDirectionality(gtuType).isForwardOrBoth())
+                    || (outgoingLink.getEndNode().equals(this) && outgoingLink.getDirectionality(gtuType).isBackwardOrBoth())))
             {
-                throw new NetworkException("addConnections: outgoing link " + outgoingLink + " not connected to node "
-                    + this + " for GTU type " + gtuType);
+                throw new NetworkException("addConnections: outgoing link " + outgoingLink + " not connected to node " + this
+                        + " for GTU type " + gtuType);
             }
         }
 
@@ -250,15 +273,14 @@ public class OTSNode implements Node, Locatable, Serializable
         // ------------------------------------------- check consistency
         if (!this.links.contains(prevLink))
         {
-            throw new NetworkException("nextLinks: incoming link " + prevLink + " for node " + this
-                + " not in links set");
+            throw new NetworkException("nextLinks: incoming link " + prevLink + " for node " + this + " not in links set");
         }
 
-        if (!(prevLink.getEndNode().equals(this) && prevLink.getDirectionality(gtuType).isForwardOrBoth() || prevLink
-            .getStartNode().equals(this) && prevLink.getDirectionality(gtuType).isBackwardOrBoth()))
+        if (!(prevLink.getEndNode().equals(this) && prevLink.getDirectionality(gtuType).isForwardOrBoth()
+                || prevLink.getStartNode().equals(this) && prevLink.getDirectionality(gtuType).isBackwardOrBoth()))
         {
-            throw new NetworkException("nextLinks: incoming link " + prevLink + " not connected to node " + this
-                + " for GTU type " + gtuType);
+            throw new NetworkException(
+                    "nextLinks: incoming link " + prevLink + " not connected to node " + this + " for GTU type " + gtuType);
         }
 
         Set<Link> result = new HashSet<>();
@@ -282,7 +304,7 @@ public class OTSNode implements Node, Locatable, Serializable
         for (Link link : getLinks())
         {
             if ((link.getStartNode().equals(this) && link.getDirectionality(gtuType).isForwardOrBoth())
-                || (link.getEndNode().equals(this) && link.getDirectionality(gtuType).isBackwardOrBoth()))
+                    || (link.getEndNode().equals(this) && link.getDirectionality(gtuType).isBackwardOrBoth()))
             {
                 if (!link.equals(prevLink)) // no U-turn
                 {
@@ -363,7 +385,7 @@ public class OTSNode implements Node, Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
     public boolean equals(final Object obj)
     {
         if (this == obj)
