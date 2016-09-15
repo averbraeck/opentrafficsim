@@ -112,7 +112,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     @Override
     public final boolean containsNode(final Node node)
     {
-        System.out.println(node);
+        // System.out.println(node);
         return this.nodeMap.keySet().contains(node.getId());
     }
 

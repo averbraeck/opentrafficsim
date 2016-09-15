@@ -69,7 +69,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
     private static final long serialVersionUID = 20150227L;
 
     /** The network. */
-    private OTSNetwork network = new OTSNetwork("network");
+    private OTSNetwork network = new OTSNetwork("gtu following test network");
 
     /** Generate unique names for the GTUs. */
     private IdGenerator gtuIdGenerator = new IdGenerator("GTU");
@@ -115,7 +115,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         Set<GTUType> compatibility = new HashSet<GTUType>();
         compatibility.add(carType);
         LaneType laneType = new LaneType("CarLane", compatibility);
-        Lane lane = CarTest.makeLane(laneType);
+        Lane lane = CarTest.makeLane(this.network, laneType);
         Length initialPosition = new Length(1234.567, METER);
         Length length = new Length(5.0, METER);
         Length width = new Length(2.0, METER);

@@ -69,7 +69,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
 public class LaneBasedGTUTest implements UNITS
 {
     /** The network. */
-    private OTSNetwork network = new OTSNetwork("network");
+    private OTSNetwork network = new OTSNetwork("leader follower parallel gtu test network");
 
     /** Id generator. */
     private IdGenerator idGenerator = new IdGenerator("id");
@@ -96,7 +96,7 @@ public class LaneBasedGTUTest implements UNITS
         }
         OTSModelInterface model = new Model();
         SimpleSimulator simulator =
-            new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND), model);
+                new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND), model);
         GTUType carType = new GTUType("car");
         GTUType truckType = new GTUType("truck");
         Set<GTUType> compatibility = new HashSet<GTUType>();
@@ -105,10 +105,10 @@ public class LaneBasedGTUTest implements UNITS
         LaneType laneType = new LaneType("CarLane", compatibility);
         // Create a series of Nodes (some closely bunched together)
         ArrayList<OTSNode> nodes = new ArrayList<OTSNode>();
-        int[] linkBoundaries = {0, 25, 50, 100, 101, 102, 103, 104, 105, 150, 175, 200};
+        int[] linkBoundaries = { 0, 25, 50, 100, 101, 102, 103, 104, 105, 150, 175, 200 };
         for (int xPos : linkBoundaries)
         {
-            nodes.add(new OTSNode("Node at " + xPos, new OTSPoint3D(xPos, 20, 0)));
+            nodes.add(new OTSNode(this.network, "Node at " + xPos, new OTSPoint3D(xPos, 20, 0)));
         }
         // Now we can build a series of Links with Lanes on them
         ArrayList<CrossSectionLink> links = new ArrayList<CrossSectionLink>();
@@ -119,8 +119,8 @@ public class LaneBasedGTUTest implements UNITS
             OTSNode toNode = nodes.get(i);
             String linkName = fromNode.getId() + "-" + toNode.getId();
             Lane[] lanes =
-                LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, laneCount, laneType,
-                    new Speed(100, KM_PER_HOUR), simulator, LongitudinalDirectionality.DIR_PLUS);
+                    LaneFactory.makeMultiLane(this.network, linkName, fromNode, toNode, null, laneCount, laneType, new Speed(
+                            100, KM_PER_HOUR), simulator, LongitudinalDirectionality.DIR_PLUS);
             links.add(lanes[0].getParentLink());
         }
         // Create a long truck with its front (reference) one meter in the last link on the 3rd lane
@@ -128,7 +128,7 @@ public class LaneBasedGTUTest implements UNITS
         Length truckLength = new Length(15, METER);
 
         Set<DirectedLanePosition> truckPositions =
-            buildPositionsSet(truckPosition, truckLength, links, truckFromLane, truckUpToLane);
+                buildPositionsSet(truckPosition, truckLength, links, truckFromLane, truckUpToLane);
         Speed truckSpeed = new Speed(0, KM_PER_HOUR);
         Length truckWidth = new Length(2.5, METER);
         LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
@@ -137,10 +137,10 @@ public class LaneBasedGTUTest implements UNITS
         BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create();
 
         LaneBasedIndividualGTU truck =
-            new LaneBasedIndividualGTU("Truck", truckType, truckLength, truckWidth, maximumSpeed, simulator, this.network);
+                new LaneBasedIndividualGTU("Truck", truckType, truckLength, truckWidth, maximumSpeed, simulator, this.network);
         LaneBasedStrategicalPlanner strategicalPlanner =
-            new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
-                gtuFollowingModel, laneChangeModel, truck), truck);
+                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
+                        gtuFollowingModel, laneChangeModel, truck), truck);
         truck.init(strategicalPlanner, truckPositions, truckSpeed);
         // Verify that the truck is registered on the correct Lanes
         int lanesChecked = 0;
@@ -174,25 +174,25 @@ public class LaneBasedGTUTest implements UNITS
             }
         }
         // Make sure we tested them all
-        assertEquals("lanesChecked should equals the number of Links times the number of lanes on each Link", laneCount
-            * links.size(), lanesChecked);
+        assertEquals("lanesChecked should equals the number of Links times the number of lanes on each Link",
+                laneCount * links.size(), lanesChecked);
         assertEquals("Truck should be registered in " + truckPositions.size() + " lanes", truckPositions.size(), found);
         Length forwardMaxDistance = truck.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
         // TODO see how we can ask the vehicle to look this far ahead
         truck.getTacticalPlanner().getPerception().perceive();
         Headway leader =
-            truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class).getForwardHeadway();
+                truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class).getForwardHeadway();
         assertTrue(
-            "With one vehicle in the network forward headway should return a value larger than zero, and smaller than maxDistance",
-            forwardMaxDistance.getSI() >= leader.getDistance().si && leader.getDistance().si > 0);
+                "With one vehicle in the network forward headway should return a value larger than zero, and smaller than maxDistance",
+                forwardMaxDistance.getSI() >= leader.getDistance().si && leader.getDistance().si > 0);
         assertEquals("With one vehicle in the network forward headwayGTU should return null", null, leader.getId());
         // TODO see how we can ask the vehicle to look this far behind
         Length reverseMaxDistance = truck.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACKOLD);
         Headway follower =
-            truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class).getBackwardHeadway();
+                truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class).getBackwardHeadway();
         assertTrue(
-            "With one vehicle in the network reverse headway should return a value less than zero, and smaller than |maxDistance|",
-            Math.abs(reverseMaxDistance.getSI()) >= Math.abs(follower.getDistance().si) && follower.getDistance().si < 0);
+                "With one vehicle in the network reverse headway should return a value less than zero, and smaller than |maxDistance|",
+                Math.abs(reverseMaxDistance.getSI()) >= Math.abs(follower.getDistance().si) && follower.getDistance().si < 0);
         assertEquals("With one vehicle in the network reverse headwayGTU should return null", null, follower.getId());
         Length carLength = new Length(4, METER);
         Length carWidth = new Length(1.8, METER);
@@ -203,32 +203,32 @@ public class LaneBasedGTUTest implements UNITS
             for (int step = 0; step < maxStep; step += 5)
             {
                 if (laneRank >= truckFromLane && laneRank <= truckUpToLane
-                    && step >= truckPosition.getSI() - truckLength.getSI()
-                    && step - carLength.getSI() <= truckPosition.getSI())
+                        && step >= truckPosition.getSI() - truckLength.getSI()
+                        && step - carLength.getSI() <= truckPosition.getSI())
                 {
                     continue; // Truck and car would overlap; the result of that placement is not defined :-)
                 }
                 Length carPosition = new Length(step, METER);
                 Set<DirectedLanePosition> carPositions =
-                    buildPositionsSet(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
-                behavioralCharacteristics = DefaultTestParameters.create(); 
+                        buildPositionsSet(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
+                behavioralCharacteristics = DefaultTestParameters.create();
 
                 LaneBasedIndividualGTU car =
-                    new LaneBasedIndividualGTU("Car", carType, carLength, carWidth, maximumSpeed, simulator, this.network);
+                        new LaneBasedIndividualGTU("Car", carType, carLength, carWidth, maximumSpeed, simulator, this.network);
                 strategicalPlanner =
-                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
-                        gtuFollowingModel, laneChangeModel, car), car);
+                        new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
+                                gtuFollowingModel, laneChangeModel, car), car);
                 car.init(strategicalPlanner, carPositions, carSpeed);
                 // leader = truck.headway(forwardMaxDistance);
                 // TODO see how we can ask the vehicle to look 'forwardMaxDistance' ahead
                 leader =
-                    truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
-                        .getForwardHeadway();
+                        truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
+                                .getForwardHeadway();
                 double actualHeadway = leader.getDistance().si;
                 double expectedHeadway =
-                    laneRank + carLanesCovered - 1 < truckFromLane || laneRank > truckUpToLane
-                        || step - truckPosition.getSI() - truckLength.getSI() <= 0 ? Double.MAX_VALUE : step
-                        - truckLength.getSI() - truckPosition.getSI();
+                        laneRank + carLanesCovered - 1 < truckFromLane || laneRank > truckUpToLane
+                                || step - truckPosition.getSI() - truckLength.getSI() <= 0 ? Double.MAX_VALUE : step
+                                - truckLength.getSI() - truckPosition.getSI();
                 // System.out.println("carLanesCovered " + laneRank + ".." + (laneRank + carLanesCovered - 1)
                 // + " truckLanesCovered " + truckFromLane + ".." + truckUpToLane + " car pos " + step
                 // + " laneRank " + laneRank + " expected headway " + expectedHeadway);
@@ -245,15 +245,15 @@ public class LaneBasedGTUTest implements UNITS
                 }
                 // TODO follower = truck.headway(reverseMaxDistance);
                 follower =
-                    truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
-                        .getBackwardHeadway();
+                        truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
+                                .getBackwardHeadway();
                 double actualReverseHeadway = follower.getDistance().si;
                 double expectedReverseHeadway =
-                    laneRank + carLanesCovered - 1 < truckFromLane || laneRank > truckUpToLane
-                        || step + carLength.getSI() >= truckPosition.getSI() ? Double.MAX_VALUE : truckPosition.getSI()
-                        - carLength.getSI() - step;
+                        laneRank + carLanesCovered - 1 < truckFromLane || laneRank > truckUpToLane
+                                || step + carLength.getSI() >= truckPosition.getSI() ? Double.MAX_VALUE : truckPosition.getSI()
+                                - carLength.getSI() - step;
                 assertEquals("Reverse headway should return " + expectedReverseHeadway, expectedReverseHeadway,
-                    actualReverseHeadway, 0.1);
+                        actualReverseHeadway, 0.1);
                 String followerGtuId = follower.getId();
                 if (expectedReverseHeadway == Double.MAX_VALUE)
                 {
@@ -277,18 +277,18 @@ public class LaneBasedGTUTest implements UNITS
                         }
                     }
                     leader =
-                        truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
-                            .getForwardHeadway();
+                            truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
+                                    .getForwardHeadway();
                     actualHeadway = leader.getDistance().si;
                     expectedHeadway =
-                        laneIndex < laneRank || laneIndex > laneRank + carLanesCovered - 1
-                            || step - truckLength.getSI() - truckPosition.getSI() <= 0 ? Double.MAX_VALUE : step
-                            - truckLength.getSI() - truckPosition.getSI();
+                            laneIndex < laneRank || laneIndex > laneRank + carLanesCovered - 1
+                                    || step - truckLength.getSI() - truckPosition.getSI() <= 0 ? Double.MAX_VALUE : step
+                                    - truckLength.getSI() - truckPosition.getSI();
                     assertEquals("Headway on lane " + laneIndex + " should be " + expectedHeadway, expectedHeadway,
-                        actualHeadway, 0.001);
+                            actualHeadway, 0.001);
                     leaderGtuId = leader.getId();
                     if (laneIndex >= laneRank && laneIndex <= laneRank + carLanesCovered - 1
-                        && step - truckLength.getSI() - truckPosition.getSI() > 0)
+                            && step - truckLength.getSI() - truckPosition.getSI() > 0)
                     {
                         assertEquals("Leader id should be the car id", car.getId(), leaderGtuId);
                     }
@@ -297,18 +297,18 @@ public class LaneBasedGTUTest implements UNITS
                         assertEquals("Leader id should be null", null, leaderGtuId);
                     }
                     follower =
-                        truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
-                            .getBackwardHeadway();
+                            truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
+                                    .getBackwardHeadway();
                     actualReverseHeadway = follower.getDistance().si;
                     expectedReverseHeadway =
-                        laneIndex < laneRank || laneIndex > laneRank + carLanesCovered - 1
-                            || step + carLength.getSI() >= truckPosition.getSI() ? Double.MAX_VALUE : truckPosition.getSI()
-                            - carLength.getSI() - step;
+                            laneIndex < laneRank || laneIndex > laneRank + carLanesCovered - 1
+                                    || step + carLength.getSI() >= truckPosition.getSI() ? Double.MAX_VALUE : truckPosition
+                                    .getSI() - carLength.getSI() - step;
                     assertEquals("Headway on lane " + laneIndex + " should be " + expectedReverseHeadway,
-                        expectedReverseHeadway, actualReverseHeadway, 0.001);
+                            expectedReverseHeadway, actualReverseHeadway, 0.001);
                     followerGtuId = follower.getId();
                     if (laneIndex >= laneRank && laneIndex <= laneRank + carLanesCovered - 1
-                        && step + carLength.getSI() < truckPosition.getSI())
+                            && step + carLength.getSI() < truckPosition.getSI())
                     {
                         assertEquals("Follower id should be the car id", car, followerGtuId);
                     }
@@ -318,12 +318,12 @@ public class LaneBasedGTUTest implements UNITS
                     }
                 }
                 Collection<Headway> leftParallel =
-                    truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
-                        .getParallelHeadwaysLeft();
+                        truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
+                                .getParallelHeadwaysLeft();
                 int expectedLeftSize =
-                    laneRank + carLanesCovered - 1 < truckFromLane - 1 || laneRank >= truckUpToLane
-                        || step + carLength.getSI() <= truckPosition.getSI()
-                        || step > truckPosition.getSI() + truckLength.getSI() ? 0 : 1;
+                        laneRank + carLanesCovered - 1 < truckFromLane - 1 || laneRank >= truckUpToLane
+                                || step + carLength.getSI() <= truckPosition.getSI()
+                                || step > truckPosition.getSI() + truckLength.getSI() ? 0 : 1;
                 // This one caught a complex bug
                 assertEquals("Left parallel set size should be " + expectedLeftSize, expectedLeftSize, leftParallel.size());
                 boolean foundCar = false;
@@ -337,14 +337,13 @@ public class LaneBasedGTUTest implements UNITS
                 }
                 assertTrue("car was not found in rightParallel", foundCar);
                 Collection<Headway> rightParallel =
-                    truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
-                        .getParallelHeadwaysRight();
+                        truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
+                                .getParallelHeadwaysRight();
                 int expectedRightSize =
-                    laneRank + carLanesCovered - 1 <= truckFromLane || laneRank > truckUpToLane + 1
-                        || step + carLength.getSI() < truckPosition.getSI()
-                        || step > truckPosition.getSI() + truckLength.getSI() ? 0 : 1;
-                assertEquals("Right parallel set size should be " + expectedRightSize, expectedRightSize, rightParallel
-                    .size());
+                        laneRank + carLanesCovered - 1 <= truckFromLane || laneRank > truckUpToLane + 1
+                                || step + carLength.getSI() < truckPosition.getSI()
+                                || step > truckPosition.getSI() + truckLength.getSI() ? 0 : 1;
+                assertEquals("Right parallel set size should be " + expectedRightSize, expectedRightSize, rightParallel.size());
                 foundCar = false;
                 for (Headway hw : rightParallel)
                 {
@@ -388,7 +387,7 @@ public class LaneBasedGTUTest implements UNITS
             // Create a car with constant acceleration
             OTSModelInterface model = new Model();
             SimpleSimulator simulator =
-                new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND), model);
+                    new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND), model);
             // Run the simulator clock to some non-zero value
             simulator.runUpTo(new Time(60, SECOND));
             while (simulator.isRunning())
@@ -406,12 +405,12 @@ public class LaneBasedGTUTest implements UNITS
             Set<GTUType> compatibility = new HashSet<GTUType>();
             compatibility.add(carType);
             LaneType laneType = new LaneType("CarLane", compatibility);
-            OTSNode fromNode = new OTSNode("Node A", new OTSPoint3D(0, 0, 0));
-            OTSNode toNode = new OTSNode("Node B", new OTSPoint3D(1000, 0, 0));
+            OTSNode fromNode = new OTSNode(this.network, "Node A", new OTSPoint3D(0, 0, 0));
+            OTSNode toNode = new OTSNode(this.network, "Node B", new OTSPoint3D(1000, 0, 0));
             String linkName = "AB";
             Lane lane =
-                LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, 1, laneType, new Speed(200, KM_PER_HOUR),
-                    simulator, LongitudinalDirectionality.DIR_PLUS)[0];
+                    LaneFactory.makeMultiLane(this.network, linkName, fromNode, toNode, null, 1, laneType, new Speed(200,
+                            KM_PER_HOUR), simulator, LongitudinalDirectionality.DIR_PLUS)[0];
             Length carPosition = new Length(100, METER);
             Set<DirectedLanePosition> carPositions = new LinkedHashSet<>(1);
             carPositions.add(new DirectedLanePosition(lane, carPosition, GTUDirectionality.DIR_PLUS));
@@ -423,11 +422,11 @@ public class LaneBasedGTUTest implements UNITS
             BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create();
 
             LaneBasedIndividualGTU car =
-                new LaneBasedIndividualGTU("Car" + this.idGenerator.nextId(), carType, new Length(4, METER), new Length(1.8,
-                    METER), maximumSpeed, simulator, this.network);
+                    new LaneBasedIndividualGTU("Car" + this.idGenerator.nextId(), carType, new Length(4, METER), new Length(
+                            1.8, METER), maximumSpeed, simulator, this.network);
             LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(fam,
-                    laneChangeModel, car), car);
+                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(fam,
+                            laneChangeModel, car), car);
             car.init(strategicalPlanner, carPositions, carSpeed);
             // Let the simulator execute the move method of the car
             simulator.runUpTo(new Time(61, SECOND));
@@ -480,7 +479,7 @@ public class LaneBasedGTUTest implements UNITS
      * @return the Set of the LanePositions that the GTU is registered on
      */
     private Set<DirectedLanePosition> buildPositionsSet(Length totalLongitudinalPosition, Length gtuLength,
-        ArrayList<CrossSectionLink> links, int fromLaneRank, int uptoLaneRank)
+            ArrayList<CrossSectionLink> links, int fromLaneRank, int uptoLaneRank)
     {
         Set<DirectedLanePosition> result = new LinkedHashSet<>(1);
         double cumulativeLength = 0;
@@ -505,7 +504,7 @@ public class LaneBasedGTUTest implements UNITS
                     try
                     {
                         result.add(new DirectedLanePosition(lane, new Length(rearPositionInLink, METER),
-                            GTUDirectionality.DIR_PLUS));
+                                GTUDirectionality.DIR_PLUS));
                     }
                     catch (GTUException exception)
                     {
@@ -550,8 +549,8 @@ class Model implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public void constructModel(
-        SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
-        throws SimRuntimeException
+            SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+            throws SimRuntimeException
     {
         // Dummy
     }

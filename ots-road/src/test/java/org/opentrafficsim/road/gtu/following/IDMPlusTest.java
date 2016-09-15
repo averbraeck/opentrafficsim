@@ -57,7 +57,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
 public class IDMPlusTest implements UNITS
 {
     /** The network. */
-    private OTSNetwork network = new OTSNetwork("network");
+    private OTSNetwork network = new OTSNetwork("IDMPlus test network");
 
     /**
      * Test IDMPlus.
@@ -80,7 +80,7 @@ public class IDMPlusTest implements UNITS
         Set<GTUType> compatibility = new HashSet<GTUType>();
         compatibility.add(gtuType);
         LaneType laneType = new LaneType("CarLane", compatibility);
-        Lane lane = CarTest.makeLane(laneType);
+        Lane lane = CarTest.makeLane(this.network, laneType);
         Time initialTime = new Time(0, SECOND);
         Length initialPosition = new Length(123.456, METER);
         Speed initialSpeed = new Speed(0, KM_PER_HOUR);

@@ -32,6 +32,7 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.animation.LinkAnimation;
@@ -69,6 +70,7 @@ public final class ShapeFileReader implements UNITS
     }
 
     /**
+     * @param network Network, the network
      * @param shapeFileName the nodes shapefile to read
      * @param numberType ???
      * @param returnCentroid if true only loop through the centroid/zones (in case of mixed nodes and centroids)
@@ -76,7 +78,7 @@ public final class ShapeFileReader implements UNITS
      * @return map of (shape file) nodes with nodenr as the key
      * @throws IOException on error
      */
-    public static Map<String, OTSNode> readNodes(final String shapeFileName, final String numberType,
+    public static Map<String, OTSNode> readNodes(final Network network, final String shapeFileName, final String numberType,
         final boolean returnCentroid, final boolean allCentroids) throws IOException
     {
         /*-
@@ -132,7 +134,7 @@ public final class ShapeFileReader implements UNITS
                 }
                 if (addThisNode)
                 {
-                    OTSNode node = new OTSNode(nr, new OTSPoint3D(coordinate));
+                    OTSNode node = new OTSNode(network, nr, new OTSPoint3D(coordinate));
                     nodes.put(nr, node);
                 }
             }
@@ -167,13 +169,14 @@ public final class ShapeFileReader implements UNITS
     }
 
     /**
+     * @param network Network; the network
      * @param shapeFileName the nodes shapefile to read
      * @param links : returns the file with real links
      * @param nodes the map of nodes to retrieve start and end node
      * @param simulator simulator for the animation registration
      * @throws IOException on error
      */
-    public static void readLinks(final String shapeFileName, final Map<String, Link> links,
+    public static void readLinks(final Network network, final String shapeFileName, final Map<String, Link> links,
         final Map<String, OTSNode> nodes, final OTSSimulatorInterface simulator) throws IOException
     {
         /*-
@@ -246,12 +249,12 @@ public final class ShapeFileReader implements UNITS
                     CrossSectionLink linkAB = null;
                     CrossSectionLink linkBA = null;
                     linkAB =
-                        new CrossSectionLink(nr, nodeA, nodeB, LinkType.ALL, new OTSLine3D(new OTSPoint3D[]{
+                        new CrossSectionLink(network, nr, nodeA, nodeB, LinkType.ALL, new OTSLine3D(new OTSPoint3D[]{
                             nodeA.getPoint(), nodeB.getPoint()}), LongitudinalDirectionality.DIR_BOTH,
                             LaneKeepingPolicy.KEEP_RIGHT);
                     animate(linkAB, typeWegVak, simulator);
                     linkBA =
-                        new CrossSectionLink(nrBA, nodeB, nodeA, LinkType.ALL, new OTSLine3D(new OTSPoint3D[]{
+                        new CrossSectionLink(network, nrBA, nodeB, nodeA, LinkType.ALL, new OTSLine3D(new OTSPoint3D[]{
                             nodeB.getPoint(), nodeA.getPoint()}), LongitudinalDirectionality.DIR_BOTH,
                             LaneKeepingPolicy.KEEP_RIGHT);
                     animate(linkBA, typeWegVak, simulator);

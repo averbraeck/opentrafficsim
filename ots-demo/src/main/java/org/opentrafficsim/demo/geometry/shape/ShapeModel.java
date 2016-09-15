@@ -13,6 +13,8 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 
 /**
@@ -41,22 +43,21 @@ public class ShapeModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public final
-        void
-        constructModel(
+    public final void constructModel(
             final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
+        Network network = new OTSNetwork("shape model network");
         try
         {
             // Read the shape files with the function:
-            this.nodes = ShapeFileReader.readNodes("/gis/TESTcordonnodes.shp", "NODENR", true, true);
+            this.nodes = ShapeFileReader.readNodes(network, "/gis/TESTcordonnodes.shp", "NODENR", true, true);
             this.shpLinks = new HashMap<>();
-            ShapeFileReader.readLinks("/gis/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.nodes, this.simulator);
+            ShapeFileReader.readLinks(network, "/gis/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.nodes, this.simulator);
 
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
-                "ntmFlowTimestep", null);
+                    "ntmFlowTimestep", null);
         }
         catch (Throwable exception)
         {
@@ -66,8 +67,8 @@ public class ShapeModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
-        getSimulator() throws RemoteException
+    public final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+            throws RemoteException
     {
         return this.simulator;
     }

@@ -85,6 +85,7 @@ public class IMBConnector implements Connector
                 }
                 try
                 {
+                    // TODO synchronized?
                     IMBConnector.this.imbTransceiverMap.get(shortIMBEventName).handleMessageFromIMB(shortIMBEventName,
                             aPayload);
                 }

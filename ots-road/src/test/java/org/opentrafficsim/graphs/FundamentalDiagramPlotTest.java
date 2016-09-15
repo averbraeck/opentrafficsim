@@ -82,7 +82,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         Set<GTUType> compatibility = new HashSet<GTUType>();
         compatibility.add(gtuType);
         LaneType laneType = new LaneType("CarLane", compatibility);
-        Lane lane = CarTest.makeLane(laneType);
+        Lane lane = CarTest.makeLane(this.network, laneType);
         FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime, lane, position);
         assertEquals("SeriesCount should match numberOfLanes", 1, fd.getSeriesCount());
         assertEquals("Position should match the supplied position", position.getSI(), fd.getPosition().getSI(), 0.0001);
@@ -336,7 +336,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         compatibility.add(GTUType.ALL);
         LaneType laneType = new LaneType("CarLane", compatibility);
         FundamentalDiagram fd =
-                new FundamentalDiagram("Fundamental Diagram", aggregationTime, CarTest.makeLane(laneType), position);
+                new FundamentalDiagram("Fundamental Diagram", aggregationTime, CarTest.makeLane(this.network, laneType),
+                        position);
         // First get the panel that stores the result of updateHint (this is ugly)
         JLabel hintPanel = null;
         ChartPanel chartPanel = null;

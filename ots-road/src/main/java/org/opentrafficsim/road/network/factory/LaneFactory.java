@@ -10,6 +10,8 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -24,6 +26,7 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -31,8 +34,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
-
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -65,7 +66,7 @@ public final class LaneFactory
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    public static CrossSectionLink makeLink(final Network network, final String name, final OTSNode from, final OTSNode to,
+    public static CrossSectionLink makeLink(final Network network, final String name, final Node from, final Node to,
             final OTSPoint3D[] intermediatePoints, final LongitudinalDirectionality direction)
             throws OTSGeometryException, NetworkException
     {

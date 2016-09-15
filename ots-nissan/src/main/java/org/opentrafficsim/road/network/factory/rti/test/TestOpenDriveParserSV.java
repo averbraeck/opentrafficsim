@@ -302,9 +302,9 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                             {
                                 // make a sink
                                 Length position = lane.getLength().lt(m25) ? m0 : m25;
-                                Sensor sensor = new SinkSensor(lane, position, this.simulator);
                                 try
                                 {
+                                    Sensor sensor = new SinkSensor(lane, position, this.simulator);
                                     lane.addSensor(sensor, GTUType.ALL);
                                 }
                                 catch (NetworkException exception)
@@ -347,9 +347,9 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                             {
                                 // make a sink
                                 Length position = lane.getLength().lt(m25) ? lane.getLength() : lane.getLength().minus(m25);
-                                Sensor sensor = new SinkSensor(lane, position, this.simulator);
                                 try
                                 {
+                                    Sensor sensor = new SinkSensor(lane, position, this.simulator);
                                     lane.addSensor(sensor, GTUType.ALL);
                                 }
                                 catch (NetworkException exception)
