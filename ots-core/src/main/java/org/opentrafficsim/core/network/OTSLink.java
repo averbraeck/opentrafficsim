@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.media.j3d.Bounds;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -33,14 +34,17 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     /** */
     private static final long serialVersionUID = 20150101L;
 
+    /** the Network. */
+    private final Network network;
+
     /** Link id. */
     private final String id;
 
     /** Start node (directional). */
-    private final OTSNode startNode;
+    private final Node startNode;
 
     /** End node (directional). */
-    private final OTSNode endNode;
+    private final Node endNode;
 
     /** Link type to indicate compatibility with GTU types. */
     private final LinkType linkType;
@@ -70,15 +74,28 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     /**
      * Construct a new link.
      * @param id the link id
+     * @param network the network to which the link belongs
      * @param startNode start node (directional)
      * @param endNode end node (directional)
      * @param linkType Link type to indicate compatibility with GTU types
      * @param designLine the OTSLine3D design line of the Link
      * @param directionalityMap the directions (FORWARD, BACKWARD, BOTH, NONE) that GTUtypes can traverse this link
+     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
+     *             or the end node of the link are not registered in the network.
      */
-    public OTSLink(final String id, final OTSNode startNode, final OTSNode endNode, final LinkType linkType,
+    public OTSLink(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
             final OTSLine3D designLine, final Map<GTUType, LongitudinalDirectionality> directionalityMap)
+            throws NetworkException
     {
+        Throw.whenNull(network, "network cannot be null");
+        Throw.whenNull(id, "id cannot be null");
+        Throw.whenNull(startNode, "startNode cannot be null");
+        Throw.whenNull(endNode, "endNode cannot be null");
+        Throw.whenNull(linkType, "linkType cannot be null");
+        Throw.whenNull(designLine, "designLine cannot be null");
+        Throw.whenNull(directionalityMap, "directionalityMap cannot be null");
+
+        this.network = network;
         this.id = id;
         this.startNode = startNode;
         this.endNode = endNode;
@@ -87,21 +104,27 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         this.endNode.addLink(this);
         this.designLine = designLine;
         this.directionalityMap = directionalityMap;
+
+        this.network.addLink(this);
     }
 
     /**
      * Construct a new link, with a directionality for all GTUs as provided.
      * @param id the link id
+     * @param network the network to which the link belongs
      * @param startNode start node (directional)
      * @param endNode end node (directional)
      * @param linkType Link type to indicate compatibility with GTU types
      * @param designLine the OTSLine3D design line of the Link
      * @param directionality the directionality for all GTUs
+     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
+     *             or the end node of the link are not registered in the network.
      */
-    public OTSLink(final String id, final OTSNode startNode, final OTSNode endNode, final LinkType linkType,
-            final OTSLine3D designLine, final LongitudinalDirectionality directionality)
+    public OTSLink(final Network network, final String id, final OTSNode startNode, final OTSNode endNode,
+            final LinkType linkType, final OTSLine3D designLine, final LongitudinalDirectionality directionality)
+            throws NetworkException
     {
-        this(id, startNode, endNode, linkType, designLine, new HashMap<GTUType, LongitudinalDirectionality>());
+        this(network, id, startNode, endNode, linkType, designLine, new HashMap<GTUType, LongitudinalDirectionality>());
         addDirectionality(GTUType.ALL, directionality);
     }
 
@@ -174,6 +197,13 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
 
     /** {@inheritDoc} */
     @Override
+    public final Network getNetwork()
+    {
+        return this.network;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public final String getId()
     {
         return this.id;
@@ -181,14 +211,14 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
 
     /** {@inheritDoc} */
     @Override
-    public final OTSNode getStartNode()
+    public final Node getStartNode()
     {
         return this.startNode;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final OTSNode getEndNode()
+    public final Node getEndNode()
     {
         return this.endNode;
     }

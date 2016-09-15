@@ -10,6 +10,8 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -119,10 +121,12 @@ class GeometryTag implements Serializable
     }
 
     /**
+     * @param network the network
      * @param geometryTag the tag with the info for the node.
      * @return a constructed node
+     * @throws NetworkException 
      */
-    static OTSNode makeOTSNode(final GeometryTag geometryTag)
+    static OTSNode makeOTSNode(final Network network, final GeometryTag geometryTag) throws NetworkException
     {
         Direction angle = Direction.ZERO;
         Direction slope = Direction.ZERO;
@@ -134,7 +138,7 @@ class GeometryTag implements Serializable
             geometryTag.id = UUID.randomUUID().toString();
         }
 
-        OTSNode node = new OTSNode(geometryTag.id, coordinate, angle, slope);
+        OTSNode node = new OTSNode(network, geometryTag.id, coordinate, angle, slope);
         geometryTag.node = node;
         return node;
     }

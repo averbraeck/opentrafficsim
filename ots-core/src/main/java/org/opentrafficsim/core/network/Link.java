@@ -24,6 +24,12 @@ import nl.tudelft.simulation.event.EventType;
  */
 public interface Link extends Locatable, Serializable
 {
+    /**
+     * Return the network in which this link is registered. Cannot be null.
+     * @return Network; the network in which this link is registered
+     */
+    Network getNetwork();
+
     /** @return id. */
     String getId();
 
@@ -104,7 +110,7 @@ public interface Link extends Locatable, Serializable
      * @return int; the number of GTUs on this link
      */
     int getGTUCount();
-
+    
     /**
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the lane. <br>
      * Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_addition}

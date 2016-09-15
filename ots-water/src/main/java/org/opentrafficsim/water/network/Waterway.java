@@ -6,6 +6,8 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
+import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNode;
 
@@ -26,6 +28,7 @@ public class Waterway extends OTSLink
 
     /**
      * Construct a new waterway.
+     * @param network the network.
      * @param id the link id
      * @param startNode start node (directional)
      * @param endNode end node (directional)
@@ -34,15 +37,17 @@ public class Waterway extends OTSLink
      * @param directionality to indicate the general direction of the waterway (FORWARD = in the direction of the design line;
      *            BACKWARD is in the opposite direction; BOTH is a waterway that can be used in both directions; NONE is a
      *            waterway that cannot be used for sailing.
+     * @throws NetworkException 
      */
-    public Waterway(String id, OTSNode startNode, OTSNode endNode, LinkType linkType, OTSLine3D designLine,
-        LongitudinalDirectionality directionality)
+    public Waterway(final Network network, String id, OTSNode startNode, OTSNode endNode, LinkType linkType, OTSLine3D designLine,
+        LongitudinalDirectionality directionality) throws NetworkException
     {
-        super(id, startNode, endNode, linkType, designLine, directionality);
+        super(network, id, startNode, endNode, linkType, designLine, directionality);
     }
 
     /**
      * Construct a new waterway.
+     * @param network the network.
      * @param id the link id
      * @param startNode start node (directional)
      * @param endNode end node (directional)
@@ -52,11 +57,12 @@ public class Waterway extends OTSLink
      *            only allowed to use a canal in one direction. Furthermore, the directions can limit waterways for certain
      *            classes of ships. Set the LongitudinalDirectionality to NONE for ships that are not allowed to sail this
      *            waterway.
+     * @throws NetworkException 
      */
-    public Waterway(String id, OTSNode startNode, OTSNode endNode, LinkType linkType, OTSLine3D designLine,
-        Map<GTUType, LongitudinalDirectionality> directionalityMap)
+    public Waterway(final Network network, String id, OTSNode startNode, OTSNode endNode, LinkType linkType, OTSLine3D designLine,
+        Map<GTUType, LongitudinalDirectionality> directionalityMap) throws NetworkException
     {
-        super(id, startNode, endNode, linkType, designLine, directionalityMap);
+        super(network, id, startNode, endNode, linkType, designLine, directionalityMap);
     }
 
 }

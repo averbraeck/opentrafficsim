@@ -14,9 +14,6 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.language.reflection.ClassUtil;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
@@ -52,6 +49,9 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 /**
  * <p>
@@ -134,7 +134,7 @@ class RoadTag implements Serializable
     /** The calculated Link. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<CrossSectionLink> subLinks = new ArrayList<>();
-    
+
     /**
      * Parse the attributes of the road tag. The sub-elements are parsed in separate classes.
      * @param node the top-level road node
@@ -144,8 +144,7 @@ class RoadTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static RoadTag parseRoad(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException,
-        NetworkException
+    static RoadTag parseRoad(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         RoadTag roadTag = new RoadTag();
@@ -195,8 +194,8 @@ class RoadTag implements Serializable
      * @throws NamingException on error registering the animation
      */
     static void buildSubLinks(RoadTag roadTag, OTSDEVSSimulatorInterface simulator,
-        OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws OTSGeometryException, NetworkException,
-        NamingException
+            OpenDriveNetworkLaneParser openDriveNetworkLaneParser)
+            throws OTSGeometryException, NetworkException, NamingException
     {
         OTSNetwork otsNetwork = openDriveNetworkLaneParser.network;
         if (roadTag.lanesTag.laneSectionTags.size() == 1)// no sub links
@@ -238,16 +237,14 @@ class RoadTag implements Serializable
                     GeometryTag currentGeometryTag = tempGeometryTags.get(indexGeometryTag);
                     if (currentGeometryTag.s.doubleValue() < laneSecLength.doubleValue())
                     {
-                        OTSPoint3D point =
-                            new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(),
-                                currentGeometryTag.z.doubleValue());
+                        OTSPoint3D point = new OTSPoint3D(currentGeometryTag.x.doubleValue(),
+                                currentGeometryTag.y.doubleValue(), currentGeometryTag.z.doubleValue());
 
                         if (points.size() == 0)
                             points.add(point);
                         else
                         {
-                            if (point.x != points.get(points.size() - 1).x
-                                && point.y != points.get(points.size() - 1).y)
+                            if (point.x != points.get(points.size() - 1).x && point.y != points.get(points.size() - 1).y)
                                 points.add(point);
                         }
 
@@ -275,16 +272,14 @@ class RoadTag implements Serializable
                     }
                     else
                     {
-                        OTSPoint3D point =
-                            new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(),
-                                currentGeometryTag.z.doubleValue());
+                        OTSPoint3D point = new OTSPoint3D(currentGeometryTag.x.doubleValue(),
+                                currentGeometryTag.y.doubleValue(), currentGeometryTag.z.doubleValue());
 
                         if (points.size() == 0)
                             points.add(point);
                         else
                         {
-                            if (point.x != points.get(points.size() - 1).x
-                                && point.y != points.get(points.size() - 1).y)
+                            if (point.x != points.get(points.size() - 1).x && point.y != points.get(points.size() - 1).y)
                                 points.add(point);
                         }
 
@@ -314,9 +309,9 @@ class RoadTag implements Serializable
                         // coordinates = (OTSPoint3D[]) points.toArray();
                         OTSLine3D designLine = new OTSLine3D(points);
                         String sublinkId = roadTag.id + "." + laneSecIndex.toString();
-                        CrossSectionLink sublink =
-                            new CrossSectionLink(sublinkId, from.node, to.node, LinkType.ALL, designLine,
-                                LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_LANE);
+                        CrossSectionLink sublink = new CrossSectionLink(openDriveNetworkLaneParser.network, sublinkId,
+                                from.node, to.node, LinkType.ALL, designLine, LongitudinalDirectionality.DIR_BOTH,
+                                LaneKeepingPolicy.KEEP_LANE);
 
                         roadTag.subLinks.add(sublink);
 
@@ -342,8 +337,7 @@ class RoadTag implements Serializable
             {
                 GeometryTag currentGeometryTag = tempGeometryTags.get(indexGeometryTag);
 
-                OTSPoint3D point =
-                    new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(),
+                OTSPoint3D point = new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(),
                         currentGeometryTag.z.doubleValue());
                 // points.add(point);
 
@@ -381,9 +375,8 @@ class RoadTag implements Serializable
             // coordinates = (OTSPoint3D[]) points.toArray();
             OTSLine3D designLine = new OTSLine3D(points);
             String sublinkId = roadTag.id + "." + Integer.toString(roadTag.lanesTag.laneSectionTags.size());
-            CrossSectionLink sublink =
-                new CrossSectionLink(sublinkId, from.node, to.node, LinkType.ALL, designLine,
-                    LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_LANE);
+            CrossSectionLink sublink = new CrossSectionLink(openDriveNetworkLaneParser.network, sublinkId, from.node, to.node,
+                    LinkType.ALL, designLine, LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_LANE);
 
             roadTag.subLinks.add(sublink);
 
@@ -408,8 +401,8 @@ class RoadTag implements Serializable
      * @throws RemoteException on error reaching the animation or simulator
      */
     static void generateRegularRoads(RoadTag roadTag, OTSDEVSSimulatorInterface simulator,
-        OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws OTSGeometryException, NetworkException,
-        NamingException, RemoteException
+            OpenDriveNetworkLaneParser openDriveNetworkLaneParser)
+            throws OTSGeometryException, NetworkException, NamingException, RemoteException
     {
         // if (roadTag.junctionId.equals("-1"))
         for (int laneSecIndex = 0; laneSecIndex < roadTag.lanesTag.laneSectionTags.size(); laneSecIndex++)
@@ -469,24 +462,22 @@ class RoadTag implements Serializable
                 if (leftLane.widthTags.size() == 1)
                 {
                     leftLane.widthTags.get(0).sOffst =
-                        leftLane.widthTags.get(0).a.plus(leftLane.widthTags.get(0).b.multiplyBy(ds.doubleValue()))
-                            .plus(leftLane.widthTags.get(0).c.multiplyBy(Math.pow(ds.doubleValue(), 2)))
-                            .plus(leftLane.widthTags.get(0).d.multiplyBy(Math.pow(ds.doubleValue(), 3)));
+                            leftLane.widthTags.get(0).a.plus(leftLane.widthTags.get(0).b.multiplyBy(ds.doubleValue()))
+                                    .plus(leftLane.widthTags.get(0).c.multiplyBy(Math.pow(ds.doubleValue(), 2)))
+                                    .plus(leftLane.widthTags.get(0).d.multiplyBy(Math.pow(ds.doubleValue(), 3)));
 
                     Length laneWidth_start = leftLane.widthTags.get(0).a;
                     Length laneWidth_end = leftLane.widthTags.get(0).sOffst;
 
-                    Length leftOffset_start =
-                        lastLane.getDesignLineOffsetAtBegin().plus(lastLane.getBeginWidth().multiplyBy(0.5))
-                            .plus(laneWidth_start.multiplyBy(0.5));
-                    Length leftOffset_end =
-                        lastLane.getDesignLineOffsetAtEnd().plus(lastLane.getEndWidth().multiplyBy(0.5))
+                    Length leftOffset_start = lastLane.getDesignLineOffsetAtBegin()
+                            .plus(lastLane.getBeginWidth().multiplyBy(0.5)).plus(laneWidth_start.multiplyBy(0.5));
+                    Length leftOffset_end = lastLane.getDesignLineOffsetAtEnd().plus(lastLane.getEndWidth().multiplyBy(0.5))
                             .plus(laneWidth_end.multiplyBy(0.5));
 
                     Length length = currentLink.getLength();
 
                     CrossSectionSlice startSlice =
-                        new CrossSectionSlice(new Length(0.0, LengthUnit.METER), leftOffset_start, laneWidth_start);
+                            new CrossSectionSlice(new Length(0.0, LengthUnit.METER), leftOffset_start, laneWidth_start);
                     CrossSectionSlice endSlice = new CrossSectionSlice(length, leftOffset_end, laneWidth_end);
                     crossSectionSlices.add(startSlice);
                     crossSectionSlices.add(endSlice);
@@ -504,13 +495,11 @@ class RoadTag implements Serializable
 
                         if (factor < 0.98)
                         {
-                            Length width =
-                                widthTag.a.plus(widthTag.b.multiplyBy(relativeLength.doubleValue()))
+                            Length width = widthTag.a.plus(widthTag.b.multiplyBy(relativeLength.doubleValue()))
                                     .plus(widthTag.c.multiplyBy(Math.pow(relativeLength.doubleValue(), 2)))
                                     .plus(widthTag.d.multiplyBy(Math.pow(relativeLength.doubleValue(), 3)));
 
-                            Length offSet =
-                                lastLane.getLateralCenterPosition(factor)
+                            Length offSet = lastLane.getLateralCenterPosition(factor)
                                     .plus(lastLane.getWidth(factor).multiplyBy(0.5)).plus(width.multiplyBy(0.5));
 
                             relativeLength = currentLink.getLength().multiplyBy(factor);
@@ -558,8 +547,7 @@ class RoadTag implements Serializable
                      * laneWidth_start, laneWidth_end, LANETYPE_ALL, directionality, speedLimit, overtakingConditions);
                      */
 
-                    Lane lane =
-                        new Lane(currentLink, leftLane.id.toString(), crossSectionSlices, LaneType.ALL, directionality,
+                    Lane lane = new Lane(currentLink, leftLane.id.toString(), crossSectionSlices, LaneType.ALL, directionality,
                             speedLimit, overtakingConditions);
                     currentLaneSec.lanes.put(leftLane.id, lane);
 
@@ -678,24 +666,22 @@ class RoadTag implements Serializable
                 if (rightLane.widthTags.size() == 1)
                 {
                     rightLane.widthTags.get(0).sOffst =
-                        rightLane.widthTags.get(0).a.plus(rightLane.widthTags.get(0).b.multiplyBy(ds.doubleValue()))
-                            .plus(rightLane.widthTags.get(0).c.multiplyBy(Math.pow(ds.doubleValue(), 2)))
-                            .plus(rightLane.widthTags.get(0).d.multiplyBy(Math.pow(ds.doubleValue(), 3)));
+                            rightLane.widthTags.get(0).a.plus(rightLane.widthTags.get(0).b.multiplyBy(ds.doubleValue()))
+                                    .plus(rightLane.widthTags.get(0).c.multiplyBy(Math.pow(ds.doubleValue(), 2)))
+                                    .plus(rightLane.widthTags.get(0).d.multiplyBy(Math.pow(ds.doubleValue(), 3)));
 
                     Length laneWidth_start = rightLane.widthTags.get(0).a;
                     Length laneWidth_end = rightLane.widthTags.get(0).sOffst;
 
-                    Length leftOffset_start =
-                        lastLane.getDesignLineOffsetAtBegin().minus(lastLane.getBeginWidth().multiplyBy(0.5))
-                            .minus(laneWidth_start.multiplyBy(0.5));
-                    Length leftOffset_end =
-                        lastLane.getDesignLineOffsetAtEnd().minus(lastLane.getEndWidth().multiplyBy(0.5))
+                    Length leftOffset_start = lastLane.getDesignLineOffsetAtBegin()
+                            .minus(lastLane.getBeginWidth().multiplyBy(0.5)).minus(laneWidth_start.multiplyBy(0.5));
+                    Length leftOffset_end = lastLane.getDesignLineOffsetAtEnd().minus(lastLane.getEndWidth().multiplyBy(0.5))
                             .minus(laneWidth_end.multiplyBy(0.5));
 
                     Length length = currentLink.getLength();
 
                     CrossSectionSlice startSlice =
-                        new CrossSectionSlice(new Length(0.0, LengthUnit.METER), leftOffset_start, laneWidth_start);
+                            new CrossSectionSlice(new Length(0.0, LengthUnit.METER), leftOffset_start, laneWidth_start);
                     CrossSectionSlice endSlice = new CrossSectionSlice(length, leftOffset_end, laneWidth_end);
                     crossSectionSlices.add(startSlice);
                     crossSectionSlices.add(endSlice);
@@ -713,13 +699,11 @@ class RoadTag implements Serializable
 
                         if (factor < 0.98)
                         {
-                            Length width =
-                                widthTag.a.plus(widthTag.b.multiplyBy(relativeLength.doubleValue()))
+                            Length width = widthTag.a.plus(widthTag.b.multiplyBy(relativeLength.doubleValue()))
                                     .plus(widthTag.c.multiplyBy(Math.pow(relativeLength.doubleValue(), 2)))
                                     .plus(widthTag.d.multiplyBy(Math.pow(relativeLength.doubleValue(), 3)));
 
-                            Length offSet =
-                                lastLane.getLateralCenterPosition(factor)
+                            Length offSet = lastLane.getLateralCenterPosition(factor)
                                     .minus(lastLane.getWidth(factor).multiplyBy(0.5)).minus(width.multiplyBy(0.5));
 
                             relativeLength = currentLink.getLength().multiplyBy(factor);
@@ -770,8 +754,7 @@ class RoadTag implements Serializable
                         // if(roadTag.id.equals("385351")||roadTag.id.equals("385359"))
                         // System.out.println();
 
-                        Lane lane =
-                            new Lane(currentLink, rightLane.id.toString(), crossSectionSlices, LaneType.ALL,
+                        Lane lane = new Lane(currentLink, rightLane.id.toString(), crossSectionSlices, LaneType.ALL,
                                 directionality, speedLimit, overtakingConditions);
 
                         currentLaneSec.lanes.put(rightLane.id, lane);
@@ -867,8 +850,9 @@ class RoadTag implements Serializable
     /**
      * @param roadTag the road tag
      * @param openDriveNetworkLaneParser the parser
+     * @throws NetworkException 
      */
-    public static void buildLink(RoadTag roadTag, OpenDriveNetworkLaneParser openDriveNetworkLaneParser)
+    public static void buildLink(RoadTag roadTag, OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws NetworkException
     {
         if (roadTag.junctionId == null)
             System.out.println("sth is wrong in building links");
@@ -899,9 +883,8 @@ class RoadTag implements Serializable
             roadTag.startNode = from;
             roadTag.endNode = to;
 
-            CrossSectionLink newlink =
-                new CrossSectionLink(roadTag.id, from, to, LinkType.ALL, roadTag.designLine,
-                    LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_LANE);
+            CrossSectionLink newlink = new CrossSectionLink(openDriveNetworkLaneParser.network, roadTag.id, from, to,
+                    LinkType.ALL, roadTag.designLine, LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_LANE);
             roadTag.link = newlink;
 
             roadTag.link = newlink;
@@ -911,9 +894,8 @@ class RoadTag implements Serializable
         {
             OTSNode from = roadTag.startNode;
             OTSNode to = roadTag.endNode;
-            CrossSectionLink newlink =
-                new CrossSectionLink(roadTag.id, from, to, LinkType.ALL, roadTag.designLine,
-                    LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_LANE);
+            CrossSectionLink newlink = new CrossSectionLink(openDriveNetworkLaneParser.network, roadTag.id, from, to,
+                    LinkType.ALL, roadTag.designLine, LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_LANE);
 
             roadTag.link = newlink;
         }
@@ -926,7 +908,7 @@ class RoadTag implements Serializable
      * @throws NetworkException on network error
      */
     public static void generateTrafficLightsbySignal(RoadTag roadTag, OTSDEVSSimulatorInterface simulator,
-        OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws NetworkException
+            OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws NetworkException
     {
         for (SignalTag signalTag : roadTag.signalsTag.signalTags)
         {
@@ -950,13 +932,11 @@ class RoadTag implements Serializable
                         sOffset = signalTag.s.minus(laneSec.s).plus(new Length(0.5, LengthUnit.METER));
 
                     Class<?> clazz = Class.forName(OldTrafficLight.class.getName());
-                    Constructor<?> trafficLightConstructor =
-                        ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class, Length.class,
-                            OTSDEVSSimulatorInterface.class});
+                    Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(clazz,
+                            new Class[] { String.class, Lane.class, Length.class, OTSDEVSSimulatorInterface.class });
 
-                    AbstractTrafficLightNew trafficLight =
-                        (AbstractTrafficLightNew) trafficLightConstructor.newInstance(new Object[]{signalTag.id, lane,
-                            sOffset, simulator});
+                    AbstractTrafficLightNew trafficLight = (AbstractTrafficLightNew) trafficLightConstructor
+                            .newInstance(new Object[] { signalTag.id, lane, sOffset, simulator });
 
                     if (!openDriveNetworkLaneParser.trafficLightsBySignals.containsKey(signalTag.id))
                     {
@@ -975,11 +955,12 @@ class RoadTag implements Serializable
 
                 }
                 catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
-                    | IllegalArgumentException | InvocationTargetException exception)
+                        | IllegalArgumentException | InvocationTargetException exception)
                 {
                     throw new NetworkException(
-                        "Traffic Light: CLASS NAME " + OldTrafficLight.class.getName() + " for " + signalTag.id
-                            + " on lane " + lane.toString() + " -- class not found or constructor not right", exception);
+                            "Traffic Light: CLASS NAME " + OldTrafficLight.class.getName() + " for " + signalTag.id
+                                    + " on lane " + lane.toString() + " -- class not found or constructor not right",
+                            exception);
                 }
             }
             else if (signalTag.type.equals("206") && signalTag.dynamic.equals("no"))// generate stop sign
@@ -998,7 +979,7 @@ class RoadTag implements Serializable
      * @throws NetworkException on network error
      */
     public static void generateTrafficLightsbySignalReference(RoadTag roadTag, OTSDEVSSimulatorInterface simulator,
-        OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws NetworkException
+            OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws NetworkException
     {
         for (SignalReferenceTag signalReferenceTag : roadTag.signalsTag.signalReferenceTag)
         {
@@ -1019,13 +1000,11 @@ class RoadTag implements Serializable
                         sOffset = signalReferenceTag.s.minus(laneSec.s).plus(new Length(0.5, LengthUnit.METER));
 
                     Class<?> clazz = Class.forName(OldTrafficLight.class.getName());
-                    Constructor<?> trafficLightConstructor =
-                        ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class, Length.class,
-                            OTSDEVSSimulatorInterface.class});
+                    Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(clazz,
+                            new Class[] { String.class, Lane.class, Length.class, OTSDEVSSimulatorInterface.class });
 
-                    AbstractTrafficLightNew trafficLight =
-                        (AbstractTrafficLightNew) trafficLightConstructor.newInstance(new Object[]{signalTag.id + ".ref",
-                            lane, sOffset, simulator});
+                    AbstractTrafficLightNew trafficLight = (AbstractTrafficLightNew) trafficLightConstructor
+                            .newInstance(new Object[] { signalTag.id + ".ref", lane, sOffset, simulator });
 
                     if (!openDriveNetworkLaneParser.trafficLightsByLanes.containsKey(roadTag.id))
                     {
@@ -1039,11 +1018,12 @@ class RoadTag implements Serializable
 
                 }
                 catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
-                    | IllegalArgumentException | InvocationTargetException exception)
+                        | IllegalArgumentException | InvocationTargetException exception)
                 {
                     throw new NetworkException(
-                        "Traffic Light: CLASS NAME " + OldTrafficLight.class.getName() + " for " + signalTag.id
-                            + " on lane " + lane.toString() + " -- class not found or constructor not right", exception);
+                            "Traffic Light: CLASS NAME " + OldTrafficLight.class.getName() + " for " + signalTag.id
+                                    + " on lane " + lane.toString() + " -- class not found or constructor not right",
+                            exception);
                 }
             }
             else if (signalTag.type.equals("206") && signalTag.dynamic.equals("no"))// generate stop sign

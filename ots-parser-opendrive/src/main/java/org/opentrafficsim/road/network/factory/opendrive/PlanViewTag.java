@@ -12,6 +12,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -31,7 +32,7 @@ class PlanViewTag implements Serializable
 
     /** */
     private static final long serialVersionUID = 20150723L;
-    
+
     /** GeometryTags */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<GeometryTag> geometryTags = new ArrayList<GeometryTag>();
@@ -43,10 +44,11 @@ class PlanViewTag implements Serializable
      * @param roadTag the RoadTag to which this element belongs
      * @throws SAXException when parsing of the tag fails
      * @throws OTSGeometryException when parsing of the tag fails
+     * @throws NetworkException
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parsePlanView(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final RoadTag roadTag)
-        throws SAXException, OTSGeometryException
+            throws SAXException, OTSGeometryException, NetworkException
     {
         int geometryCount = 0;
         PlanViewTag planViewTag = new PlanViewTag();
@@ -63,7 +65,7 @@ class PlanViewTag implements Serializable
 
                 geometryTag.z = assignHeight(geometryTag, roadTag.elevationProfileTag.elevationTags);
 
-                GeometryTag.makeOTSNode(geometryTag);
+                GeometryTag.makeOTSNode(parser.network, geometryTag);
 
                 planViewTag.geometryTags.add(geometryTag);
             }
@@ -91,7 +93,7 @@ class PlanViewTag implements Serializable
 
             lastGeometryTag.z = previousTag.z;
 
-            GeometryTag.makeOTSNode(lastGeometryTag);
+            GeometryTag.makeOTSNode(parser.network, lastGeometryTag);
 
             planViewTag.geometryTags.add(lastGeometryTag);
 
@@ -143,8 +145,8 @@ class PlanViewTag implements Serializable
      * @param geometryCount
      * @throws OTSGeometryException
      */
-    private static void interpolateSpiral(OpenDriveNetworkLaneParser parser, PlanViewTag planViewTag,
-        GeometryTag geometryTag, int geometryCount) throws OTSGeometryException
+    private static void interpolateSpiral(OpenDriveNetworkLaneParser parser, PlanViewTag planViewTag, GeometryTag geometryTag,
+            int geometryCount) throws OTSGeometryException
     {
         double startCurvature = geometryTag.spiralTag.curvStart.doubleValue();
         double endCurvature = geometryTag.spiralTag.curvEnd.doubleValue();
@@ -184,8 +186,8 @@ class PlanViewTag implements Serializable
      * @param roadTag
      * @throws OTSGeometryException
      */
-    private static void interpolateArc(PlanViewTag planViewTag, GeometryTag geometryTag, int geometryCount,
-        RoadTag roadTag) throws OTSGeometryException
+    private static void interpolateArc(PlanViewTag planViewTag, GeometryTag geometryTag, int geometryCount, RoadTag roadTag)
+            throws OTSGeometryException
     {
         double curvature = geometryTag.arcTag.curvature.doubleValue();
         OTSPoint3D start = geometryTag.node.getPoint();
@@ -224,8 +226,8 @@ class PlanViewTag implements Serializable
      * @param side
      * @return list
      */
-    private static List<OTSPoint3D> generateCurve(OTSPoint3D pFrom, OTSPoint3D pTo, double pRadius,
-        double pMinDistance, boolean shortest, boolean side)
+    private static List<OTSPoint3D> generateCurve(OTSPoint3D pFrom, OTSPoint3D pTo, double pRadius, double pMinDistance,
+            boolean shortest, boolean side)
     {
 
         List<OTSPoint3D> pOutPut = new ArrayList<OTSPoint3D>();
@@ -247,9 +249,8 @@ class PlanViewTag implements Serializable
         }
 
         // Calculate the middle of the expected curve.
-        double factor =
-            Math.sqrt((pRadius * pRadius)
-                / ((pTo.x - pFrom.x) * (pTo.x - pFrom.x) + (pTo.y - pFrom.y) * (pTo.y - pFrom.y)) - 0.25f);
+        double factor = Math.sqrt(
+                (pRadius * pRadius) / ((pTo.x - pFrom.x) * (pTo.x - pFrom.x) + (pTo.y - pFrom.y) * (pTo.y - pFrom.y)) - 0.25f);
         double x = 0;
         double y = 0;
         if (side)
@@ -283,8 +284,8 @@ class PlanViewTag implements Serializable
 
         }
 
-        if ((pTo.x - circleMiddlePoint.x < 0) && (pTo.y - circleMiddlePoint.y < 0)
-            && (pFrom.y - circleMiddlePoint.y > 0) && (pFrom.x - circleMiddlePoint.x < 0))
+        if ((pTo.x - circleMiddlePoint.x < 0) && (pTo.y - circleMiddlePoint.y < 0) && (pFrom.y - circleMiddlePoint.y > 0)
+                && (pFrom.x - circleMiddlePoint.x < 0))
         {
             double temp = angle1;
             angle1 = angle2;
@@ -293,8 +294,8 @@ class PlanViewTag implements Serializable
             angle1 = angle1 - Math.PI * 2;
             // angle2 = (float) (angle2 - Math.PI);
         }
-        else if ((pTo.x - circleMiddlePoint.x > 0) && (pTo.y - circleMiddlePoint.y < 0)
-            && (pFrom.y - circleMiddlePoint.y > 0) && (pFrom.x - circleMiddlePoint.x < 0))
+        else if ((pTo.x - circleMiddlePoint.x > 0) && (pTo.y - circleMiddlePoint.y < 0) && (pFrom.y - circleMiddlePoint.y > 0)
+                && (pFrom.x - circleMiddlePoint.x < 0))
         {
             double temp = angle1;
             angle1 = angle2;
@@ -302,8 +303,8 @@ class PlanViewTag implements Serializable
 
             angle1 = angle1 - Math.PI * 2;
         }
-        else if ((pTo.x - circleMiddlePoint.x < 0) && (pTo.y - circleMiddlePoint.y < 0)
-            && (pFrom.y - circleMiddlePoint.y > 0) && (pFrom.x - circleMiddlePoint.x > 0))
+        else if ((pTo.x - circleMiddlePoint.x < 0) && (pTo.y - circleMiddlePoint.y < 0) && (pFrom.y - circleMiddlePoint.y > 0)
+                && (pFrom.x - circleMiddlePoint.x > 0))
         {
             double temp = angle1;
             angle1 = angle2;
@@ -336,8 +337,7 @@ class PlanViewTag implements Serializable
         for (double f = angle1; f < angle2; f += step)
         {
             zFirst = zFirst + zStep;
-            OTSPoint3D p =
-                new OTSPoint3D(Math.cos(f) * pRadius + circleMiddlePoint.x,
+            OTSPoint3D p = new OTSPoint3D(Math.cos(f) * pRadius + circleMiddlePoint.x,
                     Math.sin(f) * pRadius + circleMiddlePoint.y, zFirst);
 
             pOutPut.add(p);
@@ -379,7 +379,7 @@ class PlanViewTag implements Serializable
             else
             {
                 if (geometryTag.node.getPoint().x != coordinates.get(coordinates.size() - 1).x
-                    && geometryTag.node.getPoint().y != coordinates.get(coordinates.size() - 1).y)
+                        && geometryTag.node.getPoint().y != coordinates.get(coordinates.size() - 1).y)
                 {
                     coordinates.add(geometryTag.node.getPoint());
                 }

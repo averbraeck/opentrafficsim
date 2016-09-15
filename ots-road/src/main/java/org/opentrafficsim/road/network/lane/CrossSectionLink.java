@@ -10,6 +10,8 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
+import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -42,6 +44,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
 
     /**
      * Construction of a cross section link.
+     * @param network the network.
      * @param id String; the link id.
      * @param startNode OTSNode; the start node (directional).
      * @param endNode OTSNode; the end node (directional).
@@ -50,18 +53,21 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * @param directionalityMap Map&lt;GTUType, LongitudinalDirectionality&gt;; the directions (FORWARD, BACKWARD, BOTH, NONE)
      *            that various GTUtypes can traverse this link
      * @param laneKeepingPolicy LaneKeepingPolicy; the policy to generally keep left, keep right, or keep lane
+     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
+     *             or the end node of the link are not registered in the network.
      */
-    public CrossSectionLink(final String id, final OTSNode startNode, final OTSNode endNode, final LinkType linkType,
-            final OTSLine3D designLine, final Map<GTUType, LongitudinalDirectionality> directionalityMap,
-            final LaneKeepingPolicy laneKeepingPolicy)
+    public CrossSectionLink(final Network network, final String id, final OTSNode startNode, final OTSNode endNode,
+            final LinkType linkType, final OTSLine3D designLine,
+            final Map<GTUType, LongitudinalDirectionality> directionalityMap, final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {
-        super(id, startNode, endNode, linkType, designLine, directionalityMap);
+        super(network, id, startNode, endNode, linkType, designLine, directionalityMap);
         this.laneKeepingPolicy = laneKeepingPolicy;
     }
 
     /**
      * Construction of a link, with a general directionality for GTUType.ALL. Other directionalities can be added with the
      * method addDirectionality(...) later.
+     * @param network the network.
      * @param id String; the link id.
      * @param startNode OTSnode; the start node (directional).
      * @param endNode OTSNode; the end node (directional).
@@ -69,29 +75,35 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * @param designLine OTSLine3D; the design line of the Link
      * @param directionality LongitudinalDirectionality; the default directionality for all GTUs
      * @param laneKeepingPolicy LaneKeepingPolicy; the policy to generally keep left, keep right, or keep lane
+     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
+     *             or the end node of the link are not registered in the network.
      */
-    public CrossSectionLink(final String id, final OTSNode startNode, final OTSNode endNode, final LinkType linkType,
-            final OTSLine3D designLine, final LongitudinalDirectionality directionality,
-            final LaneKeepingPolicy laneKeepingPolicy)
+    public CrossSectionLink(final Network network, final String id, final OTSNode startNode, final OTSNode endNode,
+            final LinkType linkType, final OTSLine3D designLine, final LongitudinalDirectionality directionality,
+            final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {
-        super(id, startNode, endNode, linkType, designLine, directionality);
+        super(network, id, startNode, endNode, linkType, designLine, directionality);
         this.laneKeepingPolicy = laneKeepingPolicy;
     }
 
     /**
      * Construction of a link, on which no traffic is allowed after construction of the link. Directionality for GTUTypes can be
      * added with the method addDirectionality(...) later.
+     * @param network the network.
      * @param id String; the link id.
      * @param startNode OTSNode; the start node (directional).
      * @param endNode OTSNode; the end node (directional).
      * @param linkType LinkType; the link type
      * @param designLine OTSLine3D; the design line of the Link
      * @param laneKeepingPolicy LaneKeepingPolicy; the policy to generally keep left, keep right, or keep lane
+     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
+     *             or the end node of the link are not registered in the network.
      */
-    public CrossSectionLink(final String id, final OTSNode startNode, final OTSNode endNode, final LinkType linkType,
-            final OTSLine3D designLine, final LaneKeepingPolicy laneKeepingPolicy)
+    public CrossSectionLink(final Network network, final String id, final OTSNode startNode, final OTSNode endNode,
+            final LinkType linkType, final OTSLine3D designLine, final LaneKeepingPolicy laneKeepingPolicy)
+            throws NetworkException
     {
-        this(id, startNode, endNode, linkType, designLine, new HashMap<GTUType, LongitudinalDirectionality>(),
+        this(network, id, startNode, endNode, linkType, designLine, new HashMap<GTUType, LongitudinalDirectionality>(),
                 laneKeepingPolicy);
     }
 
@@ -175,5 +187,5 @@ public class CrossSectionLink extends OTSLink implements Serializable
         return "CrossSectionLink [crossSectionElementList=" + this.crossSectionElementList + ", lanes=" + this.lanes
                 + ", laneKeepingPolicy=" + this.laneKeepingPolicy + "]";
     }
-    
+
 }
