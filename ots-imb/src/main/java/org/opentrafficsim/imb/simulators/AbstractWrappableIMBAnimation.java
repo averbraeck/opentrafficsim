@@ -39,7 +39,7 @@ public abstract class AbstractWrappableIMBAnimation extends AbstractWrappableAni
     private static final long serialVersionUID = 20160902L;
 
     /** The network. */
-    private OTSNetwork network = new OTSNetwork("network");
+    private OTSNetwork network;
 
     /** The animator. */
     private SimpleIMBAnimator animator;
@@ -59,9 +59,10 @@ public abstract class AbstractWrappableIMBAnimation extends AbstractWrappableAni
             final ArrayList<AbstractProperty<?>> userModifiedProperties, final Rectangle rect, final boolean eoc)
             throws SimRuntimeException, NamingException, OTSSimulationException, PropertyException
     {
+        this.network = new OTSNetwork("network");
         SimpleIMBAnimator simulator =
                 (SimpleIMBAnimator) super.buildAnimator(startTime, warmupPeriod, runLength, userModifiedProperties, rect, eoc);
-        // This is probably where we have to act on the imb settings (if present among the userModifiedProperties)
+        // This is where we have to act on the imb settings (if present among the userModifiedProperties)
         CompoundProperty imbSettings = null;
         for (AbstractProperty<?> property : userModifiedProperties)
         {
