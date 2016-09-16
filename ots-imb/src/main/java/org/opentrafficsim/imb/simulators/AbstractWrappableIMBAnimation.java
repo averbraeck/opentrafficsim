@@ -5,18 +5,17 @@ import java.util.ArrayList;
 
 import javax.naming.NamingException;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.imb.transceiver.OTSIMBConnector;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * Animator that links OTS to the IMB bus by:
@@ -38,18 +37,18 @@ public abstract class AbstractWrappableIMBAnimation extends AbstractWrappableAni
     /** */
     private static final long serialVersionUID = 20160902L;
 
-    /** The network. */
-    private OTSNetwork network;
-
     /** The animator. */
     private SimpleIMBAnimator animator;
-
+    
+    /** Connector to the IMB hub. */
+    private OTSIMBConnector imbConnector = null;
+    
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     protected SimpleIMBAnimator buildSimpleAnimator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
             final OTSModelInterface model) throws SimRuntimeException, NamingException, PropertyException
     {
-        this.animator = new SimpleIMBAnimator(startTime, warmupPeriod, runLength, model);
+        this.animator = new SimpleIMBAnimator(startTime, warmupPeriod, runLength, model, this.imbConnector);
         return this.animator;
     }
 
@@ -59,9 +58,7 @@ public abstract class AbstractWrappableIMBAnimation extends AbstractWrappableAni
             final ArrayList<AbstractProperty<?>> userModifiedProperties, final Rectangle rect, final boolean eoc)
             throws SimRuntimeException, NamingException, OTSSimulationException, PropertyException
     {
-        this.network = new OTSNetwork("network");
-        SimpleIMBAnimator simulator =
-                (SimpleIMBAnimator) super.buildAnimator(startTime, warmupPeriod, runLength, userModifiedProperties, rect, eoc);
+        System.out.println("AbstractWrappableIMBAnimation: connecting to IMB");
         // This is where we have to act on the imb settings (if present among the userModifiedProperties)
         CompoundProperty imbSettings = null;
         for (AbstractProperty<?> property : userModifiedProperties)
@@ -75,24 +72,17 @@ public abstract class AbstractWrappableIMBAnimation extends AbstractWrappableAni
         {
             try
             {
-                simulator.setIMBConnector(OTSIMBConnector.create(imbSettings, "OTS"));
-                new GTUTransceiver(simulator.getIMBConnector(), simulator, getNetwork());
-                new SimulatorTransceiver(simulator.getIMBConnector(), simulator);
-                new GTULinkTransceiver(simulator.getIMBConnector(), simulator, getNetwork());
+                this.imbConnector = OTSIMBConnector.create(imbSettings, "OTS");
             }
             catch (Exception exception)
             {
                 exception.printStackTrace();
             }
         }
+        System.out.println("AbstractWrappableIMBAnimation: building the simulator");
+        SimpleIMBAnimator simulator =
+                (SimpleIMBAnimator) super.buildAnimator(startTime, warmupPeriod, runLength, userModifiedProperties, rect, eoc);
         return simulator;
     }
     
-    /** {@inheritDoc} */
-    @Override
-    public final OTSNetwork getNetwork()
-    {
-        return this.network;
-    }
-
 }

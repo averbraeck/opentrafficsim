@@ -1,12 +1,19 @@
 package org.opentrafficsim.imb.simulators;
 
+import java.rmi.RemoteException;
+
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.imb.transceiver.OTSIMBConnector;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
@@ -35,14 +42,16 @@ public class SimpleIMBAnimator extends SimpleAnimator implements IMBConnectabili
      * @param warmupPeriod
      * @param runLength
      * @param model
+     * @param imbConnector
      * @throws SimRuntimeException
      * @throws NamingException
      * @throws PropertyException
      */
     public SimpleIMBAnimator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OTSModelInterface model) throws SimRuntimeException, NamingException, PropertyException
+            final OTSModelInterface model, OTSIMBConnector imbConnector) throws SimRuntimeException, NamingException, PropertyException
     {
-        super(startTime, warmupPeriod, runLength, model);
+        super(startTime, warmupPeriod, runLength, new ModelWrapper(model, imbConnector));
+        this.imbConnector = imbConnector;
     }
 
     /** {@inheritDoc} */
@@ -59,4 +68,58 @@ public class SimpleIMBAnimator extends SimpleAnimator implements IMBConnectabili
         this.imbConnector = newIMBConnector;
     }
 
+}
+
+
+/**
+ * Wrap a OTSModelInterface to allow setting the OTSIMBConnector just before the constructModel method is called.
+ */
+class ModelWrapper implements OTSModelInterface
+{
+    /** */
+    private static final long serialVersionUID = 20160916L;
+
+    /** The simulator. */
+    private SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> simulator = null;
+  
+    /** The wrapped model. */
+    private final OTSModelInterface wrappedModel;
+    
+    /** The IMB connector. */
+    private final OTSIMBConnector imbConnector;
+    
+    /**
+     * Construct a new ModelWrapper.
+     * @param model OTSModelInterface; the model that will be wrapped
+     * @param imbConnector OTSIMBConnector; the IMB connector
+     */
+    public ModelWrapper(final OTSModelInterface model, final OTSIMBConnector imbConnector)
+    {
+        System.out.println("ModelWrapper: constructor called");
+        this.wrappedModel = model;
+        this.imbConnector = imbConnector;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+            throws SimRuntimeException, RemoteException
+    {
+        System.out.println("ModelWrapper: constructModel called");
+        this.simulator = theSimulator;
+        if (theSimulator instanceof SimpleIMBAnimator)
+        {
+            SimpleIMBAnimator imbAnimator = (SimpleIMBAnimator) theSimulator;
+            imbAnimator.setIMBConnector(this.imbConnector);
+        }
+        this.wrappedModel.constructModel(theSimulator);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
+    {
+        return this.simulator;
+    }
+    
 }

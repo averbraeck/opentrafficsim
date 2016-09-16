@@ -52,10 +52,4 @@ public interface WrappableIMBAnimation extends WrappableAnimation
             ArrayList<AbstractProperty<?>> properties, Rectangle rect, boolean exitOnClose)
             throws SimRuntimeException, NetworkException, NamingException, OTSSimulationException, PropertyException;
 
-    /**
-     * Return the OTS network for subscription purposes.
-     * @return OTSNetwork; the OTS network for subscription purposes.
-     */
-    OTSNetwork getNetwork();
-
 }
