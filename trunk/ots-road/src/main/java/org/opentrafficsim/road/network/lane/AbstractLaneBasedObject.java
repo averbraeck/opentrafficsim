@@ -48,10 +48,10 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
     {
         super(geometry, height);
 
-        Throw.when(lane == null, NullPointerException.class, "lane is null");
-        Throw.when(longitudinalPosition == null, NullPointerException.class, "longitudinal position is null");
-        Throw.when(geometry == null, NullPointerException.class, "geometry is null");
-        Throw.when(length == null, NullPointerException.class, "length is null");
+        Throw.whenNull(lane, "lane is null");
+        Throw.whenNull(longitudinalPosition, "longitudinal position is null");
+        Throw.whenNull(geometry, "geometry is null");
+        Throw.whenNull(length, "length is null");
         Throw.when(longitudinalPosition.si < 0.0 || longitudinalPosition.si > lane.getCenterLine().getLengthSI(),
                 NetworkException.class, "Position of the object on the lane is out of bounds");
 

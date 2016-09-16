@@ -1,14 +1,17 @@
 package org.opentrafficsim.road.network.lane.conflict;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.Throw;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.network.lane.AbstractLaneBasedObject;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
+ * Conflicts deal with traffic on different links/roads that need to consider each other as their paths may be in conflict
+ * spatially. A single {@code Conflict} represents the one-sided consideration of a conflicting situation. I.e., what is
+ * considered <i>a single conflict in traffic theory, is represented by two {@code Conflict}s</i>, one on each of the
+ * conflicting {@code Lane}s.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -18,45 +21,35 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public final class Conflict
+public final class Conflict extends AbstractLaneBasedObject
 {
+
+    /** */
+    private static final long serialVersionUID = 20160915L;
 
     /** Conflict type, i.e. crossing, merge or split. */
     private final ConflictType conflictType;
 
-    /** The lane of this conflict. */
-    private final Lane lane;
-
-    /** The position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane in SI units. */
-    private final double longitudinalPositionSI;
-
-    /** Length of the conflict along the lane centerline. */
-    private final Length length;
-
     /** Conflict rule, i.e. priority, give way, stop or all-stop. */
     private final ConflictRule conflictRule;
-
-    /** The cached location for animation. */
-    private DirectedPoint location = null;
 
     /** Accompanying other conflict. */
     private Conflict otherConflict;
 
     /**
-     * Constructor setting the lane and position.
-     * @param conflictType conflict type, i.e. crossing, merge or split
      * @param lane lane where this conflict starts
-     * @param longitudinalPositionSI position of start of conflict on lane
+     * @param longitudinalPosition position of start of conflict on lane
      * @param length length of the conflict along the lane centerline
+     * @param geometry geometry of conflict
      * @param conflictRule conflict rule, i.e. priority, give way, stop or all-stop
+     * @param conflictType conflict type, i.e. crossing, merge or split
+     * @throws NetworkException when the position on the lane is out of bounds
      */
-    private Conflict(final ConflictType conflictType, final Lane lane, final double longitudinalPositionSI,
-        final Length length, final ConflictRule conflictRule)
+    private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final OTSLine3D geometry,
+        final ConflictType conflictType, final ConflictRule conflictRule) throws NetworkException
     {
+        super(lane, longitudinalPosition, length, geometry);
         this.conflictType = conflictType;
-        this.lane = lane;
-        this.longitudinalPositionSI = longitudinalPositionSI;
-        this.length = length;
         this.conflictRule = conflictRule;
     }
 
@@ -69,30 +62,6 @@ public final class Conflict
     }
 
     /**
-     * @return lane.
-     */
-    public Lane getLane()
-    {
-        return this.lane;
-    }
-
-    /**
-     * @return longitudinalPositionSI.
-     */
-    public double getLongitudinalPositionSI()
-    {
-        return this.longitudinalPositionSI;
-    }
-
-    /**
-     * @return length.
-     */
-    public Length getLength()
-    {
-        return this.length;
-    }
-
-    /**
      * @return conflictRule.
      */
     public ConflictRule getConflictRule()
@@ -101,60 +70,29 @@ public final class Conflict
     }
 
     /**
-     * @return other conflict.
-     */
-    public Conflict getOtherConflict()
-    {
-        return this.otherConflict;
-    }
-
-    /**
-     * Returns the location.
-     * @return location
-     */
-    public DirectedPoint getLocation()
-    {
-        if (this.location == null)
-        {
-            try
-            {
-                this.location = this.lane.getCenterLine().getLocationSI(this.longitudinalPositionSI);
-                this.location.z = this.lane.getLocation().z + 0.01;
-            }
-            catch (OTSGeometryException exception)
-            {
-                exception.printStackTrace();
-                return null;
-            }
-        }
-        return this.location;
-    }
-
-    /**
      * Creates a pair of conflicts.
      * @param conflictType conflict type, i.e. crossing, merge or split
      * @param lane1 lane of conflict 1
-     * @param longitudinalPositionSI1 longitudinal position of conflict 1
+     * @param longitudinalPosition1 longitudinal position of conflict 1
      * @param length1 {@code Length} of conflict 1
+     * @param geometry1 geometry of conflict 1
      * @param conflictRule1 conflict rule of conflict 1
      * @param lane2 lane of conflict 2
-     * @param longitudinalPositionSI2 longitudinal position of conflict 2
+     * @param longitudinalPosition2 longitudinal position of conflict 2
      * @param length2 {@code Length} of conflict 2
+     * @param geometry2 geometry of conflict 1
      * @param conflictRule2 conflict rule of conflict 2
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static void generateConflictPair(final ConflictType conflictType, final Lane lane1,
-        final double longitudinalPositionSI1, final Length length1, final ConflictRule conflictRule1, final Lane lane2,
-        final double longitudinalPositionSI2, final Length length2, final ConflictRule conflictRule2)
-        throws NetworkException
+        final Length longitudinalPosition1, final Length length1, final OTSLine3D geometry1,
+        final ConflictRule conflictRule1, final Lane lane2, final Length longitudinalPosition2, final Length length2,
+        final OTSLine3D geometry2, final ConflictRule conflictRule2) throws NetworkException
     {
+        // lane, longitudinalPosition, length and geometry are checked in AbstractLaneBasedObject
         Throw.whenNull(conflictType, "Conflict type may not be null.");
-        Throw.whenNull(lane1, "Lane may not be null.");
-        Throw.whenNull(length1, "Length may not be null.");
         Throw.whenNull(conflictRule1, "Conflict rule may not be null.");
-        Throw.whenNull(lane2, "Lane may not be null.");
-        Throw.whenNull(length2, "Length may not be null.");
         Throw.whenNull(conflictRule2, "Conflict rule may not be null.");
         if (conflictType.equals(ConflictType.SPLIT))
         {
@@ -165,22 +103,31 @@ public final class Conflict
         else
         {
             // Priority with give-way/stop
-            Throw.when(conflictRule1.equals(ConflictRule.PRIORITY) && !conflictRule2.equals(ConflictRule.GIVE_WAY)
-                && !conflictRule2.equals(ConflictRule.STOP), NetworkException.class,
-                "Conflict rule 'PRIORITY' can only be combined with a conflict rule 'GIVE_WAY' or 'STOP'.");
-            Throw.when(conflictRule2.equals(ConflictRule.PRIORITY) && !conflictRule1.equals(ConflictRule.GIVE_WAY)
-                && !conflictRule1.equals(ConflictRule.STOP), NetworkException.class,
-                "Conflict rule 'PRIORITY' can only be combined with a conflict rule 'GIVE_WAY' or 'STOP'.");
+            boolean check1 =
+                conflictRule1.equals(ConflictRule.PRIORITY) && !conflictRule2.equals(ConflictRule.GIVE_WAY)
+                    && !conflictRule2.equals(ConflictRule.STOP);
+            boolean check2 =
+                conflictRule2.equals(ConflictRule.PRIORITY) && !conflictRule1.equals(ConflictRule.GIVE_WAY)
+                    && !conflictRule1.equals(ConflictRule.STOP);
+            boolean check3 = conflictRule1.equals(ConflictRule.GIVE_WAY) && !conflictRule2.equals(ConflictRule.PRIORITY);
+            boolean check4 = conflictRule2.equals(ConflictRule.GIVE_WAY) && !conflictRule1.equals(ConflictRule.PRIORITY);
+            boolean check5 = conflictRule1.equals(ConflictRule.STOP) && !conflictRule2.equals(ConflictRule.PRIORITY);
+            boolean check6 = conflictRule2.equals(ConflictRule.STOP) && !conflictRule1.equals(ConflictRule.PRIORITY);
+            Throw.when(check1 || check2 || check3 || check4 || check5 || check6, NetworkException.class,
+                "Conflict rules need to be a combination of 'PRIORITY' and 'GIVE_WAY' or 'STOP', "
+                    + "if any of these types is used.");
             // All-stop with all-stop
-            Throw.when(conflictRule1.equals(ConflictRule.ALL_STOP) && !conflictRule2.equals(ConflictRule.ALL_STOP),
-                NetworkException.class, "Conflict rule 'PRIORITY' can only be combined with a conflict rule 'PRIORITY'.");
-            Throw.when(conflictRule2.equals(ConflictRule.ALL_STOP) && !conflictRule1.equals(ConflictRule.ALL_STOP),
-                NetworkException.class, "Conflict rule 'PRIORITY' can only be combined with a conflict rule 'PRIORITY'.");
-            Conflict conf1 = new Conflict(conflictType, lane1, longitudinalPositionSI1, length1, conflictRule1);
-            Conflict conf2 = new Conflict(conflictType, lane2, longitudinalPositionSI2, length2, conflictRule2);
-            conf1.otherConflict = conf2;
-            conf2.otherConflict = conf1;
+            boolean check7 = conflictRule1.equals(ConflictRule.ALL_STOP) && !conflictRule2.equals(ConflictRule.ALL_STOP);
+            boolean check8 = conflictRule2.equals(ConflictRule.ALL_STOP) && !conflictRule1.equals(ConflictRule.ALL_STOP);
+            Throw.when(check7 || check8, NetworkException.class,
+                "Conflict rule 'ALL_STOP' can only be combined with a conflict rule 'ALL_STOP'.");
+            // No split
+            Throw.when(conflictRule1.equals(ConflictRule.SPLIT) || conflictRule2.equals(ConflictRule.SPLIT),
+                NetworkException.class, "Conflict rule 'SPLIT' may only be used on conflicts of type SPLIT.");
         }
+        Conflict conf1 = new Conflict(lane1, longitudinalPosition1, length1, geometry1, conflictType, conflictRule1);
+        Conflict conf2 = new Conflict(lane2, longitudinalPosition2, length2, geometry2, conflictType, conflictRule2);
+        conf1.otherConflict = conf2;
+        conf2.otherConflict = conf1;
     }
-
 }

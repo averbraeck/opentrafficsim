@@ -1,7 +1,8 @@
 package org.opentrafficsim.road.network.lane.conflict;
 
 /**
- * Rule of conflict.
+ * Rule of conflict. This tells a GTU how to respond to the conflict. Whether a GTU has priority or not may come from any 
+ * traffic rule. This only represents the resulting priority.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
