@@ -207,7 +207,7 @@ public class CircularRoadIMB extends AbstractWrappableIMBAnimation implements UN
     @Override
     protected final OTSModelInterface makeModel(final GTUColorer colorer)
     {
-        this.model = new RoadSimulationModelIMB(getSavedUserModifiedProperties(), colorer, getNetwork());
+        this.model = new RoadSimulationModelIMB(getSavedUserModifiedProperties(), colorer);
         return this.model;
     }
 
@@ -398,19 +398,17 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
     private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorTrucks = null;
 
     /** the network as created by the AbstractWrappableIMBAnimation. */
-    private final OTSNetwork network;
+    private OTSNetwork network = null;
 
     /**
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
      * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
-     * @param network the network to use, created by the AbstractWrappableIMBAnimation
      */
-    RoadSimulationModelIMB(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer,
-            final OTSNetwork network)
+    RoadSimulationModelIMB(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer)
     {
+        this.network = new OTSNetwork("circular road network");
         this.properties = properties;
         this.gtuColorer = gtuColorer;
-        this.network = network;
     }
 
     /**

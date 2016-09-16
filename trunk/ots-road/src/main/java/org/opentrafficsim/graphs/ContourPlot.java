@@ -21,7 +21,10 @@ import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingConstants;
-import javax.swing.event.EventListenerList;
+
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.TimedEvent;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
@@ -50,10 +53,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.TimedEvent;
-
 /**
  * Common code for a contour plot. <br>
  * The data collection code for acceleration assumes constant acceleration during the evaluation period of the GTU.
@@ -65,14 +64,11 @@ import nl.tudelft.simulation.event.TimedEvent;
  * initial version Jul 16, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class ContourPlot extends JFrame
+public abstract class ContourPlot extends AbstractOTSPlot
         implements ActionListener, XYZDataset, MultipleViewerChart, LaneBasedGTUSampler, EventListenerInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20140716L;
-
-    /** Caption of the graph. */
-    private final String caption;
 
     /** Color scale for the graph. */
     private final ContinuousColorPaintScale paintScale;
@@ -132,7 +128,7 @@ public abstract class ContourPlot extends JFrame
             final double yellowValue, final double greenValue, final String valueFormat, final String legendFormat,
             final double legendStep) throws OTSSimulationException
     {
-        this.caption = caption;
+        super(caption);
         this.path = new ArrayList<Lane>(path); // make a copy
         double[] endLengths = new double[path.size()];
         double cumulativeLength = 0;
@@ -188,11 +184,10 @@ public abstract class ContourPlot extends JFrame
     @SuppressWarnings("checkstyle:designforextension")
     public void notify(final EventInterface event) throws RemoteException
     {
-        LaneBasedGTU gtu;
         if (event.getType().equals(Lane.GTU_ADD_EVENT))
         {
             Object[] content = (Object[]) event.getContent();
-            gtu = (LaneBasedGTU) content[1];
+            LaneBasedGTU gtu = (LaneBasedGTU) content[1];
             if (!this.gtusOfInterest.contains(gtu))
             {
                 this.gtusOfInterest.add(gtu);
@@ -202,7 +197,7 @@ public abstract class ContourPlot extends JFrame
         else if (event.getType().equals(Lane.GTU_REMOVE_EVENT))
         {
             Object[] content = (Object[]) event.getContent();
-            gtu = (LaneBasedGTU) content[1];
+            LaneBasedGTU gtu = (LaneBasedGTU) content[1];
             boolean interest = false;
             for (Lane lane : gtu.getLanes().keySet())
             {
@@ -221,7 +216,7 @@ public abstract class ContourPlot extends JFrame
         {
             Object[] content = (Object[]) event.getContent();
             Lane lane = (Lane) content[6];
-            gtu = (LaneBasedGTU) event.getSource();
+            LaneBasedGTU gtu = (LaneBasedGTU) event.getSource();
             addData(gtu, lane);
         }
     }
@@ -272,12 +267,9 @@ public abstract class ContourPlot extends JFrame
         return result;
     }
 
-    /**
-     * Create a XYBlockChart.
-     * @param container JFrame; the JFrame that will be populated with the chart and the status label
-     * @return JFreeChart; the new XYBlockChart
-     */
-    private JFreeChart createChart(final JFrame container)
+    /** {@inheritDoc} */
+    @Override
+    protected JFreeChart createChart(final JFrame container)
     {
         final JLabel statusLabel = new JLabel(" ", SwingConstants.CENTER);
         container.add(statusLabel, BorderLayout.SOUTH);
@@ -307,7 +299,7 @@ public abstract class ContourPlot extends JFrame
         plot.setBackgroundPaint(Color.lightGray);
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
-        final JFreeChart chart = new JFreeChart(this.caption, plot);
+        final JFreeChart chart = new JFreeChart(getCaption(), plot);
         FixCaption.fixCaption(chart);
         chart.setBackgroundPaint(Color.white);
         final ChartPanel cp = new ChartPanel(chart);
@@ -417,35 +409,20 @@ public abstract class ContourPlot extends JFrame
      */
     public final void reGraph()
     {
-        for (DatasetChangeListener dcl : this.listenerList.getListeners(DatasetChangeListener.class))
+        for (DatasetChangeListener dcl : getListenerList().getListeners(DatasetChangeListener.class))
         {
             if (dcl instanceof XYPlot)
             {
                 final XYPlot plot = (XYPlot) dcl;
-                plot.notifyListeners(new PlotChangeEvent(plot));
                 final XYBlockRenderer blockRenderer = (XYBlockRenderer) plot.getRenderer();
                 blockRenderer.setBlockHeight(this.getYAxis().getCurrentGranularity());
                 blockRenderer.setBlockWidth(this.getXAxis().getCurrentGranularity());
+                plot.notifyListeners(new PlotChangeEvent(plot));
                 // configureAxis(((XYPlot) dcl).getDomainAxis(), this.maximumTime.getSI());
             }
         }
         notifyListeners(new DatasetChangeEvent(this, null)); // This guess work actually works!
     }
-
-    /**
-     * Notify interested parties of an event affecting this ContourPlot.
-     * @param event DatasetChangedEvent
-     */
-    private void notifyListeners(final DatasetChangeEvent event)
-    {
-        for (DatasetChangeListener dcl : this.listenerList.getListeners(DatasetChangeListener.class))
-        {
-            dcl.datasetChanged(event);
-        }
-    }
-
-    /** List of parties interested in changes of this ContourPlot. */
-    private transient EventListenerList listenerList = new EventListenerList();
 
     /** {@inheritDoc} */
     @Override
@@ -571,20 +548,6 @@ public abstract class ContourPlot extends JFrame
     public final Number getZ(final int series, final int item)
     {
         return getZValue(series, item);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void addChangeListener(final DatasetChangeListener listener)
-    {
-        this.listenerList.add(DatasetChangeListener.class, listener);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void removeChangeListener(final DatasetChangeListener listener)
-    {
-        this.listenerList.remove(DatasetChangeListener.class, listener);
     }
 
     /** {@inheritDoc} */
@@ -826,18 +789,6 @@ public abstract class ContourPlot extends JFrame
     public final Axis getYAxis()
     {
         return this.yAxis;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final JFrame addViewer()
-    {
-        JFrame result = new JFrame(this.caption);
-        JFreeChart newChart = createChart(result);
-        newChart.setTitle((String) null);
-        addChangeListener(newChart.getPlot());
-        reGraph();
-        return result;
     }
 
 }

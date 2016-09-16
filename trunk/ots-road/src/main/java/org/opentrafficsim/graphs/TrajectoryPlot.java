@@ -3,7 +3,6 @@ package org.opentrafficsim.graphs;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.Line2D;
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -18,7 +17,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
-import javax.swing.event.EventListenerList;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.event.EventInterface;
@@ -62,7 +60,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * initial version Jul 24, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset, MultipleViewerChart, LaneBasedGTUSampler,
+public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBasedGTUSampler,
         EventListenerInterface
 
 {
@@ -119,14 +117,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         this.maximumTime = maximumTime;
     }
 
-    /** List of parties interested in changes of this ContourPlot. */
-    private transient EventListenerList listenerList = new EventListenerList();
-
     /** Not used internally. */
     private DatasetGroup datasetGroup = null;
-
-    /** Name of the chart. */
-    private final String caption;
 
     /**
      * Create a new TrajectoryPlot.
@@ -139,6 +131,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     public TrajectoryPlot(final String caption, final Duration sampleInterval, final List<Lane> path,
             final OTSDEVSSimulatorInterface simulator)
     {
+        super(caption);
         this.sampleInterval = sampleInterval;
         this.simulator = simulator;
         this.path = new ArrayList<Lane>(path); // make a defensive copy
@@ -166,7 +159,6 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             endLengths[i] = cumulativeLength;
         }
         this.cumulativeLengths = endLengths;
-        this.caption = caption;
         createChart(this);
         this.reGraph(); // fixes the domain axis
         if (null != this.sampleInterval)
@@ -291,19 +283,16 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             }
         }
     }
-
-    /**
-     * Create the visualization.
-     * @param container JFrame; the JFrame that will be filled with chart and the status label
-     * @return JFreeChart; the visualization
-     */
-    private JFreeChart createChart(final JFrame container)
+    
+    /** {@inheritDoc} */
+    @Override
+    protected JFreeChart createChart(final JFrame container)
     {
         final JLabel statusLabel = new JLabel(" ", SwingConstants.CENTER);
         container.add(statusLabel, BorderLayout.SOUTH);
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", false));
         final JFreeChart result =
-                ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false, false);
+                ChartFactory.createXYLineChart(getCaption(), "", "", this, PlotOrientation.VERTICAL, false, false, false);
         // Overrule the default background paint because some of the lines are invisible on top of this default.
         result.getPlot().setBackgroundPaint(new Color(0.9f, 0.9f, 0.9f));
         FixCaption.fixCaption(result);
@@ -412,12 +401,11 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         return result;
     }
 
-    /**
-     * Redraw this TrajectoryGraph (after the underlying data has been changed).
-     */
+    /** {@inheritDoc} */
+    @Override
     public final void reGraph()
     {
-        for (DatasetChangeListener dcl : this.listenerList.getListeners(DatasetChangeListener.class))
+        for (DatasetChangeListener dcl : getListenerList().getListeners(DatasetChangeListener.class))
         {
             if (dcl instanceof XYPlot)
             {
@@ -425,18 +413,6 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             }
         }
         notifyListeners(new DatasetChangeEvent(this, null)); // This guess work actually works!
-    }
-
-    /**
-     * Notify interested parties of an event affecting this TrajectoryPlot.
-     * @param event DatasetChangedEvent
-     */
-    private void notifyListeners(final DatasetChangeEvent event)
-    {
-        for (DatasetChangeListener dcl : this.listenerList.getListeners(DatasetChangeListener.class))
-        {
-            dcl.datasetChanged(event);
-        }
     }
 
     /**
@@ -849,10 +825,6 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
                 this.currentEndTime = car.getOperationalPlan().getEndTime();
                 this.currentEndPosition = new Length(
                         car.position(lane, car.getReference(), this.currentEndTime).getSI() + positionOffset, LengthUnit.SI);
-                if (car.getOperationalPlan().getEndTime().gt(getMaximumTime()))
-                {
-                    setMaximumTime(car.getOperationalPlan().getEndTime());
-                }
             }
             catch (Exception e)
             {
@@ -861,6 +833,10 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
                 e.printStackTrace();
             }
              */
+            if (gtu.getSimulator().getSimulatorTime().getTime().gt(getMaximumTime()))
+            {
+                setMaximumTime(gtu.getSimulator().getSimulatorTime().getTime());
+            }
         }
 
         /** {@inheritDoc} */
@@ -923,20 +899,6 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             return (Integer) seriesKey;
         }
         return -1;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void addChangeListener(final DatasetChangeListener listener)
-    {
-        this.listenerList.add(DatasetChangeListener.class, listener);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void removeChangeListener(final DatasetChangeListener listener)
-    {
-        this.listenerList.remove(DatasetChangeListener.class, listener);
     }
 
     /** {@inheritDoc} */
@@ -1007,22 +969,10 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
 
     /** {@inheritDoc} */
     @Override
-    public final JFrame addViewer()
-    {
-        JFrame result = new JFrame(this.caption);
-        result.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        JFreeChart newChart = createChart(result);
-        newChart.setTitle((String) null);
-        addChangeListener(newChart.getPlot());
-        return result;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public String toString()
     {
         return "TrajectoryPlot [sampleInterval=" + this.sampleInterval + ", path=" + this.path + ", cumulativeLengths.length="
-                + this.cumulativeLengths.length + ", maximumTime=" + this.maximumTime + ", caption=" + this.caption
+                + this.cumulativeLengths.length + ", maximumTime=" + this.maximumTime + ", caption=" + getCaption()
                 + ", trajectories.size=" + this.trajectories.size() + "]";
     }
 
