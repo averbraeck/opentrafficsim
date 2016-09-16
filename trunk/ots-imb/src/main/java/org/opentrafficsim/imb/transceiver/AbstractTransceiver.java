@@ -4,16 +4,15 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.opentrafficsim.core.Throw;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.imb.IMBException;
-
 import nl.tno.imb.TByteBuffer;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.event.EventProducerInterface;
 import nl.tudelft.simulation.event.EventType;
+
+import org.opentrafficsim.core.Throw;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.imb.IMBException;
 
 /**
  * Provide the basic implementation of a Transceiver from which targeted classes can extend.
@@ -148,10 +147,10 @@ public abstract class AbstractTransceiver extends EventProducer implements Trans
         String imbEventName = this.otsToIMBMap.get(event.getType());
         if (null != imbEventName)
         {
-            if (!event.getType().equals(GTU.MOVE_EVENT))
-            {
-                System.out.println("About to transmit to IMB event " + imbEventName + " " + event.getContent());
-            }
+            // if (!event.getType().equals(GTU.MOVE_EVENT))
+            // {
+            // System.out.println("About to transmit to IMB event " + imbEventName + " " + event.getContent());
+            // }
             try
             {
                 this.connector.postIMBMessage(imbEventName, Connector.IMBEventType.CHANGE,
