@@ -6,7 +6,6 @@ import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.event.TimedEvent;
 
-import org.opentrafficsim.core.dsol.OTSDEVSRealTimeClock;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTU;
@@ -44,7 +43,7 @@ public class GTULinkTransceiver extends AbstractTransceiver
     private final EmptyTransformer emptyTransformer = new EmptyTransformer();
 
     /** the GTU transformer for IMB. */
-    // private final GTULinkTransformer transformer = new GTULinkTransformer();
+    private final GTULinkTransformer transformer = new GTULinkTransformer();
 
     /**
      * Construct a new GTUTransceiver.
@@ -59,11 +58,6 @@ public class GTULinkTransceiver extends AbstractTransceiver
     {
         super("GTULINK", connector, simulator);
         this.network = network;
-
-        // register the OTS to IMB updates for the simulator
-        final OTSDEVSRealTimeClock animator = (OTSDEVSRealTimeClock) simulator;
-        addOTSToIMBChannel(animator, Link.GTU_ADD_EVENT, "GTU_enters_link", new Object[] {}, this.emptyTransformer);
-        addOTSToIMBChannel(animator, Link.GTU_REMOVE_EVENT, "GTU_exits_link", new Object[] {}, this.emptyTransformer);
 
         // listen on network changes and register the listener to all the Links
         addListeners();
@@ -107,6 +101,16 @@ public class GTULinkTransceiver extends AbstractTransceiver
                 return;
             }
             CrossSectionLink csl = (CrossSectionLink) link;
+            // register the OTS to IMB updates for the simulator
+            try
+            {
+                addOTSToIMBChannel(csl, Link.GTU_ADD_EVENT, "GTU_enters_link", new Object[] {}, this.emptyTransformer);
+                addOTSToIMBChannel(csl, Link.GTU_REMOVE_EVENT, "GTU_exits_link", new Object[] {}, this.emptyTransformer);
+            }
+            catch (IMBException exception1)
+            {
+                exception1.printStackTrace();
+            }
             csl.addListener(this, Link.GTU_ADD_EVENT);
             csl.addListener(this, Link.GTU_REMOVE_EVENT);
             // Post ourselves a GTU_ADD_EVENT for every GTU currently on the link
@@ -136,6 +140,14 @@ public class GTULinkTransceiver extends AbstractTransceiver
             CrossSectionLink csl = (CrossSectionLink) link;
             csl.removeListener(this, Link.GTU_ADD_EVENT);
             csl.removeListener(this, Link.GTU_REMOVE_EVENT);
+            try
+            {
+                addOTSToIMBChannel(csl, Link.GTU_REMOVE_EVENT, "LinkGTUCount", this.transformer.transform(event), this.transformer);
+            }
+            catch (IMBException exception1)
+            {
+                exception1.printStackTrace();
+            }
         }
         else if (type.equals(Link.GTU_ADD_EVENT) || type.equals(Link.GTU_REMOVE_EVENT))
         {

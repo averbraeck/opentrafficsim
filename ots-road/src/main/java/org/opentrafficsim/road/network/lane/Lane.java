@@ -769,6 +769,7 @@ public class Lane extends CrossSectionElement implements Serializable
         this.gtuList.add(index, gtu);
         fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size() },
                 gtu.getSimulator().getSimulatorTime());
+        getParentLink().addGTU(gtu);
         return index;
     }
 
@@ -794,6 +795,15 @@ public class Lane extends CrossSectionElement implements Serializable
         this.gtuList.remove(gtu);
         fireTimedEvent(Lane.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size() },
                 gtu.getSimulator().getSimulatorTime());
+        for (Lane otherLane : gtu.getLanes().keySet())
+        {
+            if (this != otherLane && this.parentLink == otherLane.parentLink)
+            {
+                return; // The GTU is still on an other lane of our parent link
+            }
+        }
+        // The GTU is no longer on any lane of our parent link; remove the GTU from our parent link.
+        this.parentLink.removeGTU(gtu);
     }
 
     /**
