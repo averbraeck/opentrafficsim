@@ -1,24 +1,24 @@
-package org.opentrafficsim.road.network.lane.conflict;
+package org.opentrafficsim.road.gtu.lane.tactical.following;
 
 /**
- * Type of conflict. This regards how the conflict is spatially correlated to the other traffic.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jun 2, 2016 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Sep 15, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @param <T> class of car following model
  */
-public enum ConflictType
-{
-    /** Crossing conflict. */
-    CROSSING,
 
-    /** Merge conflict. */
-    MERGE,
+public interface CarFollowingModelFactory<T extends CarFollowingModel>
+{
     
-    /** Split conflict. */
-    SPLIT;
+    /**
+     * Returns a new instance of a car-following model.
+     * @return new instance of a car-following model
+     */
+    T generateCarFollowingModel();
+
 }

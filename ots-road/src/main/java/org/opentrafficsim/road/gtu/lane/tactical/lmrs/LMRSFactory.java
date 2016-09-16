@@ -1,8 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
@@ -10,6 +8,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
 
 /**
@@ -31,34 +30,21 @@ public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Seria
     private static final long serialVersionUID = 20160811L;
 
     /** Constructor for the car-following model. */
-    private final Constructor<? extends CarFollowingModel> carFollowingModelConstructor;
+    private final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory;
 
     /** Default set of parameters for the car-following model. */
     private final BehavioralCharacteristics defaultCarFollowingBehavioralCharacteristics;
 
     /**
      * Constructor with car-following model class. The class should have an accessible empty constructor.
-     * @param carFollowingModelClass class of the car-following model
+     * @param carFollowingModelFactory factory of the car-following model
      * @param defaultCarFollowingBehavioralCharacteristics default set of parameters for the car-following model
-     * @param <T> class of the car-following model
      * @throws GTUException if the supplied car-following model does not have an accessible empty constructor
      */
-    public <T extends CarFollowingModel> LMRSFactory(final Class<T> carFollowingModelClass,
+    public LMRSFactory(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
         final BehavioralCharacteristics defaultCarFollowingBehavioralCharacteristics) throws GTUException
     {
-        try
-        {
-            this.carFollowingModelConstructor = carFollowingModelClass.getConstructor();
-            // test constructor
-            this.carFollowingModelConstructor.newInstance();
-        }
-        catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
-            | IllegalArgumentException | InvocationTargetException exception)
-        {
-            throw new GTUException(
-                "LMRS factory can only work with stateless car-following models with empty accesible constructors.",
-                exception);
-        }
+        this.carFollowingModelFactory = carFollowingModelFactory;
         this.defaultCarFollowingBehavioralCharacteristics = defaultCarFollowingBehavioralCharacteristics;
     }
     
@@ -77,20 +63,13 @@ public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Seria
     @Override
     public final LMRS create(final LaneBasedGTU gtu) throws GTUException
     {
-        try
-        {
-            return new LMRS(this.carFollowingModelConstructor.newInstance(), gtu);
-        }
-        catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException exception)
-        {
-            throw new GTUException("Exception occured during creation of a car-following model.", exception);
-        }
+        return new LMRS(this.carFollowingModelFactory.generateCarFollowingModel(), gtu);
     }
     
     /** {@inheritDoc} */
     public final String toString()
     {
-        return "LMRSFactory [car-following=" + this.carFollowingModelConstructor + "]";
+        return "LMRSFactory [car-following=" + this.carFollowingModelFactory + "]";
     }
 
 }

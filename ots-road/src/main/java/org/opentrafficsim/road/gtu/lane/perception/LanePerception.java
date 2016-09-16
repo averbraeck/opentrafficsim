@@ -29,4 +29,9 @@ public interface LanePerception extends Perception
      */
     LaneStructure getLaneStructure() throws ParameterException;
     
+    /**
+     * @return state of the environment 
+     */
+    EnvironmentState getEnvironmentState();
+    
 }
