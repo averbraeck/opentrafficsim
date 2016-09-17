@@ -61,7 +61,7 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
     public final void updateTrafficLights() throws GTUException, ParameterException
     {
         // TODO probably will not be a SortedSet...
-        for (RelativeLane lane : getPerception().getLaneStructure().getCrossSection(getTimestamp()))
+        // XXX for (RelativeLane lane : getPerception().getLaneStructure().getCrossSection(getTimestamp()))
         {
             // TODO TrafficLight is not yet a LaneBasedObject
             // for (TrafficLight trafficLight : getPerception().getEnvironmentState().getSortedObjects(
