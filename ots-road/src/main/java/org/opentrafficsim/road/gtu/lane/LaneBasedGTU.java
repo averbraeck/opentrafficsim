@@ -202,14 +202,14 @@ public interface LaneBasedGTU extends GTU
     EventType LINK_EXIT_EVENT = new EventType("LINK.EXIT");
 
     /**
-     * The event type for pub/sub indicating that the GTU entered a new link (with the FRONT position if driving forward; REAR
+     * The event type for pub/sub indicating that the GTU entered a new lane (with the FRONT position if driving forward; REAR
      * if driving backward). <br>
      * Payload: [String gtuId, Lane lane]
      */
     EventType LANE_ENTER_EVENT = new EventType("LANE.ENTER");
 
     /**
-     * The event type for pub/sub indicating that the GTU exited a link (with the REAR position if driving forward; FRONT if
+     * The event type for pub/sub indicating that the GTU exited a lane (with the REAR position if driving forward; FRONT if
      * driving backward). <br>
      * Payload: [String gtuId, Lane lane]
      */
