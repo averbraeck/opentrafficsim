@@ -112,14 +112,14 @@ public interface Link extends Locatable, Serializable
     int getGTUCount();
     
     /**
-     * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the lane. <br>
-     * Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_addition}
+     * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the link. <br>
+     * Payload: Object[] {String gtuId, GTU gtu, int count_after_addition}
      */
     EventType GTU_ADD_EVENT = new EventType("GTU.ADD");
 
     /**
-     * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the lane. <br>
-     * Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_removal}
+     * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the link. <br>
+     * Payload: Object[] {String gtuId, GTU gtu, int count_after_removal}
      */
     EventType GTU_REMOVE_EVENT = new EventType("GTU.REMOVE");
 

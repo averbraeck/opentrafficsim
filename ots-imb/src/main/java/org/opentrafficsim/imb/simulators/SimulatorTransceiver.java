@@ -102,7 +102,7 @@ public class SimulatorTransceiver extends AbstractTransceiver
             @Override
             public String getIMBEventName()
             {
-                return "Sim_Start";
+                return "Sim_Stop";
             }
         };
         addIMBtoOTSChannel("Sim_Stop", stopHandler);
