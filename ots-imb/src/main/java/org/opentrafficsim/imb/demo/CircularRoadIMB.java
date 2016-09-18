@@ -50,7 +50,8 @@ import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.OTSIMBConnector;
-import org.opentrafficsim.imb.transceiver.urbanstrategy.GTUTransceiver;
+import org.opentrafficsim.imb.transceiver.urbanstrategy.GTUTransceiverOld;
+import org.opentrafficsim.imb.transceiver.urbanstrategy.LaneGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.LinkGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.NetworkTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.NodeTransceiver;
@@ -455,8 +456,11 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
             new NetworkTransceiver(imbConnector, imbAnimator, this.network);
             new NodeTransceiver(imbConnector, imbAnimator, this.network);
             new LinkGTUTransceiver(imbConnector, imbAnimator, this.network);
+            new LaneGTUTransceiver(imbConnector, imbAnimator, this.network);
+            new GTUTransceiverOld(imbConnector, imbAnimator, this.network);
+            // new GTUTransceiver(imbConnector, imbAnimator, this.network);
+            // new SensorGTUTransceiver(imbConnector, imbAnimator, this.network);
             new SimulatorTransceiver(imbConnector, imbAnimator);
-            new GTUTransceiver(imbConnector, imbAnimator, this.network);
         }
         catch (IMBException exception)
         {

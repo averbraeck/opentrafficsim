@@ -149,7 +149,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
      */
     public final List<CrossSectionElement> getCrossSectionElementList()
     {
-        return new ArrayList<>(this.crossSectionElementList);
+        return this.crossSectionElementList == null ? new ArrayList<>() : new ArrayList<>(this.crossSectionElementList);
     }
 
     /**
@@ -184,7 +184,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
      */
     public final List<Lane> getLanes()
     {
-        return new ArrayList<>(this.lanes);
+        return this.lanes == null ? new ArrayList<>() : new ArrayList<>(this.lanes);
     }
 
     /** {@inheritDoc} */
