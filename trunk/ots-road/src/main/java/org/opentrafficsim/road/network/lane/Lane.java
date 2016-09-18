@@ -1198,7 +1198,7 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final List<LaneBasedGTU> getGtuList()
     {
-        return this.gtuList;
+        return this.gtuList == null ? new ArrayList<>() : this.gtuList;
     }
 
     /** {@inheritDoc} */

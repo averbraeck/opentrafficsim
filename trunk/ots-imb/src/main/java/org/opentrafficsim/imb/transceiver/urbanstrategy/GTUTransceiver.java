@@ -1,32 +1,37 @@
 package org.opentrafficsim.imb.transceiver.urbanstrategy;
 
+import java.awt.Color;
 import java.rmi.RemoteException;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
 import org.opentrafficsim.imb.transceiver.OTSToIMBTransformer;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.TimedEvent;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
- * <p>
  * The GTUTransceiver publishes the following information on the IMB bus:
  * <ol>
- * <li>GTU.INIT_EVENT as an IMB NEW event for a GTU entering the network. This also is done for GTUs that have been registered
- * at the start of the simulation.</li>
- * <li>GTU.MOVE_EVENT as an IMB CHANGE event for a GTU that moves on the network.</li>
- * <li>GTU.DESTROY_EVENT as an IMB DELETE event for a GTU that leaves the network.</li>
+ * <li>LaneBasedGTU.LANEBASED_INIT_EVENT as an IMB NEW event for a GTU entering the network. This also is done for GTUs that
+ * have been registered at the start of the simulation.</li>
+ * <li>LaneBasedGTU.LANEBASED_MOVE_EVENT as an IMB CHANGE event for a GTU that moves on the network.</li>
+ * <li>LaneBasedGTU.LANEBASED_DESTROY_EVENT as an IMB DELETE event for a GTU that leaves the network.</li>
  * </ol>
  * GTUs are identified by their gtuId.
- * </p>
  * <p>
  * OTS publishes events about GTUs (vehicles) to IMB, e.g. to calculate statistics or emissions from the vehicles or to display
  * them in the US animation.
@@ -305,17 +310,18 @@ public class GTUTransceiver extends AbstractTransceiver
     /** the OTS network on which GTUs are registered. */
     private final OTSNetwork network;
 
-    /** the GTU transformer for IMB. */
-    private final GTUTransformer transformer = new GTUTransformer();
+    /** the GTU change transformer for IMB. */
+    private final GTUTransformerChange transformerChange = new GTUTransformerChange();
 
     /**
      * Construct a new GTUTransceiver.
      * @param connector Connector; the IMB connector through which this transceiver communicates
      * @param simulator OTSDEVSSimulatorInterface; the simulator to schedule the incoming notifications on
      * @param network OTSNetwork; the OTS network on which GTUs are registered
+     * @throws IMBException when the registration of one of the channels fails
      * @throws NullPointerException in case one of the arguments is null.
      */
-    public GTUTransceiver(final Connector connector, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network)
+    public GTUTransceiver(final Connector connector, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network) throws IMBException
     {
         super("GTU", connector, simulator);
         this.network = network;
@@ -327,8 +333,9 @@ public class GTUTransceiver extends AbstractTransceiver
     /**
      * Ensure that we get notified about newly created and destroyed GTUs and for each already existing GTU generate a
      * GTU_ADD_EVENT.
+     * @throws IMBException in case notification of existing GTU fails
      */
-    private void addListeners()
+    private void addListeners() throws IMBException
     {
         this.network.addListener(this, Network.GTU_ADD_EVENT);
         this.network.addListener(this, Network.GTU_REMOVE_EVENT);
@@ -340,7 +347,7 @@ public class GTUTransceiver extends AbstractTransceiver
             {
                 this.notify(new TimedEvent<OTSSimTimeDouble>(Network.GTU_ADD_EVENT, this.network, gtu.getId(),
                         gtu.getSimulator().getSimulatorTime()));
-                this.notify(new TimedEvent<OTSSimTimeDouble>(GTU.INIT_EVENT, gtu,
+                this.notify(new TimedEvent<OTSSimTimeDouble>(LaneBasedGTU.LANEBASED_INIT_EVENT, gtu,
                         new Object[] { gtu.getId(), gtu.getLocation(), gtu.getLength(), gtu.getWidth() },
                         gtu.getSimulator().getSimulatorTime()));
             }
@@ -363,38 +370,38 @@ public class GTUTransceiver extends AbstractTransceiver
             {
                 String gtuId = event.getContent().toString();
                 GTU gtu = this.network.getGTU(gtuId);
-                gtu.addListener(this, GTU.INIT_EVENT, true);
-                gtu.addListener(this, GTU.MOVE_EVENT, true);
-                gtu.addListener(this, GTU.DESTROY_EVENT, true);
+                gtu.addListener(this, LaneBasedGTU.LANEBASED_INIT_EVENT, true);
+                gtu.addListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT, true);
+                gtu.addListener(this, LaneBasedGTU.LANEBASED_DESTROY_EVENT, true);
             }
 
             else if (event.getType().equals(Network.GTU_REMOVE_EVENT))
             {
                 String gtuId = event.getContent().toString();
                 GTU gtu = this.network.getGTU(gtuId);
-                gtu.removeListener(this, GTU.INIT_EVENT);
-                gtu.removeListener(this, GTU.MOVE_EVENT);
-                gtu.removeListener(this, GTU.DESTROY_EVENT);
+                gtu.removeListener(this, LaneBasedGTU.LANEBASED_INIT_EVENT);
+                gtu.removeListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
+                gtu.removeListener(this, LaneBasedGTU.LANEBASED_DESTROY_EVENT);
             }
 
-            else if (event.getType().equals(GTU.INIT_EVENT))
+            else if (event.getType().equals(LaneBasedGTU.LANEBASED_INIT_EVENT))
             {
                 // register the IMB channel for this GTU, and send initial payload, which is the same as the MOVE payload
                 GTU gtu = (GTU) event.getSource();
-                addOTSToIMBChannel(gtu, GTU.MOVE_EVENT, "GTU", this.transformer.transform(event), this.transformer);
+                addOTSToIMBChannel(gtu, LaneBasedGTU.LANEBASED_MOVE_EVENT, "GTU", transformNew(event), this.transformerChange);
             }
 
-            else if (event.getType().equals(GTU.MOVE_EVENT))
+            else if (event.getType().equals(LaneBasedGTU.LANEBASED_MOVE_EVENT))
             {
                 // handled by the AbstractTransceiver
                 super.notify(event);
             }
 
-            else if (event.getType().equals(GTU.DESTROY_EVENT))
+            else if (event.getType().equals(LaneBasedGTU.LANEBASED_DESTROY_EVENT))
             {
                 // register the IMB channel for this GTU, and send initial payload, which is the same as the MOVE payload
                 GTU gtu = (GTU) event.getSource();
-                removeOTSToIMBChannel(gtu, GTU.MOVE_EVENT, this.transformer.transform(event));
+                removeOTSToIMBChannel(gtu, LaneBasedGTU.LANEBASED_MOVE_EVENT, transformDelete(event));
             }
         }
         catch (IMBException exception)
@@ -405,7 +412,61 @@ public class GTUTransceiver extends AbstractTransceiver
     }
 
     /**
-     * Transform the GTU.MOVE_EVENT content to a corresponding IMB message.
+     * Transform the addition of a GTU to the network to a corresponding IMB message.
+     * @param event the event to transform to a NEW message.
+     * @return the NEW payload
+     */
+    public Object[] transformNew(final EventInterface event)
+    {
+        if (LaneBasedGTU.LANEBASED_INIT_EVENT.equals(event.getType()))
+        {
+            // content contains: [String gtuId, DirectedPoint initialPosition, Length length, Length width, Color gtuBaseColor,
+            // Lane referenceLane, Length positionOnReferenceLane]
+            Object[] content = (Object[]) event.getContent();
+            double timestamp = getSimulator().getSimulatorTime().getTime().si;
+            String gtuId = content[0].toString();
+            DirectedPoint location = (DirectedPoint) content[1];
+            Lane lane = (Lane) content[5];
+            double longitudinalPosition = ((Length) content[6]).si;
+            double length = ((Length) content[2]).si;
+            double width = ((Length) content[3]).si;
+            Color color = (Color) content[4];
+            return new Object[] { timestamp, gtuId, location.x, location.y, location.z, location.getRotZ(),
+                    lane.getParentLink().getNetwork().getId(), lane.getParentLink().getId(), lane.getId(), longitudinalPosition,
+                    length, width, (byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue() };
+        }
+        System.err.println("LaneGTUTransceiver.transformNew: Don't know how to transform event " + event);
+        return new Object[] {};
+    }
+
+    /**
+     * Transform the deletion of a GTU from the network to a corresponding IMB message.
+     * @param event the event to transform to a DELETE message.
+     * @return the DELETE payload
+     */
+    public Object[] transformDelete(final EventInterface event)
+    {
+        if (LaneBasedGTU.LANEBASED_DESTROY_EVENT.equals(event.getType()))
+        {
+            // content contains: [String gtuId, DirectedPoint lastPosition, Length odometer, Lane referenceLane,
+            // Length positionOnReferenceLane]
+            Object[] content = (Object[]) event.getContent();
+            double timestamp = getSimulator().getSimulatorTime().getTime().si;
+            String gtuId = content[0].toString();
+            DirectedPoint location = (DirectedPoint) content[1];
+            double odometer = ((Length) content[2]).si;
+            Lane lane = (Lane) content[3];
+            double longitudinalPosition = ((Length) content[4]).si;
+            return new Object[] { timestamp, gtuId, location.x, location.y, location.z, location.getRotZ(),
+                    lane.getParentLink().getNetwork().getId(), lane.getParentLink().getId(), lane.getId(), longitudinalPosition,
+                    odometer };
+        }
+        System.err.println("LaneGTUTransceiver.transformNew: Don't know how to transform event " + event);
+        return new Object[] {};
+    }
+
+    /**
+     * Transform the LaneBasedGTU.LANEBASED_MOVE_EVENT content to a corresponding IMB message.
      * <p>
      * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
@@ -417,15 +478,29 @@ public class GTUTransceiver extends AbstractTransceiver
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    static class GTUTransformer implements OTSToIMBTransformer
+    static class GTUTransformerChange implements OTSToIMBTransformer
     {
         /** {@inheritDoc} */
         @Override
         public Object[] transform(final EventInterface event)
         {
+            // moveInfo contains: {String gtuId, DirectedPoint position, Speed speed, Acceleration acceleration,
+            // TurnIndicatorStatus turnIndicatorStatus, Length odometer, Lane referenceLane, Length positionOnReferenceLane}
             Object[] moveInfo = (Object[]) event.getContent();
+            String gtuId = moveInfo[0].toString();
             DirectedPoint location = (DirectedPoint) moveInfo[1];
-            return new Object[] { moveInfo[0].toString(), location.x, location.y, location.z, location.getRotZ() };
+            LaneBasedGTU gtu = (LaneBasedGTU) event.getSource();
+            Lane lane = (Lane) moveInfo[6];
+            double longitudinalPosition = ((Length) moveInfo[7]).si;
+            double speed = ((Speed) moveInfo[2]).si;
+            double acceleration = ((Acceleration) moveInfo[3]).si;
+            double timestamp = gtu.getSimulator().getSimulatorTime().getTime().si;
+            String turnIndicatorStatus = ((TurnIndicatorStatus) moveInfo[4]).toString();
+            double odometer = ((Length) moveInfo[5]).si;
+            boolean brakingLights = acceleration < 0.0; // TODO proper function for isBraking()
+            return new Object[] { timestamp, gtuId, location.x, location.y, location.z, location.getRotZ(),
+                    lane.getParentLink().getNetwork().getId(), lane.getParentLink().getId(), lane.getId(), longitudinalPosition,
+                    speed, acceleration, turnIndicatorStatus, brakingLights, odometer };
         }
     }
 }
