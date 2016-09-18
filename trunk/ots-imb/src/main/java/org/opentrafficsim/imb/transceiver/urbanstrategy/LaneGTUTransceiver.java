@@ -8,7 +8,6 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -16,6 +15,7 @@ import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.connector.Connector.IMBEventType;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -266,6 +266,7 @@ public class LaneGTUTransceiver extends AbstractTransceiver
             CrossSectionLink csl = (CrossSectionLink) link;
 
             csl.addListener(this, CrossSectionLink.LANE_ADD_EVENT);
+            csl.addListener(this, CrossSectionLink.LANE_REMOVE_EVENT);
 
             // For already existing lanes, post ourselves a LANE_ADD_EVENT
             for (Lane lane : csl.getLanes())
@@ -295,25 +296,25 @@ public class LaneGTUTransceiver extends AbstractTransceiver
             }
             catch (IMBException exception)
             {
-                System.err.println("LaneGTUTransceiver.notify NEW - IMBException: " + exception.getMessage());
+                System.err.println("LaneGTUTransceiver.notify(LANE_ADD) - IMBException: " + exception.getMessage());
                 return;
             }
 
-            csl.addListener(this, Link.GTU_ADD_EVENT);
-            csl.addListener(this, Link.GTU_REMOVE_EVENT);
+            lane.addListener(this, Link.GTU_ADD_EVENT);
+            lane.addListener(this, Link.GTU_REMOVE_EVENT);
 
-            // Post ourselves a GTU_ADD_EVENT for every GTU currently on the link
-            int gtuCount = link.getGTUs().size();
-            for (GTU gtu : link.getGTUs())
+            // Post ourselves a GTU_ADD_EVENT for every GTU currently on the lane
+            int gtuCount = lane.getGtuList().size();
+            for (LaneBasedGTU gtu : lane.getGtuList())
             {
                 try
                 {
-                    this.notify(new TimedEvent<OTSSimTimeDouble>(Link.GTU_ADD_EVENT, link,
+                    this.notify(new TimedEvent<OTSSimTimeDouble>(Lane.GTU_ADD_EVENT, lane,
                             new Object[] { gtu.getId(), gtu, gtuCount }, getSimulator().getSimulatorTime()));
                 }
                 catch (RemoteException exception)
                 {
-                    System.err.println("LaneGTUTransceiver.notify NEW - RemoteException: " + exception.getMessage());
+                    System.err.println("LaneGTUTransceiver.notify(LANE_ADD) - RemoteException: " + exception.getMessage());
                     return;
                 }
             }
@@ -324,26 +325,53 @@ public class LaneGTUTransceiver extends AbstractTransceiver
             Link link = this.network.getLink((String) event.getContent());
             if (!(link instanceof CrossSectionLink))
             {
-                System.err.println("LaneGTUTransceiver.notify DELETE - Don't know how to handle a non-CrossSectionLink");
+                System.err.println("LaneGTUTransceiver.notify(LINK_REMOVE) - Don't know how to handle a non-CrossSectionLink");
                 return;
             }
             CrossSectionLink csl = (CrossSectionLink) link;
-            csl.removeListener(this, Link.GTU_ADD_EVENT);
-            csl.removeListener(this, Link.GTU_REMOVE_EVENT);
 
-            // post the Node message to de-register the node from the IMB bus
+            csl.removeListener(this, CrossSectionLink.LANE_ADD_EVENT);
+            csl.removeListener(this, CrossSectionLink.LANE_REMOVE_EVENT);
+
+            // For already existing lanes, post ourselves a LANE_REMOVE_EVENT
+            for (Lane lane : csl.getLanes())
+            {
+                try
+                {
+                    this.notify(new Event(CrossSectionLink.LANE_REMOVE_EVENT, csl,
+                            new Object[] { link.getNetwork().getId(), link.getId(), lane.getId() }));
+                }
+                catch (RemoteException exception)
+                {
+                    System.err.println("LaneGTUTransceiver.notify(LINK_REMOVE) - RemoteException: " + exception.getMessage());
+                    return;
+                }
+            }
+        }
+
+        else if (type.equals(CrossSectionLink.LANE_REMOVE_EVENT))
+        {
+            Object[] content = (Object[]) event.getContent();
+            String laneId = (String) content[2];
+            CrossSectionLink csl = (CrossSectionLink) event.getSource();
+            Lane lane = (Lane) csl.getCrossSectionElement(laneId);
+
+            lane.removeListener(this, Lane.GTU_ADD_EVENT);
+            lane.removeListener(this, Lane.GTU_REMOVE_EVENT);
+
+            // post the Node message to de-register the lane from the IMB bus
             try
             {
                 getConnector().postIMBMessage("Lane_GTU", IMBEventType.DELETE, transformDelete(event));
             }
             catch (IMBException exception)
             {
-                System.err.println("LaneGTUTransceiver.notify DELETE - IMBException: " + exception.getMessage());
+                System.err.println("LaneGTUTransceiver.notify(LANE_REMOVE) - IMBException: " + exception.getMessage());
                 return;
             }
         }
 
-        else if (type.equals(Link.GTU_ADD_EVENT) || type.equals(Link.GTU_REMOVE_EVENT))
+        else if (type.equals(Lane.GTU_ADD_EVENT) || type.equals(Lane.GTU_REMOVE_EVENT))
         {
             try
             {
@@ -369,23 +397,24 @@ public class LaneGTUTransceiver extends AbstractTransceiver
      */
     public Object[] transformNew(final EventInterface event)
     {
-        if (Network.LINK_ADD_EVENT.equals(event.getType()))
+        if (CrossSectionLink.LANE_ADD_EVENT.equals(event.getType()))
         {
-            String linkId = (String) event.getContent();
-            Link link = this.network.getLink(linkId);
+            Object[] content = (Object[]) event.getContent();
+            Lane lane = (Lane) content[3];
+            int laneNumber = (Integer) content[4];
             double timestamp = getSimulator().getSimulatorTime().getTime().si;
             List<Object> resultList = new ArrayList<>();
             resultList.add(timestamp);
             resultList.add(this.network.getId());
-            resultList.add(linkId);
-            resultList.add(link.getStartNode().getId());
-            resultList.add(link.getEndNode().getId());
-            resultList.add(link.getDesignLine().size());
-            for (int i = 0; i < link.getDesignLine().size(); i++)
+            resultList.add(lane.getParentLink().getId());
+            resultList.add(lane.getId());
+            resultList.add(laneNumber);
+            resultList.add(lane.getCenterLine().size());
+            for (int i = 0; i < lane.getCenterLine().size(); i++)
             {
                 try
                 {
-                    OTSPoint3D p = link.getDesignLine().get(i);
+                    OTSPoint3D p = lane.getCenterLine().get(i);
                     resultList.add(p.x);
                     resultList.add(p.y);
                     resultList.add(p.z);
@@ -414,15 +443,17 @@ public class LaneGTUTransceiver extends AbstractTransceiver
         Object[] gtuInfo = (Object[]) event.getContent();
         String gtuId = (String) gtuInfo[0];
         int countAfterEvent = (Integer) gtuInfo[2];
-        Link link = (Link) event.getSource();
+        Lane lane = (Lane) event.getSource();
         double timestamp = getSimulator().getSimulatorTime().getTime().si;
-        if (Link.GTU_ADD_EVENT.equals(event.getType()))
+        if (Lane.GTU_ADD_EVENT.equals(event.getType()))
         {
-            return new Object[] { timestamp, link.getNetwork().getId(), link.getId(), true, gtuId, countAfterEvent };
+            return new Object[] { timestamp, this.network.getId(), lane.getParentLink().getId(), lane.getId(), true, gtuId,
+                    countAfterEvent };
         }
-        else if (Link.GTU_REMOVE_EVENT.equals(event.getType()))
+        else if (Lane.GTU_REMOVE_EVENT.equals(event.getType()))
         {
-            return new Object[] { timestamp, link.getNetwork().getId(), link.getId(), false, gtuId, countAfterEvent };
+            return new Object[] { timestamp, this.network.getId(), lane.getParentLink().getId(), lane.getId(), false, gtuId,
+                    countAfterEvent };
         }
         System.err.println("LaneGTUTransceiver.transformChange: Don't know how to transform event " + event);
         return new Object[] {};
@@ -435,11 +466,14 @@ public class LaneGTUTransceiver extends AbstractTransceiver
      */
     public Object[] transformDelete(final EventInterface event)
     {
-        if (Network.LINK_REMOVE_EVENT.equals(event.getType()))
+        if (CrossSectionLink.LANE_REMOVE_EVENT.equals(event.getType()))
         {
-            String linkId = (String) event.getContent();
+            Object[] content = (Object[]) event.getContent();
+            String networkId = (String) content[0];
+            String linkId = (String) content[1];
+            String laneId = (String) content[2];
             double timestamp = getSimulator().getSimulatorTime().getTime().si;
-            return new Object[] { timestamp, this.network.getId(), linkId };
+            return new Object[] { timestamp, networkId, linkId, laneId };
         }
         System.err.println("LaneGTUTransceiver.transformDelete: Don't know how to transform event " + event);
         return new Object[] {};
