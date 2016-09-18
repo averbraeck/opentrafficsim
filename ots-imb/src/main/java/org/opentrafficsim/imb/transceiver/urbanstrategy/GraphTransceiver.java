@@ -1,4 +1,4 @@
-package org.opentrafficsim.imb.simulators;
+package org.opentrafficsim.imb.transceiver.urbanstrategy;
 
 /**
  * IMB transceiver for graphs.
