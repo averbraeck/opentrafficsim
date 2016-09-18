@@ -1,5 +1,6 @@
 package org.opentrafficsim.imb.demo;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Frame;
 import java.awt.geom.Rectangle2D;
@@ -16,6 +17,7 @@ import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -31,10 +33,12 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -55,8 +59,10 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.LaneGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.LinkGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.NetworkTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.NodeTransceiver;
+import org.opentrafficsim.imb.transceiver.urbanstrategy.SensorGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingChange0TacticalPlannerFactory;
@@ -75,9 +81,11 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.factory.LaneFactory;
+import org.opentrafficsim.road.network.lane.AbstractSensor;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.SensorAnimation;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
@@ -95,6 +103,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Circular road simulation demo.
@@ -459,7 +468,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
             new LaneGTUTransceiver(imbConnector, imbAnimator, this.network);
             new GTUTransceiverOld(imbConnector, imbAnimator, this.network);
             // new GTUTransceiver(imbConnector, imbAnimator, this.network);
-            // new SensorGTUTransceiver(imbConnector, imbAnimator, this.network);
+            new SensorGTUTransceiver(imbConnector, imbAnimator, this.network);
             new SimulatorTransceiver(imbConnector, imbAnimator);
         }
         catch (IMBException exception)
@@ -688,6 +697,20 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
                 this.paths.get(laneIndex).add(lanes1[laneIndex]);
                 this.paths.get(laneIndex).add(lanes2[laneIndex]);
             }
+            // create a sensor on every lane
+            int sensorNr = 0;
+            for (Lane lane : lanes1)
+            {
+                SimpleSilentSensor sensor = new SimpleSilentSensor("sensor " + ++sensorNr, lane,
+                        new Length(10.0, LengthUnit.METER), RelativePosition.FRONT, imbAnimator);
+                lane.addSensor(sensor, gtuType);
+            }
+            for (Lane lane : lanes2)
+            {
+                SimpleSilentSensor sensor = new SimpleSilentSensor("sensor" + ++sensorNr, lane,
+                        new Length(20.0, LengthUnit.METER), RelativePosition.REAR, imbAnimator);
+                lane.addSensor(sensor, gtuType);
+            }
             // Put the (not very evenly spaced) cars on the track
             double variability = (headway - 20) * headwayVariability;
             System.out.println("headway is " + headway + " variability limit is " + variability);
@@ -758,7 +781,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
         LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), gtuType, vehicleLength,
-                new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, (OTSNetwork) this.network);
+                new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, this.network);
 
         // strategical planner
         LaneBasedStrategicalPlanner strategicalPlanner;
@@ -821,5 +844,81 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
             exception.printStackTrace();
         }
         throw new Error(errorMessage);
+    }
+
+    /**
+     * Simple sensor that does not provide output, but is drawn on the Lanes.
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
+     * initial version Sep 18, 2016 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public static class SimpleSilentSensor extends AbstractSensor
+    {
+        /** */
+        private static final long serialVersionUID = 20150130L;
+
+        /**
+         * @param lane the lane of the sensor.
+         * @param position the position of the sensor
+         * @param triggerPosition RelativePosition.TYPE; the relative position type (e.g., FRONT, REAR) of the vehicle that
+         *            triggers the sensor.
+         * @param id the id of the sensor.
+         * @param simulator the simulator to enable animation.
+         * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
+         * @throws OTSGeometryException when the geometry of the sensor cannot be calculated, e.g. when the lane width is zero,
+         *             or the position is beyond or before the lane length
+         */
+        public SimpleSilentSensor(final String id, final Lane lane, final Length position,
+                final RelativePosition.TYPE triggerPosition, final OTSDEVSSimulatorInterface simulator)
+                throws NetworkException, OTSGeometryException
+        {
+            super(id, lane, position, triggerPosition, simulator, Length.ZERO, makeGeometry(lane, position));
+            try
+            {
+                new SensorAnimation(this, position, simulator, Color.RED);
+            }
+            catch (RemoteException | NamingException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+
+        /**
+         * Make a geometry perpendicular to the center line of the lane at the given position.
+         * @param lane Lane; the lane where the sensor resides
+         * @param position Length; The length of the object in the longitudinal direction, on the center line of the lane
+         * @return a geometry perpendicular to the center line that describes the sensor
+         * @throws OTSGeometryException when the line is ill-formed
+         */
+        private static final OTSLine3D makeGeometry(final Lane lane, final Length position) throws OTSGeometryException
+        {
+            DirectedPoint sp = lane.getCenterLine().getLocationExtended(position);
+            double w45 = 0.45 * lane.getWidth(position).si;
+            double a = sp.getRotZ() + Math.PI / 2.0;
+            OTSPoint3D p1 = new OTSPoint3D(sp.x + w45 * Math.cos(a), sp.y - w45 * Math.sin(a), sp.z + 0.0001);
+            OTSPoint3D p2 = new OTSPoint3D(sp.x - w45 * Math.cos(a), sp.y + w45 * Math.sin(a), sp.z + 0.0001);
+            return new OTSLine3D(p1, p2);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final void triggerResponse(final LaneBasedGTU gtu)
+        {
+            // do nothing.
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "SimpleSilentSensor [Lane=" + this.getLane() + "]";
+        }
     }
 }

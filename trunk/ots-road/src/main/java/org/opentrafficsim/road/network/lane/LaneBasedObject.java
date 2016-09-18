@@ -1,6 +1,11 @@
 package org.opentrafficsim.road.network.lane;
+
+import javax.media.j3d.Bounds;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.object.ObjectInterface;
+
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Objects that can be encountered on a Lane like conflict areas, GTUs, traffic lights, stop lines, etc. <br />
@@ -24,5 +29,18 @@ public interface LaneBasedObject extends ObjectInterface
 
     /** @return the length of the object in the longitudinal direction, on the center line of the lane */
     Length getLength();
-}
 
+    /**
+     * Return the location without throwing a RemoteException.
+     * @return DirectedPoint; the location
+     */
+    @Override
+    DirectedPoint getLocation();
+
+    /**
+     * Return the bounds without throwing a RemoteException.
+     * @return Bounds; the (usually rectangular) bounds of the object
+     */
+    @Override
+    Bounds getBounds();
+}

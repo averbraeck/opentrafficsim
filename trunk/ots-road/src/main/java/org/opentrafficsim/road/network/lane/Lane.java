@@ -602,6 +602,10 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final List<Sensor> getSensors()
     {
+        if (this.sensors == null)
+        {
+            return new ArrayList<>();
+        }
         List<Sensor> sensorList = new ArrayList<>(1);
         for (List<GTUTypeSensor> gtsl : this.sensors.values())
         {
