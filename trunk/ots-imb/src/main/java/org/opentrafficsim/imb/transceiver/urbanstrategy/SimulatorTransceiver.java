@@ -1,4 +1,4 @@
-package org.opentrafficsim.imb.simulators;
+package org.opentrafficsim.imb.transceiver.urbanstrategy;
 
 import org.opentrafficsim.core.dsol.OTSDEVSRealTimeClock;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -44,7 +44,7 @@ public class SimulatorTransceiver extends AbstractTransceiver
     private final SpeedTransformer speedTransformer = new SpeedTransformer();
 
     /**
-     * Construct a new GTUTransceiver.
+     * Construct a new SimulatorTransceiver.
      * @param connector Connector; the IMB connector through which this transceiver communicates
      * @param simulator OTSDEVSSimulatorInterface; the simulator to schedule the incoming notifications on
      * @throws IMBException when the registration of one of the channels fails

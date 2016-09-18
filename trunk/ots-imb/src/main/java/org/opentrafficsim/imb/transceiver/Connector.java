@@ -28,7 +28,7 @@ public interface Connector
     boolean postIMBMessage(String IMBEventName, IMBEventType imbEventType, Object[] args) throws IMBException;
 
     /**
-     * Register the transceiver as the interested party when an IMB message identified by the imbEventName is received. When an IMB messsage
+     * Register the transceiver as the interested party when an IMB message identified by the imbEventName is received. When an IMB message
      * with that imbEventName is received, the postOTSMessage method on the transceiver is called.
      * @param fullIMBEventName the IMB Event name including the federation prefix, e.g. OTS_RT.SIM_Start
      * @param transceiver the transceiver to handle the incoming event

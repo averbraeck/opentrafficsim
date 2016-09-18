@@ -1,4 +1,4 @@
-package org.opentrafficsim.imb.simulators;
+package org.opentrafficsim.imb.transceiver.urbanstrategy;
 
 import java.rmi.RemoteException;
 
@@ -13,10 +13,10 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.imb.IMBException;
-import org.opentrafficsim.imb.simulators.SimulatorTransceiver.EmptyTransformer;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
 import org.opentrafficsim.imb.transceiver.Connector;
 import org.opentrafficsim.imb.transceiver.OTSToIMBTransformer;
+import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver.EmptyTransformer;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 
 /**
@@ -46,7 +46,7 @@ public class GTULinkTransceiver extends AbstractTransceiver
     private final GTULinkTransformer transformer = new GTULinkTransformer();
 
     /**
-     * Construct a new GTUTransceiver.
+     * Construct a new GTULinkTransceiver.
      * @param connector Connector; the IMB connector through which this transceiver communicates
      * @param simulator OTSDEVSSimulatorInterface; the simulator to schedule the incoming notifications on
      * @param network OTSNetwork; the OTS network on which GTUs are registered
