@@ -59,7 +59,7 @@ public class SensorAnimation extends Renderable2D implements Serializable
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         graphics.setColor(this.color);
-        Rectangle2D rectangle = new Rectangle2D.Double(-0.25, -this.halfWidth, 0.5, 2 * this.halfWidth);
+        Rectangle2D rectangle = new Rectangle2D.Double(-this.halfWidth, -0.25, 2 * this.halfWidth, 0.5);
         graphics.fill(rectangle);
     }
 

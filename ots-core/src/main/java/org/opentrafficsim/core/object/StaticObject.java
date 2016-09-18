@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.object;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 
 import javax.media.j3d.Bounds;
 
@@ -69,14 +68,14 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
 
     /** {@inheritDoc} */
     @Override
-    public final DirectedPoint getLocation() throws RemoteException
+    public final DirectedPoint getLocation()
     {
         return this.geometry.getLocation();
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Bounds getBounds() throws RemoteException
+    public final Bounds getBounds()
     {
         return this.geometry.getBounds();
     }
