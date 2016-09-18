@@ -5,13 +5,13 @@ import java.util.ArrayList;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
+import org.opentrafficsim.simulationengine.properties.PropertyException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * <p>
@@ -41,10 +41,11 @@ public abstract class AbstractWrappableSimulation implements WrappableSimulation
      * @return SimpleSimulator; the newly constructed simulator
      * @throws SimRuntimeException on ???
      * @throws NamingException when context for the animation cannot be created
+     * @throws PropertyException when one of the user modified properties has the empty string as key
      */
     @SuppressWarnings("checkstyle:designforextension")
     protected SimpleSimulator buildSimpleSimulator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OTSModelInterface model) throws SimRuntimeException, NamingException
+            final OTSModelInterface model) throws SimRuntimeException, NamingException, PropertyException
     {
         return new SimpleSimulator(startTime, warmupPeriod, runLength, model);
     }
@@ -54,7 +55,7 @@ public abstract class AbstractWrappableSimulation implements WrappableSimulation
     @SuppressWarnings("checkstyle:designforextension")
     public SimpleSimulator buildSimulator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
             final ArrayList<AbstractProperty<?>> userModifiedProperties) throws SimRuntimeException, NamingException,
-            OTSSimulationException
+            OTSSimulationException, PropertyException
     {
         OTSModelInterface model = makeModel();
         final SimpleSimulator simulator = buildSimpleSimulator(startTime, warmupPeriod, runLength, model);

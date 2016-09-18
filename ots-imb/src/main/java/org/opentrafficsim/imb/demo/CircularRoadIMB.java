@@ -38,7 +38,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -51,8 +50,10 @@ import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.OTSIMBConnector;
-import org.opentrafficsim.imb.transceiver.urbanstrategy.GTULinkTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.GTUTransceiver;
+import org.opentrafficsim.imb.transceiver.urbanstrategy.LinkGTUTransceiver;
+import org.opentrafficsim.imb.transceiver.urbanstrategy.NetworkTransceiver;
+import org.opentrafficsim.imb.transceiver.urbanstrategy.NodeTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -408,14 +409,15 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
     private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorTrucks = null;
 
     /** the network as created by the AbstractWrappableIMBAnimation. */
-    private final Network network;
+    private final OTSNetwork network;
 
     /**
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
      * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
      * @param network Network; the network
      */
-    RoadSimulationModelIMB(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer, final Network network)
+    RoadSimulationModelIMB(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer,
+            final OTSNetwork network)
     {
         this.properties = properties;
         this.gtuColorer = gtuColorer;
@@ -450,9 +452,11 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
             }
             Throw.whenNull(imbSettings, "IMB Settings not found in properties");
             OTSIMBConnector imbConnector = OTSIMBConnector.create(imbSettings, "OTS");
+            new NetworkTransceiver(imbConnector, imbAnimator, this.network);
+            new NodeTransceiver(imbConnector, imbAnimator, this.network);
+            new LinkGTUTransceiver(imbConnector, imbAnimator, this.network);
             new SimulatorTransceiver(imbConnector, imbAnimator);
-            new GTUTransceiver(imbConnector, imbAnimator, (OTSNetwork) this.network);
-            new GTULinkTransceiver(imbConnector, imbAnimator, (OTSNetwork) this.network);
+            new GTUTransceiver(imbConnector, imbAnimator, this.network);
         }
         catch (IMBException exception)
         {

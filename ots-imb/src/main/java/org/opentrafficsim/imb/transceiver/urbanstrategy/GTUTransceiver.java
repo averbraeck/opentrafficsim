@@ -17,6 +17,7 @@ import nl.tudelft.simulation.event.TimedEvent;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
+ * <p>
  * The GTUTransceiver publishes the following information on the IMB bus:
  * <ol>
  * <li>GTU.INIT_EVENT as an IMB NEW event for a GTU entering the network. This also is done for GTUs that have been registered
@@ -25,6 +26,267 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * <li>GTU.DESTROY_EVENT as an IMB DELETE event for a GTU that leaves the network.</li>
  * </ol>
  * GTUs are identified by their gtuId.
+ * </p>
+ * <p>
+ * OTS publishes events about GTUs (vehicles) to IMB, e.g. to calculate statistics or emissions from the vehicles or to display
+ * them in the US animation.
+ * </p>
+ * <p>
+ * When a GTU is created, a NEW message is sent to IMB to identify the GTU and its initial characteristics, including the lane
+ * on which it resides with its reference point, and the position on the lane. The CHANGE message is posted whenever a vehicle
+ * initiates a new OperationalPlan, which coincides with a MOVE Event in OTS. When a GTU is removed from the network, a DELETE
+ * event is posted. The GTU NEW messages are posted after the Network NEW, Node NEW, Link NEW, and Lane NEW messages are posted
+ * to ensure the Lane on which the GTU resides is known.
+ * </p>
+ * <p>
+ * The longitudinal position of a GTU on a lane is the (projected) position on the center line of the lane, in meters. The
+ * zero-point is chosen at the start of the center line of the lane that has been provided in the Lane_GTU NEW message.
+ * </p>
+ * <p>
+ * <style>table,th,td {border:1px solid grey; border-style:solid; text-align:left; border-collapse: collapse;}</style>
+ * <h2>NEW</h2>
+ * <table summary="" style="width:800px;">
+ * <thead>
+ * <tr>
+ * <th style="width:25%;">Variable</th>
+ * <th style="width:15%;">Type</th>
+ * <th style="width:60%;">Comments</th>
+ * </tr>
+ * </thead><tbody>
+ * <tr>
+ * <td>timestamp</td>
+ * <td>double</td>
+ * <td>time of the event, in simulation time seconds</td>
+ * </tr>
+ * <tr>
+ * <td>gtuId</td>
+ * <td>String</td>
+ * <td>id of the GTU that has been added to the simulation</td>
+ * </tr>
+ * <tr>
+ * <td>position.x</td>
+ * <td>double</td>
+ * <td>x-coordinate of the gtu position in (gis) coordinates</td>
+ * </tr>
+ * <tr>
+ * <td>position.y</td>
+ * <td>double</td>
+ * <td>y-coordinate of the gtu position in (gis) coordinates</td>
+ * </tr>
+ * <tr>
+ * <td>position.z</td>
+ * <td>double</td>
+ * <td>z-coordinate of the gtu position in (gis) coordinates</td>
+ * </tr>
+ * <tr>
+ * <td>position.rotZ</td>
+ * <td>double</td>
+ * <td>angle in the x-y plane of the gtu</td>
+ * </tr>
+ * <tr>
+ * <td>networkId</td>
+ * <td>String</td>
+ * <td>Id of the Network where the gtu's reference point is</td>
+ * </tr>
+ * <tr>
+ * <td>linkId</td>
+ * <td>String</td>
+ * <td>id of the Link; unique within the Network</td>
+ * </tr>
+ * <tr>
+ * <td>laneId</td>
+ * <td>String</td>
+ * <td>id of the Lane, unique within the Link</td>
+ * </tr>
+ * <tr>
+ * <td>longitudinalPosition</td>
+ * <td>double</td>
+ * <td>gtu position on the center line of the lane, in meters</td>
+ * </tr>
+ * <tr>
+ * <td>length</td>
+ * <td>double</td>
+ * <td>length of the gtu, in meters</td>
+ * </tr>
+ * <tr>
+ * <td>width</td>
+ * <td>double</td>
+ * <td>width of the gtu, in meters</td>
+ * </tr>
+ * <tr>
+ * <td>baseColor.R</td>
+ * <td>byte</td>
+ * <td>R-component of the gtu's base color</td>
+ * </tr>
+ * <tr>
+ * <td>baseColor.G</td>
+ * <td>byte</td>
+ * <td>G-component of the gtu's base color</td>
+ * </tr>
+ * <tr>
+ * <td>baseColor.B</td>
+ * <td>byte</td>
+ * <td>B-component of the gtu's base color</td>
+ * </tr>
+ * </tbody>
+ * </table>
+ * </p>
+ * <p>
+ * <h2>CHANGE</h2>
+ * <table summary="" style="width:800px;">
+ * <thead>
+ * <tr>
+ * <th style="width:25%;">Variable</th>
+ * <th style="width:15%;">Type</th>
+ * <th style="width:60%;">Comments</th>
+ * </tr>
+ * </thead><tbody>
+ * <tr>
+ * <td>timestamp</td>
+ * <td>double</td>
+ * <td>time of the event, in simulation time seconds</td>
+ * </tr>
+ * <tr>
+ * <td>gtuId</td>
+ * <td>String</td>
+ * <td>id of the vehicle that has a new position</td>
+ * </tr>
+ * <tr>
+ * <td>position.x</td>
+ * <td>double</td>
+ * <td>x-coordinate of the gtu position at the timestamp</td>
+ * </tr>
+ * <tr>
+ * <td>position.y</td>
+ * <td>double</td>
+ * <td>y-coordinate of the gtu position at the timestamp</td>
+ * </tr>
+ * <tr>
+ * <td>position.z</td>
+ * <td>double</td>
+ * <td>z-coordinate of the gtu position at the timestamp</td>
+ * </tr>
+ * <tr>
+ * <td>position.rotZ</td>
+ * <td>double</td>
+ * <td>angle in the x-y plane of the gtu</td>
+ * </tr>
+ * <tr>
+ * <td>networkId</td>
+ * <td>String</td>
+ * <td>Id of the Network where the gtu's reference point is</td>
+ * </tr>
+ * <tr>
+ * <td>linkId</td>
+ * <td>String</td>
+ * <td>id of the Link; unique within the Network</td>
+ * </tr>
+ * <tr>
+ * <td>laneId</td>
+ * <td>String</td>
+ * <td>id of the Lane, unique within the Link</td>
+ * </tr>
+ * <tr>
+ * <td>longitudinalPosition</td>
+ * <td>double</td>
+ * <td>gtu position on the center line of the lane, in meters</td>
+ * </tr>
+ * <tr>
+ * <td>speed</td>
+ * <td>double</td>
+ * <td>current speed of the gtu, in m/s</td>
+ * </tr>
+ * <tr>
+ * <td>acceleration</td>
+ * <td>double</td>
+ * <td>current acceleration of the gtu, in m/s2</td>
+ * </tr>
+ * <tr>
+ * <td>turnIndicatorStatus</td>
+ * <td>String</td>
+ * <td>one of {NONE, LEFT, RIGHT, HAZARD, NOTPRESENT}</td>
+ * </tr>
+ * <tr>
+ * <td>brakingLights</td>
+ * <td>boolean</td>
+ * <td>braking lights on or off</td>
+ * </tr>
+ * <tr>
+ * <td>odometer</td>
+ * <td>double</td>
+ * <td>odometer reading of the GTU, in meters</td>
+ * </tr>
+ * </tbody>
+ * </table>
+ * </p>
+ * <p>
+ * <h2>DELETE</h2>
+ * <table summary="" style="width:800px;">
+ * <thead>
+ * <tr>
+ * <th style="width:25%;">Variable</th>
+ * <th style="width:15%;">Type</th>
+ * <th style="width:60%;">Comments</th>
+ * </tr>
+ * </thead><tbody>
+ * <tr>
+ * <td>timestamp</td>
+ * <td>double</td>
+ * <td>time of the event, in simulation time seconds</td>
+ * </tr>
+ * <tr>
+ * <td>gtuId</td>
+ * <td>String</td>
+ * <td>id of the GTU that that is removed from the simulation</td>
+ * </tr>
+ * <tr>
+ * <td>lastPosition.x</td>
+ * <td>double</td>
+ * <td>x-coordinate of the gtu position at removal</td>
+ * </tr>
+ * <tr>
+ * <td>lastPosition.y</td>
+ * <td>double</td>
+ * <td>y-coordinate of the gtu position at removal</td>
+ * </tr>
+ * <tr>
+ * <td>lastPosition.z</td>
+ * <td>double</td>
+ * <td>z-coordinate of the gtu position at removal</td>
+ * </tr>
+ * <tr>
+ * <td>position.rotZ</td>
+ * <td>double</td>
+ * <td>angle in the x-y plane of the gtu</td>
+ * </tr>
+ * <tr>
+ * <td>lastNetworkId</td>
+ * <td>String</td>
+ * <td>Id of the Network where the Link resides</td>
+ * </tr>
+ * <tr>
+ * <td>lastLinkId</td>
+ * <td>String</td>
+ * <td>id of the Link where the GTU was destroyed</td>
+ * </tr>
+ * <tr>
+ * <td>lastLaneId</td>
+ * <td>String</td>
+ * <td>id of the Lane in the Link where the GTU was destroyed</td>
+ * </tr>
+ * <tr>
+ * <td>lastLongitudinalPosition</td>
+ * <td>double</td>
+ * <td>gtu position on the center line of the lane, in meters</td>
+ * </tr>
+ * <tr>
+ * <td>odometer</td>
+ * <td>double</td>
+ * <td>final odometer reading of the GTU, in meters</td>
+ * </tr>
+ * </tbody>
+ * </table>
+ * </p>
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
