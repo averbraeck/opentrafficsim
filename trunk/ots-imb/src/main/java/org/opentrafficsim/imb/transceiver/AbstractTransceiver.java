@@ -13,6 +13,7 @@ import nl.tudelft.simulation.event.EventType;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.imb.IMBException;
+import org.opentrafficsim.imb.connector.Connector;
 
 /**
  * Provide the basic implementation of a Transceiver from which targeted classes can extend.

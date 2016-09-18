@@ -1,4 +1,4 @@
-package org.opentrafficsim.imb.transceiver;
+package org.opentrafficsim.imb.connector;
 
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.imb.IMBException;

@@ -3,8 +3,8 @@ package org.opentrafficsim.imb.transceiver.urbanstrategy;
 import org.opentrafficsim.core.dsol.OTSDEVSRealTimeClock;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.imb.IMBException;
+import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
-import org.opentrafficsim.imb.transceiver.Connector;
 import org.opentrafficsim.imb.transceiver.IMBMessageHandler;
 import org.opentrafficsim.imb.transceiver.OTSToIMBTransformer;
 
