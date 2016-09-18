@@ -48,7 +48,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.gui.LabeledPanel;
 import org.opentrafficsim.gui.ProbabilityDistributionEditor;
 import org.opentrafficsim.gui.SimulatorFrame;
-import org.opentrafficsim.imb.transceiver.OTSIMBConnector;
+import org.opentrafficsim.imb.connector.OTSIMBConnector;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;

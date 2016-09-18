@@ -1,6 +1,7 @@
 package org.opentrafficsim.imb.transceiver;
 
 import org.opentrafficsim.imb.IMBException;
+import org.opentrafficsim.imb.connector.Connector;
 
 import nl.tno.imb.TByteBuffer;
 import nl.tudelft.simulation.event.EventListenerInterface;

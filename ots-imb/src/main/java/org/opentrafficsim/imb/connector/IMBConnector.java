@@ -1,10 +1,11 @@
-package org.opentrafficsim.imb.transceiver;
+package org.opentrafficsim.imb.connector;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.imb.IMBException;
+import org.opentrafficsim.imb.transceiver.Transceiver;
 
 import nl.tno.imb.TByteBuffer;
 import nl.tno.imb.TConnection;

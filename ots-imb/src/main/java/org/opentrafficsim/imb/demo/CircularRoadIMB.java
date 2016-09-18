@@ -50,7 +50,7 @@ import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.imb.IMBException;
-import org.opentrafficsim.imb.transceiver.OTSIMBConnector;
+import org.opentrafficsim.imb.connector.OTSIMBConnector;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.GTULinkTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.GTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;

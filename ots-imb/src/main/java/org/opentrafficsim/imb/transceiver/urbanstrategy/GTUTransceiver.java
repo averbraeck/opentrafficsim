@@ -8,8 +8,8 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.imb.IMBException;
+import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
-import org.opentrafficsim.imb.transceiver.Connector;
 import org.opentrafficsim.imb.transceiver.OTSToIMBTransformer;
 
 import nl.tudelft.simulation.event.EventInterface;

@@ -1,6 +1,7 @@
-package org.opentrafficsim.imb.transceiver;
+package org.opentrafficsim.imb.connector;
 
 import org.opentrafficsim.imb.IMBException;
+import org.opentrafficsim.imb.transceiver.Transceiver;
 
 import nl.tno.imb.TEventEntry;
 
