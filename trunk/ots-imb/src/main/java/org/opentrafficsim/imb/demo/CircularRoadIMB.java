@@ -42,9 +42,11 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.graphs.AbstractOTSPlot;
 import org.opentrafficsim.graphs.AccelerationContourPlot;
 import org.opentrafficsim.graphs.ContourPlot;
 import org.opentrafficsim.graphs.DensityContourPlot;
@@ -55,6 +57,7 @@ import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.OTSIMBConnector;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.GTUTransceiverOld;
+import org.opentrafficsim.imb.transceiver.urbanstrategy.GraphTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.LaneGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.LinkGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.NetworkTransceiver;
@@ -287,7 +290,7 @@ public class CircularRoadIMB extends AbstractWrappableAnimation implements UNITS
         {
             String graphName = graphs.get(i).getKey();
             Container container = null;
-            LaneBasedGTUSampler graph;
+            AbstractOTSPlot graph;
             int pos = graphName.indexOf(' ') + 1;
             String laneNumberText = graphName.substring(pos, pos + 1);
             int lane = Integer.parseInt(laneNumberText) - 1;
@@ -334,6 +337,7 @@ public class CircularRoadIMB extends AbstractWrappableAnimation implements UNITS
             // Add the container to the matrix
             charts.setCell(container, i % columns, i / columns);
             this.model.getPlots().add(graph);
+            new GraphTransceiver(this.model.imbConnector, simulator, this.model.getNetwork() /* network*/, graph);
         }
 
         return charts;
@@ -420,6 +424,9 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
 
     /** the network as created by the AbstractWrappableIMBAnimation. */
     private final OTSNetwork network;
+    
+    /** Connector to the IMB hub. */
+    OTSIMBConnector imbConnector;
 
     /**
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
@@ -432,6 +439,15 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
         this.properties = properties;
         this.gtuColorer = gtuColorer;
         this.network = network;
+    }
+
+    /**
+     * Retrieve the Network.
+     * @return Network; the network
+     */
+    public Network getNetwork()
+    {
+        return this.network;
     }
 
     /**
@@ -461,15 +477,15 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
                 }
             }
             Throw.whenNull(imbSettings, "IMB Settings not found in properties");
-            OTSIMBConnector imbConnector = OTSIMBConnector.create(imbSettings, "OTS");
-            new NetworkTransceiver(imbConnector, imbAnimator, this.network);
-            new NodeTransceiver(imbConnector, imbAnimator, this.network);
-            new LinkGTUTransceiver(imbConnector, imbAnimator, this.network);
-            new LaneGTUTransceiver(imbConnector, imbAnimator, this.network);
-            new GTUTransceiverOld(imbConnector, imbAnimator, this.network);
+            this.imbConnector = OTSIMBConnector.create(imbSettings, "OTS");
+            new NetworkTransceiver(this.imbConnector, imbAnimator, this.network);
+            new NodeTransceiver(this.imbConnector, imbAnimator, this.network);
+            new LinkGTUTransceiver(this.imbConnector, imbAnimator, this.network);
+            new LaneGTUTransceiver(this.imbConnector, imbAnimator, this.network);
+            new GTUTransceiverOld(this.imbConnector, imbAnimator, this.network);
             // new GTUTransceiver(imbConnector, imbAnimator, this.network);
-            new SensorGTUTransceiver(imbConnector, imbAnimator, this.network);
-            new SimulatorTransceiver(imbConnector, imbAnimator);
+            new SensorGTUTransceiver(this.imbConnector, imbAnimator, this.network);
+            new SimulatorTransceiver(this.imbConnector, imbAnimator);
         }
         catch (IMBException exception)
         {
