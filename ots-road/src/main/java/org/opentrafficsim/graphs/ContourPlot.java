@@ -172,7 +172,7 @@ public abstract class ContourPlot extends AbstractOTSPlot
         double[] boundaries = { redValue, yellowValue, greenValue };
         final Color[] colorValues = { Color.RED, Color.YELLOW, Color.GREEN };
         this.paintScale = new ContinuousColorPaintScale(valueFormat, boundaries, colorValues);
-        createChart(this);
+        setChart(createChart(this));
         reGraph();
     }
 

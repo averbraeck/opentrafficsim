@@ -127,6 +127,8 @@ public class IMBConnector implements Connector
                 payload.write(((Character) o).charValue());
             else if (objectClass.equals(Boolean.class))
                 payload.write(((Boolean) o).booleanValue());
+            else if (objectClass.equals(TByteBuffer.class))
+                payload.write((TByteBuffer) o);
             else
                 throw new IMBException("cannot pack object of type " + objectClass.toString() + " in payload");
         }

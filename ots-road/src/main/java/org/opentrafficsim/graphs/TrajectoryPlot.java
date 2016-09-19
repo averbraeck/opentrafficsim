@@ -159,7 +159,7 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
             endLengths[i] = cumulativeLength;
         }
         this.cumulativeLengths = endLengths;
-        createChart(this);
+        setChart(createChart(this));
         this.reGraph(); // fixes the domain axis
         if (null != this.sampleInterval)
         {
