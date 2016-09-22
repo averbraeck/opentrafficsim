@@ -13,11 +13,18 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
- * @param <U> 
- * @param <T> 
+ * @param <U>
+ * @param <T>
  */
+// TODO standard deviation, percentiles, min/max
 public interface Indicator<U extends Unit<U>, T extends DoubleScalar<U>>
 {
-        T calculate(Query query);
+    
+    /**
+     * Calculate value for given query.
+     * @param query query
+     * @return value for given query
+     */
+    T calculate(final Query query);
+    
 }
-
