@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.strategical.od;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,49 +19,65 @@ import org.opentrafficsim.core.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
-public class Categorization
+public class Categorization implements Serializable
 {
 
+    /** Empty categorization. */
+    public static final Categorization UNCATEGORIZED = new Categorization("Uncategorized");
+    
+    /** */
+    private static final long serialVersionUID = 20160921L;
+    
+    /** Id. */
+    private final String id;
+    
     /** Set of categorization classes. */
     private final List<Class<?>> classes = new ArrayList<>();
-
+    
     /**
-     * Adds given class to the categorization.
-     * @param clazz class to add
-     * @throws NullPointerException if clazz is {@code null}
-     * @throws IllegalArgumentException if clazz is already in the categorization
+     * @param id id
      */
-    public final void add(final Class<?> clazz)
+    private Categorization(final String id)
     {
-        Throw.whenNull(clazz, "Categorization class may not be empty.");
-        Throw.when(this.classes.contains(clazz), IllegalArgumentException.class,
-            "Class %s is already in the categorization", clazz);
-        this.classes.add(clazz);
+        Throw.whenNull(id, "Id may not be null.");
+        this.id = id;
+    }
+    
+    /**
+     * @param id Id
+     * @param class1 1st class
+     * @param classes other classes
+     * @throws IllegalArgumentException if any class is given multiple times
+     * @throws NullPointerException if any input is null
+     */
+    public Categorization(final String id, final Class<?> class1, final Class<?>... classes)
+    {
+        this(id);
+        Throw.whenNull(class1, "Classes may not be null.");
+        this.classes.add(class1);
+        for (Class<?> clazz : classes)
+        {
+            Throw.whenNull(clazz, "Classes may not be null.");
+            Throw.when(this.classes.contains(clazz), IllegalArgumentException.class,
+                "Class %s is given multiple times.", clazz);
+            this.classes.add(clazz);
+        }
     }
 
     /**
-     * Returns whether there is no categorization defined.
-     * @return whether there is no categorization defined
-     */
-    public final boolean isEmpty()
-    {
-        return this.classes.isEmpty();
-    }
-
-    /**
-     * Returns the number of category elements defined.
-     * @return number of category elements defined
+     * Returns the number of category classes defined.
+     * @return number of category classes defined
      */
     public final int size()
     {
         return this.classes.size();
     }
-
+    
     /**
-     * Returns the i'th category.
-     * @param i index of the category
-     * @return the i'th category
+     * Returns the i'th class.
+     * @param i index of the class
+     * @return the i'th class
+     * @throws IndexOutOfBoundsException if index i is out of bounds
      */
     public final Class<?> get(final int i)
     {
@@ -70,24 +87,11 @@ public class Categorization
     }
 
     /**
-     * Returns whether the given category complies with this categorization.
-     * @param category category
-     * @return whether the given category complies with this categorization
+     * @return id.
      */
-    public final boolean complies(final Category category)
+    public final String getId()
     {
-        if (category.size() != size())
-        {
-            return false;
-        }
-        for (int i = 0; i < size(); i++)
-        {
-            if (!this.classes.get(i).isAssignableFrom(category.get(i).getClass()))
-            {
-                return false;
-            }
-        }
-        return true;
+        return this.id;
     }
 
     /** {@inheritDoc} */
@@ -135,7 +139,7 @@ public class Categorization
     @Override
     public final String toString()
     {
-        return "Categorization [classes=" + this.classes + "]";
+        return "Categorization [id=" + this.id + ", classes=" + this.classes + "]";
     }
 
 }

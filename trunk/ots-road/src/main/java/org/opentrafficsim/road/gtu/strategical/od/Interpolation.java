@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.strategical.od;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
-import org.djunits.value.vdouble.scalar.Time;
 
 /**
  * Interpolation of demand.
@@ -21,8 +21,8 @@ public enum Interpolation
     STEPWISE
     {
         @Override
-        Frequency interpolate(final Frequency frequency0, final Time time0, final Frequency frequency1, final Time time1,
-            final Time time)
+        Frequency interpolate(final Frequency frequency0, final Duration time0, final Frequency frequency1,
+            final Duration time1, final Duration time)
         {
             return frequency0;
         }
@@ -32,8 +32,8 @@ public enum Interpolation
     LINEAR
     {
         @Override
-        Frequency interpolate(final Frequency frequency0, final Time time0, final Frequency frequency1, final Time time1,
-            final Time time)
+        Frequency interpolate(final Frequency frequency0, final Duration time0, final Frequency frequency1,
+            final Duration time1, final Duration time)
         {
             return Frequency.interpolate(frequency0, frequency1, (time.si - time0.si) / (time1.si - time0.si));
         }
@@ -48,6 +48,7 @@ public enum Interpolation
      * @param time {@code time0} &le; {@code time} &lt; {@code time1}
      * @return interpolated frequency
      */
-    abstract Frequency interpolate(Frequency frequency0, Time time0, Frequency frequency1, Time time1, Time time);
+    abstract Frequency
+        interpolate(Frequency frequency0, Duration time0, Frequency frequency1, Duration time1, Duration time);
 
 }

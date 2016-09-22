@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.strategical.od;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,45 +18,79 @@ import org.opentrafficsim.core.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class Category
+public class Category implements Serializable
 {
 
-    /** Set of categorization classes. */
+    /** Empty category. */
+    public static final Category UNCATEGORIZED = new Category(Categorization.UNCATEGORIZED);
+    
+    /** */
+    private static final long serialVersionUID = 20160921L;
+
+    /** Categorization. */
+    private final Categorization categorization;
+
+    /** List of objects defining the category. */
     private final List<Object> objects = new ArrayList<>();
 
     /**
-     * Adds given class to the categorization.
-     * @param object class to add
-     * @throws NullPointerException if clazz is {@code null}
-     * @throws IllegalArgumentException if clazz is already in the categorization
+     * @param categorization categorization
      */
-    public final void add(final Object object)
+    private Category(final Categorization categorization)
     {
-        Throw.whenNull(object, "Categorization class may not be empty.");
-        Throw.when(this.objects.contains(object), IllegalArgumentException.class,
-            "Class %s is already in the categorization", object);
-        this.objects.add(object);
+        Throw.whenNull(categorization, "Categorization may not be null.");
+        this.categorization = categorization;
+    }
+    
+    /**
+     * @param categorization categorization
+     * @param object1 1st object
+     * @param objects other objects
+     * @throws IllegalArgumentException if the objects do not comply with the categorization
+     * @throws NullPointerException if any input is null
+     */
+    public Category(final Categorization categorization, final Object object1, final Object... objects)
+    {
+        this(categorization);
+        Throw.when(categorization.size() != objects.length + 1, IllegalArgumentException.class,
+            "Objects do not comply with the categorization; bad number of objects.");
+        Throw.whenNull(object1, "Objects may not be null.");
+        Throw.when(!categorization.get(0).isAssignableFrom(object1.getClass()), IllegalArgumentException.class,
+            "Objects do not comply with the categorization; object 1 is of type %s, should be %s.", object1
+                .getClass(), categorization.get(0));
+        for (int i = 1; i < categorization.size(); i++)
+        {
+            Throw.whenNull(objects[i - 1], "Objects may not be null.");
+            Throw.when(!categorization.get(i).isAssignableFrom(objects[i - 1].getClass()), IllegalArgumentException.class,
+                "Objects do not comply with the categorization; object %d is of type %s, should be %s.", i + 1, objects[i - 1]
+                    .getClass(), categorization.get(i));
+        }
+        this.objects.add(object1);
+        for (Object object : objects)
+        {
+            this.objects.add(object);
+        }
     }
 
     /**
-     * Returns the number of category elements defined.
-     * @return number of category elements defined
-     */
-    public final int size()
-    {
-        return this.objects.size();
-    }
-
-    /**
-     * Returns the i'th category.
-     * @param i index of the category
-     * @return the i'th category
+     * Returns the i'th object.
+     * @param i index of the object
+     * @return the i'th object
+     * @throws IndexOutOfBoundsException if index i is out of bounds
      */
     public final Object get(final int i)
     {
-        Throw.when(i < 0 || i >= size(), IndexOutOfBoundsException.class,
-            "Index %d is out of range for categorization of size %d", i, size());
+        Throw.when(i < 0 || i >= this.objects.size(), IndexOutOfBoundsException.class,
+            "Index %d is out of range for categorization of size %d", i, this.objects.size());
         return this.objects.get(i);
+    }
+
+    /**
+     * @return categorization.
+     */
+    public final Categorization getCategorization()
+    {
+        return this.categorization;
     }
 
     /** {@inheritDoc} */
@@ -64,6 +99,7 @@ public class Category
     {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((this.categorization == null) ? 0 : this.categorization.hashCode());
         result = prime * result + ((this.objects == null) ? 0 : this.objects.hashCode());
         return result;
     }
@@ -85,6 +121,17 @@ public class Category
             return false;
         }
         Category other = (Category) obj;
+        if (this.categorization == null)
+        {
+            if (other.categorization != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.categorization.equals(other.categorization))
+        {
+            return false;
+        }
         if (this.objects == null)
         {
             if (other.objects != null)

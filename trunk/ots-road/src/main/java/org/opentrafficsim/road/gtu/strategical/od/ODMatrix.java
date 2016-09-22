@@ -1,18 +1,19 @@
 package org.opentrafficsim.road.gtu.strategical.od;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.FrequencyVector;
-import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
@@ -34,20 +35,27 @@ import org.opentrafficsim.core.network.route.Route;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ODMatrix
+// TODO Subclass with absolute demand (not flow), turn fractions, etc.
+public class ODMatrix implements Serializable
 {
 
+    /** */
+    private static final long serialVersionUID = 20160921L;
+
+    /** Id. */
+    private final String id;
+
     /** Origin nodes. */
-    private final Set<Node> origins;
+    private final List<Node> origins;
 
     /** Destination nodes. */
-    private final Set<Node> destinations;
+    private final List<Node> destinations;
 
     /** Categorization of demand data. */
     private final Categorization categorization;
 
     /** Global time vector. */
-    private final TimeVector globalTimeVector;
+    private final DurationVector globalTimeVector;
 
     /** Global interpolation of the data. */
     private final Interpolation globalInterpolation;
@@ -57,6 +65,7 @@ public class ODMatrix
 
     /**
      * Constructs an OD matrix.
+     * @param id id
      * @param origins origin nodes
      * @param destinations destination nodes
      * @param categorization categorization of data
@@ -64,9 +73,10 @@ public class ODMatrix
      * @param globalInterpolation interpolation of demand data
      * @throws NullPointerException if any input is null
      */
-    public ODMatrix(final Set<Node> origins, final Set<Node> destinations, final Categorization categorization,
-        final TimeVector globalTimeVector, final Interpolation globalInterpolation)
+    public ODMatrix(final String id, final List<Node> origins, final List<Node> destinations,
+        final Categorization categorization, final DurationVector globalTimeVector, final Interpolation globalInterpolation)
     {
+        Throw.whenNull(id, "Id may not be null.");
         Throw.when(origins == null || origins.contains(null), NullPointerException.class,
             "Origin may not be or contain null.");
         Throw.when(destinations == null || destinations.contains(null), NullPointerException.class,
@@ -74,36 +84,46 @@ public class ODMatrix
         Throw.whenNull(categorization, "Categorization may not be null.");
         Throw.whenNull(globalTimeVector, "Global time vector may not be null.");
         Throw.whenNull(globalInterpolation, "Global interpolation may not be null.");
-        this.origins = origins;
-        this.destinations = destinations;
+        this.id = id;
+        this.origins = new ArrayList<>(origins);
+        this.destinations = new ArrayList<>(destinations);
         this.categorization = categorization;
         this.globalTimeVector = globalTimeVector;
         this.globalInterpolation = globalInterpolation;
         // build empty OD
         for (Node origin : origins)
         {
-            this.demandData.put(origin, new HashMap<>());
+            Map<Node, Map<Category, ODEntry>> map = new HashMap<>();
             for (Node destination : destinations)
             {
-                this.demandData.get(origin).put(destination, new HashMap<>());
+                map.put(destination, new HashMap<>());
             }
+            this.demandData.put(origin, map);
         }
+    }
+
+    /**
+     * @return id.
+     */
+    public final String getId()
+    {
+        return this.id;
     }
 
     /**
      * @return origins.
      */
-    public final Set<Node> getOrigins()
+    public final List<Node> getOrigins()
     {
-        return this.origins;
+        return new ArrayList<>(this.origins);
     }
 
     /**
      * @return destinations.
      */
-    public final Set<Node> getDestinations()
+    public final List<Node> getDestinations()
     {
-        return this.destinations;
+        return new ArrayList<>(this.destinations);
     }
 
     /**
@@ -117,7 +137,7 @@ public class ODMatrix
     /**
      * @return globalTimeVector.
      */
-    public final TimeVector getGlobalTimeVector()
+    public final DurationVector getGlobalTimeVector()
     {
         return this.globalTimeVector;
     }
@@ -136,13 +156,13 @@ public class ODMatrix
      * @param category category
      * @param demand demand data, length has to be equal to the global time vector
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
-     * @throws IllegalArgumentException if the category does not comply with the categorization
+     * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws NullPointerException if an input is null
      */
     public final void putDemandVector(final Node origin, final Node destination, final Category category,
         final FrequencyVector demand)
     {
-        putDemandVector(origin, destination, category, demand, null, null);
+        putDemandVector(origin, destination, category, demand, this.globalTimeVector, this.globalInterpolation);
     }
 
     /**
@@ -150,25 +170,27 @@ public class ODMatrix
      * @param destination destination
      * @param category category
      * @param demand demand data, length has to be equal to the time vector, or the global time vector if that is null
-     * @param timeVector time vector, may be null
-     * @param interpolation interpolation, may be null
+     * @param timeVector time vector
+     * @param interpolation interpolation
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
-     * @throws IllegalArgumentException if the category does not comply with the categorization
-     * @throws NullPointerException if an input is null, except for timeVector and interpolation
+     * @throws IllegalArgumentException if the category does not belong to the categorization
+     * @throws NullPointerException if an input is null
      */
     public final void putDemandVector(final Node origin, final Node destination, final Category category,
-        final FrequencyVector demand, final TimeVector timeVector, final Interpolation interpolation)
+        final FrequencyVector demand, final DurationVector timeVector, final Interpolation interpolation)
     {
         Throw.whenNull(origin, "Origin may not be null.");
         Throw.whenNull(destination, "Destination may not be null.");
         Throw.whenNull(category, "Category may not be null.");
         Throw.whenNull(demand, "Demand data may not be null.");
+        Throw.whenNull(timeVector, "Time vector may not be null.");
+        Throw.whenNull(interpolation, "Interpolation may not be null.");
         Throw.when(!this.origins.contains(origin), IllegalArgumentException.class,
             "Origin '%s' is not part of the OD matrix.", origin);
         Throw.when(!this.destinations.contains(destination), IllegalArgumentException.class,
             "Destination '%s' is not part of the OD matrix.", destination);
-        Throw.when(!this.categorization.complies(category), IllegalArgumentException.class,
-            "Provided category %s does not comply to the categorization %s.", category, this.categorization);
+        Throw.when(!this.categorization.equals(category.getCategorization()), IllegalArgumentException.class,
+            "Provided category %s does not belong to the categorization %s.", category, this.categorization);
         ODEntry odEntry = new ODEntry(demand, timeVector, interpolation); // performs checks on vector length
         this.demandData.get(origin).get(destination).put(category, odEntry);
     }
@@ -179,7 +201,7 @@ public class ODMatrix
      * @param category category
      * @return demand data for given origin, destination and categorization, {@code null} if no data is given
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
-     * @throws IllegalArgumentException if the category does not comply with the categorization
+     * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws NullPointerException if an input is null
      */
     public final FrequencyVector getDemandVector(final Node origin, final Node destination, final Category category)
@@ -189,7 +211,45 @@ public class ODMatrix
         {
             return null;
         }
-        return odEntry.getDemand();
+        return odEntry.getDemandVector();
+    }
+
+    /**
+     * @param origin origin
+     * @param destination destination
+     * @param category category
+     * @return interpolation for given origin, destination and categorization, {@code null} if no data is given
+     * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
+     * @throws IllegalArgumentException if the category does not belong to the categorization
+     * @throws NullPointerException if an input is null
+     */
+    public final DurationVector getTimeVector(final Node origin, final Node destination, final Category category)
+    {
+        ODEntry odEntry = getODEntry(origin, destination, category);
+        if (odEntry == null)
+        {
+            return null;
+        }
+        return odEntry.getTimeVector();
+    }
+
+    /**
+     * @param origin origin
+     * @param destination destination
+     * @param category category
+     * @return interpolation for given origin, destination and categorization, {@code null} if no data is given
+     * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
+     * @throws IllegalArgumentException if the category does not belong to the categorization
+     * @throws NullPointerException if an input is null
+     */
+    public final Interpolation getInterpolation(final Node origin, final Node destination, final Category category)
+    {
+        ODEntry odEntry = getODEntry(origin, destination, category);
+        if (odEntry == null)
+        {
+            return null;
+        }
+        return odEntry.getInterpolation();
     }
 
     /**
@@ -199,11 +259,13 @@ public class ODMatrix
      * @param time time
      * @return demand for given origin, destination and categorization, at given time, {@code null} if no data is given
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
-     * @throws IllegalArgumentException if the category does not comply with the categorization
+     * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws NullPointerException if an input is null
      */
-    public final Frequency getDemand(final Node origin, final Node destination, final Category category, final Time time)
+    public final Frequency
+        getDemand(final Node origin, final Node destination, final Category category, final Duration time)
     {
+        Throw.whenNull(time, "Time may not be null.");
         ODEntry odEntry = getODEntry(origin, destination, category);
         if (odEntry == null)
         {
@@ -218,7 +280,7 @@ public class ODMatrix
      * @param category category
      * @return OD entry for given origin, destination and categorization.
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
-     * @throws IllegalArgumentException if the category does not comply with the categorization
+     * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws NullPointerException if an input is null
      */
     private ODEntry getODEntry(final Node origin, final Node destination, final Category category)
@@ -230,8 +292,8 @@ public class ODMatrix
             "Origin '%s' is not part of the OD matrix", origin);
         Throw.when(!this.destinations.contains(destination), IllegalArgumentException.class,
             "Destination '%s' is not part of the OD matrix.", destination);
-        Throw.when(!this.categorization.complies(category), IllegalArgumentException.class,
-            "Provided category %s does not comply to the categorization %s.", category, this.categorization);
+        Throw.when(!this.categorization.equals(category.getCategorization()), IllegalArgumentException.class,
+            "Provided category %s does not belong to the categorization %s.", category, this.categorization);
         return this.demandData.get(origin).get(destination).get(category);
     }
 
@@ -261,15 +323,134 @@ public class ODMatrix
                     for (Category category : categoryMap.keySet())
                     {
                         System.out.println(origin.getId() + " -> " + destination.getId() + " | " + category + " | "
-                            + categoryMap.get(category).getDemand());
+                            + categoryMap.get(category).getDemandVector());
                     }
                 }
             }
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.categorization == null) ? 0 : this.categorization.hashCode());
+        result = prime * result + ((this.demandData == null) ? 0 : this.demandData.hashCode());
+        result = prime * result + ((this.destinations == null) ? 0 : this.destinations.hashCode());
+        result = prime * result + ((this.globalInterpolation == null) ? 0 : this.globalInterpolation.hashCode());
+        result = prime * result + ((this.globalTimeVector == null) ? 0 : this.globalTimeVector.hashCode());
+        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        result = prime * result + ((this.origins == null) ? 0 : this.origins.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean equals(final Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        ODMatrix other = (ODMatrix) obj;
+        if (this.categorization == null)
+        {
+            if (other.categorization != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.categorization.equals(other.categorization))
+        {
+            return false;
+        }
+        if (this.demandData == null)
+        {
+            if (other.demandData != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.demandData.equals(other.demandData))
+        {
+            return false;
+        }
+        if (this.destinations == null)
+        {
+            if (other.destinations != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.destinations.equals(other.destinations))
+        {
+            return false;
+        }
+        if (this.globalInterpolation != other.globalInterpolation)
+        {
+            return false;
+        }
+        if (this.globalTimeVector == null)
+        {
+            if (other.globalTimeVector != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.globalTimeVector.equals(other.globalTimeVector))
+        {
+            return false;
+        }
+        if (this.id == null)
+        {
+            if (other.id != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.id.equals(other.id))
+        {
+            return false;
+        }
+        if (this.origins == null)
+        {
+            if (other.origins != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.origins.equals(other.origins))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    // TODO remove this method as soon as there is a JUNIT test
     public static void main(final String[] args) throws ValueException, NetworkException
     {
+        
+        int aa = 10;
+        System.out.println(aa);
+        aa = aa + (aa >> 1);
+        System.out.println(aa);
+        aa = aa + (aa >> 1);
+        System.out.println(aa);
+        aa = aa + (aa >> 1);
+        System.out.println(aa);
+        aa = aa + (aa >> 1);
+        System.out.println(aa);
+        
         OTSNetwork net = new OTSNetwork("test");
         OTSPoint3D point = new OTSPoint3D(0, 0, 0);
         Node a = new OTSNode(net, "A", point);
@@ -277,19 +458,15 @@ public class ODMatrix
         Node c = new OTSNode(net, "C", point);
         Node d = new OTSNode(net, "D", point);
         Node e = new OTSNode(net, "E", point);
-        Set<Node> origins = new HashSet<>();
+        List<Node> origins = new ArrayList<>();
         origins.add(a);
         origins.add(b);
         origins.add(c);
-        Set<Node> destinations = new HashSet<>();
+        List<Node> destinations = new ArrayList<>();
         destinations.add(a);
         destinations.add(c);
         destinations.add(d);
-        Categorization categorization = new Categorization();
-
-        categorization.add(Route.class);
-        categorization.add(String.class);
-
+        Categorization categorization = new Categorization("test", Route.class, String.class);
         Route ac1 = new Route("AC1");
         Route ac2 = new Route("AC2");
         Route ad1 = new Route("AD1");
@@ -297,81 +474,59 @@ public class ODMatrix
         Route bc2 = new Route("BC2");
         Route bd1 = new Route("BD1");
 
-        TimeVector timeVector = new TimeVector(new double[] {0, 1200, 3600}, TimeUnit.SECOND, StorageType.DENSE);
-        ODMatrix odMatrix = new ODMatrix(origins, destinations, categorization, timeVector, Interpolation.LINEAR);
+        DurationVector timeVector = new DurationVector(new double[] {0, 1200, 3600}, TimeUnit.SECOND, StorageType.DENSE);
+        ODMatrix odMatrix = new ODMatrix("TestOD", origins, destinations, categorization, timeVector, Interpolation.LINEAR);
 
-        Category category = new Category();
-        category.add(ac1);
-        category.add("car");
+        Category category = new Category(categorization, ac1, "car");
         odMatrix.putDemandVector(a, c, category, new FrequencyVector(new double[] {100, 200, 300}, FrequencyUnit.PER_HOUR,
             StorageType.DENSE));
-        category = new Category();
-        category.add(ac2);
-        category.add("car");
+        category = new Category(categorization, ac2, "car");
         odMatrix.putDemandVector(a, c, category, new FrequencyVector(new double[] {100, 200, 300}, FrequencyUnit.PER_HOUR,
             StorageType.DENSE));
-        category = new Category();
-        category.add(ad1);
-        category.add("car");
+        category = new Category(categorization, ad1, "car");
         odMatrix.putDemandVector(a, d, category, new FrequencyVector(new double[] {100, 200, 300}, FrequencyUnit.PER_HOUR,
             StorageType.DENSE));
-        category = new Category();
-        category.add(ac1);
-        category.add("truck");
+        category = new Category(categorization, ac1, "car");
         odMatrix.putDemandVector(a, c, category, new FrequencyVector(new double[] {100, 200, 300}, FrequencyUnit.PER_HOUR,
             StorageType.DENSE));
-        category = new Category();
-        category.add(ac2);
-        category.add("truck");
+        category = new Category(categorization, ac2, "truck");
         odMatrix.putDemandVector(a, c, category, new FrequencyVector(new double[] {100, 200, 500}, FrequencyUnit.PER_HOUR,
             StorageType.DENSE));
-        category = new Category();
-        category.add(ad1);
-        category.add("truck");
+        category = new Category(categorization, ad1, "truck");
         odMatrix.putDemandVector(a, d, category, new FrequencyVector(new double[] {100, 200, 300}, FrequencyUnit.PER_HOUR,
             StorageType.DENSE));
-        category = new Category();
-        category.add(bc1);
-        category.add("car");
+        category = new Category(categorization, bc1, "truck");
         odMatrix.putDemandVector(b, c, category, new FrequencyVector(new double[] {100, 200, 300}, FrequencyUnit.PER_HOUR,
             StorageType.DENSE));
-        category = new Category();
-        category.add(bc2);
-        category.add("car");
+        category = new Category(categorization, bc2, "truck");
         odMatrix.putDemandVector(b, c, category, new FrequencyVector(new double[] {100, 200, 300}, FrequencyUnit.PER_HOUR,
             StorageType.DENSE));
-        category = new Category();
-        category.add(bd1);
-        category.add("car");
+        category = new Category(categorization, bd1, "car");
         odMatrix.putDemandVector(b, d, category, new FrequencyVector(new double[] {100, 200, 300}, FrequencyUnit.PER_HOUR,
             StorageType.DENSE));
-        category = new Category();
-        category.add(bc1);
-        category.add("truck");
+        category = new Category(categorization, bc1, "car");
         odMatrix.putDemandVector(b, c, category, new FrequencyVector(new double[] {100, 200, 300}, FrequencyUnit.PER_HOUR,
             StorageType.DENSE));
-        category = new Category();
-        category.add(bc2);
-        category.add("truck");
+        category = new Category(categorization, bc2, "car");
         odMatrix.putDemandVector(b, c, category, new FrequencyVector(new double[] {100, 200, 300}, FrequencyUnit.PER_HOUR,
             StorageType.DENSE));
-        category = new Category();
-        category.add(bd1);
-        category.add("truck");
+        category = new Category(categorization, bd1, "truck");
         odMatrix.putDemandVector(b, d, category, new FrequencyVector(new double[] {100, 200, 300}, FrequencyUnit.PER_HOUR,
             StorageType.DENSE));
 
         odMatrix.print();
         System.out.println(odMatrix);
 
-        category = new Category();
-        category.add(ac2);
-        category.add("truck");
+        category = new Category(categorization, ac2, "truck");
         for (double t = -100; t <= 3700; t += 100)
         {
-            Time time = new Time(t, TimeUnit.SECOND);
+            Duration time = new Duration(t, TimeUnit.SECOND);
             System.out.println("@ t = " + time + ", q = " + odMatrix.getDemand(a, c, category, time));
         }
+
+        System.out.println("For OD       that does not exist; q = " + odMatrix.getDemand(c, a, category, Duration.ZERO));
+        category = new Category(categorization, ac2, "does not exist");
+        System.out.println("For category that does not exist; q = " + odMatrix.getDemand(a, c, category, Duration.ZERO));
 
     }
 
@@ -391,27 +546,27 @@ public class ODMatrix
     {
 
         /** Demand vector. */
-        private final FrequencyVector demand;
+        private final FrequencyVector demandVector;
 
         /** Time vector, may be null. */
-        private final TimeVector timeVector;
+        private final DurationVector timeVector;
 
         /** Interpolation, may be null. */
         private final Interpolation interpolation;
 
         /**
-         * @param demand demand vector
-         * @param timeVector time vector, may be null
-         * @param interpolation interpolation, may be null
+         * @param demandVector demand vector
+         * @param timeVector time vector
+         * @param interpolation interpolation
          * @throws IllegalArgumentException if the demand data has a different length than time data
          */
-        ODEntry(final FrequencyVector demand, final TimeVector timeVector, final Interpolation interpolation)
+        ODEntry(final FrequencyVector demandVector, final DurationVector timeVector, final Interpolation interpolation)
         {
-            this.demand = demand;
+            Throw.when(demandVector.size() != timeVector.size(), IllegalArgumentException.class,
+                "Demand data has different length than time vector.");
+            this.demandVector = demandVector;
             this.timeVector = timeVector;
             this.interpolation = interpolation;
-            Throw.when(demand.size() != getTimeVector().size(), IllegalArgumentException.class,
-                "Demand data has different length than time vector.");
         }
 
         /**
@@ -420,29 +575,27 @@ public class ODMatrix
          * @param time time of demand requested
          * @return demand at given time
          */
-        public final Frequency getDemand(final Time time)
+        public final Frequency getDemand(final Duration time)
         {
-            TimeVector timeVec = getTimeVector();
-            Interpolation interp = getInterpolation();
             try
             {
                 // empty data or before start, return 0
-                if (timeVec.size() == 0 || time.lt(timeVec.get(0)))
+                if (this.timeVector.size() == 0 || time.lt(this.timeVector.get(0)))
                 {
                     return new Frequency(0.0, FrequencyUnit.PER_HOUR);
                 }
                 // after end, return last value
-                if (time.ge(timeVec.get(timeVec.size() - 1)))
+                if (time.ge(this.timeVector.get(this.timeVector.size() - 1)))
                 {
-                    return this.demand.get(timeVec.size() - 1);
+                    return this.demandVector.get(this.timeVector.size() - 1);
                 }
                 // interpolate
-                for (int i = 0; i < timeVec.size() - 1; i++)
+                for (int i = 0; i < this.timeVector.size() - 1; i++)
                 {
-                    if (timeVec.get(i + 1).ge(time))
+                    if (this.timeVector.get(i + 1).ge(time))
                     {
-                        return interp.interpolate(this.demand.get(i), timeVec.get(i), this.demand.get(i + 1), timeVec
-                            .get(i + 1), time);
+                        return this.interpolation.interpolate(this.demandVector.get(i), this.timeVector.get(i),
+                            this.demandVector.get(i + 1), this.timeVector.get(i + 1), time);
                     }
                 }
             }
@@ -456,27 +609,27 @@ public class ODMatrix
         }
 
         /**
-         * @return demand vector
+         * @return demandVector
          */
-        final FrequencyVector getDemand()
+        final FrequencyVector getDemandVector()
         {
-            return this.demand;
+            return this.demandVector;
+        }
+        
+        /**
+         * @return timeVector
+         */
+        final DurationVector getTimeVector()
+        {
+            return this.timeVector;
         }
 
         /**
-         * @return time vector, either from this entry, or the global vector
+         * @return interpolation
          */
-        private TimeVector getTimeVector()
+        final Interpolation getInterpolation()
         {
-            return this.timeVector == null ? ODMatrix.this.getGlobalTimeVector() : this.timeVector;
-        }
-
-        /**
-         * @return interpolation, either from this entry, or the global interpolation
-         */
-        private Interpolation getInterpolation()
-        {
-            return this.interpolation == null ? ODMatrix.this.getGlobalInterpolation() : this.interpolation;
+            return this.interpolation;
         }
 
         /** {@inheritDoc} */
@@ -486,7 +639,7 @@ public class ODMatrix
             final int prime = 31;
             int result = 1;
             result = prime * result + getOuterType().hashCode();
-            result = prime * result + ((this.demand == null) ? 0 : this.demand.hashCode());
+            result = prime * result + ((this.demandVector == null) ? 0 : this.demandVector.hashCode());
             result = prime * result + ((this.interpolation == null) ? 0 : this.interpolation.hashCode());
             result = prime * result + ((this.timeVector == null) ? 0 : this.timeVector.hashCode());
             return result;
@@ -513,14 +666,14 @@ public class ODMatrix
             {
                 return false;
             }
-            if (this.demand == null)
+            if (this.demandVector == null)
             {
-                if (other.demand != null)
+                if (other.demandVector != null)
                 {
                     return false;
                 }
             }
-            else if (!this.demand.equals(other.demand))
+            else if (!this.demandVector.equals(other.demandVector))
             {
                 return false;
             }
