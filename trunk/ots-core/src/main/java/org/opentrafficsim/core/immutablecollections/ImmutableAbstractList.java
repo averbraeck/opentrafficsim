@@ -7,6 +7,8 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import org.opentrafficsim.core.Throw;
+
 /**
  * An abstract base class for an immutable wrapper for a List.
  * <p>
@@ -28,13 +30,20 @@ public abstract class ImmutableAbstractList<E> implements ImmutableList<E>, Rand
     /** the list that is wrapped, without giving access to methods that can change it. */
     private final List<E> list;
 
+    /** COPY stores a safe, internal copy of the collection; WRAP stores a pointer to the original collection. */
+    private final Immutable copyOrWrap;
+
     /**
-     * Construct an abstract immutable list. Make sure that the argument is a safe copy of the list of the right type!
-     * @param list a safe copy of the list to use as the immutable list
+     * Construct an abstract immutable list. Make sure that the argument is a safe copy of the list or pointer to the list of
+     * the right type!
+     * @param list a safe copy of the list, or pointer to the list to use as the immutable list
+     * @param copy indicate whether the immutable is a copy or a wrap
      */
-    protected ImmutableAbstractList(final List<E> list)
+    protected ImmutableAbstractList(final List<E> list, final boolean copy)
     {
+        Throw.whenNull(list, "the list argument cannot be null");
         this.list = list;
+        this.copyOrWrap = copy ? Immutable.COPY : Immutable.WRAP;
     }
 
     /**
@@ -47,6 +56,7 @@ public abstract class ImmutableAbstractList<E> implements ImmutableList<E>, Rand
      *     return (ArrayList&lt;E&gt;) super.getList();
      * }
      * </pre>
+     * 
      * @return the list of the right type for use a subclass
      */
     @SuppressWarnings("checkstyle:designforextension")
@@ -165,6 +175,13 @@ public abstract class ImmutableAbstractList<E> implements ImmutableList<E>, Rand
     public final Stream<E> parallelStream()
     {
         return this.list.parallelStream();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean isWrap()
+    {
+        return this.copyOrWrap == Immutable.WRAP;
     }
 
     /** {@inheritDoc} */

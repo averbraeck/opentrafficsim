@@ -155,4 +155,23 @@ public interface ImmutableMap<K, V> extends Serializable
      */
     int hashCode();
 
+    /**
+     * Return whether the internal storage is a wrapped pointer to the original map. If true, this means that anyone holding a
+     * pointer to this data structure can still change it. The users of the ImmutableMap itself can, however, not make any
+     * changes.
+     * @return boolean; whether the internal storage is a wrapped pointer to the original map
+     */
+    boolean isWrap();
+
+    /**
+     * Return whether the internal storage is a (shallow) copy of the original map. If true, this means that anyone holding a
+     * pointer to the original of the data structure can not change it anymore. Nor can the users of the ImmutableMap itself
+     * make any changes.
+     * @return boolean; whether the internal storage is a safe copy of the original map
+     */
+    default boolean isCopy()
+    {
+        return !isWrap();
+    }
+
 }

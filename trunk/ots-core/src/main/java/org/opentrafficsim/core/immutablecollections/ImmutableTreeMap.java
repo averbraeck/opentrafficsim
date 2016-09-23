@@ -1,11 +1,12 @@
 package org.opentrafficsim.core.immutablecollections;
 
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.NavigableMap;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
+
+import org.opentrafficsim.core.Throw;
 
 /**
  * An immutable wrapper for a TreeMap.
@@ -31,15 +32,34 @@ public class ImmutableTreeMap<K, V> extends ImmutableAbstractMap<K, V> implement
      */
     public ImmutableTreeMap(final SortedMap<K, V> sortedMap)
     {
-        super(new TreeMap<K, V>(sortedMap));
+        this(sortedMap, Immutable.COPY);
     }
 
     /**
-     * @param sortedMap the map to use as the immutable map.
+     * @param map the map to use as the immutable map.
+     * @param copyOrWrap COPY stores a safe, internal copy of the collection; WRAP stores a pointer to the original collection
      */
-    public ImmutableTreeMap(final ImmutableSortedMap<K, V> sortedMap)
+    public ImmutableTreeMap(final SortedMap<K, V> map, final Immutable copyOrWrap)
     {
-        this(sortedMap.toMap());
+        super(copyOrWrap == Immutable.COPY ? new TreeMap<K, V>(map) : map, copyOrWrap == Immutable.COPY);
+        Throw.whenNull(copyOrWrap, "the copyOrWrap argument should be Immutable.COPY or Immutable.WRAP");
+    }
+
+    /**
+     * @param immutableMap the map to use as the immutable map.
+     */
+    public ImmutableTreeMap(final ImmutableTreeMap<K, V> immutableMap)
+    {
+        this(immutableMap, Immutable.COPY);
+    }
+
+    /**
+     * @param immutableTreeMap the map to use as the immutable map.
+     * @param copyOrWrap COPY stores a safe, internal copy of the collection; WRAP stores a pointer to the original collection
+     */
+    public ImmutableTreeMap(final ImmutableTreeMap<K, V> immutableTreeMap, final Immutable copyOrWrap)
+    {
+        this(immutableTreeMap.getMap(), copyOrWrap);
     }
 
     /** {@inheritDoc} */

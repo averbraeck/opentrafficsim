@@ -3,6 +3,8 @@ package org.opentrafficsim.core.immutablecollections;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.opentrafficsim.core.Throw;
+
 /**
  * An immutable wrapper for an ArrayList.
  * <p>
@@ -26,7 +28,17 @@ public class ImmutableArrayList<E> extends ImmutableAbstractList<E>
      */
     public ImmutableArrayList(final List<E> list)
     {
-        super(new ArrayList<E>(list));
+        this(list, Immutable.COPY);
+    }
+
+    /**
+     * @param list the list to use as the immutable list.
+     * @param copyOrWrap COPY stores a safe, internal copy of the collection; WRAP stores a pointer to the original collection
+     */
+    public ImmutableArrayList(final List<E> list, final Immutable copyOrWrap)
+    {
+        super(copyOrWrap == Immutable.COPY ? new ArrayList<E>(list) : list, copyOrWrap == Immutable.COPY);
+        Throw.whenNull(copyOrWrap, "the copyOrWrap argument should be Immutable.COPY or Immutable.WRAP");
     }
 
     /**
@@ -34,7 +46,16 @@ public class ImmutableArrayList<E> extends ImmutableAbstractList<E>
      */
     public ImmutableArrayList(final ImmutableList<E> list)
     {
-        super(list.toList());
+        this(list, Immutable.COPY);
+    }
+
+    /**
+     * @param list the list to use as the immutable list.
+     * @param copyOrWrap COPY stores a safe, internal copy of the collection; WRAP stores a pointer to the original collection
+     */
+    public ImmutableArrayList(final ImmutableList<E> list, final Immutable copyOrWrap)
+    {
+        this(((ImmutableAbstractList<E>) list).getList(), copyOrWrap);
     }
 
     /** {@inheritDoc} */
@@ -69,5 +90,5 @@ public class ImmutableArrayList<E> extends ImmutableAbstractList<E>
         }
         return "ImmutableArrayList [" + list.toString() + "]";
     }
-    
+
 }

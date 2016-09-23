@@ -2,6 +2,8 @@ package org.opentrafficsim.core.immutablecollections;
 
 import java.util.Map;
 
+import org.opentrafficsim.core.Throw;
+
 /**
  * An abstract base class for an immutable wrapper for a Map.
  * <p>
@@ -24,13 +26,19 @@ public abstract class ImmutableAbstractMap<K, V> implements ImmutableMap<K, V>
     /** the map that is wrapped, without giving access to methods that can change it. */
     private final Map<K, V> map;
 
+    /** COPY stores a safe, internal copy of the collection; WRAP stores a pointer to the original collection. */
+    private final Immutable copyOrWrap;
+
     /**
      * Construct an abstract immutable map. Make sure that the argument is a safe copy of the map of the right type!
      * @param map a safe copy of the map to use as the immutable map
+     * @param copy indicate whether the immutable is a copy or a wrap
      */
-    protected ImmutableAbstractMap(final Map<K, V> map)
+    protected ImmutableAbstractMap(final Map<K, V> map, final boolean copy)
     {
+        Throw.whenNull(map, "the map argument cannot be null");
         this.map = map;
+        this.copyOrWrap = copy ? Immutable.COPY : Immutable.WRAP;
     }
 
     /**
@@ -91,6 +99,13 @@ public abstract class ImmutableAbstractMap<K, V> implements ImmutableMap<K, V>
     public final ImmutableCollection<V> values()
     {
         return new ImmutableHashSet<>(this.map.values());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean isWrap()
+    {
+        return this.copyOrWrap == Immutable.WRAP;
     }
 
     /** {@inheritDoc} */

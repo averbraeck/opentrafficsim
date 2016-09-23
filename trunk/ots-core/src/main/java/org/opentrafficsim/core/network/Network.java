@@ -1,10 +1,10 @@
 package org.opentrafficsim.core.network;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
 
@@ -26,16 +26,16 @@ public interface Network
 {
     /** @return String; the id */
     String getId();
-    
+
     /***************************************************************************************/
     /**************************************** NODES ****************************************/
     /***************************************************************************************/
 
     /**
-     * Provide a defensive copy of the map of node ids to nodes in the network.
-     * @return a defensive copy of the map of nodes.
+     * Provide an immutable map of node ids to nodes in the network.
+     * @return an immutable map of nodes.
      */
-    Map<String, Node> getNodeMap();
+    ImmutableMap<String, Node> getNodeMap();
 
     /**
      * Register a node in the network.
@@ -77,10 +77,10 @@ public interface Network
     /***************************************************************************************/
 
     /**
-     * Provide a defensive copy of the map of link ids to links in the network.
-     * @return the a defensive copy of the map of links.
+     * Provide an immutable map of link ids to links in the network.
+     * @return the an immutable map of links.
      */
-    Map<String, Link> getLinkMap();
+    ImmutableMap<String, Link> getLinkMap();
 
     /**
      * Register a link in the network.
@@ -140,12 +140,12 @@ public interface Network
     /***************************************************************************************/
 
     /**
-     * Return a defensive copy of the defined routes that exist in the network for the GTUType.
+     * Return an immutable map of routes that exist in the network for the GTUType.
      * @param gtuType the GTUType for which to retrieve the defined routes
-     * @return a defensive copy of the defined routes in the network for the given GTUType, or an empty Map if no routes are
-     *         defined for the given GTUType.
+     * @return an immutable map of routes in the network for the given GTUType, or an empty Map if no routes are defined for the
+     *         given GTUType.
      */
-    Map<String, Route> getDefinedRouteMap(GTUType gtuType);
+    ImmutableMap<String, Route> getDefinedRouteMap(GTUType gtuType);
 
     /**
      * Add a route to the network.
@@ -235,8 +235,8 @@ public interface Network
      *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
      */
     CompleteRoute getShortestRouteBetween(GTUType gtuType, Node nodeFrom, Node nodeTo, List<Node> nodesVia)
-        throws NetworkException;
-    
+            throws NetworkException;
+
     /***************************************************************************************/
     /*************************************** EVENTS ****************************************/
     /***************************************************************************************/
@@ -252,7 +252,7 @@ public interface Network
      * Payload: String nodeId (not an array, just a String)
      */
     EventType NODE_REMOVE_EVENT = new EventType("NODE.REMOVE");
-    
+
     /**
      * The (regular, not timed) event type for pub/sub indicating the addition of a Link. <br>
      * Payload: String linkId (not an array, just a String)
@@ -264,7 +264,7 @@ public interface Network
      * Payload: String linkId (not an array, just a String)
      */
     EventType LINK_REMOVE_EVENT = new EventType("LINK.REMOVE");
-    
+
     /**
      * The (regular, not timed) event type for pub/sub indicating the addition of a Route for a gtuType. <br>
      * Payload: [String gtuTypeId, String routeId]

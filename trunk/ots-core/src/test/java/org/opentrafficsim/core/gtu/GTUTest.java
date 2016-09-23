@@ -5,15 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.rmi.RemoteException;
-import java.util.Map;
-import java.util.Set;
 
 import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
@@ -31,6 +25,8 @@ import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
+import org.opentrafficsim.core.immutablecollections.ImmutableMap;
+import org.opentrafficsim.core.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
@@ -39,6 +35,10 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.PerceivableContext;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Test the AbstractGTU class.
@@ -237,7 +237,7 @@ class TestGTU extends AbstractGTU
 
     /** {@inheritDoc} */
     @Override
-    public Map<TYPE, RelativePosition> getRelativePositions()
+    public ImmutableMap<TYPE, RelativePosition> getRelativePositions()
     {
         return null;
     }
@@ -258,7 +258,7 @@ class TestGTU extends AbstractGTU
 
     /** {@inheritDoc} */
     @Override
-    public Set<RelativePosition> getContourPoints()
+    public ImmutableSet<RelativePosition> getContourPoints()
     {
         return null;
     }

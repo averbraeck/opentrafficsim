@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.immutablecollections;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.opentrafficsim.core.Throw;
@@ -19,7 +19,7 @@ import org.opentrafficsim.core.Throw;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <E> the type of content of this Set
  */
-public class ImmutableHashSet<E> extends ImmutableAbstractSet<E>
+public class ImmutableLinkedHashSet<E> extends ImmutableHashSet<E>
 {
     /** */
     private static final long serialVersionUID = 20160507L;
@@ -27,7 +27,7 @@ public class ImmutableHashSet<E> extends ImmutableAbstractSet<E>
     /**
      * @param collection the collection to use as the immutable set.
      */
-    public ImmutableHashSet(final Collection<E> collection)
+    public ImmutableLinkedHashSet(final Collection<E> collection)
     {
         this(collection, Immutable.COPY);
     }
@@ -36,25 +36,16 @@ public class ImmutableHashSet<E> extends ImmutableAbstractSet<E>
      * @param collection the collection to use as the immutable set.
      * @param copyOrWrap COPY stores a safe, internal copy of the collection; WRAP stores a pointer to the original collection
      */
-    public ImmutableHashSet(final Collection<E> collection, final Immutable copyOrWrap)
+    public ImmutableLinkedHashSet(final Collection<E> collection, final Immutable copyOrWrap)
     {
-        super(copyOrWrap == Immutable.COPY ? new HashSet<E>(collection) : collection, copyOrWrap == Immutable.COPY);
+        super(copyOrWrap == Immutable.COPY ? new LinkedHashSet<E>(collection) : collection, copyOrWrap == Immutable.COPY);
         Throw.whenNull(copyOrWrap, "the copyOrWrap argument should be Immutable.COPY or Immutable.WRAP");
     }
 
     /**
      * @param collection the collection to use as the immutable set.
-     * @param copy boolean; indicates whether the immutable is a copy or a wrap
      */
-    protected ImmutableHashSet(final Collection<E> collection, final boolean copy)
-    {
-        super(collection, copy);
-    }
-
-    /**
-     * @param collection the collection to use as the immutable set.
-     */
-    public ImmutableHashSet(final ImmutableCollection<E> collection)
+    public ImmutableLinkedHashSet(final ImmutableCollection<E> collection)
     {
         this(collection, Immutable.COPY);
     }
@@ -63,36 +54,21 @@ public class ImmutableHashSet<E> extends ImmutableAbstractSet<E>
      * @param collection the collection to use as the immutable set.
      * @param copyOrWrap COPY stores a safe, internal copy of the collection; WRAP stores a pointer to the original collection
      */
-    public ImmutableHashSet(final ImmutableCollection<E> collection, final Immutable copyOrWrap)
+    public ImmutableLinkedHashSet(final ImmutableCollection<E> collection, final Immutable copyOrWrap)
     {
         this(collection.toCollection(), copyOrWrap);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected final HashSet<E> getSet()
-    {
-        return (HashSet<E>) super.getSet();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final Set<E> toSet()
-    {
-        return new HashSet<E>(getSet());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public String toString()
+    public final String toString()
     {
         Set<E> set = getSet();
         if (null == set)
         {
-            return "ImmutableHashSet []";
+            return "ImmutableLinkedHashSet []";
         }
-        return "ImmutableHashSet [" + set.toString() + "]";
+        return "ImmutableLinkedHashSet [" + set.toString() + "]";
     }
 
 }

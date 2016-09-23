@@ -141,22 +141,41 @@ public interface ImmutableCollection<E> extends Iterable<E>, Serializable
     }
 
     /**
-     * Returns a modifiable copy of this immutable list.
-     * @return a modifiable copy of this immutable list.
+     * Returns a modifiable copy of this immutable collection.
+     * @return a modifiable copy of this immutable collection.
      */
     Collection<E> toCollection();
-    
+
     /**
-     * Force to redefine equals for the implementations of immutable collection classes. 
+     * Force to redefine equals for the implementations of immutable collection classes.
      * @param obj the object to compare this collection with
      * @return whether the objects are equal
      */
     boolean equals(final Object obj);
 
     /**
-     * Force to redefine hashCode for the implementations of immutable collection classes. 
+     * Force to redefine hashCode for the implementations of immutable collection classes.
      * @return the calculated hashCode
      */
     int hashCode();
+
+    /**
+     * Return whether the internal storage is a wrapped pointer to the original collection. If true, this means that anyone
+     * holding a pointer to this data structure can still change it. The users of the ImmutableCollection itself can, however,
+     * not make any changes.
+     * @return boolean; whether the internal storage is a wrapped pointer to the original collection
+     */
+    boolean isWrap();
+
+    /**
+     * Return whether the internal storage is a (shallow) copy of the original collection. If true, this means that anyone
+     * holding a pointer to the original of the data structure can not change it anymore. Nor can the users of the
+     * ImmutableCollection itself make any changes.
+     * @return boolean; whether the internal storage is a safe copy of the original collection
+     */
+    default boolean isCopy()
+    {
+        return !isWrap();
+    }
 
 }

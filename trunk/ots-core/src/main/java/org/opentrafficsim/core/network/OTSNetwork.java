@@ -12,6 +12,9 @@ import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleWeightedGraph;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.immutablecollections.Immutable;
+import org.opentrafficsim.core.immutablecollections.ImmutableHashMap;
+import org.opentrafficsim.core.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.PerceivableContext;
@@ -75,9 +78,9 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final Map<String, Node> getNodeMap()
+    public final ImmutableMap<String, Node> getNodeMap()
     {
-        return new HashMap<String, Node>(this.nodeMap);
+        return new ImmutableHashMap<String, Node>(this.nodeMap, Immutable.WRAP);
     }
 
     /** {@inheritDoc} */
@@ -136,9 +139,9 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final Map<String, Link> getLinkMap()
+    public final ImmutableMap<String, Link> getLinkMap()
     {
-        return new HashMap<String, Link>(this.linkMap);
+        return new ImmutableHashMap<String, Link>(this.linkMap, Immutable.WRAP);
     }
 
     /** {@inheritDoc} */
@@ -230,14 +233,14 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final Map<String, Route> getDefinedRouteMap(final GTUType gtuType)
+    public final ImmutableMap<String, Route> getDefinedRouteMap(final GTUType gtuType)
     {
         Map<String, Route> routes = new HashMap<>();
         if (this.routeMap.containsKey(gtuType))
         {
             routes.putAll(this.routeMap.get(gtuType));
         }
-        return routes;
+        return new ImmutableHashMap<String, Route>(routes, Immutable.WRAP);
     }
 
     /** {@inheritDoc} */
