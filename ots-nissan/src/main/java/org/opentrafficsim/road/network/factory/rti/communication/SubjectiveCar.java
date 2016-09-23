@@ -1,16 +1,10 @@
 package org.opentrafficsim.road.network.factory.rti.communication;
 
 import java.rmi.RemoteException;
-import java.util.Map;
-import java.util.Set;
 
 import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 import javax.vecmath.Point3d;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.language.d3.BoundingBox;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
@@ -22,7 +16,13 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.immutablecollections.ImmutableMap;
+import org.opentrafficsim.core.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.network.OTSNetwork;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.language.d3.BoundingBox;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /** */
 public class SubjectiveCar extends AbstractGTU
@@ -121,7 +121,7 @@ public class SubjectiveCar extends AbstractGTU
      * {@inheritDoc}
      */
     @Override
-    public final Map<TYPE, RelativePosition> getRelativePositions()
+    public final ImmutableMap<TYPE, RelativePosition> getRelativePositions()
     {
         return null;
     }
@@ -180,7 +180,7 @@ public class SubjectiveCar extends AbstractGTU
 
     /** {@inheritDoc} */
     @Override
-    public final Set<RelativePosition> getContourPoints()
+    public final ImmutableSet<RelativePosition> getContourPoints()
     {
         return null;
     }

@@ -9,10 +9,6 @@ import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 import javax.vecmath.Point3d;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
-import nl.tudelft.simulation.language.d3.BoundingBox;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -27,6 +23,11 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.immutablecollections.Immutable;
+import org.opentrafficsim.core.immutablecollections.ImmutableHashMap;
+import org.opentrafficsim.core.immutablecollections.ImmutableHashSet;
+import org.opentrafficsim.core.immutablecollections.ImmutableMap;
+import org.opentrafficsim.core.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -35,6 +36,10 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+import nl.tudelft.simulation.language.d3.BoundingBox;
 
 /**
  * <p>
@@ -199,9 +204,9 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public final Map<TYPE, RelativePosition> getRelativePositions()
+    public final ImmutableMap<TYPE, RelativePosition> getRelativePositions()
     {
-        return RELATIVE_POSITIONS;
+        return new ImmutableHashMap<>(RELATIVE_POSITIONS, Immutable.WRAP);
     }
 
     /** {@inheritDoc} */
@@ -355,9 +360,9 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public final Set<RelativePosition> getContourPoints()
+    public final ImmutableSet<RelativePosition> getContourPoints()
     {
-        return CONTOUR_POINTS;
+        return new ImmutableHashSet<>(CONTOUR_POINTS, Immutable.WRAP);
     }
 
     /** {@inheritDoc} */

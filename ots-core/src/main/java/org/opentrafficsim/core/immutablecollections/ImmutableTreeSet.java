@@ -1,10 +1,11 @@
 package org.opentrafficsim.core.immutablecollections;
 
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.NavigableSet;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import org.opentrafficsim.core.Throw;
 
 /**
  * An immutable wrapper for a TreeSet.
@@ -25,19 +26,38 @@ public class ImmutableTreeSet<E> extends ImmutableAbstractSet<E> implements Immu
     private static final long serialVersionUID = 20160507L;
 
     /**
-     * @param sortedSet the set to use as the immutable set.
+     * @param sortedSet the collection to use as the immutable set.
      */
     public ImmutableTreeSet(final SortedSet<E> sortedSet)
     {
-        super(new TreeSet<E>(sortedSet));
+        this(sortedSet, Immutable.COPY);
     }
 
     /**
-     * @param sortedSet the set to use as the immutable set.
+     * @param sortedSet the collection to use as the immutable set.
+     * @param copyOrWrap COPY stores a safe, internal copy of the collection; WRAP stores a pointer to the original collection
      */
-    public ImmutableTreeSet(final ImmutableSortedSet<E> sortedSet)
+    public ImmutableTreeSet(final SortedSet<E> sortedSet, final Immutable copyOrWrap)
     {
-        this(sortedSet.toSet());
+        super(copyOrWrap == Immutable.COPY ? new TreeSet<E>(sortedSet) : sortedSet, copyOrWrap == Immutable.COPY);
+        Throw.whenNull(copyOrWrap, "the copyOrWrap argument should be Immutable.COPY or Immutable.WRAP");
+    }
+
+    /**
+     * @param immutableSortedSet the collection to use as the immutable set.
+     */
+    public ImmutableTreeSet(final ImmutableSortedSet<E> immutableSortedSet)
+    {
+        this(immutableSortedSet, Immutable.COPY);
+    }
+
+    /**
+     * @param immutableSortedSet the collection to use as the immutable set.
+     * @param copyOrWrap COPY stores a safe, internal copy of the collection; WRAP stores a pointer to the original collection
+     */
+    public ImmutableTreeSet(final ImmutableSortedSet<E> immutableSortedSet, final Immutable copyOrWrap)
+    {
+        this(immutableSortedSet.toSet(), copyOrWrap);
     }
 
     /** {@inheritDoc} */

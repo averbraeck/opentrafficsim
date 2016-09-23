@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Vector;
 
+import org.opentrafficsim.core.Throw;
+
 /**
  * An immutable wrapper for a Vector.
  * <p>
@@ -25,19 +27,38 @@ public class ImmutableVector<E> extends ImmutableAbstractList<E>
     private static final long serialVersionUID = 20160507L;
 
     /**
-     * @param list the list to use as the content of the immutable vector.
+     * @param list the list to use as the immutable list.
      */
     public ImmutableVector(final List<E> list)
     {
-        super(new Vector<E>(list));
+        this(list, Immutable.COPY);
     }
 
     /**
-     * @param list the list to use as the content of the immutable vector.
+     * @param list the list to use as the immutable vector.
+     * @param copyOrWrap COPY stores a safe, internal copy of the collection; WRAP stores a pointer to the original collection
+     */
+    public ImmutableVector(final List<E> list, final Immutable copyOrWrap)
+    {
+        super(copyOrWrap == Immutable.COPY ? new Vector<E>(list) : list, copyOrWrap == Immutable.COPY);
+        Throw.whenNull(copyOrWrap, "the copyOrWrap argument should be Immutable.COPY or Immutable.WRAP");
+    }
+
+    /**
+     * @param list the list to use as the immutable list.
      */
     public ImmutableVector(final ImmutableList<E> list)
     {
-        this(list.toList());
+        this(list, Immutable.COPY);
+    }
+
+    /**
+     * @param list the list to use as the immutable list.
+     * @param copyOrWrap COPY stores a safe, internal copy of the collection; WRAP stores a pointer to the original collection
+     */
+    public ImmutableVector(final ImmutableList<E> list, final Immutable copyOrWrap)
+    {
+        this(((ImmutableAbstractList<E>) list).getList(), copyOrWrap);
     }
 
     /** {@inheritDoc} */

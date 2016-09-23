@@ -10,10 +10,6 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.language.reflection.ClassUtil;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -27,12 +23,20 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.immutablecollections.Immutable;
+import org.opentrafficsim.core.immutablecollections.ImmutableHashSet;
+import org.opentrafficsim.core.immutablecollections.ImmutableLinkedHashMap;
+import org.opentrafficsim.core.immutablecollections.ImmutableMap;
+import org.opentrafficsim.core.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 /**
  * Augments the AbstractLaneBasedIndividualGTU with a LaneBasedIndividualCarBuilder and animation support
@@ -73,8 +77,8 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualGTU(final String id, final GTUType gtuType, final Length length, final Length width,
-        final Speed maximumSpeed, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network)
-        throws NamingException, GTUException
+            final Speed maximumSpeed, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network)
+            throws NamingException, GTUException
     {
         super(id, gtuType, length, width, maximumSpeed, simulator, network);
 
@@ -83,21 +87,21 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         // of the Car away from the reference point in the positive (driving) X-direction.
         Length dx2 = new Length(getLength().getSI() / 2.0, LengthUnit.METER);
         Length dy2 = new Length(getWidth().getSI() / 2.0, LengthUnit.METER);
-        this.relativePositions.put(RelativePosition.FRONT, new RelativePosition(dx2, Length.ZERO, Length.ZERO,
-            RelativePosition.FRONT));
-        this.relativePositions.put(RelativePosition.REAR, new RelativePosition(dx2.multiplyBy(-1.0), Length.ZERO,
-            Length.ZERO, RelativePosition.REAR));
+        this.relativePositions.put(RelativePosition.FRONT,
+                new RelativePosition(dx2, Length.ZERO, Length.ZERO, RelativePosition.FRONT));
+        this.relativePositions.put(RelativePosition.REAR,
+                new RelativePosition(dx2.multiplyBy(-1.0), Length.ZERO, Length.ZERO, RelativePosition.REAR));
         this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
-        this.relativePositions.put(RelativePosition.CENTER, new RelativePosition(Length.ZERO, Length.ZERO, Length.ZERO,
-            RelativePosition.CENTER));
+        this.relativePositions.put(RelativePosition.CENTER,
+                new RelativePosition(Length.ZERO, Length.ZERO, Length.ZERO, RelativePosition.CENTER));
 
         // Contour positions. For now, a rectangle with the four corners.
         for (int i = -1; i <= 1; i += 2)
         {
             for (int j = -1; j <= 1; j += 2)
             {
-                this.contourPoints.add(new RelativePosition(dx2.multiplyBy(i), dy2.multiplyBy(j), Length.ZERO,
-                    RelativePosition.CONTOUR));
+                this.contourPoints
+                        .add(new RelativePosition(dx2.multiplyBy(i), dy2.multiplyBy(j), Length.ZERO, RelativePosition.CONTOUR));
             }
         }
 
@@ -118,9 +122,9 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      * @throws OTSGeometryException when the initial path is wrong
      */
     public final void initWithAnimation(final LaneBasedStrategicalPlanner strategicalPlanner,
-        final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
-        final Class<? extends Renderable2D> animationClass, final GTUColorer gtuColorer) throws NetworkException,
-        SimRuntimeException, GTUException, OTSGeometryException
+            final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
+            final Class<? extends Renderable2D> animationClass, final GTUColorer gtuColorer)
+            throws NetworkException, SimRuntimeException, GTUException, OTSGeometryException
     {
         super.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
 
@@ -133,18 +137,18 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
 
                 if (null == gtuColorer)
                 {
-                    constructor = ClassUtil.resolveConstructor(animationClass, new Object[] {this, getSimulator()});
+                    constructor = ClassUtil.resolveConstructor(animationClass, new Object[] { this, getSimulator() });
                     this.animation = (Renderable2D) constructor.newInstance(this, getSimulator());
                 }
                 else
                 {
                     constructor =
-                        ClassUtil.resolveConstructor(animationClass, new Object[] {this, getSimulator(), gtuColorer});
+                            ClassUtil.resolveConstructor(animationClass, new Object[] { this, getSimulator(), gtuColorer });
                     this.animation = (Renderable2D) constructor.newInstance(this, getSimulator(), gtuColorer);
                 }
             }
             catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
-                | IllegalArgumentException | InvocationTargetException exception)
+                    | IllegalArgumentException | InvocationTargetException exception)
             {
                 throw new GTUException("Could not instantiate car animation of type " + animationClass.getName(), exception);
             }
@@ -174,16 +178,16 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
 
     /** {@inheritDoc} */
     @Override
-    public final Map<TYPE, RelativePosition> getRelativePositions()
+    public final ImmutableMap<TYPE, RelativePosition> getRelativePositions()
     {
-        return this.relativePositions;
+        return new ImmutableLinkedHashMap<>(this.relativePositions, Immutable.WRAP);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Set<RelativePosition> getContourPoints()
+    public final ImmutableSet<RelativePosition> getContourPoints()
     {
-        return this.contourPoints;
+        return new ImmutableHashSet<>(this.contourPoints, Immutable.WRAP);
     }
 
     /** {@inheritDoc} */
@@ -302,7 +306,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
          * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder setInitialLongitudinalPositions(
-            final Set<DirectedLanePosition> initialLongitudinalPositions)
+                final Set<DirectedLanePosition> initialLongitudinalPositions)
         {
             this.initialLongitudinalPositions = initialLongitudinalPositions;
             return this;
@@ -482,24 +486,21 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
          * @return the built Car with the set properties
          * @throws Exception when not all required values have been set
          */
-        public final
-            LaneBasedIndividualGTU
-            build(
+        public final LaneBasedIndividualGTU build(
                 final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> laneBasedStrategicalPlannerFactory)
                 throws Exception
         {
             if (null == this.id || null == this.gtuType || null == this.initialLongitudinalPositions
-                || null == this.initialSpeed || null == this.length || null == this.width || null == this.maximumSpeed
-                || null == this.simulator || null == this.network)
+                    || null == this.initialSpeed || null == this.length || null == this.width || null == this.maximumSpeed
+                    || null == this.simulator || null == this.network)
             {
                 // TODO Should throw a more specific Exception type
                 throw new GTUException("factory settings incomplete");
             }
-            LaneBasedIndividualGTU gtu =
-                new LaneBasedIndividualGTU(this.id, this.gtuType, this.length, this.width, this.maximumSpeed,
-                    this.simulator, this.network);
+            LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU(this.id, this.gtuType, this.length, this.width,
+                    this.maximumSpeed, this.simulator, this.network);
             gtu.initWithAnimation(laneBasedStrategicalPlannerFactory.create(gtu), this.initialLongitudinalPositions,
-                this.initialSpeed, this.animationClass, this.gtuColorer);
+                    this.initialSpeed, this.animationClass, this.gtuColorer);
             return gtu;
 
         }
@@ -509,9 +510,9 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         public final String toString()
         {
             return "LaneBasedIndividualCarBuilder [id=" + this.id + ", gtuType=" + this.gtuType
-                + ", initialLongitudinalPositions=" + this.initialLongitudinalPositions + ", initialSpeed="
-                + this.initialSpeed + ", length=" + this.length + ", width=" + this.width + ", maximumSpeed="
-                + this.maximumSpeed + ", strategicalPlanner=" + "]";
+                    + ", initialLongitudinalPositions=" + this.initialLongitudinalPositions + ", initialSpeed="
+                    + this.initialSpeed + ", length=" + this.length + ", width=" + this.width + ", maximumSpeed="
+                    + this.maximumSpeed + ", strategicalPlanner=" + "]";
         }
 
     }

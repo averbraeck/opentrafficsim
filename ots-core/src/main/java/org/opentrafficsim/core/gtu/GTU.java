@@ -2,8 +2,6 @@ package org.opentrafficsim.core.gtu;
 
 import java.awt.Color;
 import java.io.Serializable;
-import java.util.Map;
-import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -13,6 +11,8 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacter
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
+import org.opentrafficsim.core.immutablecollections.ImmutableMap;
+import org.opentrafficsim.core.immutablecollections.ImmutableSet;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.event.EventProducerInterface;
@@ -77,10 +77,10 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface
     RelativePosition getCenter();
 
     /** @return the contour points of the GTU. */
-    Set<RelativePosition> getContourPoints();
+    ImmutableSet<RelativePosition> getContourPoints();
 
     /** @return the positions for this GTU, but not the contour points. */
-    Map<RelativePosition.TYPE, RelativePosition> getRelativePositions();
+    ImmutableMap<RelativePosition.TYPE, RelativePosition> getRelativePositions();
 
     /** @return the current speed of the GTU, along the direction of movement. */
     Speed getSpeed();

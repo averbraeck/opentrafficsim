@@ -1,10 +1,11 @@
 package org.opentrafficsim.core.immutablecollections;
 
 import java.util.Collection;
-import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+
+import org.opentrafficsim.core.Throw;
 
 /**
  * An abstract base class for an immutable wrapper for a Set.
@@ -25,15 +26,21 @@ public abstract class ImmutableAbstractSet<E> implements ImmutableSet<E>
     private static final long serialVersionUID = 20160507L;
 
     /** the set that is wrapped, without giving access to methods that can change it. */
-    private final Set<E> set;
+    private final Collection<E> collection;
+
+    /** COPY stores a safe, internal copy of the collection; WRAP stores a pointer to the original collection. */
+    private final Immutable copyOrWrap;
 
     /**
      * Construct an abstract immutable set. Make sure that the argument is a safe copy of the set of the right type!
-     * @param set a safe copy of the set to use as the immutable set
+     * @param collection a safe copy of the collection to use as the immutable set
+     * @param copy indicate whether the immutable is a copy or a wrap
      */
-    protected ImmutableAbstractSet(final Set<E> set)
+    protected ImmutableAbstractSet(final Collection<E> collection, final boolean copy)
     {
-        this.set = set;
+        Throw.whenNull(collection, "the collection argument cannot be null");
+        this.collection = collection;
+        this.copyOrWrap = copy ? Immutable.COPY : Immutable.WRAP;
     }
 
     /**
@@ -49,9 +56,9 @@ public abstract class ImmutableAbstractSet<E> implements ImmutableSet<E>
      * @return the set of the right type for use a subclass
      */
     @SuppressWarnings("checkstyle:designforextension")
-    protected Set<E> getSet()
+    protected Collection<E> getSet()
     {
-        return this.set;
+        return this.collection;
     }
 
     /** {@inheritDoc} */
@@ -65,84 +72,91 @@ public abstract class ImmutableAbstractSet<E> implements ImmutableSet<E>
     @Override
     public final int size()
     {
-        return this.set.size();
+        return this.collection.size();
     }
 
     /** {@inheritDoc} */
     @Override
     public final boolean isEmpty()
     {
-        return this.set.isEmpty();
+        return this.collection.isEmpty();
     }
 
     /** {@inheritDoc} */
     @Override
     public final boolean contains(final Object o)
     {
-        return this.set.contains(o);
+        return this.collection.contains(o);
     }
 
     /** {@inheritDoc} */
     @Override
     public final Object[] toArray()
     {
-        return this.set.toArray();
+        return this.collection.toArray();
     }
 
     /** {@inheritDoc} */
     @Override
     public final <T> T[] toArray(final T[] a)
     {
-        return this.set.toArray(a);
+        return this.collection.toArray(a);
     }
 
     /** {@inheritDoc} */
     @Override
     public final ImmutableIterator<E> iterator()
     {
-        return new ImmutableIterator<E>(this.set.iterator());
+        return new ImmutableIterator<E>(this.collection.iterator());
     }
 
     /** {@inheritDoc} */
     @Override
     public final void forEach(final Consumer<? super E> action)
     {
-        this.set.forEach(action);
+        this.collection.forEach(action);
     }
 
     /** {@inheritDoc} */
     @Override
     public final Spliterator<E> spliterator()
     {
-        return this.set.spliterator();
+        return this.collection.spliterator();
     }
 
     /** {@inheritDoc} */
     @Override
     public final boolean containsAll(final Collection<?> c)
     {
-        return this.set.containsAll(c);
+        return this.collection.containsAll(c);
     }
 
     /** {@inheritDoc} */
     @Override
     public final boolean containsAll(final ImmutableCollection<?> c)
     {
-        return this.set.containsAll(c.toCollection());
+        return this.collection.containsAll(c.toCollection());
     }
 
     /** {@inheritDoc} */
     @Override
     public final Stream<E> stream()
     {
-        return this.set.stream();
+        return this.collection.stream();
     }
 
     /** {@inheritDoc} */
     @Override
     public final Stream<E> parallelStream()
     {
-        return this.set.parallelStream();
+        return this.collection.parallelStream();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean isWrap()
+    {
+        return this.copyOrWrap == Immutable.WRAP;
     }
 
     /** {@inheritDoc} */
@@ -152,7 +166,7 @@ public abstract class ImmutableAbstractSet<E> implements ImmutableSet<E>
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.set == null) ? 0 : this.set.hashCode());
+        result = prime * result + ((this.collection == null) ? 0 : this.collection.hashCode());
         return result;
     }
 
@@ -168,12 +182,12 @@ public abstract class ImmutableAbstractSet<E> implements ImmutableSet<E>
         if (getClass() != obj.getClass())
             return false;
         ImmutableAbstractSet<?> other = (ImmutableAbstractSet<?>) obj;
-        if (this.set == null)
+        if (this.collection == null)
         {
-            if (other.set != null)
+            if (other.collection != null)
                 return false;
         }
-        else if (!this.set.equals(other.set))
+        else if (!this.collection.equals(other.collection))
             return false;
         return true;
     }
@@ -183,6 +197,6 @@ public abstract class ImmutableAbstractSet<E> implements ImmutableSet<E>
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "Immutable[" + this.set.toString() + "]";
+        return "Immutable[" + this.collection.toString() + "]";
     }
 }

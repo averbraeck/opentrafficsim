@@ -19,7 +19,7 @@ import org.opentrafficsim.core.Throw;
  * @param <K> the key type of content of this Map
  * @param <V> the value type of content of this Map
  */
-public class ImmutableHashMap<K, V> extends ImmutableAbstractMap<K, V>
+public class ImmutableLinkedHashMap<K, V> extends ImmutableHashMap<K, V>
 {
     /** */
     private static final long serialVersionUID = 20160507L;
@@ -27,7 +27,7 @@ public class ImmutableHashMap<K, V> extends ImmutableAbstractMap<K, V>
     /**
      * @param map the map to use as the immutable map.
      */
-    public ImmutableHashMap(final Map<K, V> map)
+    public ImmutableLinkedHashMap(final Map<K, V> map)
     {
         this(map, Immutable.COPY);
     }
@@ -36,25 +36,16 @@ public class ImmutableHashMap<K, V> extends ImmutableAbstractMap<K, V>
      * @param map the map to use as the immutable map.
      * @param copyOrWrap COPY stores a safe, internal copy of the collection; WRAP stores a pointer to the original collection
      */
-    public ImmutableHashMap(final Map<K, V> map, final Immutable copyOrWrap)
+    public ImmutableLinkedHashMap(final Map<K, V> map, final Immutable copyOrWrap)
     {
         super(copyOrWrap == Immutable.COPY ? new HashMap<K, V>(map) : map, copyOrWrap == Immutable.COPY);
         Throw.whenNull(copyOrWrap, "the copyOrWrap argument should be Immutable.COPY or Immutable.WRAP");
     }
 
     /**
-     * @param map the map to use as the immutable map.
-     * @param copy boolean; indicates whether the immutable is a copy or a wrap
-     */
-    protected ImmutableHashMap(final Map<K, V> map, final boolean copy)
-    {
-        super(map, copy);
-    }
-
-    /**
      * @param immutableMap the map to use as the immutable map.
      */
-    public ImmutableHashMap(final ImmutableHashMap<K, V> immutableMap)
+    public ImmutableLinkedHashMap(final ImmutableHashMap<K, V> immutableMap)
     {
         this(immutableMap, Immutable.COPY);
     }
@@ -63,43 +54,29 @@ public class ImmutableHashMap<K, V> extends ImmutableAbstractMap<K, V>
      * @param immutableMap the map to use as the immutable map.
      * @param copyOrWrap COPY stores a safe, internal copy of the collection; WRAP stores a pointer to the original collection
      */
-    public ImmutableHashMap(final ImmutableHashMap<K, V> immutableMap, final Immutable copyOrWrap)
+    public ImmutableLinkedHashMap(final ImmutableHashMap<K, V> immutableMap, final Immutable copyOrWrap)
     {
         this(((ImmutableAbstractMap<K, V>) immutableMap).getMap(), copyOrWrap);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected final HashMap<K, V> getMap()
+    /**
+     * @param immutableMap the set to use as the immutable set.
+     */
+    public ImmutableLinkedHashMap(final ImmutableLinkedHashMap<K, V> immutableMap)
     {
-        return (HashMap<K, V>) super.getMap();
+        this(immutableMap.toMap());
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Map<K, V> toMap()
-    {
-        return new HashMap<K, V>(getMap());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final ImmutableSet<K> keySet()
-    {
-        return new ImmutableHashSet<K>(getMap().keySet());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public String toString()
+    public final String toString()
     {
         Map<K, V> map = getMap();
         if (null == map)
         {
-            return "ImmutableHashMap []";
+            return "ImmutableLinkedHashMap []";
         }
-        return "ImmutableHashMap [" + map.toString() + "]";
+        return "ImmutableLinkedHashMap [" + map.toString() + "]";
     }
 
 }
