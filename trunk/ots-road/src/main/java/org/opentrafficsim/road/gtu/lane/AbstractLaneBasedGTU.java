@@ -166,8 +166,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
         // TODO: LaneBasedGTU should KNOW its reference lane!
         Lane referenceLane = getLanes().keySet().iterator().next();
-        fireTimedEvent(LaneBasedGTU.INIT_EVENT, new Object[] { getId(), initialLocation, getLength(), getWidth(),
-                referenceLane, position(referenceLane, getReference()) }, getSimulator().getSimulatorTime());
+        fireTimedEvent(LaneBasedGTU.LANEBASED_INIT_EVENT, new Object[] { getId(), initialLocation, getLength(), getWidth(),
+                getBaseColor(), referenceLane, position(referenceLane, getReference()) }, getSimulator().getSimulatorTime());
 
     }
 
