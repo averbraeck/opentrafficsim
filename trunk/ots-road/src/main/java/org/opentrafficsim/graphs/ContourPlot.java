@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -21,10 +20,6 @@ import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingConstants;
-
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.TimedEvent;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
@@ -52,6 +47,10 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.TimedEvent;
 
 /**
  * Common code for a contour plot. <br>
@@ -105,9 +104,6 @@ public abstract class ContourPlot extends AbstractOTSPlot
     /** Initial upper bound for the time scale. */
     protected static final Time INITIALUPPERTIMEBOUND = new Time(300, TimeUnit.SECOND);
 
-    /** The series of Lanes that provide the data for this TrajectoryPlot. */
-    private final ArrayList<Lane> path;
-
     /** The cumulative lengths of the elements of path. */
     private final LengthVector cumulativeLengths;
 
@@ -128,8 +124,7 @@ public abstract class ContourPlot extends AbstractOTSPlot
             final double yellowValue, final double greenValue, final String valueFormat, final String legendFormat,
             final double legendStep) throws OTSSimulationException
     {
-        super(caption);
-        this.path = new ArrayList<Lane>(path); // make a copy
+        super(caption, path);
         double[] endLengths = new double[path.size()];
         double cumulativeLength = 0;
         LengthVector lengths = null;
@@ -201,7 +196,7 @@ public abstract class ContourPlot extends AbstractOTSPlot
             boolean interest = false;
             for (Lane lane : gtu.getLanes().keySet())
             {
-                if (this.path.contains(lane))
+                if (getPath().contains(lane))
                 {
                     interest = true;
                 }
@@ -600,7 +595,7 @@ public abstract class ContourPlot extends AbstractOTSPlot
         // + " position of rear on lane " + lane + " is " + car.position(lane, car.getRear()));
         // Convert the position of the car to a position on path.
         double lengthOffset = 0;
-        int index = this.path.indexOf(lane);
+        int index = getPath().indexOf(lane);
         if (index >= 0)
         {
             if (index > 0)

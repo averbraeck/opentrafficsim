@@ -41,6 +41,13 @@ public class AccelerationContourPlot extends ContourPlot
                 "acceleration %.1f m/s/s", "%.1f m/s/s", 1d);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final GraphType getGraphType()
+    {
+        return GraphType.ACCELERATION_CONTOUR;
+    }
+
     /** Storage for the total time spent in each cell. */
     private ArrayList<MutableTimeVector> cumulativeTimes;
 

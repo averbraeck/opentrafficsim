@@ -3,17 +3,23 @@ package org.opentrafficsim.graphs;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
 
 import javax.swing.JFrame;
 import javax.swing.event.EventListenerList;
-
-import nl.tudelft.simulation.event.EventType;
 
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
+import org.opentrafficsim.core.immutablecollections.Immutable;
+import org.opentrafficsim.core.immutablecollections.ImmutableArrayList;
+import org.opentrafficsim.core.immutablecollections.ImmutableList;
+import org.opentrafficsim.road.network.lane.Lane;
+
+import nl.tudelft.simulation.event.EventType;
 
 /**
  * Basics of all plots in the Open Traffic Simulator.
@@ -26,24 +32,27 @@ import org.jfree.data.general.DatasetChangeListener;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class AbstractOTSPlot extends JFrame implements Dataset, ActionListener, MultipleViewerChart,
-        LaneBasedGTUSampler
+public abstract class AbstractOTSPlot extends JFrame
+        implements Dataset, ActionListener, MultipleViewerChart, LaneBasedGTUSampler
 {
 
     /** */
     private static final long serialVersionUID = 20160916L;
-    
+
     /**
      * The (regular, not timed) event type for pub/sub indicating the addition of a graph. <br>
      * Payload: String graph caption (not an array, just a String)
      */
-    EventType GRAPH_ADD_EVENT = new EventType("GRAPH.ADD");
+    public static final EventType GRAPH_ADD_EVENT = new EventType("GRAPH.ADD");
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the removal of a graph. <br>
      * Payload: String Graph caption (not an array, just a String)
      */
-    EventType GRAPH_REMOVE_EVENT = new EventType("GRAPH.REMOVE");
+    public static final EventType GRAPH_REMOVE_EVENT = new EventType("GRAPH.REMOVE");
+
+    /** unique ID of the chart. */
+    private final UUID uniqueId = UUID.randomUUID();
 
     /** Name of the chart. */
     private final String caption;
@@ -53,21 +62,26 @@ public abstract class AbstractOTSPlot extends JFrame implements Dataset, ActionL
 
     /** The graph. */
     private JFreeChart chart;
+    
+    /** The series of Lanes that provide the data for this TrajectoryPlot. */
+    private final ImmutableList<Lane> path;
 
     /**
      * Construct a new AbstractOTSPlot.
      * @param caption String; the caption of the graph window
+     * @param path List&lt;Lane&gt; the lanes for which the plot is made  
      */
-    public AbstractOTSPlot(final String caption)
+    public AbstractOTSPlot(final String caption, final List<Lane> path)
     {
         this.caption = caption;
+        this.path = new ImmutableArrayList<Lane>(path, Immutable.COPY);
     }
-    
+
     /**
      * Save the chart.
      * @param chart JFreeChart; the chart
      */
-    protected void setChart(final JFreeChart chart)
+    protected final void setChart(final JFreeChart chart)
     {
         this.chart = chart;
     }
@@ -138,22 +152,41 @@ public abstract class AbstractOTSPlot extends JFrame implements Dataset, ActionL
     {
         return this.caption;
     }
+    
+    /**
+     * Provide a unique ID for this graph. In this case based on a generated UUID.
+     * @return String; a unique ID. 
+     */
+    public final String getId()
+    {
+        return this.uniqueId.toString();
+    }
+    
+    /**
+     * @return path List<Lane> the path
+     */
+    public final ImmutableList<Lane> getPath()
+    {
+        return this.path;
+    }
+
+    /**
+     * Return the graph type.
+     * @return GraphType: the graph type.
+     */
+    public abstract GraphType getGraphType();
 
     /**
      * Make a snapshot of the graph and return it encoded as a PNG image.
+     * @param width int; the width of the PNG in pixels
+     * @param height int; the height of the PNG in pixels
      * @return byte[]; the PNG encoded graph
+     * @throws IOException when there are IO
      */
-    public byte[] generatePNG()
+    public final byte[] generatePNG(final int width, final int height) throws IOException
     {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try
-        {
-            ChartUtilities.writeChartAsPNG(result, this.chart, 400, 300);
-        }
-        catch (IOException exception)
-        {
-            exception.printStackTrace();
-        }
+        ChartUtilities.writeChartAsPNG(result, this.chart, width, height);
         return result.toByteArray();
     }
 

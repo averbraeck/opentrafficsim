@@ -40,6 +40,13 @@ public class DensityContourPlot extends ContourPlot
             "density %.1f veh/km", "%.1f veh/km", 20d);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final GraphType getGraphType()
+    {
+        return GraphType.DENSITY_CONTOUR;
+    }
+
     /** Storage for the total time spent in each cell. */
     private ArrayList<MutableDoubleVector.Abs<TimeUnit>> cumulativeTimes;
 

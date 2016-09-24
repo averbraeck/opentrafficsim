@@ -42,6 +42,13 @@ public class SpeedContourPlot extends ContourPlot
                 "speed %.1f km/h", "%.1f km/h", 20d);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final GraphType getGraphType()
+    {
+        return GraphType.SPEED_CONTOUR;
+    }
+
     /** Storage for the total time spent in each cell. */
     private ArrayList<MutableDoubleVector.Abs<TimeUnit>> cumulativeTimes;
 
