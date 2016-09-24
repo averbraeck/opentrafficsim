@@ -251,6 +251,8 @@ public class GraphTransceiver extends AbstractTransceiver
             newMessage.add(lane.getParentLink().getId());
             newMessage.add(lane.getId());
         }
+        newMessage.add(interval.si);
+        
         getConnector().postIMBMessage("Graph", IMBEventType.NEW, newMessage.toArray());
 
         try
