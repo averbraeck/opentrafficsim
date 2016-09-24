@@ -28,20 +28,20 @@ public class TByteBuffer {
      * @param aLength length in bytes of the buffer to create
      */
     public TByteBuffer(int aLength) {
-        fBuffer = new byte[aLength];
+        this.fBuffer = new byte[aLength];
     }
 
     /**Constructor: create empty byte buffer
      */
     public TByteBuffer() {
-        fBuffer = new byte[0];
+        this.fBuffer = new byte[0];
     }
 
     /**Constructor: create byte buffer as copy of the specified byte array
      * @param aBuffer
      */
     public TByteBuffer(byte[] aBuffer) {
-        fBuffer = aBuffer;
+        this.fBuffer = aBuffer;
     }
 
     private byte[] fBuffer = null;
@@ -53,24 +53,24 @@ public class TByteBuffer {
      * @return length of the allocated buffer in bytes
      */
     public int getLength() {
-        return fBuffer.length;
+        return this.fBuffer.length;
     }
 
     /**adjust the length of the buffer retaining buffer contents (less when new size is less)
      * @param aLength new size of buffer in bytes
      */
     private void setLength(int aLength) {
-        if (aLength != fBuffer.length) {
+        if (aLength != this.fBuffer.length) {
             // create new buffer
             byte[] NewBuffer = new byte[aLength];
             // check how much data to copy from old buffer
-            int len = fBuffer.length;
+            int len = this.fBuffer.length;
             if (len > aLength)
                 len = aLength;
             // copy old data to new buffer
             for (int i = 0; i < len; i++)
-                NewBuffer[i] = fBuffer[i];
-            fBuffer = NewBuffer;
+                NewBuffer[i] = this.fBuffer[i];
+            this.fBuffer = NewBuffer;
         }
     }
     
@@ -92,56 +92,56 @@ public class TByteBuffer {
      * @return reference to internal byte buffer
      */
     public byte[] getBuffer() {
-        return fBuffer;
+        return this.fBuffer;
     }
 
     /**Clear the byte buffer to zero length and reset all cursors*/
     public void clear() {
         setLength(0);
-        fReadCursor = 0;
-        fPrepareCursor = 0;
-        fWriteCursor = 0;
+        this.fReadCursor = 0;
+        this.fPrepareCursor = 0;
+        this.fWriteCursor = 0;
     }
 
     /**Clear the byte buffer to the specified length and reset all cursors.*/
     public void clear(int aLength) {
         setLength(aLength);
-        fReadCursor = 0;
-        fWriteCursor = 0;
-        fPrepareCursor = 0;
+        this.fReadCursor = 0;
+        this.fWriteCursor = 0;
+        this.fPrepareCursor = 0;
     }
 
     /**Check if the byte buffer is empty
      * @return true if the byte buffer is empty
      */
     public boolean isEmpty() {
-        return fBuffer.length == 0;
+        return this.fBuffer.length == 0;
     }
 
     /**Retrieve the current reading (cursor) position
      * @return cursor position for reading: index into byte buffer in bytes starting at 0
      */
     public int getReadCursor() {
-        return fReadCursor;
+        return this.fReadCursor;
     }
 
     /**Retrieve the current writing (cursor) position
      * @return cursor position for writing: index into byte buffer in bytes starting at 0
      */
     public int getWriteCursor() {
-        return fWriteCursor;
+        return this.fWriteCursor;
     }
 
     /**Reset the reading cursor*/
     public void  ReadStart() {
-        fReadCursor = 0;
+        this.fReadCursor = 0;
     }
 
     /**Retrieve the bytes that still can be read from the byte buffer
      * @return bytes available for reading
      */
     public int getReadAvailable() {
-        return fBuffer.length - fReadCursor;
+        return this.fBuffer.length - this.fReadCursor;
     }
 
     /**Read a boolean from the byte buffer
@@ -157,7 +157,7 @@ public class TByteBuffer {
      */
     public boolean readBoolean(boolean aDefaultValue) {
         if (SIZE_OF_BOOLEAN <= getReadAvailable())
-            return fBuffer[fReadCursor++] != 0;
+            return this.fBuffer[this.fReadCursor++] != 0;
         else
             return aDefaultValue;
     }
@@ -175,7 +175,7 @@ public class TByteBuffer {
      */
     public byte readByte(byte aDefaultValue) {
         if (SIZE_OF_BYTE <= getReadAvailable())
-            return fBuffer[fReadCursor++];
+            return this.fBuffer[this.fReadCursor++];
         else
             return aDefaultValue;
     }
@@ -193,11 +193,11 @@ public class TByteBuffer {
      */
     public int readInt32(int aDefaultValue) {
         if (SIZE_OF_INT32 <= getReadAvailable()) {
-            fReadCursor += SIZE_OF_INT32;
-            return (int)(fBuffer[fReadCursor - 4] & 0xFF) 
-                    + ((int)(fBuffer[fReadCursor - 3] & 0xFF) << 8)
-                    + ((int)(fBuffer[fReadCursor - 2] & 0xFF) << 16) 
-                    + ((int)(fBuffer[fReadCursor - 1] & 0xFF) << 24);
+            this.fReadCursor += SIZE_OF_INT32;
+            return (int)(this.fBuffer[this.fReadCursor - 4] & 0xFF) 
+                    + ((int)(this.fBuffer[this.fReadCursor - 3] & 0xFF) << 8)
+                    + ((int)(this.fBuffer[this.fReadCursor - 2] & 0xFF) << 16) 
+                    + ((int)(this.fBuffer[this.fReadCursor - 1] & 0xFF) << 24);
         } else
             return aDefaultValue;
     }
@@ -215,15 +215,15 @@ public class TByteBuffer {
      */
     public long readInt64(long aDefaultValue) {
         if (SIZE_OF_INT64 <= getReadAvailable()) {
-            fReadCursor += SIZE_OF_INT64;
-            return (long)(fBuffer[fReadCursor - 8] & 0xFF) 
-                    + ((long)(fBuffer[fReadCursor - 7] & 0xFF) << 8)
-                    + ((long)(fBuffer[fReadCursor - 6] & 0xFF) << 16) 
-                    + ((long)(fBuffer[fReadCursor - 5] & 0xFF) << 24)
-                    + ((long)(fBuffer[fReadCursor - 4] & 0xFF) << 32) 
-                    + ((long)(fBuffer[fReadCursor - 3] & 0xFF) << 40)
-                    + ((long)(fBuffer[fReadCursor - 2] & 0xFF) << 48) 
-                    + ((long)(fBuffer[fReadCursor - 1] & 0xFF) << 56);
+            this.fReadCursor += SIZE_OF_INT64;
+            return (long)(this.fBuffer[this.fReadCursor - 8] & 0xFF) 
+                    + ((long)(this.fBuffer[this.fReadCursor - 7] & 0xFF) << 8)
+                    + ((long)(this.fBuffer[this.fReadCursor - 6] & 0xFF) << 16) 
+                    + ((long)(this.fBuffer[this.fReadCursor - 5] & 0xFF) << 24)
+                    + ((long)(this.fBuffer[this.fReadCursor - 4] & 0xFF) << 32) 
+                    + ((long)(this.fBuffer[this.fReadCursor - 3] & 0xFF) << 40)
+                    + ((long)(this.fBuffer[this.fReadCursor - 2] & 0xFF) << 48) 
+                    + ((long)(this.fBuffer[this.fReadCursor - 1] & 0xFF) << 56);
         } else
             return aDefaultValue;
     }
@@ -282,8 +282,8 @@ public class TByteBuffer {
         int len = readInt32(-1);
         if ((len != -1) && (len <= getReadAvailable())) {
             if (len > 0) {
-                fReadCursor += len;
-                return new String(fBuffer, fReadCursor - len, len, Charset.forName("UTF-8"));
+                this.fReadCursor += len;
+                return new String(this.fBuffer, this.fReadCursor - len, len, Charset.forName("UTF-8"));
             } else
                 return "";
         } else
@@ -300,8 +300,8 @@ public class TByteBuffer {
     public TByteBuffer readByteBuffer() {
         int len = readInt32(-1);
         if ((len != -1) && (len <= getReadAvailable())) {
-            fReadCursor += len;
-            return new TByteBuffer(Arrays.copyOfRange(fBuffer, fReadCursor - len, fReadCursor));
+            this.fReadCursor += len;
+            return new TByteBuffer(Arrays.copyOfRange(this.fBuffer, this.fReadCursor - len, this.fReadCursor));
         } else
             return null;
     }
@@ -401,9 +401,9 @@ public class TByteBuffer {
         if (len > 0)
         {
             aValue.setLength(len);
-            fReadCursor += len;
+            this.fReadCursor += len;
             for (int i=0; i<len; i++)
-                aValue.fBuffer[i] = this.fBuffer[fReadCursor+i];
+                aValue.fBuffer[i] = this.fBuffer[this.fReadCursor+i];
         }
         else
             aValue.clear();
@@ -416,40 +416,40 @@ public class TByteBuffer {
      * @return the boolean read from the byte buffer
      */
     public boolean qReadBoolean() {
-        return fBuffer[fReadCursor++] != 0;
+        return this.fBuffer[this.fReadCursor++] != 0;
     }
 
     /**Read a byte from the byte buffer without any checks
      * @return the byte read from the byte buffer
      */
     public byte qReadByte() {
-        return fBuffer[fReadCursor++];
+        return this.fBuffer[this.fReadCursor++];
     }
 
     /**Read an 32 bit integer from the byte buffer without any checks
      * @return the 32 bit integer read from the byte buffer
      */
     public int qReadInt32() {
-        fReadCursor += SIZE_OF_INT32;
-        return (int)(fBuffer[fReadCursor - 4] & 0xFF) 
-                + ((int)(fBuffer[fReadCursor - 3] & 0xFF) << 8)
-                + ((int)(fBuffer[fReadCursor - 1] & 0xFF) << 16) 
-                + ((int)(fBuffer[fReadCursor - 1] & 0xFF) << 24);
+        this.fReadCursor += SIZE_OF_INT32;
+        return (int)(this.fBuffer[this.fReadCursor - 4] & 0xFF) 
+                + ((int)(this.fBuffer[this.fReadCursor - 3] & 0xFF) << 8)
+                + ((int)(this.fBuffer[this.fReadCursor - 1] & 0xFF) << 16) 
+                + ((int)(this.fBuffer[this.fReadCursor - 1] & 0xFF) << 24);
     }
 
     /**Read an 64 bit integer from the byte buffer without any checks
      * @return the 64 bit integer read from the byte buffer
      */
     public long qReadInt64() {
-        fReadCursor += SIZE_OF_INT64;
-        return (long)(fBuffer[fReadCursor - 8] & 0xFF) 
-                + ((long)(fBuffer[fReadCursor - 7] & 0xFF) << 8)
-                + ((long)(fBuffer[fReadCursor - 6] & 0xFF) << 16) 
-                + ((long)(fBuffer[fReadCursor - 5] & 0xFF) << 24)
-                + ((long)(fBuffer[fReadCursor - 4] & 0xFF) << 32) 
-                + ((long)(fBuffer[fReadCursor - 3] & 0xFF) << 40)
-                + ((long)(fBuffer[fReadCursor - 2] & 0xFF) << 48) 
-                + ((long)(fBuffer[fReadCursor - 1] & 0xFF) << 56);
+        this.fReadCursor += SIZE_OF_INT64;
+        return (long)(this.fBuffer[this.fReadCursor - 8] & 0xFF) 
+                + ((long)(this.fBuffer[this.fReadCursor - 7] & 0xFF) << 8)
+                + ((long)(this.fBuffer[this.fReadCursor - 6] & 0xFF) << 16) 
+                + ((long)(this.fBuffer[this.fReadCursor - 5] & 0xFF) << 24)
+                + ((long)(this.fBuffer[this.fReadCursor - 4] & 0xFF) << 32) 
+                + ((long)(this.fBuffer[this.fReadCursor - 3] & 0xFF) << 40)
+                + ((long)(this.fBuffer[this.fReadCursor - 2] & 0xFF) << 48) 
+                + ((long)(this.fBuffer[this.fReadCursor - 1] & 0xFF) << 56);
     }
 
     /**Read a single (32 bit float) from the byte buffer without any checks
@@ -474,8 +474,8 @@ public class TByteBuffer {
     public String qReadString(String aDefaultValue) {
         int len = qReadInt32();
         if (len > 0) {
-            fReadCursor += len;
-            return new String(fBuffer, fReadCursor - len, len, Charset.forName("UTF-8"));
+            this.fReadCursor += len;
+            return new String(this.fBuffer, this.fReadCursor - len, len, Charset.forName("UTF-8"));
         } else
             return "";
     }
@@ -486,8 +486,8 @@ public class TByteBuffer {
      */
     public TByteBuffer qReadByteBuffer() {
         int len = qReadInt32();
-        fReadCursor += len;
-        return new TByteBuffer(Arrays.copyOfRange(fBuffer, fReadCursor - len, fReadCursor));
+        this.fReadCursor += len;
+        return new TByteBuffer(Arrays.copyOfRange(this.fBuffer, this.fReadCursor - len, this.fReadCursor));
     }
 
     /**Read all data available from the read cursor in this byte buffer to a newly created byte buffer
@@ -501,7 +501,7 @@ public class TByteBuffer {
      * @return a byte array containing all data read
      */
     public byte[] readRest() {
-        return Arrays.copyOfRange(fBuffer, fReadCursor, fReadCursor + getReadAvailable());
+        return Arrays.copyOfRange(this.fBuffer, this.fReadCursor, this.fReadCursor + getReadAvailable());
     }
 
     /**Skip the specified amount of bytes for reading
@@ -509,7 +509,7 @@ public class TByteBuffer {
      * @param aValueSize number of bytes to skip for reading
      */
     public void skipReading(int aValueSize) {
-        fReadCursor += aValueSize;
+        this.fReadCursor += aValueSize;
     }
 
     // peek type result
@@ -529,7 +529,7 @@ public class TByteBuffer {
      */
     public boolean peekBoolean(int aOffset, boolean aDefaultValue) {
         if (SIZE_OF_BOOLEAN + aOffset <= getReadAvailable())
-            return fBuffer[fReadCursor + aOffset] != 0;
+            return this.fBuffer[this.fReadCursor + aOffset] != 0;
         else
             return aDefaultValue;
     }
@@ -550,7 +550,7 @@ public class TByteBuffer {
      */
     public byte peekByte(int aOffset, byte aDefaultValue) {
         if (SIZE_OF_BYTE + aOffset <= getReadAvailable())
-            return fBuffer[fReadCursor + aOffset];
+            return this.fBuffer[this.fReadCursor + aOffset];
         else
             return aDefaultValue;
     }
@@ -571,10 +571,10 @@ public class TByteBuffer {
      */
     public int peekInt32(int aOffset, int aDefaultValue) {
         if (SIZE_OF_INT32 + aOffset <= getReadAvailable()) {
-            return (int)(fBuffer[fReadCursor + aOffset] & 0xFF) 
-                    + ((int)(fBuffer[fReadCursor + aOffset + 1] & 0xFF) << 8)
-                    + ((int)(fBuffer[fReadCursor + aOffset + 2] & 0xFF) << 16)
-                    + ((int)(fBuffer[fReadCursor + aOffset + 3] & 0xFF) << 24);
+            return (int)(this.fBuffer[this.fReadCursor + aOffset] & 0xFF) 
+                    + ((int)(this.fBuffer[this.fReadCursor + aOffset + 1] & 0xFF) << 8)
+                    + ((int)(this.fBuffer[this.fReadCursor + aOffset + 2] & 0xFF) << 16)
+                    + ((int)(this.fBuffer[this.fReadCursor + aOffset + 3] & 0xFF) << 24);
         } else
             return aDefaultValue;
     }
@@ -595,14 +595,14 @@ public class TByteBuffer {
      */
     public long peekInt64(int aOffset, long aDefaultValue) {
         if (SIZE_OF_INT64 + aOffset <= getReadAvailable())
-            return (long)(fBuffer[fReadCursor + aOffset] & 0xFF) 
-                    + ((long)(fBuffer[fReadCursor + aOffset + 1] & 0xFF) << 8)
-                    + ((long)(fBuffer[fReadCursor + aOffset + 2] & 0xFF) << 16)
-                    + ((long)(fBuffer[fReadCursor + aOffset + 3] & 0xFF) << 24)
-                    + ((long)(fBuffer[fReadCursor + aOffset + 4] & 0xFF) << 32)
-                    + ((long)(fBuffer[fReadCursor + aOffset + 5] & 0xFF) << 40)
-                    + ((long)(fBuffer[fReadCursor + aOffset + 6] & 0xFF) << 48)
-                    + ((long)(fBuffer[fReadCursor + aOffset + 7] & 0xFF) << 56);
+            return (long)(this.fBuffer[this.fReadCursor + aOffset] & 0xFF) 
+                    + ((long)(this.fBuffer[this.fReadCursor + aOffset + 1] & 0xFF) << 8)
+                    + ((long)(this.fBuffer[this.fReadCursor + aOffset + 2] & 0xFF) << 16)
+                    + ((long)(this.fBuffer[this.fReadCursor + aOffset + 3] & 0xFF) << 24)
+                    + ((long)(this.fBuffer[this.fReadCursor + aOffset + 4] & 0xFF) << 32)
+                    + ((long)(this.fBuffer[this.fReadCursor + aOffset + 5] & 0xFF) << 40)
+                    + ((long)(this.fBuffer[this.fReadCursor + aOffset + 6] & 0xFF) << 48)
+                    + ((long)(this.fBuffer[this.fReadCursor + aOffset + 7] & 0xFF) << 56);
         else
             return aDefaultValue;
     }
@@ -667,7 +667,7 @@ public class TByteBuffer {
         int len = peekInt32(aOffset, -1);
         if (len >= 0) {
             if (len + aOffset <= getReadAvailable()) {
-                return new String(fBuffer, fReadCursor + aOffset, len, Charset.forName("UTF-8"));
+                return new String(this.fBuffer, this.fReadCursor + aOffset, len, Charset.forName("UTF-8"));
             } else
                 return aDefaultValue;
         } else
@@ -682,7 +682,7 @@ public class TByteBuffer {
     public boolean compare(byte[] aValue, int aOffset) {
         if (aOffset + aValue.length <= getReadAvailable()) {
             for (int i = 0; i < aValue.length; i++) {
-                if (fBuffer[aOffset + fReadCursor + i] != aValue[i])
+                if (this.fBuffer[aOffset + this.fReadCursor + i] != aValue[i])
                     return false;
             }
             return true;
@@ -694,9 +694,9 @@ public class TByteBuffer {
      * @param aRightByte the byte to insert at the right side of the byte buffer after the shift 
      */
     public void shiftLeftOneByte(byte aRightByte) {
-        for (int i = 0; i < fBuffer.length - 1; i++)
-            fBuffer[i] = fBuffer[i + 1];
-        fBuffer[fBuffer.length - 1] = aRightByte;
+        for (int i = 0; i < this.fBuffer.length - 1; i++)
+            this.fBuffer[i] = this.fBuffer[i + 1];
+        this.fBuffer[this.fBuffer.length - 1] = aRightByte;
     }
 
     /**Start prepare sequence. This should be called before prepare calls.
@@ -704,8 +704,8 @@ public class TByteBuffer {
      * @return the new prepare cursor position. This can be used to calls of writeStart to reuse a byte buffer with partial deviating data.
      */
     public int prepareStart() {
-        fPrepareCursor = fWriteCursor;
-        return fPrepareCursor;
+        this.fPrepareCursor = this.fWriteCursor;
+        return this.fPrepareCursor;
     }
 
     /**Prepares the byte buffer for later writing of a boolean.
@@ -713,7 +713,7 @@ public class TByteBuffer {
      * @param aValue the boolean to be written later in a call to qWrite
      */
     public void prepare(boolean aValue) {
-        fPrepareCursor += SIZE_OF_BOOLEAN;
+        this.fPrepareCursor += SIZE_OF_BOOLEAN;
     }
 
     /**Prepares the byte buffer for later writing of a byte.
@@ -721,7 +721,7 @@ public class TByteBuffer {
      * @param aValue the byte to be written later in a call to qWrite
      */
     public void prepare(byte aValue) {
-        fPrepareCursor += SIZE_OF_BYTE;
+        this.fPrepareCursor += SIZE_OF_BYTE;
     }
 
     /**Prepares the byte buffer for later writing of an 32 bit integer.
@@ -729,7 +729,7 @@ public class TByteBuffer {
      * @param aValue the 32 bit integer to be written later in a call to qWrite
      */
     public void prepare(int aValue) {
-        fPrepareCursor += SIZE_OF_INT32;
+        this.fPrepareCursor += SIZE_OF_INT32;
     }
 
     /**Prepares the byte buffer for later writing of an 64 bit integer (long).
@@ -737,7 +737,7 @@ public class TByteBuffer {
      * @param aValue the 64 bit integer (long) to be written later in a call to qWrite
      */
     public void prepare(long aValue) {
-        fPrepareCursor += SIZE_OF_INT64;
+        this.fPrepareCursor += SIZE_OF_INT64;
     }
 
     /**Prepares the byte buffer for later writing of a 32 bit single (float).
@@ -745,7 +745,7 @@ public class TByteBuffer {
      * @param aValue the 32 bit single (float) to be written later in a call to qWrite
      */
     public void prepare(float aValue) {
-        fPrepareCursor += SIZE_OF_SINGLE;
+        this.fPrepareCursor += SIZE_OF_SINGLE;
     }
 
     /**Prepares the byte buffer for later writing of a double.
@@ -753,7 +753,7 @@ public class TByteBuffer {
      * @param aValue the double to be written later in a call to qWrite
      */
     public void prepare(double aValue) {
-        fPrepareCursor += SIZE_OF_DOUBLE;
+        this.fPrepareCursor += SIZE_OF_DOUBLE;
     }
 
     /**Prepares the byte buffer for later writing of a string.
@@ -761,7 +761,7 @@ public class TByteBuffer {
      * @param aValue the string to be written later in a call to qWrite
      */
     public void prepare(String aValue) {
-        fPrepareCursor += SIZE_OF_INT32 + aValue.getBytes(Charset.forName("UTF-8")).length;
+        this.fPrepareCursor += SIZE_OF_INT32 + aValue.getBytes(Charset.forName("UTF-8")).length;
     }
 
     /**Prepares the byte buffer for later writing of a byte array (without size).
@@ -769,7 +769,7 @@ public class TByteBuffer {
      * @param aValue the byte array to be written later in a call to qWrite
      */
     public void prepare(byte[] aValue) {
-        fPrepareCursor += aValue.length;
+        this.fPrepareCursor += aValue.length;
     }
 
     /**Prepares the byte buffer for later writing of an other byte buffers readable data.
@@ -777,7 +777,7 @@ public class TByteBuffer {
      * @param aValue the byte buffers readable data to be written later in a call to qWrite
      */
     public void prepare(TByteBuffer aValue) {
-        fPrepareCursor += SIZE_OF_INT32 + aValue.getReadAvailable();
+        this.fPrepareCursor += SIZE_OF_INT32 + aValue.getReadAvailable();
     }
 
     /**Prepares the byte buffer for later writing of the specified number of bytes.
@@ -785,23 +785,23 @@ public class TByteBuffer {
      * @param aValueSize the number of bytes to be written later in a call to qWrite
      */
     public int prepareSize(int aValueSize) {
-        int res = fPrepareCursor;
-        fPrepareCursor += aValueSize;
+        int res = this.fPrepareCursor;
+        this.fPrepareCursor += aValueSize;
         return res;
     }
 
     /**Adjusts the length of the byte buffer to accommodate at a minimum all prepared data
      */
     public void prepareApply() {
-        if (fBuffer.length < fPrepareCursor)
-            setLength(fPrepareCursor);
+        if (this.fBuffer.length < this.fPrepareCursor)
+            setLength(this.fPrepareCursor);
     }
 
     /**Adjusts the length of the byte buffer to accommodate exactly all prepared data
      */
     public void prepareApplyAndTrim() {
-        if (fBuffer.length != fPrepareCursor)
-            setLength(fPrepareCursor);
+        if (this.fBuffer.length != this.fPrepareCursor)
+            setLength(this.fPrepareCursor);
     }
 
     /**Start writing at the specified 0-based index.
@@ -809,14 +809,14 @@ public class TByteBuffer {
      * @param aIndex the new value for the write cursor
      */
     public void writeStart(int aIndex) {
-        fWriteCursor = aIndex;
+        this.fWriteCursor = aIndex;
     }
 
     /**Returns the room still available in the byte buffer to write data to without reallocating memory.
      * @return the room still left in the byte buffer to write
      */
     public int getwriteAvailable() {
-        return fBuffer.length - fWriteCursor;
+        return this.fBuffer.length - this.fWriteCursor;
     }
 
     /**Write the specified boolean to the byte buffer.
@@ -825,9 +825,9 @@ public class TByteBuffer {
      */
     public void write(boolean aValue) {
         if (SIZE_OF_BOOLEAN > getwriteAvailable())
-            setLength(fWriteCursor + SIZE_OF_BOOLEAN);
-        fBuffer[fWriteCursor] = (aValue) ? (byte) -1 : (byte) 0;
-        fWriteCursor += SIZE_OF_BOOLEAN;
+            setLength(this.fWriteCursor + SIZE_OF_BOOLEAN);
+        this.fBuffer[this.fWriteCursor] = (aValue) ? (byte) -1 : (byte) 0;
+        this.fWriteCursor += SIZE_OF_BOOLEAN;
     }
 
     /**Write the specified byte to the byte buffer.
@@ -836,9 +836,9 @@ public class TByteBuffer {
      */
     public void write(byte aValue) {
         if (SIZE_OF_BYTE > getwriteAvailable())
-            setLength(fWriteCursor + SIZE_OF_BYTE);
-        fBuffer[fWriteCursor] = aValue;
-        fWriteCursor += SIZE_OF_BYTE;
+            setLength(this.fWriteCursor + SIZE_OF_BYTE);
+        this.fBuffer[this.fWriteCursor] = aValue;
+        this.fWriteCursor += SIZE_OF_BYTE;
     }
 
     /**Write the specified 32 bit integer to the byte buffer.
@@ -847,12 +847,12 @@ public class TByteBuffer {
      */
     public void write(int aValue) {
         if (SIZE_OF_INT32 > getwriteAvailable())
-            setLength(fWriteCursor + SIZE_OF_INT32);
-        fBuffer[fWriteCursor] = (byte) (aValue & 0xFF);
-        fBuffer[fWriteCursor + 1] = (byte) ((aValue >> 8) & 0xFF);
-        fBuffer[fWriteCursor + 2] = (byte) ((aValue >> 16) & 0xFF);
-        fBuffer[fWriteCursor + 3] = (byte) ((aValue >> 24) & 0xFF);
-        fWriteCursor += SIZE_OF_INT32;
+            setLength(this.fWriteCursor + SIZE_OF_INT32);
+        this.fBuffer[this.fWriteCursor] = (byte) (aValue & 0xFF);
+        this.fBuffer[this.fWriteCursor + 1] = (byte) ((aValue >> 8) & 0xFF);
+        this.fBuffer[this.fWriteCursor + 2] = (byte) ((aValue >> 16) & 0xFF);
+        this.fBuffer[this.fWriteCursor + 3] = (byte) ((aValue >> 24) & 0xFF);
+        this.fWriteCursor += SIZE_OF_INT32;
     }
 
     /**Write the specified 64 bit integer (long) to the byte buffer.
@@ -861,16 +861,16 @@ public class TByteBuffer {
      */
     public void write(long aValue) {
         if (SIZE_OF_INT64 > getwriteAvailable())
-            setLength(fWriteCursor + SIZE_OF_INT64);
-        fBuffer[fWriteCursor] = (byte) (aValue & 0xFF);
-        fBuffer[fWriteCursor + 1] = (byte) ((aValue >> 8) & 0xFF);
-        fBuffer[fWriteCursor + 2] = (byte) ((aValue >> 16) & 0xFF);
-        fBuffer[fWriteCursor + 3] = (byte) ((aValue >> 24) & 0xFF);
-        fBuffer[fWriteCursor + 4] = (byte) ((aValue >> 32) & 0xFF);
-        fBuffer[fWriteCursor + 5] = (byte) ((aValue >> 40) & 0xFF);
-        fBuffer[fWriteCursor + 6] = (byte) ((aValue >> 48) & 0xFF);
-        fBuffer[fWriteCursor + 7] = (byte) ((aValue >> 56) & 0xFF);
-        fWriteCursor += SIZE_OF_INT64;
+            setLength(this.fWriteCursor + SIZE_OF_INT64);
+        this.fBuffer[this.fWriteCursor] = (byte) (aValue & 0xFF);
+        this.fBuffer[this.fWriteCursor + 1] = (byte) ((aValue >> 8) & 0xFF);
+        this.fBuffer[this.fWriteCursor + 2] = (byte) ((aValue >> 16) & 0xFF);
+        this.fBuffer[this.fWriteCursor + 3] = (byte) ((aValue >> 24) & 0xFF);
+        this.fBuffer[this.fWriteCursor + 4] = (byte) ((aValue >> 32) & 0xFF);
+        this.fBuffer[this.fWriteCursor + 5] = (byte) ((aValue >> 40) & 0xFF);
+        this.fBuffer[this.fWriteCursor + 6] = (byte) ((aValue >> 48) & 0xFF);
+        this.fBuffer[this.fWriteCursor + 7] = (byte) ((aValue >> 56) & 0xFF);
+        this.fWriteCursor += SIZE_OF_INT64;
     }
 
     /**Write the specified single (float) to the byte buffer.
@@ -897,13 +897,13 @@ public class TByteBuffer {
         byte[] s = aValue.getBytes(Charset.forName("UTF-8"));
         int len = s.length;
         if (SIZE_OF_INT32 + len > getwriteAvailable())
-            setLength(fWriteCursor + SIZE_OF_INT32 + len);
+            setLength(this.fWriteCursor + SIZE_OF_INT32 + len);
         // first write size
         write(len);
         // write content
         for (int i = 0; i < len; i++)
-            fBuffer[fWriteCursor + i] = s[i];
-        fWriteCursor += len;
+            this.fBuffer[this.fWriteCursor + i] = s[i];
+        this.fWriteCursor += len;
     }
 
     /**Write the specified byte array WITHOUT the size to the byte buffer.
@@ -912,10 +912,10 @@ public class TByteBuffer {
      */
     public void write(byte[] aValue) {
         if (aValue.length > getwriteAvailable())
-            setLength(fWriteCursor + aValue.length);
+            setLength(this.fWriteCursor + aValue.length);
         for (int i = 0; i < aValue.length; i++)
-            fBuffer[fWriteCursor + i] = aValue[i];
-        fWriteCursor += aValue.length;
+            this.fBuffer[this.fWriteCursor + i] = aValue[i];
+        this.fWriteCursor += aValue.length;
     }
 
     // write all readable data WITH size
@@ -935,42 +935,42 @@ public class TByteBuffer {
      */
     public void qWrite(boolean aValue) {
 
-        fBuffer[fWriteCursor] = (aValue) ? (byte) -1 : (byte) 0;
-        fWriteCursor += SIZE_OF_BOOLEAN;
+        this.fBuffer[this.fWriteCursor] = (aValue) ? (byte) -1 : (byte) 0;
+        this.fWriteCursor += SIZE_OF_BOOLEAN;
     }
 
     /**write a single byte to the buffer; the QWrite methods do not check for room in the buffer
      * @param aValue the byte value to be written to the buffer
      */
     public void qWrite(byte aValue) {
-        fBuffer[fWriteCursor] = aValue;
-        fWriteCursor += SIZE_OF_BYTE;
+        this.fBuffer[this.fWriteCursor] = aValue;
+        this.fWriteCursor += SIZE_OF_BYTE;
     }
 
     /**write a single integer (32 bit) to the buffer; the QWrite methods do not check for room in the buffer
      * @param aValue the integer (32 bit) value to be written to the buffer
      */
     public void qWrite(int aValue) {
-        fBuffer[fWriteCursor] = (byte) (aValue & 0xFF);
-        fBuffer[fWriteCursor + 1] = (byte) ((aValue >> 8) & 0xFF);
-        fBuffer[fWriteCursor + 2] = (byte) ((aValue >> 16) & 0xFF);
-        fBuffer[fWriteCursor + 3] = (byte) ((aValue >> 24) & 0xFF);
-        fWriteCursor += SIZE_OF_INT32;
+        this.fBuffer[this.fWriteCursor] = (byte) (aValue & 0xFF);
+        this.fBuffer[this.fWriteCursor + 1] = (byte) ((aValue >> 8) & 0xFF);
+        this.fBuffer[this.fWriteCursor + 2] = (byte) ((aValue >> 16) & 0xFF);
+        this.fBuffer[this.fWriteCursor + 3] = (byte) ((aValue >> 24) & 0xFF);
+        this.fWriteCursor += SIZE_OF_INT32;
     }
 
     /**write a single integer (64 bit) to the buffer; the QWrite methods do not check for room in the buffer
      * @param aValue the integer (64 bit) value to be written to the buffer
      */
     public void qWrite(long aValue) {
-        fBuffer[fWriteCursor] = (byte) (aValue & 0xFF);
-        fBuffer[fWriteCursor + 1] = (byte) ((aValue >> 8) & 0xFF);
-        fBuffer[fWriteCursor + 2] = (byte) ((aValue >> 16) & 0xFF);
-        fBuffer[fWriteCursor + 3] = (byte) ((aValue >> 24) & 0xFF);
-        fBuffer[fWriteCursor + 4] = (byte) ((aValue >> 32) & 0xFF);
-        fBuffer[fWriteCursor + 5] = (byte) ((aValue >> 40) & 0xFF);
-        fBuffer[fWriteCursor + 6] = (byte) ((aValue >> 48) & 0xFF);
-        fBuffer[fWriteCursor + 7] = (byte) ((aValue >> 56) & 0xFF);
-        fWriteCursor += SIZE_OF_INT64;
+        this.fBuffer[this.fWriteCursor] = (byte) (aValue & 0xFF);
+        this.fBuffer[this.fWriteCursor + 1] = (byte) ((aValue >> 8) & 0xFF);
+        this.fBuffer[this.fWriteCursor + 2] = (byte) ((aValue >> 16) & 0xFF);
+        this.fBuffer[this.fWriteCursor + 3] = (byte) ((aValue >> 24) & 0xFF);
+        this.fBuffer[this.fWriteCursor + 4] = (byte) ((aValue >> 32) & 0xFF);
+        this.fBuffer[this.fWriteCursor + 5] = (byte) ((aValue >> 40) & 0xFF);
+        this.fBuffer[this.fWriteCursor + 6] = (byte) ((aValue >> 48) & 0xFF);
+        this.fBuffer[this.fWriteCursor + 7] = (byte) ((aValue >> 56) & 0xFF);
+        this.fWriteCursor += SIZE_OF_INT64;
     }
 
     /**write a single float (32 bit) to the buffer; the QWrite methods do not check for room in the buffer
@@ -999,8 +999,8 @@ public class TByteBuffer {
         qWrite(len);
         // write content
         for (int i = 0; i < len; i++)
-            fBuffer[fWriteCursor + i] = s[i];
-        fWriteCursor += len;
+            this.fBuffer[this.fWriteCursor + i] = s[i];
+        this.fWriteCursor += len;
     }
 
     /**write array of byte WITHOUT size; the QWrite methods do not check for room in the buffer
@@ -1008,8 +1008,8 @@ public class TByteBuffer {
      */
     public void qWrite(byte[] aValue) {
         for (int i = 0; i < aValue.length; i++)
-            fBuffer[fWriteCursor + i] = aValue[i];
-        fWriteCursor += aValue.length;
+            this.fBuffer[this.fWriteCursor + i] = aValue[i];
+        this.fWriteCursor += aValue.length;
     }
 
     /**write, with no checking, all readable data from the given byte buffer to this prefixed WITH size
@@ -1026,14 +1026,14 @@ public class TByteBuffer {
      * @return true if all written data fitted into buffer
      */
     public boolean written(int aValueSize) {
-        fWriteCursor += aValueSize;
+        this.fWriteCursor += aValueSize;
         return getwriteAvailable() >= 0;
     }
 
     /**apply written data (trim extra buffer space)
      */
     public void writeApply() {
-        if (fWriteCursor != fBuffer.length)
-            setLength(fWriteCursor);
+        if (this.fWriteCursor != this.fBuffer.length)
+            setLength(this.fWriteCursor);
     }
 }
