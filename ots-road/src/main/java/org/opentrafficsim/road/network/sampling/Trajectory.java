@@ -34,6 +34,7 @@ import org.opentrafficsim.core.gtu.GTU;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 // TODO desired speed per time step, flexibility to add other data per time step
+// XXX Consider using FloatLengthVector, FloatSpeedVector, FloatDurationVector etc. for storage space reasons 
 public final class Trajectory
 {
 
