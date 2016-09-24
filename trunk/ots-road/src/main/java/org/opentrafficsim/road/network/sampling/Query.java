@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -25,7 +26,9 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
  */
 public final class Query
 {
-
+    /** unique id.  */
+    private UUID uniqueId = UUID.randomUUID();
+    
     /** Sampling. */
     private final Sampling sampling;
 
@@ -48,6 +51,15 @@ public final class Query
         this.connected = connected;
     }
 
+    /**
+     * return the unique id for the query.
+     * @return String; the unique id for the query
+     */
+    public String getId()
+    {
+        return this.uniqueId.toString();
+    }
+    
     /**
      * @return connected whether the space-time regions are longitudinally connected
      */

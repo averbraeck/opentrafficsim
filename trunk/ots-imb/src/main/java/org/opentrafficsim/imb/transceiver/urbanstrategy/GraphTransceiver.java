@@ -8,6 +8,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.graphs.AbstractOTSPlot;
 import org.opentrafficsim.graphs.ContourPlot;
+import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.connector.Connector.IMBEventType;
@@ -249,7 +250,19 @@ public class GraphTransceiver extends AbstractTransceiver
         newMessage.add(height);
         newMessage.add(plot.getCaption());
         newMessage.add(plot.getGraphType().toString());
-        newMessage.add(plot instanceof ContourPlot ? ((ContourPlot) plot).getXAxis().getCurrentGranularity() : 0.0d);
+        if (plot instanceof TrajectoryPlot)
+        {
+            Duration interval = ((TrajectoryPlot) plot).getSampleInterval();
+            newMessage.add(interval == null ? 0.0d : interval.si);
+        }
+        else if (plot instanceof ContourPlot)
+        {
+            newMessage.add(((ContourPlot) plot).getXAxis().getCurrentGranularity());
+        }
+        else
+        {
+            newMessage.add(0.0d);
+        }
         newMessage.add(plot instanceof ContourPlot ? ((ContourPlot) plot).getYAxis().getCurrentGranularity() : 0.0d);
         newMessage.add(this.network.getId());
         newMessage.add(plot.getPath().size());
