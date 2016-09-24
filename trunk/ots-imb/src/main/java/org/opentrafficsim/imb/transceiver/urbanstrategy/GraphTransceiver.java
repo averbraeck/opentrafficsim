@@ -111,6 +111,11 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * <td>String</td>
  * <td>id of the last Lane, unique within the Link</td>
  * </tr>
+ * <tr>
+ * <td>updateInterval</td>
+ * <td>double</td>
+ * <td>update interval of the graph in seconds</td>
+ * </tr>
  * </tbody>
  * </table>
  * </p>
