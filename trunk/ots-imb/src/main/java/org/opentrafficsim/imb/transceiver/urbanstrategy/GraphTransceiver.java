@@ -68,7 +68,9 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * <tr>
  * <td>time_resolution</td>
  * <td>double</td>
- * <td>For the four types of contour graphs, it provides the aggregation in seconds. 0.0 for other types of graphs</td>
+ * <td>For the four types of contour graphs, and the trajectory graph, it provides the aggregation in seconds. 0.0 for other
+ * types of graphs. When the value is 0.0 for the trajectory graph, the graph is updated on the basis of events from the
+ * GTU.</td>
  * </tr>
  * <tr>
  * <td>value_resolution</td>
@@ -112,9 +114,9 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * <td>id of the last Lane, unique within the Link</td>
  * </tr>
  * <tr>
- * <td>updateInterval</td>
+ * <td>transmissionInterval</td>
  * <td>double</td>
- * <td>update interval of the graph in seconds</td>
+ * <td>transmission interval of the graph in seconds</td>
  * </tr>
  * </tbody>
  * </table>
@@ -216,10 +218,10 @@ public class GraphTransceiver extends AbstractTransceiver
     private final int height;
 
     /** The interval between generation of graphs. */
-    private final Duration interval;
+    private final Duration transmissionInterval;
 
     // TODO handle the DELETE message
-    
+
     /**
      * Construct a new GraphTransceiver.
      * @param connector Connector; the IMB connector
@@ -228,17 +230,17 @@ public class GraphTransceiver extends AbstractTransceiver
      * @param width int; the width of the graph, in pixels
      * @param height int; the height of the graph, in pixels
      * @param plot AbstractOTSPlot; the graph
-     * @param interval Duration; the interval between generation of graphs
+     * @param transmissionInterval Duration; the interval between generation of graphs
      * @throws IMBException when the message cannot be posted, or the scheduling of the publish event fails
      */
     public GraphTransceiver(final Connector connector, SimpleSimulatorInterface simulator, Network network, final int width,
-            final int height, final AbstractOTSPlot plot, final Duration interval) throws IMBException
+            final int height, final AbstractOTSPlot plot, final Duration transmissionInterval) throws IMBException
     {
         super("Graph", connector, simulator);
         this.network = network;
         this.width = width;
         this.height = height;
-        this.interval = interval;
+        this.transmissionInterval = transmissionInterval;
 
         List<Object> newMessage = new ArrayList<>();
         newMessage.add(getSimulator().getSimulatorTime().getTime().si);
@@ -256,13 +258,13 @@ public class GraphTransceiver extends AbstractTransceiver
             newMessage.add(lane.getParentLink().getId());
             newMessage.add(lane.getId());
         }
-        newMessage.add(interval.si);
-        
+        newMessage.add(transmissionInterval.si);
+
         getConnector().postIMBMessage("Graph", IMBEventType.NEW, newMessage.toArray());
 
         try
         {
-            simulator.scheduleEventRel(this.interval, this, this, "makePNG", new Object[] { plot });
+            simulator.scheduleEventRel(this.transmissionInterval, this, this, "makePNG", new Object[] { plot });
         }
         catch (SimRuntimeException exception)
         {
@@ -281,6 +283,6 @@ public class GraphTransceiver extends AbstractTransceiver
         byte[] png = plot.generatePNG(this.width, this.height);
         getConnector().postIMBMessage("Graph", IMBEventType.CHANGE,
                 new Object[] { getSimulator().getSimulatorTime().getTime().si, plot.getId(), this.width, this.height, png });
-        getSimulator().scheduleEventRel(this.interval, this, this, "makePNG", new Object[] { plot });
+        getSimulator().scheduleEventRel(this.transmissionInterval, this, this, "makePNG", new Object[] { plot });
     }
 }
