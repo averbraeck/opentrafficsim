@@ -17,6 +17,8 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  * @param <T>
  */
 // TODO standard deviation, percentiles, min/max
+// XXX think about using Tally and Persistent for some of the indicators. Maybe extend Indicator to TallyIndicator?
+// XXX Persistent is already a time-weighed indicator that calculates mean, std, min, max, and confidence interval.
 public interface Indicator<U extends Unit<U>, T extends DoubleScalar<U>>
 {
     
