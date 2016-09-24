@@ -1,23 +1,28 @@
 package org.opentrafficsim.imb.transceiver.urbanstrategy;
 
-import nl.tno.imb.TByteBuffer;
-import nl.tudelft.simulation.dsol.SimRuntimeException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.graphs.AbstractOTSPlot;
+import org.opentrafficsim.graphs.ContourPlot;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.connector.Connector.IMBEventType;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
+import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+
 /**
- * OTS publishes events about the created graphs to IMB.<br>
- * At the start of the OTS simulation, or when a graph is added later, a NEW message is sent to IMB. The CHANGE message is
- * posted whenever a graph is update (currently this happens every 10 seconds of simulation time). When a graph is removed a
- * DELETE event should be posted, but this is not yet happening as graphs cannot currently be deleted.
+ * OTS can publish graphs to IMB, e.g. trajectory graphs, flow graphs and density graphs.<br>
+ * When a graph is published for the first time, a NEW message is sent to IMB to identify the graph, the image resolution, and
+ * the lane(s) for which the graph is created. The CHANGE message is posted whenever an updated graph is posted. When a Graph is
+ * no longer published, a DELETE event is posted. The Graph NEW messages are posted after the Network NEW, Node NEW, Link NEW,
+ * and Lane NEW messages are posted, as it has to be able to identify Lanes.
  * <p>
  * <style>table,th,td {border:1px solid grey; border-style:solid; text-align:left; border-collapse: collapse;}</style>
  * <h2>NEW</h2>
@@ -35,9 +40,76 @@ import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
  * <td>time of the event, in simulation time seconds</td>
  * </tr>
  * <tr>
+ * <td>graphId</td>
+ * <td>String</td>
+ * <td>a unique id for the graph, e.g. a UUID string</td>
+ * </tr>
+ * <tr>
+ * <td>width</td>
+ * <td>int</td>
+ * <td>width of the graph in pixels</td>
+ * </tr>
+ * <tr>
+ * <td>height</td>
+ * <td>int</td>
+ * <td>height of the graph in pixels</td>
+ * </tr>
+ * <tr>
+ * <td>description</td>
+ * <td>String</td>
+ * <td>textual description of the graph</td>
+ * </tr>
+ * <tr>
+ * <td>graphType</td>
+ * <td>String</td>
+ * <td>type of graph; one of TRAJECTORY, SPEED_CONTOUR, ACCELERATION_CONTOUR, DENSITY_CONTOUR, FLOW_CONTOUR,
+ * FUNDAMENTAL_DIAGRAM</td>
+ * </tr>
+ * <tr>
+ * <td>time_resolution</td>
+ * <td>double</td>
+ * <td>For the four types of contour graphs, it provides the aggregation in seconds. 0.0 for other types of graphs</td>
+ * </tr>
+ * <tr>
+ * <td>value_resolution</td>
+ * <td>double</td>
+ * <td>For the four types of contour graphs, it provides the aggregation in the SI unit of the value. 0.0 for other types of
+ * graphs</td>
+ * </tr>
+ * <tr>
  * <td>networkId</td>
  * <td>String</td>
- * <td>Id of the Network where the Link resides</td>
+ * <td>id of the Network for which the Graph is made</td>
+ * </tr>
+ * <tr>
+ * <td>numberOfLanes</td>
+ * <td>int</td>
+ * <td>number of Link-Lane combinations for this Graph</td>
+ * </tr>
+ * <tr>
+ * <td>linkId_1</td>
+ * <td>String</td>
+ * <td>id of the first Link; unique within the Network</td>
+ * </tr>
+ * <tr>
+ * <td>laneId_1</td>
+ * <td>String</td>
+ * <td>id of the first Lane, unique within the Link</td>
+ * </tr>
+ * <tr>
+ * <td>...</td>
+ * <td>&nbsp;</td>
+ * <td>&nbsp;</td>
+ * </tr>
+ * <tr>
+ * <td>linkId_n</td>
+ * <td>String</td>
+ * <td>id of the last Link; unique within the Network</td>
+ * </tr>
+ * <tr>
+ * <td>laneId_n</td>
+ * <td>String</td>
+ * <td>id of the last Lane, unique within the Link</td>
  * </tr>
  * </tbody>
  * </table>
@@ -58,14 +130,24 @@ import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
  * <td>time of the event, in simulation time seconds</td>
  * </tr>
  * <tr>
- * <td>networkId</td>
+ * <td>graphId</td>
  * <td>String</td>
- * <td>Id of the Network where the Lane resides</td>
+ * <td>the unique id for the graph, e.g. a UUID string</td>
+ * </tr>
+ * <tr>
+ * <td>width</td>
+ * <td>int</td>
+ * <td>width of the graph in pixels</td>
+ * </tr>
+ * <tr>
+ * <td>height</td>
+ * <td>int</td>
+ * <td>height of the graph in pixels</td>
  * </tr>
  * <tr>
  * <td>image data</td>
  * <td>byte[]</td>
- * <td>image data is encoded according to the PNG standard</td>
+ * <td>image in PNG format; starts with the standard 8-byte signature 89 50 4E 47 0D 0A 1A 0A.</td>
  * </tr>
  * </tbody>
  * </table>
@@ -86,15 +168,25 @@ import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
  * <td>time of the event, in simulation time seconds</td>
  * </tr>
  * <tr>
- * <td>networkId</td>
+ * <td>graphId</td>
  * <td>String</td>
- * <td>Id of the Network where the Link resides</td>
+ * <td>the unique id for the graph that is removed</td>
+ * </tr>
+ * <tr>
+ * <td>width</td>
+ * <td>int</td>
+ * <td>width of the graph in pixels</td>
+ * </tr>
+ * <tr>
+ * <td>height</td>
+ * <td>int</td>
+ * <td>height of the graph in pixels</td>
  * </tr>
  * </tbody>
  * </table>
  * <br>
- * TODO: all messages currently have the graph type and lane information encoded in the name. This should be part of the IMB
- * payload. This name contains spaces and that is asking for problems.
+ * Note: when two resolutions for the same graph are sent over the network, they have the same graphId but a different width
+ * and/or height. This means that the combination of graphId, width, and height creates a unique key for the graph.
  * </p>
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -106,93 +198,82 @@ import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
  */
 public class GraphTransceiver extends AbstractTransceiver
 {
-
     /** */
     private static final long serialVersionUID = 20160919L;
 
-    /** The interval between generation of graphs. */
-    static final Duration INTERVAL = new Duration(10, TimeUnit.SECOND);
-
-    /** The Network. */
+    /** The Network for which the graph is made. */
     private final Network network;
 
+    /** The width of the graph, in pixels. */
+    private final int width;
+
+    /** The height of the graph, in pixels. */
+    private final int height;
+
+    /** The interval between generation of graphs. */
+    private final Duration interval;
+
+    // TODO handle the DELETE message
+    
     /**
      * Construct a new GraphTransceiver.
      * @param connector Connector; the IMB connector
      * @param simulator SimpleSimulatorInterface; the simulator
      * @param network Network; the network
+     * @param width int; the width of the graph, in pixels
+     * @param height int; the height of the graph, in pixels
      * @param plot AbstractOTSPlot; the graph
+     * @param interval Duration; the interval between generation of graphs
+     * @throws IMBException when the message cannot be posted, or the scheduling of the publish event fails
      */
-    public GraphTransceiver(final Connector connector, SimpleSimulatorInterface simulator, Network network,
-            final AbstractOTSPlot plot)
+    public GraphTransceiver(final Connector connector, SimpleSimulatorInterface simulator, Network network, final int width,
+            final int height, final AbstractOTSPlot plot, final Duration interval) throws IMBException
     {
-        super("Graph." + plot.getName(), connector, simulator);
+        super("Graph", connector, simulator);
         this.network = network;
+        this.width = width;
+        this.height = height;
+        this.interval = interval;
+
+        List<Object> newMessage = new ArrayList<>();
+        newMessage.add(getSimulator().getSimulatorTime().getTime().si);
+        newMessage.add(plot.getId());
+        newMessage.add(width);
+        newMessage.add(height);
+        newMessage.add(plot.getCaption());
+        newMessage.add(plot.getGraphType().toString());
+        newMessage.add(plot instanceof ContourPlot ? ((ContourPlot) plot).getXAxis().getCurrentGranularity() : 0.0d);
+        newMessage.add(plot instanceof ContourPlot ? ((ContourPlot) plot).getYAxis().getCurrentGranularity() : 0.0d);
+        newMessage.add(this.network.getId());
+        newMessage.add(plot.getPath().size());
+        for (Lane lane : plot.getPath())
+        {
+            newMessage.add(lane.getParentLink().getId());
+            newMessage.add(lane.getId());
+        }
+        getConnector().postIMBMessage("Graph", IMBEventType.NEW, newMessage.toArray());
+
         try
         {
-            getConnector().postIMBMessage("Graph." + plot.getCaption(), IMBEventType.NEW,
-                    new Object[] { getSimulator().getSimulatorTime().getTime().si, this.network.getId() });
-        }
-        catch (IMBException exception1)
-        {
-            exception1.printStackTrace();
-        }
-        // TODO figure out a way to send IMBEventType.DELETE when we die or a graph is removed (not yet possible)
-        try
-        {
-            simulator.scheduleEventRel(INTERVAL, this, this, "makePNG", new Object[] { plot });
+            simulator.scheduleEventRel(this.interval, this, this, "makePNG", new Object[] { plot });
         }
         catch (SimRuntimeException exception)
         {
-            exception.printStackTrace();
+            throw new IMBException(exception);
         }
     }
 
     /**
-     * @param plot
+     * @param plot the plot to generate the PNG for
+     * @throws IOException when the creation of the PNG has failed
+     * @throws IMBException when the transmission of the IMB message fails
+     * @throws SimRuntimeException when the scheduling of the next publish event fails
      */
-    public void makePNG(final AbstractOTSPlot plot)
+    public void makePNG(final AbstractOTSPlot plot) throws IOException, IMBException, SimRuntimeException
     {
-        byte[] payload = plot.generatePNG();
-        // try
-        // {
-        // FileOutputStream stream = new FileOutputStream("d:/plaatje.png");
-        // try
-        // {
-        // stream.write(payload);
-        // }
-        // finally
-        // {
-        // stream.close();
-        // }
-        // }
-        // catch (FileNotFoundException exception2)
-        // {
-        // exception2.printStackTrace();
-        // }
-        // catch (IOException exception2)
-        // {
-        // exception2.printStackTrace();
-        // }
-        try
-        {
-            getConnector().postIMBMessage(
-                    "Graph." + plot.getCaption(),
-                    IMBEventType.CHANGE,
-                    new Object[] { getSimulator().getSimulatorTime().getTime().si, this.network.getId(),
-                            new TByteBuffer(payload) });
-        }
-        catch (IMBException exception1)
-        {
-            exception1.printStackTrace();
-        }
-        try
-        {
-            getSimulator().scheduleEventRel(INTERVAL, this, this, "makePNG", new Object[] { plot });
-        }
-        catch (SimRuntimeException exception)
-        {
-            exception.printStackTrace();
-        }
+        byte[] png = plot.generatePNG(this.width, this.height);
+        getConnector().postIMBMessage("Graph", IMBEventType.CHANGE,
+                new Object[] { getSimulator().getSimulatorTime().getTime().si, plot.getId(), this.width, this.height, png });
+        getSimulator().scheduleEventRel(this.interval, this, this, "makePNG", new Object[] { plot });
     }
 }

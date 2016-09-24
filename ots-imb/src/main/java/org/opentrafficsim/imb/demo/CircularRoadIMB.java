@@ -337,7 +337,17 @@ public class CircularRoadIMB extends AbstractWrappableAnimation implements UNITS
             // Add the container to the matrix
             charts.setCell(container, i % columns, i / columns);
             this.model.getPlots().add(graph);
-            new GraphTransceiver(this.model.imbConnector, simulator, this.model.getNetwork() /* network*/, graph);
+
+            // Publish all the graphs to IMB at the moment, at a 640x480 resolution, every 5 seconds.
+            try
+            {
+                new GraphTransceiver(this.model.imbConnector, simulator, this.model.getNetwork(), 640, 480, graph,
+                        new Duration(5.0, TimeUnit.SECOND));
+            }
+            catch (IMBException exception)
+            {
+                exception.printStackTrace();
+            }
         }
 
         return charts;
@@ -424,7 +434,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
 
     /** the network as created by the AbstractWrappableIMBAnimation. */
     private final OTSNetwork network;
-    
+
     /** Connector to the IMB hub. */
     OTSIMBConnector imbConnector;
 

@@ -39,6 +39,13 @@ public class FlowContourPlot extends ContourPlot
             0d, "flow %.0f veh/h", "%.0f veh/h", 500d);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final GraphType getGraphType()
+    {
+        return GraphType.FLOW_CONTOUR;
+    }
+
     /** Storage for the total length traveled in each cell. */
     private ArrayList<MutablePositionVector> cumulativeLengths;
 

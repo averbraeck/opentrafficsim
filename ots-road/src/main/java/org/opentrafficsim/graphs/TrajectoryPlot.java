@@ -18,11 +18,6 @@ import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.TimedEvent;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
@@ -50,6 +45,11 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.TimedEvent;
+
 /**
  * Trajectory plot.
  * <p>
@@ -60,8 +60,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * initial version Jul 24, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBasedGTUSampler,
-        EventListenerInterface
+public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBasedGTUSampler, EventListenerInterface
 
 {
     /** */
@@ -81,9 +80,6 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
     {
         return this.sampleInterval;
     }
-
-    /** The series of Lanes that provide the data for this TrajectoryPlot. */
-    private final ArrayList<Lane> path;
 
     /** The cumulative lengths of the elements of path. */
     private final double[] cumulativeLengths;
@@ -131,10 +127,9 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
     public TrajectoryPlot(final String caption, final Duration sampleInterval, final List<Lane> path,
             final OTSDEVSSimulatorInterface simulator)
     {
-        super(caption);
+        super(caption, path);
         this.sampleInterval = sampleInterval;
         this.simulator = simulator;
-        this.path = new ArrayList<Lane>(path); // make a defensive copy
         double[] endLengths = new double[path.size()];
         double cumulativeLength = 0;
         for (int i = 0; i < path.size(); i++)
@@ -147,8 +142,8 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
                 // Register the GTUs currently (i.e. already) on the lane (if any) for statistics sampling.
                 for (LaneBasedGTU gtu : lane.getGtuList())
                 {
-                    notify(new TimedEvent<OTSSimTimeDouble>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), gtu }, gtu
-                            .getSimulator().getSimulatorTime()));
+                    notify(new TimedEvent<OTSSimTimeDouble>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), gtu },
+                            gtu.getSimulator().getSimulatorTime()));
                 }
             }
             catch (RemoteException exception)
@@ -174,6 +169,13 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final GraphType getGraphType()
+    {
+        return GraphType.TRAJECTORY;
+    }
+
     /**
      * Sample all the GTUs on the observed lanes.
      */
@@ -188,7 +190,7 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
                 int hits = 0;
                 for (Lane lane : positions.keySet())
                 {
-                    if (this.path.contains(lane))
+                    if (getPath().contains(lane))
                     {
                         Length position = positions.get(lane);
                         if (position.si >= 0 && position.si <= lane.getLength().si)
@@ -248,7 +250,7 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
             boolean interest = false;
             for (Lane lane : gtu.getLanes().keySet())
             {
-                if (this.path.contains(lane))
+                if (getPath().contains(lane))
                 {
                     interest = true;
                 }
@@ -277,13 +279,13 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
             Lane lane = (Lane) content[6];
             Length posOnLane = (Length) content[7];
             gtu = (LaneBasedGTU) event.getSource();
-            if (this.path.contains(lane))
+            if (getPath().contains(lane))
             {
                 addData(gtu, lane, posOnLane.si);
             }
         }
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected JFreeChart createChart(final JFrame container)
@@ -452,7 +454,7 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
      */
     protected final void addData(final LaneBasedGTU gtu, final Lane lane, final double posOnLane)
     {
-        int index = this.path.indexOf(lane);
+        int index = getPath().indexOf(lane);
         if (index < 0)
         {
             // error -- silently ignore for now. Graphs should not cause errors.
@@ -759,8 +761,8 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
         }
 
         /** {@inheritDoc} */
-        public final void addSample(final LaneBasedGTU gtu, final Lane lane, final double position) throws NetworkException,
-                GTUException
+        public final void addSample(final LaneBasedGTU gtu, final Lane lane, final double position)
+                throws NetworkException, GTUException
         {
             final int sample = (int) Math.ceil(gtu.getOperationalPlan().getStartTime().si / getSampleInterval().si);
             if (0 == this.positions.size())
@@ -971,7 +973,7 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
     @Override
     public String toString()
     {
-        return "TrajectoryPlot [sampleInterval=" + this.sampleInterval + ", path=" + this.path + ", cumulativeLengths.length="
+        return "TrajectoryPlot [sampleInterval=" + this.sampleInterval + ", path=" + getPath() + ", cumulativeLengths.length="
                 + this.cumulativeLengths.length + ", maximumTime=" + this.maximumTime + ", caption=" + getCaption()
                 + ", trajectories.size=" + this.trajectories.size() + "]";
     }
