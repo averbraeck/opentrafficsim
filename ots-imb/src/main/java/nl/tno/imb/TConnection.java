@@ -51,9 +51,9 @@ public class TConnection {
      */
     public TConnection(String aRemoteHost, int aRemotePort, String aOwnerName, int aOwnerID, String aFederation,
             boolean aStartReadingThread) {
-        ffederation = aFederation;
-        fownerName = aOwnerName;
-        fownerID = aOwnerID;
+        this.ffederation = aFederation;
+        this.fownerName = aOwnerName;
+        this.fownerID = aOwnerID;
         open(aRemoteHost, aRemotePort, aStartReadingThread);
     }
     
@@ -71,15 +71,15 @@ public class TConnection {
         private int[] feventTranslation;
 
         public TEventTranslation() {
-            feventTranslation = new int[32];
+            this.feventTranslation = new int[32];
             // mark all entries as invalid
-            for (int i = 0; i < feventTranslation.length; i++)
-                feventTranslation[i] = INVALID_TRANSLATED_EVENT_ID;
+            for (int i = 0; i < this.feventTranslation.length; i++)
+                this.feventTranslation[i] = INVALID_TRANSLATED_EVENT_ID;
         }
 
         public int getTranslateEventID(int aRxEventID) {
-            if ((0 <= aRxEventID) && (aRxEventID < feventTranslation.length))
-                return feventTranslation[aRxEventID];
+            if ((0 <= aRxEventID) && (aRxEventID < this.feventTranslation.length))
+                return this.feventTranslation[aRxEventID];
             else
                 return INVALID_TRANSLATED_EVENT_ID;
         }
@@ -88,15 +88,15 @@ public class TConnection {
             if (aRxEventID >= 0) {
                 // grow event translation list until it can contain the
                 // requested id
-                while (aRxEventID >= feventTranslation.length) {
-                    int FormerSize = feventTranslation.length;
+                while (aRxEventID >= this.feventTranslation.length) {
+                    int FormerSize = this.feventTranslation.length;
                     // resize event translation array to double the size
-                    feventTranslation = Arrays.copyOf(feventTranslation, feventTranslation.length * 2);
+                    this.feventTranslation = Arrays.copyOf(this.feventTranslation, this.feventTranslation.length * 2);
                     // mark all new entries as invalid
-                    for (int i = FormerSize; i < feventTranslation.length; i++)
-                        feventTranslation[i] = INVALID_TRANSLATED_EVENT_ID;
+                    for (int i = FormerSize; i < this.feventTranslation.length; i++)
+                        this.feventTranslation[i] = INVALID_TRANSLATED_EVENT_ID;
                 }
-                feventTranslation[aRxEventID] = aTxEventID;
+                this.feventTranslation[aRxEventID] = aTxEventID;
             }
         }
     }
@@ -105,24 +105,24 @@ public class TConnection {
     private class TEventEntryList {
         
         TEventEntryList(int aInitialSize) {
-            FCount = 0;
-            fevents = new TEventEntry[aInitialSize];
+            this.FCount = 0;
+            this.fevents = new TEventEntry[aInitialSize];
         }
 
         private TEventEntry[] fevents;
         private int FCount = 0;
 
         public TEventEntry getEventEntry(int aEventID) {
-            if (0 <= aEventID && aEventID < FCount)
-                return fevents[aEventID];
+            if (0 <= aEventID && aEventID < this.FCount)
+                return this.fevents[aEventID];
             else
                 return null;
         }
 
         public String getEventName(int aEventID) {
-            if (0 <= aEventID && aEventID < FCount) {
-                if (fevents[aEventID] != null)
-                    return fevents[aEventID].getEventName();
+            if (0 <= aEventID && aEventID < this.FCount) {
+                if (this.fevents[aEventID] != null)
+                    return this.fevents[aEventID].getEventName();
                 else
                     return null;
             } else
@@ -130,20 +130,20 @@ public class TConnection {
         }
 
         public TEventEntry addEvent(TConnection aConnection, String aEventName) {
-            FCount++;
-            if (FCount>fevents.length)
-                fevents = Arrays.copyOf(fevents, fevents.length * 2);
-            fevents[FCount - 1] = new TEventEntry(aConnection, FCount - 1, aEventName);
+            this.FCount++;
+            if (this.FCount>this.fevents.length)
+                this.fevents = Arrays.copyOf(this.fevents, this.fevents.length * 2);
+            this.fevents[this.FCount - 1] = new TEventEntry(aConnection, this.FCount - 1, aEventName);
 
-            return fevents[FCount - 1];
+            return this.fevents[this.FCount - 1];
         }
 
         public TEventEntry getEventEntryOnName(String aEventName) {
-            int i = FCount - 1;
+            int i = this.FCount - 1;
             while (i >= 0 && !getEventName(i).equals(aEventName))
                 i--;
             if (i >= 0)
-                return fevents[i];
+                return this.fevents[i];
             else
                 return null;
         }
@@ -201,53 +201,53 @@ public class TConnection {
     private String fownerName = "";
 
     private TEventEntry eventIDToEventL(int aEventID) {
-        synchronized (feventEntryList) {
-            return feventEntryList.getEventEntry(aEventID);
+        synchronized (this.feventEntryList) {
+            return this.feventEntryList.getEventEntry(aEventID);
         }
     }
 
     private TEventEntry addEvent(String aEventName) {
         int EventID = 0;
         TEventEntry Event;
-        while (EventID < feventEntryList.FCount && !feventEntryList.getEventEntry(EventID).isEmpty())
+        while (EventID < this.feventEntryList.FCount && !this.feventEntryList.getEventEntry(EventID).isEmpty())
             EventID += 1;
-        if (EventID < feventEntryList.FCount) {
-            Event = feventEntryList.getEventEntry(EventID);
+        if (EventID < this.feventEntryList.FCount) {
+            Event = this.feventEntryList.getEventEntry(EventID);
             Event.feventName = aEventName;
             Event.fparent = null;
         } else
-            Event = feventEntryList.addEvent(this, aEventName);
+            Event = this.feventEntryList.addEvent(this, aEventName);
         return Event;
     }
     
     private TEventEntry addEventL(String aEventName) {
         TEventEntry Event;
-        synchronized (feventEntryList) {
+        synchronized (this.feventEntryList) {
             Event = addEvent(aEventName);
         }
         return Event;
     }
     
     private TEventEntry findOrAddEventL(String aEventName) {
-        synchronized (feventEntryList) {
-            TEventEntry Event = feventEntryList.getEventEntryOnName(aEventName);
+        synchronized (this.feventEntryList) {
+            TEventEntry Event = this.feventEntryList.getEventEntryOnName(aEventName);
             if (Event == null) {
                 int EventID = 0;
-                while (EventID < feventEntryList.FCount && !feventEntryList.getEventEntry(EventID).isEmpty())
+                while (EventID < this.feventEntryList.FCount && !this.feventEntryList.getEventEntry(EventID).isEmpty())
                     EventID += 1;
-                if (EventID < feventEntryList.FCount) {
-                    Event = feventEntryList.getEventEntry(EventID);
+                if (EventID < this.feventEntryList.FCount) {
+                    Event = this.feventEntryList.getEventEntry(EventID);
                     Event.feventName = aEventName;
                 } else
-                    Event = feventEntryList.addEvent(this, aEventName);
+                    Event = this.feventEntryList.addEvent(this, aEventName);
             }
             return Event;
         }
     }
 
     private TEventEntry findEventL(String aEventName) {
-        synchronized (feventEntryList) {
-            return feventEntryList.getEventEntryOnName(aEventName);
+        synchronized (this.feventEntryList) {
+            return this.feventEntryList.getEventEntryOnName(aEventName);
         }
     }
 
@@ -256,10 +256,10 @@ public class TConnection {
         String EventName;
         ParentEventName = "";
         TEventEntry Event = null;
-        synchronized (feventEntryList) {
-            for (int EventID = 0; EventID<feventEntryList.FCount; EventID++)
+        synchronized (this.feventEntryList) {
+            for (int EventID = 0; EventID<this.feventEntryList.FCount; EventID++)
             {
-                EventName = feventEntryList.getEventName(EventID);
+                EventName = this.feventEntryList.getEventName(EventID);
                 if (EventName.endsWith(EVENT_FILTER_POST_FIX))
                 {
                     EventName = EventName.substring(0, EventName.length()-2);
@@ -267,7 +267,7 @@ public class TConnection {
                     {
                         if (ParentEventName.length()<EventName.length())
                         {
-                            Event = feventEntryList.getEventEntry(EventID);
+                            Event = this.feventEntryList.getEventEntry(EventID);
                             ParentEventName = EventName;
                         }
                     }
@@ -279,7 +279,7 @@ public class TConnection {
 
     private TEventEntry findEventAutoPublishL(String aEventName) {
         TEventEntry Event = findEventL(aEventName);
-        if (Event == null && autoPublish)
+        if (Event == null && this.autoPublish)
             Event = publish(aEventName, false);
         return Event;
     }
@@ -289,7 +289,7 @@ public class TConnection {
             int Count = 0;
             int NumBytesRead = -1;
             while (aBuffer.getwriteAvailable() > 0 && NumBytesRead != 0) {
-                NumBytesRead = finputStream.read(aBuffer.getBuffer(), aBuffer.getWriteCursor(), aBuffer.getwriteAvailable());
+                NumBytesRead = this.finputStream.read(aBuffer.getBuffer(), aBuffer.getWriteCursor(), aBuffer.getwriteAvailable());
                 aBuffer.written(NumBytesRead);
                 Count += NumBytesRead;
             }
@@ -304,10 +304,10 @@ public class TConnection {
     // commandmagic + command + payloadsize [ + payload + payloadmagic]
     private int readCommand(TByteBuffer aFixedCommandPart, TByteBuffer aPayload, TByteBuffer aPayloadCheck)
             throws IOException {
-        int NumBytesRead = finputStream.read(aFixedCommandPart.getBuffer(), 0, aFixedCommandPart.getLength());
+        int NumBytesRead = this.finputStream.read(aFixedCommandPart.getBuffer(), 0, aFixedCommandPart.getLength());
         if (NumBytesRead > 0) {
             while (!aFixedCommandPart.compare(MAGIC_BYTES, 0)) {
-                int rbr = finputStream.read();
+                int rbr = this.finputStream.read();
                 // skipped bytes because of invalid magic in read command
                 if (rbr != -1)
                     aFixedCommandPart.shiftLeftOneByte((byte) rbr);
@@ -322,7 +322,7 @@ public class TConnection {
                 if (PayloadSize > 0) {
                     int Len = readBytesFromNetStream(aPayload);
                     if (Len == aPayload.getLength()) {
-                        NumBytesRead = finputStream.read(aPayloadCheck.getBuffer(), 0, aPayloadCheck.getLength());
+                        NumBytesRead = this.finputStream.read(aPayloadCheck.getBuffer(), 0, aPayloadCheck.getLength());
                         if (NumBytesRead == TByteBuffer.SIZE_OF_INT32 && aPayloadCheck.compare(MAGIC_STRING_CHECK, 0))
                             return aCommand;
                         else
@@ -348,7 +348,7 @@ public class TConnection {
      */
     protected int writeCommand(int aCommand, byte[] aPayload)
     {
-        synchronized (fwiteCommandLock) {
+        synchronized (this.fwiteCommandLock) {
             TByteBuffer Buffer = new TByteBuffer();
 
             Buffer.prepare(MAGIC_BYTES);
@@ -372,7 +372,7 @@ public class TConnection {
             // send buffer over socket
             if (isConnected()) {
                 try {
-                    foutputStream.write(Buffer.getBuffer(), 0, Buffer.getLength());
+                    this.foutputStream.write(Buffer.getBuffer(), 0, Buffer.getLength());
                     return Buffer.getLength();
                 } catch (Exception ex) {
                     close();
@@ -389,8 +389,8 @@ public class TConnection {
     }
 
     protected String prefixFederation(String aName, boolean aUseFederationPrefix) {
-        if (!ffederation.equals("") && aUseFederationPrefix)
-            return ffederation + "." + aName;
+        if (!this.ffederation.equals("") && aUseFederationPrefix)
+            return this.ffederation + "." + aName;
         else
             return aName;
     }
@@ -408,12 +408,12 @@ public class TConnection {
             handleCommandVariable(aPayload);
             break;
         case TEventEntry.IC_SET_EVENT_ID_TRANSLATION:
-            feventTranslation.setEventTranslation(aPayload.peekInt32(0, TEventTranslation.INVALID_TRANSLATED_EVENT_ID),
+            this.feventTranslation.setEventTranslation(aPayload.peekInt32(0, TEventTranslation.INVALID_TRANSLATED_EVENT_ID),
                     aPayload.peekInt32(TByteBuffer.SIZE_OF_INT32, TEventTranslation.INVALID_TRANSLATED_EVENT_ID));
             break;
         case TEventEntry.IC_UNIQUE_CLIENT_ID:
-            funiqueClientID = aPayload.readInt32();
-            fclientHandle = aPayload.readInt32();
+            this.funiqueClientID = aPayload.readInt32();
+            this.fclientHandle = aPayload.readInt32();
             break;
         /*
         case icTimeStamp:
@@ -442,13 +442,13 @@ public class TConnection {
     }
 
     private void handleCommandEvent(TByteBuffer aPayload) {
-        int TxEventID = feventTranslation.getTranslateEventID(aPayload.readInt32());
+        int TxEventID = this.feventTranslation.getTranslateEventID(aPayload.readInt32());
         if (TxEventID != TEventTranslation.INVALID_TRANSLATED_EVENT_ID)
             eventIDToEventL(TxEventID).handleEvent(aPayload);
     }
 
     private void handleCommandVariable(TByteBuffer aPayload) {
-        if (onVariable != null || onStatusUpdate != null) {
+        if (this.onVariable != null || this.onStatusUpdate != null) {
             String VarName = aPayload.readString();
             // check if it is a status update
             // TODO: model name is prefixed by federation. Is this correct?
@@ -459,19 +459,19 @@ public class TConnection {
                 aPayload.readInt32();
                 int Status = aPayload.readInt32(-1);
                 int Progress = aPayload.readInt32(-1);
-                if (onStatusUpdate != null)
-                    onStatusUpdate.dispatch(this, ModelUniqueClientID, ModelName, Progress, Status);
+                if (this.onStatusUpdate != null)
+                    this.onStatusUpdate.dispatch(this, ModelUniqueClientID, ModelName, Progress, Status);
             } else {
                 TByteBuffer VarValue = aPayload.readByteBuffer();
                 TByteBuffer PrevValue = new TByteBuffer();
-                if (onVariable != null)
-                    onVariable.dispatch(this, VarName, VarValue.getBuffer(), PrevValue.getBuffer());
+                if (this.onVariable != null)
+                    this.onVariable.dispatch(this, VarName, VarValue.getBuffer(), PrevValue.getBuffer());
             }
         }
     }
 
     private void handleCommandEventNames(TByteBuffer aPayload) {
-        if (onEventNames != null) {
+        if (this.onEventNames != null) {
             int ec = aPayload.readInt32();
             TEventNameEntry[] EventNames = new TEventNameEntry[ec];
             for (int en = 0; en < EventNames.length; en++) {
@@ -481,7 +481,7 @@ public class TConnection {
                 EventNames[en].subscribers = aPayload.readInt32();
                 EventNames[en].timers = aPayload.readInt32();
             }
-            onEventNames.dispatch(this, EventNames);
+            this.onEventNames.dispatch(this, EventNames);
         }
     }
 
@@ -509,8 +509,8 @@ public class TConnection {
             }
             else
             {
-                if ((onSubAndPub !=null) && !EE.isEmpty())
-                    onSubAndPub.dispatch(this, aCommand, EventName);
+                if ((this.onSubAndPub !=null) && !EE.isEmpty())
+                    this.onSubAndPub.dispatch(this, aCommand, EventName);
                 
             }
             if (EE != null)
@@ -519,8 +519,8 @@ public class TConnection {
         case TEventEntry.IC_UNSUBSCRIBE:
         case TEventEntry.IC_UNPUBLISH:
             EventName = aPayload.readString();
-            if (onSubAndPub !=null)
-                onSubAndPub.dispatch(this, aCommand, EventName);
+            if (this.onSubAndPub !=null)
+                this.onSubAndPub.dispatch(this, aCommand, EventName);
             EE = findEventL(EventName);
             if (EE != null)
                 EE.handleSubAndPub(aCommand);
@@ -545,11 +545,11 @@ public class TConnection {
     private int setOwner() {
         if (isConnected()) {
             TByteBuffer Payload = new TByteBuffer();
-            Payload.prepare(fownerID);
-            Payload.prepare(fownerName);
+            Payload.prepare(this.fownerID);
+            Payload.prepare(this.fownerName);
             Payload.prepareApply();
-            Payload.qWrite(fownerID);
-            Payload.qWrite(fownerName);
+            Payload.qWrite(this.fownerID);
+            Payload.qWrite(this.fownerName);
             return writeCommand(TEventEntry.IC_SET_CLIENT_INFO, Payload.getBuffer());
         } else
             return ICE_CONNECTION_CLOSED;
@@ -596,7 +596,7 @@ public class TConnection {
         public final int value;
 
         TConnectionState(int aValue) {
-            value = aValue;
+            this.value = aValue;
         }
     }
 
@@ -615,32 +615,32 @@ public class TConnection {
     protected boolean open(String aHost, int aPort, boolean aStartReadingThread) {
         close();
         try {
-            fremoteHost = aHost;
-            fremotePort = aPort;
-            fsocket = new Socket(fremoteHost, fremotePort);
-            if (fsocket.isConnected()) {
-                foutputStream = fsocket.getOutputStream();
-                finputStream = fsocket.getInputStream();
+            this.fremoteHost = aHost;
+            this.fremotePort = aPort;
+            this.fsocket = new Socket(this.fremoteHost, this.fremotePort);
+            if (this.fsocket.isConnected()) {
+                this.foutputStream = this.fsocket.getOutputStream();
+                this.finputStream = this.fsocket.getInputStream();
                 // FClient.Connect(FRemoteHost, FRemotePort);
                 // FNetStream = FClient.GetStream();
                 if (aStartReadingThread) {
-                    freadingThread = new Thread(new Runnable() {
+                    this.freadingThread = new Thread(new Runnable() {
                         public void run() {
                             readCommands();
                         }
                     });
-                    freadingThread.setName("imb command reader");
-                    freadingThread.start();
+                    this.freadingThread.setName("imb command reader");
+                    this.freadingThread.start();
                 }
-                if (imb2Compatible)
+                if (this.imb2Compatible)
                     requestUniqueClientID();
                 // SetState(State.icsClient);
                 setOwner();
                 // request all variables if delegates defined
-                if (onVariable != null || onStatusUpdate != null)
+                if (this.onVariable != null || this.onStatusUpdate != null)
                     writeCommand(TEventEntry.IC_ALL_VARIABLES, null);
             }
-            return fsocket.isConnected();
+            return this.fsocket.isConnected();
         } catch (Exception ex) {
             return false;
         }
@@ -680,7 +680,7 @@ public class TConnection {
     // fields
     /**Returns the current federation */
     public String getFederation() {
-        return ffederation;
+        return this.ffederation;
     }
 
     /**Set the current federation. All subscribed and published events are unsubscribed/unpublished, 
@@ -688,14 +688,14 @@ public class TConnection {
      * @param aFederation the new federation
      */
     public void setFederation(String aFederation) {
-        String OldFederation = ffederation;
+        String OldFederation = this.ffederation;
         TEventEntry Event;
         if (isConnected() && (OldFederation != "")) {
             // un-publish and un-subscribe all
-            for (int i = 0; i < feventEntryList.FCount; i++) {
-                String EventName = feventEntryList.getEventName(i);
+            for (int i = 0; i < this.feventEntryList.FCount; i++) {
+                String EventName = this.feventEntryList.getEventName(i);
                 if (!EventName.equals("") && EventName.startsWith(OldFederation + ".")) {
-                    Event = feventEntryList.getEventEntry(i);
+                    Event = this.feventEntryList.getEventEntry(i);
                     if (Event.isSubscribed())
                         Event.unSubscribe(false);
                     if (Event.isPublished())
@@ -703,14 +703,14 @@ public class TConnection {
                 }
             }
         }
-        ffederation = aFederation;
+        this.ffederation = aFederation;
         if (isConnected() && (OldFederation != "")) {
             // publish and subscribe all
-            for (int i = 0; i < feventEntryList.FCount; i++) {
-                String EventName = feventEntryList.getEventName(i);
+            for (int i = 0; i < this.feventEntryList.FCount; i++) {
+                String EventName = this.feventEntryList.getEventName(i);
                 if (!EventName.equals("") && EventName.startsWith(OldFederation + ".")) {
-                    Event = feventEntryList.getEventEntry(i);
-                    Event.feventName = ffederation + Event.feventName.substring(0, OldFederation.length());
+                    Event = this.feventEntryList.getEventEntry(i);
+                    Event.feventName = this.ffederation + Event.feventName.substring(0, OldFederation.length());
                     if (Event.isSubscribed())
                         Event.subscribe();
                     if (Event.isPublished())
@@ -729,12 +729,12 @@ public class TConnection {
     // connection
     /**Returns the IP address or DNS name of the currently connected hub */
     public String getRemoteHost() {
-        return fremoteHost;
+        return this.fremoteHost;
     }
 
     /**Returns the TCP port of the currently connected hub */
     public int getRemotePort() {
-        return fremotePort;
+        return this.fremotePort;
     }
 
     /**Returns the state of the NAGLE algorithm on the connected socket
@@ -743,7 +743,7 @@ public class TConnection {
      */
     public boolean getNoDelay() throws SocketException {
         if (isConnected())
-            return fsocket.getTcpNoDelay();
+            return this.fsocket.getTcpNoDelay();
         else
             return false;
     }
@@ -754,7 +754,7 @@ public class TConnection {
      */
     public void setNoDelay(boolean aValue) throws SocketException {
         if (isConnected())
-            fsocket.setTcpNoDelay(aValue);
+            this.fsocket.setTcpNoDelay(aValue);
     }
 
     /**Returns the status of the linger option on the connected socket
@@ -763,7 +763,7 @@ public class TConnection {
      */
     public boolean getLinger() throws SocketException {
         if (isConnected())
-            return fsocket.getSoLinger() != -1;
+            return this.fsocket.getSoLinger() != -1;
         else
             return false;
     }
@@ -774,28 +774,28 @@ public class TConnection {
      */
     public void setLinger(boolean aValue) throws SocketException {
         if (isConnected())
-            fsocket.setSoLinger(aValue, 2); // set linger time to 2 seconds
+            this.fsocket.setSoLinger(aValue, 2); // set linger time to 2 seconds
     }
 
     /** Returns the connected state of the connection */
     public boolean isConnected() {
-        return (fsocket != null) && fsocket.isConnected();
+        return (this.fsocket != null) && this.fsocket.isConnected();
     }
 
     /** Closes the connection and cleans up socket, streams and thread */
     public void close() {
-        if ((fsocket != null) && fsocket.isConnected()) {
-            if (onDisconnect != null)
-                onDisconnect.dispatch(this);
+        if ((this.fsocket != null) && this.fsocket.isConnected()) {
+            if (this.onDisconnect != null)
+                this.onDisconnect.dispatch(this);
             writeCommand(TEventEntry.IC_END_OF_SESSION, null);
             try {
-                foutputStream.close();
-                foutputStream = null;
-                finputStream.close();
-                finputStream = null;
-                fsocket.close();
-                fsocket = null;
-                freadingThread = null;
+                this.foutputStream.close();
+                this.foutputStream = null;
+                this.finputStream.close();
+                this.finputStream = null;
+                this.fsocket.close();
+                this.fsocket = null;
+                this.freadingThread = null;
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -827,7 +827,7 @@ public class TConnection {
      * @throws IOException
      */
     public void readCommandsNonBlocking() throws IOException {
-        if (finputStream.available() != 0) {
+        if (this.finputStream.available() != 0) {
             int Command = TEventEntry.IC_INVALID_COMMAND;
             // define once
             // magic + command + payload size
@@ -848,7 +848,7 @@ public class TConnection {
                     if (isConnected())
                         System.out.println("## Exception in ReadCommands loop: " + ex.getMessage());
                 }
-            } while ((Command != TEventEntry.IC_END_OF_SESSION) && isConnected() && (finputStream.available() != 0));
+            } while ((Command != TEventEntry.IC_END_OF_SESSION) && isConnected() && (this.finputStream.available() != 0));
         }
     }
 
@@ -858,7 +858,7 @@ public class TConnection {
      * @throws SocketException
      */
     public void readCommandsNonThreaded(int aTimeOut) throws SocketException {
-        fsocket.setSoTimeout(aTimeOut);
+        this.fsocket.setSoTimeout(aTimeOut);
         int Command = TEventEntry.IC_INVALID_COMMAND;
         // define once
         // magic + command + payload size
@@ -885,42 +885,42 @@ public class TConnection {
     // owner
     /**Returns the currently specified owner id */
     public int getOwnerID() {
-        return fownerID;
+        return this.fownerID;
     }
 
     /**Changes the owner id
      * @param aValue the new owner id
      */
     public void setOwnerID(int aValue) {
-        if (fownerID != aValue) {
-            fownerID = aValue;
+        if (this.fownerID != aValue) {
+            this.fownerID = aValue;
             setOwner();
         }
     }
 
     /**Returns the currently specified owner name */
     public String getOwnerName() {
-        return fownerName;
+        return this.fownerName;
     }
 
     /**Changes the owner name
      * @param aValue the new owner name
      */
     public void setOwnerName(String aValue) {
-        if (fownerName != aValue) {
-            fownerName = aValue;
+        if (this.fownerName != aValue) {
+            this.fownerName = aValue;
             setOwner();
         }
     }
 
     /**Returns the unique client id the hub assigned to this connection */
     public int getUniqueClientID() {
-        return funiqueClientID;
+        return this.funiqueClientID;
     }
     
     /**Returns the client handle the hub assigned to this connection */
     public int getClientHandle() {
-        return fclientHandle;
+        return this.fclientHandle;
     }
 
     // subscribe/publish
@@ -1123,7 +1123,7 @@ public class TConnection {
      */
     public void setOnVariable(TOnVariable aValue)
     {
-        onVariable = aValue;
+        this.onVariable = aValue;
         requestAllVariables();
     }
 
@@ -1207,7 +1207,7 @@ public class TConnection {
      */
     public void setOnStatusUpdate(TOnStatusUpdate aValue)
     {
-        onStatusUpdate = aValue;
+        this.onStatusUpdate = aValue;
         requestAllVariables();
     }
 
@@ -1231,31 +1231,31 @@ public class TConnection {
         Payload.prepareApply();
         Payload.qWrite(aStatus);
         Payload.qWrite(aProgress);
-        if (imb2Compatible) {
+        if (this.imb2Compatible) {
             // wait for unique client id
-            if (funiqueClientID == 0) {
+            if (this.funiqueClientID == 0) {
                 int SpinCount = 10; // 10*500 ms
-                while (funiqueClientID == 0 && SpinCount > 0) {
+                while (this.funiqueClientID == 0 && SpinCount > 0) {
                     Thread.sleep(500);
                     SpinCount--;
                 }
             }
             // set variable using unique client id
-            setVariableValue(Integer.toHexString(funiqueClientID) + prefixFederation(fownerName).toUpperCase() + MODEL_STATUS_VAR_SEP_CHAR
+            setVariableValue(Integer.toHexString(this.funiqueClientID) + prefixFederation(this.fownerName).toUpperCase() + MODEL_STATUS_VAR_SEP_CHAR
                     + MODEL_Status_VAR_NAME, Payload);
         } else
-            setVariableValue(prefixFederation(fownerName).toUpperCase() + MODEL_STATUS_VAR_SEP_CHAR + MODEL_Status_VAR_NAME, Payload,
+            setVariableValue(prefixFederation(this.fownerName).toUpperCase() + MODEL_STATUS_VAR_SEP_CHAR + MODEL_Status_VAR_NAME, Payload,
                     TVarPrefix.vpUniqueClientID);
     }
 
     /** Removes the current status for this client  */
     public void removeStatus() {
-        if (imb2Compatible)
+        if (this.imb2Compatible)
 
-            setVariableValue(Integer.toHexString(funiqueClientID) + prefixFederation(fownerName) + MODEL_STATUS_VAR_SEP_CHAR
+            setVariableValue(Integer.toHexString(this.funiqueClientID) + prefixFederation(this.fownerName) + MODEL_STATUS_VAR_SEP_CHAR
                     + MODEL_Status_VAR_NAME, "");
         else
-            setVariableValue(prefixFederation(fownerName) + MODEL_STATUS_VAR_SEP_CHAR + MODEL_Status_VAR_NAME, "",
+            setVariableValue(prefixFederation(this.fownerName) + MODEL_STATUS_VAR_SEP_CHAR + MODEL_Status_VAR_NAME, "",
                     TVarPrefix.vpUniqueClientID);
     }
 
@@ -1264,9 +1264,9 @@ public class TConnection {
      * @param aOnFocus callback event handler
      */
     public void subscribeOnFocus(TEventEntry.TOnFocus aOnFocus) {
-        if (ffocusEvent == null)
-            ffocusEvent = subscribe(FOCUS_EVENT_NAME);
-        ffocusEvent.onFocus = aOnFocus;
+        if (this.ffocusEvent == null)
+            this.ffocusEvent = subscribe(FOCUS_EVENT_NAME);
+        this.ffocusEvent.onFocus = aOnFocus;
     }
 
     /**Signal a new focus point to the framework
@@ -1275,16 +1275,16 @@ public class TConnection {
      * @return result of the command (see ICE_* constants)
      */
     public int signalFocus(double aX, double aY) {
-        if (ffocusEvent == null)
-            ffocusEvent = findEventAutoPublishL(prefixFederation(FOCUS_EVENT_NAME));
-        if (ffocusEvent != null) {
+        if (this.ffocusEvent == null)
+            this.ffocusEvent = findEventAutoPublishL(prefixFederation(FOCUS_EVENT_NAME));
+        if (this.ffocusEvent != null) {
             TByteBuffer Payload = new TByteBuffer();
             Payload.prepare(aX);
             Payload.prepare(aY);
             Payload.prepareApply();
             Payload.qWrite(aX);
             Payload.qWrite(aY);
-            return ffocusEvent.signalEvent(TEventEntry.EK_CHANGE_OBJECT_EVENT, Payload.getBuffer());
+            return this.ffocusEvent.signalEvent(TEventEntry.EK_CHANGE_OBJECT_EVENT, Payload.getBuffer());
         } else
             return ICE_EVENT_NOT_PUBLISHED;
     }
@@ -1294,9 +1294,9 @@ public class TConnection {
      * @param aOnChangeFederation
      */
     public void subscribeOnFederationChange(TEventEntry.TOnChangeFederation aOnChangeFederation) {
-        if (fchangeFederationEvent == null)
-            fchangeFederationEvent = subscribe(CHANGE_FEDERATION_EVENT_NAME);
-        fchangeFederationEvent.onChangeFederation = aOnChangeFederation;
+        if (this.fchangeFederationEvent == null)
+            this.fchangeFederationEvent = subscribe(CHANGE_FEDERATION_EVENT_NAME);
+        this.fchangeFederationEvent.onChangeFederation = aOnChangeFederation;
     }
 
     /**Signal a new federation to the framework
@@ -1305,10 +1305,10 @@ public class TConnection {
      * @return result of the command (see ICE_* constants)
      */
     public int signalChangeFederation(int aNewFederationID, String aNewFederation) {
-        if (fchangeFederationEvent == null)
-            fchangeFederationEvent = findEventAutoPublishL(prefixFederation(CHANGE_FEDERATION_EVENT_NAME));
-        if (fchangeFederationEvent != null)
-            return fchangeFederationEvent.signalChangeObject(TEventEntry.ACTION_CHANGE, aNewFederationID, aNewFederation);
+        if (this.fchangeFederationEvent == null)
+            this.fchangeFederationEvent = findEventAutoPublishL(prefixFederation(CHANGE_FEDERATION_EVENT_NAME));
+        if (this.fchangeFederationEvent != null)
+            return this.fchangeFederationEvent.signalChangeObject(TEventEntry.ACTION_CHANGE, aNewFederationID, aNewFederation);
         else
             return ICE_EVENT_NOT_PUBLISHED;
     }
@@ -1321,10 +1321,10 @@ public class TConnection {
      * @return result of the command (see ICE_* constants)
      */
     public int logWriteLn(String aLogEventName, String aLine, TEventEntry.TLogLevel aLevel) {
-        if (flogEvent == null)
-            flogEvent = findEventAutoPublishL(prefixFederation(aLogEventName));
-        if (flogEvent != null)
-            return flogEvent.logWriteLn(aLine, aLevel);
+        if (this.flogEvent == null)
+            this.flogEvent = findEventAutoPublishL(prefixFederation(aLogEventName));
+        if (this.flogEvent != null)
+            return this.flogEvent.logWriteLn(aLine, aLevel);
         else
             return ICE_EVENT_NOT_PUBLISHED;
     }

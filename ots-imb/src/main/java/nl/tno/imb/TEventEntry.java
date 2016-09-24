@@ -18,12 +18,12 @@ import java.nio.charset.Charset;
 public class TEventEntry {
     // other sub classes
     TEventEntry(TConnection aConnection, int aID, String aEventName) {
-        connection = aConnection;
-        ID = aID;
-        feventName = aEventName;
-        fparent = null;
-        fisPublished = false;
-        fisSubscribed = false;
+        this.connection = aConnection;
+        this.ID = aID;
+        this.feventName = aEventName;
+        this.fparent = null;
+        this.fisPublished = false;
+        this.fisSubscribed = false;
     }
     
     static final int IC_INVALID_COMMAND = -1; // to signal corrupt command
@@ -156,9 +156,9 @@ public class TEventEntry {
         private String fname;
 
         public TStreamCacheEntry(int aStreamID, OutputStream aStream, String aStreamName) {
-            fstreamID = aStreamID;
-            fstream = aStream;
-            fname = aStreamName;
+            this.fstreamID = aStreamID;
+            this.fstream = aStream;
+            this.fname = aStreamName;
         }
     }
 
@@ -166,8 +166,8 @@ public class TEventEntry {
         private List<TStreamCacheEntry> fstreamCacheList = new ArrayList<TStreamCacheEntry>();
 
         public TStreamCacheEntry find(int aStreamID) {
-            for (int i = 0; i < fstreamCacheList.size(); i++) {
-                TStreamCacheEntry sce = fstreamCacheList.get(i);
+            for (int i = 0; i < this.fstreamCacheList.size(); i++) {
+                TStreamCacheEntry sce = this.fstreamCacheList.get(i);
                 if (sce.fstreamID == aStreamID)
                     return sce;
             }
@@ -175,15 +175,15 @@ public class TEventEntry {
         }
 
         public void cache(int aStreamID, OutputStream aStream, String aStreamName) {
-            fstreamCacheList.add(new TStreamCacheEntry(aStreamID, aStream, aStreamName));
+            this.fstreamCacheList.add(new TStreamCacheEntry(aStreamID, aStream, aStreamName));
         }
 
         public void remove(int aStreamID) {
             int i = 0;
-            while ((i < fstreamCacheList.size()) && (fstreamCacheList.get(i).fstreamID != aStreamID))
+            while ((i < this.fstreamCacheList.size()) && (this.fstreamCacheList.get(i).fstreamID != aStreamID))
                 i++;
-            if (i < fstreamCacheList.size())
-                fstreamCacheList.remove(i);
+            if (i < this.fstreamCacheList.size())
+                this.fstreamCacheList.remove(i);
         }
     }
 
@@ -212,64 +212,64 @@ public class TEventEntry {
     }
 
     void subscribe() {
-        fisSubscribed = true;
+        this.fisSubscribed = true;
         // send command
         TByteBuffer Payload = new TByteBuffer();
-        Payload.prepare(ID);
+        Payload.prepare(this.ID);
         Payload.prepare(0); // EET
         Payload.prepare(getEventName());
         Payload.prepareApply();
-        Payload.qWrite(ID);
+        Payload.qWrite(this.ID);
         Payload.qWrite(0); // EET
         Payload.qWrite(getEventName());
-        connection.writeCommand(IC_SUBSCRIBE, Payload.getBuffer());
+        this.connection.writeCommand(IC_SUBSCRIBE, Payload.getBuffer());
     }
 
     void publish() {
-        fisPublished = true;
+        this.fisPublished = true;
         // send command
         TByteBuffer Payload = new TByteBuffer();
-        Payload.prepare(ID);
+        Payload.prepare(this.ID);
         Payload.prepare(0); // EET
         Payload.prepare(getEventName());
         Payload.prepareApply();
-        Payload.qWrite(ID);
+        Payload.qWrite(this.ID);
         Payload.qWrite(0); // EET
         Payload.qWrite(getEventName());
-        connection.writeCommand(IC_PUBLISH, Payload.getBuffer());
+        this.connection.writeCommand(IC_PUBLISH, Payload.getBuffer());
     }
 
     boolean isEmpty() {
-        return !(fisSubscribed || fisPublished);
+        return !(this.fisSubscribed || this.fisPublished);
     } 
     
     private boolean fSubscribers;
     private boolean fPublishers;
-    public boolean subscribers() { return fSubscribers; }
-    public boolean publishers() { return fPublishers; }
+    public boolean subscribers() { return this.fSubscribers; }
+    public boolean publishers() { return this.fPublishers; }
 
     void unSubscribe(boolean aChangeLocalState)
     {
         if (aChangeLocalState)
-            fisSubscribed = false;
+            this.fisSubscribed = false;
         // send command
         TByteBuffer Payload = new TByteBuffer();
         Payload.prepare(getEventName());
         Payload.prepareApply();
         Payload.qWrite(getEventName());
-        connection.writeCommand(IC_UNSUBSCRIBE, Payload.getBuffer());
+        this.connection.writeCommand(IC_UNSUBSCRIBE, Payload.getBuffer());
     }
 
     void unPublish(boolean aChangeLocalState)
     {
         if (aChangeLocalState)
-            fisPublished = false;
+            this.fisPublished = false;
         // send command
         TByteBuffer Payload = new TByteBuffer();
         Payload.prepare(getEventName());
         Payload.prepareApply();
         Payload.qWrite(getEventName());
-        connection.writeCommand(IC_UNPUBLISH, Payload.getBuffer());
+        this.connection.writeCommand(IC_UNPUBLISH, Payload.getBuffer());
     }
 
     // dispatcher for all events
@@ -291,8 +291,8 @@ public class TEventEntry {
             handleBuffer(EventTick, aPayload);
             break;
         case EK_NORMAL_EVENT:
-            if (onNormalEvent != null)
-                onNormalEvent.dispatch(this, aPayload);
+            if (this.onNormalEvent != null)
+                this.onNormalEvent.dispatch(this, aPayload);
             break;
         case EK_TIMER_TICK:
             handleTimerTick(aPayload);
@@ -322,8 +322,8 @@ public class TEventEntry {
             handleChildEvent(EK_CHILD_EVENT_REMOVE, aPayload);
             break;
         default:
-            if (onOtherEvent != null)
-                onOtherEvent.dispatch(this, EventTick, eventKind, aPayload);
+            if (this.onOtherEvent != null)
+                this.onOtherEvent.dispatch(this, EventTick, eventKind, aPayload);
             break;
         }
 
@@ -331,69 +331,69 @@ public class TEventEntry {
 
     // dispatchers for specific events
     private void handleChangeObject(TByteBuffer aPayload) {
-        if (onFocus != null) {
+        if (this.onFocus != null) {
             double X;
             double Y;
             X = aPayload.readDouble();
             Y = aPayload.readDouble();
-            onFocus.dispatch(X, Y);
+            this.onFocus.dispatch(X, Y);
         } else {
-            if (onChangeFederation != null) {
+            if (this.onChangeFederation != null) {
                 aPayload.readInt32(); // read action, not used
                 int NewFederationID = aPayload.readInt32();
                 String NewFederation = aPayload.readString();
-                onChangeFederation.dispatch(connection, NewFederationID, NewFederation);
+                this.onChangeFederation.dispatch(this.connection, NewFederationID, NewFederation);
             } else {
-                if (onChangeObject != null) {
+                if (this.onChangeObject != null) {
                     int Action = aPayload.readInt32();
                     int ObjectID = aPayload.readInt32();
                     String Attribute = aPayload.readString();
-                    onChangeObject.dispatch(Action, ObjectID, getShortEventName(), Attribute);
+                    this.onChangeObject.dispatch(Action, ObjectID, getShortEventName(), Attribute);
                 }
             }
         }
     }
 
     private void handleChangeObjectData(TByteBuffer aPayload) {
-        if (onChangeObjectData != null) {
+        if (this.onChangeObjectData != null) {
             int Action = aPayload.readInt32();
             int ObjectID = aPayload.readInt32();
             String Attribute = aPayload.readString();
             TByteBuffer NewValues = aPayload.readByteBuffer();
             TByteBuffer OldValues = aPayload.readByteBuffer();
-            onChangeObjectData.dispatch(this, Action, ObjectID, Attribute, NewValues, OldValues);
+            this.onChangeObjectData.dispatch(this, Action, ObjectID, Attribute, NewValues, OldValues);
         }
     }
 
     private void handleBuffer(int aEventTick, TByteBuffer aPayload) {
-        if (onBuffer != null) {
+        if (this.onBuffer != null) {
             int BufferID = aPayload.readInt32();
             TByteBuffer Buffer = aPayload.readByteBuffer();
-            onBuffer.dispatch(this, aEventTick, BufferID, Buffer);
+            this.onBuffer.dispatch(this, aEventTick, BufferID, Buffer);
         }
     }
 
     private void handleTimerTick(TByteBuffer aPayload) {
-        if (onTimerTick != null) {
+        if (this.onTimerTick != null) {
             String TimerName = aPayload.readString();
             int Tick = aPayload.readInt32();
             long TickTime = aPayload.readInt64();
             long StartTime = aPayload.readInt64();
-            onTimerTick.dispatch(this, TimerName, Tick, TickTime, StartTime);
+            this.onTimerTick.dispatch(this, TimerName, Tick, TickTime, StartTime);
         }
     }
 
     private void handleTimerCmd(int aEventKind, TByteBuffer aPayload) {
-        if (onTimerCmd != null) {
+        if (this.onTimerCmd != null) {
             String TimerName = aPayload.readString();
-            onTimerCmd.dispatch(this, aEventKind, TimerName);
+            this.onTimerCmd.dispatch(this, aEventKind, TimerName);
         }
     }
 
     private void handleChildEvent(int aEventKind, TByteBuffer aPayload) {
-        if (onChildEvent != null) {
+        if (this.onChildEvent != null) {
             String EventName = aPayload.readString();
-            onChildEvent.dispatch(this, aEventKind, EventName);
+            this.onChildEvent.dispatch(this, aEventKind, EventName);
         }
     }
 
@@ -404,17 +404,17 @@ public class TEventEntry {
         TStreamCacheEntry sce;
         switch (aEventKind) {
         case EK_STREAM_HEADER:
-            if (onStreamCreate != null) {
+            if (this.onStreamCreate != null) {
                 StreamID = aPayload.readInt32();
                 StreamName = aPayload.readString();
-                stream = onStreamCreate.dispatch(this, StreamName);
+                stream = this.onStreamCreate.dispatch(this, StreamName);
                 if (stream != null)
-                    fstreamCache.cache(StreamID, stream, StreamName);
+                    this.fstreamCache.cache(StreamID, stream, StreamName);
             }
             break;
         case EK_STREAM_BODY:
             StreamID = aPayload.readInt32();
-            sce = fstreamCache.find(StreamID);
+            sce = this.fstreamCache.find(StreamID);
             if ((sce != null) && (sce.fstream != null)) {
                 try {
                     sce.fstream.write(aPayload.getBuffer(), aPayload.getReadCursor(), aPayload.getReadAvailable());
@@ -426,47 +426,47 @@ public class TEventEntry {
             break;
         case EK_STREAM_TAIL:
             StreamID = aPayload.readInt32();
-            sce = fstreamCache.find(StreamID);
+            sce = this.fstreamCache.find(StreamID);
             if ((sce != null) && (sce.fstream != null)) {
                 try {
                     sce.fstream.write(aPayload.getBuffer(), aPayload.getReadCursor(), aPayload.getReadAvailable());
-                    if (onStreamEnd != null)
-                        onStreamEnd.dispatch(this, sce.fstream, sce.fname);
+                    if (this.onStreamEnd != null)
+                        this.onStreamEnd.dispatch(this, sce.fstream, sce.fname);
                     sce.fstream.close();
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                fstreamCache.remove(StreamID);
+                this.fstreamCache.remove(StreamID);
             }
             break;
         }
     }
 
     void handleSubAndPub(int aCommand) {
-        if (fparent == null && onSubAndPub != null)
-            onSubAndPub.dispatch(this, aCommand);
+        if (this.fparent == null && this.onSubAndPub != null)
+            this.onSubAndPub.dispatch(this, aCommand);
         switch (aCommand)
         {
         case IC_SUBSCRIBE:
-            if (fparent != null && !isPublished())
+            if (this.fparent != null && !isPublished())
                 publish();
-            fSubscribers = true;
+            this.fSubscribers = true;
             break;
         case IC_PUBLISH:
-            if (fparent != null && !isSubscribed())
+            if (this.fparent != null && !isSubscribed())
                 subscribe();
-            fPublishers = true;
+            this.fPublishers = true;
             break;
         case IC_UNSUBSCRIBE:
-            if (fparent != null && isPublished())
+            if (this.fparent != null && isPublished())
                 unPublish(true);
-            fSubscribers = false;
+            this.fSubscribers = false;
             break;
         case IC_UNPUBLISH:
-            if (fparent != null && isSubscribed())
+            if (this.fparent != null && isSubscribed())
                 unSubscribe(true);
-            fPublishers = false;
+            this.fPublishers = false;
             break;
         }
     }
@@ -480,40 +480,40 @@ public class TEventEntry {
 
     /** Returns the fully qualified name of this event */
     public String getEventName() {
-        return feventName;
+        return this.feventName;
     }
     
     public String getShortEventName() {
-        String federationPrefix = connection.getFederation()+".";
-        if (feventName.startsWith(federationPrefix))
-            return feventName.substring(federationPrefix.length());
+        String federationPrefix = this.connection.getFederation()+".";
+        if (this.feventName.startsWith(federationPrefix))
+            return this.feventName.substring(federationPrefix.length());
         else
-            return feventName;
+            return this.feventName;
     }
 
     /** Returns true if this event is published */
     public boolean isPublished() {
-        return fisPublished;
+        return this.fisPublished;
     }
 
     /** Returns true if this event is subscribed */
     public boolean isSubscribed() {
-        return fisSubscribed;
+        return this.fisSubscribed;
     }
 
     public void copyHandlersFrom(TEventEntry aEventEntry) {
-        onChangeObject       = aEventEntry.onChangeObject;
-        onFocus              = aEventEntry.onFocus;
-        onNormalEvent        = aEventEntry.onNormalEvent;
-        onBuffer             = aEventEntry.onBuffer;
-        onStreamCreate       = aEventEntry.onStreamCreate;
-        onStreamEnd          = aEventEntry.onStreamEnd;
-        onChangeFederation   = aEventEntry.onChangeFederation;
-        onTimerTick          = aEventEntry.onTimerTick;
-        onTimerCmd           = aEventEntry.onTimerCmd;
-        onChangeObjectData   = aEventEntry.onChangeObjectData;
-        onOtherEvent         = aEventEntry.onOtherEvent;
-        onSubAndPub          = aEventEntry.onSubAndPub;
+        this.onChangeObject       = aEventEntry.onChangeObject;
+        this.onFocus              = aEventEntry.onFocus;
+        this.onNormalEvent        = aEventEntry.onNormalEvent;
+        this.onBuffer             = aEventEntry.onBuffer;
+        this.onStreamCreate       = aEventEntry.onStreamCreate;
+        this.onStreamEnd          = aEventEntry.onStreamEnd;
+        this.onChangeFederation   = aEventEntry.onChangeFederation;
+        this.onTimerTick          = aEventEntry.onTimerTick;
+        this.onTimerCmd           = aEventEntry.onTimerCmd;
+        this.onChangeObjectData   = aEventEntry.onChangeObjectData;
+        this.onOtherEvent         = aEventEntry.onOtherEvent;
+        this.onSubAndPub          = aEventEntry.onSubAndPub;
     }
 
     // IMB 1
@@ -632,19 +632,19 @@ public class TEventEntry {
      */
     public int signalEvent(int aEventKind, byte[] aEventPayload) {
         TByteBuffer Payload = new TByteBuffer();
-        if (!isPublished() && connection.autoPublish)
+        if (!isPublished() && this.connection.autoPublish)
             publish();
         if (isPublished()) {
-            Payload.prepare(ID);
+            Payload.prepare(this.ID);
             Payload.prepare((int) 0); // tick
             Payload.prepare(aEventKind);
             Payload.prepare(aEventPayload);
             Payload.prepareApply();
-            Payload.qWrite(ID);
+            Payload.qWrite(this.ID);
             Payload.qWrite((int) (0)); // tick
             Payload.qWrite(aEventKind);
             Payload.qWrite(aEventPayload);
-            return connection.writeCommand(IC_EVENT, Payload.getBuffer());
+            return this.connection.writeCommand(IC_EVENT, Payload.getBuffer());
         } else
             return TConnection.ICE_EVENT_NOT_PUBLISHED;
     }
@@ -666,23 +666,23 @@ public class TEventEntry {
      */
     public int signalBuffer(int aBufferID, byte[] aBuffer, int aEventFlags) {
         TByteBuffer Payload = new TByteBuffer();
-        if (!isPublished() && connection.autoPublish)
+        if (!isPublished() && this.connection.autoPublish)
             publish();
         if (isPublished()) {
-            Payload.prepare(ID);
+            Payload.prepare(this.ID);
             Payload.prepare((int) 0); // tick
             Payload.prepare(EK_BUFFER | (aEventFlags & EVENT_FLAGS_MASK));
             Payload.prepare(aBufferID);
             Payload.prepare(aBuffer.length);
             Payload.prepare(aBuffer);
             Payload.prepareApply();
-            Payload.qWrite(ID);
+            Payload.qWrite(this.ID);
             Payload.qWrite((int) (0)); // tick
             Payload.qWrite(EK_BUFFER | (aEventFlags & EVENT_FLAGS_MASK));
             Payload.qWrite(aBufferID);
             Payload.qWrite(aBuffer.length);
             Payload.qWrite(aBuffer);
-            return connection.writeCommand(IC_EVENT, Payload.getBuffer());
+            return this.connection.writeCommand(IC_EVENT, Payload.getBuffer());
         } else
             return TConnection.ICE_EVENT_NOT_PUBLISHED;
     }
@@ -716,27 +716,27 @@ public class TEventEntry {
         int ReadSize;
         int BodyIndex;
         int EventKindIndex;
-        if (!isPublished() && connection.autoPublish)
+        if (!isPublished() && this.connection.autoPublish)
             publish();
         if (isPublished()) {
             // ekStreamHeader, includes stream name, no stream data
             byte[] StreamNameUTF8 = aStreamName.getBytes(Charset.forName("UTF-8"));
             // TODO: generate semi-unique stream id from connection URI and stream name
-            int StreamID = StreamNameUTF8.hashCode() + connection.hashCode(); 
-            Payload.prepare(ID);
+            int StreamID = StreamNameUTF8.hashCode() + this.connection.hashCode(); 
+            Payload.prepare(this.ID);
             Payload.prepare((int) 0); // tick
             Payload.prepare(EK_STREAM_HEADER); // event kind
             Payload.prepare(StreamID);
             Payload.prepare(aStreamName);
             Payload.prepareApply();
-            Payload.qWrite(ID);
+            Payload.qWrite(this.ID);
             Payload.qWrite((int) 0); // tick
             EventKindIndex = Payload.getWriteCursor();
             Payload.qWrite(EK_STREAM_HEADER); // event kind
             Payload.qWrite(StreamID);
             BodyIndex = Payload.getWriteCursor();
             Payload.qWrite(aStreamName);
-            int res = connection.writeCommand(IC_EVENT, Payload.getBuffer());
+            int res = this.connection.writeCommand(IC_EVENT, Payload.getBuffer());
             if (res > 0) {
                 // ekStreamBody, only buffer size chunks of data
                 // prepare payload to same value but aStreamName stripped
@@ -754,7 +754,7 @@ public class TEventEntry {
                     ReadSize = readBytesFromStream(Payload, aStream);
                     // ReadSize = aStream.Read(Payload.Buffer, BodyIndex, Connection.MaxStreamBodyBuffer);
                     if (ReadSize == MAX_STREAM_BODY_BUFFER_SIZE)
-                        res = connection.writeCommand(IC_EVENT, Payload.getBuffer());
+                        res = this.connection.writeCommand(IC_EVENT, Payload.getBuffer());
                     // reset write position
                     Payload.writeStart(BodyIndex);
                 } while ((ReadSize == MAX_STREAM_BODY_BUFFER_SIZE) && (res > 0));
@@ -767,7 +767,7 @@ public class TEventEntry {
                     // fixup event kind
                     Payload.writeStart(EventKindIndex);
                     Payload.qWrite(EK_STREAM_TAIL);
-                    res = connection.writeCommand(IC_EVENT, Payload.getBuffer());
+                    res = this.connection.writeCommand(IC_EVENT, Payload.getBuffer());
                 }
             }
             return res;
@@ -790,23 +790,23 @@ public class TEventEntry {
      */
     public int signalChangeObject(int aAction, int aObjectID, String aAttribute) {
         TByteBuffer Payload = new TByteBuffer();
-        if (!isPublished() && connection.autoPublish)
+        if (!isPublished() && this.connection.autoPublish)
             publish();
         if (isPublished()) {
-            Payload.prepare(ID);
+            Payload.prepare(this.ID);
             Payload.prepare((int) 0); // tick
             Payload.prepare(EK_CHANGE_OBJECT_EVENT);
             Payload.prepare(aAction);
             Payload.prepare(aObjectID);
             Payload.prepare(aAttribute);
             Payload.prepareApply();
-            Payload.qWrite(ID);
+            Payload.qWrite(this.ID);
             Payload.qWrite((int) (0)); // tick
             Payload.qWrite(EK_CHANGE_OBJECT_EVENT);
             Payload.qWrite(aAction);
             Payload.qWrite(aObjectID);
             Payload.qWrite(aAttribute);
-            return connection.writeCommand(IC_EVENT, Payload.getBuffer());
+            return this.connection.writeCommand(IC_EVENT, Payload.getBuffer());
         } else
             return TConnection.ICE_EVENT_NOT_PUBLISHED;
     }
@@ -834,23 +834,23 @@ public class TEventEntry {
     public int timerCreate(String aTimerName, long aStartTimeUTCorRelFT, int aResolutionms, double aSpeedFactor,
             int aRepeatCount) {
         TByteBuffer Payload = new TByteBuffer();
-        if (!isPublished() && connection.autoPublish)
+        if (!isPublished() && this.connection.autoPublish)
             publish();
         if (isPublished()) {
-            Payload.prepare(ID);
+            Payload.prepare(this.ID);
             Payload.prepare(aTimerName);
             Payload.prepare(aStartTimeUTCorRelFT);
             Payload.prepare(aResolutionms);
             Payload.prepare(aSpeedFactor);
             Payload.prepare(aRepeatCount);
             Payload.prepareApply();
-            Payload.qWrite(ID);
+            Payload.qWrite(this.ID);
             Payload.qWrite(aTimerName);
             Payload.qWrite(aStartTimeUTCorRelFT);
             Payload.qWrite(aResolutionms);
             Payload.qWrite(aSpeedFactor);
             Payload.qWrite(aRepeatCount);
-            return connection.writeCommand(IC_CREATE_TIMER, Payload.getBuffer());
+            return this.connection.writeCommand(IC_CREATE_TIMER, Payload.getBuffer());
         } else
             return TConnection.ICE_EVENT_NOT_PUBLISHED;
     }
@@ -949,7 +949,7 @@ public class TEventEntry {
      */
     public int logWriteLn(String aLine, TLogLevel aLevel) {
         TByteBuffer Payload = new TByteBuffer();
-        if (!isPublished() && connection.autoPublish)
+        if (!isPublished() && this.connection.autoPublish)
             publish();
         if (isPublished()) {
             Payload.prepare((int) 0); // client id filled in by hub
