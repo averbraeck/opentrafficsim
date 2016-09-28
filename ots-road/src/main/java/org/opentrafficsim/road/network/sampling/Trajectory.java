@@ -1,8 +1,6 @@
 package org.opentrafficsim.road.network.sampling;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
@@ -14,10 +12,10 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.vector.AccelerationVector;
-import org.djunits.value.vdouble.vector.DurationVector;
-import org.djunits.value.vdouble.vector.LengthVector;
-import org.djunits.value.vdouble.vector.SpeedVector;
+import org.djunits.value.vfloat.vector.FloatAccelerationVector;
+import org.djunits.value.vfloat.vector.FloatDurationVector;
+import org.djunits.value.vfloat.vector.FloatLengthVector;
+import org.djunits.value.vfloat.vector.FloatSpeedVector;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTU;
 
@@ -34,7 +32,6 @@ import org.opentrafficsim.core.gtu.GTU;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 // TODO desired speed per time step, flexibility to add other data per time step
-// XXX Consider using FloatLengthVector, FloatSpeedVector, FloatDurationVector etc. for storage space reasons 
 public final class Trajectory
 {
 
@@ -57,7 +54,7 @@ public final class Trajectory
     private float[] t = new float[DEFAULT_CAPACITY];
 
     /** Meta data. */
-    private final Map<MetaDataType<?>, Object> metaData = new HashMap<>();
+    private final MetaData metaData;
 
     /** GTU id. */
     private final String gtuId;
@@ -68,22 +65,26 @@ public final class Trajectory
     /**
      * @param gtu GTU of this trajectory, only the id is stored.
      * @param longitudinalEntry whether GTU entered this trajectory longitudinally
+     * @param metaData meta data
      */
-    public Trajectory(final GTU gtu, final boolean longitudinalEntry)
+    public Trajectory(final GTU gtu, final boolean longitudinalEntry, final MetaData metaData)
     {
         this.gtuId = gtu.getId();
         this.longitudinalEntry = longitudinalEntry;
+        this.metaData = metaData;
     }
 
     /**
      * Private constructor for creating subsets.
      * @param gtuId GTU id
      * @param longitudinalEntry longitudinal entry
+     * @param metaData meta data
      */
-    private Trajectory(final String gtuId, final boolean longitudinalEntry)
+    private Trajectory(final String gtuId, final boolean longitudinalEntry, final MetaData metaData)
     {
         this.gtuId = gtuId;
         this.longitudinalEntry = longitudinalEntry;
+        this.metaData = new MetaData(metaData);
     }
 
     /**
@@ -183,11 +184,11 @@ public final class Trajectory
     /**
      * @return strongly typed copy of length
      */
-    public LengthVector getLength()
+    public FloatLengthVector getLength()
     {
         try
         {
-            return new LengthVector(asDoubleArray(this.x), LengthUnit.SI, StorageType.DENSE);
+            return new FloatLengthVector(this.x, LengthUnit.SI, StorageType.DENSE);
         }
         catch (ValueException exception)
         {
@@ -199,11 +200,11 @@ public final class Trajectory
     /**
      * @return strongly typed copy of speed
      */
-    public SpeedVector getSpeed()
+    public FloatSpeedVector getSpeed()
     {
         try
         {
-            return new SpeedVector(asDoubleArray(this.v), SpeedUnit.SI, StorageType.DENSE);
+            return new FloatSpeedVector(this.v, SpeedUnit.SI, StorageType.DENSE);
         }
         catch (ValueException exception)
         {
@@ -215,11 +216,11 @@ public final class Trajectory
     /**
      * @return strongly typed copy of acceleration
      */
-    public AccelerationVector getAcceleration()
+    public FloatAccelerationVector getAcceleration()
     {
         try
         {
-            return new AccelerationVector(asDoubleArray(this.a), AccelerationUnit.SI, StorageType.DENSE);
+            return new FloatAccelerationVector(this.a, AccelerationUnit.SI, StorageType.DENSE);
         }
         catch (ValueException exception)
         {
@@ -231,11 +232,11 @@ public final class Trajectory
     /**
      * @return strongly typed copy of time
      */
-    public DurationVector getDuration()
+    public FloatDurationVector getDuration()
     {
         try
         {
-            return new DurationVector(asDoubleArray(this.t), TimeUnit.SI, StorageType.DENSE);
+            return new FloatDurationVector(this.t, TimeUnit.SI, StorageType.DENSE);
         }
         catch (ValueException exception)
         {
@@ -245,37 +246,12 @@ public final class Trajectory
     }
 
     /**
-     * Copies a float array into a double array, as strongly typed array require double while data is stored as float.
-     * @param values value to copy
-     * @return double array copy of float array
-     */
-    private double[] asDoubleArray(final float[] values)
-    {
-        double[] out = new double[this.size];
-        for (int i = 0; i < this.size; i++)
-        {
-            out[i] = values[i];
-        }
-        return out;
-    }
-
-    /**
-     * @param metaDataType meta data type
-     * @param <T> class of meta data
-     * @param value value of meta data
-     */
-    public <T> void setMetaData(final MetaDataType<T> metaDataType, final T value)
-    {
-        this.metaData.put(metaDataType, value);
-    }
-
-    /**
      * @param metaDataType meta data type
      * @return whether the trajectory contains the meta data of give type
      */
     public boolean contains(final MetaDataType<?> metaDataType)
     {
-        return this.metaData.containsKey(metaDataType);
+        return this.metaData.contains(metaDataType);
     }
     
     /**
@@ -283,10 +259,9 @@ public final class Trajectory
      * @param <T> class of meta data
      * @return value of meta data
      */
-    @SuppressWarnings("unchecked")
     public <T> T getMetaData(final MetaDataType<T> metaDataType)
     {
-        return (T) this.metaData.get(metaDataType);
+        return this.metaData.get(metaDataType);
     }
     
     /**
@@ -385,11 +360,7 @@ public final class Trajectory
      */
     private Trajectory subSet(final int from, final int to)
     {
-        Trajectory out = new Trajectory(this.gtuId, from == 0 ? this.longitudinalEntry : false);
-        for (MetaDataType<?> metaDataType : this.metaData.keySet())
-        {
-            out.metaData.put(metaDataType, this.metaData.get(metaDataType));
-        }
+        Trajectory out = new Trajectory(this.gtuId, from == 0 ? this.longitudinalEntry : false, this.metaData);
         if (from < to) // otherwise empty, no data in the subset
         {
             out.x = Arrays.copyOfRange(this.x, from, to);

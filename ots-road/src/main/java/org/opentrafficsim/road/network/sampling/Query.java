@@ -1,9 +1,7 @@
 package org.opentrafficsim.road.network.sampling;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Duration;
@@ -39,16 +37,18 @@ public final class Query
     private final List<SpaceTimeRegion> spaceTimeRegions = new ArrayList<>();
 
     /** Meta data. */
-    private final Map<MetaDataType<?>, Object> metaData = new HashMap<>();
+    private final MetaData metaData;
 
     /**
      * @param sampling sampling
      * @param connected whether the space-time regions are longitudinally connected
+     * @param metaData meta data
      */
-    public Query(final Sampling sampling, final boolean connected)
+    public Query(final Sampling sampling, final boolean connected, final MetaData metaData)
     {
         this.sampling = sampling;
         this.connected = connected;
+        this.metaData = new MetaData(metaData);
     }
 
     /**
@@ -88,16 +88,6 @@ public final class Query
     }
 
     /**
-     * @param metaDataType meta data type
-     * @param <T> class of meta data
-     * @param value value of meta data
-     */
-    public <T> void setMetaData(final MetaDataType<T> metaDataType, final T value)
-    {
-        this.metaData.put(metaDataType, value);
-    }
-
-    /**
      * Accepts a trajectory if the values of meta data types specified in this query are equal to the values of the meta data
      * types in the trajectory. If the trajectory does not contain a certain meta data type specified in this query, the
      * trajectory is not accepted. Any additional meta data types in the trajectory are ignored.
@@ -106,7 +96,7 @@ public final class Query
      */
     public boolean accept(final Trajectory trajectory)
     {
-        for (MetaDataType<?> metaDataType : this.metaData.keySet())
+        for (MetaDataType<?> metaDataType : this.metaData.getMetaDataTypes())
         {
             if (!trajectory.contains(metaDataType)
                 || !trajectory.getMetaData(metaDataType).equals(this.metaData.get(metaDataType)))
