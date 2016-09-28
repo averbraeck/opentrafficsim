@@ -19,6 +19,10 @@ import org.djunits.value.vfloat.vector.FloatSpeedVector;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTU;
 
+import nl.tudelft.simulation.jstats.statistics.Counter;
+import nl.tudelft.simulation.jstats.statistics.Persistent;
+import nl.tudelft.simulation.jstats.statistics.Tally;
+
 /**
  * Contains position, speed, acceleration and time data of a GTU, over some section.
  * <p>
@@ -262,6 +266,11 @@ public final class Trajectory
     public <T> T getMetaData(final MetaDataType<T> metaDataType)
     {
         return this.metaData.get(metaDataType);
+//        Counter c;
+//        Tally t;
+//        nl.tudelft.simulation.dsol.statistics.Tally<SimTime<?,?,T>> t2;
+//        Persistent p;
+//        nl.tudelft.simulation.dsol.statistics.Persistent<SimTime<?,?,T>> p2;
     }
     
     /**
