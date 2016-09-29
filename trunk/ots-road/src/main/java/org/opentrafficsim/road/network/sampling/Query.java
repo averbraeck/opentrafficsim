@@ -1,12 +1,20 @@
 package org.opentrafficsim.road.network.sampling;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.immutablecollections.ImmutableIterator;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 
 /**
@@ -24,31 +32,36 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
  */
 public final class Query
 {
-    /** unique id.  */
+    /** unique id. */
     private UUID uniqueId = UUID.randomUUID();
-    
+
     /** Sampling. */
     private final Sampling sampling;
+
+    /** Description. */
+    private final String description;
 
     /** Whether the space-time regions are longitudinally connected. */
     private final boolean connected;
 
+    /** Meta data set. */
+    private final MetaDataSet metaDataSet;
+
     /** List of space-time regions of this query. */
     private final List<SpaceTimeRegion> spaceTimeRegions = new ArrayList<>();
 
-    /** Meta data. */
-    private final MetaData metaData;
-
     /**
      * @param sampling sampling
+     * @param description description
      * @param connected whether the space-time regions are longitudinally connected
-     * @param metaData meta data
+     * @param metaDataSet meta data
      */
-    public Query(final Sampling sampling, final boolean connected, final MetaData metaData)
+    public Query(final Sampling sampling, final String description, final boolean connected, final MetaDataSet metaDataSet)
     {
         this.sampling = sampling;
         this.connected = connected;
-        this.metaData = new MetaData(metaData);
+        this.metaDataSet = new MetaDataSet(metaDataSet);
+        this.description = description;
     }
 
     /**
@@ -59,13 +72,37 @@ public final class Query
     {
         return this.uniqueId.toString();
     }
-    
+
+    /**
+     * @return description
+     */
+    public String getDescription()
+    {
+        return this.description;
+    }
+
     /**
      * @return connected whether the space-time regions are longitudinally connected
      */
     public boolean isConnected()
     {
         return this.connected;
+    }
+
+    /**
+     * @return number of meta data entries
+     */
+    public int metaDataSize()
+    {
+        return this.metaDataSet.size();
+    }
+
+    /**
+     * @return iterator over meta data entries, removal is not allowed
+     */
+    public Iterator<Entry<MetaDataType<?>, Set<?>>> getMetaDataSetIterator()
+    {
+        return this.metaDataSet.getMetaDataSetIterator();
     }
 
     /**
@@ -88,33 +125,72 @@ public final class Query
     }
 
     /**
-     * Accepts a trajectory if the values of meta data types specified in this query are equal to the values of the meta data
-     * types in the trajectory. If the trajectory does not contain a certain meta data type specified in this query, the
-     * trajectory is not accepted. Any additional meta data types in the trajectory are ignored.
-     * @param trajectory trajectory
-     * @return whether the trajectory is accepted for this query
+     * @return number of space-time regions
      */
-    public boolean accept(final Trajectory trajectory)
+    public int spaceTimeRegionSize()
     {
-        for (MetaDataType<?> metaDataType : this.metaData.getMetaDataTypes())
-        {
-            if (!trajectory.contains(metaDataType)
-                || !trajectory.getMetaData(metaDataType).equals(this.metaData.get(metaDataType)))
-            {
-                return false;
-            }
-        }
-        return true;
+        return this.spaceTimeRegions.size();
+    }
+
+    /**
+     * @return iterator over space-time regions, removal is not allowed
+     */
+    public Iterator<SpaceTimeRegion> getSpaceTimeIterator()
+    {
+        return new ImmutableIterator<>(this.spaceTimeRegions.iterator());
     }
 
     /**
      * Returns a list of trajectories in accordance with the query. Each {@code Trajectories} contains {@code Trajectory}
      * objects pertaining to a {@code SpaceTimeRegion} from the query. A {@code Trajectory} is only included if its meta data
      * complies with the meta data of this query.
+     * @param <T> underlying class of meta data type and its value
      * @return list of trajectories in accordance with the query
+     * @throws RuntimeException if a meta data type returned a boolean array with incorrect length
      */
-    public List<Trajectories> getTrajectories()
+    public <T> List<Trajectories> getTrajectories()
     {
+        // Step 1) gather trajectories per GTU
+        Map<String, List<Trajectory>> trajectoryMap = new HashMap<>();
+        Map<String, List<Trajectories>> trajectoriesMap = new HashMap<>();
+        for (SpaceTimeRegion spaceTimeRegion : this.spaceTimeRegions)
+        {
+            Trajectories trajectories = this.sampling.getTrajectories(spaceTimeRegion.getLaneDirection());
+            for (Trajectory trajectory : trajectories.getTrajectories())
+            {
+                if (!trajectoryMap.containsKey(trajectory.getGtuId()))
+                {
+                    trajectoryMap.put(trajectory.getGtuId(), new ArrayList<>());
+                    trajectoriesMap.put(trajectory.getGtuId(), new ArrayList<>());
+                }
+                trajectoryMap.get(trajectory.getGtuId()).add(trajectory);
+                trajectoriesMap.get(trajectory.getGtuId()).add(trajectories);
+            }
+        }
+        // Step 2) accept per GTU
+        Map<String, Boolean[]> booleanMap = new HashMap<>();
+        Iterator<String> iterator = trajectoryMap.keySet().iterator();
+        while (iterator.hasNext())
+        {
+            String gtuId = iterator.next();
+            Boolean[] accepted = new Boolean[trajectoryMap.get(gtuId).size()];
+            for (MetaDataType<?> metaDataType : this.metaDataSet.getMetaDataTypes())
+            {
+                // create safe copies as meta data types may use the list to throw out rejected trajectories etc.
+                @SuppressWarnings("unchecked")
+                boolean[] acceptedTmp =
+                    ((MetaDataType<T>) metaDataType).accept(new ArrayList<>(trajectoryMap.get(gtuId)), new ArrayList<>(
+                        trajectoriesMap.get(gtuId)), (Set<T>) new HashSet<>(this.metaDataSet.get(metaDataType)));
+                Throw.when(acceptedTmp.length != accepted.length, RuntimeException.class,
+                    "Meta data type %s returned a boolean array with incorrect length.", metaDataType);
+                for (int i = 0; i < accepted.length; i++)
+                {
+                    accepted[i] = accepted[i] && acceptedTmp[i];
+                }
+            }
+            booleanMap.put(gtuId, accepted);
+        }
+        // Step 3) filter Trajectories
         List<Trajectories> out = new ArrayList<>();
         for (SpaceTimeRegion spaceTimeRegion : this.spaceTimeRegions)
         {
@@ -125,7 +201,8 @@ public final class Query
             Trajectories filtered = new Trajectories(startTime, spaceTimeRegion.getLaneDirection());
             for (Trajectory trajectory : full.getTrajectories())
             {
-                if (accept(trajectory))
+                String gtuId = trajectory.getGtuId();
+                if (booleanMap.get(gtuId)[trajectoryMap.get(gtuId).indexOf(trajectory)])
                 {
                     // TODO include points on boundaries with some input into the subSet method, there are 4 possibilities
                     // if trajectory is cut: add point on edge
