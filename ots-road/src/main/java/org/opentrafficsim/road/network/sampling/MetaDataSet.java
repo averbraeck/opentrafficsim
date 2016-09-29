@@ -18,39 +18,39 @@ import org.opentrafficsim.core.immutablecollections.ImmutableIterator;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class MetaData
+public class MetaDataSet
 {
 
     /** Meta data. */
-    private final Map<MetaDataType<?>, Object> metaDataMap = new HashMap<>();
+    private final Map<MetaDataType<?>, Set<?>> metaDataMap = new HashMap<>();
 
     /**
      * Default constructor.
      */
-    public MetaData()
+    public MetaDataSet()
     {
         //
     }
 
     /**
-     * @param metaData meta data to copy into new meta data
+     * @param metaDataSet set of meta data to copy into new meta data set
      */
-    public MetaData(final MetaData metaData)
+    public MetaDataSet(final MetaDataSet metaDataSet)
     {
-        for (MetaDataType<?> metaDataType : metaData.metaDataMap.keySet())
+        for (MetaDataType<?> metaDataType : metaDataSet.metaDataMap.keySet())
         {
-            this.metaDataMap.put(metaDataType, metaData.metaDataMap.get(metaDataType));
+            this.metaDataMap.put(metaDataType, metaDataSet.metaDataMap.get(metaDataType));
         }
     }
 
     /**
      * @param metaDataType meta data type
      * @param <T> class of meta data
-     * @param value value of meta data
+     * @param values values of meta data
      */
-    public final <T> void put(final MetaDataType<T> metaDataType, final T value)
+    public final <T> void put(final MetaDataType<T> metaDataType, final Set<T> values)
     {
-        this.metaDataMap.put(metaDataType, value);
+        this.metaDataMap.put(metaDataType, values);
     }
 
     /**
@@ -68,9 +68,9 @@ public class MetaData
      * @return value of meta data
      */
     @SuppressWarnings("unchecked")
-    public final <T> T get(final MetaDataType<T> metaDataType)
+    public final <T> Set<T> get(final MetaDataType<T> metaDataType)
     {
-        return (T) this.metaDataMap.get(metaDataType);
+        return (Set<T>) this.metaDataMap.get(metaDataType);
     }
 
     /**
@@ -92,7 +92,7 @@ public class MetaData
     /**
      * @return iterator over meta data entries, removal is not allowed
      */
-    public final Iterator<Entry<MetaDataType<?>, Object>> getMetaDataIterator()
+    public final Iterator<Entry<MetaDataType<?>, Set<?>>> getMetaDataSetIterator()
     {
         return new ImmutableIterator<>(this.metaDataMap.entrySet().iterator());
     }
