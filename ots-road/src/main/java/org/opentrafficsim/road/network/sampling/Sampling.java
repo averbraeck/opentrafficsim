@@ -39,7 +39,7 @@ public class Sampling
         Duration firstDataTime;
         if (this.trajectories.containsKey(spaceTimeRegion.getLaneDirection()))
         {
-            firstDataTime = this.trajectories.get(spaceTimeRegion).getStartTime();
+            firstDataTime = this.trajectories.get(spaceTimeRegion.getLaneDirection()).getStartTime();
         }
         else
         {
