@@ -3,8 +3,10 @@ package org.opentrafficsim.road.gtu.strategical.od;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
@@ -35,7 +37,6 @@ import org.opentrafficsim.core.network.route.Route;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-// TODO Subclass with absolute demand (not flow), turn fractions, etc.
 public class ODMatrix implements Serializable
 {
 
@@ -169,7 +170,7 @@ public class ODMatrix implements Serializable
      * @param origin origin
      * @param destination destination
      * @param category category
-     * @param demand demand data, length has to be equal to the time vector, or the global time vector if that is null
+     * @param demand demand data, length has to be equal to the time vector
      * @param timeVector time vector
      * @param interpolation interpolation
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
@@ -253,11 +254,13 @@ public class ODMatrix implements Serializable
     }
 
     /**
+     * Returns the demand at given time. If given time is before the first time slice or after the last time slice, 0 demand is
+     * returned.
      * @param origin origin
      * @param destination destination
      * @param category category
      * @param time time
-     * @return demand for given origin, destination and categorization, at given time, {@code null} if no data is given
+     * @return demand for given origin, destination and categorization, at given time
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws NullPointerException if an input is null
@@ -269,7 +272,7 @@ public class ODMatrix implements Serializable
         ODEntry odEntry = getODEntry(origin, destination, category);
         if (odEntry == null)
         {
-            return null;
+            return new Frequency(0.0, FrequencyUnit.PER_HOUR); // Frequency.ZERO give "Hz" which is not nice for flow
         }
         return odEntry.getDemand(time);
     }
@@ -296,11 +299,32 @@ public class ODMatrix implements Serializable
             "Provided category %s does not belong to the categorization %s.", category, this.categorization);
         return this.demandData.get(origin).get(destination).get(category);
     }
+    
+    /**
+     * Returns the categories specified for given origin-destination combination.
+     * @param origin origin
+     * @param destination destination
+     * @return categories specified for given origin-destination combination
+     * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
+     * @throws NullPointerException if an input is null
+     */
+    public final Set<Category> getCategories(final Node origin, final Node destination)
+    {
+        Throw.whenNull(origin, "Origin may not be null.");
+        Throw.whenNull(destination, "Destination may not be null.");
+        Throw.when(!this.origins.contains(origin), IllegalArgumentException.class,
+            "Origin '%s' is not part of the OD matrix", origin);
+        Throw.when(!this.destinations.contains(destination), IllegalArgumentException.class,
+            "Destination '%s' is not part of the OD matrix.", destination);
+        return new HashSet<>(this.demandData.get(origin).get(destination).keySet());
+    }
 
     /** {@inheritDoc} */
-    public final String toString()
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
     {
-        return "ODMatrix [" + this.origins.size() + " origins, " + this.destinations.size() + " destinations]";
+        return "ODMatrix [" + this.origins.size() + " origins, " + this.destinations.size() + " destinations, "
+            + this.categorization + " ]";
     }
 
     /**
@@ -308,6 +332,17 @@ public class ODMatrix implements Serializable
      */
     public final void print()
     {
+        int originLength = 0;
+        for (Node origin : this.origins)
+        {
+            originLength = originLength >= origin.getId().length() ? originLength : origin.getId().length();
+        }
+        int destinLength = 0;
+        for (Node destination : this.destinations)
+        {
+            destinLength = destinLength >= destination.getId().length() ? destinLength : destination.getId().length();
+        }
+        String format = "%-" + originLength + "s -> %-" + destinLength + "s | ";
         for (Node origin : this.origins)
         {
             Map<Node, Map<Category, ODEntry>> destinationMap = this.demandData.get(origin);
@@ -316,13 +351,13 @@ public class ODMatrix implements Serializable
                 Map<Category, ODEntry> categoryMap = destinationMap.get(destination);
                 if (categoryMap.isEmpty())
                 {
-                    System.out.println(origin.getId() + " -> " + destination.getId() + " | -no data-");
+                    System.out.println(String.format(format, origin.getId(), destination.getId()) + "-no data-");
                 }
                 else
                 {
                     for (Category category : categoryMap.keySet())
                     {
-                        System.out.println(origin.getId() + " -> " + destination.getId() + " | " + category + " | "
+                        System.out.println(String.format(format, origin.getId(), destination.getId()) + category + " | "
                             + categoryMap.get(category).getDemandVector());
                     }
                 }
@@ -439,7 +474,7 @@ public class ODMatrix implements Serializable
     // TODO remove this method as soon as there is a JUNIT test
     public static void main(final String[] args) throws ValueException, NetworkException
     {
-        
+
         int aa = 10;
         System.out.println(aa);
         aa = aa + (aa >> 1);
@@ -450,13 +485,13 @@ public class ODMatrix implements Serializable
         System.out.println(aa);
         aa = aa + (aa >> 1);
         System.out.println(aa);
-        
+
         OTSNetwork net = new OTSNetwork("test");
         OTSPoint3D point = new OTSPoint3D(0, 0, 0);
         Node a = new OTSNode(net, "A", point);
-        Node b = new OTSNode(net, "B", point);
+        Node b = new OTSNode(net, "Barendrecht", point);
         Node c = new OTSNode(net, "C", point);
-        Node d = new OTSNode(net, "D", point);
+        Node d = new OTSNode(net, "Delft", point);
         Node e = new OTSNode(net, "E", point);
         List<Node> origins = new ArrayList<>();
         origins.add(a);
@@ -570,8 +605,8 @@ public class ODMatrix implements Serializable
         }
 
         /**
-         * Returns the demand at given time. If given time is before the first time slice, 0 demand is returned. If it is after
-         * the last time slice, the last demand value is returned.
+         * Returns the demand at given time. If given time is before the first time slice or after the last time slice, 0 demand
+         * is returned.
          * @param time time of demand requested
          * @return demand at given time
          */
@@ -579,15 +614,11 @@ public class ODMatrix implements Serializable
         {
             try
             {
-                // empty data or before start, return 0
-                if (this.timeVector.size() == 0 || time.lt(this.timeVector.get(0)))
+                // empty data or before start or after end, return 0
+                if (this.timeVector.size() == 0 || time.lt(this.timeVector.get(0))
+                    || time.ge(this.timeVector.get(this.timeVector.size() - 1)))
                 {
-                    return new Frequency(0.0, FrequencyUnit.PER_HOUR);
-                }
-                // after end, return last value
-                if (time.ge(this.timeVector.get(this.timeVector.size() - 1)))
-                {
-                    return this.demandVector.get(this.timeVector.size() - 1);
+                    return new Frequency(0.0, FrequencyUnit.PER_HOUR); // Frequency.ZERO give "Hz" which is not nice for flow
                 }
                 // interpolate
                 for (int i = 0; i < this.timeVector.size() - 1; i++)
@@ -615,7 +646,7 @@ public class ODMatrix implements Serializable
         {
             return this.demandVector;
         }
-        
+
         /**
          * @return timeVector
          */
