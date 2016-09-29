@@ -18,12 +18,12 @@ public class TravelTime implements Indicator<TimeUnit, Duration>
 
     /** {@inheritDoc} */
     @Override
-    public final Duration calculate(final Query query)
+    public final Duration calculate(final Query query, final Duration startTime, final Duration endTime)
     {
         double sum = 0;
-        for (Trajectories trajectories : query.getTrajectories())
+        for (Trajectories trajectories : query.getTrajectories(startTime, endTime))
         {
-            for (Trajectory trajectory : trajectories.getTrajectories())
+            for (Trajectory trajectory : trajectories.getTrajectorySet())
             {
                 float[] t = trajectory.getX();
                 sum += (t[t.length - 1] - t[0]);

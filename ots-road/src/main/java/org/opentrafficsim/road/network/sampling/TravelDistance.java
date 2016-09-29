@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.sampling;
 
 import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 
 /**
@@ -19,12 +20,12 @@ public class TravelDistance implements Indicator<LengthUnit, Length>
 
     /** {@inheritDoc} */
     @Override
-    public final Length calculate(final Query query)
+    public final Length calculate(final Query query, final Duration startTime, final Duration endTime)
     {
         double sum = 0;
-        for (Trajectories trajectories : query.getTrajectories())
+        for (Trajectories trajectories : query.getTrajectories(startTime, endTime))
         {
-            for (Trajectory trajectory : trajectories.getTrajectories())
+            for (Trajectory trajectory : trajectories.getTrajectorySet())
             {
                 float[] x = trajectory.getX();
                 sum += (x[x.length - 1] - x[0]);

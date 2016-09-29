@@ -61,7 +61,7 @@ public class Trajectories
      * Returns a list of trajectories.
      * @return list of trajectories
      */
-    public final List<Trajectory> getTrajectories()
+    public final List<Trajectory> getTrajectorySet()
     {
         return new ArrayList<>(this.trajectories);
     }
