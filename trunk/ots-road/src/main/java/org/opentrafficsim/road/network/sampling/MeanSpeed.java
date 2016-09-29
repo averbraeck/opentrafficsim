@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.sampling;
 
 import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
 
 /**
@@ -18,7 +19,7 @@ public class MeanSpeed implements Indicator<SpeedUnit, Speed>
 
     /** Travel distance indicator. */
     private final TravelDistance travelDistance;
-    
+
     /** Travel time indicator. */
     private final TravelTime travelTime;
 
@@ -34,10 +35,11 @@ public class MeanSpeed implements Indicator<SpeedUnit, Speed>
 
     /** {@inheritDoc} */
     @Override
-    public final Speed calculate(final Query query)
+    public final Speed calculate(final Query query, final Duration startTime, final Duration endTime)
     {
         // TODO let indicator not recalculate if requested at the same time
-        return this.travelDistance.calculate(query).divideBy(this.travelTime.calculate(query));
+        return this.travelDistance.calculate(query, startTime, endTime).divideBy(
+            this.travelTime.calculate(query, startTime, endTime));
     }
 
 }

@@ -2,6 +2,7 @@ package org.opentrafficsim.road.network.sampling;
 
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
 
 /**
  * <p>
@@ -23,10 +24,23 @@ public interface Indicator<U extends Unit<U>, T extends DoubleScalar<U>>
 {
     
     /**
-     * Calculate value for given query.
+     * Calculate value for given query over time interval.
      * @param query query
+     * @param startTime start time of interval to calculate indicator over
+     * @param endTime start time of interval to calculate indicator over
      * @return value for given query
      */
-    T calculate(final Query query);
+    T calculate(Query query, Duration startTime, Duration endTime);
+    
+    /**
+     * Calculate value for given query until given time.
+     * @param query query
+     * @param endTime start time of interval to calculate indicator over
+     * @return value for given query
+     */
+    default T calculate(Query query, Duration endTime)
+    {
+        return calculate(query, Duration.ZERO, endTime);
+    }
     
 }

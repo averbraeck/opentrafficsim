@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -47,6 +48,12 @@ public final class Query
     /** Meta data set. */
     private final MetaDataSet metaDataSet;
 
+    /** Update frequency. */
+    private final Frequency updateFrequency;
+
+    /** Interval to gather statistics over. */
+    private final Duration interval;
+
     /** List of space-time regions of this query. */
     private final List<SpaceTimeRegion> spaceTimeRegions = new ArrayList<>();
 
@@ -55,13 +62,62 @@ public final class Query
      * @param description description
      * @param connected whether the space-time regions are longitudinally connected
      * @param metaDataSet meta data
+     * @throws NullPointerException if sampling, description or metaDataSet is null
      */
     public Query(final Sampling sampling, final String description, final boolean connected, final MetaDataSet metaDataSet)
     {
+        this(sampling, description, connected, metaDataSet, null, null);
+    }
+
+    /**
+     * @param sampling sampling
+     * @param description description
+     * @param connected whether the space-time regions are longitudinally connected
+     * @param metaDataSet meta data
+     * @param interval interval to gather statistics over
+     * @throws NullPointerException if sampling, description or metaDataSet is null
+     */
+    public Query(final Sampling sampling, final String description, final boolean connected, final MetaDataSet metaDataSet,
+        final Duration interval)
+    {
+        this(sampling, description, connected, metaDataSet, null, interval);
+    }
+
+    /**
+     * @param sampling sampling
+     * @param description description
+     * @param connected whether the space-time regions are longitudinally connected
+     * @param metaDataSet meta data
+     * @param updateFrequency update frequency
+     * @throws NullPointerException if sampling, description or metaDataSet is null
+     */
+    public Query(final Sampling sampling, final String description, final boolean connected, final MetaDataSet metaDataSet,
+        final Frequency updateFrequency)
+    {
+        this(sampling, description, connected, metaDataSet, updateFrequency, null);
+    }
+
+    /**
+     * @param sampling sampling
+     * @param description description
+     * @param connected whether the space-time regions are longitudinally connected
+     * @param metaDataSet meta data
+     * @param updateFrequency update frequency
+     * @param interval interval to gather statistics over
+     * @throws NullPointerException if sampling, description or metaDataSet is null
+     */
+    public Query(final Sampling sampling, final String description, final boolean connected, final MetaDataSet metaDataSet,
+        final Frequency updateFrequency, final Duration interval)
+    {
+        Throw.whenNull(sampling, "Sampling may not be null.");
+        Throw.whenNull(description, "Description may not be null.");
+        Throw.whenNull(metaDataSet, "Meta data may not be null.");
         this.sampling = sampling;
         this.connected = connected;
         this.metaDataSet = new MetaDataSet(metaDataSet);
         this.description = description;
+        this.updateFrequency = updateFrequency;
+        this.interval = interval;
     }
 
     /**
@@ -87,6 +143,22 @@ public final class Query
     public boolean isConnected()
     {
         return this.connected;
+    }
+
+    /**
+     * @return updateFrequency.
+     */
+    public Frequency getUpdateFrequency()
+    {
+        return this.updateFrequency;
+    }
+
+    /**
+     * @return interval.
+     */
+    public Duration getInterval()
+    {
+        return this.interval;
     }
 
     /**
@@ -144,19 +216,27 @@ public final class Query
      * Returns a list of trajectories in accordance with the query. Each {@code Trajectories} contains {@code Trajectory}
      * objects pertaining to a {@code SpaceTimeRegion} from the query. A {@code Trajectory} is only included if its meta data
      * complies with the meta data of this query.
+     * @param startTime start time of interval to get trajectories for
+     * @param endTime start time of interval to get trajectories for
      * @param <T> underlying class of meta data type and its value
      * @return list of trajectories in accordance with the query
      * @throws RuntimeException if a meta data type returned a boolean array with incorrect length
      */
-    public <T> List<Trajectories> getTrajectories()
+    // TODO get trajectories only over "interval", then indicators need not to be bothered
+    public <T> List<Trajectories> getTrajectories(final Duration startTime, final Duration endTime)
     {
-        // Step 1) gather trajectories per GTU
+        // Step 1) gather trajectories per GTU, truncated over space and time
         Map<String, List<Trajectory>> trajectoryMap = new HashMap<>();
         Map<String, List<Trajectories>> trajectoriesMap = new HashMap<>();
+        Set<Trajectories> trajectorySet = new HashSet<>();
         for (SpaceTimeRegion spaceTimeRegion : this.spaceTimeRegions)
         {
-            Trajectories trajectories = this.sampling.getTrajectories(spaceTimeRegion.getLaneDirection());
-            for (Trajectory trajectory : trajectories.getTrajectories())
+            Duration start = startTime.gt(spaceTimeRegion.getStartTime()) ? startTime : spaceTimeRegion.getStartTime();
+            Duration end = endTime.lt(spaceTimeRegion.getEndTime()) ? endTime : spaceTimeRegion.getEndTime();
+            Trajectories trajectories =
+                this.sampling.getTrajectories(spaceTimeRegion.getLaneDirection()).getTrajectories(
+                    spaceTimeRegion.getStartPosition(), spaceTimeRegion.getEndPosition(), start, end);
+            for (Trajectory trajectory : trajectories.getTrajectorySet())
             {
                 if (!trajectoryMap.containsKey(trajectory.getGtuId()))
                 {
@@ -165,6 +245,7 @@ public final class Query
                 }
                 trajectoryMap.get(trajectory.getGtuId()).add(trajectory);
                 trajectoriesMap.get(trajectory.getGtuId()).add(trajectories);
+                trajectorySet.add(trajectories);
             }
         }
         // Step 2) accept per GTU
@@ -192,14 +273,10 @@ public final class Query
         }
         // Step 3) filter Trajectories
         List<Trajectories> out = new ArrayList<>();
-        for (SpaceTimeRegion spaceTimeRegion : this.spaceTimeRegions)
+        for (Trajectories full : trajectorySet)
         {
-            Trajectories full = this.sampling.getTrajectories(spaceTimeRegion.getLaneDirection());
-            Duration startTime =
-                spaceTimeRegion.getStartTime().lt(full.getStartTime()) ? spaceTimeRegion.getStartTime() : full
-                    .getStartTime();
-            Trajectories filtered = new Trajectories(startTime, spaceTimeRegion.getLaneDirection());
-            for (Trajectory trajectory : full.getTrajectories())
+            Trajectories filtered = new Trajectories(full.getStartTime(), full.getLaneDirection());
+            for (Trajectory trajectory : full.getTrajectorySet())
             {
                 String gtuId = trajectory.getGtuId();
                 if (booleanMap.get(gtuId)[trajectoryMap.get(gtuId).indexOf(trajectory)])
@@ -208,13 +285,7 @@ public final class Query
                     // if trajectory is cut: add point on edge
                     // if first point and traj was longitudinally started, add point on edge interpolated to previous point
                     // if last point and traj was longitudinally ended, add point on edge interpolated with next point
-                    Trajectory trajectoryTmp =
-                        trajectory.subSet(spaceTimeRegion.getStartPosition(), spaceTimeRegion.getEndPosition(),
-                            spaceTimeRegion.getStartTime(), spaceTimeRegion.getEndTime());
-                    if (trajectoryTmp.size() > 0)
-                    {
-                        filtered.addTrajectory(trajectoryTmp);
-                    }
+                    filtered.addTrajectory(trajectory);
                 }
             }
             out.add(filtered);
