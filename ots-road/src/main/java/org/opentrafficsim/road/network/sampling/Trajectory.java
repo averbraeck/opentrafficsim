@@ -18,10 +18,8 @@ import org.djunits.value.vfloat.vector.FloatLengthVector;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTU;
-
-import nl.tudelft.simulation.jstats.statistics.Counter;
-import nl.tudelft.simulation.jstats.statistics.Persistent;
-import nl.tudelft.simulation.jstats.statistics.Tally;
+import org.opentrafficsim.road.network.sampling.meta.MetaData;
+import org.opentrafficsim.road.network.sampling.meta.MetaDataType;
 
 /**
  * Contains position, speed, acceleration and time data of a GTU, over some section.
@@ -247,6 +245,26 @@ public final class Trajectory
             // should not happen, inputs are not null
             throw new RuntimeException("Could not return trajectory data.", exception);
         }
+    }
+    
+    /**
+     * @return total length of this trajectory
+     * @throws IllegalStateException if trajectory is empty
+     */
+    public Length getTotalLength()
+    {
+        Throw.when(this.size == 0, IllegalStateException.class, "Empty trajectory does not have a length.");
+        return new Length(this.x[this.size - 1] - this.x[0], LengthUnit.SI);
+    }
+    
+    /**
+     * @return total duration of this trajectory
+     * @throws IllegalStateException if trajectory is empty
+     */
+    public Duration getTotalDuration()
+    {
+        Throw.when(this.size == 0, IllegalStateException.class, "Empty trajectory does not have a duration.");
+        return new Duration(this.t[this.size - 1] - this.t[0], TimeUnit.SI);
     }
 
     /**

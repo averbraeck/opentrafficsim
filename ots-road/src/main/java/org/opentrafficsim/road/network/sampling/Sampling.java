@@ -91,5 +91,58 @@ public class Sampling
     {
         return this.trajectories.get(laneDirection);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.endTimes == null) ? 0 : this.endTimes.hashCode());
+        result = prime * result + ((this.trajectories == null) ? 0 : this.trajectories.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean equals(final Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        Sampling other = (Sampling) obj;
+        if (this.endTimes == null)
+        {
+            if (other.endTimes != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.endTimes.equals(other.endTimes))
+        {
+            return false;
+        }
+        if (this.trajectories == null)
+        {
+            if (other.trajectories != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.trajectories.equals(other.trajectories))
+        {
+            return false;
+        }
+        return true;
+    }
     
 }

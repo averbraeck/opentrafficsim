@@ -17,6 +17,8 @@ import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.immutablecollections.ImmutableIterator;
 import org.opentrafficsim.road.network.lane.LaneDirection;
+import org.opentrafficsim.road.network.sampling.meta.MetaDataSet;
+import org.opentrafficsim.road.network.sampling.meta.MetaDataType;
 
 /**
  * A query defines which subset of trajectory information should be included. This is in terms of space-time regions, and in
@@ -78,7 +80,7 @@ public final class Query
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
     public Query(final Sampling sampling, final String description, final boolean connected, final MetaDataSet metaDataSet,
-        final Duration interval)
+            final Duration interval)
     {
         this(sampling, description, connected, metaDataSet, null, interval);
     }
@@ -92,7 +94,7 @@ public final class Query
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
     public Query(final Sampling sampling, final String description, final boolean connected, final MetaDataSet metaDataSet,
-        final Frequency updateFrequency)
+            final Frequency updateFrequency)
     {
         this(sampling, description, connected, metaDataSet, updateFrequency, null);
     }
@@ -107,7 +109,7 @@ public final class Query
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
     public Query(final Sampling sampling, final String description, final boolean connected, final MetaDataSet metaDataSet,
-        final Frequency updateFrequency, final Duration interval)
+            final Frequency updateFrequency, final Duration interval)
     {
         Throw.whenNull(sampling, "Sampling may not be null.");
         Throw.whenNull(description, "Description may not be null.");
@@ -187,7 +189,7 @@ public final class Query
      * @param tEnd end time
      */
     public void addSpaceTimeRegion(final OTSSimulatorInterface simulator, final LaneDirection laneDirection,
-        final Length xStart, final Length xEnd, final Duration tStart, final Duration tEnd)
+            final Length xStart, final Length xEnd, final Duration tStart, final Duration tEnd)
     {
         SpaceTimeRegion spaceTimeRegion = new SpaceTimeRegion(laneDirection, xStart, xEnd, tStart, tEnd);
         this.sampling.registerSpaceTimeRegion(simulator, spaceTimeRegion);
@@ -214,72 +216,81 @@ public final class Query
 
     /**
      * Returns a list of trajectories in accordance with the query. Each {@code Trajectories} contains {@code Trajectory}
-     * objects pertaining to a {@code SpaceTimeRegion} from the query. A {@code Trajectory} is only included if its meta data
-     * complies with the meta data of this query.
+     * objects pertaining to a {@code SpaceTimeRegion} from the query. A {@code Trajectory} is only included if all the meta
+     * data of this query accepts the trajectory.
      * @param startTime start time of interval to get trajectories for
      * @param endTime start time of interval to get trajectories for
      * @param <T> underlying class of meta data type and its value
      * @return list of trajectories in accordance with the query
      * @throws RuntimeException if a meta data type returned a boolean array with incorrect length
      */
-    // TODO get trajectories only over "interval", then indicators need not to be bothered
+    @SuppressWarnings("unchecked")
     public <T> List<Trajectories> getTrajectories(final Duration startTime, final Duration endTime)
     {
         // Step 1) gather trajectories per GTU, truncated over space and time
-        Map<String, List<Trajectory>> trajectoryMap = new HashMap<>();
-        Map<String, List<Trajectories>> trajectoriesMap = new HashMap<>();
-        Set<Trajectories> trajectorySet = new HashSet<>();
+        Map<String, TrajectoryAcceptList> trajectoryAcceptListMap = new HashMap<>();
+        List<Trajectories> trajectoriesSet = new ArrayList<>();
         for (SpaceTimeRegion spaceTimeRegion : this.spaceTimeRegions)
         {
             Duration start = startTime.gt(spaceTimeRegion.getStartTime()) ? startTime : spaceTimeRegion.getStartTime();
             Duration end = endTime.lt(spaceTimeRegion.getEndTime()) ? endTime : spaceTimeRegion.getEndTime();
-            Trajectories trajectories =
-                this.sampling.getTrajectories(spaceTimeRegion.getLaneDirection()).getTrajectories(
-                    spaceTimeRegion.getStartPosition(), spaceTimeRegion.getEndPosition(), start, end);
+            Trajectories trajectories = this.sampling.getTrajectories(spaceTimeRegion.getLaneDirection())
+                    .getTrajectories(spaceTimeRegion.getStartPosition(), spaceTimeRegion.getEndPosition(), start, end);
             for (Trajectory trajectory : trajectories.getTrajectorySet())
             {
-                if (!trajectoryMap.containsKey(trajectory.getGtuId()))
+                if (!trajectoryAcceptListMap.containsKey(trajectory.getGtuId()))
                 {
-                    trajectoryMap.put(trajectory.getGtuId(), new ArrayList<>());
-                    trajectoriesMap.put(trajectory.getGtuId(), new ArrayList<>());
+                    trajectoryAcceptListMap.put(trajectory.getGtuId(), new TrajectoryAcceptList());
                 }
-                trajectoryMap.get(trajectory.getGtuId()).add(trajectory);
-                trajectoriesMap.get(trajectory.getGtuId()).add(trajectories);
-                trajectorySet.add(trajectories);
+                trajectoryAcceptListMap.get(trajectory.getGtuId()).addTrajectory(trajectory, trajectories);
+                trajectoriesSet.add(trajectories);
             }
         }
         // Step 2) accept per GTU
-        Map<String, Boolean[]> booleanMap = new HashMap<>();
-        Iterator<String> iterator = trajectoryMap.keySet().iterator();
+        Iterator<String> iterator = trajectoryAcceptListMap.keySet().iterator();
         while (iterator.hasNext())
         {
             String gtuId = iterator.next();
-            Boolean[] accepted = new Boolean[trajectoryMap.get(gtuId).size()];
+            TrajectoryAcceptList trajectoryAcceptListCombined = null;
             for (MetaDataType<?> metaDataType : this.metaDataSet.getMetaDataTypes())
             {
-                // create safe copies as meta data types may use the list to throw out rejected trajectories etc.
-                @SuppressWarnings("unchecked")
-                boolean[] acceptedTmp =
-                    ((MetaDataType<T>) metaDataType).accept(new ArrayList<>(trajectoryMap.get(gtuId)), new ArrayList<>(
-                        trajectoriesMap.get(gtuId)), (Set<T>) new HashSet<>(this.metaDataSet.get(metaDataType)));
-                Throw.when(acceptedTmp.length != accepted.length, RuntimeException.class,
-                    "Meta data type %s returned a boolean array with incorrect length.", metaDataType);
-                for (int i = 0; i < accepted.length; i++)
+                // create safe copy per meta data type, with defaults accepts = false
+                TrajectoryAcceptList trajectoryAcceptList = trajectoryAcceptListMap.get(gtuId);
+                TrajectoryAcceptList trajectoryAcceptListCopy = new TrajectoryAcceptList();
+                for (int i = 0; i < trajectoryAcceptList.size(); i++)
                 {
-                    accepted[i] = accepted[i] && acceptedTmp[i];
+                    trajectoryAcceptListCopy.addTrajectory(trajectoryAcceptList.getTrajectory(i),
+                            trajectoryAcceptList.getTrajectories(i));
+                }
+                // request meta data type to accept or reject
+                ((MetaDataType<T>) metaDataType).accept(trajectoryAcceptListCopy,
+                        (Set<T>) new HashSet<>(this.metaDataSet.get(metaDataType)));
+                // combine acceptance/rejection of meta data type so far
+                if (trajectoryAcceptListCombined == null)
+                {
+                    trajectoryAcceptListCombined = trajectoryAcceptListCopy;
+                }
+                else
+                {
+                    for (int i = 0; i < trajectoryAcceptListCopy.size(); i++)
+                    {
+                        Trajectory trajectory = trajectoryAcceptListCopy.getTrajectory(i);
+                        trajectoryAcceptListCombined.acceptTrajectory(trajectory,
+                                trajectoryAcceptListCombined.isAccepted(trajectory)
+                                        && trajectoryAcceptListCopy.isAccepted(trajectory));
+                    }
                 }
             }
-            booleanMap.put(gtuId, accepted);
         }
         // Step 3) filter Trajectories
         List<Trajectories> out = new ArrayList<>();
-        for (Trajectories full : trajectorySet)
+        for (Trajectories full : trajectoriesSet)
         {
             Trajectories filtered = new Trajectories(full.getStartTime(), full.getLaneDirection());
             for (Trajectory trajectory : full.getTrajectorySet())
             {
                 String gtuId = trajectory.getGtuId();
-                if (booleanMap.get(gtuId)[trajectoryMap.get(gtuId).indexOf(trajectory)])
+                if (trajectoryAcceptListMap.get(gtuId).isAccepted(trajectory))
                 {
                     // TODO include points on boundaries with some input into the subSet method, there are 4 possibilities
                     // if trajectory is cut: add point on edge
@@ -293,4 +304,122 @@ public final class Query
         return out;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (this.connected ? 1231 : 1237);
+        result = prime * result + ((this.description == null) ? 0 : this.description.hashCode());
+        result = prime * result + ((this.interval == null) ? 0 : this.interval.hashCode());
+        result = prime * result + ((this.metaDataSet == null) ? 0 : this.metaDataSet.hashCode());
+        result = prime * result + ((this.sampling == null) ? 0 : this.sampling.hashCode());
+        result = prime * result + ((this.spaceTimeRegions == null) ? 0 : this.spaceTimeRegions.hashCode());
+        result = prime * result + ((this.uniqueId == null) ? 0 : this.uniqueId.hashCode());
+        result = prime * result + ((this.updateFrequency == null) ? 0 : this.updateFrequency.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        Query other = (Query) obj;
+        if (this.connected != other.connected)
+        {
+            return false;
+        }
+        if (this.description == null)
+        {
+            if (other.description != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.description.equals(other.description))
+        {
+            return false;
+        }
+        if (this.interval == null)
+        {
+            if (other.interval != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.interval.equals(other.interval))
+        {
+            return false;
+        }
+        if (this.metaDataSet == null)
+        {
+            if (other.metaDataSet != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.metaDataSet.equals(other.metaDataSet))
+        {
+            return false;
+        }
+        if (this.sampling == null)
+        {
+            if (other.sampling != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.sampling.equals(other.sampling))
+        {
+            return false;
+        }
+        if (this.spaceTimeRegions == null)
+        {
+            if (other.spaceTimeRegions != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.spaceTimeRegions.equals(other.spaceTimeRegions))
+        {
+            return false;
+        }
+        if (this.uniqueId == null)
+        {
+            if (other.uniqueId != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.uniqueId.equals(other.uniqueId))
+        {
+            return false;
+        }
+        if (this.updateFrequency == null)
+        {
+            if (other.updateFrequency != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.updateFrequency.equals(other.updateFrequency))
+        {
+            return false;
+        }
+        return true;
+    }
+    
 }

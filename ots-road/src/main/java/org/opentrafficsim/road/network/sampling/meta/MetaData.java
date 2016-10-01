@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.network.sampling;
+package org.opentrafficsim.road.network.sampling.meta;
 
 import java.util.HashMap;
 import java.util.Iterator;

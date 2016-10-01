@@ -1,12 +1,13 @@
-package org.opentrafficsim.road.network.sampling;
+package org.opentrafficsim.road.network.sampling.meta;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
+import org.opentrafficsim.road.network.sampling.CrossSection;
+import org.opentrafficsim.road.network.sampling.Trajectories;
+import org.opentrafficsim.road.network.sampling.TrajectoryAcceptList;
 
 /**
  * <p>
@@ -33,14 +34,13 @@ public class MetaDataCrossSections extends MetaDataType<CrossSection>
      * Accepts all trajectory's or rejects all trajectory's depending on whether all cross sections have been crossed.
      */
     @Override
-    protected final boolean[] accept(final List<Trajectory> trajectoryList, final List<Trajectories> trajectoriesList,
-        final Set<CrossSection> querySet)
+    public final void accept(final TrajectoryAcceptList trajectoryAcceptList, final Set<CrossSection> querySet)
     {
         Set<CrossSection> crossedCrossSections = new HashSet<>();
         // Loop over trajectoryList/trajectoriesList combo
-        for (int i = 0; i < trajectoryList.size(); i++)
+        for (int i = 0; i < trajectoryAcceptList.size(); i++)
         {
-            Trajectories trajectories = trajectoriesList.get(i);
+            Trajectories trajectories = trajectoryAcceptList.getTrajectories(i);
             // Loop over cross sections
             Iterator<CrossSection> crossSectionIterator = querySet.iterator();
             while (crossSectionIterator.hasNext())
@@ -53,10 +53,10 @@ public class MetaDataCrossSections extends MetaDataType<CrossSection>
                     DirectedLanePosition directedLanePosition = directedLanePositionIterator.next();
                     // If Trajectories is of same lane and direction, check position
                     if (trajectories.getLaneDirection().getLane().equals(directedLanePosition.getLane())
-                        && trajectories.getLaneDirection().getDirection().equals(directedLanePosition.getGtuDirection()))
+                            && trajectories.getLaneDirection().getDirection().equals(directedLanePosition.getGtuDirection()))
                     {
                         double position = directedLanePosition.getPosition().si;
-                        float[] x = trajectoryList.get(i).getX();
+                        float[] x = trajectoryAcceptList.getTrajectory(i).getX();
                         double xStart = x[0];
                         double xEnd = x[x.length - 1];
                         if ((xStart < position && position < xEnd) || (xEnd < position && position < xStart))
@@ -68,12 +68,10 @@ public class MetaDataCrossSections extends MetaDataType<CrossSection>
                 }
             }
         }
-        boolean[] out = new boolean[trajectoryList.size()];
         if (querySet.equals(crossedCrossSections))
         {
-            Arrays.fill(out, true);
+            trajectoryAcceptList.acceptAll();
         }
-        return out;
     }
 
 }

@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.network.sampling;
+package org.opentrafficsim.road.network.sampling.meta;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -97,4 +97,45 @@ public class MetaDataSet
         return new ImmutableIterator<>(this.metaDataMap.entrySet().iterator());
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.metaDataMap == null) ? 0 : this.metaDataMap.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean equals(final Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        MetaDataSet other = (MetaDataSet) obj;
+        if (this.metaDataMap == null)
+        {
+            if (other.metaDataMap != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.metaDataMap.equals(other.metaDataMap))
+        {
+            return false;
+        }
+        return true;
+    }
+    
 }

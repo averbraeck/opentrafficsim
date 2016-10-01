@@ -1,7 +1,10 @@
-package org.opentrafficsim.road.network.sampling;
+package org.opentrafficsim.road.network.sampling.indicator;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.opentrafficsim.road.network.sampling.Query;
+import org.opentrafficsim.road.network.sampling.Trajectories;
+import org.opentrafficsim.road.network.sampling.Trajectory;
 
 /**
  * <p>
@@ -13,23 +16,22 @@ import org.djunits.value.vdouble.scalar.Duration;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TravelTime implements Indicator<TimeUnit, Duration>
+public class TotalTravelTime extends AbstractIndicator<TimeUnit, Duration>
 {
 
     /** {@inheritDoc} */
     @Override
     public final Duration calculate(final Query query, final Duration startTime, final Duration endTime)
     {
-        double sum = 0;
+        Duration sum = Duration.ZERO;
         for (Trajectories trajectories : query.getTrajectories(startTime, endTime))
         {
             for (Trajectory trajectory : trajectories.getTrajectorySet())
             {
-                float[] t = trajectory.getX();
-                sum += (t[t.length - 1] - t[0]);
+                sum = sum.plus(trajectory.getTotalDuration());
             }
         }
-        return new Duration(sum, TimeUnit.SI);
+        return sum;
     }
 
 }

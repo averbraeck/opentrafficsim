@@ -1,6 +1,6 @@
-package org.opentrafficsim.road.network.sampling;
+package org.opentrafficsim.road.network.sampling.meta;
 
-import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.network.Node;
 
 /**
  * <p>
@@ -12,13 +12,13 @@ import org.opentrafficsim.core.network.route.Route;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class MetaDataRoute extends MetaDataType<Route>
+public class MetaDataDestination extends MetaDataType<Node>
 {
 
     /**
      * @param id id
      */
-    public MetaDataRoute(final String id)
+    public MetaDataDestination(final String id)
     {
         super(id);
     }
