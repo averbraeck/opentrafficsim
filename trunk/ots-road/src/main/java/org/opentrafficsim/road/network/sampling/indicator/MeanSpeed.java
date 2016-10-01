@@ -1,8 +1,9 @@
-package org.opentrafficsim.road.network.sampling;
+package org.opentrafficsim.road.network.sampling.indicator;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.road.network.sampling.Query;
 
 /**
  * <p>
@@ -14,20 +15,20 @@ import org.djunits.value.vdouble.scalar.Speed;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class MeanSpeed implements Indicator<SpeedUnit, Speed>
+public class MeanSpeed extends AbstractIndicator<SpeedUnit, Speed>
 {
 
     /** Travel distance indicator. */
-    private final TravelDistance travelDistance;
+    private final TotalTravelDistance travelDistance;
 
     /** Travel time indicator. */
-    private final TravelTime travelTime;
+    private final TotalTravelTime travelTime;
 
     /**
      * @param travelDistance travel distance indicator
      * @param travelTime travel time indicator
      */
-    public MeanSpeed(final TravelDistance travelDistance, final TravelTime travelTime)
+    public MeanSpeed(final TotalTravelDistance travelDistance, final TotalTravelTime travelTime)
     {
         this.travelDistance = travelDistance;
         this.travelTime = travelTime;
@@ -37,9 +38,8 @@ public class MeanSpeed implements Indicator<SpeedUnit, Speed>
     @Override
     public final Speed calculate(final Query query, final Duration startTime, final Duration endTime)
     {
-        // TODO let indicator not recalculate if requested at the same time
-        return this.travelDistance.calculate(query, startTime, endTime).divideBy(
-            this.travelTime.calculate(query, startTime, endTime));
+        return this.travelDistance.getValue(query, startTime, endTime).divideBy(
+            this.travelTime.getValue(query, startTime, endTime));
     }
 
 }

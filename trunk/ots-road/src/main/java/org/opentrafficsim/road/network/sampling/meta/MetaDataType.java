@@ -1,8 +1,8 @@
-package org.opentrafficsim.road.network.sampling;
+package org.opentrafficsim.road.network.sampling.meta;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
+
+import org.opentrafficsim.road.network.sampling.TrajectoryAcceptList;
 
 /**
  * <p>
@@ -50,21 +50,17 @@ public abstract class MetaDataType<T>
      * <li>etc.</li>
      * </ol>
      * The default implementation is that of 1.<br>
-     * @param trajectoryList list of trajectory's from a single GTU within the span of a single query
-     * @param trajectoriesList list of trajectories from which the respective trajectory's have been taken
+     * @param trajectoryAcceptList containing {@code Trajectory}'s and {@code Trajectories}'s pertaining to a single GTU
      * @param querySet set of values in the query for this metadata type
-     * @return boolean array of length equal to {@code trajectoryList} and {@code trajectoriesList}
      */
     @SuppressWarnings("checkstyle:designforextension")
-    protected boolean[] accept(final List<Trajectory> trajectoryList, final List<Trajectories> trajectoriesList,
-        final Set<T> querySet)
+    public void accept(final TrajectoryAcceptList trajectoryAcceptList, final Set<T> querySet)
     {
-        boolean[] out = new boolean[trajectoryList.size()];
-        if (trajectoryList.get(0).contains(this) && querySet.contains(trajectoryList.get(0).getMetaData(this)))
+        if (trajectoryAcceptList.getTrajectory(0).contains(this)
+                && querySet.contains(trajectoryAcceptList.getTrajectory(0).getMetaData(this)))
         {
-            Arrays.fill(out, true);
+            trajectoryAcceptList.acceptAll();
         }
-        return out;
     }
 
 }
