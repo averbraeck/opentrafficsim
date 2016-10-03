@@ -29,8 +29,6 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.animation.LinkAnimation;
-import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLightNew;
-import org.opentrafficsim.road.gtu.lane.object.OldTrafficLight;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.animation.ShoulderAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation;
@@ -46,6 +44,8 @@ import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
+import org.opentrafficsim.road.network.lane.object.AbstractTrafficLight;
+import org.opentrafficsim.road.network.lane.object.OldTrafficLight;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -935,18 +935,18 @@ class RoadTag implements Serializable
                     Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(clazz,
                             new Class[] { String.class, Lane.class, Length.class, OTSDEVSSimulatorInterface.class });
 
-                    AbstractTrafficLightNew trafficLight = (AbstractTrafficLightNew) trafficLightConstructor
+                    AbstractTrafficLight trafficLight = (AbstractTrafficLight) trafficLightConstructor
                             .newInstance(new Object[] { signalTag.id, lane, sOffset, simulator });
 
                     if (!openDriveNetworkLaneParser.trafficLightsBySignals.containsKey(signalTag.id))
                     {
-                        Set<AbstractTrafficLightNew> lights = new HashSet<AbstractTrafficLightNew>();
+                        Set<AbstractTrafficLight> lights = new HashSet<AbstractTrafficLight>();
                         openDriveNetworkLaneParser.trafficLightsBySignals.put(signalTag.id, lights);
                     }
 
                     if (!openDriveNetworkLaneParser.trafficLightsByLanes.containsKey(roadTag.id))
                     {
-                        Set<AbstractTrafficLightNew> lights = new HashSet<AbstractTrafficLightNew>();
+                        Set<AbstractTrafficLight> lights = new HashSet<AbstractTrafficLight>();
                         openDriveNetworkLaneParser.trafficLightsByLanes.put(roadTag.id, lights);
                     }
 
@@ -1003,12 +1003,12 @@ class RoadTag implements Serializable
                     Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(clazz,
                             new Class[] { String.class, Lane.class, Length.class, OTSDEVSSimulatorInterface.class });
 
-                    AbstractTrafficLightNew trafficLight = (AbstractTrafficLightNew) trafficLightConstructor
+                    AbstractTrafficLight trafficLight = (AbstractTrafficLight) trafficLightConstructor
                             .newInstance(new Object[] { signalTag.id + ".ref", lane, sOffset, simulator });
 
                     if (!openDriveNetworkLaneParser.trafficLightsByLanes.containsKey(roadTag.id))
                     {
-                        Set<AbstractTrafficLightNew> lights = new HashSet<AbstractTrafficLightNew>();
+                        Set<AbstractTrafficLight> lights = new HashSet<AbstractTrafficLight>();
                         openDriveNetworkLaneParser.trafficLightsByLanes.put(roadTag.id, lights);
                     }
 

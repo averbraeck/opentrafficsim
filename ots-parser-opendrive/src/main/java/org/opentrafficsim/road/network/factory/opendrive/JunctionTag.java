@@ -9,8 +9,7 @@ import javax.naming.NamingException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLightNew;
-import org.opentrafficsim.road.network.factory.XMLParser;
+import org.opentrafficsim.road.network.lane.object.AbstractTrafficLight;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -109,7 +108,7 @@ class JunctionTag implements Serializable
 
                 // AbstractTrafficLight trafficLight = openDriveNetworkLaneParser.trafficLightsBySignals.get(signalId);
 
-                for (AbstractTrafficLightNew trafficLight : openDriveNetworkLaneParser.trafficLightsBySignals
+                for (AbstractTrafficLight trafficLight : openDriveNetworkLaneParser.trafficLightsBySignals
                     .get(signalId))
                     controller.addTrafficLight(sequence, trafficLight);
 

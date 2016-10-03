@@ -20,9 +20,8 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLightNew;
-import org.opentrafficsim.road.network.factory.XMLParser;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.object.AbstractTrafficLight;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -83,11 +82,11 @@ public class OpenDriveNetworkLaneParser implements Serializable
 
     /** The trafficLights that have been created, organized by signals */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, Set<AbstractTrafficLightNew>> trafficLightsBySignals = new HashMap<>();
+    protected Map<String, Set<AbstractTrafficLight>> trafficLightsBySignals = new HashMap<>();
 
     /** The trafficLights that have been created, organized by lanes */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, Set<AbstractTrafficLightNew>> trafficLightsByLanes = new HashMap<>();
+    protected Map<String, Set<AbstractTrafficLight>> trafficLightsByLanes = new HashMap<>();
 
     /** The generated animation per object. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
