@@ -1,6 +1,6 @@
 <?xml version="1.1" encoding="UTF-8"?>
 <NETWORK xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots http://www.opentrafficsim.org/docs/ots-network.xsd">
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots http://www.opentrafficsim.org/docs/current/ots-network.xsd">
 
   <DEFINITIONS>
 
@@ -11,15 +11,15 @@
     <GTU NAME="CAR" GTUTYPE="CAR" FOLLOWING="IDM+" LENGTH="CONST(5) m" WIDTH="CONST(2) m" LANECHANGE="EGOISTIC"
       MAXSPEED="CONST(10) m/s" />
 
-    <LANETYPE NAME="ROAD" />
+    <ROADTYPE NAME="ROAD" />
 
     <COMPATIBILITY LANETYPE="ROAD">
       <GTU NAME="CAR" />
     </COMPATIBILITY>
 
-    <ROADTYPE NAME="r1">
-      <LANE NAME="A1" TYPE="ROAD" OFFSET="-1.8m" WIDTH="3.6m" DIRECTION="FORWARD" SPEED="10 m/s" />
-    </ROADTYPE>
+    <ROADLAYOUT NAME="r1">
+      <LANE NAME="A1" TYPE="ROAD" OFFSET="-1.8m" WIDTH="3.6m" DIRECTION="FORWARD"  MAXSPEED="10 m/s" />
+    </ROADLAYOUT>
 
   </DEFINITIONS>
 

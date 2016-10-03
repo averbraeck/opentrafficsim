@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>opentrafficsim</groupId>
+    <artifactId>ots-base</artifactId>
+    <version>0.11.00-SNAPSHOT</version>
+    <relativePath>../ots-base/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>ots-parser-xml</artifactId>
+  <name>OTS Road parser for XML files</name>
+  <description>OTS Road parser for XML files</description>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>wagon-maven-plugin</artifactId>
+        <version>${wagon.maven.version}</version>
+        <executions>
+          <execution>
+            <id>upload-schema</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>upload</goal>
+            </goals>
+            <configuration>
+              <fromDir>${basedir}/src/main/resources</fromDir>
+              <includes>ots-types.xsd, ots-definitions.xsd, ots-network.xsd</includes>
+              <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/docs</url>
+              <toDir>current</toDir>
+              <serverId>ots-deployment</serverId>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>opentrafficsim</groupId>
+      <artifactId>ots-road</artifactId>
+    </dependency>
+
+  </dependencies>
+
+</project>
