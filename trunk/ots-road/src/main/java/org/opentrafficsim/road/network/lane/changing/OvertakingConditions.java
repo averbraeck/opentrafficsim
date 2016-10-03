@@ -69,7 +69,7 @@ public interface OvertakingConditions
         /** {@inheritDoc} */
         @Override
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-            final LaneBasedGTU predecessorGTU)
+                final LaneBasedGTU predecessorGTU)
         {
             return OvertakingDirection.LEFT;
         }
@@ -96,11 +96,11 @@ public interface OvertakingConditions
      */
     public static class RightOnly implements OvertakingConditions
     {
-        
+
         /** {@inheritDoc} */
         @Override
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-            final LaneBasedGTU predecessorGTU)
+                final LaneBasedGTU predecessorGTU)
         {
             return OvertakingDirection.RIGHT;
         }
@@ -125,11 +125,11 @@ public interface OvertakingConditions
      */
     public static class None implements OvertakingConditions
     {
-        
+
         /** {@inheritDoc} */
         @Override
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-            final LaneBasedGTU predecessorGTU)
+                final LaneBasedGTU predecessorGTU)
         {
             return OvertakingDirection.NONE;
         }
@@ -154,11 +154,11 @@ public interface OvertakingConditions
      */
     public static class LeftAndRight implements OvertakingConditions
     {
-        
+
         /** {@inheritDoc} */
         @Override
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-            final LaneBasedGTU predecessorGTU)
+                final LaneBasedGTU predecessorGTU)
         {
             return OvertakingDirection.BOTH;
         }
@@ -168,6 +168,93 @@ public interface OvertakingConditions
         public final String toString()
         {
             return "LeftAndRight []";
+        }
+    }
+
+    /**
+     * Overtaking on the left allowed for all GTUs; they stay on the same lane (e.g., bicycles).
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
+     * initial version Sep 13, 2015
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     */
+    public static class SameLaneLeft implements OvertakingConditions
+    {
+
+        /** {@inheritDoc} */
+        @Override
+        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
+                final LaneBasedGTU predecessorGTU)
+        {
+            return OvertakingDirection.LEFT;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "SameLaneLeft []";
+        }
+    }
+
+    /**
+     * Overtaking on the right allowed for all GTUs; they stay on the same lane (e.g., bicycles).
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
+     * initial version Sep 13, 2015
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     */
+    public static class SameLaneRight implements OvertakingConditions
+    {
+
+        /** {@inheritDoc} */
+        @Override
+        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
+                final LaneBasedGTU predecessorGTU)
+        {
+            return OvertakingDirection.RIGHT;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "SameLaneRight []";
+        }
+    }
+
+    /**
+     * Overtaking on both sides allowed for all GTUs; they stay on the same lane (e.g., pedestrians).
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
+     * initial version Sep 13, 2015
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     */
+    public static class SameLaneBoth implements OvertakingConditions
+    {
+
+        /** {@inheritDoc} */
+        @Override
+        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
+                final LaneBasedGTU predecessorGTU)
+        {
+            return OvertakingDirection.BOTH;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "SameLaneBoth []";
         }
     }
 
@@ -185,7 +272,7 @@ public interface OvertakingConditions
     {
         /** */
         private static final long serialVersionUID = 20150913L;
-        
+
         /** The speed under which overtaking on the "wrong" side is allowed. */
         private final Speed rightOvertakingSpeedMax;
 
@@ -200,10 +287,9 @@ public interface OvertakingConditions
         /** {@inheritDoc} */
         @Override
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-            final LaneBasedGTU predecessorGTU)
+                final LaneBasedGTU predecessorGTU)
         {
-            return gtu.getSpeed().lt(this.rightOvertakingSpeedMax) ? OvertakingDirection.BOTH
-                : OvertakingDirection.LEFT;
+            return gtu.getSpeed().lt(this.rightOvertakingSpeedMax) ? OvertakingDirection.BOTH : OvertakingDirection.LEFT;
         }
 
         /** {@inheritDoc} */
@@ -228,7 +314,7 @@ public interface OvertakingConditions
     {
         /** */
         private static final long serialVersionUID = 20150913L;
-        
+
         /** The speed under which overtaking on the "wrong" side is allowed. */
         private final Speed leftOvertakingSpeedMax;
 
@@ -243,10 +329,9 @@ public interface OvertakingConditions
         /** {@inheritDoc} */
         @Override
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-            final LaneBasedGTU predecessorGTU)
+                final LaneBasedGTU predecessorGTU)
         {
-            return gtu.getSpeed().lt(this.leftOvertakingSpeedMax) ? OvertakingDirection.BOTH
-                : OvertakingDirection.RIGHT;
+            return gtu.getSpeed().lt(this.leftOvertakingSpeedMax) ? OvertakingDirection.BOTH : OvertakingDirection.RIGHT;
         }
 
         /** {@inheritDoc} */
@@ -276,7 +361,7 @@ public interface OvertakingConditions
     {
         /** */
         private static final long serialVersionUID = 20150913L;
-        
+
         /** A collection of GTUs that can overtake another collection of GTUs. */
         private final Collection<GTUType> overtakingGTUs;
 
@@ -301,11 +386,10 @@ public interface OvertakingConditions
         /** {@inheritDoc} */
         @Override
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-            final LaneBasedGTU predecessorGTU)
+                final LaneBasedGTU predecessorGTU)
         {
             if ((this.overtakingGTUs.contains(GTUType.ALL) || this.overtakingGTUs.contains(gtu.getGTUType())
-                && (this.overtakenGTUs.contains(GTUType.ALL) || this.overtakenGTUs
-                    .contains(predecessorGTU.getGTUType()))))
+                    && (this.overtakenGTUs.contains(GTUType.ALL) || this.overtakenGTUs.contains(predecessorGTU.getGTUType()))))
             {
                 return OvertakingDirection.LEFT;
             }
@@ -339,7 +423,7 @@ public interface OvertakingConditions
     {
         /** */
         private static final long serialVersionUID = 20150913L;
-        
+
         /** A collection of GTUs that can overtake another collection of GTUs. */
         private final Collection<GTUType> overtakingGTUs;
 
@@ -364,11 +448,10 @@ public interface OvertakingConditions
         /** {@inheritDoc} */
         @Override
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-            final LaneBasedGTU predecessorGTU)
+                final LaneBasedGTU predecessorGTU)
         {
             if ((this.overtakingGTUs.contains(GTUType.ALL) || this.overtakingGTUs.contains(gtu.getGTUType())
-                && (this.overtakenGTUs.contains(GTUType.ALL) || this.overtakenGTUs
-                    .contains(predecessorGTU.getGTUType()))))
+                    && (this.overtakenGTUs.contains(GTUType.ALL) || this.overtakenGTUs.contains(predecessorGTU.getGTUType()))))
             {
                 return OvertakingDirection.RIGHT;
             }
@@ -402,7 +485,7 @@ public interface OvertakingConditions
     {
         /** */
         private static final long serialVersionUID = 20150913L;
-        
+
         /** A collection of GTUs that can overtake another collection of GTUs. */
         private final Collection<GTUType> overtakingGTUs;
 
@@ -424,7 +507,7 @@ public interface OvertakingConditions
          * @param rightOvertakingSpeedMax the speed under which overtaking on the "wrong" side is allowed
          */
         public LeftSetRightSpeed(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs,
-            final Speed rightOvertakingSpeedMax)
+                final Speed rightOvertakingSpeedMax)
         {
             this.overtakingGTUs = overtakingGTUs;
             this.overtakenGTUs = overtakenGTUs;
@@ -434,12 +517,10 @@ public interface OvertakingConditions
         /** {@inheritDoc} */
         @Override
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-            final LaneBasedGTU predecessorGTU)
+                final LaneBasedGTU predecessorGTU)
         {
-            boolean left =
-                ((this.overtakingGTUs.contains(GTUType.ALL) || this.overtakingGTUs.contains(gtu.getGTUType())
-                    && (this.overtakenGTUs.contains(GTUType.ALL) || this.overtakenGTUs.contains(predecessorGTU
-                        .getGTUType()))));
+            boolean left = ((this.overtakingGTUs.contains(GTUType.ALL) || this.overtakingGTUs.contains(gtu.getGTUType())
+                    && (this.overtakenGTUs.contains(GTUType.ALL) || this.overtakenGTUs.contains(predecessorGTU.getGTUType()))));
             boolean right = gtu.getSpeed().lt(this.rightOvertakingSpeedMax);
             if (left)
             {
@@ -476,7 +557,7 @@ public interface OvertakingConditions
     {
         /** */
         private static final long serialVersionUID = 20150913L;
-        
+
         /** A collection of GTUs that can overtake another collection of GTUs. */
         private final Collection<GTUType> overtakingGTUs;
 
@@ -498,7 +579,7 @@ public interface OvertakingConditions
          * @param leftOvertakingSpeedMax the speed under which overtaking on the "wrong" side is allowed
          */
         public RightSetLeftSpeed(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs,
-            final Speed leftOvertakingSpeedMax)
+                final Speed leftOvertakingSpeedMax)
         {
             this.overtakingGTUs = overtakingGTUs;
             this.overtakenGTUs = overtakenGTUs;
@@ -508,12 +589,10 @@ public interface OvertakingConditions
         /** {@inheritDoc} */
         @Override
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-            final LaneBasedGTU predecessorGTU)
+                final LaneBasedGTU predecessorGTU)
         {
-            boolean right =
-                ((this.overtakingGTUs.contains(GTUType.ALL) || this.overtakingGTUs.contains(gtu.getGTUType())
-                    && (this.overtakenGTUs.contains(GTUType.ALL) || this.overtakenGTUs.contains(predecessorGTU
-                        .getGTUType()))));
+            boolean right = ((this.overtakingGTUs.contains(GTUType.ALL) || this.overtakingGTUs.contains(gtu.getGTUType())
+                    && (this.overtakenGTUs.contains(GTUType.ALL) || this.overtakenGTUs.contains(predecessorGTU.getGTUType()))));
             boolean left = gtu.getSpeed().lt(this.leftOvertakingSpeedMax);
             if (right)
             {
