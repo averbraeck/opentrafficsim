@@ -5,7 +5,6 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.factory.XMLParser;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;

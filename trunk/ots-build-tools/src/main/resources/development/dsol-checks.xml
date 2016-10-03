@@ -91,6 +91,7 @@
 		</module>
 		<module name="JavadocStyle">
 			<property name="severity" value="warning" />
+            <property name="checkHtml" value="false"/>
 		</module>
 
 

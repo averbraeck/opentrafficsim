@@ -8,16 +8,16 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLightNew;
-import org.opentrafficsim.road.gtu.lane.object.TrafficLight.TrafficLightColor;
+import org.opentrafficsim.road.network.lane.object.AbstractTrafficLight;
+import org.opentrafficsim.road.network.lane.object.TrafficLight.TrafficLightColor;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * Traffic Light Controller
@@ -43,7 +43,7 @@ public class Controller implements Serializable
     private String id;
 
     /** */
-    private Map<Integer, Set<AbstractTrafficLightNew>> trafficLights = new HashMap<Integer, Set<AbstractTrafficLightNew>>();
+    private Map<Integer, Set<AbstractTrafficLight>> trafficLights = new HashMap<Integer, Set<AbstractTrafficLight>>();
 
     /**
      * @param name the name of the OnOffTrafficLight
@@ -90,7 +90,7 @@ public class Controller implements Serializable
 
         if (this.trafficLights.containsKey(3))
         {
-            for (AbstractTrafficLightNew light : this.trafficLights.get(3))
+            for (AbstractTrafficLight light : this.trafficLights.get(3))
             {
                 try
                 {
@@ -111,7 +111,7 @@ public class Controller implements Serializable
         }
         if (this.trafficLights.containsKey(4))
         {
-            for (AbstractTrafficLightNew light : this.trafficLights.get(4))
+            for (AbstractTrafficLight light : this.trafficLights.get(4))
             {
                 try
                 {
@@ -130,7 +130,7 @@ public class Controller implements Serializable
         }
         if (this.trafficLights.containsKey(6))
         {
-            for (AbstractTrafficLightNew light : this.trafficLights.get(6))
+            for (AbstractTrafficLight light : this.trafficLights.get(6))
             {
                 try
                 {
@@ -151,7 +151,7 @@ public class Controller implements Serializable
         }
         if (this.trafficLights.containsKey(7))
         {
-            for (AbstractTrafficLightNew light : this.trafficLights.get(7))
+            for (AbstractTrafficLight light : this.trafficLights.get(7))
             {
                 try
                 {
@@ -170,7 +170,7 @@ public class Controller implements Serializable
         }
         if (this.trafficLights.containsKey(9))
         {
-            for (AbstractTrafficLightNew light : this.trafficLights.get(9))
+            for (AbstractTrafficLight light : this.trafficLights.get(9))
             {
                 try
                 {
@@ -191,7 +191,7 @@ public class Controller implements Serializable
         }
         if (this.trafficLights.containsKey(10))
         {
-            for (AbstractTrafficLightNew light : this.trafficLights.get(10))
+            for (AbstractTrafficLight light : this.trafficLights.get(10))
             {
                 try
                 {
@@ -210,7 +210,7 @@ public class Controller implements Serializable
         }
         if (this.trafficLights.containsKey(12))
         {
-            for (AbstractTrafficLightNew light : this.trafficLights.get(12))
+            for (AbstractTrafficLight light : this.trafficLights.get(12))
             {
                 try
                 {
@@ -231,7 +231,7 @@ public class Controller implements Serializable
         }
         if (this.trafficLights.containsKey(13))
         {
-            for (AbstractTrafficLightNew light : this.trafficLights.get(13))
+            for (AbstractTrafficLight light : this.trafficLights.get(13))
             {
                 try
                 {
@@ -254,11 +254,11 @@ public class Controller implements Serializable
      * @param sequence2 sequence2
      * @param trafficLight trafficLight
      */
-    public void addTrafficLight(int sequence2, AbstractTrafficLightNew trafficLight)
+    public void addTrafficLight(int sequence2, AbstractTrafficLight trafficLight)
     {
         if (!this.trafficLights.containsKey(sequence2))
         {
-            Set<AbstractTrafficLightNew> trafficLightsSet = new HashSet<AbstractTrafficLightNew>();
+            Set<AbstractTrafficLight> trafficLightsSet = new HashSet<AbstractTrafficLight>();
             this.trafficLights.put(sequence2, trafficLightsSet);
         }
         this.trafficLights.get(sequence2).add(trafficLight);
