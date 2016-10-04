@@ -15,7 +15,7 @@
   <xsd:element name="GLOBAL">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="VELOCITYGTUCOLORER" minOccurs="0" maxOccurs="1">
+        <xsd:element name="SPEEDGTUCOLORER" minOccurs="0" maxOccurs="1">
           <xsd:complexType>
             <xsd:attribute name="MAXSPEED" type="SPEEDTYPE" use="required" />
           </xsd:complexType>
@@ -50,8 +50,6 @@
       <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
       <xsd:attribute name="LENGTH" type="LENGTHDISTTYPE" use="required" />
       <xsd:attribute name="WIDTH" type="LENGTHDISTTYPE" use="required" />
-      <xsd:attribute name="FOLLOWING" type="FOLLOWINGTYPE" use="required" />
-      <xsd:attribute name="LANECHANGE" type="LANECHANGETYPE" use="required" />
       <xsd:attribute name="MAXSPEED" type="SPEEDDISTTYPE" use="required" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
@@ -75,9 +73,9 @@
   <xsd:element name="ROADTYPE">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="GTUTYPE" minOccurs="1" maxOccurs="unbounded">
+        <xsd:element name="SPEEDLIMIT" minOccurs="1" maxOccurs="unbounded">
           <xsd:complexType>
-            <xsd:attribute name="NAME" type="xsd:string" use="required" />
+            <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
             <xsd:attribute name="LEGALSPEEDLIMIT" type="SPEEDTYPE" use="required" />
           </xsd:complexType>
         </xsd:element>
@@ -93,9 +91,9 @@
   <xsd:element name="LANETYPE">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="GTUTYPE" minOccurs="1" maxOccurs="unbounded">
+        <xsd:element name="SPEEDLIMIT" minOccurs="1" maxOccurs="unbounded">
           <xsd:complexType>
-            <xsd:attribute name="NAME" type="xsd:string" use="required" />
+            <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
             <xsd:attribute name="LEGALSPEEDLIMIT" type="SPEEDTYPE" use="optional" />
           </xsd:complexType>
         </xsd:element>
@@ -110,15 +108,30 @@
   <xsd:element name="ROADLAYOUT">
     <xsd:complexType>
       <xsd:sequence>
+
+        <xsd:element name="SPEEDLIMIT" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
+            <xsd:attribute name="LEGALSPEEDLIMIT" type="SPEEDTYPE" use="optional" />
+          </xsd:complexType>
+        </xsd:element>
+
         <xsd:choice minOccurs="1" maxOccurs="unbounded">
 
           <xsd:element name="LANE" minOccurs="0" maxOccurs="unbounded">
             <xsd:complexType>
+              <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+                <xsd:element name="SPEEDLIMIT" minOccurs="1" maxOccurs="unbounded">
+                  <xsd:complexType>
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
+                    <xsd:attribute name="LEGALSPEEDLIMIT" type="SPEEDTYPE" use="optional" />
+                  </xsd:complexType>
+                </xsd:element>
+              </xsd:sequence>
               <xsd:attribute name="NAME" type="xsd:string" use="required" />
               <xsd:attribute name="LANETYPE" type="xsd:string" use="optional" />
               <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required" />
               <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
-              <xsd:attribute name="LEGALSPEEDLIMIT" type="SPEEDTYPE" use="optional" />
               <xsd:attribute name="DIRECTION" type="DIRECTIONTYPE" use="required" />
               <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
               <xsd:attribute name="OVERTAKING" type="OVERTAKINGTYPE" use="optional" />
@@ -158,7 +171,6 @@
       <xsd:attribute name="NAME" type="xsd:string" use="required" />
       <xsd:attribute name="ROADTYPE" type="xsd:string" use="required" />
       <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
-      <xsd:attribute name="LEGALSPEEDLIMIT" type="SPEEDTYPE" use="optional" />
       <xsd:attribute name="LANEKEEPING" type="LANEKEEPINGTYPE" use="optional" />
       <xsd:attribute name="OVERTAKING" type="OVERTAKINGTYPE" use="optional" />
       <xsd:attribute ref="xml:base" />

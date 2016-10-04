@@ -67,7 +67,7 @@ public final class AngleUnits implements UNITS
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Direction parseAngleAbs(final String s) throws NetworkException
+    public static Direction parseDirection(final String s) throws NetworkException
     {
         String us = parseAngleUnit(s);
         AngleUnit u = ANGLE_UNITS.get(us);
@@ -89,7 +89,7 @@ public final class AngleUnits implements UNITS
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Angle parseAngleRel(final String s) throws NetworkException
+    public static Angle parseAngle(final String s) throws NetworkException
     {
         String us = parseAngleUnit(s);
         AngleUnit u = ANGLE_UNITS.get(us);

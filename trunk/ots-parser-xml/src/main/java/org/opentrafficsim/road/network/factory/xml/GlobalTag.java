@@ -3,20 +3,49 @@ package org.opentrafficsim.road.network.factory.xml;
 import java.io.Serializable;
 import java.util.List;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.factory.xml.units.AccelerationUnits;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
-import org.opentrafficsim.road.network.factory.xml.units.LaneAttributes;
-import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
+ * GlobalTag parser.
+ * 
+ * <pre>
+ * {@code
+  <xsd:element name="GLOBAL">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="SPEEDGTUCOLORER" minOccurs="0" maxOccurs="1">
+          <xsd:complexType>
+            <xsd:attribute name="MAXSPEED" type="SPEEDTYPE" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="ACCELERATIONGTUCOLORER" minOccurs="0" maxOccurs="1">
+          <xsd:complexType>
+            <xsd:attribute name="MAXDECELERATION" type="ACCELERATIONTYPE" use="required" />
+            <xsd:attribute name="MAXACCELERATION" type="ACCELERATIONTYPE" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="LANECHANGEURGEGTUCOLORER" minOccurs="0" maxOccurs="1">
+          <xsd:complexType>
+            <xsd:attribute name="MINLANECHANGEDISTANCE" type="LENGTHTYPE" use="required" />
+            <xsd:attribute name="HORIZON" type="LENGTHTYPE" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+ * }
+ * </pre>
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -30,27 +59,25 @@ class GlobalTag implements Serializable
     /** */
     private static final long serialVersionUID = 20150723L;
 
-    /** Default speed. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    Speed defaultMaxSpeed = null;
-
-    /** Default lane width. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length defaultLaneWidth = null;
-
     /** Default SpeedGTUColorer.maxSpeed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Speed speedGTUColorerMaxSpeed = null;
 
-    /** Default lane keeping policy. */
+    /** Default AccelerationGTUColorer.maxDeceleration. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    LaneKeepingPolicy defaultLaneKeepingPolicy = null;
+    Acceleration accelerationGTUColorerMaxDeceleration = null;
 
-    /** Default overtaking conditions. */
+    /** Default AccelerationGTUColorer.maxAcceleration. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    OvertakingConditions defaultOvertakingConditions = null;
+    Acceleration accelerationGTUColorerMaxAcceleration = null;
 
-    // TODO add other GTUColorer tags
+    /** Default LaneChangeUrgeGTUColorer.minLaneChangeDistance. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    Length laneChangeUrgeGTUColorerMinLaneChangeDistance = null;
+
+    /** Default LaneChangeUrgeGTUColorer.horizon. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    Length laneChangeUrgeGTUColorerHorizon = null;
 
     /**
      * @param nodeList nodeList the top-level nodes of the XML-file
@@ -59,8 +86,7 @@ class GlobalTag implements Serializable
      * @throws SAXException when parsing of GLOBAL tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseGlobal(final NodeList nodeList, final XmlNetworkLaneParser parser) throws NetworkException,
-        SAXException
+    static void parseGlobal(final NodeList nodeList, final XmlNetworkLaneParser parser) throws NetworkException, SAXException
     {
         List<Node> nodes = XMLParser.getNodes(nodeList, "GLOBAL");
         if (nodes.size() > 1)
@@ -68,17 +94,8 @@ class GlobalTag implements Serializable
         if (nodes.size() == 1)
         {
             Node node = nodes.get(0);
-            NamedNodeMap attributes = node.getAttributes();
 
             parser.globalTag = new GlobalTag();
-
-            Node speed = attributes.getNamedItem("DEFAULTMAXSPEED");
-            if (speed != null)
-                parser.globalTag.defaultMaxSpeed = SpeedUnits.parseSpeedAbs(speed.getNodeValue().trim());
-
-            Node width = attributes.getNamedItem("DEFAULTLANEWIDTH");
-            if (width != null)
-                parser.globalTag.defaultLaneWidth = LengthUnits.parseLengthRel(width.getNodeValue().trim());
 
             // SPEEDGTUCOLORER attributes
             List<Node> speedGTUColorerNodes = XMLParser.getNodes(node.getChildNodes(), "SPEEDGTUCOLORER");
@@ -91,29 +108,56 @@ class GlobalTag implements Serializable
                 if (speedGTUColorerAttributes.getNamedItem("MAXSPEED") == null)
                     throw new SAXException("GLOBAL: No attribute MAXSPEED for the tag SPEEDGTUCOLORER");
                 parser.globalTag.speedGTUColorerMaxSpeed =
-                    SpeedUnits.parseSpeedAbs(speedGTUColorerAttributes.getNamedItem("MAXSPEED").getNodeValue());
+                        SpeedUnits.parseSpeed(speedGTUColorerAttributes.getNamedItem("MAXSPEED").getNodeValue());
             }
 
-            Node lkp = attributes.getNamedItem("DEFAULTLANEKEEPING");
-            if (lkp != null)
-                parser.globalTag.defaultLaneKeepingPolicy =
-                    LaneAttributes.parseLaneKeepingPolicy(lkp.getNodeValue().trim());
+            // ACCELERATIONGTUCOLORER attributes
+            List<Node> accelerationGTUColorerNodes = XMLParser.getNodes(node.getChildNodes(), "ACCELERATIONGTUCOLORER");
+            if (accelerationGTUColorerNodes.size() > 1)
+                throw new SAXException("GLOBAL: More than one tag ACCELERATIONGTUCOLORER in the XML-file");
+            if (accelerationGTUColorerNodes.size() == 1)
+            {
+                Node accelerationGTUColorerNode = nodes.get(0);
+                NamedNodeMap accelerationGTUColorerAttributes = accelerationGTUColorerNode.getAttributes();
+                if (accelerationGTUColorerAttributes.getNamedItem("MAXDECELERATION") == null)
+                    throw new SAXException("GLOBAL: No attribute MAXDECELERATION for the tag ACCELERATIONGTUCOLORER");
+                parser.globalTag.accelerationGTUColorerMaxDeceleration = AccelerationUnits
+                        .parseAcceleration(accelerationGTUColorerAttributes.getNamedItem("MAXDECELERATION").getNodeValue());
+                if (accelerationGTUColorerAttributes.getNamedItem("MAXACCELERATION") == null)
+                    throw new SAXException("GLOBAL: No attribute MAXACCELERATION for the tag ACCELERATIONGTUCOLORER");
+                parser.globalTag.accelerationGTUColorerMaxAcceleration = AccelerationUnits
+                        .parseAcceleration(accelerationGTUColorerAttributes.getNamedItem("MAXACCELERATION").getNodeValue());
+            }
 
-            Node oc = attributes.getNamedItem("DEFAULTOVERTAKING");
-            if (oc != null)
-                parser.globalTag.defaultOvertakingConditions =
-                    LaneAttributes.parseOvertakingConditions(oc.getNodeValue().trim(), parser);
-
-            // TODO parse other GTUColorer tags
+            // LANECHANGEURGEGTUCOLORER attributes
+            List<Node> lcuGTUColorerNodes = XMLParser.getNodes(node.getChildNodes(), "LANECHANGEURGEGTUCOLORER");
+            if (lcuGTUColorerNodes.size() > 1)
+                throw new SAXException("GLOBAL: More than one tag LANECHANGEURGEGTUCOLORER in the XML-file");
+            if (lcuGTUColorerNodes.size() == 1)
+            {
+                Node lcuGTUColorerNode = nodes.get(0);
+                NamedNodeMap lcuGTUColorerAttributes = lcuGTUColorerNode.getAttributes();
+                if (lcuGTUColorerAttributes.getNamedItem("MINLANECHANGEDISTANCE") == null)
+                    throw new SAXException("GLOBAL: No attribute MINLANECHANGEDISTANCE for the tag LANECHANGEURGEGTUCOLORER");
+                parser.globalTag.laneChangeUrgeGTUColorerMinLaneChangeDistance =
+                        LengthUnits.parseLength(lcuGTUColorerAttributes.getNamedItem("MINLANECHANGEDISTANCE").getNodeValue());
+                if (lcuGTUColorerAttributes.getNamedItem("HORIZON") == null)
+                    throw new SAXException("GLOBAL: No attribute HORIZON for the tag LANECHANGEURGEGTUCOLORER");
+                parser.globalTag.laneChangeUrgeGTUColorerHorizon =
+                        LengthUnits.parseLength(lcuGTUColorerAttributes.getNamedItem("HORIZON").getNodeValue());
+            }
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String toString()
+    public String toString()
     {
-        return "GlobalTag [defaultMaxSpeed=" + this.defaultMaxSpeed + ", defaultLaneWidth=" + this.defaultLaneWidth
-                + ", speedGTUColorerMaxSpeed=" + this.speedGTUColorerMaxSpeed + ", defaultLaneKeepingPolicy="
-                + this.defaultLaneKeepingPolicy + ", defaultOvertakingConditions=" + this.defaultOvertakingConditions + "]";
+        return "GlobalTag [speedGTUColorerMaxSpeed=" + this.speedGTUColorerMaxSpeed + ", accelerationGTUColorerMaxDeceleration="
+                + this.accelerationGTUColorerMaxDeceleration + ", accelerationGTUColorerMaxAcceleration="
+                + this.accelerationGTUColorerMaxAcceleration + ", laneChangeUrgeGTUColorerMinLaneChangeDistance="
+                + this.laneChangeUrgeGTUColorerMinLaneChangeDistance + ", laneChangeUrgeGTUColorerHorizon="
+                + this.laneChangeUrgeGTUColorerHorizon + "]";
     }
+
 }

@@ -13,6 +13,7 @@
       <item name="ots-base" href="http://opentrafficsim.org/docs/${version}/index.html" />
       <item name="ots-core" href="http://opentrafficsim.org/docs/${version}/ots-core/index.html" />
       <item name="ots-road" href="http://opentrafficsim.org/docs/${version}/ots-road/index.html" />
+      <item name="ots-parser-xml" href="http://opentrafficsim.org/docs/${version}/ots-parser-xml/index.html" />
       <item name="ots-parser-opendrive" href="http://opentrafficsim.org/docs/${version}/ots-parser-opendrive/index.html" />
       <item name="ots-parser-osm" href="http://opentrafficsim.org/docs/${version}/ots-parser-osm/index.html" />
       <item name="ots-parser-shape" href="http://opentrafficsim.org/docs/${version}/ots-parser-shape/index.html" />

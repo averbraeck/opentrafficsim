@@ -139,12 +139,12 @@ class FillTag implements Serializable
         Node distance = attributes.getNamedItem("DISTANCE");
         if (distance == null)
             throw new SAXException("FILL: missing attribute DISTANCE");
-        fillTag.distanceDist = Distributions.parseLengthDistRel(distance.getNodeValue());
+        fillTag.distanceDist = Distributions.parseLengthDist(distance.getNodeValue());
 
         Node initialSpeed = attributes.getNamedItem("INITIALSPEED");
         if (initialSpeed == null)
             throw new SAXException("FILL: missing attribute INITIALSPEED");
-        fillTag.initialSpeedDist = Distributions.parseSpeedDistRel(initialSpeed.getNodeValue());
+        fillTag.initialSpeedDist = Distributions.parseSpeedDist(initialSpeed.getNodeValue());
 
         Node maxGTU = attributes.getNamedItem("MAXGTU");
         fillTag.maxGTUs = maxGTU == null ? Integer.MAX_VALUE : Integer.parseInt(maxGTU.getNodeValue().trim());

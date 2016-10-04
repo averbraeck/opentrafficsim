@@ -182,21 +182,21 @@ class GeneratorTag implements Serializable
         Node iat = attributes.getNamedItem("IAT");
         if (iat == null)
             throw new SAXException("GENERATOR: missing attribute IAT");
-        generatorTag.iatDist = Distributions.parseTimeDistRel(iat.getNodeValue());
+        generatorTag.iatDist = Distributions.parseDurationDist(iat.getNodeValue());
 
         Node initialSpeed = attributes.getNamedItem("INITIALSPEED");
         if (initialSpeed == null)
             throw new SAXException("GENERATOR: missing attribute INITIALSPEED");
-        generatorTag.initialSpeedDist = Distributions.parseSpeedDistRel(initialSpeed.getNodeValue());
+        generatorTag.initialSpeedDist = Distributions.parseSpeedDist(initialSpeed.getNodeValue());
 
         Node maxGTU = attributes.getNamedItem("MAXGTU");
         generatorTag.maxGTUs = maxGTU == null ? Integer.MAX_VALUE : Integer.parseInt(maxGTU.getNodeValue().trim());
 
         if (attributes.getNamedItem("STARTTIME") != null)
-            generatorTag.startTime = TimeUnits.parseTimeAbs(attributes.getNamedItem("STARTTIME").getNodeValue());
+            generatorTag.startTime = TimeUnits.parseTime(attributes.getNamedItem("STARTTIME").getNodeValue());
 
         if (attributes.getNamedItem("ENDTIME") != null)
-            generatorTag.endTime = TimeUnits.parseTimeAbs(attributes.getNamedItem("ENDTIME").getNodeValue());
+            generatorTag.endTime = TimeUnits.parseTime(attributes.getNamedItem("ENDTIME").getNodeValue());
 
         int numberRouteTags = 0;
 

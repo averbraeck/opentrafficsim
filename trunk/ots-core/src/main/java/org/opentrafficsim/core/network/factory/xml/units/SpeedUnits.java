@@ -66,28 +66,7 @@ public final class SpeedUnits implements UNITS
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Speed parseSpeedAbs(final String s) throws NetworkException
-    {
-        String us = parseSpeedUnit(s);
-        SpeedUnit u = SPEED_UNITS.get(us);
-        String sv = s.substring(0, s.indexOf(us));
-        try
-        {
-            double value = Double.parseDouble(sv);
-            return new Speed(value, u);
-        }
-        catch (NumberFormatException nfe)
-        {
-            throw new NetworkException("Parsing network: cannot instantiate scalar: " + s, nfe);
-        }
-    }
-
-    /**
-     * @param s the string to parse
-     * @return the next value.
-     * @throws NetworkException when parsing fails
-     */
-    public static Speed parseSpeedRel(final String s) throws NetworkException
+    public static Speed parseSpeed(final String s) throws NetworkException
     {
         String us = parseSpeedUnit(s);
         SpeedUnit u = SPEED_UNITS.get(us);

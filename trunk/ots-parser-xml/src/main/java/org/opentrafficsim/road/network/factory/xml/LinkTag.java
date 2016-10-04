@@ -148,11 +148,11 @@ final class LinkTag implements Serializable
             if (parser.linkTags.keySet().contains(linkTag.name))
                 throw new SAXException("LINK: NAME " + linkTag.name + " defined twice");
 
-            if (attributes.getNamedItem("ROADTYPE") == null)
-                throw new SAXException("LINK: missing attribute ROADTYPE for link " + linkTag.name);
-            String roadTypeName = attributes.getNamedItem("ROADTYPE").getNodeValue().trim();
-            if (!parser.roadTypeTags.containsKey(roadTypeName))
-                throw new SAXException("LINK: ROADTYPE " + roadTypeName + " not found for link " + linkTag.name);
+            if (attributes.getNamedItem("ROADLAYOUT") == null)
+                throw new SAXException("LINK: missing attribute ROADLAYOUT for link " + linkTag.name);
+            String roadTypeName = attributes.getNamedItem("ROADLAYOUT").getNodeValue().trim();
+            if (!parser.roadLayoutTags.containsKey(roadTypeName))
+                throw new SAXException("LINK: ROADLAYOUT " + roadTypeName + " not found for link " + linkTag.name);
             linkTag.roadLayoutTag = parser.roadLayoutTags.get(roadTypeName);
 
             if (attributes.getNamedItem("NODESTART") == null)
@@ -170,24 +170,24 @@ final class LinkTag implements Serializable
                 throw new SAXException("LINK: NODEEND node " + toNodeStr + " for link " + linkTag.name + " not defined");
 
             if (attributes.getNamedItem("OFFSETSTART") != null)
-                linkTag.offsetStart = LengthUnits.parseLengthRel(attributes.getNamedItem("OFFSETSTART").getNodeValue());
+                linkTag.offsetStart = LengthUnits.parseLength(attributes.getNamedItem("OFFSETSTART").getNodeValue());
 
             if (attributes.getNamedItem("OFFSETEND") != null)
-                linkTag.offsetEnd = LengthUnits.parseLengthRel(attributes.getNamedItem("OFFSETEND").getNodeValue());
+                linkTag.offsetEnd = LengthUnits.parseLength(attributes.getNamedItem("OFFSETEND").getNodeValue());
 
             if (attributes.getNamedItem("ROTATIONSTART") != null)
-                linkTag.rotationStart = AngleUnits.parseAngleRel(attributes.getNamedItem("ROTATIONSTART").getNodeValue());
+                linkTag.rotationStart = AngleUnits.parseAngle(attributes.getNamedItem("ROTATIONSTART").getNodeValue());
 
             if (attributes.getNamedItem("ROTATIONEND") != null)
-                linkTag.rotationEnd = AngleUnits.parseAngleRel(attributes.getNamedItem("ROTATIONEND").getNodeValue());
+                linkTag.rotationEnd = AngleUnits.parseAngle(attributes.getNamedItem("ROTATIONEND").getNodeValue());
 
             Node lkp = attributes.getNamedItem("LANEKEEPING");
             if (lkp != null)
                 linkTag.laneKeepingPolicy = LaneAttributes.parseLaneKeepingPolicy(lkp.getNodeValue().trim());
             else if (linkTag.roadLayoutTag.laneKeepingPolicy != null)
                 linkTag.laneKeepingPolicy = linkTag.roadLayoutTag.laneKeepingPolicy;
-            else if (parser.globalTag.defaultLaneKeepingPolicy != null)
-                linkTag.laneKeepingPolicy = parser.globalTag.defaultLaneKeepingPolicy;
+            else if (linkTag.roadLayoutTag.roadTypeTag.defaultLaneKeepingPolicy != null)
+                linkTag.laneKeepingPolicy = linkTag.roadLayoutTag.roadTypeTag.defaultLaneKeepingPolicy;
             else
                 throw new SAXException("LINK: cannot determine LANEKEEPING for lane: " + linkTag.name);
 
@@ -322,7 +322,7 @@ final class LinkTag implements Serializable
         if (posStr.trim().startsWith("END-"))
         {
             String s = posStr.substring(4).trim();
-            double offset = LengthUnits.parseLengthRel(s).getSI();
+            double offset = LengthUnits.parseLength(s).getSI();
             if (offset > length)
             {
                 throw new NetworkException("parseBeginEndPosition - attribute POSITION with value " + posStr
@@ -331,7 +331,7 @@ final class LinkTag implements Serializable
             return new Length(length - offset, LengthUnit.METER);
         }
 
-        Length offset = LengthUnits.parseLengthRel(posStr);
+        Length offset = LengthUnits.parseLength(posStr);
         if (offset.getSI() > length)
         {
             throw new NetworkException("parseBeginEndPosition - attribute POSITION with value " + posStr + " invalid for lane "

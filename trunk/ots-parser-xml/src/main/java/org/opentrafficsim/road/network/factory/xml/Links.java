@@ -19,7 +19,6 @@ import org.djunits.unit.AngleUnit;
 import org.djunits.value.AngleUtil;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -40,6 +39,7 @@ import org.opentrafficsim.road.network.lane.AbstractSensor;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
 import org.opentrafficsim.road.network.lane.Sensor;
 import org.opentrafficsim.road.network.lane.Shoulder;
@@ -48,7 +48,6 @@ import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.AbstractTrafficLight;
-import org.opentrafficsim.road.network.lane.object.CSEBlock;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -602,7 +601,6 @@ final class Links
                     LongitudinalDirectionality direction = cseTag.direction;
                     Color color = cseTag.color;
                     OvertakingConditions overtakingConditions = cseTag.overtakingConditions;
-                    Speed speed = cseTag.speed;
                     if (laneOverrideTag != null)
                     {
                         if (laneOverrideTag.overtakingConditions != null)
@@ -611,8 +609,6 @@ final class Links
                             color = laneOverrideTag.color;
                         if (laneOverrideTag.direction != null)
                             direction = laneOverrideTag.direction;
-                        if (laneOverrideTag.speed != null)
-                            speed = laneOverrideTag.speed;
                     }
                     Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
                     directionality.put(GTUType.ALL, direction);
@@ -634,14 +630,14 @@ final class Links
                             linkDirection = LongitudinalDirectionality.DIR_BOTH;
                         }
                     }
-                    Map<GTUType, Speed> speedLimit = new LinkedHashMap<>();
-                    speedLimit.put(GTUType.ALL, speed);
 
                     // XXX: Quick hack to solve the error that the lane directionality has not (yet) been registered at the link
                     csl.addDirectionality(GTUType.ALL, linkDirection);
 
+                    // XXX: LaneTypes with compatibilities might have to be defined in a new way -- LaneType.ALL for now...
                     Lane lane = new Lane(csl, cseTag.name, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width,
-                            cseTag.laneType, directionality, speedLimit, overtakingConditions);
+                            LaneType.ALL, directionality, cseTag.legalSpeedLimits,
+                            overtakingConditions);
                     // System.out.println(OTSGeometry.printCoordinates("#link design line: \nc1,0,0\n#",
                     // lane.getParentLink().getDesignLine(), "\n "));
                     // System.out.println(OTSGeometry.printCoordinates("#lane center line: \nc0,1,0\n#", lane.getCenterLine(),

@@ -335,11 +335,11 @@
       <xsd:field xpath="@NAME" />
     </xsd:keyref>
 
-    <!-- DEFINITIONS.ROADTYPE.GTUTYPE.NAME defined by DEFINITIONS.GTUTYPE.NAME -->
+    <!-- DEFINITIONS.ROADTYPE.SPEEDLIMITS.GTUTYPE defined by DEFINITIONS.GTUTYPE.NAME -->
 
     <xsd:keyref name="roadTypeGtuTypeRef" refer="ots:gtuTypeKey">
-      <xsd:selector xpath="ots:DEFINITIONS/ots:ROADTYPE/ots:GTUTYPE" />
-      <xsd:field xpath="@NAME" />
+      <xsd:selector xpath="ots:DEFINITIONS/ots:ROADTYPE/ots:SPEEDLIMITS" />
+      <xsd:field xpath="@GTUTYPE" />
     </xsd:keyref>
 
     <!-- DEFINITIONS.LANETYPE.GTUTYPE.NAME defined by DEFINITIONS.GTUTYPE.NAME -->

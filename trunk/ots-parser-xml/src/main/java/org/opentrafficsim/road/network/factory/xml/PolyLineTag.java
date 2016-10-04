@@ -50,7 +50,7 @@ class PolyLineTag implements Serializable
             linkTag.polyLineTag.coordinates =
                     Coordinates.parseCoordinates(polyLineAttributes.getNamedItem("INTERMEDIATEPOINTS").getNodeValue());
         if (polyLineAttributes.getNamedItem("LENGTH") != null)
-            linkTag.polyLineTag.length = LengthUnits.parseLengthRel(polyLineAttributes.getNamedItem("LENGTH").getNodeValue());
+            linkTag.polyLineTag.length = LengthUnits.parseLength(polyLineAttributes.getNamedItem("LENGTH").getNodeValue());
 
     }
 

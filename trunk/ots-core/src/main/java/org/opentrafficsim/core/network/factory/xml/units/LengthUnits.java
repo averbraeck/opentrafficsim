@@ -6,8 +6,8 @@ import java.util.Map;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.UNITS;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Position;
 import org.opentrafficsim.core.network.NetworkException;
 
@@ -90,7 +90,7 @@ public final class LengthUnits implements UNITS
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Position parseLengthAbs(final String s) throws NetworkException
+    public static Position parsePosition(final String s) throws NetworkException
     {
         String us = parseLengthUnit(s);
         LengthUnit u = LENGTH_UNITS.get(us);
@@ -111,7 +111,7 @@ public final class LengthUnits implements UNITS
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Length parseLengthRel(final String s) throws NetworkException
+    public static Length parseLength(final String s) throws NetworkException
     {
         String us = parseLengthUnit(s);
         LengthUnit u = LENGTH_UNITS.get(us);
@@ -157,7 +157,7 @@ public final class LengthUnits implements UNITS
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static DoubleScalar.Abs<LinearDensityUnit> parsePerLengthAbs(final String s) throws NetworkException
+    public static LinearDensity parseLinearDensity(final String s) throws NetworkException
     {
         String us = parsePerLengthUnit(s);
         LinearDensityUnit u = PER_LENGTH_UNITS.get(us);
@@ -165,7 +165,7 @@ public final class LengthUnits implements UNITS
         try
         {
             double value = Double.parseDouble(sv);
-            return new DoubleScalar.Abs<LinearDensityUnit>(value, u);
+            return new LinearDensity(value, u);
         }
         catch (NumberFormatException nfe)
         {

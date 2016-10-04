@@ -129,7 +129,7 @@ class ListGeneratorTag implements Serializable
         Node initialSpeed = attributes.getNamedItem("INITIALSPEED");
         if (initialSpeed == null)
             throw new SAXException("LISTGENERATOR: missing attribute INITIALSPEED");
-        listGeneratorTag.initialSpeedDist = Distributions.parseSpeedDistRel(initialSpeed.getNodeValue());
+        listGeneratorTag.initialSpeedDist = Distributions.parseSpeedDist(initialSpeed.getNodeValue());
 
         // TODO GTUColorer
 

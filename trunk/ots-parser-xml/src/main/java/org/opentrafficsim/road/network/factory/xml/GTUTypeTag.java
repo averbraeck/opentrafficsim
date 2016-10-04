@@ -12,6 +12,17 @@ import org.xml.sax.SAXException;
 
 /**
  * The XML tag for the GTUType.
+ * 
+ * <pre>
+ * {@code
+  <xsd:element name="GTUTYPE">
+    <xsd:complexType>
+      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+ * }
+ * </pre>
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.

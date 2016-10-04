@@ -14,13 +14,13 @@
 
   <xsd:simpleType name="SPEEDTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\d+\.?\d*\s*(km/h|m/s|mi/h|y/s|ft/s)"></xsd:pattern>
+      <xsd:pattern value="\d+\.?\d*\s*(km/h|m/s|mi/h|ft/s)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="ACCELERATIONTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\d+\.?\d*\s*(km/h\^2|m/s\^2|mi/h\^2|y/s\^2|ft/s\^2)"></xsd:pattern>
+      <xsd:pattern value="\d+\.?\d*\s*(km/h\^2|m/s\^2|mi/h\^2|ft/s\^2)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -138,26 +138,14 @@
     <xsd:restriction base="xsd:string">
       <xsd:pattern
         value="LEFTONLY|RIGHTONLY|NONE|BOTH|SAMELANELEFT|SAMELANERIGHT|SAMELANEBOTH|(\
-{0})LEFTALWAYS\s+RIGHTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|y/s|ft/s)\)|(\
-{0})RIGHTALWAYS\s+LEFTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|y/s|ft/s)\)|(\
+{0})LEFTALWAYS\s+RIGHTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|ft/s)\)|(\
+{0})RIGHTALWAYS\s+LEFTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|ft/s)\)|(\
 {0})LEFTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)|(\
 {0})LEFTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)(\
-{0})\s*RIGHTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|y/s|ft/s)\)|(\
+{0})\s*RIGHTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|ft/s)\)|(\
 {0})RIGHTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)|(\
 {0})RIGHTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)(\
-{0})\s*LEFTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|y/s|ft/s)\)"></xsd:pattern>
-    </xsd:restriction>
-  </xsd:simpleType>
-
-  <xsd:simpleType name="FOLLOWINGTYPE">
-    <xsd:restriction base="xsd:string">
-      <xsd:pattern value="IDM|IDM\+"></xsd:pattern>
-    </xsd:restriction>
-  </xsd:simpleType>
-
-  <xsd:simpleType name="LANECHANGETYPE">
-    <xsd:restriction base="xsd:string">
-      <xsd:pattern value="EGOISTIC|ALTRUISTIC"></xsd:pattern>
+{0})\s*LEFTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|ft/s)\)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -247,18 +235,18 @@
     <xsd:restriction base="xsd:string">
       <xsd:pattern
         value="(\
-{0})(CONST|CONSTANT)\(\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|(EXPO|EXPONENTIAL)\(\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|(TRIA|TRIANGULAR)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|(NORM|NORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|BETA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|ERLANG\(\s*\d+\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|GAMMA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|(LOGN|LOGNORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|PEARSON5\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|PEARSON6\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|(UNIF|UNIFORM)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
-{0})|(WEIB|WEIBULL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)">
+{0})(CONST|CONSTANT)\(\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|(EXPO|EXPONENTIAL)\(\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|(TRIA|TRIANGULAR)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|(NORM|NORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|BETA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|ERLANG\(\s*\d+\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|GAMMA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|(LOGN|LOGNORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|PEARSON5\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|PEARSON6\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|(UNIF|UNIFORM)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|(WEIB|WEIBULL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)">
       </xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
