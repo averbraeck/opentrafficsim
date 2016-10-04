@@ -73,12 +73,12 @@ class ArcTag implements Serializable
         Node radius = arcAttributes.getNamedItem("RADIUS");
         if (radius == null)
             throw new SAXException("ARC: missing attribute RADIUS");
-        linkTag.arcTag.radius = LengthUnits.parseLengthRel(radius.getNodeValue());
+        linkTag.arcTag.radius = LengthUnits.parseLength(radius.getNodeValue());
 
         Node angle = arcAttributes.getNamedItem("ANGLE");
         if (angle == null)
             throw new SAXException("ARC: missing attribute ANGLE");
-        linkTag.arcTag.angle = AngleUnits.parseAngleAbs(angle.getNodeValue());
+        linkTag.arcTag.angle = AngleUnits.parseDirection(angle.getNodeValue());
 
         Node dirNode = arcAttributes.getNamedItem("DIRECTION");
         if (dirNode == null)

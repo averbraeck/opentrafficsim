@@ -4,9 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.djunits.unit.LinearDensityUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
@@ -51,7 +50,7 @@ class ShortestRouteTag implements Serializable
 
     /** Distance unit for the "cost" per time. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Abs<LinearDensityUnit> costPerDistance = null;
+    LinearDensity costPerDistance = null;
 
     /**
      * Parse the SHORTESTROUTE tag.
@@ -61,8 +60,8 @@ class ShortestRouteTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseShortestRoutes(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException,
-        NetworkException
+    static void parseShortestRoutes(final NodeList nodeList, final XmlNetworkLaneParser parser)
+            throws SAXException, NetworkException
     {
         for (Node node : XMLParser.getNodes(nodeList, "SHORTESTROUTE"))
         {
@@ -79,8 +78,7 @@ class ShortestRouteTag implements Serializable
                 throw new SAXException("SHORTESTROUTE: missing attribute FROM");
             String fromNode = attributes.getNamedItem("FROM").getNodeValue().trim();
             if (!parser.nodeTags.containsKey(fromNode))
-                throw new SAXException("SHORTESTROUTE " + shortestRouteTag.name + ": FROM node " + fromNode
-                    + " not found");
+                throw new SAXException("SHORTESTROUTE " + shortestRouteTag.name + ": FROM node " + fromNode + " not found");
             shortestRouteTag.from = parser.nodeTags.get(fromNode);
 
             if (attributes.getNamedItem("NODELIST") != null)
@@ -99,12 +97,12 @@ class ShortestRouteTag implements Serializable
             Node distanceCost = attributes.getNamedItem("DISTANCECOST");
             if (distanceCost == null)
                 throw new SAXException("SHORTESTROUTE: missing attribute DISTANCECOST");
-            shortestRouteTag.costPerDistance = LengthUnits.parsePerLengthAbs(distanceCost.getNodeValue().trim());
+            shortestRouteTag.costPerDistance = LengthUnits.parseLinearDensity(distanceCost.getNodeValue().trim());
 
             Node timeCost = attributes.getNamedItem("TIMECOST");
             if (timeCost == null)
                 throw new SAXException("SHORTESTROUTE: missing attribute TIMECOST");
-            shortestRouteTag.costPerTime = TimeUnits.parsePerTimeAbs(timeCost.getNodeValue().trim());
+            shortestRouteTag.costPerTime = TimeUnits.parseFrequency(timeCost.getNodeValue().trim());
 
             parser.shortestRouteTags.put(shortestRouteTag.name.trim(), shortestRouteTag);
         }

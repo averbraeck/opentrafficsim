@@ -11,6 +11,26 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
+ * GTUMIX Tag.
+ * 
+ * <pre>
+ * {@code
+  <xsd:element name="GTUMIX">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="GTU" minOccurs="1" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="NAME" type="xsd:string" use="required" />
+            <xsd:attribute name="WEIGHT" type="xsd:double" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+ * }
+ * </pre>
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -44,8 +64,7 @@ class GTUMixTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseGTUMix(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException,
-        NetworkException
+    static void parseGTUMix(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException, NetworkException
     {
         for (Node node : XMLParser.getNodes(nodeList, "GTUMIX"))
         {
@@ -80,8 +99,8 @@ class GTUMixTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    private static void parseGTUMixGTUTag(final Node gtuNode, final XmlNetworkLaneParser parser,
-        final GTUMixTag gtuMixTag) throws NetworkException, SAXException
+    private static void parseGTUMixGTUTag(final Node gtuNode, final XmlNetworkLaneParser parser, final GTUMixTag gtuMixTag)
+            throws NetworkException, SAXException
     {
         NamedNodeMap attributes = gtuNode.getAttributes();
 
@@ -89,14 +108,13 @@ class GTUMixTag implements Serializable
         if (gtuName == null)
             throw new NetworkException("GTUMIX: No GTU NAME defined");
         if (!parser.gtuTags.containsKey(gtuName.getNodeValue().trim()))
-            throw new NetworkException("GTUMIX: " + gtuMixTag.name + " GTU " + gtuName.getNodeValue().trim()
-                + " not defined");
+            throw new NetworkException("GTUMIX: " + gtuMixTag.name + " GTU " + gtuName.getNodeValue().trim() + " not defined");
         gtuMixTag.gtus.add(parser.gtuTags.get(gtuName.getNodeValue().trim()));
 
         Node weight = attributes.getNamedItem("WEIGHT");
         if (weight == null)
-            throw new NetworkException("GTUMIX: " + gtuMixTag.name + " GTU " + gtuName.getNodeValue().trim()
-                + ": weight not defined");
+            throw new NetworkException(
+                    "GTUMIX: " + gtuMixTag.name + " GTU " + gtuName.getNodeValue().trim() + ": weight not defined");
         gtuMixTag.weights.add(Double.parseDouble(weight.getNodeValue()));
     }
 

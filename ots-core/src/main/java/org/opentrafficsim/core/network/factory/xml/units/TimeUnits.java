@@ -27,7 +27,7 @@ public final class TimeUnits implements UNITS
     public static final Map<String, TimeUnit> TIME_UNITS = new HashMap<>();
 
     /** The per time units. */
-    public static final Map<String, FrequencyUnit> PER_TIME_UNITS = new HashMap<>();
+    public static final Map<String, FrequencyUnit> FREQUENCY_UNITS = new HashMap<>();
 
     static
     {
@@ -42,16 +42,16 @@ public final class TimeUnits implements UNITS
         TIME_UNITS.put("wk", WEEK);
         TIME_UNITS.put("week", WEEK);
 
-        PER_TIME_UNITS.put("/ms", PER_MILLISECOND);
-        PER_TIME_UNITS.put("/s", PER_SECOND);
-        PER_TIME_UNITS.put("/m", PER_MINUTE);
-        PER_TIME_UNITS.put("/min", PER_MINUTE);
-        PER_TIME_UNITS.put("/h", PER_HOUR);
-        PER_TIME_UNITS.put("/hr", PER_HOUR);
-        PER_TIME_UNITS.put("/d", PER_DAY);
-        PER_TIME_UNITS.put("/day", PER_DAY);
-        PER_TIME_UNITS.put("/wk", PER_WEEK);
-        PER_TIME_UNITS.put("/week", PER_WEEK);
+        FREQUENCY_UNITS.put("/ms", PER_MILLISECOND);
+        FREQUENCY_UNITS.put("/s", PER_SECOND);
+        FREQUENCY_UNITS.put("/m", PER_MINUTE);
+        FREQUENCY_UNITS.put("/min", PER_MINUTE);
+        FREQUENCY_UNITS.put("/h", PER_HOUR);
+        FREQUENCY_UNITS.put("/hr", PER_HOUR);
+        FREQUENCY_UNITS.put("/d", PER_DAY);
+        FREQUENCY_UNITS.put("/day", PER_DAY);
+        FREQUENCY_UNITS.put("/wk", PER_WEEK);
+        FREQUENCY_UNITS.put("/week", PER_WEEK);
     }
 
     /** Utility class. */
@@ -90,7 +90,7 @@ public final class TimeUnits implements UNITS
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Time parseTimeAbs(final String s) throws NetworkException
+    public static Time parseTime(final String s) throws NetworkException
     {
         String us = parseTimeUnit(s);
         TimeUnit u = TIME_UNITS.get(us);
@@ -111,7 +111,7 @@ public final class TimeUnits implements UNITS
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Duration parseTimeRel(final String s) throws NetworkException
+    public static Duration parseDuration(final String s) throws NetworkException
     {
         String us = parseTimeUnit(s);
         TimeUnit u = TIME_UNITS.get(us);
@@ -132,10 +132,10 @@ public final class TimeUnits implements UNITS
      * @return the unit as a String in the Map.
      * @throws NetworkException when parsing fails
      */
-    public static String parsePerTimeUnit(final String s) throws NetworkException
+    public static String parseFrequencyUnit(final String s) throws NetworkException
     {
         String u = null;
-        for (String us : PER_TIME_UNITS.keySet())
+        for (String us : FREQUENCY_UNITS.keySet())
         {
             if (s.toString().contains(us))
             {
@@ -147,7 +147,7 @@ public final class TimeUnits implements UNITS
         }
         if (u == null)
         {
-            throw new NetworkException("Parsing network: cannot instantiate per-time unit in: " + s);
+            throw new NetworkException("Parsing network: cannot instantiate frequency unit in: " + s);
         }
         return u;
     }
@@ -157,10 +157,10 @@ public final class TimeUnits implements UNITS
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Frequency parsePerTimeAbs(final String s) throws NetworkException
+    public static Frequency parseFrequency(final String s) throws NetworkException
     {
-        String us = parsePerTimeUnit(s);
-        FrequencyUnit u = PER_TIME_UNITS.get(us);
+        String us = parseFrequencyUnit(s);
+        FrequencyUnit u = FREQUENCY_UNITS.get(us);
         String sv = s.substring(0, s.indexOf(us));
         try
         {

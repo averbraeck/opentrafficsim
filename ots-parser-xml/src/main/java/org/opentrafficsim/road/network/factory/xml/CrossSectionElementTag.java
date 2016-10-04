@@ -2,11 +2,15 @@ package org.opentrafficsim.road.network.factory.xml;
 
 import java.awt.Color;
 import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Colors;
@@ -14,13 +18,74 @@ import org.opentrafficsim.core.network.factory.xml.units.Directions;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
 import org.opentrafficsim.road.network.factory.xml.units.LaneAttributes;
-import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 /**
+ * CrossSectionElement tags as part of the ROADLAYOUT tag. {@code
+  <xsd:element name="ROADLAYOUT">
+    <xsd:complexType>
+      <xsd:sequence>
+        ...
+        <xsd:choice minOccurs="1" maxOccurs="unbounded">
+
+          <xsd:element name="LANE" minOccurs="0" maxOccurs="unbounded">
+            <xsd:complexType>
+              <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+                <xsd:element name="SPEEDLIMIT" minOccurs="1" maxOccurs="unbounded">
+                  <xsd:complexType>
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
+                    <xsd:attribute name="LEGALSPEEDLIMIT" type="SPEEDTYPE" use="optional" />
+                  </xsd:complexType>
+                </xsd:element>
+              </xsd:sequence>
+              <xsd:attribute name="NAME" type="xsd:string" use="required" />
+              <xsd:attribute name="LANETYPE" type="xsd:string" use="optional" />
+              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required" />
+              <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
+              <xsd:attribute name="DIRECTION" type="DIRECTIONTYPE" use="required" />
+              <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
+              <xsd:attribute name="OVERTAKING" type="OVERTAKINGTYPE" use="optional" />
+            </xsd:complexType>
+          </xsd:element>
+
+          <xsd:element name="NOTRAFFICLANE" minOccurs="0" maxOccurs="unbounded">
+            <xsd:complexType>
+              <xsd:attribute name="NAME" type="xsd:string" use="optional" />
+              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required" />
+              <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
+              <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
+            </xsd:complexType>
+          </xsd:element>
+
+          <xsd:element name="SHOULDER" minOccurs="0" maxOccurs="unbounded">
+            <xsd:complexType>
+              <xsd:attribute name="NAME" type="xsd:string" use="optional" />
+              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required" />
+              <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
+              <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
+            </xsd:complexType>
+          </xsd:element>
+
+          <xsd:element name="STRIPE" minOccurs="0" maxOccurs="unbounded">
+            <xsd:complexType>
+              <xsd:attribute name="NAME" type="xsd:string" use="optional" />
+              <xsd:attribute name="TYPE" type="STRIPETYPE" use="required" />
+              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required" />
+              <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
+              <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
+            </xsd:complexType>
+          </xsd:element>
+
+        </xsd:choice>
+      </xsd:sequence>
+      ...
+    </xsd:complexType>
+  </xsd:element>
+ * }
+ * </pre>
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -35,17 +100,25 @@ class CrossSectionElementTag implements Serializable
     private static final long serialVersionUID = 20150723L;
 
     /** Element types. */
-    @SuppressWarnings({"javadoc", "checkstyle:javadocvariable"})
+    @SuppressWarnings({ "javadoc", "checkstyle:javadocvariable" })
     enum ElementType
     {
-        LANE, NOTRAFFICLANE, SHOULDER, STRIPE
+        LANE,
+        NOTRAFFICLANE,
+        SHOULDER,
+        STRIPE
     };
 
     /** Stripe types. */
-    @SuppressWarnings({"javadoc", "checkstyle:javadocvariable"})
+    @SuppressWarnings({ "javadoc", "checkstyle:javadocvariable" })
     enum StripeType
     {
-        SOLID, DASHED, BLOCKED, DOUBLE, LEFTONLY, RIGHTONLY
+        SOLID,
+        DASHED,
+        BLOCKED,
+        DOUBLE,
+        LEFTONLY,
+        RIGHTONLY
     };
 
     /** Type. */
@@ -56,13 +129,9 @@ class CrossSectionElementTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 
-    /** Lane type name in case elementType is a LANE. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    String laneTypeString = null;
-
     /** Lane type in case elementType is a LANE. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    LaneType laneType = null;
+    LaneTypeTag laneTypeTag = null;
 
     /** Stripe type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -72,9 +141,9 @@ class CrossSectionElementTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length offset = null;
 
-    /** Speed limit. */
+    /** Speed limits. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Speed speed = null;
+    Map<GTUType, Speed> legalSpeedLimits = null;
 
     /** Lane width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -90,7 +159,7 @@ class CrossSectionElementTag implements Serializable
 
     /** Overtaking conditions. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    OvertakingConditions overtakingConditions = new OvertakingConditions.LeftAndRight();
+    OvertakingConditions overtakingConditions = null;
 
     /**
      * Parse the ROADLAYOUT.LANE tag.
@@ -103,7 +172,7 @@ class CrossSectionElementTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static CrossSectionElementTag parseLane(final Node node, final XmlNetworkLaneParser parser,
-        final RoadLayoutTag roadLayoutTag) throws SAXException, NetworkException
+            final RoadLayoutTag roadLayoutTag) throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         CrossSectionElementTag cseTag = new CrossSectionElementTag();
@@ -117,40 +186,67 @@ class CrossSectionElementTag implements Serializable
 
         cseTag.elementType = ElementType.LANE;
 
-        if (attributes.getNamedItem("TYPE") == null)
-            throw new SAXException("ROADLAYOUT.LANE: missing attribute TYPE for lane " + roadLayoutTag.name + "." + name);
-        cseTag.laneTypeString = attributes.getNamedItem("TYPE").getNodeValue().trim();
-        if (!parser.laneTypes.containsKey(cseTag.laneTypeString))
-            throw new SAXException("ROADLAYOUT.LANE: TYPE " + cseTag.laneTypeString + " for lane " + roadLayoutTag.name
-                + "." + name + " does not have compatible GTUs defined in a COMPATIBILITY element");
-        cseTag.laneType = parser.laneTypes.get(cseTag.laneTypeString);
+        if (attributes.getNamedItem("LANETYPE") != null)
+        {
+            String laneTypeString = attributes.getNamedItem("LANETYPE").getNodeValue().trim();
+            if (!parser.laneTypeTags.containsKey(laneTypeString))
+                throw new SAXException("ROADLAYOUT.LANE: LANETYPE " + laneTypeString + " for lane " + roadLayoutTag.name + "."
+                        + name + " not defined");
+            cseTag.laneTypeTag = parser.laneTypeTags.get(laneTypeString);
+        }
 
         if (attributes.getNamedItem("OFFSET") != null)
-            cseTag.offset = LengthUnits.parseLengthRel(attributes.getNamedItem("OFFSET").getNodeValue());
+            cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
         else
             throw new SAXException("ROADLAYOUT.LANE: missing attribute OFFSET for lane " + roadLayoutTag.name + "." + name);
 
         if (attributes.getNamedItem("WIDTH") != null)
-            cseTag.width = LengthUnits.parseLengthRel(attributes.getNamedItem("WIDTH").getNodeValue());
-        else if (roadLayoutTag.width != null)
-            cseTag.width = roadLayoutTag.width;
-        else if (parser.globalTag.defaultLaneWidth != null)
-            cseTag.width = parser.globalTag.defaultLaneWidth;
+            cseTag.width = LengthUnits.parseLength(attributes.getNamedItem("WIDTH").getNodeValue());
+        else if (roadLayoutTag.defaultLaneWidth != null)
+            cseTag.width = roadLayoutTag.defaultLaneWidth;
+        else if (roadLayoutTag.roadTypeTag.defaultLaneWidth != null)
+            cseTag.width = roadLayoutTag.roadTypeTag.defaultLaneWidth;
         else
             throw new SAXException("ROADLAYOUT.LANE: cannot determine WIDTH for lane: " + roadLayoutTag.name + "." + name);
 
-        if (attributes.getNamedItem("SPEED") != null)
-            cseTag.speed = SpeedUnits.parseSpeedAbs(attributes.getNamedItem("SPEED").getNodeValue());
-        else if (roadLayoutTag.speed != null)
-            cseTag.speed = roadLayoutTag.speed;
-        else if (parser.globalTag.defaultMaxSpeed != null)
-            cseTag.speed = parser.globalTag.defaultMaxSpeed;
-        else
-            throw new SAXException("ROADLAYOUT.LANE: cannot determine SPEED for lane: " + roadLayoutTag.name + "." + name);
+        List<Node> speedLimitList = XMLParser.getNodes(node.getChildNodes(), "SPEEDLIMIT");
+        if (speedLimitList.size() > 0)
+            cseTag.legalSpeedLimits = new LinkedHashMap<>();
+        for (Node speedLimitNode : speedLimitList)
+        {
+            NamedNodeMap speedLimitAttributes = speedLimitNode.getAttributes();
+
+            Node gtuTypeName = speedLimitAttributes.getNamedItem("GTUTYPE");
+            if (gtuTypeName == null)
+                throw new NetworkException("ROADLAYOUT.LANE.SPEEDLIMIT: No GTUTYPE defined");
+            if (!parser.gtuTypes.containsKey(gtuTypeName.getNodeValue().trim()))
+                throw new NetworkException("ROADLAYOUT.LANE.SPEEDLIMIT: " + roadLayoutTag.name + " GTUTYPE "
+                        + gtuTypeName.getNodeValue().trim() + " not defined");
+            GTUType gtuType = parser.gtuTypes.get(gtuTypeName.getNodeValue().trim());
+
+            Node speedNode = speedLimitAttributes.getNamedItem("LEGALSPEEDLIMIT");
+            if (speedNode == null)
+                throw new NetworkException("ROADLAYOUT.LANE.SPEEDLIMIT: " + roadLayoutTag.name + " GTUTYPE " + gtuType.getId()
+                        + ": LEGALSPEEDLIMIT not defined");
+            Speed speed = SpeedUnits.parseSpeed(speedNode.getNodeValue().trim());
+
+            cseTag.legalSpeedLimits.put(gtuType, speed);
+        }
+
+        if (cseTag.legalSpeedLimits == null)
+        {
+            if (cseTag.laneTypeTag != null && cseTag.laneTypeTag.legalSpeedLimits != null)
+                cseTag.legalSpeedLimits = new LinkedHashMap<>(cseTag.laneTypeTag.legalSpeedLimits);
+            else if (roadLayoutTag.legalSpeedLimits != null)
+                cseTag.legalSpeedLimits = new LinkedHashMap<>(roadLayoutTag.legalSpeedLimits);
+            else if (roadLayoutTag.roadTypeTag.legalSpeedLimits != null)
+                cseTag.legalSpeedLimits = new LinkedHashMap<>(roadLayoutTag.roadTypeTag.legalSpeedLimits);
+            else
+                throw new SAXException("ROADLAYOUT.LANE: cannot determine SPEED for lane: " + roadLayoutTag.name + "." + name);
+        }
 
         if (attributes.getNamedItem("DIRECTION") == null)
-            throw new SAXException("ROADLAYOUT.LANE: missing attribute DIRECTION for lane " + roadLayoutTag.name + "."
-                + name);
+            throw new SAXException("ROADLAYOUT.LANE: missing attribute DIRECTION for lane " + roadLayoutTag.name + "." + name);
         cseTag.direction = Directions.parseDirection(attributes.getNamedItem("DIRECTION").getNodeValue());
 
         if (attributes.getNamedItem("COLOR") != null)
@@ -163,11 +259,10 @@ class CrossSectionElementTag implements Serializable
             cseTag.overtakingConditions = LaneAttributes.parseOvertakingConditions(oc.getNodeValue().trim(), parser);
         else if (roadLayoutTag.overtakingConditions != null)
             cseTag.overtakingConditions = roadLayoutTag.overtakingConditions;
-        else if (parser.globalTag.defaultOvertakingConditions != null)
-            cseTag.overtakingConditions = parser.globalTag.defaultOvertakingConditions;
+        else if (roadLayoutTag.roadTypeTag.defaultOvertakingConditions != null)
+            cseTag.overtakingConditions = roadLayoutTag.roadTypeTag.defaultOvertakingConditions;
         else
-            throw new SAXException("ROADLAYOUT.LANE: cannot determine OVERTAKING for lane: " + roadLayoutTag.name + "."
-                + name);
+            throw new SAXException("ROADLAYOUT.LANE: cannot determine OVERTAKING for lane: " + roadLayoutTag.name + "." + name);
 
         roadLayoutTag.cseTags.put(cseTag.name, cseTag);
         return cseTag;
@@ -184,7 +279,7 @@ class CrossSectionElementTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static CrossSectionElementTag parseNoTrafficLane(final Node node, final XmlNetworkLaneParser parser,
-        final RoadLayoutTag roadLayoutTag) throws SAXException, NetworkException
+            final RoadLayoutTag roadLayoutTag) throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         CrossSectionElementTag cseTag = new CrossSectionElementTag();
@@ -201,19 +296,19 @@ class CrossSectionElementTag implements Serializable
         cseTag.elementType = ElementType.NOTRAFFICLANE;
 
         if (attributes.getNamedItem("OFFSET") != null)
-            cseTag.offset = LengthUnits.parseLengthRel(attributes.getNamedItem("OFFSET").getNodeValue());
+            cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
         else
             throw new SAXException("ROADLAYOUT.LANE: missing attribute OFFSET for lane " + roadLayoutTag.name + "." + name);
 
         if (attributes.getNamedItem("WIDTH") != null)
-            cseTag.width = LengthUnits.parseLengthRel(attributes.getNamedItem("WIDTH").getNodeValue());
-        else if (roadLayoutTag.width != null)
-            cseTag.width = roadLayoutTag.width;
-        else if (parser.globalTag.defaultLaneWidth != null)
-            cseTag.width = parser.globalTag.defaultLaneWidth;
+            cseTag.width = LengthUnits.parseLength(attributes.getNamedItem("WIDTH").getNodeValue());
+        else if (roadLayoutTag.defaultLaneWidth != null)
+            cseTag.width = roadLayoutTag.defaultLaneWidth;
+        else if (roadLayoutTag.roadTypeTag.defaultLaneWidth != null)
+            cseTag.width = roadLayoutTag.roadTypeTag.defaultLaneWidth;
         else
-            throw new SAXException("ROADLAYOUT.NOTRAFFICLANE: cannot determine WIDTH for NOTRAFFICLANE: "
-                + roadLayoutTag.name + "." + name);
+            throw new SAXException(
+                    "ROADLAYOUT.NOTRAFFICLANE: cannot determine WIDTH for NOTRAFFICLANE: " + roadLayoutTag.name + "." + name);
 
         if (attributes.getNamedItem("COLOR") != null)
             cseTag.color = Colors.parseColor(attributes.getNamedItem("COLOR").getNodeValue());
@@ -235,7 +330,7 @@ class CrossSectionElementTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static CrossSectionElementTag parseShoulder(final Node node, final XmlNetworkLaneParser parser,
-        final RoadLayoutTag roadLayoutTag) throws SAXException, NetworkException
+            final RoadLayoutTag roadLayoutTag) throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         CrossSectionElementTag cseTag = new CrossSectionElementTag();
@@ -252,19 +347,19 @@ class CrossSectionElementTag implements Serializable
         cseTag.elementType = ElementType.SHOULDER;
 
         if (attributes.getNamedItem("OFFSET") != null)
-            cseTag.offset = LengthUnits.parseLengthRel(attributes.getNamedItem("OFFSET").getNodeValue());
+            cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
         else
             throw new SAXException("ROADLAYOUT.LANE: missing attribute OFFSET for lane " + roadLayoutTag.name + "." + name);
 
         if (attributes.getNamedItem("WIDTH") != null)
-            cseTag.width = LengthUnits.parseLengthRel(attributes.getNamedItem("WIDTH").getNodeValue());
-        else if (roadLayoutTag.width != null)
-            cseTag.width = roadLayoutTag.width;
-        else if (parser.globalTag.defaultLaneWidth != null)
-            cseTag.width = parser.globalTag.defaultLaneWidth;
+            cseTag.width = LengthUnits.parseLength(attributes.getNamedItem("WIDTH").getNodeValue());
+        else if (roadLayoutTag.defaultLaneWidth != null)
+            cseTag.width = roadLayoutTag.defaultLaneWidth;
+        else if (roadLayoutTag.roadTypeTag.defaultLaneWidth != null)
+            cseTag.width = roadLayoutTag.roadTypeTag.defaultLaneWidth;
         else
-            throw new SAXException("ROADLAYOUT.SHOULDER: cannot determine WIDTH for NOTRAFFICLANE: " + roadLayoutTag.name
-                + "." + name);
+            throw new SAXException(
+                    "ROADLAYOUT.SHOULDER: cannot determine WIDTH for NOTRAFFICLANE: " + roadLayoutTag.name + "." + name);
 
         if (attributes.getNamedItem("COLOR") != null)
             cseTag.color = Colors.parseColor(attributes.getNamedItem("COLOR").getNodeValue());
@@ -286,7 +381,7 @@ class CrossSectionElementTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static CrossSectionElementTag parseStripe(final Node node, final XmlNetworkLaneParser parser,
-        final RoadLayoutTag roadLayoutTag) throws SAXException, NetworkException
+            final RoadLayoutTag roadLayoutTag) throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         CrossSectionElementTag cseTag = new CrossSectionElementTag();
@@ -306,12 +401,12 @@ class CrossSectionElementTag implements Serializable
             cseTag.stripeType = parseStripeType(attributes.getNamedItem("TYPE").getNodeValue());
 
         if (attributes.getNamedItem("OFFSET") != null)
-            cseTag.offset = LengthUnits.parseLengthRel(attributes.getNamedItem("OFFSET").getNodeValue());
+            cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
         else
             throw new SAXException("ROADLAYOUT.LANE: missing attribute OFFSET for lane " + roadLayoutTag.name + "." + name);
 
         if (attributes.getNamedItem("WIDTH") != null)
-            cseTag.width = LengthUnits.parseLengthRel(attributes.getNamedItem("WIDTH").getNodeValue());
+            cseTag.width = LengthUnits.parseLength(attributes.getNamedItem("WIDTH").getNodeValue());
         else
             cseTag.width = new Length(0.2, LengthUnit.METER);
 
@@ -360,12 +455,12 @@ class CrossSectionElementTag implements Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final String toString()
+    public String toString()
     {
-        return "CrossSectionElementTag [elementType=" + this.elementType + ", name=" + this.name + ", laneTypeString="
-                + this.laneTypeString + ", laneType=" + this.laneType + ", stripeType=" + this.stripeType + ", offset="
-                + this.offset + ", speed=" + this.speed + ", width=" + this.width + ", direction=" + this.direction
-                + ", color=" + this.color + ", overtakingConditions=" + this.overtakingConditions + "]";
+        return "CrossSectionElementTag [elementType=" + this.elementType + ", name=" + this.name + ", laneTypeTag="
+                + this.laneTypeTag + ", stripeType=" + this.stripeType + ", offset=" + this.offset + ", legalSpeedLimits="
+                + this.legalSpeedLimits + ", width=" + this.width + ", direction=" + this.direction + ", color=" + this.color
+                + ", overtakingConditions=" + this.overtakingConditions + "]";
     }
 
 }

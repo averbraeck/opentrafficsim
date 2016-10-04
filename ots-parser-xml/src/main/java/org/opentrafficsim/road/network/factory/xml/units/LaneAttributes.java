@@ -95,7 +95,7 @@ public final class LaneAttributes
             {
                 throw new NetworkException("Speed in overtaking conditions string: '" + ocStr + "' not coded right");
             }
-            Speed speed = SpeedUnits.parseSpeedAbs(ocStr.substring(lb + 1, rb));
+            Speed speed = SpeedUnits.parseSpeed(ocStr.substring(lb + 1, rb));
             return new OvertakingConditions.LeftAlwaysRightSpeed(speed);
         }
         else if (ocStr.startsWith("RIGHTALWAYS LEFTSPEED"))
@@ -106,7 +106,7 @@ public final class LaneAttributes
             {
                 throw new NetworkException("Speed in overtaking conditions string: '" + ocStr + "' not coded right");
             }
-            Speed speed = SpeedUnits.parseSpeedAbs(ocStr.substring(lb + 1, rb));
+            Speed speed = SpeedUnits.parseSpeed(ocStr.substring(lb + 1, rb));
             return new OvertakingConditions.RightAlwaysLeftSpeed(speed);
         }
         else if (ocStr.startsWith("LEFTSET"))
@@ -130,7 +130,7 @@ public final class LaneAttributes
                 {
                     throw new NetworkException("Speed in overtaking conditions string: '" + ocStr + "' not coded right");
                 }
-                Speed speed = SpeedUnits.parseSpeedAbs(ocStr.substring(lb + 1, rb));
+                Speed speed = SpeedUnits.parseSpeed(ocStr.substring(lb + 1, rb));
                 return new OvertakingConditions.LeftSetRightSpeed(overtakingGTUs, overtakenGTUs, speed);
             }
             return new OvertakingConditions.LeftSet(overtakingGTUs, overtakenGTUs);
@@ -156,7 +156,7 @@ public final class LaneAttributes
                 {
                     throw new NetworkException("Speed in overtaking conditions string: '" + ocStr + "' not coded right");
                 }
-                Speed speed = SpeedUnits.parseSpeedAbs(ocStr.substring(lb + 1, rb));
+                Speed speed = SpeedUnits.parseSpeed(ocStr.substring(lb + 1, rb));
                 return new OvertakingConditions.RightSetLeftSpeed(overtakingGTUs, overtakenGTUs, speed);
             }
             return new OvertakingConditions.RightSet(overtakingGTUs, overtakenGTUs);

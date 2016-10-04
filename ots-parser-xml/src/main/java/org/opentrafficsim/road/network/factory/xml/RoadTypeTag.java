@@ -2,12 +2,15 @@ package org.opentrafficsim.road.network.factory.xml;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
+import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
 import org.opentrafficsim.road.network.factory.xml.units.LaneAttributes;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
@@ -21,23 +24,22 @@ import org.xml.sax.SAXException;
  * 
  * <pre>
  * {@code
- * <xsd:element name="ROADTYPE">
- *   <xsd:complexType>
- *     <xsd:sequence>
- *       <xsd:element name="GTUTYPE" minOccurs="1" maxOccurs="unbounded">
- *         <xsd:complexType>
- *           <xsd:attribute name="NAME" type="xsd:string" use="required" />
- *           <xsd:attribute name="LEGALSPEEDLIMIT" type="SPEEDTYPE" use="required" />
- *         </xsd:complexType>
- *       </xsd:element>
- *     </xsd:sequence>
- *     <xsd:attribute name="NAME" type="xsd:string" use="required" />
- *     <xsd:attribute name="DEFAULTLANEWIDTH" type="LENGTHTYPE" use="required" />
- *     <xsd:attribute name="DEFAULTLANEKEEPING" type="LANEKEEPINGTYPE" use="required" />
- *     <xsd:attribute name="DEFAULTOVERTAKING" type="OVERTAKINGTYPE" use="required" />
- *     <xsd:attribute ref="xml:base" />
- *   </xsd:complexType>
- * </xsd:element>
+  <xsd:element name="LANETYPE">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="SPEEDLIMIT" minOccurs="1" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
+            <xsd:attribute name="LEGALSPEEDLIMIT" type="SPEEDTYPE" use="optional" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute name="DEFAULTLANEWIDTH" type="LENGTHTYPE" use="optional" />
+      <xsd:attribute name="DEFAULTLANEKEEPING" type="LANEKEEPINGTYPE" use="optional" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
  * }
  * </pre>
  * <p>
@@ -57,9 +59,9 @@ class RoadTypeTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 
-    /** CrossSectionElementTags, order is important, so a LinkedHashMap. */
+    /** Speed limits. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Map<String, Speed> legalSpeedLimitTags = new LinkedHashMap<>();
+    Map<GTUType, Speed> legalSpeedLimits = new LinkedHashMap<>();
 
     /** Default lane width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -115,7 +117,7 @@ class RoadTypeTag implements Serializable
 
         Node width = attributes.getNamedItem("DEFAULTLANEWIDTH");
         if (width != null)
-            roadTypeTag.defaultLaneWidth = LengthUnits.parseLengthRel(width.getNodeValue());
+            roadTypeTag.defaultLaneWidth = LengthUnits.parseLength(width.getNodeValue());
 
         Node lkp = attributes.getNamedItem("DEFAULTLANEKEEPING");
         if (lkp != null)
@@ -126,14 +128,39 @@ class RoadTypeTag implements Serializable
             roadTypeTag.defaultOvertakingConditions =
                     LaneAttributes.parseOvertakingConditions(oc.getNodeValue().trim(), parser);
 
+        List<Node> speedLimitList = XMLParser.getNodes(node.getChildNodes(), "SPEEDLIMIT");
+        if (speedLimitList.size() == 0)
+            throw new SAXException("ROADTYPE: missing tag SPEEDLIMIT");
+        for (Node speedLimitNode : speedLimitList)
+        {
+            NamedNodeMap speedLimitAttributes = speedLimitNode.getAttributes();
+            
+            Node gtuTypeName = speedLimitAttributes.getNamedItem("GTUTYPE");
+            if (gtuTypeName == null)
+                throw new NetworkException("ROADTYPE: No GTUTYPE defined");
+            if (!parser.gtuTypes.containsKey(gtuTypeName.getNodeValue().trim()))
+                throw new NetworkException("ROADTYPE: " + roadTypeTag.name + " GTUTYPE " + gtuTypeName.getNodeValue().trim() + " not defined");
+            GTUType gtuType= parser.gtuTypes.get(gtuTypeName.getNodeValue().trim());
+
+            Node speedNode = speedLimitAttributes.getNamedItem("LEGALSPEEDLIMIT");
+            if (speedNode == null)
+                throw new NetworkException(
+                        "ROADTYPE: " + roadTypeTag.name + " GTUTYPE " + gtuType.getId() + ": LEGALSPEEDLIMIT not defined");
+            Speed speed = SpeedUnits.parseSpeed(speedNode.getNodeValue().trim());
+            
+            roadTypeTag.legalSpeedLimits.put(gtuType, speed);
+        }
+
         return roadTypeTag;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String toString()
+    public String toString()
     {
-        return "RoadTypeTag [name=" + this.name + ", default width=" + this.defaultLaneWidth + ", default laneKeepingPolicy="
-                + this.defaultLaneKeepingPolicy + ", default overtakingConditions=" + this.defaultOvertakingConditions + "]";
+        return "RoadTypeTag [name=" + this.name + ", legalSpeedLimits=" + this.legalSpeedLimits + ", defaultLaneWidth="
+                + this.defaultLaneWidth + ", defaultLaneKeepingPolicy=" + this.defaultLaneKeepingPolicy
+                + ", defaultOvertakingConditions=" + this.defaultOvertakingConditions + "]";
     }
+
 }

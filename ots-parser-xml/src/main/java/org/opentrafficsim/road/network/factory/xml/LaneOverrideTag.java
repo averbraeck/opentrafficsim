@@ -73,7 +73,7 @@ class LaneOverrideTag implements Serializable
             throw new SAXException("LANEOVERRIDE: LANE OVERRIDE with LANE " + name + " defined twice");
 
         if (attributes.getNamedItem("SPEED") != null)
-            laneOverrideTag.speed = SpeedUnits.parseSpeedAbs(attributes.getNamedItem("SPEED").getNodeValue().trim());
+            laneOverrideTag.speed = SpeedUnits.parseSpeed(attributes.getNamedItem("SPEED").getNodeValue().trim());
 
         if (attributes.getNamedItem("DIRECTION") != null)
             laneOverrideTag.direction =

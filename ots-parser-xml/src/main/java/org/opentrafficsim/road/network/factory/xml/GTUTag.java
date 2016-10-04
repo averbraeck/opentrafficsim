@@ -11,14 +11,28 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
+ * GTU Tag.
+ * 
+ * <pre>
+ * {@code
+  <xsd:element name="GTU">
+    <xsd:complexType>
+      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
+      <xsd:attribute name="LENGTH" type="LENGTHDISTTYPE" use="required" />
+      <xsd:attribute name="WIDTH" type="LENGTHDISTTYPE" use="required" />
+      <xsd:attribute name="MAXSPEED" type="SPEEDDISTTYPE" use="required" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+ * }
+ * </pre>
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -48,14 +62,6 @@ class GTUTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDist = null;
 
-    /** GTU following model. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    GTUFollowingModelOld followingModel = null;
-
-    /** Lane change model. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    LaneChangeModel laneChangeModel = null;
-
     /** Maximum speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maxSpeedDist = null;
@@ -68,8 +74,8 @@ class GTUTag implements Serializable
      * @throws GTUException if GTUType defined twice
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseGTUs(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException,
-        NetworkException, GTUException
+    static void parseGTUs(final NodeList nodeList, final XmlNetworkLaneParser parser)
+            throws SAXException, NetworkException, GTUException
     {
         for (Node node : XMLParser.getNodes(nodeList, "GTU"))
         {
@@ -86,50 +92,27 @@ class GTUTag implements Serializable
             Node gtuType = attributes.getNamedItem("GTUTYPE");
             if (gtuType == null)
                 throw new SAXException("GTU: missing attribute GTUTYPE");
-            gtuTag.gtuType = parseGTUType(gtuType.getNodeValue().trim(), parser);
+            if (!parser.gtuTypes.containsKey(gtuType.getNodeValue().trim()))
+                throw new SAXException("GTU: GTUTYPE " + gtuType.getNodeValue().trim() + " not defined");
+            gtuTag.gtuType = parser.gtuTypes.get(gtuType.getNodeValue().trim());
 
             Node length = attributes.getNamedItem("LENGTH");
             if (length == null)
                 throw new SAXException("GTU: missing attribute LENGTH");
-            gtuTag.lengthDist = Distributions.parseLengthDistRel(length.getNodeValue());
+            gtuTag.lengthDist = Distributions.parseLengthDist(length.getNodeValue());
 
             Node width = attributes.getNamedItem("WIDTH");
             if (width == null)
                 throw new SAXException("GTU: missing attribute WIDTH");
-            gtuTag.widthDist = Distributions.parseLengthDistRel(width.getNodeValue());
-            //
-            // Node following = attributes.getNamedItem("FOLLOWING");
-            // if (following == null)
-            // throw new SAXException("GTU: missing attribute FOLLOWING");
-            // gtuTag.followingModel = parseFollowingModel(following.getNodeValue());
-            //
-            // Node laneChange = attributes.getNamedItem("LANECHANGE");
-            // if (laneChange == null)
-            // throw new SAXException("GTU: missing attribute LANECHANGE");
-            // gtuTag.laneChangeModel = parseLaneChangeModel(laneChange.getNodeValue());
+            gtuTag.widthDist = Distributions.parseLengthDist(width.getNodeValue());
 
             Node maxSpeed = attributes.getNamedItem("MAXSPEED");
             if (maxSpeed == null)
                 throw new SAXException("GTU: missing attribute LENGTH");
-            gtuTag.maxSpeedDist = Distributions.parseSpeedDistRel(maxSpeed.getNodeValue());
+            gtuTag.maxSpeedDist = Distributions.parseSpeedDist(maxSpeed.getNodeValue());
 
             parser.gtuTags.put(gtuTag.name, gtuTag);
         }
-    }
-
-    /**
-     * @param typeName the name of the GTU type.
-     * @param parser the parser with the lists of information
-     * @return the GTUType that was retrieved.
-     * @throws SAXException when GTU Type not defined
-     */
-    static GTUType parseGTUType(final String typeName, final XmlNetworkLaneParser parser) throws SAXException
-    {
-        if (!parser.gtuTypes.containsKey(typeName))
-        {
-            throw new SAXException("GTU: GTUTYPE " + typeName + " not defined");
-        }
-        return parser.gtuTypes.get(typeName);
     }
 
     /** {@inheritDoc} */
@@ -137,8 +120,7 @@ class GTUTag implements Serializable
     public final String toString()
     {
         return "GTUTag [name=" + this.name + ", gtuType=" + this.gtuType + ", lengthDist=" + this.lengthDist + ", widthDist="
-                + this.widthDist + ", followingModel=" + this.followingModel + ", laneChangeModel=" + this.laneChangeModel
-                + ", maxSpeedDist=" + this.maxSpeedDist + "]";
+                + this.widthDist + ", followingModel=" + ", maxSpeedDist=" + this.maxSpeedDist + "]";
     }
 
 }

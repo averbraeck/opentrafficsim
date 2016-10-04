@@ -136,7 +136,7 @@ public final class Distributions
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static ContinuousDistDoubleScalar.Rel<Length, LengthUnit> parseLengthDistRel(final String s)
+    public static ContinuousDistDoubleScalar.Rel<Length, LengthUnit> parseLengthDist(final String s)
         throws NetworkException
     {
         String[] s1 = s.split("\\(");
@@ -154,7 +154,7 @@ public final class Distributions
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static ContinuousDistDoubleScalar.Abs<Position, LengthUnit> parseLengthDistAbs(final String s)
+    public static ContinuousDistDoubleScalar.Abs<Position, LengthUnit> parsePositionDist(final String s)
         throws NetworkException
     {
         String[] s1 = s.split("\\(");
@@ -172,7 +172,7 @@ public final class Distributions
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> parseTimeDistRel(final String s)
+    public static ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> parseDurationDist(final String s)
         throws NetworkException
     {
         String[] s1 = s.split("\\(");
@@ -190,7 +190,7 @@ public final class Distributions
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static ContinuousDistDoubleScalar.Abs<Time, TimeUnit> parseTimeDistAbs(final String s)
+    public static ContinuousDistDoubleScalar.Abs<Time, TimeUnit> parseTimeDist(final String s)
         throws NetworkException
     {
         String[] s1 = s.split("\\(");
@@ -208,7 +208,7 @@ public final class Distributions
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> parseSpeedDistRel(final String s)
+    public static ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> parseSpeedDist(final String s)
         throws NetworkException
     {
         String[] s1 = s.split("\\(");

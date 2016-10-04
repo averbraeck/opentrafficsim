@@ -31,11 +31,15 @@ OTS - Open Traffic Simulation
 	
 	* OTS-ROAD includes several models for headway (IDM, IDM+) and lane changing.
 	
-	* OTS-ROAD has readers for XML, OpenDrive and OpenStreetMap.
+	* OTS-ROAD includes more advanced behavioral models such as LMRS.
+	
+	* OTS-ROAD has models for perception of the environment by GTUs (General travel Units such as cars).
 	
 	* OTS-ROAD models traffic lights.
 	
-	* OTS-ROAD includes different types of graphs for reporting.
+	* OTS-ROAD has functions to model O/D matrices.
+	
+	* OTS-ROAD includes different types of statistics and several types of graphs for reporting.
 	
 	[]
 	

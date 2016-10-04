@@ -44,7 +44,7 @@ class StraightTag implements Serializable
 
         if (straightAttributes.getNamedItem("LENGTH") != null)
             linkTag.straightTag.length =
-                LengthUnits.parseLengthRel(straightAttributes.getNamedItem("LENGTH").getNodeValue());
+                LengthUnits.parseLength(straightAttributes.getNamedItem("LENGTH").getNodeValue());
     }
 
     /** {@inheritDoc} */

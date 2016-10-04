@@ -78,7 +78,7 @@ class NodeTag implements Serializable
                 nodeTag.coordinate = Coordinates.parseCoordinate(attributes.getNamedItem("COORDINATE").getNodeValue());
 
             if (attributes.getNamedItem("ANGLE") != null)
-                nodeTag.angle = AngleUnits.parseAngleAbs(attributes.getNamedItem("ANGLE").getNodeValue());
+                nodeTag.angle = AngleUnits.parseDirection(attributes.getNamedItem("ANGLE").getNodeValue());
 
             // TODO slope for the Node.
 
