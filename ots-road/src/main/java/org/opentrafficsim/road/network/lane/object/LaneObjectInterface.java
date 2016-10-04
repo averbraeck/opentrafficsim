@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.object.lane;
+package org.opentrafficsim.road.network.lane.object;
 
 import java.util.Set;
 
