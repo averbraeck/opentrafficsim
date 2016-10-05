@@ -13,8 +13,8 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.animation.PaintPolygons;
-import org.opentrafficsim.road.network.lane.object.AbstractTrafficLight;
-import org.opentrafficsim.road.network.lane.object.TrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.AbstractTrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 /**
  * Draw a traffic light on the road at th place where the cars are expected to stop.

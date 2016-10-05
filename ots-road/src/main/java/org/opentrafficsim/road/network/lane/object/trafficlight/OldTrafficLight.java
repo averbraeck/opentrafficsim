@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.network.lane.object;
+package org.opentrafficsim.road.network.lane.object.trafficlight;
 
 import java.rmi.RemoteException;
 
@@ -9,6 +9,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.AbstractCSEObject;
 import org.opentrafficsim.road.network.lane.object.animation.TrafficLightAnimation;
 
 /**

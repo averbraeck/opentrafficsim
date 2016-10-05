@@ -1,7 +1,8 @@
-package org.opentrafficsim.road.network.lane.object;
+package org.opentrafficsim.road.network.lane.object.trafficlight;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.road.network.lane.object.AbstractCSEObject;
 
 /**
  * <p>
