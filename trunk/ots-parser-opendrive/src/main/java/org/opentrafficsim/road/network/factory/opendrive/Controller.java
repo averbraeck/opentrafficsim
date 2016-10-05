@@ -14,8 +14,8 @@ import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.lane.object.AbstractTrafficLight;
-import org.opentrafficsim.road.network.lane.object.TrafficLight.TrafficLightColor;
+import org.opentrafficsim.road.network.lane.object.trafficlight.AbstractTrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight.TrafficLightColor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 

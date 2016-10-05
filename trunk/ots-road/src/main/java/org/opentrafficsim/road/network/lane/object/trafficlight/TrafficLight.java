@@ -1,10 +1,11 @@
-package org.opentrafficsim.road.network.lane.object;
+package org.opentrafficsim.road.network.lane.object.trafficlight;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
+import org.opentrafficsim.road.network.lane.object.AbstractCSEObject;
 
 /**
  * <p>
@@ -18,6 +19,9 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
  */
 public class TrafficLight extends AbstractTrafficLight
 {
+    /** */
+    private static final long serialVersionUID = 20161004L;
+
     /** The GTU colors for a normal traffic light. */
     public enum TrafficLightColor
     {
@@ -31,7 +35,32 @@ public class TrafficLight extends AbstractTrafficLight
         GREEN,
 
         /** Traffic light is not working. */
-        BLACK
+        BLACK;
+        
+        /** @return whether the light is red. */
+        public final boolean isRed()
+        {
+            return this.equals(RED);
+        }
+        
+        /** @return whether the light is yellow. */
+        public final boolean isYellow()
+        {
+            return this.equals(YELLOW);
+        }
+        
+        /** @return whether the light is green. */
+        public final boolean isGreen()
+        {
+            return this.equals(GREEN);
+        }
+        
+        /** @return whether the light is black (off). */
+        public final boolean isBlack()
+        {
+            return this.equals(BLACK);
+        }
+        
     };
 
     /** The color of the traffic light. */
