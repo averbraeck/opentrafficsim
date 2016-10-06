@@ -7,7 +7,6 @@ import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -36,15 +35,12 @@ public class SimpleReportingSensor extends AbstractSensor
      *            the sensor.
      * @param id the id of the sensor.
      * @param simulator the simulator to enable animation.
-     * @param length Length; The length of the object in the longitudinal direction, on the center line of the lane
-     * @param geometry the geometry of the object, which provides its location and bounds as well
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
     public SimpleReportingSensor(final String id, final Lane lane, final Length position,
-        final RelativePosition.TYPE triggerPosition, final OTSDEVSSimulatorInterface simulator, final Length length,
-        final OTSLine3D geometry) throws NetworkException
+            final RelativePosition.TYPE triggerPosition, final OTSDEVSSimulatorInterface simulator) throws NetworkException
     {
-        super(id, lane, position, triggerPosition, simulator, length, geometry);
+        super(id, lane, position, triggerPosition, simulator);
         try
         {
             new SensorAnimation(this, position, simulator, Color.YELLOW);

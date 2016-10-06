@@ -1,18 +1,10 @@
 package org.opentrafficsim.road.network.lane.object.trafficlight;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.NavigableSet;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight.TrafficLightColor;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * Standard fields and methods for traffic light controllers.

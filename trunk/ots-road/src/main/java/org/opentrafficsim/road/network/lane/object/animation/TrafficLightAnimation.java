@@ -8,13 +8,11 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.animation.PaintPolygons;
-import org.opentrafficsim.road.network.lane.object.trafficlight.AbstractTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
+
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 /**
  * Draw a traffic light on the road at th place where the cars are expected to stop.
@@ -31,9 +29,6 @@ public class TrafficLightAnimation extends Renderable2D implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20160000L;
-    
-    /** The point (0,0,0). */
-    private static final DirectedPoint POINT_000 = new DirectedPoint();
 
     /**
      * Construct the DefaultCarAnimation for a LaneBlock (road block).
@@ -42,8 +37,8 @@ public class TrafficLightAnimation extends Renderable2D implements Serializable
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public TrafficLightAnimation(final AbstractTrafficLight source, final OTSSimulatorInterface simulator)
-        throws NamingException, RemoteException
+    public TrafficLightAnimation(final TrafficLight source, final OTSSimulatorInterface simulator)
+            throws NamingException, RemoteException
     {
         super(source, simulator);
         // setTranslate(false);
@@ -77,8 +72,7 @@ public class TrafficLightAnimation extends Renderable2D implements Serializable
                 break;
         }
 
-        PaintPolygons.paintMultiPolygon(graphics, fillColor, trafficLight.getLocation(), trafficLight.getGeometry(),
-            true);
+        PaintPolygons.paintMultiPolygon(graphics, fillColor, trafficLight.getLocation(), trafficLight.getGeometry(), true);
     }
 
     /** {@inheritDoc} */
