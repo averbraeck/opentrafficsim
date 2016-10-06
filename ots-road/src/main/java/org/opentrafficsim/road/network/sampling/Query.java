@@ -10,12 +10,16 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
+import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.immutablecollections.ImmutableIterator;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.sampling.meta.MetaDataSet;
 import org.opentrafficsim.road.network.sampling.meta.MetaDataType;
@@ -177,6 +181,28 @@ public final class Query
     public Iterator<Entry<MetaDataType<?>, Set<?>>> getMetaDataSetIterator()
     {
         return this.metaDataSet.getMetaDataSetIterator();
+    }
+
+    /**
+     * Defines a region in space and time for which this query is valid. All lanes in the link are included.
+     * @param simulator simulator
+     * @param link link
+     * @param direction direction
+     * @param xStart start position
+     * @param xEnd end position
+     * @param tStart start time
+     * @param tEnd end time
+     */
+    public void addSpaceTimeRegionLink(final OTSSimulatorInterface simulator, final CrossSectionLink link,
+            final GTUDirectionality direction, final Length xStart, final Length xEnd, final Duration tStart,
+            final Duration tEnd)
+    {
+        for (Lane lane : link.getLanes())
+        {
+            Length x0 = new Length(lane.getLength().si * link.getLength().si / xStart.si, LengthUnit.SI);
+            Length x1 = new Length(lane.getLength().si * link.getLength().si / xEnd.si, LengthUnit.SI);
+            addSpaceTimeRegion(simulator, new LaneDirection(lane, direction), x0, x1, tStart, tEnd);
+        }
     }
 
     /**
@@ -421,5 +447,5 @@ public final class Query
         }
         return true;
     }
-    
+
 }

@@ -3,7 +3,9 @@ package org.opentrafficsim.road.network.factory.xml;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -132,8 +134,15 @@ public class XmlNetworkLaneParser implements Serializable
     public final OTSNetwork build(final URL url) throws NetworkException, ParserConfigurationException, SAXException,
             IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException
     {
-        if (url.getFile().length() > 0 && !(new File(url.getFile()).exists()))
-            throw new SAXException("XmlNetworkLaneParser.build: File url.getFile() does not exist");
+        try
+        {
+            if (url.getFile().length() > 0 && !(new File(url.toURI()).exists()))
+                throw new SAXException("XmlNetworkLaneParser.build: File " + url.getFile() + " does not exist");
+        }
+        catch (URISyntaxException exception)
+        {
+            throw new SAXException("XmlNetworkLaneParser.build: File " + url.getFile() + " is not properly formatted", exception);
+        }
         this.network = new OTSNetwork(url.toString());
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
