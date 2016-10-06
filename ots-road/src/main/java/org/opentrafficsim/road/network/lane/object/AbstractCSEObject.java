@@ -50,7 +50,7 @@ public abstract class AbstractCSEObject extends StaticObject
         double fraction = position.si / cse.getParentLink().getLength().si;
         double w2 = width.si / 2.0;
         double l2 = length.si / 2.0;
-        DirectedPoint cp = cse.getCenterLine().getLocationFraction(fraction);
+        DirectedPoint cp = cse.getCenterLine().getLocationFractionExtended(fraction);
         double a = cp.getRotZ();
         double l2ca = l2 * Math.cos(a);
         double l2sa = l2 * Math.sin(a);

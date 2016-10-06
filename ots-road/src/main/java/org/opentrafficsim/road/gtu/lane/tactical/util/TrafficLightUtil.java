@@ -17,7 +17,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeAccele
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight.TrafficLightColor;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**

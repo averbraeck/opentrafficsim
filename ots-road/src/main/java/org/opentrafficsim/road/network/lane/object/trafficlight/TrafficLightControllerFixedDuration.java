@@ -10,7 +10,6 @@ import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight.TrafficLightColor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 

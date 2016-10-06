@@ -44,8 +44,7 @@ import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
-import org.opentrafficsim.road.network.lane.object.trafficlight.AbstractTrafficLight;
-import org.opentrafficsim.road.network.lane.object.trafficlight.OldTrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -931,22 +930,22 @@ class RoadTag implements Serializable
                     else
                         sOffset = signalTag.s.minus(laneSec.s).plus(new Length(0.5, LengthUnit.METER));
 
-                    Class<?> clazz = Class.forName(OldTrafficLight.class.getName());
+                    Class<?> clazz = Class.forName(SimpleTrafficLight.class.getName());
                     Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(clazz,
                             new Class[] { String.class, Lane.class, Length.class, OTSDEVSSimulatorInterface.class });
 
-                    AbstractTrafficLight trafficLight = (AbstractTrafficLight) trafficLightConstructor
+                    SimpleTrafficLight trafficLight = (SimpleTrafficLight) trafficLightConstructor
                             .newInstance(new Object[] { signalTag.id, lane, sOffset, simulator });
 
                     if (!openDriveNetworkLaneParser.trafficLightsBySignals.containsKey(signalTag.id))
                     {
-                        Set<AbstractTrafficLight> lights = new HashSet<AbstractTrafficLight>();
+                        Set<SimpleTrafficLight> lights = new HashSet<SimpleTrafficLight>();
                         openDriveNetworkLaneParser.trafficLightsBySignals.put(signalTag.id, lights);
                     }
 
                     if (!openDriveNetworkLaneParser.trafficLightsByLanes.containsKey(roadTag.id))
                     {
-                        Set<AbstractTrafficLight> lights = new HashSet<AbstractTrafficLight>();
+                        Set<SimpleTrafficLight> lights = new HashSet<SimpleTrafficLight>();
                         openDriveNetworkLaneParser.trafficLightsByLanes.put(roadTag.id, lights);
                     }
 
@@ -958,7 +957,7 @@ class RoadTag implements Serializable
                         | IllegalArgumentException | InvocationTargetException exception)
                 {
                     throw new NetworkException(
-                            "Traffic Light: CLASS NAME " + OldTrafficLight.class.getName() + " for " + signalTag.id
+                            "Traffic Light: CLASS NAME " + SimpleTrafficLight.class.getName() + " for " + signalTag.id
                                     + " on lane " + lane.toString() + " -- class not found or constructor not right",
                             exception);
                 }
@@ -999,16 +998,16 @@ class RoadTag implements Serializable
                     else
                         sOffset = signalReferenceTag.s.minus(laneSec.s).plus(new Length(0.5, LengthUnit.METER));
 
-                    Class<?> clazz = Class.forName(OldTrafficLight.class.getName());
+                    Class<?> clazz = Class.forName(SimpleTrafficLight.class.getName());
                     Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(clazz,
                             new Class[] { String.class, Lane.class, Length.class, OTSDEVSSimulatorInterface.class });
 
-                    AbstractTrafficLight trafficLight = (AbstractTrafficLight) trafficLightConstructor
+                    SimpleTrafficLight trafficLight = (SimpleTrafficLight) trafficLightConstructor
                             .newInstance(new Object[] { signalTag.id + ".ref", lane, sOffset, simulator });
 
                     if (!openDriveNetworkLaneParser.trafficLightsByLanes.containsKey(roadTag.id))
                     {
-                        Set<AbstractTrafficLight> lights = new HashSet<AbstractTrafficLight>();
+                        Set<SimpleTrafficLight> lights = new HashSet<SimpleTrafficLight>();
                         openDriveNetworkLaneParser.trafficLightsByLanes.put(roadTag.id, lights);
                     }
 
@@ -1021,7 +1020,7 @@ class RoadTag implements Serializable
                         | IllegalArgumentException | InvocationTargetException exception)
                 {
                     throw new NetworkException(
-                            "Traffic Light: CLASS NAME " + OldTrafficLight.class.getName() + " for " + signalTag.id
+                            "Traffic Light: CLASS NAME " + SimpleTrafficLight.class.getName() + " for " + signalTag.id
                                     + " on lane " + lane.toString() + " -- class not found or constructor not right",
                             exception);
                 }

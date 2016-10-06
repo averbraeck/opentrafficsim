@@ -6,10 +6,9 @@ import java.util.ArrayList;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.factory.xml.CrossSectionElementTag.ElementType;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.object.trafficlight.AbstractTrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -88,14 +87,14 @@ class TrafficLightTag implements Serializable
         try
         {
             Class<?> clazz = Class.forName(trafficLightTag.className);
-            if (!AbstractTrafficLight.class.isAssignableFrom(clazz))
+            if (!TrafficLight.class.isAssignableFrom(clazz))
                 throw new SAXException("TRAFFICLIGHT: CLASS NAME " + trafficLightTag.className + " for trafficLight "
-                    + trafficLightTag.name + " on lane " + laneName + " does not extend the AbstractTrafficLight class");
+                    + trafficLightTag.name + " on lane " + laneName + " does not implement the TrafficLight interface");
 
             try
             {
                 ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class, Length.class,
-                    OTSDEVSSimulatorInterface.class, OTSNetwork.class});
+                    OTSDEVSSimulatorInterface.class });
             }
             catch (NoSuchMethodException nsme)
             {
@@ -106,7 +105,7 @@ class TrafficLightTag implements Serializable
                         + trafficLightTag.name
                         + " on lane "
                         + laneName
-                        + " -- no constructor with arguments (String, Lane, Length, OTSDEVSSimulatorInterface, OTSNetwork)");
+                        + " -- no constructor with arguments (String, Lane, Length, OTSDEVSSimulatorInterface)");
             }
         }
         catch (ClassNotFoundException cnfe)

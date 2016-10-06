@@ -8,6 +8,7 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.AngleUnit;
 import org.djunits.value.vdouble.scalar.Direction;
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
@@ -84,9 +85,9 @@ class NodeTag implements Serializable
 
             parser.nodeTags.put(nodeTag.name, nodeTag);
 
-            if (nodeTag.coordinate != null)
+            if (nodeTag.coordinate != null && nodeTag.angle != null)
             {
-                // only make a node if we know the coordinate. Otherwise, wait till we can calculate it.
+                // only make a node if we know the coordinate and angle. Otherwise, wait till we can calculate it.
                 try
                 {
                     makeOTSNode(nodeTag, parser);
@@ -134,8 +135,9 @@ class NodeTag implements Serializable
     static OTSNode makeOTSNode(final NodeTag nodeTag, final XmlNetworkLaneParser parser) throws NetworkException,
         NamingException
     {
+        Throw.whenNull(nodeTag.angle, "NodeTag: " + nodeTag.name + " angle == null");
         String id = nodeTag.name;
-        Direction angle = nodeTag.angle == null ? new Direction(0.0, AngleUnit.SI) : nodeTag.angle;
+        Direction angle = nodeTag.angle;
         Direction slope = nodeTag.slope == null ? new Direction(0.0, AngleUnit.SI) : nodeTag.slope;
         OTSNode node = new OTSNode(parser.network, id, nodeTag.coordinate, angle, slope);
         nodeTag.node = node;

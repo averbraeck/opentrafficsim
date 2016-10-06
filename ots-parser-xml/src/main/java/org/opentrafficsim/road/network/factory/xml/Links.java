@@ -47,7 +47,7 @@ import org.opentrafficsim.road.network.lane.SinkSensor;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
-import org.opentrafficsim.road.network.lane.object.trafficlight.AbstractTrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -121,14 +121,56 @@ final class Links
     static void calculateNodeCoordinates(final XmlNetworkLaneParser parser) throws NetworkException, NamingException
     {
         Set<LinkTag> links = new HashSet<>(parser.linkTags.values());
+
+        // give all straight tags a length if both coordinates are known.
+        for (LinkTag linkTag : links)
+        {
+            if (linkTag.straightTag != null && linkTag.nodeStartTag.coordinate != null && linkTag.nodeEndTag.coordinate != null)
+            {
+                linkTag.straightTag.length = linkTag.nodeStartTag.coordinate.distance(linkTag.nodeEndTag.coordinate);
+                // set the angles of the nodes
+                double angle = Math.atan2(linkTag.nodeEndTag.coordinate.y - linkTag.nodeStartTag.coordinate.y,
+                        linkTag.nodeEndTag.coordinate.x - linkTag.nodeStartTag.coordinate.x);
+                // TODO test for over-specification (i.e. node direction was already specified)
+                linkTag.nodeStartTag.angle = new Direction(angle, AngleUnit.SI);
+                linkTag.nodeEndTag.angle = new Direction(angle, AngleUnit.SI);
+                double slope = linkTag.nodeStartTag.slope == null ? 0.0 : linkTag.nodeStartTag.slope.si;
+                linkTag.nodeStartTag.slope = new Direction(slope, AngleUnit.SI);
+                slope = linkTag.nodeEndTag.slope == null ? 0.0 : linkTag.nodeEndTag.slope.si;
+                linkTag.nodeEndTag.slope = new Direction(slope, AngleUnit.SI);
+
+                if (linkTag.nodeStartTag.node == null)
+                {
+                    linkTag.nodeStartTag.node = NodeTag.makeOTSNode(linkTag.nodeStartTag, parser);
+                }
+                if (linkTag.nodeEndTag.node == null)
+                {
+                    linkTag.nodeEndTag.node = NodeTag.makeOTSNode(linkTag.nodeEndTag, parser);
+                }
+            }
+        }
+
         while (!links.isEmpty())
         {
-            System.out.println(links);
+            // System.out.println(links);
             boolean found = false;
             for (LinkTag linkTag : links)
             {
+                if (linkTag.bezierTag != null)
+                {
+                    links.remove(linkTag);
+                    found = true;
+                    break;
+                }
                 if (linkTag.nodeStartTag.node != null && linkTag.nodeEndTag.node != null)
                 {
+                    if (linkTag.arcTag != null || linkTag.straightTag != null)
+                    {
+                        if (linkTag.nodeStartTag.angle == null || linkTag.nodeEndTag.angle == null)
+                        {
+                            calculateNodeCoordinates(linkTag, parser);
+                        }
+                    }
                     links.remove(linkTag);
                     found = true;
                     break;
@@ -367,7 +409,9 @@ final class Links
         NodeTag from = linkTag.nodeStartTag;
         OTSPoint3D startPoint = new OTSPoint3D(from.coordinate);
         // XXX: HACK!
-        double startAngle = linkTag.rotationStart != null ? linkTag.rotationStart.si : from.angle == null ? 0.0 : from.angle.si;
+        // double startAngle = linkTag.rotationStart != null ? linkTag.rotationStart.si : from.angle == null ? 0.0 :
+        // from.angle.si;
+        double startAngle = from.angle.si;
         if (linkTag.offsetStart != null && linkTag.offsetStart.si != 0.0)
         {
             // shift the start point perpendicular to the node direction or read from tag
@@ -381,7 +425,8 @@ final class Links
         NodeTag to = linkTag.nodeEndTag;
         OTSPoint3D endPoint = new OTSPoint3D(to.coordinate);
         // XXX: HACK!
-        double endAngle = linkTag.rotationEnd != null ? linkTag.rotationEnd.si : to.angle == null ? 0.0 : to.angle.si;
+        // double endAngle = linkTag.rotationEnd != null ? linkTag.rotationEnd.si : to.angle == null ? 0.0 : to.angle.si;
+        double endAngle = to.angle.si;
         if (linkTag.offsetEnd != null && linkTag.offsetEnd.si != 0.0)
         {
             // shift the start point perpendicular to the node direction or read from tag
@@ -636,8 +681,7 @@ final class Links
 
                     // XXX: LaneTypes with compatibilities might have to be defined in a new way -- LaneType.ALL for now...
                     Lane lane = new Lane(csl, cseTag.name, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width,
-                            LaneType.ALL, directionality, cseTag.legalSpeedLimits,
-                            overtakingConditions);
+                            LaneType.ALL, directionality, cseTag.legalSpeedLimits, overtakingConditions);
                     // System.out.println(OTSGeometry.printCoordinates("#link design line: \nc1,0,0\n#",
                     // lane.getParentLink().getDesignLine(), "\n "));
                     // System.out.println(OTSGeometry.printCoordinates("#lane center line: \nc0,1,0\n#", lane.getCenterLine(),
@@ -684,12 +728,11 @@ final class Links
                             try
                             {
                                 Class<?> clazz = Class.forName(trafficLightTag.className);
-                                Constructor<?> trafficLightConstructor =
-                                        ClassUtil.resolveConstructor(clazz, new Class[] { String.class, Lane.class,
-                                                Length.class, OTSDEVSSimulatorInterface.class, OTSNetwork.class });
+                                Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(clazz, new Class[] {
+                                        String.class, Lane.class, Length.class, OTSDEVSSimulatorInterface.class });
                                 Length position = LinkTag.parseBeginEndPosition(trafficLightTag.positionStr, lane);
-                                AbstractTrafficLight trafficLight = (AbstractTrafficLight) trafficLightConstructor.newInstance(
-                                        new Object[] { trafficLightTag.name, lane, position, simulator, parser.network });
+                                SimpleTrafficLight trafficLight = (SimpleTrafficLight) trafficLightConstructor
+                                        .newInstance(new Object[] { trafficLightTag.name, lane, position, simulator });
                             }
                             catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
                                     | IllegalAccessException | IllegalArgumentException | InvocationTargetException
@@ -720,11 +763,11 @@ final class Links
                             {
                                 Class<?> clazz = Class.forName(sensorTag.className);
                                 Constructor<?> sensorConstructor =
-                                        ClassUtil.resolveConstructor(clazz, new Class[] { Lane.class, Length.class,
-                                                RelativePosition.TYPE.class, String.class, OTSDEVSSimulatorInterface.class });
+                                        ClassUtil.resolveConstructor(clazz, new Class[] { String.class, Lane.class,
+                                                Length.class, RelativePosition.TYPE.class, OTSDEVSSimulatorInterface.class });
                                 Length position = LinkTag.parseBeginEndPosition(sensorTag.positionStr, lane);
                                 AbstractSensor sensor = (AbstractSensor) sensorConstructor.newInstance(
-                                        new Object[] { lane, position, sensorTag.triggerPosition, sensorTag.name, simulator });
+                                        new Object[] { sensorTag.name, lane, position, sensorTag.triggerPosition, simulator });
                                 lane.addSensor(sensor, GTUType.ALL);
                             }
                             catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
