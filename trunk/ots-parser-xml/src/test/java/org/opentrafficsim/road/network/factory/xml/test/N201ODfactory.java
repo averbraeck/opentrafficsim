@@ -127,7 +127,7 @@ public class N201ODfactory
         Class<?> gtuClass = LaneBasedIndividualGTU.class;
         Time startTime = Time.ZERO;
         Time endTime = new Time(Double.MAX_VALUE, TimeUnit.SI);
-        Length position = Length.ZERO;
+        Length position = new Length(1.0, LengthUnit.SI);
         GTUType gtuType = new GTUType("CAR");
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initSpeedDist =
                 new ContinuousDistDoubleScalar.Rel<>(30, SpeedUnit.KM_PER_HOUR);
@@ -147,18 +147,20 @@ public class N201ODfactory
             List<Distribution.FrequencyAndObject<Route>> routeList = new ArrayList<>();
             for (Node destination : matrix.getDestinations())
             {
-                Route route = new Route(origin + "->" + destination);
-                try
+                if (matrix.contains(origin, destination, Category.UNCATEGORIZED))
                 {
-                    route.addNode(origin);
-                    route.addNode(destination);
+                    Route route = new Route(origin + "->" + destination);
+                    try
+                    {
+                        route = network.getShortestRouteBetween(GTUType.ALL, origin, destination);
+                    }
+                    catch (NetworkException exception)
+                    {
+                        throw new RuntimeException("Problem finding route from " + origin + " to " + destination, exception);
+                    }
+                    double prob = matrix.originDestinationTotal(origin, destination) / dem;
+                    routeList.add(new Distribution.FrequencyAndObject<>(prob, route));
                 }
-                catch (NetworkException exception)
-                {
-                    throw new RuntimeException(exception);
-                }
-                double prob = matrix.originDestinationTotal(origin, destination) / dem;
-                routeList.add(new Distribution.FrequencyAndObject<>(prob, route));
             }
             ProbabilisticRouteGenerator routeGenerator;
             try
