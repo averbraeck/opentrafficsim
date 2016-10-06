@@ -301,6 +301,20 @@ public class ODMatrix implements Serializable
     }
     
     /**
+     * @param origin origin
+     * @param destination destination
+     * @param category category
+     * @return whether there is data for the specified origin, destination and category
+     * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
+     * @throws IllegalArgumentException if the category does not belong to the categorization
+     * @throws NullPointerException if an input is null
+     */
+    public final boolean contains(final Node origin, final Node destination, final Category category)
+    {
+        return getODEntry(origin, destination, category) != null;
+    }
+    
+    /**
      * Returns the categories specified for given origin-destination combination.
      * @param origin origin
      * @param destination destination
