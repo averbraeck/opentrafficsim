@@ -3,12 +3,14 @@ package org.opentrafficsim.road.network.factory.xml.test;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -39,6 +41,9 @@ import org.opentrafficsim.road.gtu.strategical.od.ODMatrixTrips;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.sampling.Query;
+import org.opentrafficsim.road.network.sampling.Sampling;
+import org.opentrafficsim.road.network.sampling.meta.MetaDataSet;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -197,6 +202,46 @@ public class N201ODfactory
                     throw new RuntimeException(exception);
                 }
             }
+        }
+    }
+
+    /**
+     * @param network network
+     * @param sampling sampling
+     * @param simulator simulator
+     * @return query covering the entire N201
+     */
+    public static Query getQuery(final OTSNetwork network, final Sampling sampling, final OTSDEVSSimulatorInterface simulator)
+    {
+        String[] northBound = new String[] { "L1a", "L2a", "L3a4a", "L5a", "L6a", "L7a", "L8a9a", "L10a11a", "L12a", "L13a14a",
+                "L15a16a", "L17a", "L18a19a", "L20a21a", "L22a", "L23a24a", "L25a", "L26a", "L27a", "L28a29a", "L30a", "L31a",
+                "L32a", "L33a", "L34a", "L35a", "L36a", "L37a", "L38a", "L39a", "L40a", "L41a", "L42a", "L43a", "L44a", "L45a",
+                "L46a", "L47a48a", "L49a" };
+        String[] southBound = new String[] { "L49b", "L48b47b", "L46b", "L45b", "L44b", "L43b", "L42b", "L41b", "L40b", "L39b",
+                "L38b", "L37b", "L36b", "L35b", "L34b", "L33b", "L32b", "L31b", "L30b", "L29b28b", "L27b", "L26b", "L25b",
+                "L24b23b", "L22b21b", "L20b", "L19b18b", "L17b16b", "L15b", "L14b13b", "L12b", "L11b", "L10b", "L9b8b", "L7b",
+                "L6b", "L5b", "L4b3b", "L2b", "L1b" };
+        boolean connected = false;
+        Query query = new Query(sampling, "N201 both directions", connected, new MetaDataSet(), new Frequency(2.0, FrequencyUnit.PER_MINUTE));
+        addSpaceTimeRegions(query, network, northBound, simulator);
+        addSpaceTimeRegions(query, network, southBound, simulator);
+        return query;
+    }
+
+    /**
+     * @param query query
+     * @param network network
+     * @param links link names
+     * @param simulator simulator
+     */
+    private static void addSpaceTimeRegions(final Query query, final OTSNetwork network, final String[] links,
+            final OTSDEVSSimulatorInterface simulator)
+    {
+        for (String link : links)
+        {
+            // In N201 demo, all links are DIR_MINUS
+            query.addSpaceTimeRegionLink(simulator, (CrossSectionLink) network.getLink(link), GTUDirectionality.DIR_MINUS,
+                    Length.ZERO, network.getLink(link).getLength(), Duration.ZERO, new Duration(1.0, TimeUnit.HOUR));
         }
     }
 
