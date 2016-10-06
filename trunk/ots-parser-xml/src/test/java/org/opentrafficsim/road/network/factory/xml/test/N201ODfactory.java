@@ -76,14 +76,13 @@ public class N201ODfactory
         origins.add(network.getNode("N50a")); // J
 
         List<Node> destinations = new ArrayList<>();
-        origins.add(network.getNode("N1a")); // A
-        origins.add(network.getNode("N234b_uit2")); // B
-        origins.add(network.getNode("N239a_uit2")); // C
-        origins.add(network.getNode("N245a_uit2")); // D
-        origins.add(network.getNode("N245b_uit2")); // E
-        origins.add(network.getNode("N249a_uit2")); // F
-        origins.add(network.getNode("N291a_uit2")); // I
-        origins.add(network.getNode("N50b")); // J
+        destinations.add(network.getNode("N1a")); // A
+        destinations.add(network.getNode("N234b_uit2")); // B
+        destinations.add(network.getNode("N239a_uit2")); // C
+        destinations.add(network.getNode("N245a_uit2")); // D
+        destinations.add(network.getNode("N249a_uit2")); // F
+        destinations.add(network.getNode("N291a_uit2")); // I
+        destinations.add(network.getNode("N50b")); // J
 
         ODMatrixTrips matrix;
         try
@@ -97,9 +96,9 @@ public class N201ODfactory
         }
 
         // loop matrix
-        int[][] od = new int[][] { { 0, 502, 309, 35, 0, 285, 33, 218 }, { 331, 0, 229, 26, 0, 212, 25, 162 },
-                { 150, 89, 0, 12, 0, 98, 11, 75 }, { 29, 17, 14, 0, 0, 30, 4, 23 }, { 30, 18, 14, 2, 0, 32, 4, 25 },
-                { 296, 175, 143, 18, 0, 0, 21, 136 }, { 67, 40, 32, 4, 0, 63, 0, 787 }, { 373, 221, 180, 22, 0, 350, 815, 0 } };
+        int[][] od = new int[][] { { 0, 502, 309, 35, 285, 33, 218 }, { 331, 0, 229, 26, 212, 25, 162 },
+                { 150, 89, 0, 12, 98, 11, 75 }, { 29, 17, 14, 0, 30, 4, 23 }, { 30, 18, 14, 2, 32, 4, 25 },
+                { 296, 175, 143, 18, 0, 21, 136 }, { 67, 40, 32, 4, 63, 0, 787 }, { 373, 221, 180, 22, 350, 815, 0 } };
         for (int o = 0; o < origins.size(); o++)
         {
             for (int d = 0; d < destinations.size(); d++)

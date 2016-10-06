@@ -22,6 +22,8 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.gtu.strategical.od.ODMatrixTrips;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
@@ -157,9 +159,12 @@ public class TestXMLParser extends AbstractWrappableAnimation
             // URL url = URLResource.getResource("/Circuit.xml");
             URL url = URLResource.getResource("/N201v7.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
+            OTSNetwork network;
             try
             {
-                nlp.build(url);
+                network = nlp.build(url);
+                ODMatrixTrips matrix = N201ODfactory.get(network);
+                N201ODfactory.makeGeneratorsFromOD(network, matrix, this.simulator);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
                     | OTSGeometryException exception)

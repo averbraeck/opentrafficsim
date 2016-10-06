@@ -276,7 +276,7 @@ public class ODMatrixTrips extends ODMatrix
             DurationVector time = getTimeVector(origin, destination, category);
             FrequencyVector demand = getDemandVector(origin, destination, category);
             Interpolation interpolation = getInterpolation(origin, destination, category);
-            for (int i = 0; i < time.size(); i++)
+            for (int i = 0; i < time.size() - 1; i++)
             {
                 try
                 {
