@@ -248,7 +248,7 @@ public class IMBChat extends JFrame
 
     /**
      * Start up the application.
-     * @param args
+     * @param args String[] args for main - should be empty
      */
     public static void main(String[] args)
     {

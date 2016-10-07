@@ -128,7 +128,7 @@ public class CircularRoadIMB extends AbstractWrappableAnimation implements UNITS
 
     /**
      * Create a CircularRoad simulation.
-     * @throws PropertyException
+     * @throws PropertyException if key for a property used more than once
      */
     public CircularRoadIMB() throws PropertyException
     {

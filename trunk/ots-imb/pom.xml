@@ -13,6 +13,11 @@
   <name>Open Traffic Sim link to IMB</name>
   <description>Open Traffic Sim connector to TNO's IMB bus from Urban Strategy</description>
 
+  <!-- Don't make javadoc crash on the HTML tags for the IMB table such as STYLE, or missing comments in the nl.tno package  -->
+  <properties>
+    <additionalparam>-Xdoclint:accessibility,reference,syntax</additionalparam>
+  </properties>
+  
   <build>
     <directory>target</directory>
     <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
