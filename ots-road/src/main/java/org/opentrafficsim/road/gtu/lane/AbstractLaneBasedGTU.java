@@ -310,9 +310,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
             // TODO: LaneBasedGTU should KNOW its reference lane!
             Lane referenceLane = getLanes().keySet().iterator().next();
-            fireTimedEvent(LaneBasedGTU.LANEBASED_MOVE_EVENT, new Object[] { getId(), fromLocation, getSpeed(), getAcceleration(),
-                    getTurnIndicatorStatus(), getOdometer(), referenceLane, position(referenceLane, getReference()) },
-                    getSimulator().getSimulatorTime());
+            fireTimedEvent(LaneBasedGTU.LANEBASED_MOVE_EVENT,
+                    new Object[] { getId(), fromLocation, getSpeed(), getAcceleration(), getTurnIndicatorStatus(),
+                            getOdometer(), referenceLane, position(referenceLane, getReference()) }, getSimulator()
+                            .getSimulatorTime());
 
             if (getOperationalPlan().getAcceleration(Duration.ZERO).si < -10)
             {
@@ -878,8 +879,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             try
             {
-                fireTimedEvent(LaneBasedGTU.DESTROY_EVENT, new Object[] { getId(), getLocation(), getOdometer(), referenceLane,
-                        position(referenceLane, getReference()) }, getSimulator().getSimulatorTime());
+                fireTimedEvent(LaneBasedGTU.LANEBASED_DESTROY_EVENT, new Object[] { getId(), getLocation(), getOdometer(),
+                        referenceLane, position(referenceLane, getReference()) }, getSimulator().getSimulatorTime());
             }
             catch (GTUException exception)
             {
@@ -889,9 +890,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
         if (referenceLane == null)
         {
-            fireTimedEvent(LaneBasedGTU.DESTROY_EVENT,
-                    new Object[] { getId(), getLocation(), getOdometer(), null, Length.ZERO }, getSimulator()
-                            .getSimulatorTime());
+            fireTimedEvent(LaneBasedGTU.LANEBASED_DESTROY_EVENT, new Object[] { getId(), getLocation(), getOdometer(), null,
+                    Length.ZERO }, getSimulator().getSimulatorTime());
         }
 
         synchronized (this.lock)
