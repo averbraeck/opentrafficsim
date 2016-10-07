@@ -4,7 +4,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.graphs.AbstractOTSPlot;
 import org.opentrafficsim.graphs.ContourPlot;
@@ -15,6 +22,13 @@ import org.opentrafficsim.imb.connector.Connector.IMBEventType;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.sampling.Query;
+import org.opentrafficsim.road.network.sampling.indicator.MeanSpeed;
+import org.opentrafficsim.road.network.sampling.indicator.MeanTravelTime;
+import org.opentrafficsim.road.network.sampling.indicator.MeanTripLength;
+import org.opentrafficsim.road.network.sampling.indicator.TotalDelay;
+import org.opentrafficsim.road.network.sampling.indicator.TotalNumberOfStops;
+import org.opentrafficsim.road.network.sampling.indicator.TotalTravelDistance;
+import org.opentrafficsim.road.network.sampling.indicator.TotalTravelTime;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -102,8 +116,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * </tr>
  * <td>numberSpaceTimeRegions</td>
  * <td>int</td>
- * <td>number of space-time regions for this statistic</td>
- * </tr>
+ * <td>number of space-time regions for this statistic</td> </tr>
  * <tr>
  * <td>startTime_1</td>
  * <td>double</td>
@@ -263,15 +276,29 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
 
     /** The query for the statistic. */
     private final Query query;
-    
+
     /** The Network for which the graph is made. */
     private final Network network;
 
     /** The interval between generation of graphs. */
     private final Duration transmissionInterval;
 
+    private TotalTravelDistance totalTravelDistance = new TotalTravelDistance();
+
+    private TotalTravelTime totalTravelTime = new TotalTravelTime();
+
+    private MeanSpeed meanSpeed = new MeanSpeed(this.totalTravelDistance, this.totalTravelTime);
+
+    private MeanTravelTime meanTravelTime = new MeanTravelTime(this.meanSpeed);
+
+    private MeanTripLength meanTripLength = new MeanTripLength();
+
+    private TotalDelay totalDelay = new TotalDelay(new Speed(80.0, SpeedUnit.KM_PER_HOUR));
+
+    private TotalNumberOfStops totalNumberOfStops = new TotalNumberOfStops();
+
     // TODO implement DELETE message
-    
+
     /**
      * Construct a new StatisticsGTULaneTransceiver.
      * @param connector Connector; the IMB connector
@@ -284,7 +311,7 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
     public StatisticsGTULaneTransceiver(final Connector connector, SimpleSimulatorInterface simulator, Network network,
             final Query query, final Duration transmissionInterval) throws IMBException
     {
-        super("Graph", connector, simulator);
+        super("StatisticsGTULane", connector, simulator);
         this.query = query;
         this.network = network;
         this.transmissionInterval = transmissionInterval;
@@ -300,11 +327,11 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
         newMessage.add(true); // TODO totalTrajectory
         newMessage.add(transmissionInterval.si);
 
-        getConnector().postIMBMessage("Graph", IMBEventType.NEW, newMessage.toArray());
+        getConnector().postIMBMessage("StatisticsGTULane", IMBEventType.NEW, newMessage.toArray());
 
         try
         {
-            simulator.scheduleEventRel(this.transmissionInterval, this, this, "sendStatisticsUpdate", new Object[] { });
+            simulator.scheduleEventRel(this.transmissionInterval, this, this, "sendStatisticsUpdate", new Object[] {});
         }
         catch (SimRuntimeException exception)
         {
@@ -318,9 +345,28 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
      */
     public void sendStatisticsUpdate() throws IMBException, SimRuntimeException
     {
-        // TODO add the other fields after their calculation has been implemented.
-        getConnector().postIMBMessage("Graph", IMBEventType.CHANGE,
-                new Object[] { getSimulator().getSimulatorTime().getTime().si, this.query.getId() });
-        getSimulator().scheduleEventRel(this.transmissionInterval, this, this, "sendStatisticsUpdate", new Object[] { });
+        double time = getSimulator().getSimulatorTime().getTime().si;
+        Length tdist = this.totalTravelDistance.getValue(this.query, new Duration(time, TimeUnit.SI));
+        Duration ttt = this.totalTravelTime.getValue(this.query, new Duration(time, TimeUnit.SI));
+        Speed ms = this.meanSpeed.getValue(this.query, new Duration(time, TimeUnit.SI));
+        Duration mtt = this.meanTravelTime.getValue(this.query, new Duration(time, TimeUnit.SI));
+        Length mtl = this.meanTripLength.getValue(this.query, new Duration(time, TimeUnit.SI));
+        Duration tdel = this.totalDelay.getValue(this.query, new Duration(time, TimeUnit.SI));
+        Dimensionless nos = this.totalNumberOfStops.getValue(this.query, new Duration(time, TimeUnit.SI));
+        System.out.println("===== @time " + time + " s =====");
+        System.out.println("Total distance " + tdist);
+        System.out.println("Total travel time " + ttt);
+        System.out.println("Mean speed " + ms);
+        System.out.println("Mean travel time " + mtt);
+        System.out.println("Mean trip length " + mtl);
+        System.out.println("Total delay " + tdel);
+        System.out.println("Number of stops " + nos);
+        getConnector().postIMBMessage(
+                "StatisticsGTULane",
+                IMBEventType.CHANGE,
+                new Object[] { getSimulator().getSimulatorTime().getTime().si, this.query.getId(), tdist.si, ttt.si, ms.si,
+                        mtt.si, tdel.si, Double.NaN, nos.si });
+        getSimulator().scheduleEventRel(this.transmissionInterval, this, this, "sendStatisticsUpdate", new Object[] {});
     }
+
 }

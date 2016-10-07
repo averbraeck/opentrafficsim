@@ -12,9 +12,13 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -35,7 +39,18 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.NetworkTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.NodeTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SensorGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;
+import org.opentrafficsim.imb.transceiver.urbanstrategy.StatisticsGTULaneTransceiver;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.test.N201ODfactory;
+import org.opentrafficsim.road.network.sampling.Query;
+import org.opentrafficsim.road.network.sampling.Sampling;
+import org.opentrafficsim.road.network.sampling.indicator.MeanSpeed;
+import org.opentrafficsim.road.network.sampling.indicator.MeanTravelTime;
+import org.opentrafficsim.road.network.sampling.indicator.MeanTripLength;
+import org.opentrafficsim.road.network.sampling.indicator.TotalDelay;
+import org.opentrafficsim.road.network.sampling.indicator.TotalNumberOfStops;
+import org.opentrafficsim.road.network.sampling.indicator.TotalTravelDistance;
+import org.opentrafficsim.road.network.sampling.indicator.TotalTravelTime;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
@@ -253,7 +268,16 @@ public class N201IMB extends AbstractWrappableAnimation
             {
                 exception.printStackTrace();
             }
-            
+            Query query = N201ODfactory.getQuery(this.network, new Sampling(), this.simulator);
+            try
+            {
+                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network, query, new Duration(30, TimeUnit.SECOND));
+            }
+            catch (IMBException exception)
+            {
+                throw new SimRuntimeException(exception);
+            }
+
             URL gisURL = URLResource.getResource("/N201/map.xml");
             System.err.println("GIS-map file: " + gisURL.toString());
             CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
