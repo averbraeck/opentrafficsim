@@ -24,6 +24,7 @@ import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 
 /**
+ * Sampling is the highest level organizer for sampling.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -33,37 +34,48 @@ import nl.tudelft.simulation.event.EventListenerInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-// TODO set this class as a property of Network
 public class Sampling implements EventListenerInterface
 {
 
     /** Map with all sampling data. */
-    private final Map<LaneDirection, Trajectories> trajectories = new HashMap<>();
+    private final Map<LaneDirection, TrajectoryGroup> trajectories = new HashMap<>();
 
     /** End times of active samplings. */
     private final Map<LaneDirection, Duration> endTimes = new HashMap<>();
 
-    private OTSDEVSSimulatorInterface simulator;
+    /** Simulator. */
+    private final OTSDEVSSimulatorInterface simulator;
+
+    /** Registration of current trajectories of each GTU per lane. */
+    private final Map<String, Map<Lane, Trajectory>> trajectoryPerGtu = new HashMap<>();
 
     /**
+     * Constructor.
      * @param simulator simulator
+     */
+    public Sampling(final OTSDEVSSimulatorInterface simulator)
+    {
+        this.simulator = simulator;
+    }
+
+    /**
      * @param spaceTimeRegion space-time region
      * @throws IllegalStateException if data is not available from the requested start time
      */
-    public final void registerSpaceTimeRegion(final OTSDEVSSimulatorInterface simulator, final SpaceTimeRegion spaceTimeRegion)
+    public final void registerSpaceTimeRegion(final SpaceTimeRegion spaceTimeRegion)
     {
-        this.simulator = simulator;
-        Duration firstDataTime;
+        Duration firstPossibleDataTime;
         if (this.trajectories.containsKey(spaceTimeRegion.getLaneDirection()))
         {
-            firstDataTime = this.trajectories.get(spaceTimeRegion.getLaneDirection()).getStartTime();
+            firstPossibleDataTime = this.trajectories.get(spaceTimeRegion.getLaneDirection()).getStartTime();
         }
         else
         {
-            firstDataTime = new Duration(simulator.getSimulatorTime().getTime().si, TimeUnit.SI);
+            firstPossibleDataTime = new Duration(this.simulator.getSimulatorTime().getTime().si, TimeUnit.SI);
         }
-        Throw.when(spaceTimeRegion.getStartTime().lt(firstDataTime), IllegalStateException.class,
-                "Space time region with start time %s is defined while data is available from %s onwards.");
+        Throw.when(spaceTimeRegion.getStartTime().lt(firstPossibleDataTime), IllegalStateException.class,
+                "Space time region with start time %s is defined while data is available from %s onwards.",
+                spaceTimeRegion.getStartTime(), firstPossibleDataTime);
         if (this.trajectories.containsKey(spaceTimeRegion.getLaneDirection()))
         {
             this.endTimes.put(spaceTimeRegion.getLaneDirection(),
@@ -71,26 +83,22 @@ public class Sampling implements EventListenerInterface
         }
         else
         {
-            this.trajectories.put(spaceTimeRegion.getLaneDirection(),
-                    new Trajectories(firstDataTime, spaceTimeRegion.getLaneDirection()));
             this.endTimes.put(spaceTimeRegion.getLaneDirection(), spaceTimeRegion.getEndTime());
-            // TODO schedule event for startRecording at spaceTimeRegion.gettStart()
             try
             {
-                simulator.scheduleEventNow(this, this, "startRecording",
-                        new Object[] { Duration.ZERO, spaceTimeRegion.getLaneDirection(), simulator });
+                this.simulator.scheduleEventNow(this, this, "startRecording",
+                        new Object[] { spaceTimeRegion.getStartTime(), spaceTimeRegion.getLaneDirection() });
             }
             catch (SimRuntimeException exception)
             {
                 throw new RuntimeException("Cannot start recording.", exception);
             }
         }
-        // TODO schedule event for stopRecording at this.endTimes.get(spaceTimeRegion.getLaneDirection())
-        // note, before then, additional space-time regions with a later end time may have been registered
         try
         {
-            simulator.scheduleEventAbs(simulator.getSimulatorTime().plus(this.endTimes.get(spaceTimeRegion.getLaneDirection())),
-                    this, this, "stopRecording", new Object[] { spaceTimeRegion.getLaneDirection(), simulator });
+            this.simulator.scheduleEventAbs(
+                    this.simulator.getSimulatorTime().plus(this.endTimes.get(spaceTimeRegion.getLaneDirection())), this, this,
+                    "stopRecording", new Object[] { spaceTimeRegion.getLaneDirection() });
         }
         catch (SimRuntimeException exception)
         {
@@ -102,97 +110,117 @@ public class Sampling implements EventListenerInterface
      * Start recording at the given time (which should be the current time) on the given lane direction.
      * @param time current time
      * @param laneDirection lane direction
-     * @param simulator simulator
      */
-    public final void startRecording(final Duration time, final LaneDirection laneDirection,
-            final OTSDEVSSimulatorInterface simulator)
+    public final void startRecording(final Duration time, final LaneDirection laneDirection)
     {
-        this.trajectories.put(laneDirection, new Trajectories(time, laneDirection));
-        // TODO subscribe for Lane/GTU events to append trajectories
+        if (this.trajectories.containsKey(laneDirection))
+        {
+            return;
+        }
+        this.trajectories.put(laneDirection, new TrajectoryGroup(time, laneDirection));
         laneDirection.getLane().addListener(this, Lane.GTU_ADD_EVENT, true);
         laneDirection.getLane().addListener(this, Lane.GTU_REMOVE_EVENT, true);
     }
 
-    private Map<String, Map<Lane, Trajectory>> trajectoryPerGtu = new HashMap<>();
+    /**
+     * Stop recording at given lane direction.
+     * @param time to stop
+     * @param laneDirection lane direction
+     */
+    public final void stopRecording(final Duration time, final LaneDirection laneDirection)
+    {
+        if (!this.trajectories.containsKey(laneDirection) || this.endTimes.get(laneDirection).gt(time))
+        {
+            return;
+        }
+        this.trajectories.remove(laneDirection);
+        laneDirection.getLane().removeListener(this, Lane.GTU_ADD_EVENT);
+        laneDirection.getLane().removeListener(this, Lane.GTU_REMOVE_EVENT);
+    }
 
     /** {@inheritDoc} */
     @Override
-    public void notify(final EventInterface event) throws RemoteException
+    public final void notify(final EventInterface event) throws RemoteException
     {
-        if (event.getType().equals(Lane.GTU_ADD_EVENT))
-        {
-            // Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_addition}
-            Object[] payload = (Object[]) event.getContent();
-            String gtuId = (String) payload[0];
-            LaneBasedGTU gtu = (LaneBasedGTU) payload[1];
-            Lane lane = (Lane) event.getSource();
-            Length x;
-            try
-            {
-                x = gtu.position(lane, RelativePosition.REFERENCE_POSITION);
-            }
-            catch (GTUException exception)
-            {
-                throw new RuntimeException(exception);
-            }
-            LaneDirection laneDirection = new LaneDirection(lane, GTUDirectionality.DIR_PLUS);
-            if (this.trajectories.containsKey(laneDirection))
-            {
-                gtu.addListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT, true);
-                boolean longitudinalEntry = false;
-                Trajectory trajectory = new Trajectory(gtu, longitudinalEntry, new MetaData());
-                Map<Lane, Trajectory> map = new HashMap<>();
-                map.put(lane, trajectory);
-                this.trajectoryPerGtu.put(gtuId, map);
-                this.trajectories.get(laneDirection).addTrajectory(trajectory);
-            }
-        }
-        if (event.getType().equals(Lane.GTU_REMOVE_EVENT))
-        {
-            // Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_removal}
-            Object[] payload = (Object[]) event.getContent();
-            String gtuId = (String) payload[0];
-            LaneBasedGTU gtu = (LaneBasedGTU) payload[1];
-            gtu.removeListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
-            Lane lane = (Lane) event.getSource();
-            if (this.trajectoryPerGtu.get(gtuId) != null)
-            {
-                this.trajectoryPerGtu.get(gtuId).remove(lane);
-            }
-        }
         if (event.getType().equals(LaneBasedGTU.LANEBASED_MOVE_EVENT))
         {
             // Payload: [String gtuId, DirectedPoint position, Speed speed, Acceleration acceleration, TurnIndicatorStatus
             // turnIndicatorStatus, Length odometer, Lane referenceLane, Length positionOnReferenceLane]
             Object[] payload = (Object[]) event.getContent();
             String gtuId = (String) payload[0];
-            // get trajectories
             if (this.trajectoryPerGtu.containsKey(gtuId) && this.trajectoryPerGtu.get(gtuId).containsKey(payload[6]))
             {
                 this.trajectoryPerGtu.get(gtuId).get(payload[6]).add((Length) payload[7], (Speed) payload[2],
                         (Acceleration) payload[3], new Duration(this.simulator.getSimulatorTime().get().si, TimeUnit.SI));
             }
         }
+        else if (event.getType().equals(Lane.GTU_ADD_EVENT))
+        {
+            // Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_addition}
+            Lane lane = (Lane) event.getSource();
+            // TODO GTUDirectionality from Lane.GTU_ADD_EVENT
+            LaneDirection laneDirection = new LaneDirection(lane, GTUDirectionality.DIR_PLUS);
+            if (!this.trajectories.containsKey(laneDirection))
+            {
+                // we are not sampling this LaneDirection
+                return;
+            }
+            Object[] payload = (Object[]) event.getContent();
+            String gtuId = (String) payload[0];
+            LaneBasedGTU gtu = (LaneBasedGTU) payload[1];
+            Length distance;
+            try
+            {
+                // TODO Length from Lane.GTU_ADD_EVENT
+                distance = gtu.position(lane, RelativePosition.REFERENCE_POSITION);
+            }
+            catch (GTUException exception)
+            {
+                throw new RuntimeException(exception);
+            }
+            Speed speed = gtu.getSpeed();
+            Acceleration acceleration = gtu.getAcceleration();
+            Duration time = new Duration(this.simulator.getSimulatorTime().getTime().si, TimeUnit.SI);
+            boolean longitudinalEntry = false;
+            // TODO MetaData specific for GTU, incorporate getMetaData(LaneBasedGTU gtu) in MetaDataType and subclasses
+            // Keep list of all MetaDataTypes of registered queries, i.e. registerMetaDataTypes(), invoke all
+            Trajectory trajectory = new Trajectory(gtu, longitudinalEntry, new MetaData());
+            trajectory.add(distance, speed, acceleration, time);
+            if (!this.trajectoryPerGtu.containsKey(gtuId))
+            {
+                Map<Lane, Trajectory> map = new HashMap<>();
+                this.trajectoryPerGtu.put(gtuId, map);
+            }
+            this.trajectoryPerGtu.get(gtuId).put(lane, trajectory);
+            this.trajectories.get(laneDirection).addTrajectory(trajectory);
+            gtu.addListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT, true);
+        }
+        else if (event.getType().equals(Lane.GTU_REMOVE_EVENT))
+        {
+            // Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_removal}
+            Object[] payload = (Object[]) event.getContent();
+            String gtuId = (String) payload[0];
+            LaneBasedGTU gtu = (LaneBasedGTU) payload[1];
+            Lane lane = (Lane) event.getSource();
+            if (this.trajectoryPerGtu.get(gtuId) != null)
+            {
+                this.trajectoryPerGtu.get(gtuId).remove(lane);
+                if (this.trajectoryPerGtu.get(gtuId).isEmpty())
+                {
+                    this.trajectoryPerGtu.remove(gtuId);
+                }
+            }
+            gtu.removeListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
+        }
 
     }
 
     /**
-     * Stop recording at given lane direction.
+     * Returns the trajectory group of given lane direction.
      * @param laneDirection lane direction
-     * @param simulator simulator
+     * @return trajectory group of given lane direction, {@code null} if none
      */
-    public final void stopRecording(final LaneDirection laneDirection, final OTSDEVSSimulatorInterface simulator)
-    {
-        this.trajectories.remove(laneDirection);
-        // TODO unsubscribe for Lane/GTU events to append trajectories
-    }
-
-    /**
-     * Returns the trajectories of given lane direction.
-     * @param laneDirection lane direction
-     * @return trajectories of given lane direction, {@code null} if none
-     */
-    public final Trajectories getTrajectories(final LaneDirection laneDirection)
+    public final TrajectoryGroup getTrajectoryGroup(final LaneDirection laneDirection)
     {
         return this.trajectories.get(laneDirection);
     }
@@ -205,6 +233,7 @@ public class Sampling implements EventListenerInterface
         int result = 1;
         result = prime * result + ((this.endTimes == null) ? 0 : this.endTimes.hashCode());
         result = prime * result + ((this.trajectories == null) ? 0 : this.trajectories.hashCode());
+        result = prime * result + ((this.trajectoryPerGtu == null) ? 0 : this.trajectoryPerGtu.hashCode());
         return result;
     }
 
@@ -247,16 +276,25 @@ public class Sampling implements EventListenerInterface
         {
             return false;
         }
+        if (this.trajectoryPerGtu == null)
+        {
+            if (other.trajectoryPerGtu != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.trajectoryPerGtu.equals(other.trajectoryPerGtu))
+        {
+            return false;
+        }
         return true;
     }
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public String toString()
+    public final String toString()
     {
-        return "Sampling [trajectories=" + this.trajectories + ", endTimes=" + this.endTimes + ", trajectoryPerGtu="
-                + this.trajectoryPerGtu + "]";
+        return "Sampling [simulator=" + this.simulator + "]";
     }
 
 }

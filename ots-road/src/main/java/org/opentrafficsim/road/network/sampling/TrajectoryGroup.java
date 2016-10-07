@@ -8,6 +8,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 
 /**
+ * Contains all trajectories pertaining to a certain space-time region.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -18,7 +19,7 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class Trajectories
+public class TrajectoryGroup
 {
 
     /** Start time of trajectories. */
@@ -41,7 +42,7 @@ public class Trajectories
      * @param startTime start time of trajectories
      * @param laneDirection lane direction
      */
-    public Trajectories(final Duration startTime, final LaneDirection laneDirection)
+    public TrajectoryGroup(final Duration startTime, final LaneDirection laneDirection)
     {
         this.startTime = startTime;
         this.minLength = Length.ZERO;
@@ -50,12 +51,12 @@ public class Trajectories
     }
 
     /**
-     * @param startTime start time of trajectories
+     * @param startTime start time of trajectory group
      * @param minLength length of the section
      * @param maxLength length of the section
      * @param laneDirection lane direction
      */
-    public Trajectories(final Duration startTime, final Length minLength, final Length maxLength,
+    public TrajectoryGroup(final Duration startTime, final Length minLength, final Length maxLength,
             final LaneDirection laneDirection)
     {
         this.startTime = startTime;
@@ -90,10 +91,10 @@ public class Trajectories
     }
 
     /**
-     * Whether this {@code Trajectories} holds the given trajectory. Note that this is false if the given trajectory is derived
-     * from a trajectory in this {@code Trajectories}.
+     * Whether this {@code TrajectoryGroup} holds the given trajectory. Note that this is false if the given trajectory is
+     * derived from a trajectory in this {@code TrajectoryGroup}.
      * @param trajectory trajectory
-     * @return whether this {@code Trajectories} holds the given trajectory.
+     * @return whether this {@code TrajectoryGroup} holds the given trajectory.
      */
     public final boolean contains(final Trajectory trajectory)
     {
@@ -104,22 +105,22 @@ public class Trajectories
      * Returns a list of trajectories.
      * @return list of trajectories
      */
-    public final List<Trajectory> getTrajectorySet()
+    public final List<Trajectory> getTrajectories()
     {
         return new ArrayList<>(this.trajectories);
     }
 
     /**
-     * Returns trajectories between two locations.
+     * Returns trajectory group between two locations.
      * @param startLength start length
      * @param endLength end length
      * @return list of trajectories
      */
-    public final Trajectories getTrajectories(final Length startLength, final Length endLength)
+    public final TrajectoryGroup getTrajectoryGroup(final Length startLength, final Length endLength)
     {
         Length minLenght = Length.max(startLength, this.minLength);
         Length maxLenght = Length.min(endLength, this.maxLength);
-        Trajectories out = new Trajectories(this.startTime, minLenght, maxLenght, this.laneDirection);
+        TrajectoryGroup out = new TrajectoryGroup(this.startTime, minLenght, maxLenght, this.laneDirection);
         for (Trajectory trajectory : this.trajectories)
         {
             out.addTrajectory(trajectory.subSet(startLength, endLength));
@@ -128,14 +129,15 @@ public class Trajectories
     }
 
     /**
-     * Returns trajectories between two times.
+     * Returns trajectory group between two times.
      * @param startDuration start duration
      * @param endDuration end duration
      * @return list of trajectories
      */
-    public final Trajectories getTrajectories(final Duration startDuration, final Duration endDuration)
+    public final TrajectoryGroup getTrajectoryGroup(final Duration startDuration, final Duration endDuration)
     {
-        Trajectories out = new Trajectories(this.startTime.lt(startDuration) ? startDuration : this.startTime, this.laneDirection);
+        TrajectoryGroup out =
+                new TrajectoryGroup(this.startTime.lt(startDuration) ? startDuration : this.startTime, this.laneDirection);
         for (Trajectory trajectory : this.trajectories)
         {
             out.addTrajectory(trajectory.subSet(startDuration, endDuration));
@@ -144,17 +146,18 @@ public class Trajectories
     }
 
     /**
-     * Returns trajectories between two locations and between two times.
+     * Returns trajectory group between two locations and between two times.
      * @param startLength start length
      * @param endLength end length
      * @param startDuration start duration
      * @param endDuration end duration
      * @return list of trajectories
      */
-    public final Trajectories getTrajectories(final Length startLength, final Length endLength, final Duration startDuration,
-            final Duration endDuration)
+    public final TrajectoryGroup getTrajectoryGroup(final Length startLength, final Length endLength,
+            final Duration startDuration, final Duration endDuration)
     {
-        Trajectories out = new Trajectories(this.startTime.lt(startDuration) ? startDuration : this.startTime, this.laneDirection);
+        TrajectoryGroup out =
+                new TrajectoryGroup(this.startTime.lt(startDuration) ? startDuration : this.startTime, this.laneDirection);
         for (Trajectory trajectory : this.trajectories)
         {
             out.addTrajectory(trajectory.subSet(startLength, endLength, startDuration, endDuration));
@@ -173,12 +176,99 @@ public class Trajectories
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final int hashCode()
     {
-        return "Trajectories [startTime=" + this.startTime + ", minLength=" + this.minLength + ", maxLength=" + this.maxLength
-                + ", laneDirection=" + this.laneDirection + ", trajectories=" + this.trajectories + "]";
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.laneDirection == null) ? 0 : this.laneDirection.hashCode());
+        result = prime * result + ((this.maxLength == null) ? 0 : this.maxLength.hashCode());
+        result = prime * result + ((this.minLength == null) ? 0 : this.minLength.hashCode());
+        result = prime * result + ((this.startTime == null) ? 0 : this.startTime.hashCode());
+        result = prime * result + ((this.trajectories == null) ? 0 : this.trajectories.hashCode());
+        return result;
     }
 
-    
-    
+    /** {@inheritDoc} */
+    @Override
+    public final boolean equals(final Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        TrajectoryGroup other = (TrajectoryGroup) obj;
+        if (this.laneDirection == null)
+        {
+            if (other.laneDirection != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.laneDirection.equals(other.laneDirection))
+        {
+            return false;
+        }
+        if (this.maxLength == null)
+        {
+            if (other.maxLength != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.maxLength.equals(other.maxLength))
+        {
+            return false;
+        }
+        if (this.minLength == null)
+        {
+            if (other.minLength != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.minLength.equals(other.minLength))
+        {
+            return false;
+        }
+        if (this.startTime == null)
+        {
+            if (other.startTime != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.startTime.equals(other.startTime))
+        {
+            return false;
+        }
+        if (this.trajectories == null)
+        {
+            if (other.trajectories != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.trajectories.equals(other.trajectories))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "TrajectoryGroup [startTime=" + this.startTime + ", minLength=" + this.minLength + ", maxLength="
+                + this.maxLength + ", laneDirection=" + this.laneDirection + "]";
+    }
+
 }

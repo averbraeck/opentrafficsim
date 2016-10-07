@@ -4,7 +4,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.road.network.sampling.Query;
-import org.opentrafficsim.road.network.sampling.Trajectories;
+import org.opentrafficsim.road.network.sampling.TrajectoryGroup;
 import org.opentrafficsim.road.network.sampling.Trajectory;
 
 /**
@@ -25,9 +25,9 @@ public class TotalTravelDistance extends AbstractIndicator<LengthUnit, Length>
     public final Length calculate(final Query query, final Duration startTime, final Duration endTime)
     {
         Length sum = Length.ZERO;
-        for (Trajectories trajectories : query.getTrajectories(startTime, endTime))
+        for (TrajectoryGroup trajectoryGroup : query.getTrajectoryGroups(startTime, endTime))
         {
-            for (Trajectory trajectory : trajectories.getTrajectorySet())
+            for (Trajectory trajectory : trajectoryGroup.getTrajectories())
             {
                 sum = sum.plus(trajectory.getTotalLength());
             }

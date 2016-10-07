@@ -9,6 +9,7 @@ import java.util.Set;
 import org.opentrafficsim.core.immutablecollections.ImmutableIterator;
 
 /**
+ * Collection of objects, one object per meta data type included.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -99,10 +100,50 @@ public class MetaData
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public String toString()
+    public final int hashCode()
     {
-        return "MetaData [metaDataMap=" + this.metaDataMap + "]";
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.metaDataMap == null) ? 0 : this.metaDataMap.hashCode());
+        return result;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final boolean equals(final Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        MetaData other = (MetaData) obj;
+        if (this.metaDataMap == null)
+        {
+            if (other.metaDataMap != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.metaDataMap.equals(other.metaDataMap))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "MetaData [" + this.metaDataMap + "]";
+    }
+    
 }

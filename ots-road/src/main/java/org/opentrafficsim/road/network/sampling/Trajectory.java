@@ -418,11 +418,99 @@ public final class Trajectory
 
     /** {@inheritDoc} */
     @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(this.a);
+        result = prime * result + ((this.gtuId == null) ? 0 : this.gtuId.hashCode());
+        result = prime * result + (this.longitudinalEntry ? 1231 : 1237);
+        result = prime * result + ((this.metaData == null) ? 0 : this.metaData.hashCode());
+        result = prime * result + this.size;
+        result = prime * result + Arrays.hashCode(this.t);
+        result = prime * result + Arrays.hashCode(this.v);
+        result = prime * result + Arrays.hashCode(this.x);
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        Trajectory other = (Trajectory) obj;
+        if (!Arrays.equals(this.a, other.a))
+        {
+            return false;
+        }
+        if (this.gtuId == null)
+        {
+            if (other.gtuId != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.gtuId.equals(other.gtuId))
+        {
+            return false;
+        }
+        if (this.longitudinalEntry != other.longitudinalEntry)
+        {
+            return false;
+        }
+        if (this.metaData == null)
+        {
+            if (other.metaData != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.metaData.equals(other.metaData))
+        {
+            return false;
+        }
+        if (this.size != other.size)
+        {
+            return false;
+        }
+        if (!Arrays.equals(this.t, other.t))
+        {
+            return false;
+        }
+        if (!Arrays.equals(this.v, other.v))
+        {
+            return false;
+        }
+        if (!Arrays.equals(this.x, other.x))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public String toString()
     {
-        return "Trajectory [size=" + this.size + ", x=" + Arrays.toString(this.x) + ", v=" + Arrays.toString(this.v) + ", a="
-                + Arrays.toString(this.a) + ", t=" + Arrays.toString(this.t) + ", metaData=" + this.metaData + ", gtuId="
-                + this.gtuId + ", longitudinalEntry=" + this.longitudinalEntry + "]";
+        if (this.size > 0)
+        {
+            return "Trajectory [size=" + this.size + ", x={" + this.x[0] + "..." + this.x[this.size - 1] + "}, t={" + this.t[0]
+                    + "..." + this.t[this.size - 1] + "}, metaData=" + this.metaData + ", gtuId=" + this.gtuId
+                    + ", longitudinalEntry=" + this.longitudinalEntry + "]";
+        }
+        return "Trajectory [size=" + this.size + ", x={}, t={}, metaData=" + this.metaData + ", gtuId=" + this.gtuId
+                + ", longitudinalEntry=" + this.longitudinalEntry + "]";
     }
 
 }

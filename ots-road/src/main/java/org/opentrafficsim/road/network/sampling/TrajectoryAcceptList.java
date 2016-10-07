@@ -30,30 +30,30 @@ public class TrajectoryAcceptList
     private final List<Trajectory> trajectoryList = new ArrayList<>();
 
     /** List of trajectories. */
-    private final List<Trajectories> trajectoriesList = new ArrayList<>();
+    private final List<TrajectoryGroup> trajectoryGroupList = new ArrayList<>();
 
     /** Map of trajectory's and acceptance boolean. */
     private final Map<Trajectory, Boolean> trajectoryMap = new HashMap<>();
 
     /**
-     * Adds a {@code Trajectory} with the {@code Trajectories} it is from to the accept list.
+     * Adds a {@code Trajectory} with the {@code TrajectoryGroup} it is from to the accept list.
      * @param trajectory {@code Trajectory} trajectory
-     * @param trajectories {@code Trajectories} trajectories
-     * @throws IllegalArgumentException if the {@code Trajectory} is not within the {@code Trajectories}
+     * @param trajectoryGroup {@code TrajectoryGroup} trajectories
+     * @throws IllegalArgumentException if the {@code Trajectory} is not within the {@code TrajectoryGroup}
      * @throws IllegalArgumentException if the {@code Trajectory} belongs to a different GTU than an earlier provided
      *             {@code Trajectory}
      */
-    public final void addTrajectory(final Trajectory trajectory, final Trajectories trajectories)
+    public final void addTrajectory(final Trajectory trajectory, final TrajectoryGroup trajectoryGroup)
     {
         Throw.whenNull(trajectory, "Trajectory may not be null.");
-        Throw.whenNull(trajectories, "Trajectories may not be null.");
-        Throw.when(!trajectories.contains(trajectory), IllegalArgumentException.class,
+        Throw.whenNull(trajectoryGroup, "Trajectories may not be null.");
+        Throw.when(!trajectoryGroup.contains(trajectory), IllegalArgumentException.class,
                 "The trajectory should be contained within the trajectories.");
         Throw.when(this.gtuId != null && !this.gtuId.equals(trajectory.getGtuId()), IllegalArgumentException.class,
                 "Trajectories of different GTU's may not be in a single trajectory accept list.");
         this.gtuId = trajectory.getGtuId();
         this.trajectoryList.add(trajectory);
-        this.trajectoriesList.add(trajectories);
+        this.trajectoryGroupList.add(trajectoryGroup);
         this.trajectoryMap.put(trajectory, false);
     }
 
@@ -76,13 +76,13 @@ public class TrajectoryAcceptList
     }
 
     /**
-     * @param i number of {@code trajectories} to get
-     * @return i'th {@code trajectories}
+     * @param i number of {@code TrajectoryGroup} to get
+     * @return i'th {@code TrajectoryGroup}
      * @throws IndexOutOfBoundsException if the index is out of range (<tt>index &lt; 0 || index &gt;= size()</tt>)
      */
-    public final Trajectories getTrajectories(final int i)
+    public final TrajectoryGroup getTrajectoryGroup(final int i)
     {
-        return this.trajectoriesList.get(i);
+        return this.trajectoryGroupList.get(i);
     }
 
     /**
@@ -94,11 +94,11 @@ public class TrajectoryAcceptList
     }
 
     /**
-     * @return iterator over {@code Trajectories}'s, does not allow removal
+     * @return iterator over {@code TrajectoryGroup}'s, does not allow removal
      */
-    public final Iterator<Trajectories> getTrajectoriesIterator()
+    public final Iterator<TrajectoryGroup> getTrajectoryGroupIterator()
     {
-        return new ImmutableIterator<>(this.trajectoriesList.iterator());
+        return new ImmutableIterator<>(this.trajectoryGroupList.iterator());
     }
 
     /**
@@ -120,7 +120,7 @@ public class TrajectoryAcceptList
     {
         acceptTrajectory(trajectory, false);
     }
-    
+
     /**
      * Accept or reject given trajectory.
      * @param trajectory trajectory to accept or reject
@@ -171,12 +171,9 @@ public class TrajectoryAcceptList
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
-        return "TrajectoryAcceptList [gtuId=" + this.gtuId + ", trajectoryList=" + this.trajectoryList + ", trajectoriesList="
-                + this.trajectoriesList + ", trajectoryMap=" + this.trajectoryMap + "]";
+        return "TrajectoryAcceptList [gtuId=" + this.gtuId + ", " + this.trajectoryList.size() + " trajectories]";
     }
-    
-    
 
 }

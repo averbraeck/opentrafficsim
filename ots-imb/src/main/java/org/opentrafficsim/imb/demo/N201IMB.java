@@ -69,7 +69,7 @@ public class N201IMB extends AbstractWrappableAnimation
 {
     /** */
     private static final long serialVersionUID = 20161007L;
-    
+
     /** The model. */
     private N201Model model;
 
@@ -133,9 +133,7 @@ public class N201IMB extends AbstractWrappableAnimation
     protected final OTSModelInterface makeModel(final GTUColorer colorer)
     {
         System.out.println("N201IMB.makeModel called");
-        this.model =
-                new N201Model(getSavedUserModifiedProperties(), colorer, new OTSNetwork(
-                        "N201 network"));
+        this.model = new N201Model(getSavedUserModifiedProperties(), colorer, new OTSNetwork("N201 network"));
         return this.model;
     }
 
@@ -195,8 +193,7 @@ public class N201IMB extends AbstractWrappableAnimation
          * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
          * @param network Network; the network
          */
-        N201Model(final ArrayList<AbstractProperty<?>> modelProperties, final GTUColorer gtuColorer,
-                final OTSNetwork network)
+        N201Model(final ArrayList<AbstractProperty<?>> modelProperties, final GTUColorer gtuColorer, final OTSNetwork network)
         {
             this.modelProperties = modelProperties;
             this.network = network;
@@ -236,8 +233,8 @@ public class N201IMB extends AbstractWrappableAnimation
             {
                 throw new SimRuntimeException(exception);
             }
-            
-            // Stream to allow the xml-file to be retrievable from a JAR file 
+
+            // Stream to allow the xml-file to be retrievable from a JAR file
             InputStream stream = URLResource.getResourceAsStream("/N201v8.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
@@ -251,10 +248,11 @@ public class N201IMB extends AbstractWrappableAnimation
             {
                 exception.printStackTrace();
             }
-            Query query = N201ODfactory.getQuery(this.network, new Sampling(), this.simulator);
+            Query query = N201ODfactory.getQuery(this.network, new Sampling(this.simulator));
             try
             {
-                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network, query, new Duration(30, TimeUnit.SECOND));
+                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network, query,
+                        new Duration(30, TimeUnit.SECOND));
             }
             catch (IMBException exception)
             {
@@ -283,7 +281,7 @@ public class N201IMB extends AbstractWrappableAnimation
         }
 
     }
-    
+
     /**
      * Convert coordinates to/from the Dutch RD system.
      */
@@ -322,8 +320,8 @@ public class N201IMB extends AbstractWrappableAnimation
         {
             try
             {
-                    Point2D c = TransformWGS84DutchRDNew.fromWGS84(x, y);
-                    return new double[] { c.getX() - this.dx, c.getY() - this.dy };
+                Point2D c = TransformWGS84DutchRDNew.fromWGS84(x, y);
+                return new double[] { c.getX() - this.dx, c.getY() - this.dy };
             }
             catch (Exception exception)
             {
@@ -339,5 +337,5 @@ public class N201IMB extends AbstractWrappableAnimation
             return "CoordinateTransformRD [dx=" + this.dx + ", dy=" + this.dy + "]";
         }
     }
-    
+
 }

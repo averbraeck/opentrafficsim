@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.10" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
-  <interface id="1" language="java" name="org.opentrafficsim.road.network.sampling.indicator.Indicator" 
-    project="ots-road" file="/ots-road/src/main/java/org/opentrafficsim/road/network/sampling/indicator/Indicator.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="536" y="311"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
-      <operations public="false" package="false" protected="false" private="false" static="false"/>    
-    </display>  
-  </interface>  
-  <class id="2" language="java" name="org.opentrafficsim.road.network.sampling.meta.MetaDataDestination" 
+  <class id="1" language="java" name="org.opentrafficsim.road.network.sampling.meta.MetaDataDestination" 
     project="ots-road" 
     file="/ots-road/src/main/java/org/opentrafficsim/road/network/sampling/meta/MetaDataDestination.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -22,8 +12,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="org.opentrafficsim.road.network.sampling.Trajectories" project="ots-road" 
-    file="/ots-road/src/main/java/org/opentrafficsim/road/network/sampling/Trajectories.java" binary="false" 
+  <class id="2" language="java" name="org.opentrafficsim.road.network.sampling.TrajectoryGroup" project="ots-road" 
+    file="/ots-road/src/main/java/org/opentrafficsim/road/network/sampling/TrajectoryGroup.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="275" y="437"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
@@ -32,7 +22,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="org.opentrafficsim.road.network.sampling.SpaceTimeRegion" project="ots-road" 
+  <class id="3" language="java" name="org.opentrafficsim.road.network.sampling.SpaceTimeRegion" project="ots-road" 
     file="/ots-road/src/main/java/org/opentrafficsim/road/network/sampling/SpaceTimeRegion.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="125" y="358"/>    
@@ -42,7 +32,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="org.opentrafficsim.road.network.sampling.Query" project="ots-road" 
+  <class id="4" language="java" name="org.opentrafficsim.road.network.sampling.Query" project="ots-road" 
     file="/ots-road/src/main/java/org/opentrafficsim/road/network/sampling/Query.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="194" y="254"/>    
@@ -52,7 +42,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="org.opentrafficsim.road.network.sampling.meta.MetaDataGTUType" project="ots-road" 
+  <class id="5" language="java" name="org.opentrafficsim.road.network.sampling.meta.MetaDataGTUType" project="ots-road" 
     file="/ots-road/src/main/java/org/opentrafficsim/road/network/sampling/meta/MetaDataGTUType.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="313" y="163"/>    
@@ -62,7 +52,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="7" language="java" name="org.opentrafficsim.road.network.sampling.meta.MetaDataType" project="ots-road" 
+  <class id="6" language="java" name="org.opentrafficsim.road.network.sampling.meta.MetaDataType" project="ots-road" 
     file="/ots-road/src/main/java/org/opentrafficsim/road/network/sampling/meta/MetaDataType.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="390" y="84"/>    
@@ -72,7 +62,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="org.opentrafficsim.road.network.sampling.meta.MetaDataRoute" project="ots-road" 
+  <class id="7" language="java" name="org.opentrafficsim.road.network.sampling.meta.MetaDataRoute" project="ots-road" 
     file="/ots-road/src/main/java/org/opentrafficsim/road/network/sampling/meta/MetaDataRoute.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="472" y="163"/>    
@@ -82,7 +72,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="9" language="java" name="org.opentrafficsim.road.network.sampling.Sampling" project="ots-road" 
+  <class id="8" language="java" name="org.opentrafficsim.road.network.sampling.Sampling" project="ots-road" 
     file="/ots-road/src/main/java/org/opentrafficsim/road/network/sampling/Sampling.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="270" y="350"/>    
@@ -92,7 +82,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="10" language="java" name="org.opentrafficsim.road.network.sampling.indicator.TotalTravelDistance" 
+  <class id="9" language="java" name="org.opentrafficsim.road.network.sampling.indicator.TotalTravelDistance" 
     project="ots-road" 
     file="/ots-road/src/main/java/org/opentrafficsim/road/network/sampling/indicator/TotalTravelDistance.java" 
     binary="false" corner="BOTTOM_RIGHT">    
@@ -103,7 +93,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="11" language="java" name="org.opentrafficsim.road.network.sampling.indicator.MeanSpeed" project="ots-road" 
+  <class id="10" language="java" name="org.opentrafficsim.road.network.sampling.indicator.MeanSpeed" project="ots-road" 
     file="/ots-road/src/main/java/org/opentrafficsim/road/network/sampling/indicator/MeanSpeed.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="535" y="493"/>    
@@ -113,7 +103,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="12" language="java" name="org.opentrafficsim.road.network.sampling.indicator.TotalTravelTime" 
+  <class id="11" language="java" name="org.opentrafficsim.road.network.sampling.indicator.TotalTravelTime" 
     project="ots-road" 
     file="/ots-road/src/main/java/org/opentrafficsim/road/network/sampling/indicator/TotalTravelTime.java" 
     binary="false" corner="BOTTOM_RIGHT">    
@@ -124,7 +114,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="13" language="java" name="org.opentrafficsim.road.network.sampling.meta.MetaDataOrigin" project="ots-road" 
+  <class id="12" language="java" name="org.opentrafficsim.road.network.sampling.meta.MetaDataOrigin" project="ots-road" 
     file="/ots-road/src/main/java/org/opentrafficsim/road/network/sampling/meta/MetaDataOrigin.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="624" y="163"/>    
@@ -134,7 +124,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="14" language="java" name="org.opentrafficsim.road.network.sampling.Trajectory" project="ots-road" 
+  <class id="13" language="java" name="org.opentrafficsim.road.network.sampling.Trajectory" project="ots-road" 
     file="/ots-road/src/main/java/org/opentrafficsim/road/network/sampling/Trajectory.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="274" y="527"/>    
@@ -144,94 +134,94 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <association id="15">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="16" name="trajectories">        
+  <association id="14">    
+    <end type="SOURCE" refId="10" navigable="false">      
+      <attribute id="15" name="travelDistance">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="17" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="14" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="18">    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="7"/>  
-  </generalization>  
-  <association id="19">    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="20" name="trajectories">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="21" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="22">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="23" name="sampling">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="24" minimum="0" maximum="1">        
+      <multiplicity id="16" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="9" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="25">    
-    <end type="SOURCE" refId="11" navigable="false">      
-      <attribute id="26" name="travelTime">        
+  <generalization id="17">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="6"/>  
+  </generalization>  
+  <association id="18">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="19" name="sampling">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="27" minimum="0" maximum="1">        
+      <multiplicity id="20" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="12" navigable="true"/>    
+    <end type="TARGET" refId="8" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="28">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="7"/>  
+  <generalization id="21">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="6"/>  
   </generalization>  
-  <association id="29">    
-    <end type="SOURCE" refId="11" navigable="false">      
-      <attribute id="30" name="travelDistance">        
+  <generalization id="22">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="6"/>  
+  </generalization>  
+  <association id="23">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="24" name="trajectories">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="31" minimum="0" maximum="1">        
+      <multiplicity id="25" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
+    <end type="TARGET" refId="13" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="26">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="27" name="trajectories">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="28" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="29">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="30" name="spaceTimeRegions">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="31" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <generalization id="32">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="7"/>  
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="6"/>  
   </generalization>  
   <association id="33">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="34" name="spaceTimeRegions">        
+    <end type="SOURCE" refId="10" navigable="false">      
+      <attribute id="34" name="travelTime">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="35" minimum="0" maximum="2147483647">        
+      <multiplicity id="35" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
+    <end type="TARGET" refId="11" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="36">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="7"/>  
-  </generalization>  
   <classifier-display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
     <attributes public="false" package="false" protected="false" private="false" static="false"/>    

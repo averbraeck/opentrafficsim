@@ -6,10 +6,11 @@ import java.util.Set;
 
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.sampling.CrossSection;
-import org.opentrafficsim.road.network.sampling.Trajectories;
+import org.opentrafficsim.road.network.sampling.TrajectoryGroup;
 import org.opentrafficsim.road.network.sampling.TrajectoryAcceptList;
 
 /**
+ * Accepts trajectories that have passed all cross sections as defined in a query.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -40,7 +41,7 @@ public class MetaDataCrossSections extends MetaDataType<CrossSection>
         // Loop over trajectoryList/trajectoriesList combo
         for (int i = 0; i < trajectoryAcceptList.size(); i++)
         {
-            Trajectories trajectories = trajectoryAcceptList.getTrajectories(i);
+            TrajectoryGroup trajectoryGroup = trajectoryAcceptList.getTrajectoryGroup(i);
             // Loop over cross sections
             Iterator<CrossSection> crossSectionIterator = querySet.iterator();
             while (crossSectionIterator.hasNext())
@@ -52,8 +53,8 @@ public class MetaDataCrossSections extends MetaDataType<CrossSection>
                 {
                     DirectedLanePosition directedLanePosition = directedLanePositionIterator.next();
                     // If Trajectories is of same lane and direction, check position
-                    if (trajectories.getLaneDirection().getLane().equals(directedLanePosition.getLane())
-                            && trajectories.getLaneDirection().getDirection().equals(directedLanePosition.getGtuDirection()))
+                    if (trajectoryGroup.getLaneDirection().getLane().equals(directedLanePosition.getLane())
+                            && trajectoryGroup.getLaneDirection().getDirection().equals(directedLanePosition.getGtuDirection()))
                     {
                         double position = directedLanePosition.getPosition().si;
                         float[] x = trajectoryAcceptList.getTrajectory(i).getX();
