@@ -169,4 +169,14 @@ public class TrajectoryAcceptList
         return this.trajectoryMap.get(trajectory);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "TrajectoryAcceptList [gtuId=" + this.gtuId + ", trajectoryList=" + this.trajectoryList + ", trajectoriesList="
+                + this.trajectoriesList + ", trajectoryMap=" + this.trajectoryMap + "]";
+    }
+    
+    
+
 }

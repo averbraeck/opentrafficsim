@@ -55,7 +55,7 @@ public class SimpleReportingSensor extends AbstractSensor
     @Override
     public final void triggerResponse(final LaneBasedGTU gtu)
     {
-        System.out.println(this + " triggered by " + getPositionType().getName() + " of " + gtu);
+        //System.out.println(this + " triggered by " + getPositionType().getName() + " of " + gtu);
     }
 
     /** {@inheritDoc} */

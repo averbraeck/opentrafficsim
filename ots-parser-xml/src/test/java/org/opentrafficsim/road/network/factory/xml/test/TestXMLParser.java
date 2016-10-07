@@ -12,9 +12,13 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -24,9 +28,17 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.gtu.strategical.od.ODMatrixTrips;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.factory.xml.test.TestXMLParser.WGS84ToRDNewTransform.Coords;
+import org.opentrafficsim.road.network.sampling.Query;
+import org.opentrafficsim.road.network.sampling.Sampling;
+import org.opentrafficsim.road.network.sampling.indicator.MeanSpeed;
+import org.opentrafficsim.road.network.sampling.indicator.MeanTravelTime;
+import org.opentrafficsim.road.network.sampling.indicator.MeanTripLength;
+import org.opentrafficsim.road.network.sampling.indicator.TotalDelay;
+import org.opentrafficsim.road.network.sampling.indicator.TotalNumberOfStops;
+import org.opentrafficsim.road.network.sampling.indicator.TotalTravelDistance;
+import org.opentrafficsim.road.network.sampling.indicator.TotalTravelTime;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
@@ -169,6 +181,8 @@ public class TestXMLParser extends AbstractWrappableAnimation
                 network = nlp.build(url);
                 // ODMatrixTrips matrix = N201ODfactory.get(network);
                 // N201ODfactory.makeGeneratorsFromOD(network, matrix, this.simulator);
+                Query query = N201ODfactory.getQuery(network, new Sampling(), this.simulator);
+                scheduleKpiEvent(30.0, this.simulator, query);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
                     | OTSGeometryException exception)
@@ -185,7 +199,6 @@ public class TestXMLParser extends AbstractWrappableAnimation
         /** {@inheritDoc} */
         @Override
         public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-
         {
             return this.simulator;
         }
@@ -197,6 +210,46 @@ public class TestXMLParser extends AbstractWrappableAnimation
             return "TestXMLModel [simulator=" + this.simulator + "]";
         }
 
+    }
+    
+    TotalTravelDistance totalTravelDistance  = new TotalTravelDistance();
+    TotalTravelTime totalTravelTime  = new TotalTravelTime();
+    MeanSpeed meanSpeed = new MeanSpeed(this.totalTravelDistance, this.totalTravelTime);
+    MeanTravelTime meanTravelTime = new MeanTravelTime(this.meanSpeed);
+    MeanTripLength meanTripLength = new MeanTripLength();
+    TotalDelay totalDelay = new TotalDelay(new Speed(80.0, SpeedUnit.KM_PER_HOUR));
+    TotalNumberOfStops totalNumberOfStops = new TotalNumberOfStops();
+    
+    public void publishKpis(double time, final OTSDEVSSimulatorInterface simulator, final Query query)
+    {
+        Length tdist = this.totalTravelDistance.getValue(query, new Duration(time, TimeUnit.SI));
+        Duration ttt = this.totalTravelTime.getValue(query, new Duration(time, TimeUnit.SI));
+        Speed ms = this.meanSpeed.getValue(query, new Duration(time, TimeUnit.SI));
+        Duration mtt = this.meanTravelTime.getValue(query, new Duration(time, TimeUnit.SI));
+        Length mtl = this.meanTripLength.getValue(query, new Duration(time, TimeUnit.SI));
+        Duration tdel = this.totalDelay.getValue(query, new Duration(time, TimeUnit.SI));
+        Dimensionless nos = this.totalNumberOfStops.getValue(query, new Duration(time, TimeUnit.SI));
+        System.out.println("===== @time " + time + " s =====");
+        System.out.println("Total distance " + tdist);
+        System.out.println("Total travel time " + ttt);
+        System.out.println("Mean speed " + ms);
+        System.out.println("Mean travel time " + mtt);
+        System.out.println("Mean trip length " + mtl);
+        System.out.println("Total delay " + tdel);
+        System.out.println("Number of stops " + nos);
+        scheduleKpiEvent(time + 30, simulator, query);
+    }
+    
+    public void scheduleKpiEvent(double time, final OTSDEVSSimulatorInterface simulator, final Query query) 
+    {
+        try
+        {
+            simulator.scheduleEventAbs(new Time(time, TimeUnit.SI), this, this, "publishKpis", new Object[]{time, simulator, query});
+        }
+        catch (SimRuntimeException exception)
+        {
+            throw new RuntimeException("Cannot schedule KPI event.", exception);
+        }
     }
     
     /**

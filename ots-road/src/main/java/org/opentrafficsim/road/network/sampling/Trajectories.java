@@ -171,4 +171,14 @@ public class Trajectories
         return this.laneDirection;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "Trajectories [startTime=" + this.startTime + ", minLength=" + this.minLength + ", maxLength=" + this.maxLength
+                + ", laneDirection=" + this.laneDirection + ", trajectories=" + this.trajectories + "]";
+    }
+
+    
+    
 }

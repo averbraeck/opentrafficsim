@@ -214,10 +214,11 @@ public class N201ODfactory
      */
     public static Query getQuery(final OTSNetwork network, final Sampling sampling, final OTSDEVSSimulatorInterface simulator)
     {
-        String[] southBound = new String[] { "L1a", "L2a", "L3a4a", "L5a", "L6a", "L7a", "L8a9a", "L10a11a", "L12a", "L13a14a",
-                "L15a16a", "L17a", "L18a19a", "L20a21a", "L22a", "L23a24a", "L25a", "L26a", "L27a", "L28a29a", "L30a", "L31a",
-                "L32a", "L33a", "L34a", "L35a", "L36a", "L37a", "L38a", "L39a", "L40a", "L41a", "L42a", "L43a", "L44a", "L45a",
-                "L46a", "L47a48a", "L49a" };
+//        String[] southBound = new String[] { "L1a", "L2a", "L3a4a", "L5a", "L6a", "L7a", "L8a9a", "L10a11a", "L12a", "L13a14a",
+//                "L15a16a", "L17a", "L18a19a", "L20a21a", "L22a", "L23a24a", "L25a", "L26a", "L27a", "L28a29a", "L30a", "L31a",
+//                "L32a", "L33a", "L34a", "L35a", "L36a", "L37a", "L38a", "L39a", "L40a", "L41a", "L42a", "L43a", "L44a", "L45a",
+//                "L46a", "L47a48a", "L49a" };
+        String[] southBound = new String[] { "L2a" };
         String[] northBound = new String[] { "L49b", "L48b47b", "L46b", "L45b", "L44b", "L43b", "L42b", "L41b", "L40b", "L39b",
                 "L38b", "L37b", "L36b", "L35b", "L34b", "L33b", "L32b", "L31b", "L30b", "L29b28b", "L27b", "L26b", "L25b",
                 "L24b23b", "L22b21b", "L20b", "L19b18b", "L17b16b", "L15b", "L14b13b", "L12b", "L11b", "L10b", "L9b8b", "L7b",
@@ -225,7 +226,7 @@ public class N201ODfactory
         boolean connected = false;
         Query query = new Query(sampling, "N201 both directions", connected, new MetaDataSet(),
                 new Frequency(2.0, FrequencyUnit.PER_MINUTE));
-        addSpaceTimeRegions(query, network, northBound, simulator);
+        //addSpaceTimeRegions(query, network, northBound, simulator);
         addSpaceTimeRegions(query, network, southBound, simulator);
         return query;
     }
