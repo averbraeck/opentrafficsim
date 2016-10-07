@@ -30,10 +30,12 @@
       <modules>
         <module>../ots-core</module>
         <module>../ots-road</module>
+        <module>../ots-trafficcontrol</module>
         <module>../ots-rail</module>
         <module>../ots-water</module>
         <module>../ots-demo</module>
         <module>../ots-imb</module>
+        <module>../ots-parser-xml</module>
         <module>../ots-parser-opendrive</module>
         <module>../ots-parser-osm</module>
         <module>../ots-parser-shape</module>
@@ -708,6 +710,12 @@
         <version>${ots.version}</version>
       </dependency>
 
+       <dependency>
+        <groupId>opentrafficsim</groupId>
+        <artifactId>ots-trafficcontrol</artifactId>
+        <version>${ots.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>opentrafficsim</groupId>
         <artifactId>ots-rail</artifactId>
@@ -717,6 +725,12 @@
       <dependency>
         <groupId>opentrafficsim</groupId>
         <artifactId>ots-water</artifactId>
+        <version>${ots.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>opentrafficsim</groupId>
+        <artifactId>ots-parser-xml</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
