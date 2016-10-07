@@ -38,6 +38,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+
 import org.djunits.locale.DefaultLocale;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -61,8 +63,6 @@ import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionPro
 import org.opentrafficsim.simulationengine.properties.PropertyException;
 import org.opentrafficsim.simulationengine.properties.SelectionProperty;
 import org.opentrafficsim.simulationengine.properties.StringProperty;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * Several demos in one application.
@@ -137,6 +137,8 @@ public class IMBSuperDemo implements UNITS
         mainPanel.setPreferredSize(new Dimension(800, 800));
         final ArrayList<WrappableAnimation> demonstrations = new ArrayList<>();
         demonstrations.add(new CircularRoadIMB());
+        demonstrations.add(new N201IMB());
+
         // final JPanel left = new LabeledPanel("Simulation Settings");
         this.simulationSelection = new LabeledPanel("Network");
         this.simulationSelection.setLayout(new GridBagLayout());
@@ -225,8 +227,7 @@ public class IMBSuperDemo implements UNITS
                     simulation.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND),
                             IMBSuperDemo.this.activeProperties, null, false);
                 }
-                catch (SimRuntimeException | NetworkException | NamingException | OTSSimulationException
-                        | PropertyException exception)
+                catch (SimRuntimeException | NetworkException | NamingException | OTSSimulationException | PropertyException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -259,8 +260,9 @@ public class IMBSuperDemo implements UNITS
         this.propertyPanel.removeAll();
         try
         {
-            CompoundProperty simulationSettings = new CompoundProperty("SimulationSettings", "Simulation settings",
-                    "Select the simulation network and traffic composition", null, false, 0);
+            CompoundProperty simulationSettings =
+                    new CompoundProperty("SimulationSettings", "Simulation settings",
+                            "Select the simulation network and traffic composition", null, false, 0);
             /*
              * This is ugly, but it gets the job done... Insert a dummy property at the top and later replace the property
              * editor for the dummy property by the simulationSelection JPanel.
@@ -292,8 +294,9 @@ public class IMBSuperDemo implements UNITS
                 simulationSettings.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
                         "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
                         new Double[] { 0.8, 0.2 }, false, 5));
-                CompoundProperty modelSelection = new CompoundProperty("ModelSelection", "Model selection",
-                        "Modeling specific settings", null, false, 300);
+                CompoundProperty modelSelection =
+                        new CompoundProperty("ModelSelection", "Model selection", "Modeling specific settings", null, false,
+                                300);
                 modelSelection.add(new SelectionProperty("SimulationScale", "Simulation scale",
                         "Level of detail of the simulation", new String[] { "Micro", "Macro", "Meta" }, 0, true, 0));
                 modelSelection.add(new SelectionProperty("CarFollowingModel", "Car following model",
@@ -301,13 +304,13 @@ public class IMBSuperDemo implements UNITS
                                 + "the acceleration that a vehicle will make taking into account "
                                 + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
                                 + "curvature of the road) capabilities of the vehicle and personality "
-                                + "of the driver.</html>",
-                        new String[] { "IDM", "IDM+" }, 1, false, 1));
-                modelSelection.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car", new Acceleration(1.0, METER_PER_SECOND_2),
-                        new Acceleration(1.5, METER_PER_SECOND_2), new Length(2.0, METER), new Duration(1.0, SECOND), 2));
-                modelSelection.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck",
-                        new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2),
-                        new Length(2.0, METER), new Duration(1.0, SECOND), 3));
+                                + "of the driver.</html>", new String[] { "IDM", "IDM+" }, 1, false, 1));
+                modelSelection.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car",
+                        new Acceleration(1.0, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length(2.0,
+                                METER), new Duration(1.0, SECOND), 2));
+                modelSelection.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck", new Acceleration(0.5,
+                        METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER), new Duration(
+                        1.0, SECOND), 3));
                 properties.add(properties.size() > 0 ? 1 : 0, modelSelection);
             }
             properties.add(0, simulationSettings);
@@ -427,8 +430,9 @@ public class IMBSuperDemo implements UNITS
             slider.setMinimum(ip.getMinimumValue());
             slider.setValue(ip.getValue());
             slider.setPaintTicks(true);
-            final JLabel currentValue = new JLabel(
-                    String.format(DefaultLocale.getLocale(), ip.getFormatString(), ip.getValue()), SwingConstants.RIGHT);
+            final JLabel currentValue =
+                    new JLabel(String.format(DefaultLocale.getLocale(), ip.getFormatString(), ip.getValue()),
+                            SwingConstants.RIGHT);
             slider.addChangeListener(new ChangeListener()
             {
                 @Override
@@ -464,10 +468,11 @@ public class IMBSuperDemo implements UNITS
             final int useSteps = 1000;
             slider.setMaximum(useSteps);
             slider.setMinimum(0);
-            slider.setValue(
-                    (int) (useSteps * (cp.getValue() - cp.getMinimumValue()) / (cp.getMaximumValue() - cp.getMinimumValue())));
-            final JLabel currentValue = new JLabel(
-                    String.format(DefaultLocale.getLocale(), cp.getFormatString(), cp.getValue()), SwingConstants.RIGHT);
+            slider.setValue((int) (useSteps * (cp.getValue() - cp.getMinimumValue()) / (cp.getMaximumValue() - cp
+                    .getMinimumValue())));
+            final JLabel currentValue =
+                    new JLabel(String.format(DefaultLocale.getLocale(), cp.getFormatString(), cp.getValue()),
+                            SwingConstants.RIGHT);
             slider.addChangeListener(new ChangeListener()
             {
                 @Override
