@@ -29,7 +29,7 @@ public class TrajectoryAcceptList
     /** List of trajectory's. */
     private final List<Trajectory> trajectoryList = new ArrayList<>();
 
-    /** List of trajectories. */
+    /** List of trajectory groups. */
     private final List<TrajectoryGroup> trajectoryGroupList = new ArrayList<>();
 
     /** Map of trajectory's and acceptance boolean. */
@@ -46,9 +46,9 @@ public class TrajectoryAcceptList
     public final void addTrajectory(final Trajectory trajectory, final TrajectoryGroup trajectoryGroup)
     {
         Throw.whenNull(trajectory, "Trajectory may not be null.");
-        Throw.whenNull(trajectoryGroup, "Trajectories may not be null.");
+        Throw.whenNull(trajectoryGroup, "Trajectory group may not be null.");
         Throw.when(!trajectoryGroup.contains(trajectory), IllegalArgumentException.class,
-                "The trajectory should be contained within the trajectories.");
+                "The trajectory should be contained within the trajectory group.");
         Throw.when(this.gtuId != null && !this.gtuId.equals(trajectory.getGtuId()), IllegalArgumentException.class,
                 "Trajectories of different GTU's may not be in a single trajectory accept list.");
         this.gtuId = trajectory.getGtuId();

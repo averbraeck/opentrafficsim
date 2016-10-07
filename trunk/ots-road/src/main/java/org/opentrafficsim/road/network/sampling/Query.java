@@ -311,7 +311,7 @@ public final class Query
                 }
             }
         }
-        // Step 3) filter Trajectories
+        // Step 3) filter trajectories
         List<TrajectoryGroup> out = new ArrayList<>();
         for (TrajectoryGroup full : trajectoryGroupList)
         {
