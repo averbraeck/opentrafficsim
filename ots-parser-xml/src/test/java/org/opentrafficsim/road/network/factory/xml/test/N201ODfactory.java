@@ -103,7 +103,7 @@ public class N201ODfactory
         // loop matrix
         // 2*0 because the through movement on the IJweg is not incorporated
         int[][] od = new int[][] { { 0, 502, 309, 35, 285, 33, 218 }, { 331, 0, 229, 26, 212, 25, 162 },
-                { 150, 89, 0, 12, 98, 11, 75 }, { 29, 17, 14, 0, 30, 4, 23 }, { 30, 18, 14, 2*0, 32, 4, 25 },
+                { 150, 89, 0, 12, 98, 11, 75 }, { 29, 17, 14, 0, 30, 4, 23 }, { 30, 18, 14, 2 * 0, 32, 4, 25 },
                 { 296, 175, 143, 18, 0, 21, 136 }, { 67, 40, 32, 4, 63, 0, 787 }, { 373, 221, 180, 22, 350, 815, 0 } };
         for (int o = 0; o < origins.size(); o++)
         {
@@ -223,7 +223,8 @@ public class N201ODfactory
                 "L24b23b", "L22b21b", "L20b", "L19b18b", "L17b16b", "L15b", "L14b13b", "L12b", "L11b", "L10b", "L9b8b", "L7b",
                 "L6b", "L5b", "L4b3b", "L2b", "L1b" };
         boolean connected = false;
-        Query query = new Query(sampling, "N201 both directions", connected, new MetaDataSet(), new Frequency(2.0, FrequencyUnit.PER_MINUTE));
+        Query query = new Query(sampling, "N201 both directions", connected, new MetaDataSet(),
+                new Frequency(2.0, FrequencyUnit.PER_MINUTE));
         addSpaceTimeRegions(query, network, northBound, simulator);
         addSpaceTimeRegions(query, network, southBound, simulator);
         return query;
@@ -240,8 +241,7 @@ public class N201ODfactory
     {
         for (String link : links)
         {
-            // In N201 demo, all links are DIR_MINUS
-            query.addSpaceTimeRegionLink(simulator, (CrossSectionLink) network.getLink(link), GTUDirectionality.DIR_MINUS,
+            query.addSpaceTimeRegionLink(simulator, (CrossSectionLink) network.getLink(link), GTUDirectionality.DIR_PLUS,
                     Length.ZERO, network.getLink(link).getLength(), Duration.ZERO, new Duration(1.0, TimeUnit.HOUR));
         }
     }
