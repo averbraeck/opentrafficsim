@@ -163,7 +163,7 @@ public abstract class AbstractOTSPlot extends JFrame
     }
     
     /**
-     * @return path List<Lane> the path
+     * @return path List&lt;Lane&gt; the path
      */
     public final ImmutableList<Lane> getPath()
     {

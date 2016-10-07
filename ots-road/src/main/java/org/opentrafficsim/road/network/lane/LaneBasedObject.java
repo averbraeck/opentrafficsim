@@ -8,7 +8,7 @@ import org.opentrafficsim.core.object.ObjectInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
- * Objects that can be encountered on a Lane like conflict areas, GTUs, traffic lights, stop lines, etc. <br />
+ * Objects that can be encountered on a Lane like conflict areas, GTUs, traffic lights, stop lines, etc.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
