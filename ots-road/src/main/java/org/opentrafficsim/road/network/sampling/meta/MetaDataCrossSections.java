@@ -38,7 +38,7 @@ public class MetaDataCrossSections extends MetaDataType<CrossSection>
     public final void accept(final TrajectoryAcceptList trajectoryAcceptList, final Set<CrossSection> querySet)
     {
         Set<CrossSection> crossedCrossSections = new HashSet<>();
-        // Loop over trajectoryList/trajectoriesList combo
+        // Loop over trajectoryList/trajectoryGroupList combo
         for (int i = 0; i < trajectoryAcceptList.size(); i++)
         {
             TrajectoryGroup trajectoryGroup = trajectoryAcceptList.getTrajectoryGroup(i);
