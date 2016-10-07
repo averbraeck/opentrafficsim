@@ -167,7 +167,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
             {
                 fd =
                         new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getSI() + "m", new Duration(1,
-                                MINUTE), this.model.getLane(), detectorLocation);
+                                MINUTE), this.model.getLane(), detectorLocation, simulator);
                 fd.setTitle("Density Contour Graph");
                 fd.setExtendedState(Frame.MAXIMIZED_BOTH);
                 this.model.getFundamentalDiagrams().add(fd);
