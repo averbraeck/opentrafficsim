@@ -59,4 +59,50 @@ public class LaneDirection implements Serializable
         return "[" + this.lane + (this.direction.isPlus() ? " +]" : " -]");
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.direction == null) ? 0 : this.direction.hashCode());
+        result = prime * result + ((this.lane == null) ? 0 : this.lane.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean equals(final Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        LaneDirection other = (LaneDirection) obj;
+        if (this.direction != other.direction)
+        {
+            return false;
+        }
+        if (this.lane == null)
+        {
+            if (other.lane != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.lane.equals(other.lane))
+        {
+            return false;
+        }
+        return true;
+    }
+    
 }

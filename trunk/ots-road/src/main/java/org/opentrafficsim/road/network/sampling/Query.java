@@ -15,7 +15,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.Throw;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.immutablecollections.ImmutableIterator;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -193,7 +193,7 @@ public final class Query
      * @param tStart start time
      * @param tEnd end time
      */
-    public void addSpaceTimeRegionLink(final OTSSimulatorInterface simulator, final CrossSectionLink link,
+    public void addSpaceTimeRegionLink(final OTSDEVSSimulatorInterface simulator, final CrossSectionLink link,
             final GTUDirectionality direction, final Length xStart, final Length xEnd, final Duration tStart,
             final Duration tEnd)
     {
@@ -214,7 +214,7 @@ public final class Query
      * @param tStart start time
      * @param tEnd end time
      */
-    public void addSpaceTimeRegion(final OTSSimulatorInterface simulator, final LaneDirection laneDirection,
+    public void addSpaceTimeRegion(final OTSDEVSSimulatorInterface simulator, final LaneDirection laneDirection,
             final Length xStart, final Length xEnd, final Duration tStart, final Duration tEnd)
     {
         SpaceTimeRegion spaceTimeRegion = new SpaceTimeRegion(laneDirection, xStart, xEnd, tStart, tEnd);
