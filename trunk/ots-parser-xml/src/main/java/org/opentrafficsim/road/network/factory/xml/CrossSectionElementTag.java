@@ -24,7 +24,10 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 /**
- * CrossSectionElement tags as part of the ROADLAYOUT tag. {@code
+ * CrossSectionElement tags as part of the ROADLAYOUT tag.
+ * 
+ * <pre>
+ * {@code
   <xsd:element name="ROADLAYOUT">
     <xsd:complexType>
       <xsd:sequence>
