@@ -63,4 +63,12 @@ public abstract class MetaDataType<T>
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "MetaDataType [id=" + this.id + "]";
+    }
+
 }

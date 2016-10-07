@@ -97,4 +97,12 @@ public class MetaData
         return new ImmutableIterator<>(this.metaDataMap.entrySet().iterator());
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "MetaData [metaDataMap=" + this.metaDataMap + "]";
+    }
+
 }

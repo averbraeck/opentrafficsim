@@ -51,4 +51,12 @@ public class MeanTravelTime extends AbstractIndicator<TimeUnit, Duration>
         return cumulLength.divideBy(this.meanSpeed.getValue(query, startTime, endTime));
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "MeanTravelTime [meanSpeed=" + this.meanSpeed + "]";
+    }
+
 }

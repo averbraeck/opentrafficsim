@@ -23,4 +23,12 @@ public class MetaDataGTUType extends MetaDataType<GTUType>
         super(id);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "MetaDataGTUType: " + super.toString();
+    }
+
 }

@@ -185,4 +185,14 @@ public class TrafficLightControllerFixedDuration implements TrafficLightControll
         this.clearanceDuration = clearanceDuration;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "TrafficLightControllerFixedDuration [id=" + this.id + ", phases=" + this.phases + ", yellowDurations="
+                + this.yellowDurations + ", greenDurations=" + this.greenDurations + ", currentPhase=" + this.currentPhase
+                + ", currentColor=" + this.currentColor + ", clearanceDuration=" + this.clearanceDuration + "]";
+    }
+
 }

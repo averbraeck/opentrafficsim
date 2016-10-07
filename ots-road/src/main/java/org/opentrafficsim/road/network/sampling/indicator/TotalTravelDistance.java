@@ -35,4 +35,12 @@ public class TotalTravelDistance extends AbstractIndicator<LengthUnit, Length>
         return sum;
     }
 
+    @SuppressWarnings("checkstyle:designforextension")
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "TotalTravelDistance []";
+    }
+
 }

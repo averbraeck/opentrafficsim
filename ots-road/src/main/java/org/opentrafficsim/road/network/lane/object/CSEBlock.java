@@ -43,4 +43,13 @@ public class CSEBlock extends AbstractCSEObject
             new Length(0.5, LengthUnit.METER), cse.getWidth(position).multiplyBy(0.8), new Length(0.5,
                 LengthUnit.METER)), new Length(1.0, LengthUnit.METER));
     }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "CSEBlock: " + super.toString();
+    }
+    
 }

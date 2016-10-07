@@ -454,4 +454,13 @@ public final class Query
         return true;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "Query [uniqueId=" + this.uniqueId + ", sampling=" + this.sampling + ", description=" + this.description
+                + ", connected=" + this.connected + ", metaDataSet=" + this.metaDataSet + ", updateFrequency="
+                + this.updateFrequency + ", interval=" + this.interval + ", spaceTimeRegions=" + this.spaceTimeRegions + "]";
+    }
+
 }

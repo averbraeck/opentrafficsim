@@ -74,4 +74,12 @@ public class MetaDataCrossSections extends MetaDataType<CrossSection>
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "MetaDataCrossSections: " + super.toString();
+    }
+
 }

@@ -40,4 +40,12 @@ public class MeanTripLength extends AbstractIndicator<LengthUnit, Length>
         return sum.divideBy(gtuIds.size());
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "MeanTripLength []";
+    }
+
 }

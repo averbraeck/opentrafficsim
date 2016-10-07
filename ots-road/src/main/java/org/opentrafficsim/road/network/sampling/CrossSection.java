@@ -59,5 +59,13 @@ public class CrossSection implements Serializable
     {
         return new ImmutableIterator<>(this.directedLanePositions.iterator());
     }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "CrossSection [directedLanePositions=" + this.directedLanePositions + "]";
+    }
     
 }

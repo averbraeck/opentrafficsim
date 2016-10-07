@@ -22,5 +22,13 @@ public class MetaDataDestination extends MetaDataType<Node>
     {
         super(id);
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "MetaDataDestination " + super.toString();
+    }
 
 }

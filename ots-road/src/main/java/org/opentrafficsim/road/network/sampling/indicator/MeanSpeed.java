@@ -42,4 +42,12 @@ public class MeanSpeed extends AbstractIndicator<SpeedUnit, Speed>
             this.travelTime.getValue(query, startTime, endTime));
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "MeanSpeed [travelDistance=" + this.travelDistance + ", travelTime=" + this.travelTime + "]";
+    }
+
 }

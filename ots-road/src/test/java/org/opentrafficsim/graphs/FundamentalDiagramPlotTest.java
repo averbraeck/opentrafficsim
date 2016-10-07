@@ -28,6 +28,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.jfree.chart.ChartPanel;
 import org.junit.Test;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -66,6 +67,9 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
 
     /** The network. */
     private OTSNetwork network = new OTSNetwork("network");
+    
+    /** the simulator. */
+    private OTSDEVSSimulatorInterface simulator;
 
     /**
      * Test the FundamentalDiagram.
@@ -75,6 +79,9 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
     @Test
     public final void fundamentalDiagramTest() throws Exception
     {
+        this.simulator =
+                new SimpleSimulator(new Time(0, SECOND), new Duration(0, SECOND), new Duration(1800, SECOND), this);
+
         Duration aggregationTime = new Duration(30, SECOND);
         Length position = new Length(123, METER);
         Length carPosition = new Length(122.5, METER);
@@ -83,7 +90,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         compatibility.add(gtuType);
         LaneType laneType = new LaneType("CarLane", compatibility);
         Lane lane = CarTest.makeLane(this.network, laneType);
-        FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime, lane, position);
+        FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime, lane, position, this.simulator);
         assertEquals("SeriesCount should match numberOfLanes", 1, fd.getSeriesCount());
         assertEquals("Position should match the supplied position", position.getSI(), fd.getPosition().getSI(), 0.0001);
         try
@@ -121,8 +128,6 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions.add(new DirectedLanePosition(lane, carPosition, GTUDirectionality.DIR_PLUS));
-        SimpleSimulator simulator =
-                new SimpleSimulator(new Time(0, SECOND), new Duration(0, SECOND), new Duration(1800, SECOND), this);
 
         // add a sink 100 meter before the end of the lane.
         lane.addSensor(new SinkSensor(lane, new Length(lane.getLength().getSI() - 100, METER), simulator), GTUType.ALL);
@@ -330,6 +335,9 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
     @Test
     public final void testHints() throws Exception
     {
+        this.simulator =
+                new SimpleSimulator(new Time(0, SECOND), new Duration(0, SECOND), new Duration(1800, SECOND), this);
+
         Duration aggregationTime = new Duration(30, SECOND);
         Length position = new Length(123, METER);
         Set<GTUType> compatibility = new HashSet<GTUType>();
@@ -337,7 +345,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         LaneType laneType = new LaneType("CarLane", compatibility);
         FundamentalDiagram fd =
                 new FundamentalDiagram("Fundamental Diagram", aggregationTime, CarTest.makeLane(this.network, laneType),
-                        position);
+                        position, this.simulator);
         // First get the panel that stores the result of updateHint (this is ugly)
         JLabel hintPanel = null;
         ChartPanel chartPanel = null;
@@ -431,7 +439,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
     public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
 
     {
-        return null;
+        return this.simulator;
     }
 
 }

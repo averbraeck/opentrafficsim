@@ -43,4 +43,12 @@ public class TotalNumberOfStops extends AbstractIndicator<DimensionlessUnit, Dim
         return new Dimensionless(sum, DimensionlessUnit.SI);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "TotalNumberOfStops []";
+    }
+
 }
