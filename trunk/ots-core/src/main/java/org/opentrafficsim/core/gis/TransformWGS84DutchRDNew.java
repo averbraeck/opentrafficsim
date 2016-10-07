@@ -18,7 +18,7 @@ import java.util.Locale;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author Gert-Jan Stolk
  **/
-public class TransformWGS84DutchRDNew
+public final class TransformWGS84DutchRDNew
 {
 
     /** Western boundary of the Dutch RD system. */
@@ -44,6 +44,12 @@ public class TransformWGS84DutchRDNew
 
     /** Northern boundary of the Dutch RD system. */
     private static final double RD_MAXIMUM_Y = 630000;
+
+    /** This class is a utility class and instances cannot be constructed. */
+    private TransformWGS84DutchRDNew()
+    {
+        // This class is a utility class and instances cannot be constructed. 
+    }
 
     /**
      * Convert from WGS84 to RD coordinates.

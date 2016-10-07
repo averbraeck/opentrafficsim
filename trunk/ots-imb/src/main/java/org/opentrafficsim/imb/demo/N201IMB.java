@@ -1,5 +1,6 @@
 package org.opentrafficsim.imb.demo;
 
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.io.IOException;
@@ -22,13 +23,13 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.gis.TransformWGS84DutchRDNew;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.OTSIMBConnector;
-import org.opentrafficsim.imb.demo.N201IMB.WGS84ToRDNewTransform.Coords;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.GTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.LaneGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.LinkGTUTransceiver;
@@ -181,10 +182,7 @@ public class N201IMB extends AbstractWrappableAnimation
         private OTSDEVSSimulatorInterface simulator;
 
         /** User settable properties. */
-        private ArrayList<AbstractProperty<?>> properties = null;
-
-        /** The GTUColorer for the generated vehicles. */
-        private final GTUColorer gtuColorer;
+        private ArrayList<AbstractProperty<?>> modelProperties = null;
 
         /** the network as created by the AbstractWrappableIMBAnimation. */
         private final OTSNetwork network;
@@ -193,15 +191,14 @@ public class N201IMB extends AbstractWrappableAnimation
         OTSIMBConnector imbConnector;
 
         /**
-         * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
+         * @param modelProperties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
          * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
          * @param network Network; the network
          */
-        N201Model(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer,
+        N201Model(final ArrayList<AbstractProperty<?>> modelProperties, final GTUColorer gtuColorer,
                 final OTSNetwork network)
         {
-            this.properties = properties;
-            this.gtuColorer = gtuColorer;
+            this.modelProperties = modelProperties;
             this.network = network;
         }
 
@@ -217,7 +214,7 @@ public class N201IMB extends AbstractWrappableAnimation
             try
             {
                 CompoundProperty imbSettings = null;
-                for (AbstractProperty<?> property : this.properties)
+                for (AbstractProperty<?> property : this.modelProperties)
                 {
                     if (property.getKey().equals(OTSIMBConnector.PROPERTY_KEY))
                     {
@@ -239,11 +236,8 @@ public class N201IMB extends AbstractWrappableAnimation
             {
                 throw new SimRuntimeException(exception);
             }
-            // URL url = URLResource.getResource("/PNH1.xml");
-            // URL url = URLResource.getResource("/offset-example.xml");
-            // URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
-            // URL url = URLResource.getResource("/straight-road-new-gtu-example_2.xml");
-            // URL url = URLResource.getResource("/Circuit.xml");
+            
+            // Stream to allow the xml-file to be retrievable from a JAR file 
             InputStream stream = URLResource.getResourceAsStream("/N201v8.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
@@ -285,7 +279,7 @@ public class N201IMB extends AbstractWrappableAnimation
         @Override
         public final String toString()
         {
-            return "TestXMLModel [simulator=" + this.simulator + "]";
+            return "N201Model [simulator=" + this.simulator + "]";
         }
 
     }
@@ -328,12 +322,12 @@ public class N201IMB extends AbstractWrappableAnimation
         {
             try
             {
-                Coords c = WGS84ToRDNewTransform.ellipswgs842rd(x, y);
-                return new double[] { c.x - this.dx, c.y - this.dy };
+                    Point2D c = TransformWGS84DutchRDNew.fromWGS84(x, y);
+                    return new double[] { c.getX() - this.dx, c.getY() - this.dy };
             }
             catch (Exception exception)
             {
-                exception.printStackTrace();
+                System.err.println(exception.getMessage());
                 return new double[] { 0, 0 };
             }
         }
@@ -346,107 +340,4 @@ public class N201IMB extends AbstractWrappableAnimation
         }
     }
     
-    /**
-     * <p>
-     * Copyright (c) 2011 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. The
-     * source code and binary code of this software is proprietary information of Delft University of Technology. Specific
-     * MathTransform for WGS84 WGS84 (EPSG:4326) to RD_new (EPSG:28992) conversions. Code based on C code by Peter Knoppers as
-     * applied <a href="http://www.regiolab-delft.nl/?q=node/36">here</a>, which is based on <a
-     * href="http://www.dekoepel.nl/pdf/Transformatieformules.pdf">this</a> paper.
-     * @author Gert-Jan Stolk
-     **/
-    public static class WGS84ToRDNewTransform
-    {
-
-        /** */
-        private static final long serialVersionUID = 20141017L;
-
-        //@formatter:off
-        private static final double r[][] = { /* p down, q right */
-            {  155000.00, 190094.945,   -0.008, -32.391, 0.0   , },
-            {     -0.705, -11832.228,    0.0  ,   0.608, 0.0   , },
-            {      0.0  ,   -114.221,    0.0  ,   0.148, 0.0   , },
-            {      0.0  ,      2.340,    0.0  ,   0.0  , 0.0   , },
-            {      0.0  ,      0.0  ,    0.0  ,   0.0  , 0.0   , }};
-        private static final double s[][] = { /* p down, q right */
-            { 463000.00 ,      0.433, 3638.893,   0.0  ,  0.092, },
-            { 309056.544,     -0.032, -157.984,   0.0  , -0.054, },
-            {     73.077,      0.0  ,   -6.439,   0.0  ,  0.0  , },
-            {     59.788,      0.0  ,    0.0  ,   0.0  ,  0.0  , },
-            {      0.0  ,      0.0  ,    0.0  ,   0.0  ,  0.0  , }};
-        //@formatter:on
-
-        public static void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts) throws Exception
-        {
-            int offsetDelta = dstOff - srcOff;
-            for (int i = srcOff; i < srcOff + numPts && i + 1 < srcPts.length && i + offsetDelta + 1 < dstPts.length; i += 2)
-            {
-                Coords transformedCoords = ellipswgs842rd(srcPts[i], srcPts[i + 1]);
-                dstPts[i + offsetDelta] = transformedCoords.x;
-                dstPts[i + offsetDelta + 1] = transformedCoords.y;
-            }
-        }
-
-        private static Coords ellipswgs842rd(double EW, double NS)
-        {
-            Coords result = new Coords(0, 0);
-            int p;
-            double pown = 1;
-            double dn = 0.36 * (NS - 52.15517440);
-            double de = 0.36 * (EW - 5.38720621);
-            if (NS <= 50 || NS >= 54 || EW <= 3 || (EW >= 8))
-            {
-                System.err.println("Error: ellipswgs842rd input out of range (" + EW + ", " + NS + ")");
-            }
-
-            for (p = 0; p < 5; p++)
-            {
-                double powe = 1;
-                int q;
-
-                for (q = 0; q < 5; q++)
-                {
-                    result.x += r[p][q] * powe * pown;
-                    result.y += s[p][q] * powe * pown;
-                    powe *= de;
-                }
-                pown *= dn;
-            }
-            return result;
-        }
-
-        /**
-         * Coordinate pair.
-         */
-        static class Coords implements Serializable
-        {
-            /** */
-            private static final long serialVersionUID = 20141017L;
-
-            public double x, y;
-
-            public Coords(double x, double y)
-            {
-                this.x = x;
-                this.y = y;
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public final String toString()
-            {
-                return "Coords [x=" + this.x + ", y=" + this.y + "]";
-            }
-
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public final String toString()
-        {
-            return "WGS84ToRDNewTransform []";
-        }
-
-    }
-
 }
