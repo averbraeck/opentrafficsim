@@ -2,6 +2,7 @@ package org.opentrafficsim.road.network.sampling;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 
 /**
@@ -38,10 +39,12 @@ public class SpaceTimeRegion
      * @param endPosition end position
      * @param startTime start time
      * @param endTime end time
+     * @throws IllegalArgumentException if start time is larger than end time
      */
     SpaceTimeRegion(final LaneDirection laneDirection, final Length startPosition, final Length endPosition,
         final Duration startTime, final Duration endTime)
     {
+        Throw.when(endTime.lt(startTime), IllegalArgumentException.class, "Start time is larger than end time.");
         this.laneDirection = laneDirection;
         this.startPosition = startPosition;
         this.endPosition = endPosition;
@@ -87,6 +90,95 @@ public class SpaceTimeRegion
     public final Duration getEndTime()
     {
         return this.endTime;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.endPosition == null) ? 0 : this.endPosition.hashCode());
+        result = prime * result + ((this.endTime == null) ? 0 : this.endTime.hashCode());
+        result = prime * result + ((this.laneDirection == null) ? 0 : this.laneDirection.hashCode());
+        result = prime * result + ((this.startPosition == null) ? 0 : this.startPosition.hashCode());
+        result = prime * result + ((this.startTime == null) ? 0 : this.startTime.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean equals(final Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        SpaceTimeRegion other = (SpaceTimeRegion) obj;
+        if (this.endPosition == null)
+        {
+            if (other.endPosition != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.endPosition.equals(other.endPosition))
+        {
+            return false;
+        }
+        if (this.endTime == null)
+        {
+            if (other.endTime != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.endTime.equals(other.endTime))
+        {
+            return false;
+        }
+        if (this.laneDirection == null)
+        {
+            if (other.laneDirection != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.laneDirection.equals(other.laneDirection))
+        {
+            return false;
+        }
+        if (this.startPosition == null)
+        {
+            if (other.startPosition != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.startPosition.equals(other.startPosition))
+        {
+            return false;
+        }
+        if (this.startTime == null)
+        {
+            if (other.startTime != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.startTime.equals(other.startTime))
+        {
+            return false;
+        }
+        return true;
     }
 
     /** {@inheritDoc} */

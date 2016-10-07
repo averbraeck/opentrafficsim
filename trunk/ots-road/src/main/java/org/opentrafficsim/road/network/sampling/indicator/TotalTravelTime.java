@@ -3,7 +3,7 @@ package org.opentrafficsim.road.network.sampling.indicator;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.road.network.sampling.Query;
-import org.opentrafficsim.road.network.sampling.Trajectories;
+import org.opentrafficsim.road.network.sampling.TrajectoryGroup;
 import org.opentrafficsim.road.network.sampling.Trajectory;
 
 /**
@@ -24,9 +24,9 @@ public class TotalTravelTime extends AbstractIndicator<TimeUnit, Duration>
     public final Duration calculate(final Query query, final Duration startTime, final Duration endTime)
     {
         Duration sum = Duration.ZERO;
-        for (Trajectories trajectories : query.getTrajectories(startTime, endTime))
+        for (TrajectoryGroup trajectoryGroup : query.getTrajectoryGroups(startTime, endTime))
         {
-            for (Trajectory trajectory : trajectories.getTrajectorySet())
+            for (Trajectory trajectory : trajectoryGroup.getTrajectories())
             {
                 sum = sum.plus(trajectory.getTotalDuration());
             }

@@ -4,7 +4,7 @@ import org.djunits.unit.DimensionlessUnit;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.road.network.sampling.Query;
-import org.opentrafficsim.road.network.sampling.Trajectories;
+import org.opentrafficsim.road.network.sampling.TrajectoryGroup;
 import org.opentrafficsim.road.network.sampling.Trajectory;
 
 /**
@@ -17,7 +17,6 @@ import org.opentrafficsim.road.network.sampling.Trajectory;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-// TODO stops on longitudinal lane edges
 public class TotalNumberOfStops extends AbstractIndicator<DimensionlessUnit, Dimensionless>
 {
 
@@ -26,9 +25,9 @@ public class TotalNumberOfStops extends AbstractIndicator<DimensionlessUnit, Dim
     public final Dimensionless calculate(final Query query, final Duration startTime, final Duration endTime)
     {
         int sum = 0;
-        for (Trajectories trajectories : query.getTrajectories(startTime, endTime))
+        for (TrajectoryGroup trajectoryGroup : query.getTrajectoryGroups(startTime, endTime))
         {
-            for (Trajectory trajectory : trajectories.getTrajectorySet())
+            for (Trajectory trajectory : trajectoryGroup.getTrajectories())
             {
                 float[] v = trajectory.getV();
                 for (int i = 1; i < v.length; i++)

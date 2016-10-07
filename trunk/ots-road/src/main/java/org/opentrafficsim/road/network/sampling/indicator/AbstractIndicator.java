@@ -7,8 +7,8 @@ import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.road.network.sampling.Query;
 
 /**
- * Abstract implementation of {@code Indicator} which stores the last calculated value and returns it in {@code getValue()} for
- * an equal query, start time and end time.
+ * Abstract indicator which stores the last calculated value and returns it in {@code getValue()} for an equal query, start time
+ * and end time.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -20,9 +20,9 @@ import org.opentrafficsim.road.network.sampling.Query;
  * @param <U> class of the unit
  * @param <T> class of the value
  */
-//TODO standard deviation, percentiles, min/max
-//XXX think about using Tally and Persistent for some of the indicators. Maybe extend Indicator to TallyIndicator?
-//XXX Persistent is already a time-weighed indicator that calculates mean, std, min, max, and confidence interval.
+// TODO standard deviation, percentiles, min/max
+// XXX think about using Tally and Persistent for some of the indicators. Maybe extend Indicator to TallyIndicator?
+// XXX Persistent is already a time-weighed indicator that calculates mean, std, min, max, and confidence interval.
 public abstract class AbstractIndicator<U extends Unit<U>, T extends DoubleScalar<U>>
 {
 
@@ -34,7 +34,7 @@ public abstract class AbstractIndicator<U extends Unit<U>, T extends DoubleScala
 
     /** Last end time. */
     private Duration lastEndTime;
-    
+
     /** Last value. */
     private T lastValue;
 
@@ -49,7 +49,7 @@ public abstract class AbstractIndicator<U extends Unit<U>, T extends DoubleScala
     {
         return getValue(query, Duration.ZERO, endTime);
     }
-    
+
     /**
      * Get value for given query over time interval, returning earlier calculated value if possible.
      * @param query query
@@ -72,7 +72,7 @@ public abstract class AbstractIndicator<U extends Unit<U>, T extends DoubleScala
         }
         return this.lastValue;
     }
-    
+
     /**
      * Calculate value for given query until given time.
      * @param query query
@@ -84,7 +84,7 @@ public abstract class AbstractIndicator<U extends Unit<U>, T extends DoubleScala
     {
         return calculate(query, Duration.ZERO, endTime);
     }
-    
+
     /**
      * Calculate value for given query over time interval.
      * @param query query

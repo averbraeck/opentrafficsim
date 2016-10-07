@@ -15,7 +15,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.Throw;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.immutablecollections.ImmutableIterator;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -49,6 +48,7 @@ public final class Query
     private final String description;
 
     /** Whether the space-time regions are longitudinally connected. */
+    // TODO remove this field? should not be required if GTU_ADD_EVENT and GTU_REMOVE_EVENT events are truly on the edges
     private final boolean connected;
 
     /** Meta data set. */
@@ -185,7 +185,6 @@ public final class Query
 
     /**
      * Defines a region in space and time for which this query is valid. All lanes in the link are included.
-     * @param simulator simulator
      * @param link link
      * @param direction direction
      * @param xStart start position
@@ -193,35 +192,31 @@ public final class Query
      * @param tStart start time
      * @param tEnd end time
      */
-    public void addSpaceTimeRegionLink(final OTSDEVSSimulatorInterface simulator, final CrossSectionLink link,
-            final GTUDirectionality direction, final Length xStart, final Length xEnd, final Duration tStart,
-            final Duration tEnd)
+    public void addSpaceTimeRegionLink(final CrossSectionLink link, final GTUDirectionality direction, final Length xStart,
+            final Length xEnd, final Duration tStart, final Duration tEnd)
     {
         for (Lane lane : link.getLanes())
         {
             Length x0 = new Length(lane.getLength().si * xStart.si / link.getLength().si, LengthUnit.SI);
             Length x1 = new Length(lane.getLength().si * xEnd.si / link.getLength().si, LengthUnit.SI);
-            addSpaceTimeRegion(simulator, new LaneDirection(lane, direction), x0, x1, tStart, tEnd);
+            addSpaceTimeRegion(new LaneDirection(lane, direction), x0, x1, tStart, tEnd);
         }
     }
 
     /**
      * Defines a region in space and time for which this query is valid.
-     * @param simulator simulator
      * @param laneDirection lane direction
      * @param xStart start position
      * @param xEnd end position
      * @param tStart start time
      * @param tEnd end time
      */
-    public void addSpaceTimeRegion(final OTSDEVSSimulatorInterface simulator, final LaneDirection laneDirection,
-            final Length xStart, final Length xEnd, final Duration tStart, final Duration tEnd)
+    public void addSpaceTimeRegion(final LaneDirection laneDirection, final Length xStart, final Length xEnd,
+            final Duration tStart, final Duration tEnd)
     {
         SpaceTimeRegion spaceTimeRegion = new SpaceTimeRegion(laneDirection, xStart, xEnd, tStart, tEnd);
-        this.sampling.registerSpaceTimeRegion(simulator, spaceTimeRegion);
+        this.sampling.registerSpaceTimeRegion(spaceTimeRegion);
         this.spaceTimeRegions.add(spaceTimeRegion);
-        // TODO check on connectivity of laneDirections if connected==true, they should be given in order and be connected
-        // through equal nodes
     }
 
     /**
@@ -241,93 +236,91 @@ public final class Query
     }
 
     /**
-     * Returns a list of trajectories in accordance with the query. Each {@code Trajectories} contains {@code Trajectory}
+     * Returns a list of TrajectoryGroups in accordance with the query. Each {@code TrajectoryGroup} contains {@code Trajectory}
      * objects pertaining to a {@code SpaceTimeRegion} from the query. A {@code Trajectory} is only included if all the meta
      * data of this query accepts the trajectory.
-     * @param startTime start time of interval to get trajectories for
-     * @param endTime start time of interval to get trajectories for
+     * @param startTime start time of interval to get trajectory groups for
+     * @param endTime start time of interval to get trajectory groups for
      * @param <T> underlying class of meta data type and its value
-     * @return list of trajectories in accordance with the query
+     * @return list of trajectory groups in accordance with the query
      * @throws RuntimeException if a meta data type returned a boolean array with incorrect length
      */
     @SuppressWarnings("unchecked")
-    public <T> List<Trajectories> getTrajectories(final Duration startTime, final Duration endTime)
+    public <T> List<TrajectoryGroup> getTrajectoryGroups(final Duration startTime, final Duration endTime)
     {
         // Step 1) gather trajectories per GTU, truncated over space and time
-        Map<String, TrajectoryAcceptList> trajectoryAcceptListMap = new HashMap<>();
-        List<Trajectories> trajectoriesSet = new ArrayList<>();
+        Map<String, TrajectoryAcceptList> trajectoryAcceptLists = new HashMap<>();
+        List<TrajectoryGroup> trajectoryGroupList = new ArrayList<>();
         for (SpaceTimeRegion spaceTimeRegion : this.spaceTimeRegions)
         {
             Duration start = startTime.gt(spaceTimeRegion.getStartTime()) ? startTime : spaceTimeRegion.getStartTime();
             Duration end = endTime.lt(spaceTimeRegion.getEndTime()) ? endTime : spaceTimeRegion.getEndTime();
-            Trajectories trajectories = this.sampling.getTrajectories(spaceTimeRegion.getLaneDirection())
-                    .getTrajectories(spaceTimeRegion.getStartPosition(), spaceTimeRegion.getEndPosition(), start, end);
-            for (Trajectory trajectory : trajectories.getTrajectorySet())
+            TrajectoryGroup trajectoryGroup = this.sampling.getTrajectoryGroup(spaceTimeRegion.getLaneDirection())
+                    .getTrajectoryGroup(spaceTimeRegion.getStartPosition(), spaceTimeRegion.getEndPosition(), start, end);
+            for (Trajectory trajectory : trajectoryGroup.getTrajectories())
             {
-                if (!trajectoryAcceptListMap.containsKey(trajectory.getGtuId()))
+                if (!trajectoryAcceptLists.containsKey(trajectory.getGtuId()))
                 {
-                    trajectoryAcceptListMap.put(trajectory.getGtuId(), new TrajectoryAcceptList());
+                    trajectoryAcceptLists.put(trajectory.getGtuId(), new TrajectoryAcceptList());
                 }
-                trajectoryAcceptListMap.get(trajectory.getGtuId()).addTrajectory(trajectory, trajectories);
+                trajectoryAcceptLists.get(trajectory.getGtuId()).addTrajectory(trajectory, trajectoryGroup);
             }
-            trajectoriesSet.add(trajectories);
+            trajectoryGroupList.add(trajectoryGroup);
         }
         // Step 2) accept per GTU
-        Iterator<String> iterator = trajectoryAcceptListMap.keySet().iterator();
+        Iterator<String> iterator = trajectoryAcceptLists.keySet().iterator();
         while (iterator.hasNext())
         {
             String gtuId = iterator.next();
             TrajectoryAcceptList trajectoryAcceptListCombined = null;
             if (this.metaDataSet.size() == 0)
             {
-                trajectoryAcceptListCombined = trajectoryAcceptListMap.get(gtuId);
+                trajectoryAcceptListCombined = trajectoryAcceptLists.get(gtuId);
                 trajectoryAcceptListCombined.acceptAll();
-                
             }
-            for (MetaDataType<?> metaDataType : this.metaDataSet.getMetaDataTypes())
+            else
             {
-                // create safe copy per meta data type, with defaults accepts = false
-                TrajectoryAcceptList trajectoryAcceptList = trajectoryAcceptListMap.get(gtuId);
-                TrajectoryAcceptList trajectoryAcceptListCopy = new TrajectoryAcceptList();
-                for (int i = 0; i < trajectoryAcceptList.size(); i++)
+                for (MetaDataType<?> metaDataType : this.metaDataSet.getMetaDataTypes())
                 {
-                    trajectoryAcceptListCopy.addTrajectory(trajectoryAcceptList.getTrajectory(i),
-                            trajectoryAcceptList.getTrajectories(i));
-                }
-                // request meta data type to accept or reject
-                ((MetaDataType<T>) metaDataType).accept(trajectoryAcceptListCopy,
-                        (Set<T>) new HashSet<>(this.metaDataSet.get(metaDataType)));
-                // combine acceptance/rejection of meta data type so far
-                if (trajectoryAcceptListCombined == null)
-                {
-                    trajectoryAcceptListCombined = trajectoryAcceptListCopy;
-                }
-                else
-                {
-                    for (int i = 0; i < trajectoryAcceptListCopy.size(); i++)
+                    // create safe copy per meta data type, with defaults accepts = false
+                    TrajectoryAcceptList trajectoryAcceptList = trajectoryAcceptLists.get(gtuId);
+                    TrajectoryAcceptList trajectoryAcceptListCopy = new TrajectoryAcceptList();
+                    for (int i = 0; i < trajectoryAcceptList.size(); i++)
                     {
-                        Trajectory trajectory = trajectoryAcceptListCopy.getTrajectory(i);
-                        trajectoryAcceptListCombined.acceptTrajectory(trajectory,
-                                trajectoryAcceptListCombined.isAccepted(trajectory)
-                                        && trajectoryAcceptListCopy.isAccepted(trajectory));
+                        trajectoryAcceptListCopy.addTrajectory(trajectoryAcceptList.getTrajectory(i),
+                                trajectoryAcceptList.getTrajectoryGroup(i));
+                    }
+                    // request meta data type to accept or reject
+                    ((MetaDataType<T>) metaDataType).accept(trajectoryAcceptListCopy,
+                            (Set<T>) new HashSet<>(this.metaDataSet.get(metaDataType)));
+                    // combine acceptance/rejection of meta data type so far
+                    if (trajectoryAcceptListCombined == null)
+                    {
+                        trajectoryAcceptListCombined = trajectoryAcceptListCopy;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < trajectoryAcceptListCopy.size(); i++)
+                        {
+                            Trajectory trajectory = trajectoryAcceptListCopy.getTrajectory(i);
+                            trajectoryAcceptListCombined.acceptTrajectory(trajectory,
+                                    trajectoryAcceptListCombined.isAccepted(trajectory)
+                                            && trajectoryAcceptListCopy.isAccepted(trajectory));
+                        }
                     }
                 }
             }
         }
         // Step 3) filter Trajectories
-        List<Trajectories> out = new ArrayList<>();
-        for (Trajectories full : trajectoriesSet)
+        List<TrajectoryGroup> out = new ArrayList<>();
+        for (TrajectoryGroup full : trajectoryGroupList)
         {
-            Trajectories filtered = new Trajectories(full.getStartTime(), full.getLaneDirection());
-            for (Trajectory trajectory : full.getTrajectorySet())
+            TrajectoryGroup filtered = new TrajectoryGroup(full.getStartTime(), full.getLaneDirection());
+            for (Trajectory trajectory : full.getTrajectories())
             {
                 String gtuId = trajectory.getGtuId();
-                if (trajectoryAcceptListMap.get(gtuId).isAccepted(trajectory))
+                if (trajectoryAcceptLists.get(gtuId).isAccepted(trajectory))
                 {
-                    // TODO include points on boundaries with some input into the subSet method, there are 4 possibilities
-                    // if trajectory is cut: add point on edge
-                    // if first point and traj was longitudinally started, add point on edge interpolated to previous point
-                    // if last point and traj was longitudinally ended, add point on edge interpolated with next point
                     filtered.addTrajectory(trajectory);
                 }
             }
@@ -458,9 +451,7 @@ public final class Query
     @Override
     public String toString()
     {
-        return "Query [uniqueId=" + this.uniqueId + ", sampling=" + this.sampling + ", description=" + this.description
-                + ", connected=" + this.connected + ", metaDataSet=" + this.metaDataSet + ", updateFrequency="
-                + this.updateFrequency + ", interval=" + this.interval + ", spaceTimeRegions=" + this.spaceTimeRegions + "]";
+        return "Query (" + this.description + ")";
     }
 
 }

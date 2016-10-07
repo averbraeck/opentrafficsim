@@ -39,9 +39,9 @@ public abstract class MetaDataType<T>
 
     /**
      * Determines for a set of {@code trajectory}'s from a single GTU, which may be accepted according to this meta data type.
-     * As a single GTU may have several trajectories for a single {@code Trajectories} object, the specified
-     * {@code Trajectories}'s may have duplicates. As the {@code trajectory}'s are from a single GTU, the meta data is equal for
-     * all. Implementations of this method may for instance:
+     * As a single GTU may have several trajectories for a single {@code TrajectoryGroup} object, the specified
+     * {@code TrajectoryGroup}'s may have duplicates. As the {@code trajectory}'s are from a single GTU, the meta data is equal
+     * for all. Implementations of this method may for instance:
      * <ol>
      * <li>Determine only from the first {@code Trajectory}s' meta data that all may be accepted.</li>
      * <li>Determine for the separate {@code Trajectory}'s whether they are acceptable.</li>
@@ -50,7 +50,7 @@ public abstract class MetaDataType<T>
      * <li>etc.</li>
      * </ol>
      * The default implementation is that of 1.<br>
-     * @param trajectoryAcceptList containing {@code Trajectory}'s and {@code Trajectories}'s pertaining to a single GTU
+     * @param trajectoryAcceptList containing {@code Trajectory}'s and {@code TrajectoryGroup}'s pertaining to a single GTU
      * @param querySet set of values in the query for this metadata type
      */
     @SuppressWarnings("checkstyle:designforextension")

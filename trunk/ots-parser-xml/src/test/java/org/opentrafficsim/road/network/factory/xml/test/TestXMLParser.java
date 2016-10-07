@@ -181,7 +181,7 @@ public class TestXMLParser extends AbstractWrappableAnimation
                 network = nlp.build(url);
                 // ODMatrixTrips matrix = N201ODfactory.get(network);
                 // N201ODfactory.makeGeneratorsFromOD(network, matrix, this.simulator);
-                Query query = N201ODfactory.getQuery(network, new Sampling(), this.simulator);
+                Query query = N201ODfactory.getQuery(network, new Sampling(this.simulator));
                 scheduleKpiEvent(30.0, this.simulator, query);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException

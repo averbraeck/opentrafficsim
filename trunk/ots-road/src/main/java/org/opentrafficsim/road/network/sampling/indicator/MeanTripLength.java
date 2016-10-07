@@ -7,7 +7,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.road.network.sampling.Query;
-import org.opentrafficsim.road.network.sampling.Trajectories;
+import org.opentrafficsim.road.network.sampling.TrajectoryGroup;
 import org.opentrafficsim.road.network.sampling.Trajectory;
 
 /**
@@ -29,9 +29,9 @@ public class MeanTripLength extends AbstractIndicator<LengthUnit, Length>
     {
         Length sum = Length.ZERO;
         Set<String> gtuIds = new HashSet<>();
-        for (Trajectories trajectories : query.getTrajectories(startTime, endTime))
+        for (TrajectoryGroup trajectoryGroup : query.getTrajectoryGroups(startTime, endTime))
         {
-            for (Trajectory trajectory : trajectories.getTrajectorySet())
+            for (Trajectory trajectory : trajectoryGroup.getTrajectories())
             {
                 sum = sum.plus(trajectory.getTotalLength());
                 gtuIds.add(trajectory.getGtuId());
