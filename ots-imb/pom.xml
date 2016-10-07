@@ -13,6 +13,24 @@
   <name>Open Traffic Sim link to IMB</name>
   <description>Open Traffic Sim connector to TNO's IMB bus from Urban Strategy</description>
 
+  <build>
+    <directory>target</directory>
+    <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+    <testSourceDirectory>${basedir}/src/test/java</testSourceDirectory>
+    <outputDirectory>${basedir}/target/classes</outputDirectory>
+    <testOutputDirectory> ${basedir}/target/test-classes</testOutputDirectory>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>${basedir}/src/test/resources</directory>
+      </testResource>
+    </testResources>
+  </build>
+  
   <dependencies>
     <dependency>
       <groupId>opentrafficsim</groupId>

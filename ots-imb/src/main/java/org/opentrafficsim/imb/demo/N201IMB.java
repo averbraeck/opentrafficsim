@@ -3,6 +3,7 @@ package org.opentrafficsim.imb.demo;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
@@ -12,13 +13,9 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -41,16 +38,8 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.SensorGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.StatisticsGTULaneTransceiver;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
-import org.opentrafficsim.road.network.factory.xml.test.N201ODfactory;
 import org.opentrafficsim.road.network.sampling.Query;
 import org.opentrafficsim.road.network.sampling.Sampling;
-import org.opentrafficsim.road.network.sampling.indicator.MeanSpeed;
-import org.opentrafficsim.road.network.sampling.indicator.MeanTravelTime;
-import org.opentrafficsim.road.network.sampling.indicator.MeanTripLength;
-import org.opentrafficsim.road.network.sampling.indicator.TotalDelay;
-import org.opentrafficsim.road.network.sampling.indicator.TotalNumberOfStops;
-import org.opentrafficsim.road.network.sampling.indicator.TotalTravelDistance;
-import org.opentrafficsim.road.network.sampling.indicator.TotalTravelTime;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
@@ -77,8 +66,11 @@ import nl.tudelft.simulation.language.io.URLResource;
  */
 public class N201IMB extends AbstractWrappableAnimation
 {
+    /** */
+    private static final long serialVersionUID = 20161007L;
+    
     /** The model. */
-    private TestXMLModel model;
+    private N201Model model;
 
     /**
      * Main program.
@@ -94,9 +86,9 @@ public class N201IMB extends AbstractWrappableAnimation
             {
                 try
                 {
-                    N201IMB xmlModel = new N201IMB();
+                    N201IMB n201Model = new N201IMB();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                    n201Model.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
                             new Duration(10.0, TimeUnit.HOUR), new ArrayList<AbstractProperty<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
@@ -111,14 +103,14 @@ public class N201IMB extends AbstractWrappableAnimation
     @Override
     public final String shortName()
     {
-        return "TestXMLModel";
+        return "Model N201";
     }
 
     /** {@inheritDoc} */
     @Override
     public final String description()
     {
-        return "TestXMLModel - N201 - IMB";
+        return "Model N201 - IMB";
     }
 
     /** {@inheritDoc} */
@@ -139,10 +131,10 @@ public class N201IMB extends AbstractWrappableAnimation
     @Override
     protected final OTSModelInterface makeModel(final GTUColorer colorer)
     {
-        System.out.println("CircularRoadIMB.makeModel called");
+        System.out.println("N201IMB.makeModel called");
         this.model =
-                new TestXMLModel(getSavedUserModifiedProperties(), colorer, new OTSNetwork(
-                        "circular road simulation network"));
+                new N201Model(getSavedUserModifiedProperties(), colorer, new OTSNetwork(
+                        "N201 network"));
         return this.model;
     }
 
@@ -158,17 +150,14 @@ public class N201IMB extends AbstractWrappableAnimation
     @Override
     protected final Double makeAnimationRectangle()
     {
-        // return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
-        // return new Rectangle2D.Double(120000, 450000, 10000, 10000);
-        // return new Rectangle2D.Double(0, 0, 5000, 5000);
-        return new Rectangle2D.Double(103000, 476000, 5000, 5000);
+        return new Rectangle2D.Double(103000, 478000, 5500, 5000);
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "TestXMLParser - N201 network - IMB []";
+        return "N201 network - IMB []";
     }
 
     /**
@@ -183,7 +172,7 @@ public class N201IMB extends AbstractWrappableAnimation
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class TestXMLModel implements OTSModelInterface
+    class N201Model implements OTSModelInterface
     {
         /** */
         private static final long serialVersionUID = 20141121L;
@@ -208,7 +197,7 @@ public class N201IMB extends AbstractWrappableAnimation
          * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
          * @param network Network; the network
          */
-        TestXMLModel(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer,
+        N201Model(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer,
                 final OTSNetwork network)
         {
             this.properties = properties;
@@ -255,11 +244,11 @@ public class N201IMB extends AbstractWrappableAnimation
             // URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
             // URL url = URLResource.getResource("/straight-road-new-gtu-example_2.xml");
             // URL url = URLResource.getResource("/Circuit.xml");
-            URL url = URLResource.getResource("/N201v8.xml");
+            InputStream stream = URLResource.getResourceAsStream("/N201v8.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
             {
-                nlp.build(url, this.network);
+                nlp.build(stream, this.network);
                 // ODMatrixTrips matrix = N201ODfactory.get(network);
                 // N201ODfactory.makeGeneratorsFromOD(network, matrix, this.simulator);
             }

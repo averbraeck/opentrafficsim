@@ -1,11 +1,9 @@
 package org.opentrafficsim.road.network.factory.xml;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -138,6 +136,25 @@ public class XmlNetworkLaneParser implements Serializable
     }
 
     /**
+     * @param stream the input stream with the network in the agreed xml-grammar.
+     * @return the network with Nodes, Links, and Lanes.
+     * @throws NetworkException in case of parsing problems.
+     * @throws SAXException in case of parsing problems.
+     * @throws ParserConfigurationException in case of parsing problems.
+     * @throws IOException in case of file reading problems.
+     * @throws NamingException in case the animation context cannot be found
+     * @throws GTUException in case of a problem with creating the LaneBlock (which is a GTU right now)
+     * @throws OTSGeometryException when construction of a lane contour or offset design line fails
+     * @throws SimRuntimeException when simulator cannot be used to schedule GTU generation
+     */
+    @SuppressWarnings("checkstyle:needbraces")
+    public final OTSNetwork build(final InputStream stream) throws NetworkException, ParserConfigurationException, SAXException,
+            IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException
+    {
+        return build(stream, new OTSNetwork(stream.toString()));
+    }
+
+    /**
      * @param url the file with the network in the agreed xml-grammar.
      * @param network OTSNetwork; the network
      * @return the network with Nodes, Links, and Lanes.
@@ -155,23 +172,44 @@ public class XmlNetworkLaneParser implements Serializable
             ParserConfigurationException, SAXException, IOException, NamingException, GTUException, OTSGeometryException,
             SimRuntimeException
     {
-        try
-        {
-            if (url.getFile().length() > 0 && !(new File(url.toURI()).exists()))
-                throw new SAXException("XmlNetworkLaneParser.build: File " + url.getFile() + " does not exist");
-        }
-        catch (URISyntaxException exception)
-        {
-            throw new SAXException("XmlNetworkLaneParser.build: File " + url.getFile() + " is not properly formatted",
-                    exception);
-        }
+        return build(url.openStream(), network);
+    }
+    
+    /**
+     * @param stream the input stream with the network in the agreed xml-grammar.
+     * @param network OTSNetwork; the network
+     * @return the network with Nodes, Links, and Lanes.
+     * @throws NetworkException in case of parsing problems.
+     * @throws SAXException in case of parsing problems.
+     * @throws ParserConfigurationException in case of parsing problems.
+     * @throws IOException in case of file reading problems.
+     * @throws NamingException in case the animation context cannot be found
+     * @throws GTUException in case of a problem with creating the LaneBlock (which is a GTU right now)
+     * @throws OTSGeometryException when construction of a lane contour or offset design line fails
+     * @throws SimRuntimeException when simulator cannot be used to schedule GTU generation
+     */
+    @SuppressWarnings("checkstyle:needbraces")
+    public final OTSNetwork build(final InputStream stream, final OTSNetwork network) throws NetworkException,
+            ParserConfigurationException, SAXException, IOException, NamingException, GTUException, OTSGeometryException,
+            SimRuntimeException
+    {
+//        try
+//        {
+//            if (url.getFile().length() > 0 && !(new File(url.toURI()).exists()))
+//                throw new SAXException("XmlNetworkLaneParser.build: File " + url.getFile() + " does not exist");
+//        }
+//        catch (URISyntaxException exception)
+//        {
+//            throw new SAXException("XmlNetworkLaneParser.build: File " + url.getFile() + " is not properly formatted",
+//                    exception);
+//        }
         this.network = network;
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setXIncludeAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
-        Document document = builder.parse(url.openStream());
+        Document document = builder.parse(stream);
         NodeList networkNodeList = document.getDocumentElement().getChildNodes();
 
         if (!document.getDocumentElement().getNodeName().equals("NETWORK"))

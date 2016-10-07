@@ -109,13 +109,7 @@
     </resources>
     <testResources>
       <testResource>
-        <directory>${basedir}/src/main/resources</directory>
-      </testResource>
-      <testResource>
         <directory>${basedir}/src/test/resources</directory>
-      </testResource>
-      <testResource>
-        <directory>${basedir}/src/test/java/org/opentrafficsim/core/network/factory/*.xml</directory>
       </testResource>
     </testResources>
 
@@ -227,7 +221,8 @@
               <commands>
                 <command>rm -r -f /home/web/opentrafficsim.org/docs/current</command>
                 <command>mkdir -p /home/web/opentrafficsim.org/docs/current</command>
-                <command>cp -r -f /home/web/opentrafficsim.org/docs/${project.version}/. /home/web/opentrafficsim.org/docs/current</command>
+                <command>cp -r -f /home/web/opentrafficsim.org/docs/${project.version}/.
+                  /home/web/opentrafficsim.org/docs/current</command>
               </commands>
             </configuration>
           </execution>
@@ -710,7 +705,7 @@
         <version>${ots.version}</version>
       </dependency>
 
-       <dependency>
+      <dependency>
         <groupId>opentrafficsim</groupId>
         <artifactId>ots-trafficcontrol</artifactId>
         <version>${ots.version}</version>
