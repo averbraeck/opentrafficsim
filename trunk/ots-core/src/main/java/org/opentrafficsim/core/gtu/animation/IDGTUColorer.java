@@ -32,7 +32,7 @@ public class IDGTUColorer implements GTUColorer, Serializable
      */
     static
     {
-        LEGEND = new ArrayList<LegendEntry>(4);
+        LEGEND = new ArrayList<LegendEntry>();
         LEGEND.add(new LegendEntry(Color.BLACK, "black", "black"));
         LEGEND.add(new LegendEntry(new Color(0xa5, 0x2a, 0x2a), "brown", "brown"));
         LEGEND.add(new LegendEntry(Color.RED, "red", "red"));

@@ -72,4 +72,12 @@ public class SimpleTrafficLight extends AbstractCSEObject implements TrafficLigh
         this.trafficLightColor = trafficLightColor;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "SimpleTrafficLight [trafficLightColor=" + this.trafficLightColor + "]";
+    }
+
 }

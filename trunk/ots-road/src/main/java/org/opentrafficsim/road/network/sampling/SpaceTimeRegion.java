@@ -89,4 +89,12 @@ public class SpaceTimeRegion
         return this.endTime;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "SpaceTimeRegion [laneDirection=" + this.laneDirection + ", startPosition=" + this.startPosition
+                + ", endPosition=" + this.endPosition + ", startTime=" + this.startTime + ", endTime=" + this.endTime + "]";
+    }
+
 }

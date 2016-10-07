@@ -23,4 +23,12 @@ public class MetaDataOrigin extends MetaDataType<Node>
         super(id);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "MetaDataOrigin: " + super.toString();
+    }
+
 }

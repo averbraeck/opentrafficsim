@@ -749,6 +749,14 @@ public class ODMatrix implements Serializable
             return ODMatrix.this;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "ODEntry [demandVector=" + this.demandVector + ", timeVector=" + this.timeVector + ", interpolation="
+                    + this.interpolation + "]";
+        }
+
     }
 
 }

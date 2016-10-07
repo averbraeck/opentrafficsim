@@ -658,6 +658,13 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
             }
             return sample.getDistance();
         }
+        
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "VariableSampleRateTrajectory [id=" + this.id + ", currentEndTime=" + this.currentEndTime + "]";
+        }
 
         /**
          * Store a position and a time.
@@ -699,8 +706,14 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
                 return this.time;
             }
 
-        }
+            /** {@inheritDoc} */
+            @Override
+            public String toString()
+            {
+                return "DistanceAndTime [distance=" + this.distance + ", time=" + this.time + "]";
+            }
 
+        }
     }
 
     /**
@@ -971,7 +984,7 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "TrajectoryPlot [sampleInterval=" + this.sampleInterval + ", path=" + getPath() + ", cumulativeLengths.length="
                 + this.cumulativeLengths.length + ", maximumTime=" + this.maximumTime + ", caption=" + getCaption()

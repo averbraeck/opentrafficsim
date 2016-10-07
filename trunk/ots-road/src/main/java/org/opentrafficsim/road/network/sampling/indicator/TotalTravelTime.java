@@ -34,4 +34,12 @@ public class TotalTravelTime extends AbstractIndicator<TimeUnit, Duration>
         return sum;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "TotalTravelTime []";
+    }
+
 }

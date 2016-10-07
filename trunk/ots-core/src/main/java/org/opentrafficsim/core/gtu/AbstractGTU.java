@@ -48,6 +48,12 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
     /** The id of the GTU. */
     private final String id;
+    
+    /** unique number of the GTU. */
+    private final int uniqueNumber;
+    
+    /** the unique number counter. */
+    private static int UNIQUE_NUMBER = 0;
 
     /** The type of GTU, e.g. TruckType, CarType, BusType. */
     private final GTUType gtuType;
@@ -113,6 +119,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         Throw.when(simulator == null, GTUException.class, "simulator is null for GTU with id %s", id);
 
         this.id = id;
+        this.uniqueNumber = ++UNIQUE_NUMBER;
         this.gtuType = gtuType;
         this.simulator = simulator;
         this.odometer = Length.ZERO;
@@ -486,29 +493,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     {
         if (this.baseColor == null)
         {
-            String idString = "" + getId();
-            int firstDigit = idString.length();
-            while (firstDigit > 0)
-            {
-                if (Character.isDigit(idString.charAt(firstDigit - 1)))
-                {
-                    firstDigit--;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            int idKey;
-            if (firstDigit == idString.length())
-            {
-                idKey = idString.hashCode();
-            }
-            else
-            {
-                idKey = Integer.parseInt(idString.substring(firstDigit));
-            }
-            this.baseColor = IDGTUColorer.LEGEND.get(idKey % IDGTUColorer.LEGEND.size()).getColor();
+            this.baseColor = IDGTUColorer.LEGEND.get(this.uniqueNumber % IDGTUColorer.LEGEND.size()).getColor();
         }
         return this.baseColor;
     }

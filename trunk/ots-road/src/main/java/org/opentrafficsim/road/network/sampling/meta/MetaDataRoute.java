@@ -23,4 +23,12 @@ public class MetaDataRoute extends MetaDataType<Route>
         super(id);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "MetaDataRoute: " + super.toString();
+    }
+
 }

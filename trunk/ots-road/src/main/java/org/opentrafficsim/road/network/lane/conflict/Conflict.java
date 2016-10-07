@@ -130,4 +130,13 @@ public final class Conflict extends AbstractLaneBasedObject
         conf1.otherConflict = conf2;
         conf2.otherConflict = conf1;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "Conflict [conflictType=" + this.conflictType + ", conflictRule=" + this.conflictRule + ", otherConflict="
+                + this.otherConflict + "]";
+    }
+    
 }

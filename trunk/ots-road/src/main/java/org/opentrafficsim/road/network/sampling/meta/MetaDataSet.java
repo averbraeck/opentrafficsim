@@ -137,5 +137,12 @@ public class MetaDataSet
         }
         return true;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "MetaDataSet [metaDataMap=" + this.metaDataMap + "]";
+    }
     
 }

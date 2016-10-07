@@ -384,6 +384,7 @@ public class LaneBasedGTUTest implements UNITS
     {
         for (int a = 1; a >= -1; a--)
         {
+            this.network = new OTSNetwork("test"); // new network every time, otherwise nodes cannot be added again
             // Create a car with constant acceleration
             OTSModelInterface model = new Model();
             SimpleSimulator simulator =

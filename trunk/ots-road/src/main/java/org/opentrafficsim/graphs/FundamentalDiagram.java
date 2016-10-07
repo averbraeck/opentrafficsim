@@ -166,9 +166,11 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      *            Fundamental diagram
      * @param lane Lane; the Lane on which the traffic will be sampled
      * @param position DoubleScalarRel&lt;LengthUnit&gt;; longitudinal position of the detector on the Lane
+     * @param simulator the simulator
      * @throws NetworkException on network inconsistency
      */
-    public FundamentalDiagram(final String caption, final Duration aggregationTime, final Lane lane, final Length position)
+    public FundamentalDiagram(final String caption, final Duration aggregationTime, final Lane lane, final Length position,
+            final OTSDEVSSimulatorInterface simulator)
             throws NetworkException
     {
         if (aggregationTime.getSI() <= 0)
@@ -229,7 +231,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         this.add(cp, BorderLayout.CENTER);
         this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
         this.add(this.statusLabel, BorderLayout.SOUTH);
-        new FundamentalDiagramSensor(lane, position, null);
+        new FundamentalDiagramSensor(lane, position, simulator);
     }
 
     /**

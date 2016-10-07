@@ -81,7 +81,7 @@ public class CurveTest
                         simulator, LongitudinalDirectionality.DIR_PLUS);
         OTSLine3D curveLine = LaneFactory.makeBezier(origin, curveStart, curveEnd, destination);
         Lane[] curve =
-                LaneFactory.makeMultiLane(network, "straight2", curveStart, curveEnd, curveLine.getPoints(), laneCount,
+                LaneFactory.makeMultiLane(network, "bezier", curveStart, curveEnd, curveLine.getPoints(), laneCount,
                         laneType, speedLimit, simulator, LongitudinalDirectionality.DIR_PLUS);
         Lane[][] laneSets = new Lane[][] { straight1, curve, straight2 };
         Length initialPosition = new Length(5, LengthUnit.METER);
