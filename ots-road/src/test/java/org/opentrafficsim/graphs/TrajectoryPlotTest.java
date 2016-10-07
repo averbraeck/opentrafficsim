@@ -103,12 +103,13 @@ public class TrajectoryPlotTest implements UNITS
         GTUFollowingModelOld gtuFollowingModel =
                 new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(10, SECOND));
         LaneChangeModel laneChangeModel = new Egoistic();
-        LaneBasedIndividualGTU car =
+        /*-
+                LaneBasedIndividualGTU car =
                 CarTest.makeReferenceCar("12345", gtuType, lane1, initialPosition, initialSpeed, simulator, gtuFollowingModel,
                         laneChangeModel, network);
         // Make the car accelerate with constant acceleration of 0.05 m/s/s for 400 seconds
         Duration duration = new Duration(400, SECOND);
-        /*-
+
         Time endTime = simulator.getSimulatorTime().getTime().plus(duration);
         car.setState(new GTUFollowingModelResult(new Acceleration(0.05, METER_PER_SECOND_2), endTime));
         // System.out.println("Car end position " + car.getPosition(car.getNextEvaluationTime()));
