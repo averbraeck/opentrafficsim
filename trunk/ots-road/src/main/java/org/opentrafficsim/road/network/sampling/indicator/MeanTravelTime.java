@@ -1,8 +1,12 @@
 package org.opentrafficsim.road.network.sampling.indicator;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.road.network.sampling.Query;
 import org.opentrafficsim.road.network.sampling.Trajectories;
 
@@ -35,9 +39,14 @@ public class MeanTravelTime extends AbstractIndicator<TimeUnit, Duration>
     public final Duration calculate(final Query query, final Duration startTime, final Duration endTime)
     {
         Length cumulLength = Length.ZERO;
+        Set<Link> links = new HashSet<>();
         for (Trajectories trajectories : query.getTrajectories(startTime, endTime))
         {
-            cumulLength = cumulLength.plus(trajectories.getLength());
+            if (!links.contains(trajectories.getLaneDirection().getLane().getParentLink()))
+            {
+                cumulLength = cumulLength.plus(trajectories.getLength()); // TODO should be average lane length of link
+                links.add(trajectories.getLaneDirection().getLane().getParentLink());
+            }
         }
         return cumulLength.divideBy(this.meanSpeed.getValue(query, startTime, endTime));
     }

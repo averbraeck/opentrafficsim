@@ -39,6 +39,7 @@ public class TotalDelay extends AbstractIndicator<TimeUnit, Duration>
         Duration sum = Duration.ZERO;
         for (Trajectories trajectories : query.getTrajectories(startTime, endTime))
         {
+            // TODO: use data points and limit speed per interval
             for (Trajectory trajectory : trajectories.getTrajectorySet())
             {
                 sum = sum.plus(trajectory.getTotalDuration().minus(trajectory.getTotalLength().divideBy(this.referenceSpeed)));

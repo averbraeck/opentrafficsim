@@ -199,8 +199,8 @@ public final class Query
     {
         for (Lane lane : link.getLanes())
         {
-            Length x0 = new Length(lane.getLength().si * link.getLength().si / xStart.si, LengthUnit.SI);
-            Length x1 = new Length(lane.getLength().si * link.getLength().si / xEnd.si, LengthUnit.SI);
+            Length x0 = new Length(lane.getLength().si * xStart.si / link.getLength().si, LengthUnit.SI);
+            Length x1 = new Length(lane.getLength().si * xEnd.si / link.getLength().si, LengthUnit.SI);
             addSpaceTimeRegion(simulator, new LaneDirection(lane, direction), x0, x1, tStart, tEnd);
         }
     }
@@ -269,8 +269,8 @@ public final class Query
                     trajectoryAcceptListMap.put(trajectory.getGtuId(), new TrajectoryAcceptList());
                 }
                 trajectoryAcceptListMap.get(trajectory.getGtuId()).addTrajectory(trajectory, trajectories);
-                trajectoriesSet.add(trajectories);
             }
+            trajectoriesSet.add(trajectories);
         }
         // Step 2) accept per GTU
         Iterator<String> iterator = trajectoryAcceptListMap.keySet().iterator();
@@ -278,6 +278,12 @@ public final class Query
         {
             String gtuId = iterator.next();
             TrajectoryAcceptList trajectoryAcceptListCombined = null;
+            if (this.metaDataSet.size() == 0)
+            {
+                trajectoryAcceptListCombined = trajectoryAcceptListMap.get(gtuId);
+                trajectoryAcceptListCombined.acceptAll();
+                
+            }
             for (MetaDataType<?> metaDataType : this.metaDataSet.getMetaDataTypes())
             {
                 // create safe copy per meta data type, with defaults accepts = false

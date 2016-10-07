@@ -92,7 +92,7 @@ public final class Trajectory
     /**
      * Returns whether GTU entered this trajectory longitudinally. The first point may then be connected to the last point in a
      * previous trajectory.
-     * @return  whether GTU entered this trajectory longitudinally
+     * @return whether GTU entered this trajectory longitudinally
      */
     public boolean isLongitudinalEntry()
     {
@@ -246,24 +246,34 @@ public final class Trajectory
             throw new RuntimeException("Could not return trajectory data.", exception);
         }
     }
-    
+
     /**
      * @return total length of this trajectory
      * @throws IllegalStateException if trajectory is empty
      */
     public Length getTotalLength()
     {
-        Throw.when(this.size == 0, IllegalStateException.class, "Empty trajectory does not have a length.");
+        // TODO don't allow empty trajectories
+        // Throw.when(this.size == 0, IllegalStateException.class, "Empty trajectory does not have a length.");
+        if (this.size == 0)
+        {
+            return Length.ZERO;
+        }
         return new Length(this.x[this.size - 1] - this.x[0], LengthUnit.SI);
     }
-    
+
     /**
      * @return total duration of this trajectory
      * @throws IllegalStateException if trajectory is empty
      */
     public Duration getTotalDuration()
     {
-        Throw.when(this.size == 0, IllegalStateException.class, "Empty trajectory does not have a duration.");
+        // TODO don't allow empty trajectories
+        // Throw.when(this.size == 0, IllegalStateException.class, "Empty trajectory does not have a duration.");
+        if (this.size == 0)
+        {
+            return Duration.ZERO;
+        }
         return new Duration(this.t[this.size - 1] - this.t[0], TimeUnit.SI);
     }
 
@@ -275,7 +285,7 @@ public final class Trajectory
     {
         return this.metaData.contains(metaDataType);
     }
-    
+
     /**
      * @param metaDataType meta data type
      * @param <T> class of meta data
@@ -284,13 +294,13 @@ public final class Trajectory
     public <T> T getMetaData(final MetaDataType<T> metaDataType)
     {
         return this.metaData.get(metaDataType);
-//        Counter c;
-//        Tally t;
-//        nl.tudelft.simulation.dsol.statistics.Tally<SimTime<?,?,T>> t2;
-//        Persistent p;
-//        nl.tudelft.simulation.dsol.statistics.Persistent<SimTime<?,?,T>> p2;
+        // Counter c;
+        // Tally t;
+        // nl.tudelft.simulation.dsol.statistics.Tally<SimTime<?,?,T>> t2;
+        // Persistent p;
+        // nl.tudelft.simulation.dsol.statistics.Persistent<SimTime<?,?,T>> p2;
     }
-    
+
     /**
      * Copies the trajectory but with a subset of the data. Longitudinal entry is only true if the original trajectory has true,
      * and the subset is from the start.
@@ -370,10 +380,17 @@ public final class Trajectory
         {
             from++;
         }
-        int to = this.size;
-        while ((maxLength.si < this.x[to] || maxTime.si < this.t[to]) && to > 0)
+        int to = this.size - 1;
+        if (to >= 0)
         {
-            to--;
+            while ((maxLength.si < this.x[to] || maxTime.si < this.t[to]) && to > 0)
+            {
+                to--;
+            }
+        }
+        else
+        {
+            to = 0;
         }
         return subSet(from, to);
     }
@@ -394,8 +411,18 @@ public final class Trajectory
             out.v = Arrays.copyOfRange(this.v, from, to);
             out.a = Arrays.copyOfRange(this.a, from, to);
             out.t = Arrays.copyOfRange(this.t, from, to);
+            out.size = out.x.length;
         }
         return out;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "Trajectory [size=" + this.size + ", x=" + Arrays.toString(this.x) + ", v=" + Arrays.toString(this.v) + ", a="
+                + Arrays.toString(this.a) + ", t=" + Arrays.toString(this.t) + ", metaData=" + this.metaData + ", gtuId="
+                + this.gtuId + ", longitudinalEntry=" + this.longitudinalEntry + "]";
     }
 
 }

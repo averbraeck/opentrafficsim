@@ -13,6 +13,9 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
@@ -113,7 +116,7 @@ public class Sampling implements EventListenerInterface
         laneDirection.getLane().addListener(this, Lane.GTU_REMOVE_EVENT, true);
     }
 
-    private Map<String, Trajectory> trajectoryPerGtu = new HashMap<>();
+    private Map<String, Map<Lane, Trajectory>> trajectoryPerGtu = new HashMap<>();
 
     /** {@inheritDoc} */
     @Override
@@ -125,14 +128,25 @@ public class Sampling implements EventListenerInterface
             Object[] payload = (Object[]) event.getContent();
             String gtuId = (String) payload[0];
             LaneBasedGTU gtu = (LaneBasedGTU) payload[1];
-            Lane lane = gtu.getLanes().keySet().iterator().next();
-            LaneDirection laneDirection = new LaneDirection(lane, gtu.getLanes().get(lane));
+            Lane lane = (Lane) event.getSource();
+            Length x;
+            try
+            {
+                x = gtu.position(lane, RelativePosition.REFERENCE_POSITION);
+            }
+            catch (GTUException exception)
+            {
+                throw new RuntimeException(exception);
+            }
+            LaneDirection laneDirection = new LaneDirection(lane, GTUDirectionality.DIR_PLUS);
             if (this.trajectories.containsKey(laneDirection))
             {
-                gtu.addListener(this, GTU.MOVE_EVENT, true);
+                gtu.addListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT, true);
                 boolean longitudinalEntry = false;
                 Trajectory trajectory = new Trajectory(gtu, longitudinalEntry, new MetaData());
-                this.trajectoryPerGtu.put(gtuId, trajectory);
+                Map<Lane, Trajectory> map = new HashMap<>();
+                map.put(lane, trajectory);
+                this.trajectoryPerGtu.put(gtuId, map);
                 this.trajectories.get(laneDirection).addTrajectory(trajectory);
             }
         }
@@ -142,23 +156,25 @@ public class Sampling implements EventListenerInterface
             Object[] payload = (Object[]) event.getContent();
             String gtuId = (String) payload[0];
             LaneBasedGTU gtu = (LaneBasedGTU) payload[1];
-            gtu.removeListener(this, GTU.MOVE_EVENT);
-            Lane lane = gtu.getLanes().keySet().iterator().next();
+            gtu.removeListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
+            Lane lane = (Lane) event.getSource();
             if (this.trajectoryPerGtu.get(gtuId) != null)
             {
-                this.trajectoryPerGtu.remove(gtu);
+                this.trajectoryPerGtu.get(gtuId).remove(lane);
             }
         }
-        if (event.getType().equals(GTU.MOVE_EVENT))
+        if (event.getType().equals(LaneBasedGTU.LANEBASED_MOVE_EVENT))
         {
-            // Payload: [String id, DirectedPoint position, Speed speed, Acceleration acceleration, TurnIndicatorStatus
-            // * turnIndicatorStatus, Length odometer]
+            // Payload: [String gtuId, DirectedPoint position, Speed speed, Acceleration acceleration, TurnIndicatorStatus
+            // turnIndicatorStatus, Length odometer, Lane referenceLane, Length positionOnReferenceLane]
             Object[] payload = (Object[]) event.getContent();
             String gtuId = (String) payload[0];
             // get trajectories
-            this.trajectoryPerGtu.get(gtuId).add(new Length(((DirectedPoint) payload[1]).getX(), LengthUnit.SI),
-                    (Speed) payload[2], (Acceleration) payload[3],
-                    new Duration(this.simulator.getSimulatorTime().get().si, TimeUnit.SI));
+            if (this.trajectoryPerGtu.containsKey(gtuId) && this.trajectoryPerGtu.get(gtuId).containsKey(payload[6]))
+            {
+                this.trajectoryPerGtu.get(gtuId).get(payload[6]).add((Length) payload[7], (Speed) payload[2],
+                        (Acceleration) payload[3], new Duration(this.simulator.getSimulatorTime().get().si, TimeUnit.SI));
+            }
         }
 
     }
