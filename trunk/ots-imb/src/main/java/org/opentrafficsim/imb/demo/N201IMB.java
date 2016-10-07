@@ -82,7 +82,7 @@ public class N201IMB extends AbstractWrappableAnimation
                     N201IMB xmlModel = new N201IMB();
                     // 1 hour simulation run for testing
                     xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
-                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
+                            new Duration(10.0, TimeUnit.HOUR), new ArrayList<AbstractProperty<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -145,7 +145,8 @@ public class N201IMB extends AbstractWrappableAnimation
     {
         // return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
         // return new Rectangle2D.Double(120000, 450000, 10000, 10000);
-        return new Rectangle2D.Double(0, 0, 5000, 5000);
+        // return new Rectangle2D.Double(0, 0, 5000, 5000);
+        return new Rectangle2D.Double(103000, 476000, 5000, 5000);
     }
 
     /** {@inheritDoc} */
@@ -239,7 +240,7 @@ public class N201IMB extends AbstractWrappableAnimation
             // URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
             // URL url = URLResource.getResource("/straight-road-new-gtu-example_2.xml");
             // URL url = URLResource.getResource("/Circuit.xml");
-            URL url = URLResource.getResource("/N201v7.xml");
+            URL url = URLResource.getResource("/N201v8.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
             {
@@ -255,7 +256,7 @@ public class N201IMB extends AbstractWrappableAnimation
             
             URL gisURL = URLResource.getResource("/N201/map.xml");
             System.err.println("GIS-map file: " + gisURL.toString());
-            CoordinateTransform rdto0 = new CoordinateTransformRD(104450, 478845);
+            CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
             new GisRenderable2D(this.simulator, gisURL, rdto0);
         }
 
