@@ -118,8 +118,8 @@ public class TestXMLParser extends AbstractWrappableAnimation
     protected final Double makeAnimationRectangle()
     {
         // return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
-        // return new Rectangle2D.Double(120000, 450000, 10000, 10000);
-        return new Rectangle2D.Double(0, 0, 5000, 5000);
+        return new Rectangle2D.Double(104000, 482000, 5000, 5000);
+        // return new Rectangle2D.Double(0, 0, 5000, 5000);
     }
 
     /** {@inheritDoc} */
@@ -161,7 +161,7 @@ public class TestXMLParser extends AbstractWrappableAnimation
             // URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
             // URL url = URLResource.getResource("/straight-road-new-gtu-example_2.xml");
             // URL url = URLResource.getResource("/Circuit.xml");
-            URL url = URLResource.getResource("/N201v7.xml");
+            URL url = URLResource.getResource("/N201v8.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             OTSNetwork network;
             try
@@ -178,7 +178,7 @@ public class TestXMLParser extends AbstractWrappableAnimation
             
             URL gisURL = URLResource.getResource("/N201/map.xml");
             System.err.println("GIS-map file: " + gisURL.toString());
-            CoordinateTransform rdto0 = new CoordinateTransformRD(104450, 478845);
+            CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
             new GisRenderable2D(this.simulator, gisURL, rdto0);
         }
 
