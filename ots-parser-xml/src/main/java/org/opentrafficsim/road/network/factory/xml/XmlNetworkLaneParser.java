@@ -134,6 +134,27 @@ public class XmlNetworkLaneParser implements Serializable
     public final OTSNetwork build(final URL url) throws NetworkException, ParserConfigurationException, SAXException,
             IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException
     {
+        return build(url, new OTSNetwork(url.toString()));
+    }
+
+    /**
+     * @param url the file with the network in the agreed xml-grammar.
+     * @param network OTSNetwork; the network
+     * @return the network with Nodes, Links, and Lanes.
+     * @throws NetworkException in case of parsing problems.
+     * @throws SAXException in case of parsing problems.
+     * @throws ParserConfigurationException in case of parsing problems.
+     * @throws IOException in case of file reading problems.
+     * @throws NamingException in case the animation context cannot be found
+     * @throws GTUException in case of a problem with creating the LaneBlock (which is a GTU right now)
+     * @throws OTSGeometryException when construction of a lane contour or offset design line fails
+     * @throws SimRuntimeException when simulator cannot be used to schedule GTU generation
+     */
+    @SuppressWarnings("checkstyle:needbraces")
+    public final OTSNetwork build(final URL url, final OTSNetwork network) throws NetworkException,
+            ParserConfigurationException, SAXException, IOException, NamingException, GTUException, OTSGeometryException,
+            SimRuntimeException
+    {
         try
         {
             if (url.getFile().length() > 0 && !(new File(url.toURI()).exists()))
@@ -141,9 +162,10 @@ public class XmlNetworkLaneParser implements Serializable
         }
         catch (URISyntaxException exception)
         {
-            throw new SAXException("XmlNetworkLaneParser.build: File " + url.getFile() + " is not properly formatted", exception);
+            throw new SAXException("XmlNetworkLaneParser.build: File " + url.getFile() + " is not properly formatted",
+                    exception);
         }
-        this.network = new OTSNetwork(url.toString());
+        this.network = network;
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
@@ -215,7 +237,7 @@ public class XmlNetworkLaneParser implements Serializable
         for (RouteTag routeTag : this.routeTags.values())
         {
             // TODO Make routes GTU specific. See what to do with GTUType.ALL for routes
-            // TODO Automate addition of Routes to network 
+            // TODO Automate addition of Routes to network
             this.network.addRoute(GTUType.ALL, routeTag.route);
         }
         return this.network;
