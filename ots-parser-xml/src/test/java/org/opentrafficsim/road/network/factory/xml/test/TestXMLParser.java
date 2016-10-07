@@ -327,7 +327,7 @@ public class TestXMLParser extends AbstractWrappableAnimation
         /**
          * Coordinate pair.
          */
-        static class Coords implements Serializable
+        public static class Coords implements Serializable
         {
             /** */
             private static final long serialVersionUID = 20141017L;
