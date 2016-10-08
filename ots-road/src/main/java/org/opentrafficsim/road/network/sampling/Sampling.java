@@ -98,7 +98,8 @@ public class Sampling implements EventListenerInterface
         {
             this.simulator.scheduleEventAbs(
                     this.simulator.getSimulatorTime().plus(this.endTimes.get(spaceTimeRegion.getLaneDirection())), this, this,
-                    "stopRecording", new Object[] { spaceTimeRegion.getLaneDirection() });
+                    "stopRecording",
+                    new Object[] { this.endTimes.get(spaceTimeRegion.getLaneDirection()), spaceTimeRegion.getLaneDirection() });
         }
         catch (SimRuntimeException exception)
         {
@@ -133,7 +134,6 @@ public class Sampling implements EventListenerInterface
         {
             return;
         }
-        this.trajectories.remove(laneDirection);
         laneDirection.getLane().removeListener(this, Lane.GTU_ADD_EVENT);
         laneDirection.getLane().removeListener(this, Lane.GTU_REMOVE_EVENT);
     }
