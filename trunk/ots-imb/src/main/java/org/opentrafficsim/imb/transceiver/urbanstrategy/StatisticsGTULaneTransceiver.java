@@ -365,7 +365,7 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
                 "StatisticsGTULane",
                 IMBEventType.CHANGE,
                 new Object[] { getSimulator().getSimulatorTime().getTime().si, this.query.getId(), tdist.si, ttt.si, ms.si,
-                        mtt.si, tdel.si, Double.NaN, nos.si });
+                        mtt.si, tdel.si, mtl.si, nos.si });
         getSimulator().scheduleEventRel(this.transmissionInterval, this, this, "sendStatisticsUpdate", new Object[] {});
     }
 
