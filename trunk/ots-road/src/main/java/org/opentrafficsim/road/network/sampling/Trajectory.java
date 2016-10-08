@@ -407,10 +407,10 @@ public final class Trajectory
         Trajectory out = new Trajectory(this.gtuId, from == 0 ? this.longitudinalEntry : false, this.metaData);
         if (from < to) // otherwise empty, no data in the subset
         {
-            out.x = Arrays.copyOfRange(this.x, from, to);
-            out.v = Arrays.copyOfRange(this.v, from, to);
-            out.a = Arrays.copyOfRange(this.a, from, to);
-            out.t = Arrays.copyOfRange(this.t, from, to);
+            out.x = Arrays.copyOfRange(this.x, from, to + 1);
+            out.v = Arrays.copyOfRange(this.v, from, to + 1);
+            out.a = Arrays.copyOfRange(this.a, from, to + 1);
+            out.t = Arrays.copyOfRange(this.t, from, to + 1);
             out.size = out.x.length;
         }
         return out;
