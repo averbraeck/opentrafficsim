@@ -4,7 +4,7 @@
 
   <groupId>opentrafficsim</groupId>
   <artifactId>ots-base</artifactId>
-  <version>0.11.00</version>
+  <version>0.12.00-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>OpenTrafficSim base project</name>
@@ -105,11 +105,17 @@
     <resources>
       <resource>
         <directory>${basedir}/src/main/resources</directory>
+        <excludes>
+          <exclude></exclude>
+        </excludes>
       </resource>
     </resources>
     <testResources>
       <testResource>
         <directory>${basedir}/src/test/resources</directory>
+        <excludes>
+          <exclude></exclude>
+        </excludes>
       </testResource>
     </testResources>
 
