@@ -102,23 +102,20 @@
     <testSourceDirectory>${basedir}/src/test/java</testSourceDirectory>
     <outputDirectory>${basedir}/target/classes</outputDirectory>
     <testOutputDirectory> ${basedir}/target/test-classes</testOutputDirectory>
-    <resources>
+    
+   <resources>
       <resource>
         <directory>${basedir}/src/main/resources</directory>
-        <excludes>
-          <exclude></exclude>
-        </excludes>
+        <filtering>false</filtering>
       </resource>
     </resources>
     <testResources>
       <testResource>
         <directory>${basedir}/src/test/resources</directory>
-        <excludes>
-          <exclude></exclude>
-        </excludes>
+        <filtering>false</filtering>
       </testResource>
     </testResources>
-
+    
     <extensions>
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
