@@ -124,6 +124,7 @@ public final class Query
         this.description = description;
         this.updateFrequency = updateFrequency;
         this.interval = interval;
+        sampling.registerMetaDataTypes(metaDataSet.getMetaDataTypes());
     }
 
     /**
@@ -272,42 +273,28 @@ public final class Query
         while (iterator.hasNext())
         {
             String gtuId = iterator.next();
-            TrajectoryAcceptList trajectoryAcceptListCombined = null;
-            if (this.metaDataSet.size() == 0)
+            TrajectoryAcceptList trajectoryAcceptListCombined = trajectoryAcceptLists.get(gtuId);
+            trajectoryAcceptListCombined.acceptAll(); // refuse only if any meta data type refuses
+            for (MetaDataType<?> metaDataType : this.metaDataSet.getMetaDataTypes())
             {
-                trajectoryAcceptListCombined = trajectoryAcceptLists.get(gtuId);
-                trajectoryAcceptListCombined.acceptAll();
-            }
-            else
-            {
-                for (MetaDataType<?> metaDataType : this.metaDataSet.getMetaDataTypes())
+                // create safe copy per meta data type, with defaults accepts = false
+                TrajectoryAcceptList trajectoryAcceptList = trajectoryAcceptLists.get(gtuId);
+                TrajectoryAcceptList trajectoryAcceptListCopy = new TrajectoryAcceptList();
+                for (int i = 0; i < trajectoryAcceptList.size(); i++)
                 {
-                    // create safe copy per meta data type, with defaults accepts = false
-                    TrajectoryAcceptList trajectoryAcceptList = trajectoryAcceptLists.get(gtuId);
-                    TrajectoryAcceptList trajectoryAcceptListCopy = new TrajectoryAcceptList();
-                    for (int i = 0; i < trajectoryAcceptList.size(); i++)
-                    {
-                        trajectoryAcceptListCopy.addTrajectory(trajectoryAcceptList.getTrajectory(i),
-                                trajectoryAcceptList.getTrajectoryGroup(i));
-                    }
-                    // request meta data type to accept or reject
-                    ((MetaDataType<T>) metaDataType).accept(trajectoryAcceptListCopy,
-                            (Set<T>) new HashSet<>(this.metaDataSet.get(metaDataType)));
-                    // combine acceptance/rejection of meta data type so far
-                    if (trajectoryAcceptListCombined == null)
-                    {
-                        trajectoryAcceptListCombined = trajectoryAcceptListCopy;
-                    }
-                    else
-                    {
-                        for (int i = 0; i < trajectoryAcceptListCopy.size(); i++)
-                        {
-                            Trajectory trajectory = trajectoryAcceptListCopy.getTrajectory(i);
-                            trajectoryAcceptListCombined.acceptTrajectory(trajectory,
-                                    trajectoryAcceptListCombined.isAccepted(trajectory)
-                                            && trajectoryAcceptListCopy.isAccepted(trajectory));
-                        }
-                    }
+                    trajectoryAcceptListCopy.addTrajectory(trajectoryAcceptList.getTrajectory(i),
+                            trajectoryAcceptList.getTrajectoryGroup(i));
+                }
+                // request meta data type to accept or reject
+                ((MetaDataType<T>) metaDataType).accept(trajectoryAcceptListCopy,
+                        (Set<T>) new HashSet<>(this.metaDataSet.get(metaDataType)));
+                // combine acceptance/rejection of meta data type so far
+                for (int i = 0; i < trajectoryAcceptListCopy.size(); i++)
+                {
+                    Trajectory trajectory = trajectoryAcceptListCopy.getTrajectory(i);
+                    trajectoryAcceptListCombined.acceptTrajectory(trajectory,
+                            trajectoryAcceptListCombined.isAccepted(trajectory)
+                                    && trajectoryAcceptListCopy.isAccepted(trajectory));
                 }
             }
         }

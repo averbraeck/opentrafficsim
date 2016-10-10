@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.sampling.CrossSection;
 import org.opentrafficsim.road.network.sampling.TrajectoryGroup;
@@ -29,6 +30,13 @@ public class MetaDataCrossSections extends MetaDataType<CrossSection>
     public MetaDataCrossSections(final String id)
     {
         super(id);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final CrossSection getValue(final GTU gtu)
+    {
+        return null;
     }
 
     /**

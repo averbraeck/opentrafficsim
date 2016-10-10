@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.sampling.meta;
 
+import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 
 /**
@@ -22,6 +24,20 @@ public class MetaDataOrigin extends MetaDataType<Node>
     public MetaDataOrigin(final String id)
     {
         super(id);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public final Node getValue(final GTU gtu)
+    {
+        try
+        {
+            return gtu.getStrategicalPlanner().getRoute().originNode();
+        }
+        catch (NetworkException exception)
+        {
+            throw new RuntimeException("Route of GTU has no origin.", exception);
+        }
     }
 
     /** {@inheritDoc} */

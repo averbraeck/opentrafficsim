@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.sampling.meta;
 
+import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 
 /**
@@ -23,7 +25,21 @@ public class MetaDataDestination extends MetaDataType<Node>
     {
         super(id);
     }
-    
+
+    /** {@inheritDoc} */
+    @Override
+    public final Node getValue(final GTU gtu)
+    {
+        try
+        {
+            return gtu.getStrategicalPlanner().getRoute().destinationNode();
+        }
+        catch (NetworkException exception)
+        {
+            throw new RuntimeException("Route of GTU has no destination.", exception);
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
