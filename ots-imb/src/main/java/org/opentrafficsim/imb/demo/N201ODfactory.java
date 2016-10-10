@@ -42,7 +42,7 @@ import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePl
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.sampling.Query;
-import org.opentrafficsim.road.network.sampling.Sampling;
+import org.opentrafficsim.road.network.sampling.Sampler;
 import org.opentrafficsim.road.network.sampling.meta.MetaDataSet;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -211,7 +211,7 @@ public class N201ODfactory
      * @param sampling sampling
      * @return query covering the entire N201
      */
-    public static Query getQuery(final OTSNetwork network, final Sampling sampling)
+    public static Query getQuery(final OTSNetwork network, final Sampler sampling)
     {
         // String[] southBound = new String[] { "L1a", "L2a", "L3a4a", "L5a", "L6a", "L7a", "L8a9a", "L10a11a", "L12a",
         // "L13a14a",
