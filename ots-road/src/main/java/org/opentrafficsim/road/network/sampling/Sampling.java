@@ -2,7 +2,9 @@ package org.opentrafficsim.road.network.sampling;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -11,6 +13,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -18,6 +21,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.sampling.meta.MetaData;
+import org.opentrafficsim.road.network.sampling.meta.MetaDataType;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.event.EventInterface;
@@ -48,6 +52,9 @@ public class Sampling implements EventListenerInterface
 
     /** Registration of current trajectories of each GTU per lane. */
     private final Map<String, Map<Lane, Trajectory>> trajectoryPerGtu = new HashMap<>();
+    
+    /** Set of registered meta data types. */
+    private Set<MetaDataType<?>> registeredMetaDataTypes = new HashSet<>();
 
     /**
      * Constructor.
@@ -105,6 +112,15 @@ public class Sampling implements EventListenerInterface
         {
             throw new RuntimeException("Cannot stop recording.", exception);
         }
+    }
+    
+    /**
+     * Registers meta data types that will be stored with the trajectories.
+     * @param metaDataTypes meta data types to register
+     */
+    public final void registerMetaDataTypes(final Set<MetaDataType<?>> metaDataTypes)
+    {
+        this.registeredMetaDataTypes.addAll(metaDataTypes);
     }
 
     /**
@@ -184,7 +200,7 @@ public class Sampling implements EventListenerInterface
             boolean longitudinalEntry = false;
             // TODO MetaData specific for GTU, incorporate getMetaData(LaneBasedGTU gtu) in MetaDataType and subclasses
             // Keep list of all MetaDataTypes of registered queries, i.e. registerMetaDataTypes(), invoke all
-            Trajectory trajectory = new Trajectory(gtu, longitudinalEntry, new MetaData());
+            Trajectory trajectory = new Trajectory(gtu, longitudinalEntry, makeMetaData(gtu));
             trajectory.add(distance, speed, acceleration, time);
             if (!this.trajectoryPerGtu.containsKey(gtuId))
             {
@@ -213,6 +229,22 @@ public class Sampling implements EventListenerInterface
             gtu.removeListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
         }
 
+    }
+    
+    /**
+     * @param gtu gtu to return meta data for
+     * @param <T> underlying type of a meta data type
+     * @return meta data for the given gtu
+     */
+    @SuppressWarnings("unchecked")
+    private <T> MetaData makeMetaData(final GTU gtu)
+    {
+        MetaData metaData = new MetaData();
+        for (MetaDataType<?> metaDataType : this.registeredMetaDataTypes)
+        {
+            metaData.put((MetaDataType<T>) metaDataType, (T) metaDataType.getValue(gtu));
+        }
+        return metaData;
     }
 
     /**

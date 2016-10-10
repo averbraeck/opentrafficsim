@@ -1,6 +1,9 @@
 package org.opentrafficsim.road.network.sampling.meta;
 
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 
 /**
  * Accepts trajectories with a GTUType included in a set in a query.
@@ -24,6 +27,13 @@ public class MetaDataGTUType extends MetaDataType<GTUType>
         super(id);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final GTUType getValue(final GTU gtu)
+    {
+        return gtu.getGTUType();
+    }
+    
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")

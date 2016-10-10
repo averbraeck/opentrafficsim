@@ -1,7 +1,9 @@
 package org.opentrafficsim.road.network.factory.xml.test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
@@ -43,6 +45,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.sampling.Query;
 import org.opentrafficsim.road.network.sampling.Sampling;
+import org.opentrafficsim.road.network.sampling.meta.MetaDataGTUType;
 import org.opentrafficsim.road.network.sampling.meta.MetaDataSet;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -224,7 +227,12 @@ public class N201ODfactory
                 "L24b23b", "L22b21b", "L20b", "L19b18b", "L17b16b", "L15b", "L14b13b", "L12b", "L11b", "L10b", "L9b8b", "L7b",
                 "L6b", "L5b", "L4b3b", "L2b", "L1b" };
         boolean connected = false;
-        Query query = new Query(sampling, "N201 both directions", connected, new MetaDataSet(),
+        MetaDataSet metaDataSet = new MetaDataSet();
+        Set<GTUType> gtuTypes = new HashSet<>();
+        gtuTypes.add(new GTUType("CAR"));
+        gtuTypes.add(new GTUType("BUS"));
+        metaDataSet.put(new MetaDataGTUType("gtuType"), gtuTypes);
+        Query query = new Query(sampling, "N201 both directions", connected, metaDataSet,
                 new Frequency(2.0, FrequencyUnit.PER_MINUTE));
         // addSpaceTimeRegions(query, network, northBound);
         addSpaceTimeRegions(query, network, southBound);

@@ -1,5 +1,8 @@
 package org.opentrafficsim.road.network.sampling.meta;
 
+import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 
 /**
@@ -24,6 +27,13 @@ public class MetaDataRoute extends MetaDataType<Route>
         super(id);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final Route getValue(final GTU gtu)
+    {
+        return gtu.getStrategicalPlanner().getRoute();
+    }
+    
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
