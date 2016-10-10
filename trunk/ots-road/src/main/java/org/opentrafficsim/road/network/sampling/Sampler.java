@@ -9,10 +9,12 @@ import java.util.Set;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -24,11 +26,12 @@ import org.opentrafficsim.road.network.sampling.meta.MetaData;
 import org.opentrafficsim.road.network.sampling.meta.MetaDataType;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 
 /**
- * Sampling is the highest level organizer for sampling.
+ * Sampler is the highest level organizer for sampling.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -38,7 +41,7 @@ import nl.tudelft.simulation.event.EventListenerInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class Sampling implements EventListenerInterface
+public class Sampler implements EventListenerInterface
 {
 
     /** Map with all sampling data. */
@@ -52,17 +55,43 @@ public class Sampling implements EventListenerInterface
 
     /** Registration of current trajectories of each GTU per lane. */
     private final Map<String, Map<Lane, Trajectory>> trajectoryPerGtu = new HashMap<>();
-    
+
+    /** Registration of sampling events of each GTU per lane, if interval based. */
+    private final Map<String, Map<Lane, SimEvent<OTSSimTimeDouble>>> eventPerGtu = new HashMap<>();
+
     /** Set of registered meta data types. */
     private Set<MetaDataType<?>> registeredMetaDataTypes = new HashSet<>();
 
+    /** Sampling interval. */
+    private final Duration samplingInterval;
+
     /**
-     * Constructor.
+     * Constructor which uses the operational plan updates of GTU's as sampling interval.
      * @param simulator simulator
+     * @throw {@link NullPointerException} if the simulator is {@code null}
      */
-    public Sampling(final OTSDEVSSimulatorInterface simulator)
+    public Sampler(final OTSDEVSSimulatorInterface simulator)
     {
+        Throw.whenNull(simulator, "Simulator may not be null.");
         this.simulator = simulator;
+        this.samplingInterval = null;
+    }
+
+    /**
+     * Constructor which uses the given frequency to determine the sampling interval.
+     * @param simulator simulator
+     * @param frequency sampling frequency
+     * @throw {@link NullPointerException} if an input is {@code null}
+     * @throw {@link IllegalArgumentException} if frequency is negative or zero
+     */
+    public Sampler(final OTSDEVSSimulatorInterface simulator, final Frequency frequency)
+    {
+        Throw.whenNull(simulator, "Simulator may not be null.");
+        Throw.whenNull(frequency, "Frequency may not be null.");
+        Throw.when(frequency.le(Frequency.ZERO), IllegalArgumentException.class,
+                "Negative or zero sampling frequency is not permitted.");
+        this.simulator = simulator;
+        this.samplingInterval = new Duration(1.0 / frequency.si, TimeUnit.SI);
     }
 
     /**
@@ -113,7 +142,7 @@ public class Sampling implements EventListenerInterface
             throw new RuntimeException("Cannot stop recording.", exception);
         }
     }
-    
+
     /**
      * Registers meta data types that will be stored with the trajectories.
      * @param metaDataTypes meta data types to register
@@ -198,8 +227,6 @@ public class Sampling implements EventListenerInterface
             Acceleration acceleration = gtu.getAcceleration();
             Duration time = new Duration(this.simulator.getSimulatorTime().getTime().si, TimeUnit.SI);
             boolean longitudinalEntry = false;
-            // TODO MetaData specific for GTU, incorporate getMetaData(LaneBasedGTU gtu) in MetaDataType and subclasses
-            // Keep list of all MetaDataTypes of registered queries, i.e. registerMetaDataTypes(), invoke all
             Trajectory trajectory = new Trajectory(gtu, longitudinalEntry, makeMetaData(gtu));
             trajectory.add(distance, speed, acceleration, time);
             if (!this.trajectoryPerGtu.containsKey(gtuId))
@@ -209,7 +236,14 @@ public class Sampling implements EventListenerInterface
             }
             this.trajectoryPerGtu.get(gtuId).put(lane, trajectory);
             this.trajectories.get(laneDirection).addTrajectory(trajectory);
-            gtu.addListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT, true);
+            if (isIntervalBased())
+            {
+                scheduleSamplingEvent(gtu, lane);
+            }
+            else
+            {
+                gtu.addListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT, true);
+            }
         }
         else if (event.getType().equals(Lane.GTU_REMOVE_EVENT))
         {
@@ -226,11 +260,92 @@ public class Sampling implements EventListenerInterface
                     this.trajectoryPerGtu.remove(gtuId);
                 }
             }
-            gtu.removeListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
+            if (isIntervalBased())
+            {
+                if (this.eventPerGtu.get(gtuId) != null)
+                {
+                    if (this.eventPerGtu.get(gtuId).containsKey(lane))
+                    {
+                        this.simulator.cancelEvent(this.eventPerGtu.get(gtuId).get(lane));
+                    }
+                    this.eventPerGtu.get(gtuId).remove(lane);
+                    if (this.eventPerGtu.get(gtuId).isEmpty())
+                    {
+                        this.eventPerGtu.remove(gtuId);
+                    }
+                }
+            }
+            else
+            {
+                gtu.removeListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
+            }
         }
 
     }
+
+    /**
+     * @return whether sampling is interval based
+     */
+    private boolean isIntervalBased()
+    {
+        return this.samplingInterval != null;
+    }
     
+    /**
+     * Schedules a sampling event for the given gtu on the given lane for the samlping interval from the current time.
+     * @param gtu gtu to sample
+     * @param lane lane where the gtu is at
+     */
+    private void scheduleSamplingEvent(final LaneBasedGTU gtu, final Lane lane)
+    {
+        OTSSimTimeDouble simTime = this.simulator.getSimulatorTime().copy();
+        simTime.add(this.samplingInterval);
+        SimEvent<OTSSimTimeDouble> simEvent = new SimEvent<>(simTime, this, this, "notifySample", new Object[] { gtu, lane });
+        try
+        {
+            this.simulator.scheduleEvent(simEvent);
+        }
+        catch (SimRuntimeException exception)
+        {
+            // should not happen with getSimulatorTime.add()
+            throw new RuntimeException("Scheduling sampling in the past.", exception);
+        }
+        String gtuId = gtu.getId();
+        if (!this.eventPerGtu.containsKey(gtuId))
+        {
+            Map<Lane, SimEvent<OTSSimTimeDouble>> map = new HashMap<>();
+            this.eventPerGtu.put(gtuId, map);
+        }
+        this.eventPerGtu.get(gtuId).put(lane, simEvent);
+    }
+
+    /**
+     * Samples a gtu and schedules the next sampling event.
+     * @param gtu gtu to sample
+     * @param lane lane where the gtu is at
+     */
+    public final void notifySample(final LaneBasedGTU gtu, final Lane lane)
+    {
+        String gtuId = gtu.getId();
+        if (this.trajectoryPerGtu.containsKey(gtuId) && this.trajectoryPerGtu.get(gtuId).containsKey(lane))
+        {
+            // Payload: [String gtuId, DirectedPoint position, Speed speed, Acceleration acceleration, TurnIndicatorStatus
+            // turnIndicatorStatus, Length odometer, Lane referenceLane, Length positionOnReferenceLane]
+            try
+            {
+                this.trajectoryPerGtu.get(gtuId).get(lane).add(gtu.position(lane, RelativePosition.REFERENCE_POSITION),
+                        gtu.getSpeed(), gtu.getAcceleration(),
+                        new Duration(this.simulator.getSimulatorTime().get().si, TimeUnit.SI));
+            }
+            catch (GTUException exception)
+            {
+                // should not happen, as remove event should prevent it
+                throw new RuntimeException("Could not execute sampling event.", exception);
+            }
+        }
+        scheduleSamplingEvent(gtu, lane);
+    }
+
     /**
      * @param gtu gtu to return meta data for
      * @param <T> underlying type of a meta data type
@@ -242,7 +357,11 @@ public class Sampling implements EventListenerInterface
         MetaData metaData = new MetaData();
         for (MetaDataType<?> metaDataType : this.registeredMetaDataTypes)
         {
-            metaData.put((MetaDataType<T>) metaDataType, (T) metaDataType.getValue(gtu));
+            T value = (T) metaDataType.getValue(gtu);
+            if (value != null)
+            {
+                metaData.put((MetaDataType<T>) metaDataType, value);
+            }
         }
         return metaData;
     }
@@ -285,7 +404,7 @@ public class Sampling implements EventListenerInterface
         {
             return false;
         }
-        Sampling other = (Sampling) obj;
+        Sampler other = (Sampler) obj;
         if (this.endTimes == null)
         {
             if (other.endTimes != null)

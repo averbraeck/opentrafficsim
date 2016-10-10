@@ -72,8 +72,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="org.opentrafficsim.road.network.sampling.Sampling" project="ots-road" 
-    file="/ots-road/src/main/java/org/opentrafficsim/road/network/sampling/Sampling.java" binary="false" 
+  <class id="8" language="java" name="org.opentrafficsim.road.network.sampling.Sampler" project="ots-road" 
+    file="/ots-road/src/main/java/org/opentrafficsim/road/network/sampling/Sampler.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="270" y="350"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 

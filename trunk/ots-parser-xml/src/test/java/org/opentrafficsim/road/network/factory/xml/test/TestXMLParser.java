@@ -12,11 +12,13 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -31,7 +33,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.factory.xml.test.TestXMLParser.WGS84ToRDNewTransform.Coords;
 import org.opentrafficsim.road.network.sampling.Query;
-import org.opentrafficsim.road.network.sampling.Sampling;
+import org.opentrafficsim.road.network.sampling.Sampler;
 import org.opentrafficsim.road.network.sampling.indicator.MeanSpeed;
 import org.opentrafficsim.road.network.sampling.indicator.MeanTravelTime;
 import org.opentrafficsim.road.network.sampling.indicator.MeanTripLength;
@@ -181,7 +183,8 @@ public class TestXMLParser extends AbstractWrappableAnimation
                 network = nlp.build(url);
                 // ODMatrixTrips matrix = N201ODfactory.get(network);
                 // N201ODfactory.makeGeneratorsFromOD(network, matrix, this.simulator);
-                Query query = N201ODfactory.getQuery(network, new Sampling(this.simulator));
+                Query query =
+                        N201ODfactory.getQuery(network, new Sampler(this.simulator, new Frequency(10.0, FrequencyUnit.SI)));
                 scheduleKpiEvent(30.0, this.simulator, query);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
@@ -189,7 +192,7 @@ public class TestXMLParser extends AbstractWrappableAnimation
             {
                 exception.printStackTrace();
             }
-            
+
             URL gisURL = URLResource.getResource("/N201/map.xml");
             System.err.println("GIS-map file: " + gisURL.toString());
             CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
@@ -211,15 +214,21 @@ public class TestXMLParser extends AbstractWrappableAnimation
         }
 
     }
-    
-    TotalTravelDistance totalTravelDistance  = new TotalTravelDistance();
-    TotalTravelTime totalTravelTime  = new TotalTravelTime();
+
+    TotalTravelDistance totalTravelDistance = new TotalTravelDistance();
+
+    TotalTravelTime totalTravelTime = new TotalTravelTime();
+
     MeanSpeed meanSpeed = new MeanSpeed(this.totalTravelDistance, this.totalTravelTime);
+
     MeanTravelTime meanTravelTime = new MeanTravelTime(this.meanSpeed);
+
     MeanTripLength meanTripLength = new MeanTripLength();
+
     TotalDelay totalDelay = new TotalDelay(new Speed(80.0, SpeedUnit.KM_PER_HOUR));
+
     TotalNumberOfStops totalNumberOfStops = new TotalNumberOfStops();
-    
+
     public void publishKpis(double time, final OTSDEVSSimulatorInterface simulator, final Query query)
     {
         Length tdist = this.totalTravelDistance.getValue(query, new Duration(time, TimeUnit.SI));
@@ -239,19 +248,20 @@ public class TestXMLParser extends AbstractWrappableAnimation
         System.out.println("Number of stops " + nos);
         scheduleKpiEvent(time + 30, simulator, query);
     }
-    
-    public void scheduleKpiEvent(double time, final OTSDEVSSimulatorInterface simulator, final Query query) 
+
+    public void scheduleKpiEvent(double time, final OTSDEVSSimulatorInterface simulator, final Query query)
     {
         try
         {
-            simulator.scheduleEventAbs(new Time(time, TimeUnit.SI), this, this, "publishKpis", new Object[]{time, simulator, query});
+            simulator.scheduleEventAbs(new Time(time, TimeUnit.SI), this, this, "publishKpis",
+                    new Object[] { time, simulator, query });
         }
         catch (SimRuntimeException exception)
         {
             throw new RuntimeException("Cannot schedule KPI event.", exception);
         }
     }
-    
+
     /**
      * Convert coordinates to/from the Dutch RD system.
      */
@@ -307,14 +317,14 @@ public class TestXMLParser extends AbstractWrappableAnimation
             return "CoordinateTransformRD [dx=" + this.dx + ", dy=" + this.dy + "]";
         }
     }
-    
+
     /**
      * <p>
      * Copyright (c) 2011 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. The
      * source code and binary code of this software is proprietary information of Delft University of Technology. Specific
      * MathTransform for WGS84 WGS84 (EPSG:4326) to RD_new (EPSG:28992) conversions. Code based on C code by Peter Knoppers as
-     * applied <a href="http://www.regiolab-delft.nl/?q=node/36">here</a>, which is based on <a
-     * href="http://www.dekoepel.nl/pdf/Transformatieformules.pdf">this</a> paper.
+     * applied <a href="http://www.regiolab-delft.nl/?q=node/36">here</a>, which is based on
+     * <a href="http://www.dekoepel.nl/pdf/Transformatieformules.pdf">this</a> paper.
      * @author Gert-Jan Stolk
      **/
     public static class WGS84ToRDNewTransform

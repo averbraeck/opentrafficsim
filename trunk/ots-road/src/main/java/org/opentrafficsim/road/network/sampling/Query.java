@@ -42,7 +42,7 @@ public final class Query
     private UUID uniqueId = UUID.randomUUID();
 
     /** Sampling. */
-    private final Sampling sampling;
+    private final Sampler sampling;
 
     /** Description. */
     private final String description;
@@ -70,7 +70,7 @@ public final class Query
      * @param metaDataSet meta data
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampling sampling, final String description, final boolean connected, final MetaDataSet metaDataSet)
+    public Query(final Sampler sampling, final String description, final boolean connected, final MetaDataSet metaDataSet)
     {
         this(sampling, description, connected, metaDataSet, null, null);
     }
@@ -83,7 +83,7 @@ public final class Query
      * @param interval interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampling sampling, final String description, final boolean connected, final MetaDataSet metaDataSet,
+    public Query(final Sampler sampling, final String description, final boolean connected, final MetaDataSet metaDataSet,
             final Duration interval)
     {
         this(sampling, description, connected, metaDataSet, null, interval);
@@ -97,7 +97,7 @@ public final class Query
      * @param updateFrequency update frequency
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampling sampling, final String description, final boolean connected, final MetaDataSet metaDataSet,
+    public Query(final Sampler sampling, final String description, final boolean connected, final MetaDataSet metaDataSet,
             final Frequency updateFrequency)
     {
         this(sampling, description, connected, metaDataSet, updateFrequency, null);
@@ -112,7 +112,7 @@ public final class Query
      * @param interval interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampling sampling, final String description, final boolean connected, final MetaDataSet metaDataSet,
+    public Query(final Sampler sampling, final String description, final boolean connected, final MetaDataSet metaDataSet,
             final Frequency updateFrequency, final Duration interval)
     {
         Throw.whenNull(sampling, "Sampling may not be null.");
