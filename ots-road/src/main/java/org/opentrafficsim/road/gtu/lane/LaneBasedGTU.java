@@ -170,20 +170,21 @@ public interface LaneBasedGTU extends GTU
     /**
      * The lane-based event type for pub/sub indicating the initialization of a new GTU. <br>
      * Payload: [String gtuId, DirectedPoint initialPosition, Length length, Length width, Color gtuBaseColor, Lane
-     * referenceLane, Length positionOnReferenceLane]
+     * referenceLane, Length positionOnReferenceLane, GTUDirectionality direction]
      */
     EventType LANEBASED_INIT_EVENT = new EventType("LANEBASEDGTU.INIT");
 
     /**
      * The lane-based event type for pub/sub indicating a move. <br>
      * Payload: [String gtuId, DirectedPoint position, Speed speed, Acceleration acceleration, TurnIndicatorStatus
-     * turnIndicatorStatus, Length odometer, Lane referenceLane, Length positionOnReferenceLane]
+     * turnIndicatorStatus, Length odometer, Lane referenceLane, Length positionOnReferenceLane, GTUDirectionality direction]
      */
     EventType LANEBASED_MOVE_EVENT = new EventType("LANEBASEDGTU.MOVE");
 
     /**
      * The lane-based event type for pub/sub indicating destruction of the GTU. <br>
-     * Payload: [String gtuId, DirectedPoint lastPosition, Length odometer, Lane referenceLane, Length positionOnReferenceLane]
+     * Payload: [String gtuId, DirectedPoint lastPosition, Length odometer, Lane referenceLane, Length positionOnReferenceLane,
+     * GTUDirectionality direction]
      */
     EventType LANEBASED_DESTROY_EVENT = new EventType("LANEBASEDGTU.DESTROY");
 
