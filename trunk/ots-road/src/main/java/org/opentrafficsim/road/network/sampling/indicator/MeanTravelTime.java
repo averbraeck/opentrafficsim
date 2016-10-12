@@ -6,6 +6,7 @@ import java.util.Set;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.road.network.sampling.Query;
 import org.opentrafficsim.road.network.sampling.TrajectoryGroup;
@@ -36,7 +37,7 @@ public class MeanTravelTime extends AbstractIndicator<TimeUnit, Duration>
 
     /** {@inheritDoc} */
     @Override
-    public final Duration calculate(final Query query, final Duration startTime, final Duration endTime)
+    public final Duration calculate(final Query query, final Time startTime, final Time endTime)
     {
         Length cumulLength = Length.ZERO;
         Set<Link> links = new HashSet<>();

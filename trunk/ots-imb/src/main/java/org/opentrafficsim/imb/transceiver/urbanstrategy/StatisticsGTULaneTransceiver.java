@@ -9,6 +9,7 @@ import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
@@ -316,7 +317,7 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
         newMessage.add(this.network.getId());
         newMessage.add((int) 0); // TODO numberMetadataEntries
         newMessage.add((int) 0); // TODO numberSpaceTimeRegions
-        newMessage.add(query.isConnected());
+        newMessage.add(false); // TODO "connected" not part of query anymore
         newMessage.add(true); // TODO totalTrajectory
         newMessage.add(transmissionInterval.si);
 
@@ -339,13 +340,13 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
     public void sendStatisticsUpdate() throws IMBException, SimRuntimeException
     {
         double time = getSimulator().getSimulatorTime().getTime().si;
-        Length tdist = this.totalTravelDistance.getValue(this.query, new Duration(time, TimeUnit.SI));
-        Duration ttt = this.totalTravelTime.getValue(this.query, new Duration(time, TimeUnit.SI));
-        Speed ms = this.meanSpeed.getValue(this.query, new Duration(time, TimeUnit.SI));
-        Duration mtt = this.meanTravelTime.getValue(this.query, new Duration(time, TimeUnit.SI));
-        Length mtl = this.meanTripLength.getValue(this.query, new Duration(time, TimeUnit.SI));
-        Duration tdel = this.totalDelay.getValue(this.query, new Duration(time, TimeUnit.SI));
-        Dimensionless nos = this.totalNumberOfStops.getValue(this.query, new Duration(time, TimeUnit.SI));
+        Length tdist = this.totalTravelDistance.getValue(this.query, new Time(time, TimeUnit.SI));
+        Duration ttt = this.totalTravelTime.getValue(this.query, new Time(time, TimeUnit.SI));
+        Speed ms = this.meanSpeed.getValue(this.query, new Time(time, TimeUnit.SI));
+        Duration mtt = this.meanTravelTime.getValue(this.query, new Time(time, TimeUnit.SI));
+        Length mtl = this.meanTripLength.getValue(this.query, new Time(time, TimeUnit.SI));
+        Duration tdel = this.totalDelay.getValue(this.query, new Time(time, TimeUnit.SI));
+        Dimensionless nos = this.totalNumberOfStops.getValue(this.query, new Time(time, TimeUnit.SI));
         System.out.println("===== @time " + time + " s =====");
         System.out.println("Total distance " + tdist);
         System.out.println("Total travel time " + ttt);

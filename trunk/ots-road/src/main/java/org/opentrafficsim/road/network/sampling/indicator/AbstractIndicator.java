@@ -2,7 +2,7 @@ package org.opentrafficsim.road.network.sampling.indicator;
 
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.road.network.sampling.Query;
 
@@ -30,10 +30,10 @@ public abstract class AbstractIndicator<U extends Unit<U>, T extends DoubleScala
     private Query lastQuery;
 
     /** Last start time. */
-    private Duration lastStartTime;
+    private Time lastStartTime;
 
     /** Last end time. */
-    private Duration lastEndTime;
+    private Time lastEndTime;
 
     /** Last value. */
     private T lastValue;
@@ -45,9 +45,9 @@ public abstract class AbstractIndicator<U extends Unit<U>, T extends DoubleScala
      * @return value for given query
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public T getValue(final Query query, final Duration endTime)
+    public T getValue(final Query query, final Time endTime)
     {
-        return getValue(query, Duration.ZERO, endTime);
+        return getValue(query, Time.ZERO, endTime);
     }
 
     /**
@@ -57,7 +57,7 @@ public abstract class AbstractIndicator<U extends Unit<U>, T extends DoubleScala
      * @param endTime start time of interval to calculate indicator over
      * @return value for given query
      */
-    public final T getValue(final Query query, final Duration startTime, final Duration endTime)
+    public final T getValue(final Query query, final Time startTime, final Time endTime)
     {
         Throw.whenNull(query, "Query may not be null.");
         Throw.whenNull(startTime, "Start time may not be null.");
@@ -80,9 +80,9 @@ public abstract class AbstractIndicator<U extends Unit<U>, T extends DoubleScala
      * @return value for given query
      */
     @SuppressWarnings("checkstyle:designforextension")
-    protected T calculate(final Query query, final Duration endTime)
+    protected T calculate(final Query query, final Time endTime)
     {
-        return calculate(query, Duration.ZERO, endTime);
+        return calculate(query, Time.ZERO, endTime);
     }
 
     /**
@@ -92,6 +92,6 @@ public abstract class AbstractIndicator<U extends Unit<U>, T extends DoubleScala
      * @param endTime start time of interval to calculate indicator over
      * @return value for given query
      */
-    protected abstract T calculate(Query query, Duration startTime, Duration endTime);
+    protected abstract T calculate(Query query, Time startTime, Time endTime);
 
 }

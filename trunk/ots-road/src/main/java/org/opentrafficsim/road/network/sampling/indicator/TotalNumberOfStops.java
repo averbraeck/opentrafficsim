@@ -2,10 +2,10 @@ package org.opentrafficsim.road.network.sampling.indicator;
 
 import org.djunits.unit.DimensionlessUnit;
 import org.djunits.value.vdouble.scalar.Dimensionless;
-import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.road.network.sampling.Query;
-import org.opentrafficsim.road.network.sampling.TrajectoryGroup;
 import org.opentrafficsim.road.network.sampling.Trajectory;
+import org.opentrafficsim.road.network.sampling.TrajectoryGroup;
 
 /**
  * <p>
@@ -22,7 +22,7 @@ public class TotalNumberOfStops extends AbstractIndicator<DimensionlessUnit, Dim
 
     /** {@inheritDoc} */
     @Override
-    public final Dimensionless calculate(final Query query, final Duration startTime, final Duration endTime)
+    public final Dimensionless calculate(final Query query, final Time startTime, final Time endTime)
     {
         int sum = 0;
         for (TrajectoryGroup trajectoryGroup : query.getTrajectoryGroups(startTime, endTime))

@@ -3,9 +3,10 @@ package org.opentrafficsim.road.network.sampling.indicator;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.road.network.sampling.Query;
-import org.opentrafficsim.road.network.sampling.TrajectoryGroup;
 import org.opentrafficsim.road.network.sampling.Trajectory;
+import org.opentrafficsim.road.network.sampling.TrajectoryGroup;
 
 /**
  * <p>
@@ -34,7 +35,7 @@ public class TotalDelay extends AbstractIndicator<TimeUnit, Duration>
 
     /** {@inheritDoc} */
     @Override
-    public final Duration calculate(final Query query, final Duration startTime, final Duration endTime)
+    public final Duration calculate(final Query query, final Time startTime, final Time endTime)
     {
         Duration sum = Duration.ZERO;
         for (TrajectoryGroup trajectoryGroup : query.getTrajectoryGroups(startTime, endTime))
