@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.sampling;
 
-import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 
@@ -28,10 +28,10 @@ public class SpaceTimeRegion
     private final Length endPosition;
 
     /** Start time. */
-    private final Duration startTime;
+    private final Time startTime;
 
     /** End time. */
-    private final Duration endTime;
+    private final Time endTime;
 
     /**
      * @param laneDirection lane direction
@@ -42,7 +42,7 @@ public class SpaceTimeRegion
      * @throws IllegalArgumentException if start time is larger than end time
      */
     SpaceTimeRegion(final LaneDirection laneDirection, final Length startPosition, final Length endPosition,
-        final Duration startTime, final Duration endTime)
+        final Time startTime, final Time endTime)
     {
         Throw.when(endTime.lt(startTime), IllegalArgumentException.class, "Start time is larger than end time.");
         this.laneDirection = laneDirection;
@@ -79,7 +79,7 @@ public class SpaceTimeRegion
     /**
      * @return startTime.
      */
-    public final Duration getStartTime()
+    public final Time getStartTime()
     {
         return this.startTime;
     }
@@ -87,7 +87,7 @@ public class SpaceTimeRegion
     /**
      * @return endTime.
      */
-    public final Duration getEndTime()
+    public final Time getEndTime()
     {
         return this.endTime;
     }

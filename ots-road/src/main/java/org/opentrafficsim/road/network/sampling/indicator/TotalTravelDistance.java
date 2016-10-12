@@ -1,11 +1,11 @@
 package org.opentrafficsim.road.network.sampling.indicator;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.road.network.sampling.Query;
-import org.opentrafficsim.road.network.sampling.TrajectoryGroup;
 import org.opentrafficsim.road.network.sampling.Trajectory;
+import org.opentrafficsim.road.network.sampling.TrajectoryGroup;
 
 /**
  * <p>
@@ -22,7 +22,7 @@ public class TotalTravelDistance extends AbstractIndicator<LengthUnit, Length>
 
     /** {@inheritDoc} */
     @Override
-    public final Length calculate(final Query query, final Duration startTime, final Duration endTime)
+    public final Length calculate(final Query query, final Time startTime, final Time endTime)
     {
         Length sum = Length.ZERO;
         for (TrajectoryGroup trajectoryGroup : query.getTrajectoryGroups(startTime, endTime))

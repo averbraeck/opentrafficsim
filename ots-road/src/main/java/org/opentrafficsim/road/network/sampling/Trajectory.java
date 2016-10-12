@@ -1,6 +1,11 @@
 package org.opentrafficsim.road.network.sampling;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
@@ -12,17 +17,20 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.vector.FloatAccelerationVector;
-import org.djunits.value.vfloat.vector.FloatDurationVector;
 import org.djunits.value.vfloat.vector.FloatLengthVector;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
+import org.djunits.value.vfloat.vector.FloatTimeVector;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.road.network.sampling.data.ExtendedDataType;
 import org.opentrafficsim.road.network.sampling.meta.MetaData;
 import org.opentrafficsim.road.network.sampling.meta.MetaDataType;
 
 /**
- * Contains position, speed, acceleration and time data of a GTU, over some section.
+ * Contains position, speed, acceleration and time data of a GTU, over some section. Position is relative to the start of the
+ * lane, also when trajectories have been truncated at a position x &gt; 0.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -33,7 +41,6 @@ import org.opentrafficsim.road.network.sampling.meta.MetaDataType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-// TODO desired speed per time step, flexibility to add other data per time step
 public final class Trajectory
 {
 
@@ -43,7 +50,10 @@ public final class Trajectory
     /** Effective length of the underlying data (arrays may be longer). */
     private int size = 0;
 
-    /** Distance array. */
+    /**
+     * Position array. Position is relative to the start of the lane, also when trajectories have been truncated at a position x
+     * &gt; 0.
+     */
     private float[] x = new float[DEFAULT_CAPACITY];
 
     /** Speed array. */
@@ -55,70 +65,64 @@ public final class Trajectory
     /** Time array. */
     private float[] t = new float[DEFAULT_CAPACITY];
 
+    /** Map of array data types and their values. */
+    private final Map<ExtendedDataType<?>, List<Object>> extendedData = new HashMap<>();
+
     /** Meta data. */
     private final MetaData metaData;
 
     /** GTU id. */
     private final String gtuId;
 
-    /** Whether GTU entered this trajectory longitudinally. */
-    private final boolean longitudinalEntry;
-
     /**
      * @param gtu GTU of this trajectory, only the id is stored.
-     * @param longitudinalEntry whether GTU entered this trajectory longitudinally
      * @param metaData meta data
+     * @param extendedData types of extended data
      */
-    public Trajectory(final GTU gtu, final boolean longitudinalEntry, final MetaData metaData)
+    public Trajectory(final GTU gtu, final MetaData metaData, final Set<ExtendedDataType<?>> extendedData)
     {
-        this.gtuId = gtu.getId();
-        this.longitudinalEntry = longitudinalEntry;
-        this.metaData = metaData;
+        this(gtu.getId(), metaData, extendedData);
     }
 
     /**
      * Private constructor for creating subsets.
      * @param gtuId GTU id
-     * @param longitudinalEntry longitudinal entry
      * @param metaData meta data
+     * @param extendedData types of extended data
      */
-    private Trajectory(final String gtuId, final boolean longitudinalEntry, final MetaData metaData)
+    private Trajectory(final String gtuId, final MetaData metaData, final Set<ExtendedDataType<?>> extendedData)
     {
         this.gtuId = gtuId;
-        this.longitudinalEntry = longitudinalEntry;
         this.metaData = new MetaData(metaData);
+        for (ExtendedDataType<?> dataType : extendedData)
+        {
+            this.extendedData.put(dataType, new ArrayList<>());
+        }
     }
 
     /**
-     * Returns whether GTU entered this trajectory longitudinally. The first point may then be connected to the last point in a
-     * previous trajectory.
-     * @return whether GTU entered this trajectory longitudinally
-     */
-    public boolean isLongitudinalEntry()
-    {
-        return this.longitudinalEntry;
-    }
-
-    /**
-     * Adds values of distance, speed, acceleration and time.
-     * @param distance distance
+     * Adds values of position, speed, acceleration and time.
+     * @param position position is relative to the start of the lane, also when trajectories have been truncated at a position x
+     *            &gt; 0
      * @param speed speed
      * @param acceleration acceleration
      * @param time time
      */
-    public void add(final Length distance, final Speed speed, final Acceleration acceleration, final Duration time)
+    public void add(final Length position, final Speed speed, final Acceleration acceleration, final Time time)
     {
-        add((float) distance.si, (float) speed.si, (float) acceleration.si, (float) time.si);
+        add(position, speed, acceleration, time, null);
     }
 
     /**
-     * Adds si values of distance, speed, acceleration and time.
-     * @param xSI si distance
-     * @param vSI si speed
-     * @param aSI si acceleration
-     * @param tSI si time
+     * Adds values of position, speed, acceleration and time.
+     * @param position position is relative to the start of the lane, also when trajectories have been truncated at a position x
+     *            &gt; 0
+     * @param speed speed
+     * @param acceleration acceleration
+     * @param time time
+     * @param gtu gtu to add extended data for
      */
-    public void add(final float xSI, final float vSI, final float aSI, final float tSI)
+    public void add(final Length position, final Speed speed, final Acceleration acceleration, final Time time, final GTU gtu)
     {
         if (this.size == this.x.length)
         {
@@ -128,11 +132,25 @@ public final class Trajectory
             this.a = Arrays.copyOf(this.a, cap);
             this.t = Arrays.copyOf(this.t, cap);
         }
-        this.x[this.size] = xSI;
-        this.v[this.size] = vSI;
-        this.a[this.size] = aSI;
-        this.t[this.size] = tSI;
+        this.x[this.size] = (float) position.si;
+        this.v[this.size] = (float) speed.si;
+        this.a[this.size] = (float) acceleration.si;
+        this.t[this.size] = (float) time.si;
         this.size++;
+        if (gtu != null)
+        {
+            for (ExtendedDataType<?> extendedDataType : this.extendedData.keySet())
+            {
+                this.extendedData.get(extendedDataType).add(this.size - 1, extendedDataType.getValue(gtu));
+            }
+        }
+        else
+        {
+            for (ExtendedDataType<?> extendedDataType : this.extendedData.keySet())
+            {
+                this.extendedData.get(extendedDataType).add(this.size - 1, null);
+            }
+        }
     }
 
     /**
@@ -152,7 +170,8 @@ public final class Trajectory
     }
 
     /**
-     * @return si distance values
+     * @return si position values, position is relative to the start of the lane, also when trajectories have been truncated at
+     *         a position x &gt; 0
      */
     public float[] getX()
     {
@@ -184,9 +203,10 @@ public final class Trajectory
     }
 
     /**
-     * @return strongly typed copy of length
+     * @return strongly typed copy of position, position is relative to the start of the lane, also when trajectories have been
+     *         truncated at a position x &gt; 0
      */
-    public FloatLengthVector getLength()
+    public FloatLengthVector getPosition()
     {
         try
         {
@@ -234,11 +254,11 @@ public final class Trajectory
     /**
      * @return strongly typed copy of time
      */
-    public FloatDurationVector getDuration()
+    public FloatTimeVector getTime()
     {
         try
         {
-            return new FloatDurationVector(this.t, TimeUnit.SI, StorageType.DENSE);
+            return new FloatTimeVector(this.t, TimeUnit.SI, StorageType.DENSE);
         }
         catch (ValueException exception)
         {
@@ -302,6 +322,29 @@ public final class Trajectory
     }
 
     /**
+     * @param extendedDataType extended data type
+     * @return whether the trajectory contains the extended data of give type
+     */
+    public boolean contains(final ExtendedDataType<?> extendedDataType)
+    {
+        return this.extendedData.containsKey(extendedDataType);
+    }
+
+    /**
+     * @param extendedDataType extended data type to return
+     * @param <T> value type of the extended data type
+     * @return values of extended data type
+     * @throws SamplingException if the extended data type is not in the trajectory
+     */
+    @SuppressWarnings("unchecked")
+    public <T> List<T> getExtendedData(final ExtendedDataType<T> extendedDataType) throws SamplingException
+    {
+        Throw.when(!this.extendedData.containsKey(extendedDataType), SamplingException.class,
+                "Extended data type %s is not in the trajectory.", extendedDataType);
+        return (List<T>) this.extendedData.get(extendedDataType);
+    }
+
+    /**
      * Copies the trajectory but with a subset of the data. Longitudinal entry is only true if the original trajectory has true,
      * and the subset is from the start.
      * @param minLength minimum length
@@ -315,17 +358,7 @@ public final class Trajectory
         Throw.whenNull(minLength, "minLength may not be null");
         Throw.whenNull(maxLength, "maxLength may not be null");
         Throw.when(minLength.gt(maxLength), IllegalArgumentException.class, "minLength should be smaller than maxLength");
-        int from = 0;
-        while (minLength.si > this.x[from] && from < this.size)
-        {
-            from++;
-        }
-        int to = this.size;
-        while (maxLength.si < this.x[to] && to > 0)
-        {
-            to--;
-        }
-        return subSet(from, to);
+        return subSet(spaceBoundaries(minLength, maxLength));
     }
 
     /**
@@ -337,22 +370,12 @@ public final class Trajectory
      * @throws NullPointerException if an input is null
      * @throws IllegalArgumentException of minTime is smaller than maxTime
      */
-    public Trajectory subSet(final Duration minTime, final Duration maxTime)
+    public Trajectory subSet(final Time minTime, final Time maxTime)
     {
         Throw.whenNull(minTime, "minTime may not be null");
         Throw.whenNull(maxTime, "maxTime may not be null");
         Throw.when(minTime.gt(maxTime), IllegalArgumentException.class, "minTime should be smaller than maxTime");
-        int from = 0;
-        while (minTime.si > this.t[from] && from < this.size)
-        {
-            from++;
-        }
-        int to = this.size;
-        while (maxTime.si < this.t[to] && to > 0)
-        {
-            to--;
-        }
-        return subSet(from, to);
+        return subSet(timeBoundaries(minTime, maxTime));
     }
 
     /**
@@ -366,7 +389,7 @@ public final class Trajectory
      * @throws NullPointerException if an input is null
      * @throws IllegalArgumentException of minLength/Time is smaller than maxLength/Time
      */
-    public Trajectory subSet(final Length minLength, final Length maxLength, final Duration minTime, final Duration maxTime)
+    public Trajectory subSet(final Length minLength, final Length maxLength, final Time minTime, final Time maxTime)
     {
         // could use this.subSet(minLength, maxLength).subSet(minTime, maxTime), but that copies twice
         Throw.whenNull(minLength, "minLength may not be null");
@@ -375,43 +398,129 @@ public final class Trajectory
         Throw.whenNull(minTime, "minTime may not be null");
         Throw.whenNull(maxTime, "maxTime may not be null");
         Throw.when(minTime.gt(maxTime), IllegalArgumentException.class, "minTime should be smaller than maxTime");
-        int from = 0;
-        while ((minLength.si > this.x[from] || minTime.si > this.t[from]) && from < this.size)
-        {
-            from++;
-        }
-        int to = this.size - 1;
-        if (to >= 0)
-        {
-            while ((maxLength.si < this.x[to] || maxTime.si < this.t[to]) && to > 0)
-            {
-                to--;
-            }
-        }
-        else
-        {
-            to = 0;
-        }
-        return subSet(from, to);
+        return subSet(spaceBoundaries(minLength, maxLength).intersect(timeBoundaries(minTime, maxTime)));
     }
 
     /**
-     * Copies the trajectory but with a subset of the data. Longitudinal entry is only true if the original trajectory has true,
-     * and the subset is from the start.
-     * @param from first index
-     * @param to last index
+     * Determine spatial boundaries.
+     * @param minLength minimum length
+     * @param maxLength maximum length
+     * @return spatial boundaries
+     */
+    private Boundaries spaceBoundaries(final Length minLength, final Length maxLength)
+    {
+        int from = 0;
+        double fFrom = 0;
+        while (minLength.si > this.x[from + 1] && from < this.size - 1)
+        {
+            from++;
+        }
+        if (this.x[from] < minLength.si)
+        {
+            fFrom = (minLength.si - this.x[from]) / (this.x[from + 1] - this.x[from]);
+        }
+        int to = this.size - 1;
+        double fTo = 0;
+        while (maxLength.si < this.x[to] && to > 0)
+        {
+            to--;
+        }
+        if (to < this.size - 1)
+        {
+            fTo = (maxLength.si - this.x[to]) / (this.x[to + 1] - this.x[to]);
+        }
+        return new Boundaries(from, fFrom, to, fTo);
+    }
+
+    /**
+     * Determine spatial boundaries.
+     * @param minTime minimum time
+     * @param maxTime maximum time
+     * @return spatial boundaries
+     */
+    private Boundaries timeBoundaries(final Time minTime, final Time maxTime)
+    {
+        int from = 0;
+        double fFrom = 0;
+        while (minTime.si > this.t[from + 1] && from < this.size - 1)
+        {
+            from++;
+        }
+        if (this.t[from] < minTime.si)
+        {
+            fFrom = (minTime.si - this.t[from]) / (this.t[from + 1] - this.t[from]);
+        }
+        int to = this.size - 1;
+        double fTo = 0;
+        while (maxTime.si < this.t[to] && to > 0)
+        {
+            to--;
+        }
+        if (to < this.size - 1)
+        {
+            fTo = (maxTime.si - this.t[to]) / (this.t[to + 1] - this.t[to]);
+        }
+        return new Boundaries(from, fFrom, to, fTo);
+    }
+
+    /**
+     * Copies the trajectory but with a subset of the data. Data is taken from position (from + fFrom) to (to + fTo).
+     * @param bounds boundaries
+     * @param <T> type of underlying extended data value
      * @return subset of the trajectory
      */
-    private Trajectory subSet(final int from, final int to)
+    @SuppressWarnings("unchecked")
+    private <T> Trajectory subSet(final Boundaries bounds)
     {
-        Trajectory out = new Trajectory(this.gtuId, from == 0 ? this.longitudinalEntry : false, this.metaData);
-        if (from < to) // otherwise empty, no data in the subset
+        Trajectory out = new Trajectory(this.gtuId, this.metaData, this.extendedData.keySet());
+        if (bounds.from < bounds.to) // otherwise empty, no data in the subset
         {
-            out.x = Arrays.copyOfRange(this.x, from, to + 1);
-            out.v = Arrays.copyOfRange(this.v, from, to + 1);
-            out.a = Arrays.copyOfRange(this.a, from, to + 1);
-            out.t = Arrays.copyOfRange(this.t, from, to + 1);
-            out.size = out.x.length;
+            int nBefore = bounds.fFrom < 1.0 ? 1 : 0;
+            int nAfter = bounds.fTo > 0.0 ? 1 : 0;
+            int n = bounds.to - bounds.from + nBefore + nAfter;
+            out.x = new float[n];
+            out.v = new float[n];
+            out.a = new float[n];
+            out.t = new float[n];
+            System.arraycopy(this.x, bounds.from + 1, out.x, nBefore, bounds.to - bounds.from);
+            System.arraycopy(this.v, bounds.from + 1, out.v, nBefore, bounds.to - bounds.from);
+            System.arraycopy(this.a, bounds.from + 1, out.a, nBefore, bounds.to - bounds.from);
+            System.arraycopy(this.t, bounds.from + 1, out.t, nBefore, bounds.to - bounds.from);
+            if (nBefore == 1)
+            {
+                out.x[0] = (float) (this.x[bounds.from] * (1 - bounds.fFrom) + this.x[bounds.from + 1] * bounds.fFrom);
+                out.v[0] = (float) (this.v[bounds.from] * (1 - bounds.fFrom) + this.v[bounds.from + 1] * bounds.fFrom);
+                out.a[0] = (float) (this.a[bounds.from] * (1 - bounds.fFrom) + this.a[bounds.from + 1] * bounds.fFrom);
+                out.t[0] = (float) (this.t[bounds.from] * (1 - bounds.fFrom) + this.t[bounds.from + 1] * bounds.fFrom);
+            }
+            if (nAfter == 1)
+            {
+                out.x[n - 1] = (float) (this.x[bounds.to] * (1 - bounds.fTo) + this.x[bounds.to + 1] * bounds.fTo);
+                out.v[n - 1] = (float) (this.v[bounds.to] * (1 - bounds.fTo) + this.v[bounds.to + 1] * bounds.fTo);
+                out.a[n - 1] = (float) (this.a[bounds.to] * (1 - bounds.fTo) + this.a[bounds.to + 1] * bounds.fTo);
+                out.t[n - 1] = (float) (this.t[bounds.to] * (1 - bounds.fTo) + this.t[bounds.to + 1] * bounds.fTo);
+            }
+            out.size = n;
+            for (ExtendedDataType<?> extendedDataType : this.extendedData.keySet())
+            {
+                List<Object> fromList = this.extendedData.get(extendedDataType);
+                List<Object> toList = new ArrayList<>();
+                if (nBefore == 1)
+                {
+                    toList.add(((ExtendedDataType<T>) extendedDataType).interpolate((T) fromList.get(bounds.from),
+                            (T) fromList.get(bounds.from + 1), bounds.fFrom));
+                }
+                for (int i = bounds.from + 1; i < bounds.to; i++)
+                {
+                    toList.add(fromList.get(i));
+                }
+                if (nAfter == 1)
+                {
+                    toList.add(((ExtendedDataType<T>) extendedDataType).interpolate((T) fromList.get(bounds.to),
+                            (T) fromList.get(bounds.to + 1), bounds.fTo));
+                }
+                out.extendedData.put(extendedDataType, toList);
+            }
         }
         return out;
     }
@@ -423,8 +532,8 @@ public final class Trajectory
         final int prime = 31;
         int result = 1;
         result = prime * result + Arrays.hashCode(this.a);
+        result = prime * result + ((this.extendedData == null) ? 0 : this.extendedData.hashCode());
         result = prime * result + ((this.gtuId == null) ? 0 : this.gtuId.hashCode());
-        result = prime * result + (this.longitudinalEntry ? 1231 : 1237);
         result = prime * result + ((this.metaData == null) ? 0 : this.metaData.hashCode());
         result = prime * result + this.size;
         result = prime * result + Arrays.hashCode(this.t);
@@ -435,7 +544,7 @@ public final class Trajectory
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
         {
@@ -454,6 +563,17 @@ public final class Trajectory
         {
             return false;
         }
+        if (this.extendedData == null)
+        {
+            if (other.extendedData != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.extendedData.equals(other.extendedData))
+        {
+            return false;
+        }
         if (this.gtuId == null)
         {
             if (other.gtuId != null)
@@ -462,10 +582,6 @@ public final class Trajectory
             }
         }
         else if (!this.gtuId.equals(other.gtuId))
-        {
-            return false;
-        }
-        if (this.longitudinalEntry != other.longitudinalEntry)
         {
             return false;
         }
@@ -506,11 +622,97 @@ public final class Trajectory
         if (this.size > 0)
         {
             return "Trajectory [size=" + this.size + ", x={" + this.x[0] + "..." + this.x[this.size - 1] + "}, t={" + this.t[0]
-                    + "..." + this.t[this.size - 1] + "}, metaData=" + this.metaData + ", gtuId=" + this.gtuId
-                    + ", longitudinalEntry=" + this.longitudinalEntry + "]";
+                    + "..." + this.t[this.size - 1] + "}, metaData=" + this.metaData + ", gtuId=" + this.gtuId + "]";
         }
-        return "Trajectory [size=" + this.size + ", x={}, t={}, metaData=" + this.metaData + ", gtuId=" + this.gtuId
-                + ", longitudinalEntry=" + this.longitudinalEntry + "]";
+        return "Trajectory [size=" + this.size + ", x={}, t={}, metaData=" + this.metaData + ", gtuId=" + this.gtuId + "]";
+    }
+
+    /**
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 12 okt. 2016 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    private class Boundaries
+    {
+        /** Rounded-down from-index. */
+        @SuppressWarnings("checkstyle:visibilitymodifier")
+        public final int from;
+
+        /** Fraction of to-index. */
+        @SuppressWarnings("checkstyle:visibilitymodifier")
+        public final double fFrom;
+
+        /** Rounded-down to-index. */
+        @SuppressWarnings("checkstyle:visibilitymodifier")
+        public final int to;
+
+        /** Fraction of to-index. */
+        @SuppressWarnings("checkstyle:visibilitymodifier")
+        public final double fTo;
+
+        /**
+         * @param from from index, rounded down
+         * @param fFrom from index, fraction
+         * @param to to index, rounded down
+         * @param fTo to index, fraction
+         */
+        Boundaries(final int from, final double fFrom, final int to, final double fTo)
+        {
+            Throw.when(from < 0 || from > Trajectory.this.size() - 1, IllegalArgumentException.class,
+                    "Argument from (%d) is out of bounds.", from);
+            Throw.when(fFrom < 0 || fFrom > 1, IllegalArgumentException.class, "Argument fFrom (%f) is out of bounds.", fFrom);
+            Throw.when(from == Trajectory.this.size() && fFrom > 0, IllegalArgumentException.class,
+                    "Arguments from (%d) and fFrom (%f) are out of bounds.", from, fFrom);
+            Throw.when(to < 0 || to >= Trajectory.this.size(), IllegalArgumentException.class,
+                    "Argument to (%d) is out of bounds.", to);
+            Throw.when(fTo < 0 || fTo > 1, IllegalArgumentException.class, "Argument fTo (%f) is out of bounds.", fTo);
+            Throw.when(to == Trajectory.this.size() && fTo > 0, IllegalArgumentException.class,
+                    "Arguments to (%d) and fTo (%f) are out of bounds.", to, fTo);
+            this.from = from;
+            this.fFrom = fFrom;
+            this.to = to;
+            this.fTo = fTo;
+        }
+
+        /**
+         * @param boundaries boundaries
+         * @return intersection of both boundaries
+         */
+        public Boundaries intersect(final Boundaries boundaries)
+        {
+            int newFrom;
+            double newFFrom;
+            if (this.from > boundaries.from || this.from == boundaries.from && this.fFrom > boundaries.fFrom)
+            {
+                newFrom = this.from;
+                newFFrom = this.fFrom;
+            }
+            else
+            {
+                newFrom = boundaries.from;
+                newFFrom = boundaries.fFrom;
+            }
+            int newTo;
+            double newFTo;
+            if (this.to < boundaries.to || this.to == boundaries.to && this.fTo < boundaries.fTo)
+            {
+                newTo = this.to;
+                newFTo = this.fTo;
+            }
+            else
+            {
+                newTo = boundaries.to;
+                newFTo = boundaries.fTo;
+            }
+            return new Boundaries(newFrom, newFFrom, newTo, newFTo);
+        }
+
     }
 
 }

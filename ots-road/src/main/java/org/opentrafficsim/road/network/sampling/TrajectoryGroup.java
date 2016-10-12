@@ -3,8 +3,8 @@ package org.opentrafficsim.road.network.sampling;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 
 /**
@@ -23,7 +23,7 @@ public class TrajectoryGroup
 {
 
     /** Start time of trajectories. */
-    private final Duration startTime;
+    private final Time startTime;
 
     /** Minimum position of the section. */
     private final Length minLength;
@@ -42,7 +42,7 @@ public class TrajectoryGroup
      * @param startTime start time of trajectories
      * @param laneDirection lane direction
      */
-    public TrajectoryGroup(final Duration startTime, final LaneDirection laneDirection)
+    public TrajectoryGroup(final Time startTime, final LaneDirection laneDirection)
     {
         this.startTime = startTime;
         this.minLength = Length.ZERO;
@@ -56,7 +56,7 @@ public class TrajectoryGroup
      * @param maxLength length of the section
      * @param laneDirection lane direction
      */
-    public TrajectoryGroup(final Duration startTime, final Length minLength, final Length maxLength,
+    public TrajectoryGroup(final Time startTime, final Length minLength, final Length maxLength,
             final LaneDirection laneDirection)
     {
         this.startTime = startTime;
@@ -77,7 +77,7 @@ public class TrajectoryGroup
     /**
      * @return startTime.
      */
-    public final Duration getStartTime()
+    public final Time getStartTime()
     {
         return this.startTime;
     }
@@ -112,55 +112,52 @@ public class TrajectoryGroup
 
     /**
      * Returns trajectory group between two locations.
-     * @param startLength start length
-     * @param endLength end length
+     * @param x0 start length
+     * @param x1 end length
      * @return list of trajectories
      */
-    public final TrajectoryGroup getTrajectoryGroup(final Length startLength, final Length endLength)
+    public final TrajectoryGroup getTrajectoryGroup(final Length x0, final Length x1)
     {
-        Length minLenght = Length.max(startLength, this.minLength);
-        Length maxLenght = Length.min(endLength, this.maxLength);
+        Length minLenght = Length.max(x0, this.minLength);
+        Length maxLenght = Length.min(x1, this.maxLength);
         TrajectoryGroup out = new TrajectoryGroup(this.startTime, minLenght, maxLenght, this.laneDirection);
         for (Trajectory trajectory : this.trajectories)
         {
-            out.addTrajectory(trajectory.subSet(startLength, endLength));
+            out.addTrajectory(trajectory.subSet(x0, x1));
         }
         return out;
     }
 
     /**
      * Returns trajectory group between two times.
-     * @param startDuration start duration
-     * @param endDuration end duration
+     * @param t0 start time
+     * @param t1 end time
      * @return list of trajectories
      */
-    public final TrajectoryGroup getTrajectoryGroup(final Duration startDuration, final Duration endDuration)
+    public final TrajectoryGroup getTrajectoryGroup(final Time t0, final Time t1)
     {
-        TrajectoryGroup out =
-                new TrajectoryGroup(this.startTime.lt(startDuration) ? startDuration : this.startTime, this.laneDirection);
+        TrajectoryGroup out = new TrajectoryGroup(this.startTime.lt(t0) ? t0 : this.startTime, this.laneDirection);
         for (Trajectory trajectory : this.trajectories)
         {
-            out.addTrajectory(trajectory.subSet(startDuration, endDuration));
+            out.addTrajectory(trajectory.subSet(t0, t1));
         }
         return out;
     }
 
     /**
      * Returns trajectory group between two locations and between two times.
-     * @param startLength start length
-     * @param endLength end length
-     * @param startDuration start duration
-     * @param endDuration end duration
+     * @param x0 start length
+     * @param x1 end length
+     * @param t0 start time
+     * @param t1 end time
      * @return list of trajectories
      */
-    public final TrajectoryGroup getTrajectoryGroup(final Length startLength, final Length endLength,
-            final Duration startDuration, final Duration endDuration)
+    public final TrajectoryGroup getTrajectoryGroup(final Length x0, final Length x1, final Time t0, final Time t1)
     {
-        TrajectoryGroup out =
-                new TrajectoryGroup(this.startTime.lt(startDuration) ? startDuration : this.startTime, this.laneDirection);
+        TrajectoryGroup out = new TrajectoryGroup(this.startTime.lt(t0) ? t0 : this.startTime, this.laneDirection);
         for (Trajectory trajectory : this.trajectories)
         {
-            out.addTrajectory(trajectory.subSet(startLength, endLength, startDuration, endDuration));
+            out.addTrajectory(trajectory.subSet(x0, x1, t0, t1));
         }
         return out;
     }

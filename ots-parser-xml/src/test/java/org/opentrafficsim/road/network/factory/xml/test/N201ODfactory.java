@@ -226,13 +226,12 @@ public class N201ODfactory
                 "L38b", "L37b", "L36b", "L35b", "L34b", "L33b", "L32b", "L31b", "L30b", "L29b28b", "L27b", "L26b", "L25b",
                 "L24b23b", "L22b21b", "L20b", "L19b18b", "L17b16b", "L15b", "L14b13b", "L12b", "L11b", "L10b", "L9b8b", "L7b",
                 "L6b", "L5b", "L4b3b", "L2b", "L1b" };
-        boolean connected = false;
         MetaDataSet metaDataSet = new MetaDataSet();
         Set<GTUType> gtuTypes = new HashSet<>();
         gtuTypes.add(new GTUType("CAR"));
         gtuTypes.add(new GTUType("BUS"));
         metaDataSet.put(new MetaDataGTUType("gtuType"), gtuTypes);
-        Query query = new Query(sampling, "N201 both directions", connected, metaDataSet,
+        Query query = new Query(sampling, "N201 both directions", metaDataSet,
                 new Frequency(2.0, FrequencyUnit.PER_MINUTE));
         // addSpaceTimeRegions(query, network, northBound);
         addSpaceTimeRegions(query, network, southBound);
@@ -249,7 +248,7 @@ public class N201ODfactory
         for (String link : links)
         {
             query.addSpaceTimeRegionLink((CrossSectionLink) network.getLink(link), GTUDirectionality.DIR_PLUS, Length.ZERO,
-                    network.getLink(link).getLength(), Duration.ZERO, new Duration(1.0, TimeUnit.HOUR));
+                    network.getLink(link).getLength(), Time.ZERO, new Time(1.0, TimeUnit.HOUR));
         }
     }
 

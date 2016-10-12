@@ -12,6 +12,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -22,6 +23,7 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
+import org.opentrafficsim.road.network.sampling.data.ExtendedDataType;
 import org.opentrafficsim.road.network.sampling.meta.MetaData;
 import org.opentrafficsim.road.network.sampling.meta.MetaDataType;
 
@@ -48,7 +50,7 @@ public class Sampler implements EventListenerInterface
     private final Map<LaneDirection, TrajectoryGroup> trajectories = new HashMap<>();
 
     /** End times of active samplings. */
-    private final Map<LaneDirection, Duration> endTimes = new HashMap<>();
+    private final Map<LaneDirection, Time> endTimes = new HashMap<>();
 
     /** Simulator. */
     private final OTSDEVSSimulatorInterface simulator;
@@ -58,6 +60,9 @@ public class Sampler implements EventListenerInterface
 
     /** Registration of sampling events of each GTU per lane, if interval based. */
     private final Map<String, Map<Lane, SimEvent<OTSSimTimeDouble>>> eventPerGtu = new HashMap<>();
+
+    /** Registration of included extended data types. */
+    private final Set<ExtendedDataType<?>> extendedDataTypes = new HashSet<>();
 
     /** Set of registered meta data types. */
     private Set<MetaDataType<?>> registeredMetaDataTypes = new HashSet<>();
@@ -100,14 +105,14 @@ public class Sampler implements EventListenerInterface
      */
     public final void registerSpaceTimeRegion(final SpaceTimeRegion spaceTimeRegion)
     {
-        Duration firstPossibleDataTime;
+        Time firstPossibleDataTime;
         if (this.trajectories.containsKey(spaceTimeRegion.getLaneDirection()))
         {
             firstPossibleDataTime = this.trajectories.get(spaceTimeRegion.getLaneDirection()).getStartTime();
         }
         else
         {
-            firstPossibleDataTime = new Duration(this.simulator.getSimulatorTime().getTime().si, TimeUnit.SI);
+            firstPossibleDataTime = new Time(this.simulator.getSimulatorTime().getTime().si, TimeUnit.SI);
         }
         Throw.when(spaceTimeRegion.getStartTime().lt(firstPossibleDataTime), IllegalStateException.class,
                 "Space time region with start time %s is defined while data is available from %s onwards.",
@@ -115,7 +120,7 @@ public class Sampler implements EventListenerInterface
         if (this.trajectories.containsKey(spaceTimeRegion.getLaneDirection()))
         {
             this.endTimes.put(spaceTimeRegion.getLaneDirection(),
-                    Duration.max(this.endTimes.get(spaceTimeRegion.getLaneDirection()), spaceTimeRegion.getEndTime()));
+                    Time.max(this.endTimes.get(spaceTimeRegion.getLaneDirection()), spaceTimeRegion.getEndTime()));
         }
         else
         {
@@ -132,8 +137,7 @@ public class Sampler implements EventListenerInterface
         }
         try
         {
-            this.simulator.scheduleEventAbs(
-                    this.simulator.getSimulatorTime().plus(this.endTimes.get(spaceTimeRegion.getLaneDirection())), this, this,
+            this.simulator.scheduleEventAbs(this.endTimes.get(spaceTimeRegion.getLaneDirection()), this, this,
                     "stopRecording",
                     new Object[] { this.endTimes.get(spaceTimeRegion.getLaneDirection()), spaceTimeRegion.getLaneDirection() });
         }
@@ -153,11 +157,20 @@ public class Sampler implements EventListenerInterface
     }
 
     /**
+     * Registers extended data type that will be stored with the trajectories.
+     * @param extendedDataType extended data type to register
+     */
+    public final void registerExtendedDataType(final ExtendedDataType<?> extendedDataType)
+    {
+        this.extendedDataTypes.add(extendedDataType);
+    }
+
+    /**
      * Start recording at the given time (which should be the current time) on the given lane direction.
      * @param time current time
      * @param laneDirection lane direction
      */
-    public final void startRecording(final Duration time, final LaneDirection laneDirection)
+    public final void startRecording(final Time time, final LaneDirection laneDirection)
     {
         if (this.trajectories.containsKey(laneDirection))
         {
@@ -173,7 +186,7 @@ public class Sampler implements EventListenerInterface
      * @param time to stop
      * @param laneDirection lane direction
      */
-    public final void stopRecording(final Duration time, final LaneDirection laneDirection)
+    public final void stopRecording(final Time time, final LaneDirection laneDirection)
     {
         if (!this.trajectories.containsKey(laneDirection) || this.endTimes.get(laneDirection).gt(time))
         {
@@ -196,7 +209,8 @@ public class Sampler implements EventListenerInterface
             if (this.trajectoryPerGtu.containsKey(gtuId) && this.trajectoryPerGtu.get(gtuId).containsKey(payload[6]))
             {
                 this.trajectoryPerGtu.get(gtuId).get(payload[6]).add((Length) payload[7], (Speed) payload[2],
-                        (Acceleration) payload[3], new Duration(this.simulator.getSimulatorTime().get().si, TimeUnit.SI));
+                        (Acceleration) payload[3], new Time(this.simulator.getSimulatorTime().get().si, TimeUnit.SI),
+                        (LaneBasedGTU) event.getSource());
             }
         }
         else if (event.getType().equals(Lane.GTU_ADD_EVENT))
@@ -225,10 +239,9 @@ public class Sampler implements EventListenerInterface
             }
             Speed speed = gtu.getSpeed();
             Acceleration acceleration = gtu.getAcceleration();
-            Duration time = new Duration(this.simulator.getSimulatorTime().getTime().si, TimeUnit.SI);
-            boolean longitudinalEntry = false;
-            Trajectory trajectory = new Trajectory(gtu, longitudinalEntry, makeMetaData(gtu));
-            trajectory.add(distance, speed, acceleration, time);
+            Time time = new Time(this.simulator.getSimulatorTime().getTime().si, TimeUnit.SI);
+            Trajectory trajectory = new Trajectory(gtu, makeMetaData(gtu), this.extendedDataTypes);
+            trajectory.add(distance, speed, acceleration, time, gtu);
             if (!this.trajectoryPerGtu.containsKey(gtuId))
             {
                 Map<Lane, Trajectory> map = new HashMap<>();
@@ -290,7 +303,7 @@ public class Sampler implements EventListenerInterface
     {
         return this.samplingInterval != null;
     }
-    
+
     /**
      * Schedules a sampling event for the given gtu on the given lane for the samlping interval from the current time.
      * @param gtu gtu to sample
@@ -335,7 +348,7 @@ public class Sampler implements EventListenerInterface
             {
                 this.trajectoryPerGtu.get(gtuId).get(lane).add(gtu.position(lane, RelativePosition.REFERENCE_POSITION),
                         gtu.getSpeed(), gtu.getAcceleration(),
-                        new Duration(this.simulator.getSimulatorTime().get().si, TimeUnit.SI));
+                        new Time(this.simulator.getSimulatorTime().get().si, TimeUnit.SI), gtu);
             }
             catch (GTUException exception)
             {

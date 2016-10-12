@@ -14,6 +14,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.immutablecollections.ImmutableIterator;
@@ -47,10 +48,6 @@ public final class Query
     /** Description. */
     private final String description;
 
-    /** Whether the space-time regions are longitudinally connected. */
-    // TODO remove this field? should not be required if GTU_ADD_EVENT and GTU_REMOVE_EVENT events are truly on the edges
-    private final boolean connected;
-
     /** Meta data set. */
     private final MetaDataSet metaDataSet;
 
@@ -66,60 +63,55 @@ public final class Query
     /**
      * @param sampling sampling
      * @param description description
-     * @param connected whether the space-time regions are longitudinally connected
      * @param metaDataSet meta data
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampling, final String description, final boolean connected, final MetaDataSet metaDataSet)
+    public Query(final Sampler sampling, final String description, final MetaDataSet metaDataSet)
     {
-        this(sampling, description, connected, metaDataSet, null, null);
+        this(sampling, description, metaDataSet, null, null);
     }
 
     /**
      * @param sampling sampling
      * @param description description
-     * @param connected whether the space-time regions are longitudinally connected
      * @param metaDataSet meta data
      * @param interval interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampling, final String description, final boolean connected, final MetaDataSet metaDataSet,
+    public Query(final Sampler sampling, final String description, final MetaDataSet metaDataSet,
             final Duration interval)
     {
-        this(sampling, description, connected, metaDataSet, null, interval);
+        this(sampling, description, metaDataSet, null, interval);
     }
 
     /**
      * @param sampling sampling
      * @param description description
-     * @param connected whether the space-time regions are longitudinally connected
      * @param metaDataSet meta data
      * @param updateFrequency update frequency
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampling, final String description, final boolean connected, final MetaDataSet metaDataSet,
+    public Query(final Sampler sampling, final String description, final MetaDataSet metaDataSet,
             final Frequency updateFrequency)
     {
-        this(sampling, description, connected, metaDataSet, updateFrequency, null);
+        this(sampling, description, metaDataSet, updateFrequency, null);
     }
 
     /**
      * @param sampling sampling
      * @param description description
-     * @param connected whether the space-time regions are longitudinally connected
      * @param metaDataSet meta data
      * @param updateFrequency update frequency
      * @param interval interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampling, final String description, final boolean connected, final MetaDataSet metaDataSet,
+    public Query(final Sampler sampling, final String description, final MetaDataSet metaDataSet,
             final Frequency updateFrequency, final Duration interval)
     {
         Throw.whenNull(sampling, "Sampling may not be null.");
         Throw.whenNull(description, "Description may not be null.");
         Throw.whenNull(metaDataSet, "Meta data may not be null.");
         this.sampling = sampling;
-        this.connected = connected;
         this.metaDataSet = new MetaDataSet(metaDataSet);
         this.description = description;
         this.updateFrequency = updateFrequency;
@@ -142,14 +134,6 @@ public final class Query
     public String getDescription()
     {
         return this.description;
-    }
-
-    /**
-     * @return connected whether the space-time regions are longitudinally connected
-     */
-    public boolean isConnected()
-    {
-        return this.connected;
     }
 
     /**
@@ -194,7 +178,7 @@ public final class Query
      * @param tEnd end time
      */
     public void addSpaceTimeRegionLink(final CrossSectionLink link, final GTUDirectionality direction, final Length xStart,
-            final Length xEnd, final Duration tStart, final Duration tEnd)
+            final Length xEnd, final Time tStart, final Time tEnd)
     {
         for (Lane lane : link.getLanes())
         {
@@ -213,7 +197,7 @@ public final class Query
      * @param tEnd end time
      */
     public void addSpaceTimeRegion(final LaneDirection laneDirection, final Length xStart, final Length xEnd,
-            final Duration tStart, final Duration tEnd)
+            final Time tStart, final Time tEnd)
     {
         SpaceTimeRegion spaceTimeRegion = new SpaceTimeRegion(laneDirection, xStart, xEnd, tStart, tEnd);
         this.sampling.registerSpaceTimeRegion(spaceTimeRegion);
@@ -247,15 +231,15 @@ public final class Query
      * @throws RuntimeException if a meta data type returned a boolean array with incorrect length
      */
     @SuppressWarnings("unchecked")
-    public <T> List<TrajectoryGroup> getTrajectoryGroups(final Duration startTime, final Duration endTime)
+    public <T> List<TrajectoryGroup> getTrajectoryGroups(final Time startTime, final Time endTime)
     {
         // Step 1) gather trajectories per GTU, truncated over space and time
         Map<String, TrajectoryAcceptList> trajectoryAcceptLists = new HashMap<>();
         List<TrajectoryGroup> trajectoryGroupList = new ArrayList<>();
         for (SpaceTimeRegion spaceTimeRegion : this.spaceTimeRegions)
         {
-            Duration start = startTime.gt(spaceTimeRegion.getStartTime()) ? startTime : spaceTimeRegion.getStartTime();
-            Duration end = endTime.lt(spaceTimeRegion.getEndTime()) ? endTime : spaceTimeRegion.getEndTime();
+            Time start = startTime.gt(spaceTimeRegion.getStartTime()) ? startTime : spaceTimeRegion.getStartTime();
+            Time end = endTime.lt(spaceTimeRegion.getEndTime()) ? endTime : spaceTimeRegion.getEndTime();
             TrajectoryGroup trajectoryGroup = this.sampling.getTrajectoryGroup(spaceTimeRegion.getLaneDirection())
                     .getTrajectoryGroup(spaceTimeRegion.getStartPosition(), spaceTimeRegion.getEndPosition(), start, end);
             for (Trajectory trajectory : trajectoryGroup.getTrajectories())
@@ -322,7 +306,6 @@ public final class Query
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (this.connected ? 1231 : 1237);
         result = prime * result + ((this.description == null) ? 0 : this.description.hashCode());
         result = prime * result + ((this.interval == null) ? 0 : this.interval.hashCode());
         result = prime * result + ((this.metaDataSet == null) ? 0 : this.metaDataSet.hashCode());
@@ -350,10 +333,6 @@ public final class Query
             return false;
         }
         Query other = (Query) obj;
-        if (this.connected != other.connected)
-        {
-            return false;
-        }
         if (this.description == null)
         {
             if (other.description != null)

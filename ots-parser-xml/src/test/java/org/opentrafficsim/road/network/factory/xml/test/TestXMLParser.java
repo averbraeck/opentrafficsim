@@ -34,6 +34,7 @@ import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.factory.xml.test.TestXMLParser.WGS84ToRDNewTransform.Coords;
 import org.opentrafficsim.road.network.sampling.Query;
 import org.opentrafficsim.road.network.sampling.Sampler;
+import org.opentrafficsim.road.network.sampling.data.SpeedLimit;
 import org.opentrafficsim.road.network.sampling.indicator.MeanSpeed;
 import org.opentrafficsim.road.network.sampling.indicator.MeanTravelTime;
 import org.opentrafficsim.road.network.sampling.indicator.MeanTripLength;
@@ -183,8 +184,10 @@ public class TestXMLParser extends AbstractWrappableAnimation
                 network = nlp.build(url);
                 // ODMatrixTrips matrix = N201ODfactory.get(network);
                 // N201ODfactory.makeGeneratorsFromOD(network, matrix, this.simulator);
+                Sampler sampler = new Sampler(this.simulator, new Frequency(10.0, FrequencyUnit.SI));
+                sampler.registerExtendedDataType(new SpeedLimit());
                 Query query =
-                        N201ODfactory.getQuery(network, new Sampler(this.simulator, new Frequency(10.0, FrequencyUnit.SI)));
+                        N201ODfactory.getQuery(network, sampler);
                 scheduleKpiEvent(30.0, this.simulator, query);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
@@ -231,13 +234,13 @@ public class TestXMLParser extends AbstractWrappableAnimation
 
     public void publishKpis(double time, final OTSDEVSSimulatorInterface simulator, final Query query)
     {
-        Length tdist = this.totalTravelDistance.getValue(query, new Duration(time, TimeUnit.SI));
-        Duration ttt = this.totalTravelTime.getValue(query, new Duration(time, TimeUnit.SI));
-        Speed ms = this.meanSpeed.getValue(query, new Duration(time, TimeUnit.SI));
-        Duration mtt = this.meanTravelTime.getValue(query, new Duration(time, TimeUnit.SI));
-        Length mtl = this.meanTripLength.getValue(query, new Duration(time, TimeUnit.SI));
-        Duration tdel = this.totalDelay.getValue(query, new Duration(time, TimeUnit.SI));
-        Dimensionless nos = this.totalNumberOfStops.getValue(query, new Duration(time, TimeUnit.SI));
+        Length tdist = this.totalTravelDistance.getValue(query, new Time(time, TimeUnit.SI));
+        Duration ttt = this.totalTravelTime.getValue(query, new Time(time, TimeUnit.SI));
+        Speed ms = this.meanSpeed.getValue(query, new Time(time, TimeUnit.SI));
+        Duration mtt = this.meanTravelTime.getValue(query, new Time(time, TimeUnit.SI));
+        Length mtl = this.meanTripLength.getValue(query, new Time(time, TimeUnit.SI));
+        Duration tdel = this.totalDelay.getValue(query, new Time(time, TimeUnit.SI));
+        Dimensionless nos = this.totalNumberOfStops.getValue(query, new Time(time, TimeUnit.SI));
         System.out.println("===== @time " + time + " s =====");
         System.out.println("Total distance " + tdist);
         System.out.println("Total travel time " + ttt);
