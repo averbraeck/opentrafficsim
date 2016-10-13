@@ -38,6 +38,9 @@ public class Evaluator
     /** The original rules. */
     final List<String> trafcodRules = new ArrayList<>();
 
+    /** The tokenised rules. */
+    final List<Object[]> tokenisedRules = new ArrayList<>();
+
     /** The TrafCOD variables. */
     final Map<String, Variable> variables = new HashMap<>();
 
@@ -46,10 +49,10 @@ public class Evaluator
 
     /** Prefix for initialization rules. */
     private final static String INIT_PREFIX = "%init ";
-    
+
     /** Prefix for time initializer rules. */
     private final static String TIME_PREFIX = "%time ";
-    
+
     /** Prefix for export rules. */
     private final static String EXPORT_PREFIX = "%export ";
 
@@ -64,7 +67,19 @@ public class Evaluator
 
     /** The conflict groups in order that they will be served. */
     private List<List<Short>> conflictgroups = new ArrayList<>();
-    
+
+    /** Maximum number of evaluation loops. */
+    private int maxLoopCount = 10;
+
+    /** Position in current expression. */
+    private int currentToken;
+
+    /** The expression evaluation stack. */
+    private List<Integer> stack = new ArrayList<Integer>();
+
+    /** Rule that is currently being evaluated. */
+    private Object[] currentRule;
+
     /**
      * @param trafCodURL String; the URL of the TrafCOD rules
      * @throws Exception when a rule cannot be parsed
@@ -187,8 +202,9 @@ public class Evaluator
             {
                 String varNameAndInitialValue = trimmedLine.substring(INIT_PREFIX.length()).trim().replaceAll("[ \t]+", " ");
                 String[] fields = varNameAndInitialValue.split(" ");
-                NameAndStream nameAndStream = new NameAndStream(fields[0]);
-                installVariable(nameAndStream.name, nameAndStream.getStream(), EnumSet.noneOf(Flags.class), locationDescription);
+                NameAndStream nameAndStream = new NameAndStream(fields[0], locationDescription);
+                installVariable(nameAndStream.getName(), nameAndStream.getStream(), EnumSet.noneOf(Flags.class),
+                        locationDescription);
                 // The supplied initial value is ignored (in this version of the TrafCOD interpreter)!
                 continue;
             }
@@ -196,28 +212,39 @@ public class Evaluator
             {
                 String timerNameAndMaximumValue = trimmedLine.substring(INIT_PREFIX.length()).trim().replaceAll("[ \t]+", " ");
                 String[] fields = timerNameAndMaximumValue.split(" ");
-                NameAndStream nameAndStream = new NameAndStream(fields[0]);
-                Variable variable = installVariable(nameAndStream.name, nameAndStream.getStream(), EnumSet.noneOf(Flags.class), locationDescription);
+                NameAndStream nameAndStream = new NameAndStream(fields[0], locationDescription);
+                Variable variable =
+                        installVariable(nameAndStream.getName(), nameAndStream.getStream(), EnumSet.noneOf(Flags.class),
+                                locationDescription);
                 int value10 = Integer.parseInt(fields[1]);
                 variable.setTimerMax(value10);
                 continue;
             }
             if (stringBeginsWithIgnoreCase(EXPORT_PREFIX, trimmedLine))
             {
-                String varNameAndOutputValue = trimmedLine.substring(INIT_PREFIX.length()).trim().replaceAll("[ \t]+", " ");
+                String varNameAndOutputValue = trimmedLine.substring(EXPORT_PREFIX.length()).trim().replaceAll("[ \t]+", " ");
                 String[] fields = varNameAndOutputValue.split(" ");
-                NameAndStream nameAndStream = new NameAndStream(fields[0]);
-                Variable variable = installVariable(nameAndStream.name, nameAndStream.getStream(), EnumSet.noneOf(Flags.class), locationDescription);
+                NameAndStream nameAndStream = new NameAndStream(fields[0], locationDescription);
+                Variable variable =
+                        installVariable(nameAndStream.getName(), nameAndStream.getStream(), EnumSet.noneOf(Flags.class),
+                                locationDescription);
                 int value = Integer.parseInt(fields[1]);
                 variable.setOutput(value);
                 continue;
             }
             this.trafcodRules.add(trimmedLine);
-            parse(trimmedLine, locationDescription);
-
-            
-            
-            
+            Object[] tokenisedRule = parse(trimmedLine, locationDescription);
+            if (null != tokenisedRule)
+            {
+                this.tokenisedRules.add(tokenisedRule);
+                // for (Object o : tokenisedRule)
+                // {
+                // System.out.print(o + " ");
+                // }
+                // System.out.println("");
+                String untokenised = printRule(tokenisedRule, false);
+                System.out.println(untokenised);
+            }
         }
         in.close();
         System.out.println("Installed " + this.variables.size() + " variables");
@@ -230,12 +257,336 @@ public class Evaluator
                                     PrintFlags.S, PrintFlags.E)));
         }
     }
+
+    /**
+     * Evaluate all expressions until no more changes occur.
+     * @return int; number of iteration loops performed
+     * @throws Exception when evalution of a fule fails
+     */
+    private int evalExprs() throws Exception
+    {
+        for (int loop = 0; loop < this.maxLoopCount; loop++)
+        {
+            if (evalExpressionsOnce() == 0)
+            {
+                return loop;
+            }
+        }
+        return this.maxLoopCount;
+    }
+
+    /**
+     * Evaluate all expressions and return the number of changed variables.
+     * @return int; the number of changed variables
+     * @throws Exception when evaluation of a rule fails
+     */
+    private int evalExpressionsOnce() throws Exception
+    {
+        for (Variable variable : this.variables.values())
+        {
+            variable.clearChangedFlag();
+        }
+        int changeCount = 0;
+        for (Object[] rule : this.tokenisedRules)
+        {
+            if (evalRule(rule))
+            {
+                changeCount++;
+            }
+        }
+        return changeCount;
+    }
+
+    /**
+     * Evaluate a rule.
+     * @param rule Object[]; the tokenised rule
+     * @return boolean; true if the variable that is affected by the rule has changed; false if no variable was changed
+     * @throws Exception when evaluation of the rule fails
+     */
+    private boolean evalRule(final Object[] rule) throws Exception
+    {
+        Token ruleType = (Token) rule[0];
+        Variable destination = (Variable) rule[1];
+        if (destination.isTimer())
+        {
+            if (destination.getFlags().contains(Flags.TIMEREXPIRED))
+            {
+                destination.clearFlag(Flags.TIMEREXPIRED);
+                destination.setFlag(Flags.END);
+            }
+            else if (destination.getFlags().contains(Flags.START) || destination.getFlags().contains(Flags.END))
+            {
+                destination.clearFlag(Flags.START);
+                destination.clearFlag(Flags.END);
+                destination.setFlag(Flags.CHANGED);
+            }
+        }
+        else
+        {
+            // Normal Variable or detector
+            if (Token.START_RULE == ruleType)
+            {
+                destination.clearFlag(Flags.START);
+            }
+            else if (Token.END_RULE == ruleType)
+            {
+                destination.clearFlag(Flags.END);
+            }
+            else
+            {
+                destination.clearFlag(Flags.START);
+                destination.clearFlag(Flags.END);
+            }
+        }
+
+        int currentValue = destination.getValue();
+        if (Token.START_RULE == ruleType && currentValue != 0 || Token.END == ruleType && currentValue == 0
+                || Token.INIT_TIMER == ruleType && currentValue != 0)
+        {
+            return false; // Value cannot change from zero to nonzero or vice versa due to evaluating the expression
+        }
+        this.currentRule = rule;
+        this.currentToken = 2; // Point to first token of the RHS
+        this.stack.clear();
+        evalExpr(0);
+
+        return false;
+    }
+
+    /** Binding strength of unary minus. */
+    private static int BIND_UNARY_MINUS = 4;
+
+    /**
+     * Evaluate an expression.
+     * @param bindingStrength int; the binding strength of a not yet applied binary operator (higher value must be applied
+     *            first)
+     * @throws Exception when the expression is not valid
+     */
+    private void evalExpr(final int bindingStrength) throws Exception
+    {
+        if (this.currentToken >= this.currentRule.length)
+        {
+            throw new Exception("Missing operand at end of expression " + printRule(this.currentRule, false));
+        }
+        Token token = (Token) this.currentRule[this.currentToken++];
+        Object nextToken = null;
+        if (this.currentToken < this.currentRule.length)
+        {
+            nextToken = this.currentRule[this.currentToken];
+        }
+        switch (token)
+        {
+            case UNARY_MINUS:
+                if (Token.OPEN_PAREN != nextToken && Token.VARIABLE != nextToken && Token.NEG_VARIABLE != nextToken
+                        && Token.CONSTANT != nextToken && Token.START != nextToken && Token.END != nextToken)
+                {
+                    throw new Exception("Operand expected after unary minus");
+                }
+                evalExpr(BIND_UNARY_MINUS);
+                push(-pop());
+                break;
+
+            case OPEN_PAREN:
+                evalExpr(0);
+                if (Token.CLOSE_PAREN != this.currentRule[this.currentToken])
+                {
+                    throw new Exception("Missing closing parenthesis");
+                }
+                this.currentToken++;
+                break;
+
+            case START:
+                if (!(nextToken instanceof Variable))
+                {
+                    throw new Exception("Missing variable after S");
+                }
+                push(((Variable) nextToken).getFlags().contains(Flags.START) ? 1 : 0);
+                this.currentToken++;
+                break;
+
+            case END:
+                if (!(nextToken instanceof Variable))
+                {
+                    throw new Exception("Missing variable after E");
+                }
+                push(((Variable) nextToken).getFlags().contains(Flags.END) ? 1 : 0);
+                this.currentToken++;
+                break;
+
+            case VARIABLE:
+            {
+                Variable operand = (Variable) nextToken;
+                if (operand.isTimer())
+                {
+                    push(operand.getValue() == 0 ? 0 : 1);
+                }
+                else
+                {
+                    push(operand.getValue());
+                }
+                this.currentToken++;
+                break;
+            }
+
+            case CONSTANT:
+                push((Integer) nextToken);
+                this.currentToken++;
+                break;
+
+            case NEG_VARIABLE:
+                push(-((Variable) nextToken).getValue());
+                this.currentToken++;
+                break;
+
+            default:
+                throw new Exception("Operand missing");
+        }
+        evalRHS(bindingStrength);
+    }
     
+    private void evalRHS(final int bindingStrength)
+    {
+        
+    }
+
+    /**
+     * Push a value on the evaluation stack.
+     * @param value int; the value to push on the evaluation stack
+     */
+    private void push(final int value)
+    {
+        this.stack.add(value);
+    }
+
+    /**
+     * Remove the last not-yet-removed value from the evaluation stack and return it.
+     * @return int; the last non-yet-removed value on the evaluation stack
+     * @throws Exception when the stack is empty
+     */
+    private int pop() throws Exception
+    {
+        if (this.stack.size() < 1)
+        {
+            throw new Exception("Stack empty");
+        }
+        return this.stack.remove(this.stack.size() - 1);
+    }
+
+    /**
+     * Print a tokenised rule.
+     * @param tokens Object[]; the tokens
+     * @param printValues boolean; if true; print the values of all encountered variable; if false; do not print the values of
+     *            all encountered variable
+     * @return String; a textual approximation of the original rule
+     * @throws Exception when <cite>tokens</cite> does not match the expected grammar
+     */
+    private String printRule(Object[] tokens, final boolean printValues) throws Exception
+    {
+        StringBuilder result = new StringBuilder();
+        for (int inPos = 0; inPos < tokens.length; inPos++)
+        {
+            Object token = tokens[inPos];
+            if (token instanceof Token)
+            {
+                switch ((Token) token)
+                {
+                    case EQUALS_RULE:
+                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(EnumSet.of(PrintFlags.ID)));
+                        result.append("=");
+                        break;
+                    case NEG_EQUALS_RULE:
+                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(EnumSet.of(PrintFlags.ID,
+                                PrintFlags.NEGATED)));
+                        result.append("=");
+                        break;
+                    case START_RULE:
+                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(EnumSet.of(PrintFlags.ID)));
+                        result.append(".=");
+                        break;
+                    case END_RULE:
+                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(EnumSet.of(PrintFlags.ID,
+                                PrintFlags.NEGATED)));
+                        result.append(".=");
+                        break;
+                    case INIT_TIMER:
+                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(EnumSet.of(PrintFlags.ID,
+                                PrintFlags.INITTIMER)));
+                        result.append(".=");
+                        break;
+                    case REINIT_TIMER:
+                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(EnumSet.of(PrintFlags.ID,
+                                PrintFlags.REINITTIMER)));
+                        result.append(".=");
+                        break;
+                    case START:
+                        result.append("S");
+                        break;
+                    case END:
+                        result.append("E");
+                        break;
+                    case VARIABLE:
+                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(EnumSet.of(PrintFlags.ID)));
+                        break;
+                    case NEG_VARIABLE:
+                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(EnumSet.of(PrintFlags.ID,
+                                PrintFlags.NEGATED)));
+                        break;
+                    case CONSTANT:
+                        result.append(tokens[++inPos]).toString();
+                        break;
+                    case UNARY_MINUS:
+                    case MINUS:
+                        result.append("-");
+                        break;
+                    case PLUS:
+                        result.append("+");
+                        break;
+                    case TIMES:
+                        result.append(".");
+                        break;
+                    case EQ:
+                        result.append("=");
+                        break;
+                    case NOTEQ:
+                        result.append("<>");
+                        break;
+                    case GT:
+                        result.append(">");
+                        break;
+                    case GTEQ:
+                        result.append(">=");
+                        break;
+                    case LE:
+                        result.append("<");
+                        break;
+                    case LEEQ:
+                        result.append("<=");
+                        break;
+                    case OPEN_PAREN:
+                        result.append("(");
+                        break;
+                    case CLOSE_PAREN:
+                        result.append(")");
+                        break;
+                    default:
+                        System.out.println("<<<ERROR>>> encountered a non-Token object: " + token + " after "
+                                + result.toString());
+                        throw new Exception("Unknown token");
+
+                }
+            }
+            else
+            {
+                System.out.println("<<<ERROR>>> encountered a non-Token object: " + token + " after " + result.toString());
+                throw new Exception("Not a token");
+            }
+        }
+        return result.toString();
+    }
+
     /**
      * States of the rule parser.
      * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$,
-     *          initial version Oct 7, 2016 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
     enum ParserState
@@ -251,24 +602,72 @@ public class Evaluator
         /** Looking for an expression. */
         FIND_EXPR,
     }
-    
-    enum RuleType
+
+    /**
+     * Types of TrafCOD tokens.
+     * <p>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     */
+    enum Token
     {
+        /** Equals rule. */
+        EQUALS_RULE,
+        /** Not equals rule. */
+        NEG_EQUALS_RULE,
         /** Assignment rule. */
         ASSIGNMENT,
         /** Start rule. */
-        START,
+        START_RULE,
         /** End rule. */
+        END_RULE,
+        /** Timer initialize rule. */
+        INIT_TIMER,
+        /** Timer re-initialize rule. */
+        REINIT_TIMER,
+        /** Unary minus operator. */
+        UNARY_MINUS,
+        /** Less than or equal to ("<="). */
+        LEEQ,
+        /** Not equal to ("<>"). */
+        NOTEQ,
+/** Less than ("<"). */
+        LE,
+        /** Greater than or equal to (">="). */
+        GTEQ,
+        /** Greater than (">"). */
+        GT,
+        /** Equals to ("="). */
+        EQ,
+        /** True if following variable has just started. */
+        START,
+        /** True if following variable has just ended. */
         END,
+        /** Variable follows. */
+        VARIABLE,
+        /** Variable that follows must be logically negated. */
+        NEG_VARIABLE,
+        /** Integer follows. */
+        CONSTANT,
+        /** Addition operator. */
+        PLUS,
+        /** Subtraction operator. */
+        MINUS,
+        /** Multiplication operator. */
+        TIMES,
+        /** Opening parenthesis. */
+        OPEN_PAREN,
+        /** Closing parenthesis. */
+        CLOSE_PAREN,
     }
-    
+
     /**
      * Parse one TrafCOD rule.
      * @param rawRule String; the TrafCOD rule
      * @param locationDescription String; description of the location (file, line) where the rule was found
+     * @return Object[]; array filled with the tokenised rule
      * @throws Exception when the rule is not a valid TrafCOD rule
      */
-    private void parse(final String rawRule, final String locationDescription) throws Exception
+    private Object[] parse(final String rawRule, final String locationDescription) throws Exception
     {
         if (rawRule.length() == 0)
         {
@@ -276,8 +675,10 @@ public class Evaluator
         }
         ParserState state = ParserState.FIND_LHS;
         String rule = rawRule.toUpperCase(Locale.US);
-        RuleType ruleType = RuleType.ASSIGNMENT;
+        Token ruleType = Token.ASSIGNMENT;
         int inPos = 0;
+        NameAndStream lhsNameAndStream = null;
+        List<Object> tokens = new ArrayList<>();
         while (inPos < rule.length())
         {
             char character = rule.charAt(inPos);
@@ -289,28 +690,247 @@ public class Evaluator
             switch (state)
             {
                 case FIND_LHS:
+                {
                     if ('S' == character)
                     {
-                        ruleType = RuleType.START;
+                        ruleType = Token.START_RULE;
+                        inPos++;
+                        lhsNameAndStream = new NameAndStream(rule.substring(inPos), locationDescription);
+                        inPos += lhsNameAndStream.getNumberOfChars();
+                    }
+                    else if ('E' == character)
+                    {
+                        ruleType = Token.END_RULE;
+                        inPos++;
+                        lhsNameAndStream = new NameAndStream(rule.substring(inPos), locationDescription);
+                        inPos += lhsNameAndStream.getNumberOfChars();
+                    }
+                    else if ('I' == character && 'T' == rule.charAt(inPos + 1))
+                    {
+                        ruleType = Token.INIT_TIMER;
+                        inPos++; // The 'T' is part of the name of the time; do not consume it
+                        lhsNameAndStream = new NameAndStream(rule.substring(inPos), locationDescription);
+                        inPos += lhsNameAndStream.getNumberOfChars();
+                    }
+                    else if ('R' == character && 'I' == rule.charAt(inPos + 1) && 'T' == rule.charAt(inPos + 2))
+                    {
+                        ruleType = Token.REINIT_TIMER;
+                        inPos += 2; // The 'T' is part of the name of the time; do not consume it
+                        lhsNameAndStream = new NameAndStream(rule.substring(inPos), locationDescription);
+                        inPos += lhsNameAndStream.getNumberOfChars();
+                    }
+                    else if ('T' == character && rule.indexOf('=') >= 0
+                            && (rule.indexOf('N') < 0 || rule.indexOf('N') > rule.indexOf('=')))
+                    {
+                        throw new Exception("Bad time initialization at " + locationDescription);
+                    }
+                    else
+                    {
+                        ruleType = Token.EQUALS_RULE;
+                        lhsNameAndStream = new NameAndStream(rule.substring(inPos), locationDescription);
+                        inPos += lhsNameAndStream.getNumberOfChars();
+                        if (lhsNameAndStream.isNegated())
+                        {
+                            ruleType = Token.NEG_EQUALS_RULE;
+                        }
+                    }
+                    state = ParserState.FIND_ASSIGN;
+                    break;
+                }
+                case FIND_ASSIGN:
+                {
+                    if ('.' == character && '=' == rule.charAt(inPos + 1))
+                    {
+                        if (Token.EQUALS_RULE == ruleType)
+                        {
+                            ruleType = Token.START_RULE;
+                        }
+                        else if (Token.NEG_EQUALS_RULE == ruleType)
+                        {
+                            ruleType = Token.END_RULE;
+                        }
+                        inPos += 2;
+                    }
+                    else if ('=' == character)
+                    {
+                        if (Token.START_RULE == ruleType || Token.END_RULE == ruleType || Token.INIT_TIMER == ruleType
+                                || Token.REINIT_TIMER == ruleType)
+                        {
+                            throw new Exception("Bad assignment at " + locationDescription);
+                        }
                         inPos++;
                     }
-                case FIND_ASSIGN:
+                    tokens.add(ruleType);
+                    EnumSet<Flags> lhsFlags = EnumSet.noneOf(Flags.class);
+                    if (Token.START_RULE == ruleType || Token.EQUALS_RULE == ruleType || Token.NEG_EQUALS_RULE == ruleType
+                            || Token.INIT_TIMER == ruleType || Token.REINIT_TIMER == ruleType)
+                    {
+                        lhsFlags.add(Flags.HAS_START_RULE);
+                    }
+                    if (Token.END_RULE == ruleType || Token.EQUALS_RULE == ruleType || Token.NEG_EQUALS_RULE == ruleType)
+                    {
+                        lhsFlags.add(Flags.HAS_END_RULE);
+                    }
+                    Variable lhsVariable =
+                            installVariable(lhsNameAndStream.getName(), lhsNameAndStream.getStream(), lhsFlags,
+                                    locationDescription);
+                    tokens.add(lhsVariable);
+                    state = ParserState.MAY_UMINUS;
                     break;
-                case FIND_EXPR:
-                    break;
-                case FIND_RHS:
-                    break;
+                }
                 case MAY_UMINUS:
+                    if ('-' == character)
+                    {
+                        tokens.add(Token.UNARY_MINUS);
+                        inPos++;
+                    }
+                    state = ParserState.FIND_EXPR;
                     break;
+
+                case FIND_EXPR:
+                {
+                    if (Character.isDigit(character))
+                    {
+                        int constValue = 0;
+                        while (inPos < rule.length() && Character.isDigit(rule.charAt(inPos)))
+                        {
+                            int digit = rule.charAt(inPos) - '0';
+                            if (constValue >= (Integer.MAX_VALUE - digit) / 10)
+                            {
+                                throw new Exception("Number too large at " + locationDescription);
+                            }
+                            constValue = 10 * constValue + digit;
+                            inPos++;
+                        }
+                        tokens.add(Token.CONSTANT);
+                        tokens.add(new Integer(constValue));
+                    }
+                    if (inPos >= rule.length())
+                    {
+                        return tokens.toArray();
+                    }
+                    character = rule.charAt(inPos);
+                    switch (character)
+                    {
+                        case '+':
+                            tokens.add(Token.PLUS);
+                            inPos++;
+                            break;
+                        case '-':
+                            tokens.add(Token.MINUS);
+                            inPos++;
+                            break;
+                        case '.':
+                            tokens.add(Token.TIMES);
+                            inPos++;
+                            break;
+                        case ')':
+                            tokens.add(Token.CLOSE_PAREN);
+                            inPos++;
+                            break;
+
+                        case '<':
+                        {
+                            Character nextChar = rule.charAt(++inPos);
+                            if ('=' == nextChar)
+                            {
+                                tokens.add(Token.LEEQ);
+                                inPos++;
+                            }
+                            else if ('>' == nextChar)
+                            {
+                                tokens.add(Token.NOTEQ);
+                                inPos++;
+                            }
+                            else
+                            {
+                                tokens.add(Token.LE);
+                            }
+                            break;
+                        }
+                        case '>':
+                        {
+                            Character nextChar = rule.charAt(++inPos);
+                            if ('=' == nextChar)
+                            {
+                                tokens.add(Token.GTEQ);
+                                inPos++;
+                            }
+                            else if ('<' == nextChar)
+                            {
+                                tokens.add(Token.NOTEQ);
+                                inPos++;
+                            }
+                            else
+                            {
+                                tokens.add(Token.GT);
+                            }
+                            break;
+                        }
+                        case '=':
+                        {
+                            Character nextChar = rule.charAt(++inPos);
+                            if ('<' == nextChar)
+                            {
+                                tokens.add(Token.LEEQ);
+                                inPos++;
+                            }
+                            else if ('>' == nextChar)
+                            {
+                                tokens.add(Token.GTEQ);
+                                inPos++;
+                            }
+                            else
+                            {
+                                tokens.add(Token.EQ);
+                            }
+                            break;
+                        }
+                        case '(':
+                        {
+                            inPos++;
+                            tokens.add(Token.OPEN_PAREN);
+                            state = ParserState.MAY_UMINUS;
+                            break;
+                        }
+                        default:
+                        {
+                            if ('S' == character)
+                            {
+                                tokens.add(Token.START);
+                                inPos++;
+                            }
+                            else if ('E' == character)
+                            {
+                                tokens.add(Token.END);
+                                inPos++;
+                            }
+                            NameAndStream nas = new NameAndStream(rule.substring(inPos), locationDescription);
+                            inPos += nas.getNumberOfChars();
+                            if (nas.isNegated())
+                            {
+                                tokens.add(Token.NEG_VARIABLE);
+                            }
+                            else
+                            {
+                                tokens.add(Token.VARIABLE);
+                            }
+                            Variable variable =
+                                    installVariable(nas.getName(), nas.getStream(), EnumSet.noneOf(Flags.class),
+                                            locationDescription);
+                            variable.incrementReferenceCount();
+                            tokens.add(variable);
+                        }
+                    }
+                    break;
+                }
                 default:
-                    break;
-                    
+                    throw new Exception("Error: bad switch; case " + state + " should not happen");
             }
         }
-        
+        return tokens.toArray();
+
     }
-    
-    
 
     /**
      * Check if a String begins with the text of a supplied String (ignoring case).
@@ -346,12 +966,21 @@ public class Evaluator
      * Lookup or create a new Variable.
      * @param name String; name of the variable
      * @param stream short; stream number of the variable
-     * @param flags EnumSet&lt;Flags&gt;; flags of the variable
+     * @param flags EnumSet&lt;Flags&gt;; some (possibly empty) combination of Flags.HAS_START_RULE and Flags.HAS_END_RULE; no
+     *            other flags are allowed
      * @param location String; description of the location in the TrafCOD file that triggered the call to this method
      * @return Variable; the new (or already existing) variable
+     * @throws Exception if the variable already exists and already has (one of) the specified flag(s)
      */
-    private Variable installVariable(String name, short stream, EnumSet<Flags> flags, String location)
+    private Variable installVariable(String name, short stream, EnumSet<Flags> flags, String location) throws Exception
     {
+        EnumSet<Flags> forbidden = EnumSet.complementOf(EnumSet.of(Flags.HAS_START_RULE, Flags.HAS_END_RULE));
+        EnumSet<Flags> badFlags = EnumSet.copyOf(forbidden);
+        badFlags.retainAll(flags);
+        if (badFlags.size() > 0)
+        {
+            throw new Exception("installVariable was called with wrong flag(s): " + badFlags);
+        }
         String key = variableKey(name, stream);
         Variable variable = this.variables.get(key);
         if (null == variable)
@@ -360,11 +989,11 @@ public class Evaluator
             variable = new Variable(name, stream);
             this.variables.put(key, variable);
         }
-        if (flags.contains(Flags.START))
+        if (flags.contains(Flags.HAS_START_RULE))
         {
             variable.setStartSource(location);
         }
-        if (flags.contains(Flags.END))
+        if (flags.contains(Flags.HAS_END_RULE))
         {
             variable.setEndSource(location);
         }
@@ -392,44 +1021,48 @@ public class Evaluator
 class NameAndStream
 {
     /** The name. */
-    final String name;
+    private final String name;
 
     /** The stream number. */
-    short stream = 0;
-    
+    private short stream = -1;
+
     /** Number characters parsed. */
-    int numberOfChars = 0;
+    private int numberOfChars = 0;
+
+    /** Was a letter N consumed while parsing the name?. */
+    private boolean negated = false;
 
     /**
      * Parse a name and stream.
      * @param text String; the name and stream
+     * @param locationDescription String; description of the location in the input file
      * @throws Exception when <cite>text</cite> is not a valid TrafCOD variable name
      */
-    public NameAndStream(final String text) throws Exception
+    public NameAndStream(final String text, final String locationDescription) throws Exception
     {
         int pos = 0;
-        while(pos < text.length() && Character.isWhitespace(text.charAt(pos)))
+        while (pos < text.length() && Character.isWhitespace(text.charAt(pos)))
         {
             pos++;
         }
         while (pos < text.length())
         {
             char character = text.charAt(pos);
-            if (Character.isWhitespace(character) || '.' == character || '=' == character)
+            if (!Character.isLetterOrDigit(character))
             {
                 break;
             }
+            // if (Character.isWhitespace(character) || '.' == character || '=' == character)
+            // {
+            // break;
+            // }
             pos++;
-        }
-        if (pos >= text.length())
-        {
-            throw new Exception("missing variable");
         }
         this.numberOfChars = pos;
         String trimmed = text.substring(0, pos).replaceAll(" ", "");
         if (trimmed.length() == 0)
         {
-            throw new Exception("missing variable");
+            throw new Exception("missing variable at " + locationDescription);
         }
         if (trimmed.matches("^D([Nn]?\\d\\d\\d)|(\\d\\d\\d[Nn])"))
         {
@@ -443,26 +1076,29 @@ class NameAndStream
             this.stream = (short) (10 * (trimmed.charAt(1) - '0') + trimmed.charAt(2) - '0');
             return;
         }
-        else if (trimmed.matches("^T"))
-        {
-            trimmed = trimmed.substring(1);
-        }
+        // else if (trimmed.matches("^T"))
+        // {
+        // trimmed = trimmed.substring(1);
+        // }
         StringBuilder nameBuilder = new StringBuilder();
         for (pos = 0; pos < trimmed.length(); pos++)
         {
             char nextChar = trimmed.charAt(pos);
-            if (pos < trimmed.length() - 1 && Character.isDigit(nextChar) && Character.isDigit(trimmed.charAt(pos + 1)))
+            if (pos < trimmed.length() - 1 && Character.isDigit(nextChar) && Character.isDigit(trimmed.charAt(pos + 1))
+                    && -1 == this.stream)
             {
                 if (0 == pos || (1 == pos && trimmed.startsWith("N")))
                 {
-                    throw new Exception("Bad variable name: " + trimmed);
+                    throw new Exception("Bad variable name: " + trimmed + " at " + locationDescription);
                 }
                 if (trimmed.charAt(pos - 1) == 'N')
                 {
                     // Previous N was NOT part of the name
                     nameBuilder.deleteCharAt(nameBuilder.length() - 1);
                     // Move the 'N' after the digits
-                    trimmed = trimmed.substring(0, pos - 2) + trimmed.substring(pos, 2) + "N" + trimmed.substring(pos + 2);
+                    trimmed =
+                            trimmed.substring(0, pos - 2) + trimmed.substring(pos, pos + 2) + "N" + trimmed.substring(pos + 2);
+                    pos -= 2;
                 }
                 this.stream = (short) (10 * (trimmed.charAt(pos) - '0') + trimmed.charAt(pos + 1) - '0');
                 pos++;
@@ -475,8 +1111,18 @@ class NameAndStream
         if (trimmed.endsWith("N"))
         {
             nameBuilder.deleteCharAt(nameBuilder.length() - 1);
+            this.negated = true;
         }
         this.name = nameBuilder.toString();
+    }
+
+    /**
+     * Was a negation operator ('N') embedded in the name?
+     * @return boolean
+     */
+    public boolean isNegated()
+    {
+        return this.negated;
     }
 
     /**
@@ -495,6 +1141,23 @@ class NameAndStream
     public String getName()
     {
         return this.name;
+    }
+
+    /**
+     * Retrieve the number of characters consumed from the input.
+     * @return int; the number of characters consumed from the input
+     */
+    public int getNumberOfChars()
+    {
+        return this.numberOfChars;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "NameAndStream [name=" + this.name + ", stream=" + this.stream + ", numberOfChars=" + this.numberOfChars
+                + ", negated=" + this.negated + "]";
     }
 
 }
@@ -556,10 +1219,81 @@ class Variable
         {
             this.flags.add(Flags.IS_TIMER);
         }
-        if(this.name.length() == 2 && this.name.startsWith("D") && Character.isDigit(this.name.charAt(1)))
+        if (this.name.length() == 2 && this.name.startsWith("D") && Character.isDigit(this.name.charAt(1)))
         {
             this.flags.add(Flags.IS_DETECTOR);
         }
+    }
+
+    /**
+     * Retrieve the current value of this Variable.
+     * @return int; the value of this Variable
+     */
+    public int getValue()
+    {
+        return this.value;
+    }
+
+    /**
+     * Set one flag.
+     * @param flag Flags
+     */
+    public void setFlag(final Flags flag)
+    {
+        this.flags.add(flag);
+    }
+
+    /**
+     * Clear one flag.
+     * @param flag Flags; the flag to clear
+     */
+    public void clearFlag(final Flags flag)
+    {
+        this.flags.remove(flag);
+    }
+
+    /**
+     * Report whether this Variable is a timer.
+     * @return boolean; true if this Variable is a timer; false if this variable is not a timer
+     */
+    public boolean isTimer()
+    {
+        return this.flags.contains(Flags.IS_TIMER);
+    }
+
+    /**
+     * Clear the CHANGED flag of this Variable.
+     */
+    public void clearChangedFlag()
+    {
+        this.flags.remove(Flags.CHANGED);
+    }
+
+    /**
+     * Increment the reference counter of this variable. The reference counter counts the number of rules where this variable
+     * occurs on the right hand side of the assignment operator.
+     */
+    public void incrementReferenceCount()
+    {
+        this.refCount++;
+    }
+
+    /**
+     * Return a safe copy of the flags.
+     * @return EnumSet&lt;Flags&gt;
+     */
+    public EnumSet<Flags> getFlags()
+    {
+        return EnumSet.copyOf(this.flags);
+    }
+
+    /**
+     * Set a flag of this Variable.
+     * @param flag Flags; the flag to set
+     */
+    public void addFlag(final Flags flag)
+    {
+        this.flags.add(flag);
     }
 
     /**
@@ -579,7 +1313,7 @@ class Variable
      */
     public void setTimerMax(int value10) throws Exception
     {
-        if (! this.flags.contains(Flags.IS_TIMER))
+        if (!this.flags.contains(Flags.IS_TIMER))
         {
             throw new Exception("Cannot set maximum timer value of " + selectedFieldsToString(EnumSet.of(PrintFlags.ID)));
         }
@@ -598,10 +1332,16 @@ class Variable
     /**
      * Set the description of the rule that starts this variable.
      * @param startSource String; description of the rule that starts this variable
+     * @throws Exception when a start source has already been set
      */
-    public void setStartSource(String startSource)
+    public void setStartSource(String startSource) throws Exception
     {
+        if (null != this.startSource)
+        {
+            throw new Exception("Conflicting rules: " + this.startSource + " vs " + startSource);
+        }
         this.startSource = startSource;
+        this.flags.add(Flags.HAS_START_RULE);
     }
 
     /**
@@ -616,10 +1356,16 @@ class Variable
     /**
      * Set the description of the rule that ends this variable.
      * @param endSource String; description of the rule that ends this variable
+     * @throws Exception when an end source has already been set
      */
-    public void setEndSource(String endSource)
+    public void setEndSource(String endSource) throws Exception
     {
+        if (null != this.endSource)
+        {
+            throw new Exception("Conflicting rules: " + this.startSource + " vs " + endSource);
+        }
         this.endSource = endSource;
+        this.flags.add(Flags.HAS_END_RULE);
     }
 
     /**
