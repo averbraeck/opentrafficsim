@@ -13,17 +13,25 @@ import nl.tudelft.simulation.language.reflection.ClassUtil;
  * class, including the standard Java exceptions and exceptions from libraries that are used in the project. Instead of:
  * 
  * <pre>
- * if (Double.isNaN(gtu.getPosition.si))
+ * if (car == null)
  * {
- *     throw new GTUException(&quot;position is NaN for GTU &quot; + gtu.getId());
+ *     throw new NullPointerException(&quot;Car may not be null.&quot;);
+ * }
+ * if (Double.isNaN(car.getPosition()))
+ * {
+ *     throw new IllegalArgumentException(&quot;Position of car &quot; + car + &quot; is NaN.&quot;);
  * }
  * </pre>
  * 
  * we can write:
  * 
  * <pre>
- * Throw.when(Double.isNaN(gtu.getPosition.si), GTUException.class, &quot;position is NaN for GTU %s&quot;, gtu.getId());
+ * Throw.whenNull(car, &quot;Car may not be null.&quot;);
+ * Throw.when(Double.isNaN(car.getPosition()), IllegalArgumentException.class, &quot;Position of car %s is NaN.&quot;, car);
  * </pre>
+ * 
+ * The exception message can be formatted with additional arguments, such that the overhead of building the exception message
+ * only occurs if the exception condition is met.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -43,18 +51,21 @@ public final class Throw
     }
 
     /**
-     * Throw a Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
-     * as follows: <br>
-     * <code>Throw.when(value == null, GTUException.class, "value cannot be null");</code>
-     * TODO this example is badly chosen; to test for null; call whenNull.
+     * Throw a Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use as
+     * follows: <br>
+     * 
+     * <pre>
+     * Throw.when(Double.isNan(object.getValue()), IllegalArgumentException.class, &quot;Value may not be NaN.&quot;);
+     * </pre>
+     * 
      * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
      * @param throwableClass the Throwable type to throw
      * @param message the message to use in the exception
      * @throws T the throwable to throw on true condition
      * @param <T> the Throwable type
      */
-    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass,
-        final String message) throws T
+    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass, final String message)
+            throws T
     {
         if (condition)
         {
@@ -63,9 +74,13 @@ public final class Throw
     }
 
     /**
-     * Throw a Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
-     * as follows: <br>
-     * <code>Throw.when(value == null, GTUException.class, "value cannot be null for GTU with id = %s", id);</code>
+     * Throw a Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use as
+     * follows: <br>
+     * 
+     * <pre>
+     * Throw.when(Double.isNan(object.getValue()), IllegalArgumentException.class, &quot;Value may not be NaN for object %s.&quot;, object);
+     * </pre>
+     * 
      * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
      * @param throwableClass the Throwable type to throw
      * @param message the message to use in the exception, with formatting identifiers
@@ -73,8 +88,8 @@ public final class Throw
      * @throws T the throwable to throw on true condition
      * @param <T> the Throwable type
      */
-    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass,
-        final String message, final Object arg) throws T
+    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass, final String message,
+            final Object arg) throws T
     {
         if (condition)
         {
@@ -85,9 +100,14 @@ public final class Throw
     }
 
     /**
-     * Throw a Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
-     * as follows: <br>
-     * <code>Throw.when(value == null, GTUException.class, "value cannot be null for GTU %s with id %s", name, id);</code>
+     * Throw a Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use as
+     * follows: <br>
+     * 
+     * <pre>
+     * Throw.when(Double.isNan(object.getValue()), IllegalArgumentException.class,
+     *         &quot;Value may not be NaN for object %s with name %s.&quot;, object, name);
+     * </pre>
+     * 
      * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
      * @param throwableClass the Throwable type to throw
      * @param message the message to use in the exception, with formatting identifiers
@@ -96,8 +116,8 @@ public final class Throw
      * @throws T the throwable to throw on true condition
      * @param <T> the Throwable type
      */
-    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass,
-        final String message, final Object arg1, final Object arg2) throws T
+    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass, final String message,
+            final Object arg1, final Object arg2) throws T
     {
         if (condition)
         {
@@ -109,9 +129,14 @@ public final class Throw
     }
 
     /**
-     * Throw a Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
-     * as follows: <br>
-     * <code>Throw.when(value == null, GTUException.class, "value cannot be null for GTU %s with id %s", name, id);</code>
+     * Throw a Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use as
+     * follows: <br>
+     * 
+     * <pre>
+     * Throw.when(Double.isNan(object.getValue()), IllegalArgumentException.class,
+     *         &quot;Value may not be NaN for object %s with name %s and id %s.&quot;, object, name, id);
+     * </pre>
+     * 
      * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
      * @param throwableClass the Throwable type to throw
      * @param message the message to use in the exception, with formatting identifiers
@@ -121,8 +146,8 @@ public final class Throw
      * @throws T the throwable to throw on true condition
      * @param <T> the Throwable type
      */
-    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass,
-        final String message, final Object arg1, final Object arg2, final Object arg3) throws T
+    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass, final String message,
+            final Object arg1, final Object arg2, final Object arg3) throws T
     {
         if (condition)
         {
@@ -135,9 +160,14 @@ public final class Throw
     }
 
     /**
-     * Throw a Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use
-     * as follows: <br>
-     * <code>Throw.when(value == null, GTUException.class, "value cannot be null for GTU with id = %s", id);</code>
+     * Throw a Throwable (such as an Exception or Error) if a condition is met, e.g. for pre- and postcondition checking. Use as
+     * follows: <br>
+     * 
+     * <pre>
+     * Throw.when(Double.isNan(object.getValue()), IllegalArgumentException.class,
+     *         &quot;Value may not be NaN for object %s with name %s, id %s and parent %s.&quot;, object, name, id, parent);
+     * </pre>
+     * 
      * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
      * @param throwableClass the Throwable type to throw
      * @param message the message to use in the exception, with formatting identifiers
@@ -148,8 +178,8 @@ public final class Throw
      * @throws T the throwable to throw on true condition
      * @param <T> the Throwable type
      */
-    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass,
-        final String message, final Object arg1, final Object arg2, final Object arg3, final Object... args) throws T
+    public static <T extends Throwable> void when(final boolean condition, final Class<T> throwableClass, final String message,
+            final Object arg1, final Object arg2, final Object arg3, final Object... args) throws T
     {
         if (condition)
         {
@@ -170,9 +200,8 @@ public final class Throw
      * @throws T the throwable to throw
      * @param <T> the Throwable type
      */
-    @SuppressWarnings("unchecked")
     private static <T extends Throwable> void throwMessage(final Class<T> throwableClass, final String message,
-        final List<Object> argList) throws T
+            final List<Object> argList) throws T
     {
         // create a clear message
         List<StackTraceElement> steList = new ArrayList<>(Arrays.asList(new Throwable().getStackTrace()));
@@ -186,7 +215,7 @@ public final class Throw
         {
             formattedMessage = where + String.format(message, args);
         }
-        catch (IllegalFormatException exception)
+        catch (@SuppressWarnings("unused") IllegalFormatException exception)
         {
             formattedMessage = where + message + " [FormatException; args=" + argList + "]";
         }
@@ -195,8 +224,9 @@ public final class Throw
         T exception;
         try
         {
+            @SuppressWarnings("unchecked")
             Constructor<T> constructor =
-                (Constructor<T>) ClassUtil.resolveConstructor(throwableClass, new Class<?>[] {String.class});
+                    (Constructor<T>) ClassUtil.resolveConstructor(throwableClass, new Class<?>[] { String.class });
             exception = constructor.newInstance(formattedMessage);
             exception.setStackTrace(ste);
         }
@@ -211,7 +241,11 @@ public final class Throw
 
     /**
      * Throw a NullPointerException if object is null, e.g. for pre- and postcondition checking. Use as follows: <br>
-     * <code>Throw.whenNull(value, "value cannot be null");</code>
+     * 
+     * <pre>
+     * Throw.when(object.getValue(), &quot;Value may not be null.&quot;);
+     * </pre>
+     * 
      * @param object object to check; an exception will be thrown if this is <b>null</b>
      * @param message the message to use in the exception
      * @throws NullPointerException if object is null
@@ -226,7 +260,11 @@ public final class Throw
 
     /**
      * Throw a NullPointerException if object is null, e.g. for pre- and postcondition checking. Use as follows: <br>
-     * <code>Throw.whenNull(value, "value cannot be null for GTU with id = %s", id);</code>
+     * 
+     * <pre>
+     * Throw.whenNull(object.getValue(), &quot;Value may not be null for object %s.&quot;, object);
+     * </pre>
+     * 
      * @param object object to check; an exception will be thrown if this is <b>null</b>
      * @param message the message to use in the exception, with formatting identifiers
      * @param arg value to use for the formatting identifiers
@@ -244,7 +282,11 @@ public final class Throw
 
     /**
      * Throw a NullPointerException if object is null, e.g. for pre- and postcondition checking. Use as follows: <br>
-     * <code>Throw.whenNull(value, "value cannot be null for GTU %s with id %s", name, id);</code>
+     * 
+     * <pre>
+     * Throw.whenNull(object.getValue(), &quot;Value may not be null for object %s with name %s.&quot;, object, name);
+     * </pre>
+     * 
      * @param object object to check; an exception will be thrown if this is <b>null</b>
      * @param message the message to use in the exception, with formatting identifiers
      * @param arg1 1st value to use for the formatting identifiers
@@ -252,7 +294,7 @@ public final class Throw
      * @throws NullPointerException if object is null
      */
     public static void whenNull(final Object object, final String message, final Object arg1, final Object arg2)
-        throws NullPointerException
+            throws NullPointerException
     {
         if (object == null)
         {
@@ -265,7 +307,11 @@ public final class Throw
 
     /**
      * Throw a NullPointerException if object is null, e.g. for pre- and postcondition checking. Use as follows: <br>
-     * <code>Throw.whenNull(value, "value cannot be null for GTU %s with id %s", name, id);</code>
+     * 
+     * <pre>
+     * Throw.whenNull(object.getValue(), &quot;Value may not be null for object %s with name %s and id %s.&quot;, object, name, id);
+     * </pre>
+     * 
      * @param object object to check; an exception will be thrown if this is <b>null</b>
      * @param message the message to use in the exception, with formatting identifiers
      * @param arg1 1st value to use for the formatting identifiers
@@ -274,7 +320,7 @@ public final class Throw
      * @throws NullPointerException if object is null
      */
     public static void whenNull(final Object object, final String message, final Object arg1, final Object arg2,
-        final Object arg3) throws NullPointerException
+            final Object arg3) throws NullPointerException
     {
         if (object == null)
         {
@@ -288,7 +334,12 @@ public final class Throw
 
     /**
      * Throw a NullPointerException if object is null, e.g. for pre- and postcondition checking. Use as follows: <br>
-     * <code>Throw.whenNull(value, "value cannot be null for GTU %s with id %s", name, id);</code>
+     * 
+     * <pre>
+     * Throw.whenNull(object.getValue(), &quot;Value may not be null for object %s with name %s, id %s and parent %s.&quot;, object, name, id,
+     *         parent);
+     * </pre>
+     * 
      * @param object object to check; an exception will be thrown if this is <b>null</b>
      * @param message the message to use in the exception, with formatting identifiers
      * @param arg1 1st value to use for the formatting identifiers
@@ -298,7 +349,7 @@ public final class Throw
      * @throws NullPointerException if object is null
      */
     public static void whenNull(final Object object, final String message, final Object arg1, final Object arg2,
-        final Object arg3, final Object... args) throws NullPointerException
+            final Object arg3, final Object... args) throws NullPointerException
     {
         if (object == null)
         {
