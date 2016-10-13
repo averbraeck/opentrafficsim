@@ -29,6 +29,7 @@
       </activation>
       <modules>
         <module>../ots-core</module>
+        <module>../ots-kpi</module>
         <module>../ots-road</module>
         <module>../ots-trafficcontrol</module>
         <module>../ots-rail</module>
@@ -698,6 +699,12 @@
       <dependency>
         <groupId>opentrafficsim</groupId>
         <artifactId>ots-core</artifactId>
+        <version>${ots.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>opentrafficsim</groupId>
+        <artifactId>ots-kpi</artifactId>
         <version>${ots.version}</version>
       </dependency>
 

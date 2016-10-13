@@ -78,8 +78,7 @@ public final class Query
      * @param interval interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampling, final String description, final MetaDataSet metaDataSet,
-            final Duration interval)
+    public Query(final Sampler sampling, final String description, final MetaDataSet metaDataSet, final Duration interval)
     {
         this(sampling, description, metaDataSet, null, interval);
     }
@@ -196,8 +195,8 @@ public final class Query
      * @param tStart start time
      * @param tEnd end time
      */
-    public void addSpaceTimeRegion(final LaneDirection laneDirection, final Length xStart, final Length xEnd,
-            final Time tStart, final Time tEnd)
+    public void addSpaceTimeRegion(final LaneDirection laneDirection, final Length xStart, final Length xEnd, final Time tStart,
+            final Time tEnd)
     {
         SpaceTimeRegion spaceTimeRegion = new SpaceTimeRegion(laneDirection, xStart, xEnd, tStart, tEnd);
         this.sampling.registerSpaceTimeRegion(spaceTimeRegion);
@@ -240,8 +239,16 @@ public final class Query
         {
             Time start = startTime.gt(spaceTimeRegion.getStartTime()) ? startTime : spaceTimeRegion.getStartTime();
             Time end = endTime.lt(spaceTimeRegion.getEndTime()) ? endTime : spaceTimeRegion.getEndTime();
-            TrajectoryGroup trajectoryGroup = this.sampling.getTrajectoryGroup(spaceTimeRegion.getLaneDirection())
-                    .getTrajectoryGroup(spaceTimeRegion.getStartPosition(), spaceTimeRegion.getEndPosition(), start, end);
+            TrajectoryGroup trajectoryGroup;
+            if (this.sampling.getTrajectoryGroup(spaceTimeRegion.getLaneDirection()) == null)
+            {
+                trajectoryGroup = new TrajectoryGroup(start, spaceTimeRegion.getLaneDirection());
+            }
+            else
+            {
+                trajectoryGroup = this.sampling.getTrajectoryGroup(spaceTimeRegion.getLaneDirection())
+                        .getTrajectoryGroup(spaceTimeRegion.getStartPosition(), spaceTimeRegion.getEndPosition(), start, end);
+            }
             for (Trajectory trajectory : trajectoryGroup.getTrajectories())
             {
                 if (!trajectoryAcceptLists.containsKey(trajectory.getGtuId()))
@@ -252,6 +259,7 @@ public final class Query
             }
             trajectoryGroupList.add(trajectoryGroup);
         }
+
         // Step 2) accept per GTU
         Iterator<String> iterator = trajectoryAcceptLists.keySet().iterator();
         while (iterator.hasNext())
@@ -282,9 +290,12 @@ public final class Query
                 }
             }
         }
+
         // Step 3) filter trajectories
         List<TrajectoryGroup> out = new ArrayList<>();
-        for (TrajectoryGroup full : trajectoryGroupList)
+        for (
+
+        TrajectoryGroup full : trajectoryGroupList)
         {
             TrajectoryGroup filtered = new TrajectoryGroup(full.getStartTime(), full.getLaneDirection());
             for (Trajectory trajectory : full.getTrajectories())

@@ -29,6 +29,8 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
+import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.road.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -47,6 +49,8 @@ import org.opentrafficsim.road.network.sampling.Query;
 import org.opentrafficsim.road.network.sampling.Sampler;
 import org.opentrafficsim.road.network.sampling.meta.MetaDataGTUType;
 import org.opentrafficsim.road.network.sampling.meta.MetaDataSet;
+import org.opentrafficsim.road.network.sampling2.GtuTypeData;
+import org.opentrafficsim.road.network.sampling2.LinkData;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -231,8 +235,7 @@ public class N201ODfactory
         gtuTypes.add(new GTUType("CAR"));
         gtuTypes.add(new GTUType("BUS"));
         metaDataSet.put(new MetaDataGTUType("gtuType"), gtuTypes);
-        Query query = new Query(sampling, "N201 both directions", metaDataSet,
-                new Frequency(2.0, FrequencyUnit.PER_MINUTE));
+        Query query = new Query(sampling, "N201 both directions", metaDataSet, new Frequency(2.0, FrequencyUnit.PER_MINUTE));
         // addSpaceTimeRegions(query, network, northBound);
         addSpaceTimeRegions(query, network, southBound);
         return query;
@@ -248,7 +251,52 @@ public class N201ODfactory
         for (String link : links)
         {
             query.addSpaceTimeRegionLink((CrossSectionLink) network.getLink(link), GTUDirectionality.DIR_PLUS, Length.ZERO,
-                    network.getLink(link).getLength(), Time.ZERO, new Time(1.0, TimeUnit.HOUR));
+                    network.getLink(link).getLength(), new Time(0, TimeUnit.SI), new Time(1.0, TimeUnit.HOUR));
+        }
+    }
+
+    /**
+     * @param network network
+     * @param sampling sampling
+     * @return query covering the entire N201
+     */
+    public static org.opentrafficsim.kpi.sampling.Query getQuery(final OTSNetwork network,
+            final org.opentrafficsim.kpi.sampling.Sampler sampling)
+    {
+        // String[] southBound = new String[] { "L1a", "L2a", "L3a4a", "L5a", "L6a", "L7a", "L8a9a", "L10a11a", "L12a",
+        // "L13a14a",
+        // "L15a16a", "L17a", "L18a19a", "L20a21a", "L22a", "L23a24a", "L25a", "L26a", "L27a", "L28a29a", "L30a", "L31a",
+        // "L32a", "L33a", "L34a", "L35a", "L36a", "L37a", "L38a", "L39a", "L40a", "L41a", "L42a", "L43a", "L44a", "L45a",
+        // "L46a", "L47a48a", "L49a" };
+        String[] southBound = new String[] { "L2a" };
+        String[] northBound = new String[] { "L49b", "L48b47b", "L46b", "L45b", "L44b", "L43b", "L42b", "L41b", "L40b", "L39b",
+                "L38b", "L37b", "L36b", "L35b", "L34b", "L33b", "L32b", "L31b", "L30b", "L29b28b", "L27b", "L26b", "L25b",
+                "L24b23b", "L22b21b", "L20b", "L19b18b", "L17b16b", "L15b", "L14b13b", "L12b", "L11b", "L10b", "L9b8b", "L7b",
+                "L6b", "L5b", "L4b3b", "L2b", "L1b" };
+        org.opentrafficsim.kpi.sampling.meta.MetaDataSet metaDataSet = new org.opentrafficsim.kpi.sampling.meta.MetaDataSet();
+        Set<GtuTypeDataInterface> gtuTypes = new HashSet<>();
+        gtuTypes.add(new GtuTypeData(new GTUType("CAR")));
+        gtuTypes.add(new GtuTypeData(new GTUType("BUS")));
+        metaDataSet.put(new org.opentrafficsim.kpi.sampling.meta.MetaDataGtuType("gtuType"), gtuTypes);
+        org.opentrafficsim.kpi.sampling.Query query = new org.opentrafficsim.kpi.sampling.Query(sampling,
+                "N201 both directions", metaDataSet, new Frequency(2.0, FrequencyUnit.PER_MINUTE));
+        // addSpaceTimeRegions(query, network, northBound);
+        addSpaceTimeRegions(query, network, southBound);
+        return query;
+    }
+
+    /**
+     * @param query query
+     * @param network network
+     * @param links link names
+     */
+    private static void addSpaceTimeRegions(final org.opentrafficsim.kpi.sampling.Query query, final OTSNetwork network,
+            final String[] links)
+    {
+        for (String link : links)
+        {
+            query.addSpaceTimeRegionLink(new LinkData((CrossSectionLink) network.getLink(link)), KpiGtuDirectionality.DIR_PLUS,
+                    Length.ZERO, network.getLink(link).getLength(), new Time(0, TimeUnit.SI), new Time(1.0, TimeUnit.HOUR));
         }
     }
 
