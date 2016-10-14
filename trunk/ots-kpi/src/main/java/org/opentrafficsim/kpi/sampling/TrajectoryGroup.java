@@ -99,6 +99,15 @@ public class TrajectoryGroup
     {
         return this.trajectories.contains(trajectory);
     }
+    
+    /**
+     * Returns the number of trajectories in this group.
+     * @return number of trajectories in this group
+     */
+    public final int size()
+    {
+        return this.trajectories.size();
+    }
 
     /**
      * Returns a list of trajectories.

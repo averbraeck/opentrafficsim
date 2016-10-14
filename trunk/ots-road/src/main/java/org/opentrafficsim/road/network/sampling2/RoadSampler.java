@@ -1,7 +1,9 @@
 package org.opentrafficsim.road.network.sampling2;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.djunits.unit.TimeUnit;
@@ -28,6 +30,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.TimedEvent;
 
 /**
  * <p>
@@ -90,11 +93,11 @@ public class RoadSampler extends Sampler implements EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public final void scheduleStartRecording(final Time time, final KpiLaneDirection laneDirection)
+    public final void scheduleStartRecording(final Time time, final KpiLaneDirection kpiLaneDirection)
     {
         try
         {
-            this.simulator.scheduleEventAbs(time, this, this, "startRecording", new Object[] { time, laneDirection });
+            this.simulator.scheduleEventAbs(time, this, this, "startRecording", new Object[] { kpiLaneDirection });
         }
         catch (SimRuntimeException exception)
         {
@@ -104,11 +107,11 @@ public class RoadSampler extends Sampler implements EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public final void scheduleStopRecording(final Time time, final KpiLaneDirection laneDirection)
+    public final void scheduleStopRecording(final Time time, final KpiLaneDirection kpiLaneDirection)
     {
         try
         {
-            this.simulator.scheduleEventAbs(time, this, this, "stopRecording", new Object[] { time, laneDirection });
+            this.simulator.scheduleEventAbs(time, this, this, "stopRecording", new Object[] { kpiLaneDirection });
         }
         catch (SimRuntimeException exception)
         {
@@ -118,20 +121,81 @@ public class RoadSampler extends Sampler implements EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public final void addListeners(final KpiLaneDirection laneDirection)
+    public final void initRecording(final KpiLaneDirection kpiLaneDirection)
     {
-        ((LaneData) laneDirection.getLaneData()).getLane().addListener(this, Lane.GTU_ADD_EVENT, true);
-        ((LaneData) laneDirection.getLaneData()).getLane().addListener(this, Lane.GTU_REMOVE_EVENT, true);
+        ((LaneData) kpiLaneDirection.getLaneData()).getLane().addListener(this, Lane.GTU_ADD_EVENT, true);
+        ((LaneData) kpiLaneDirection.getLaneData()).getLane().addListener(this, Lane.GTU_REMOVE_EVENT, true);
+        Lane lane = ((LaneData) kpiLaneDirection.getLaneData()).getLane();
+        int count = 1;
+        for (LaneBasedGTU gtu : lane.getGtuList())
+        {
+            Map<Lane, GTUDirectionality> lanes = gtu.getLanes();
+            if (lanes.containsKey(lane) && sameDirection(kpiLaneDirection.getKpiDirection(), lanes.get(lane)))
+            {
+                try
+                {
+                    // Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_addition}
+                    notify(new TimedEvent<>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), gtu, count },
+                            gtu.getSimulator().getSimulatorTime()));
+                }
+                catch (RemoteException exception)
+                {
+                    throw new RuntimeException("Position cannot be obtained for GTU that is registered on a lane.", exception);
+                }
+                count++;
+            }
+        }
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void removeListeners(final KpiLaneDirection laneDirection)
+    public final void finalizeRecording(final KpiLaneDirection kpiLaneDirection)
     {
-        ((LaneData) laneDirection.getLaneData()).getLane().removeListener(this, Lane.GTU_ADD_EVENT);
-        ((LaneData) laneDirection.getLaneData()).getLane().removeListener(this, Lane.GTU_REMOVE_EVENT);
+        ((LaneData) kpiLaneDirection.getLaneData()).getLane().removeListener(this, Lane.GTU_ADD_EVENT);
+        ((LaneData) kpiLaneDirection.getLaneData()).getLane().removeListener(this, Lane.GTU_REMOVE_EVENT);
+        Lane lane = ((LaneData) kpiLaneDirection.getLaneData()).getLane();
+        int count = 0;
+        List<LaneBasedGTU> currentGtus = new ArrayList<>();
+        for (LaneBasedGTU gtu : lane.getGtuList())
+        {
+            Map<Lane, GTUDirectionality> lanes = gtu.getLanes();
+            if (lanes.containsKey(lane) && sameDirection(kpiLaneDirection.getKpiDirection(), lanes.get(lane)))
+            {
+                currentGtus.add(gtu);
+                count++;
+            }
+        }
+        for (LaneBasedGTU gtu : currentGtus)
+        {
+            try
+            {
+                // Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_removal}
+                notify(new TimedEvent<>(Lane.GTU_REMOVE_EVENT, lane, new Object[] { gtu.getId(), gtu, count },
+                        gtu.getSimulator().getSimulatorTime()));
+            }
+            catch (RemoteException exception)
+            {
+                throw new RuntimeException("Position cannot be obtained for GTU that is registered on a lane.", exception);
+            }
+            count--;
+        }
     }
 
+    /**
+     * Compares a {@link KpiGtuDirectionality} and a {@link GTUDirectionality}.
+     * @param kpiGtuDirectionality kpi gtu direction
+     * @param gtuDirectionality gtu direction
+     * @return whether both are in the same direction
+     */
+    private boolean sameDirection(final KpiGtuDirectionality kpiGtuDirectionality, final GTUDirectionality gtuDirectionality)
+    {
+        if (kpiGtuDirectionality.equals(KpiGtuDirectionality.DIR_PLUS))
+        {
+            return gtuDirectionality.equals(GTUDirectionality.DIR_PLUS);
+        }
+        return gtuDirectionality.equals(GTUDirectionality.DIR_MINUS);
+    }
+    
     /** {@inheritDoc} */
     @Override
     public final void notify(final EventInterface event) throws RemoteException
@@ -192,14 +256,14 @@ public class RoadSampler extends Sampler implements EventListenerInterface
             Length position = lane.getLength();
             // TODO Length from Lane.GTU_ADD_EVENT
             // this doesn't work, as the GTU is no longer on the lane it was removed from
-            //try
-            //{
-            //    position = gtu.position(lane, RelativePosition.REFERENCE_POSITION);
-            //}
-            //catch (GTUException exception)
-            //{
-            //    throw new RuntimeException(exception);
-            //}
+            // try
+            // {
+            // position = gtu.position(lane, RelativePosition.REFERENCE_POSITION);
+            // }
+            // catch (GTUException exception)
+            // {
+            // throw new RuntimeException(exception);
+            // }
             Speed speed = gtu.getSpeed();
             Acceleration acceleration = gtu.getAcceleration();
             processGtuRemoveEvent(kpiLaneDirection, position, speed, acceleration, now(), new GtuData(gtu));

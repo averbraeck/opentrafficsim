@@ -315,7 +315,7 @@ public final class Trajectory
     {
         return this.metaData.contains(metaDataType);
     }
-
+    
     /**
      * @param metaDataType meta data type
      * @param <T> class of meta data
