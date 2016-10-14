@@ -29,7 +29,9 @@ import org.opentrafficsim.kpi.sampling.meta.MetaDataType;
 
 /**
  * Contains position, speed, acceleration and time data of a GTU, over some section. Position is relative to the start of the
- * lane, also when trajectories have been truncated at a position x &gt; 0.
+ * lane in the direction of travel, also when trajectories have been truncated at a position x &gt; 0. Note that this regards
+ * internal data and output. Input position always refers to the design line of the lane. This class internally flips input
+ * positions and boundaries.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -50,8 +52,8 @@ public final class Trajectory
     private int size = 0;
 
     /**
-     * Position array. Position is relative to the start of the lane, also when trajectories have been truncated at a position x
-     * &gt; 0.
+     * Position array. Position is relative to the start of the lane in the direction of travel, also when trajectories have
+     * been truncated at a position x &gt; 0.
      */
     private float[] x = new float[DEFAULT_CAPACITY];
 
@@ -64,23 +66,28 @@ public final class Trajectory
     /** Time array. */
     private float[] t = new float[DEFAULT_CAPACITY];
 
-    /** Map of array data types and their values. */
-    private final Map<ExtendedDataType<?>, List<Object>> extendedData = new HashMap<>();
+    /** GTU id. */
+    private final String gtuId;
 
     /** Meta data. */
     private final MetaData metaData;
 
-    /** GTU id. */
-    private final String gtuId;
+    /** Map of array data types and their values. */
+    private final Map<ExtendedDataType<?>, List<Object>> extendedData = new HashMap<>();
+
+    /** Direction of travel. */
+    private final KpiLaneDirection kpiLaneDirection;
 
     /**
      * @param gtu GTU of this trajectory, only the id is stored.
      * @param metaData meta data
      * @param extendedData types of extended data
+     * @param kpiLaneDirection direction of travel
      */
-    public Trajectory(final GtuDataInterface gtu, final MetaData metaData, final Set<ExtendedDataType<?>> extendedData)
+    public Trajectory(final GtuDataInterface gtu, final MetaData metaData, final Set<ExtendedDataType<?>> extendedData,
+            final KpiLaneDirection kpiLaneDirection)
     {
-        this(gtu.getId(), metaData, extendedData);
+        this(gtu.getId(), metaData, extendedData, kpiLaneDirection);
     }
 
     /**
@@ -88,8 +95,10 @@ public final class Trajectory
      * @param gtuId GTU id
      * @param metaData meta data
      * @param extendedData types of extended data
+     * @param kpiLaneDirection direction of travel
      */
-    private Trajectory(final String gtuId, final MetaData metaData, final Set<ExtendedDataType<?>> extendedData)
+    private Trajectory(final String gtuId, final MetaData metaData, final Set<ExtendedDataType<?>> extendedData,
+            final KpiLaneDirection kpiLaneDirection)
     {
         this.gtuId = gtuId;
         this.metaData = new MetaData(metaData);
@@ -97,12 +106,13 @@ public final class Trajectory
         {
             this.extendedData.put(dataType, new ArrayList<>());
         }
+        this.kpiLaneDirection = kpiLaneDirection;
     }
 
     /**
      * Adds values of position, speed, acceleration and time.
-     * @param position position is relative to the start of the lane, also when trajectories have been truncated at a position x
-     *            &gt; 0
+     * @param position position is relative to the start of the lane in the direction of the design line, i.e. irrespective of
+     *            the travel direction, also when trajectories have been truncated at a position x &gt; 0
      * @param speed speed
      * @param acceleration acceleration
      * @param time time
@@ -114,14 +124,15 @@ public final class Trajectory
 
     /**
      * Adds values of position, speed, acceleration and time.
-     * @param position position is relative to the start of the lane, also when trajectories have been truncated at a position x
-     *            &gt; 0
+     * @param position position is relative to the start of the lane in the direction of the design line, i.e. irrespective of
+     *            the travel direction, also when trajectories have been truncated at a position x &gt; 0
      * @param speed speed
      * @param acceleration acceleration
      * @param time time
      * @param gtu gtu to add extended data for
      */
-    public void add(final Length position, final Speed speed, final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
+    public void add(final Length position, final Speed speed, final Acceleration acceleration, final Time time,
+            final GtuDataInterface gtu)
     {
         if (this.size == this.x.length)
         {
@@ -131,7 +142,7 @@ public final class Trajectory
             this.a = Arrays.copyOf(this.a, cap);
             this.t = Arrays.copyOf(this.t, cap);
         }
-        this.x[this.size] = (float) position.si;
+        this.x[this.size] = (float) this.kpiLaneDirection.getPositionInDirection(position).si;
         this.v[this.size] = (float) speed.si;
         this.a[this.size] = (float) acceleration.si;
         this.t[this.size] = (float) time.si;
@@ -339,8 +350,8 @@ public final class Trajectory
     public <T> List<T> getExtendedData(final ExtendedDataType<T> extendedDataType) throws SamplingException
     {
         // TODO Throw
-        //Throw.when(!this.extendedData.containsKey(extendedDataType), SamplingException.class,
-        //        "Extended data type %s is not in the trajectory.", extendedDataType);
+        // Throw.when(!this.extendedData.containsKey(extendedDataType), SamplingException.class,
+        // "Extended data type %s is not in the trajectory.", extendedDataType);
         return (List<T>) this.extendedData.get(extendedDataType);
     }
 
@@ -356,10 +367,14 @@ public final class Trajectory
     public Trajectory subSet(final Length minLength, final Length maxLength)
     {
         // TODO Throw
-        //Throw.whenNull(minLength, "minLength may not be null");
-        //Throw.whenNull(maxLength, "maxLength may not be null");
-        //Throw.when(minLength.gt(maxLength), IllegalArgumentException.class, "minLength should be smaller than maxLength");
-        return subSet(spaceBoundaries(minLength, maxLength));
+        // Throw.whenNull(minLength, "minLength may not be null");
+        // Throw.whenNull(maxLength, "maxLength may not be null");
+        Length length0 = this.kpiLaneDirection.getPositionInDirection(minLength);
+        Length length1 = this.kpiLaneDirection.getPositionInDirection(maxLength);
+        // TODO Throw
+        // Throw.when(length0.gt(length1), IllegalArgumentException.class, "minLength should be smaller than maxLength in the
+        // direction of travel");
+        return subSet(spaceBoundaries(length0, length1));
     }
 
     /**
@@ -374,9 +389,9 @@ public final class Trajectory
     public Trajectory subSet(final Time minTime, final Time maxTime)
     {
         // TODO Throw
-        //Throw.whenNull(minTime, "minTime may not be null");
-        //Throw.whenNull(maxTime, "maxTime may not be null");
-        //Throw.when(minTime.gt(maxTime), IllegalArgumentException.class, "minTime should be smaller than maxTime");
+        // Throw.whenNull(minTime, "minTime may not be null");
+        // Throw.whenNull(maxTime, "maxTime may not be null");
+        // Throw.when(minTime.gt(maxTime), IllegalArgumentException.class, "minTime should be smaller than maxTime");
         return subSet(timeBoundaries(minTime, maxTime));
     }
 
@@ -395,13 +410,17 @@ public final class Trajectory
     {
         // could use this.subSet(minLength, maxLength).subSet(minTime, maxTime), but that copies twice
         // TODO Throw
-        //Throw.whenNull(minLength, "minLength may not be null");
-        //Throw.whenNull(maxLength, "maxLength may not be null");
-        //Throw.when(minLength.gt(maxLength), IllegalArgumentException.class, "minLength should be smaller than maxLength");
-        //Throw.whenNull(minTime, "minTime may not be null");
-        //Throw.whenNull(maxTime, "maxTime may not be null");
-        //Throw.when(minTime.gt(maxTime), IllegalArgumentException.class, "minTime should be smaller than maxTime");
-        return subSet(spaceBoundaries(minLength, maxLength).intersect(timeBoundaries(minTime, maxTime)));
+        // Throw.whenNull(minLength, "minLength may not be null");
+        // Throw.whenNull(maxLength, "maxLength may not be null");
+        Length length0 = this.kpiLaneDirection.getPositionInDirection(minLength);
+        Length length1 = this.kpiLaneDirection.getPositionInDirection(maxLength);
+        // TODO Throw
+        // Throw.when(length0.gt(length1), IllegalArgumentException.class, "minLength should be smaller than maxLength in the
+        // direction of travel");
+        // Throw.whenNull(minTime, "minTime may not be null");
+        // Throw.whenNull(maxTime, "maxTime may not be null");
+        // Throw.when(minTime.gt(maxTime), IllegalArgumentException.class, "minTime should be smaller than maxTime");
+        return subSet(spaceBoundaries(length0, length1).intersect(timeBoundaries(minTime, maxTime)));
     }
 
     /**
@@ -475,7 +494,7 @@ public final class Trajectory
     @SuppressWarnings("unchecked")
     private <T> Trajectory subSet(final Boundaries bounds)
     {
-        Trajectory out = new Trajectory(this.gtuId, this.metaData, this.extendedData.keySet());
+        Trajectory out = new Trajectory(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLaneDirection);
         if (bounds.from < bounds.to) // otherwise empty, no data in the subset
         {
             int nBefore = bounds.fFrom < 1.0 ? 1 : 0;
@@ -668,16 +687,17 @@ public final class Trajectory
         Boundaries(final int from, final double fFrom, final int to, final double fTo)
         {
             // TODO Throw
-            //Throw.when(from < 0 || from > Trajectory.this.size() - 1, IllegalArgumentException.class,
-            //        "Argument from (%d) is out of bounds.", from);
-            //Throw.when(fFrom < 0 || fFrom > 1, IllegalArgumentException.class, "Argument fFrom (%f) is out of bounds.", fFrom);
-            //Throw.when(from == Trajectory.this.size() && fFrom > 0, IllegalArgumentException.class,
-            //        "Arguments from (%d) and fFrom (%f) are out of bounds.", from, fFrom);
-            //Throw.when(to < 0 || to >= Trajectory.this.size(), IllegalArgumentException.class,
-            //        "Argument to (%d) is out of bounds.", to);
-            //Throw.when(fTo < 0 || fTo > 1, IllegalArgumentException.class, "Argument fTo (%f) is out of bounds.", fTo);
-            //Throw.when(to == Trajectory.this.size() && fTo > 0, IllegalArgumentException.class,
-            //        "Arguments to (%d) and fTo (%f) are out of bounds.", to, fTo);
+            // Throw.when(from < 0 || from > Trajectory.this.size() - 1, IllegalArgumentException.class,
+            // "Argument from (%d) is out of bounds.", from);
+            // Throw.when(fFrom < 0 || fFrom > 1, IllegalArgumentException.class, "Argument fFrom (%f) is out of bounds.",
+            // fFrom);
+            // Throw.when(from == Trajectory.this.size() && fFrom > 0, IllegalArgumentException.class,
+            // "Arguments from (%d) and fFrom (%f) are out of bounds.", from, fFrom);
+            // Throw.when(to < 0 || to >= Trajectory.this.size(), IllegalArgumentException.class,
+            // "Argument to (%d) is out of bounds.", to);
+            // Throw.when(fTo < 0 || fTo > 1, IllegalArgumentException.class, "Argument fTo (%f) is out of bounds.", fTo);
+            // Throw.when(to == Trajectory.this.size() && fTo > 0, IllegalArgumentException.class,
+            // "Arguments to (%d) and fTo (%f) are out of bounds.", to, fTo);
             this.from = from;
             this.fFrom = fFrom;
             this.to = to;

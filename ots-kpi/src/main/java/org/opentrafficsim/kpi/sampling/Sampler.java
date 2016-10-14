@@ -167,7 +167,7 @@ public abstract class Sampler
             final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
     {
         String gtuId = gtu.getId();
-        Trajectory trajectory = new Trajectory(gtu, makeMetaData(gtu), this.extendedDataTypes);
+        Trajectory trajectory = new Trajectory(gtu, makeMetaData(gtu), this.extendedDataTypes, kpiLaneDirection);
         if (!this.trajectoryPerGtu.containsKey(gtuId))
         {
             Map<KpiLaneDirection, Trajectory> map = new HashMap<>();
