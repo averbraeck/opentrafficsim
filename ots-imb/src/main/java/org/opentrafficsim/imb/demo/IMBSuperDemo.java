@@ -95,10 +95,15 @@ public class IMBSuperDemo implements UNITS
 
     /**
      * Start the application.
-     * @param args String[]; the command line arguments (not used)
+     * @param args String[]; the command line arguments
      */
     public static void main(final String[] args)
     {
+        if (args.length > 0 && args[0].startsWith("/RemoteHost"))
+        {
+            // IMB Remote control mode
+            // TODO set up the IMB information for later use
+        }
         SwingUtilities.invokeLater(new Runnable()
         {
             @Override
