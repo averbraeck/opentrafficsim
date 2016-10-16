@@ -11,11 +11,11 @@ import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
 import org.djunits.value.vdouble.scalar.Direction;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**

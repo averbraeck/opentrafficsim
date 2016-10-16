@@ -2,7 +2,7 @@ package org.opentrafficsim.core.immutablecollections;
 
 import java.util.Map;
 
-import org.opentrafficsim.core.Throw;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * An abstract base class for an immutable wrapper for a Map.

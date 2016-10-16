@@ -3,7 +3,7 @@ package org.opentrafficsim.core.immutablecollections;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opentrafficsim.core.Throw;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * An immutable wrapper for an ArrayList.

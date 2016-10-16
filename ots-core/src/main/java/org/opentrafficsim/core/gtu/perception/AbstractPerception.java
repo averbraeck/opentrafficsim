@@ -3,12 +3,13 @@ package org.opentrafficsim.core.gtu.perception;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>

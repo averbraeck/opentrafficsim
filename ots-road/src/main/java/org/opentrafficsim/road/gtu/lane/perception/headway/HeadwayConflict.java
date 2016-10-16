@@ -5,10 +5,11 @@ import java.util.TreeSet;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.network.lane.conflict.ConflictRule;
 import org.opentrafficsim.road.network.lane.conflict.ConflictType;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>

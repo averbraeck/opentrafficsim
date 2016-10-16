@@ -2,8 +2,9 @@ package org.opentrafficsim.core.gtu;
 
 import java.io.Serializable;
 
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.Type;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * A GTU type identifies the type of a GTU. <br>

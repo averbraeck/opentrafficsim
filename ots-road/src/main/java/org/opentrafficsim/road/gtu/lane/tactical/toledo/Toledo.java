@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
@@ -42,6 +40,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
+
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Implementation of the model of Toledo (2003).<br>

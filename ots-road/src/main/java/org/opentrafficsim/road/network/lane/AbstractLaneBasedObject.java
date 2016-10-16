@@ -1,10 +1,11 @@
 package org.opentrafficsim.road.network.lane;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.StaticObject;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * An abstract implementation of the LaneBasedObject interface with the required fields being initialized and getters for those

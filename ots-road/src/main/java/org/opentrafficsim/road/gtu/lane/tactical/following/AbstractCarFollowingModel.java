@@ -6,10 +6,11 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Default implementation where desired speed and headway are pre-calculated for car-following.

@@ -5,7 +5,7 @@ import java.util.NavigableSet;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.opentrafficsim.core.Throw;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * An immutable wrapper for a TreeSet.

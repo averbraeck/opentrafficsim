@@ -6,7 +6,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import org.opentrafficsim.core.Throw;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Test the GTUException class.

@@ -9,15 +9,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
-import nl.tudelft.simulation.dsol.gui.swing.Console;
-import nl.tudelft.simulation.dsol.gui.swing.StatusBar;
-import nl.tudelft.simulation.dsol.gui.swing.TabbedContentPane;
-
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
+
+import nl.tudelft.simulation.dsol.gui.swing.Console;
+import nl.tudelft.simulation.dsol.gui.swing.StatusBar;
+import nl.tudelft.simulation.dsol.gui.swing.TabbedContentPane;
 
 /**
  * GUI with simulator, console, control panel, status bar, etc.

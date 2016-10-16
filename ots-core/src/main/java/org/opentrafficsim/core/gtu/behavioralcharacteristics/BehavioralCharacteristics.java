@@ -9,8 +9,8 @@ import java.util.Set;
 import org.djunits.unit.DimensionlessUnit;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
-import org.opentrafficsim.core.Throw;
 
+import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 /**

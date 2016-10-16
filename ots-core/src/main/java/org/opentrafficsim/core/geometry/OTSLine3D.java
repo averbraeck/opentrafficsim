@@ -11,10 +11,6 @@ import java.util.List;
 
 import javax.media.j3d.Bounds;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.language.d3.BoundingBox;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
@@ -28,6 +24,9 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.linearref.LengthIndexedLine;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.language.d3.BoundingBox;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Line with OTSPoint3D points, a cached length indexed line, a cahced length, and a cached centroid (all calculated on first

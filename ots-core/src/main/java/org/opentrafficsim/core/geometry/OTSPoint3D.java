@@ -7,15 +7,15 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.language.d3.CartesianPoint;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
+
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.language.d3.CartesianPoint;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * An OTSPoint3D implements a 3D-coordinate for OTS. X, y and z are stored as doubles, but it is assumed that the scale is in SI

@@ -19,15 +19,15 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.Event;
-import nl.tudelft.simulation.language.io.URLResource;
-
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
+
+import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.Event;
+import nl.tudelft.simulation.language.io.URLResource;
 
 /**
  * Animation panel with various controls.

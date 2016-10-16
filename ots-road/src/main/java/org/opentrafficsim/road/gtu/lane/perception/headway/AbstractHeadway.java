@@ -3,8 +3,9 @@ package org.opentrafficsim.road.gtu.lane.perception.headway;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTUException;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Container for a reference to information about a (lane based) GTU and a headway. The Headway can store information about GTUs

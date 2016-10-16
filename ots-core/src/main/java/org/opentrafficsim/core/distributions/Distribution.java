@@ -6,8 +6,7 @@ import java.util.List;
 
 import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-
-import org.opentrafficsim.core.Throw;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Generic implementation of a set of objects that have a draw method with corresponding probabilities / frequencies.

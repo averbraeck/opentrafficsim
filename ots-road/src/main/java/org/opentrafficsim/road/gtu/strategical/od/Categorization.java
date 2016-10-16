@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opentrafficsim.core.Throw;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * A categorization determines for what part of traffic certain demand data is applicable. By default, this is always for a

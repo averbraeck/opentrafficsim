@@ -1,12 +1,13 @@
 package org.opentrafficsim.imb.connector;
 
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
 import org.opentrafficsim.simulationengine.properties.IntegerProperty;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
 import org.opentrafficsim.simulationengine.properties.StringProperty;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>

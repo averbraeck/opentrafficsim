@@ -6,8 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.immutablecollections.ImmutableIterator;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Set of trajectories to be accepted or rejected for a query.

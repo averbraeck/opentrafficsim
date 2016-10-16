@@ -2,8 +2,9 @@ package org.opentrafficsim.road.network.sampling.data;
 
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTU;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Type class to define different types of data by which trajectories can be extended beyond the basic t, x, v, a. Extend this 

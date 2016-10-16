@@ -4,16 +4,16 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.imb.IMBException;
+import org.opentrafficsim.imb.connector.Connector;
+
 import nl.tno.imb.TByteBuffer;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.event.EventProducerInterface;
 import nl.tudelft.simulation.event.EventType;
-
-import org.opentrafficsim.core.Throw;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.imb.IMBException;
-import org.opentrafficsim.imb.connector.Connector;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Provide the basic implementation of a Transceiver from which targeted classes can extend.

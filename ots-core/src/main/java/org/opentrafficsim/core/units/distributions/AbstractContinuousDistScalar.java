@@ -2,12 +2,12 @@ package org.opentrafficsim.core.units.distributions;
 
 import java.io.Serializable;
 
+import org.djunits.unit.Unit;
+
 import nl.tudelft.simulation.jstats.distributions.DistConstant;
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 import nl.tudelft.simulation.jstats.streams.Java2Random;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-
-import org.djunits.unit.Unit;
 
 /**
  * Continuous distribution with unit.

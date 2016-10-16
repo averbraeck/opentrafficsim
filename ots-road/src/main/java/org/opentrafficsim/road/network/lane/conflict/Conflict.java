@@ -1,11 +1,12 @@
 package org.opentrafficsim.road.network.lane.conflict;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.lane.AbstractLaneBasedObject;
 import org.opentrafficsim.road.network.lane.Lane;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Conflicts deal with traffic on different links/roads that need to consider each other as their paths may be in conflict

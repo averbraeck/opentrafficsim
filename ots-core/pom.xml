@@ -47,6 +47,11 @@
     </dependency>
 
     <dependency>
+      <groupId>opentrafficsim</groupId>
+      <artifactId>ots-base</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.jfree</groupId>
       <artifactId>jfreechart</artifactId>
     </dependency>

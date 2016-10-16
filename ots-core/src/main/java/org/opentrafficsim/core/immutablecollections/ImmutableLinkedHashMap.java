@@ -3,7 +3,7 @@ package org.opentrafficsim.core.immutablecollections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.opentrafficsim.core.Throw;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * An immutable wrapper for a HashMap.

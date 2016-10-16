@@ -8,7 +8,6 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeAcceleration;
@@ -18,6 +17,8 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 import org.opentrafficsim.road.network.speed.SpeedLimitType;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypeSpeedLegal;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Static methods regarding speed limits for composition in tactical planners.

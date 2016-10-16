@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
@@ -21,6 +19,8 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.math.Solver;
+
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * An Operational plan describes a path through the world with a speed profile that a GTU intends to follow. The OperationalPlan

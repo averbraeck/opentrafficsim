@@ -12,8 +12,6 @@ import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -24,6 +22,8 @@ import org.opentrafficsim.gui.OTSAnimationPanel;
 import org.opentrafficsim.gui.SimulatorFrame;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * <p>
