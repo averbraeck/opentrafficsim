@@ -116,13 +116,13 @@ public class VerifyPerceptionCategoryMethods
                             String fieldUp = field.substring(0, 1).toUpperCase() + field.substring(1);
                             if (isBoolean)
                             {
-                                testGetter(c, fieldNames, methodNames, methodReturnTypes, fieldDown, "is" + fieldUp, "is"
-                                    + fieldUp + "TimeStamped", "update" + fieldUp);
+                                testGetter(c, fieldNames, methodNames, methodReturnTypes, fieldDown, "is" + fieldUp,
+                                        "is" + fieldUp + "TimeStamped", "update" + fieldUp);
                             }
                             else
                             {
                                 testGetter(c, fieldNames, methodNames, methodReturnTypes, fieldDown, "get" + fieldUp,
-                                    "getTimeStamped" + fieldUp, "update" + fieldUp);
+                                        "getTimeStamped" + fieldUp, "update" + fieldUp);
                             }
                             fieldsDone.add(fieldDown);
                         }
@@ -145,8 +145,8 @@ public class VerifyPerceptionCategoryMethods
      */
     @SuppressWarnings("checkstyle:parameternumber")
     private void testGetter(final Class<?> c, final List<String> fieldNames, final List<String> methodNames,
-        final List<Class<?>> methodReturnTypes, final String field, final String getter, final String timeStampedGetter,
-        final String updater)
+            final List<Class<?>> methodReturnTypes, final String field, final String getter, final String timeStampedGetter,
+            final String updater)
     {
         boolean fieldFound = false;
         int i = 0;

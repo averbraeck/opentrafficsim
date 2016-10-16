@@ -2,7 +2,7 @@ package org.opentrafficsim.graphs;
 
 import java.io.Serializable;
 
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 
 /**
  * Definition of one axis for a ContourPlot.
@@ -20,10 +20,10 @@ public class Axis implements Serializable
     private static final long serialVersionUID = 20140000L;
 
     /** Lowest value along this axis. */
-    private final DoubleScalar<?> minimumValue;
+    private final DoubleScalarInterface minimumValue;
 
     /** Highest value along this axis. */
-    private DoubleScalar<?> maximumValue;
+    private DoubleScalarInterface maximumValue;
 
     /** Aggregation values along this axis (all values must be an integer multiple of the first value). */
     private final double[] granularities;
@@ -51,8 +51,9 @@ public class Axis implements Serializable
      * @param shortName String; the name identifying this axis for use in a menu
      * @param format String; format string for rendering a value along this axis
      */
-    public Axis(final DoubleScalar<?> minimumValue, final DoubleScalar<?> maximumValue, final double[] granularities,
-        final double initialGranularity, final String name, final String shortName, final String format)
+    public Axis(final DoubleScalarInterface minimumValue, final DoubleScalarInterface maximumValue,
+            final double[] granularities, final double initialGranularity, final String name, final String shortName,
+            final String format)
     {
         this.minimumValue = minimumValue;
         this.setMaximumValue(maximumValue);
@@ -71,7 +72,7 @@ public class Axis implements Serializable
      * @param value DoubleScalar; the value
      * @return double; the bin that belongs to the value
      */
-    public double getRelativeBin(final DoubleScalar<?> value)
+    public double getRelativeBin(final DoubleScalarInterface value)
     {
         return (value.getSI() - this.getMinimumValue().getSI()) / this.getGranularities()[0];
     }
@@ -80,7 +81,7 @@ public class Axis implements Serializable
      * Adjust (increase) the range of this AxisDefinition.
      * @param newMaximum DoubleScalar; the new maximum value of the axis
      */
-    public void adjustMaximumValue(final DoubleScalar<?> newMaximum)
+    public void adjustMaximumValue(final DoubleScalarInterface newMaximum)
     {
         // System.out.println("extending axis " + this.name + " from " + this.maximumValue + " to " + newMaximum);
         this.setMaximumValue(newMaximum);
@@ -101,8 +102,8 @@ public class Axis implements Serializable
      */
     public int getAggregatedBinCount()
     {
-        return (int) Math.ceil((this.getMaximumValue().getSI() - this.getMinimumValue().getSI())
-            / this.getCurrentGranularity());
+        return (int) Math
+                .ceil((this.getMaximumValue().getSI() - this.getMinimumValue().getSI()) / this.getCurrentGranularity());
     }
 
     /**
@@ -110,8 +111,7 @@ public class Axis implements Serializable
      */
     public int getBinCount()
     {
-        return (int) Math.ceil((this.getMaximumValue().getSI() - this.getMinimumValue().getSI())
-            / this.getGranularities()[0]);
+        return (int) Math.ceil((this.getMaximumValue().getSI() - this.getMinimumValue().getSI()) / this.getGranularities()[0]);
     }
 
     /**
@@ -145,7 +145,7 @@ public class Axis implements Serializable
      * Get the maximum value of this axis.
      * @return DoubleScalar; the current maximum value of this axis
      */
-    public DoubleScalar<?> getMaximumValue()
+    public DoubleScalarInterface getMaximumValue()
     {
         return this.maximumValue;
     }
@@ -155,7 +155,7 @@ public class Axis implements Serializable
      * The maximum value can only be increased.
      * @param newMaximumValue DoubleScalar; the new maximum value of this axis
      */
-    public void setMaximumValue(final DoubleScalar<?> newMaximumValue)
+    public void setMaximumValue(final DoubleScalarInterface newMaximumValue)
     {
         if (null != this.maximumValue && newMaximumValue.getSI() < this.maximumValue.getSI())
         {
@@ -168,7 +168,7 @@ public class Axis implements Serializable
      * Get the minimum value of this axis.
      * @return DoubleScalar; the minimum value of this axis
      */
-    public DoubleScalar<?> getMinimumValue()
+    public DoubleScalarInterface getMinimumValue()
     {
         return this.minimumValue;
     }

@@ -2,7 +2,6 @@ package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.io.Serializable;
 
-import org.djunits.unit.LinearDensityUnit;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 
 /**
@@ -16,7 +15,7 @@ import org.djunits.value.vdouble.scalar.LinearDensity;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeLinearDensity extends ParameterType<LinearDensityUnit, LinearDensity> implements Serializable
+public class ParameterTypeLinearDensity extends ParameterType<LinearDensity> implements Serializable
 {
 
     /** */

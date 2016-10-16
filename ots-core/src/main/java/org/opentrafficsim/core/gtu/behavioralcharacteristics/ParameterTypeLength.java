@@ -2,7 +2,6 @@ package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.io.Serializable;
 
-import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 
 /**
@@ -16,7 +15,7 @@ import org.djunits.value.vdouble.scalar.Length;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeLength extends ParameterType<LengthUnit, Length> implements Serializable
+public class ParameterTypeLength extends ParameterType<Length> implements Serializable
 {
 
     /** */

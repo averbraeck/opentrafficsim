@@ -13,14 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -55,6 +49,10 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -129,12 +127,11 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
      * @throws OTSGeometryException
      * @throws GTUException
      */
-    protected final void drawPlots() throws NamingException, NetworkException, SimRuntimeException, OTSGeometryException,
-            GTUException
+    protected final void drawPlots()
+            throws NamingException, NetworkException, SimRuntimeException, OTSGeometryException, GTUException
     {
-        SimpleSimulator simulator =
-                new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI), new Duration(99999, TimeUnit.SI),
-                        this);
+        SimpleSimulator simulator = new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI),
+                new Duration(99999, TimeUnit.SI), this);
         final int rows = SPEEDLIMITS.length;
         final int columns = TARGETLANES.length;
         for (int row = 0; row < rows; row++)
@@ -151,22 +148,20 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
                 Set<GTUType> compatibility = new HashSet<GTUType>();
                 compatibility.add(gtuType);
                 LaneType laneType = new LaneType("CarLane", compatibility);
-                Lane[] lanes =
-                        LaneFactory.makeMultiLane(network, "Test road", from, branchPoint, null, LANECOUNT, laneType,
-                                speedLimit, simulator, LongitudinalDirectionality.DIR_PLUS);
+                Lane[] lanes = LaneFactory.makeMultiLane(network, "Test road", from, branchPoint, null, LANECOUNT, laneType,
+                        speedLimit, simulator, LongitudinalDirectionality.DIR_PLUS);
                 OTSNode destination =
                         new OTSNode(network, "Destination", new OTSPoint3D(1000, targetLaneConfiguration > 0 ? 100 : -100, 0));
                 LaneFactory.makeMultiLane(network, "DestinationLink", branchPoint, destination, null,
-                        Math.abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? 0 : LANECOUNT
-                                + targetLaneConfiguration, 0, laneType, speedLimit, simulator,
-                        LongitudinalDirectionality.DIR_PLUS);
-                OTSNode nonDestination =
-                        new OTSNode(network, "Non-Destination", new OTSPoint3D(1000, targetLaneConfiguration > 0 ? -100 : 100,
-                                0));
+                        Math.abs(targetLaneConfiguration),
+                        targetLaneConfiguration > 0 ? 0 : LANECOUNT + targetLaneConfiguration, 0, laneType, speedLimit,
+                        simulator, LongitudinalDirectionality.DIR_PLUS);
+                OTSNode nonDestination = new OTSNode(network, "Non-Destination",
+                        new OTSPoint3D(1000, targetLaneConfiguration > 0 ? -100 : 100, 0));
                 LaneFactory.makeMultiLane(network, "Non-DestinationLink", branchPoint, nonDestination, null,
-                        LANECOUNT - Math.abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? LANECOUNT
-                                - targetLaneConfiguration : 0, 0, laneType, speedLimit, simulator,
-                        LongitudinalDirectionality.DIR_PLUS);
+                        LANECOUNT - Math.abs(targetLaneConfiguration),
+                        targetLaneConfiguration > 0 ? LANECOUNT - targetLaneConfiguration : 0, 0, laneType, speedLimit,
+                        simulator, LongitudinalDirectionality.DIR_PLUS);
                 CompleteRoute route = new CompleteRoute("route", gtuType);
                 route.addNode(from);
                 route.addNode(branchPoint);
@@ -212,9 +207,8 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
             for (int column = 0; column < columns; column++)
             {
                 Speed speedLimit = new Speed(SPEEDLIMITS[column], KM_PER_HOUR);
-                JFreeChart chart =
-                        createChart(String.format("Speed limit %.0f%s, %s", speedLimit.getInUnit(), speedLimit.getUnit(),
-                                targetLaneDescription), speedLimit);
+                JFreeChart chart = createChart(String.format("Speed limit %.0f%s, %s", speedLimit.getInUnit(),
+                        speedLimit.getUnit(), targetLaneDescription), speedLimit);
                 chartsPanel.setCell(new ChartPanel(chart), column, row);
                 this.charts[row][column] = chart;
             }
@@ -275,7 +269,7 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+    public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
             throws SimRuntimeException, RemoteException
     {
         // Do nothing
@@ -283,7 +277,7 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
+    public final SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
     {
         return null;
     }

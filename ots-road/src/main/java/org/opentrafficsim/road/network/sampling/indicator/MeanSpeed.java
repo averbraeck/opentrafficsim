@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.sampling.indicator;
 
-import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.road.network.sampling.Query;
@@ -15,7 +14,7 @@ import org.opentrafficsim.road.network.sampling.Query;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class MeanSpeed extends AbstractIndicator<SpeedUnit, Speed>
+public class MeanSpeed extends AbstractIndicator<Speed>
 {
 
     /** Travel distance indicator. */

@@ -152,9 +152,8 @@ public class OTS2DSetTest
         assertEquals("Set should be empty again", 0, set.size());
         double left = rectangle.getMaxX();
         left += Math.ulp(left);
-        OTSShape shape2 =
-                new OTSShape(new OTSPoint3D(left, rectangle.getMinY()), new OTSPoint3D(left + 10, rectangle.getMinY()),
-                        new OTSPoint3D(left, rectangle.getMaxY()));
+        OTSShape shape2 = new OTSShape(new OTSPoint3D(left, rectangle.getMinY()),
+                new OTSPoint3D(left + 10, rectangle.getMinY()), new OTSPoint3D(left, rectangle.getMaxY()));
         // This shape is one ULP outside the area of the set (without that ULP it would be added).
         assertFalse("OTSShape just outside rectangle should not be added", set.add(shape2));
         assertTrue("set should still be empty", set.isEmpty());

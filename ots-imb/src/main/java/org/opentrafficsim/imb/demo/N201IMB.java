@@ -15,7 +15,6 @@ import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.Throw;
@@ -202,7 +201,7 @@ public class N201IMB extends AbstractWrappableAnimation
         /** {@inheritDoc} */
         @Override
         public final void constructModel(
-                final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
+                final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
                 throws SimRuntimeException
         {
             System.out.println("N201IMB: constructModel called; Connecting to IMB");
@@ -267,7 +266,7 @@ public class N201IMB extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
 
         {
             return this.simulator;

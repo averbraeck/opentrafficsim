@@ -14,8 +14,7 @@ import org.opentrafficsim.core.Throw;
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version Mar 11, 2016 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Mar 11, 2016 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class GTUExceptionTest
@@ -53,7 +52,7 @@ public class GTUExceptionTest
         assertEquals("message should be " + message, message, e.getMessage());
         assertEquals("cause message should be" + causeMessage, causeMessage, e.getCause().getMessage());
     }
-    
+
     /**
      * Test the throwIf method.
      * @throws GTUException should not happen (this test has failed if it does)
@@ -71,7 +70,7 @@ public class GTUExceptionTest
         {
             assertTrue(e.getMessage().endsWith(message));
         }
-        
+
         Throw.when(false, GTUException.class, message);
     }
 }

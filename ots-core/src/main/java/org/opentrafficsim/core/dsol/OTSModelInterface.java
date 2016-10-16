@@ -1,9 +1,9 @@
 package org.opentrafficsim.core.dsol;
 
-import nl.tudelft.simulation.dsol.DSOLModel;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Time;
 
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import nl.tudelft.simulation.dsol.DSOLModel;
 
 /**
  * <p>
@@ -14,8 +14,7 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  *          initial version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public interface OTSModelInterface extends
-    DSOLModel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
+public interface OTSModelInterface extends DSOLModel<Time, Duration, OTSSimTimeDouble>
 {
     //
 }

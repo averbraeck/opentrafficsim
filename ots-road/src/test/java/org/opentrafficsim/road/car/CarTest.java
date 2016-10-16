@@ -118,14 +118,14 @@ public class CarTest implements UNITS
     {
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
         Model model = new Model();
-        Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> exp =
-                new Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>();
-        Treatment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> tr =
+        Experiment<Time, Duration, OTSSimTimeDouble> exp =
+                new Experiment<Time, Duration, OTSSimTimeDouble>();
+        Treatment<Time, Duration, OTSSimTimeDouble> tr =
                 new Treatment<>(exp, "tr1", new OTSSimTimeDouble(new Time(0, SECOND)), new Duration(0, SECOND), new Duration(
                         3600.0, SECOND));
         exp.setTreatment(tr);
         exp.setModel(model);
-        Replication<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> rep = new Replication<>(exp);
+        Replication<Time, Duration, OTSSimTimeDouble> rep = new Replication<>(exp);
         simulator.initialize(rep, ReplicationMode.TERMINATING);
         return simulator;
     }
@@ -202,7 +202,7 @@ public class CarTest implements UNITS
         /** {@inheritDoc} */
         @Override
         public final void constructModel(
-                final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+                final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulator) theSimulator;

@@ -1,14 +1,12 @@
 package org.opentrafficsim.core.dsol;
 
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Time;
+
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.eventlists.EventListInterface;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 
 /**
  * Typed extension of the DEVSSimulatorInterface without remote exceptions and using the Time and Duration arguments.
@@ -20,9 +18,8 @@ import org.djunits.value.vdouble.scalar.Time;
  *          initial version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public interface OTSDEVSSimulatorInterface extends
-    DEVSSimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>,
-    OTSSimulatorInterface
+public interface OTSDEVSSimulatorInterface
+        extends DEVSSimulatorInterface<Time, Duration, OTSSimTimeDouble>, OTSSimulatorInterface
 {
     /** {@inheritDoc} */
     @Override
@@ -46,8 +43,8 @@ public interface OTSDEVSSimulatorInterface extends
      * @param args the arguments.
      * @throws SimRuntimeException whenever the event is scheduled in the past.
      */
-    void scheduleEventRel(Duration relativeDelay, short priority, Object source, Object target, String method,
-        Object[] args) throws SimRuntimeException;
+    void scheduleEventRel(Duration relativeDelay, short priority, Object source, Object target, String method, Object[] args)
+            throws SimRuntimeException;
 
     /**
      * schedules a methodCall at a relative duration. The executionTime is thus simulator.getSimulatorTime()+relativeDuration.
@@ -59,12 +56,12 @@ public interface OTSDEVSSimulatorInterface extends
      * @throws SimRuntimeException whenever the event is scheduled in the past.
      */
     void scheduleEventRel(Duration relativeDelay, Object source, Object target, String method, Object[] args)
-        throws SimRuntimeException;
+            throws SimRuntimeException;
 
     /** {@inheritDoc} */
     @Override
     void scheduleEventAbs(OTSSimTimeDouble absoluteTime, short priority, Object source, Object target, String method,
-        Object[] args) throws SimRuntimeException;
+            Object[] args) throws SimRuntimeException;
 
     /**
      * schedules a methodCall at an absolute time.
@@ -76,7 +73,7 @@ public interface OTSDEVSSimulatorInterface extends
      * @throws SimRuntimeException whenever the event is scheduled in the past.
      */
     void scheduleEventAbs(Time absoluteTime, Object source, Object target, String method, Object[] args)
-        throws SimRuntimeException;
+            throws SimRuntimeException;
 
     /**
      * schedules a methodCall at an absolute time.
@@ -88,18 +85,18 @@ public interface OTSDEVSSimulatorInterface extends
      * @param args the arguments.
      * @throws SimRuntimeException whenever the event is scheduled in the past.
      */
-    void scheduleEventAbs(Time absoluteTime, short priority, Object source, Object target, String method,
-        Object[] args) throws SimRuntimeException;
+    void scheduleEventAbs(Time absoluteTime, short priority, Object source, Object target, String method, Object[] args)
+            throws SimRuntimeException;
 
     /** {@inheritDoc} */
     @Override
     void scheduleEventAbs(OTSSimTimeDouble absoluteTime, Object source, Object target, String method, Object[] args)
-        throws SimRuntimeException;
+            throws SimRuntimeException;
 
     /** {@inheritDoc} */
     @Override
     void scheduleEventNow(short priority, Object source, Object target, String method, Object[] args)
-        throws SimRuntimeException;
+            throws SimRuntimeException;
 
     /** {@inheritDoc} */
     @Override

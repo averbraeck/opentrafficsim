@@ -27,4 +27,3 @@
  */
 
 package org.opentrafficsim.demo.carFollowing;
-

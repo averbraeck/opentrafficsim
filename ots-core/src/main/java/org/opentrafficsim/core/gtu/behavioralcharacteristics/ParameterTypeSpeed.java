@@ -2,7 +2,6 @@ package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.io.Serializable;
 
-import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
 
 /**
@@ -16,7 +15,7 @@ import org.djunits.value.vdouble.scalar.Speed;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeSpeed extends ParameterType<SpeedUnit, Speed> implements Serializable
+public class ParameterTypeSpeed extends ParameterType<Speed> implements Serializable
 {
 
     /** */

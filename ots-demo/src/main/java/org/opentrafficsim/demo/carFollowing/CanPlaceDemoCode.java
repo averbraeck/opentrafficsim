@@ -46,15 +46,15 @@ public class CanPlaceDemoCode implements LaneBasedGTUGenerator.RoomChecker
         }
         if (null == lane)
         {
-            throw new NetworkException("No " + laneBasedGTUCharacteristics.getGTUType()
-                    + "-compatible lane in initial longitudinal positions");
+            throw new NetworkException(
+                    "No " + laneBasedGTUCharacteristics.getGTUType() + "-compatible lane in initial longitudinal positions");
         }
         // Use the speed limit of the first compatible lane in the initial longitudinal positions.
         Speed speedLimit = lane.getSpeedLimit(laneBasedGTUCharacteristics.getGTUType());
         Speed maximumSpeed = laneBasedGTUCharacteristics.getMaximumSpeed();
         GTUFollowingModelOld gfm = new IDMOld();
-        if (headway.lt(//laneBasedGTUCharacteristics.getStrategicalPlanner().getBehavioralCharacteristics().getGTUFollowingModel()
-            gfm.minimumHeadway(leaderSpeed, leaderSpeed, precision, maxDistance, speedLimit, maximumSpeed)))
+        if (headway.lt(// laneBasedGTUCharacteristics.getStrategicalPlanner().getBehavioralCharacteristics().getGTUFollowingModel()
+                gfm.minimumHeadway(leaderSpeed, leaderSpeed, precision, maxDistance, speedLimit, maximumSpeed)))
         {
             return null;
         }

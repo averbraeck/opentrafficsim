@@ -197,7 +197,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
         /** {@inheritDoc} */
         @Override
         public final void constructModel(
-            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
+            final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
             throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
@@ -558,7 +558,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
 
         {
             return this.simulator;

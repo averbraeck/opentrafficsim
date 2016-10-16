@@ -411,21 +411,21 @@ class DummyModel implements OTSModelInterface
     private static final long serialVersionUID = 20150114L;
 
     /** The simulator. */
-    private SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator;
+    private SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator;
 
     /**
      * Register the simulator.
      * @param simulator SimulatorInterface&lt;Time, Duration, OTSSimTimeDouble&gt;; the simulator
      */
     public void setSimulator(
-            SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+            SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
     {
         this.simulator = simulator;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> arg0)
+    public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0)
             throws SimRuntimeException
     {
         // Nothing happens here
@@ -433,7 +433,7 @@ class DummyModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+    public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
 
     {
         if (null == this.simulator)

@@ -3,9 +3,8 @@ package org.opentrafficsim.road.network.factory.opendrive;
 import java.io.Serializable;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.network.NetworkException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -36,7 +35,7 @@ class TypeTag implements Serializable
 
     /** Maximum allowed speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar<SpeedUnit> maxSpeed = null;
+    Speed maxSpeed = null;
 
     /**
      * Parse the attributes of the road.type tag. The sub-elements are parsed in separate classes.

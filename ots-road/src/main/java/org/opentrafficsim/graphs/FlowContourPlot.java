@@ -6,7 +6,7 @@ import java.util.List;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.djunits.value.vdouble.vector.MutablePositionVector;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
@@ -58,7 +58,7 @@ public class FlowContourPlot extends ContourPlot
 
     /** {@inheritDoc} */
     @Override
-    public final void extendXRange(final DoubleScalar<?> newUpperLimit)
+    public final void extendXRange(final DoubleScalarInterface newUpperLimit)
     {
         if (null == this.cumulativeLengths)
         {

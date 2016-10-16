@@ -133,7 +133,7 @@ public class RouteTest
         assertEquals("vistNextNode should have returned n3", n3, nextNode);
         nextNode = route.visitNextNode();
         assertEquals("vistNextNode should have returned null", null, nextNode);
-
+        
         List<Node> list = new ArrayList<Node>();
         list.add(n0);
         list.add(n1);

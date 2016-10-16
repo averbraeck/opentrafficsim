@@ -2,7 +2,6 @@ package org.opentrafficsim.core.gtu.plan.operational;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
@@ -17,6 +16,8 @@ import org.junit.Test;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Test the OperationalPlan and OperationalPlanBuilder classes.
@@ -89,15 +90,14 @@ public class OperationalPlanTest
             assertEquals("Distance from wait point at " + t + " is 0", 0, waitPoint.distance(locationAtT), 0.002);
         }
         assertEquals("end location matches start location", 0,
-            new OTSPoint3D(op.getEndLocation()).distance(new OTSPoint3D(waitPoint)).si, 0.0001);
+                new OTSPoint3D(op.getEndLocation()).distance(new OTSPoint3D(waitPoint)).si, 0.0001);
         OTSLine3D path = new OTSLine3D(new OTSPoint3D(12, 13, 14), new OTSPoint3D(123, 234, 345));
         Speed startSpeed = new Speed(20, SpeedUnit.KM_PER_HOUR);
         Speed endSpeed = new Speed(50, SpeedUnit.KM_PER_HOUR);
         Acceleration maxAcceleration = new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2);
         Acceleration maxDeceleration = new Acceleration(6, AccelerationUnit.METER_PER_SECOND_2);
-        op =
-            OperationalPlanBuilder.buildGradualAccelerationPlan(null, path, startTime, startSpeed, endSpeed,
-                maxAcceleration, maxDeceleration);
+        op = OperationalPlanBuilder.buildGradualAccelerationPlan(null, path, startTime, startSpeed, endSpeed, maxAcceleration,
+                maxDeceleration);
         assertEquals("Start speed is " + startSpeed, startSpeed.si, op.getStartSpeed().si, 0.00001);
         assertEquals("Start time is " + startTime, startTime.si, op.getStartTime().si, 0.00001);
         assertEquals("End speed is " + endSpeed, endSpeed.si, op.getEndSpeed().si, 0.00001);
@@ -159,18 +159,17 @@ public class OperationalPlanTest
             double fraction = expectedDistance / path.getLength().si;
             OTSPoint3D expectedPosition = new OTSPoint3D(path.getLocationFraction(fraction));
             DirectedPoint actualPosition = op.getLocation(absTime);
-            assertEquals("Position at abs time " + deltaT, 0,
-                expectedPosition.distance(new OTSPoint3D(actualPosition)).si, 0.002);
+            assertEquals("Position at abs time " + deltaT, 0, expectedPosition.distance(new OTSPoint3D(actualPosition)).si,
+                    0.002);
             actualPosition = op.getLocation(relTime);
-            assertEquals("Position at rel time " + deltaT, 0,
-                expectedPosition.distance(new OTSPoint3D(actualPosition)).si, 0.002);
+            assertEquals("Position at rel time " + deltaT, 0, expectedPosition.distance(new OTSPoint3D(actualPosition)).si,
+                    0.002);
             double expectedSpeed = startSpeed.si + a.si * deltaT;
             Speed actualSpeed = op.getSpeed(absTime);
             assertEquals("Speed at abs time " + deltaT, expectedSpeed, actualSpeed.si, 0.0001);
             actualSpeed = op.getSpeed(relTime);
             assertEquals("Speed at rel time " + deltaT, expectedSpeed, actualSpeed.si, 0.0001);
-            Time actualTimeAtPosition =
-                op.timeAtDistance(new Length(fraction * path.getLength().si, LengthUnit.SI));
+            Time actualTimeAtPosition = op.timeAtDistance(new Length(fraction * path.getLength().si, LengthUnit.SI));
             assertEquals("TimeAtDistance matches time", startTime.si + deltaT, actualTimeAtPosition.si, 0.0001);
             double actualAcceleration = op.getAcceleration(absTime).si;
             assertEquals("acceleration at abs time", a.si, actualAcceleration, 0.00001);

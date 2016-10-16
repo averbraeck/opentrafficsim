@@ -6,6 +6,13 @@ import java.io.IOException;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.dsol.OTSDEVSAnimator;
+import org.opentrafficsim.core.dsol.OTSReplication;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
@@ -13,14 +20,6 @@ import nl.tudelft.simulation.dsol.gui.swing.DSOLApplication;
 import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
-
-import org.djunits.unit.TimeUnit;
-import org.djunits.unit.UNITS;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.Duration;
-import org.opentrafficsim.core.dsol.OTSDEVSAnimator;
-import org.opentrafficsim.core.dsol.OTSReplication;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 
 /**
  * <p>
@@ -37,8 +36,7 @@ public class ShapeTestApplication extends DSOLApplication implements UNITS
      * @param title String title of the application window
      * @param panel DSOLPanel
      */
-    public ShapeTestApplication(final String title,
-        final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
+    public ShapeTestApplication(final String title, final DSOLPanel<Time, Duration, OTSSimTimeDouble> panel)
     {
         super(title, panel);
     }
@@ -56,13 +54,11 @@ public class ShapeTestApplication extends DSOLApplication implements UNITS
     {
         ShapeModel model = new ShapeModel();
         OTSDEVSAnimator simulator = new OTSDEVSAnimator();
-        OTSReplication replication =
-            new OTSReplication("rep1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, SECOND)), new Duration(
-                0.0, SECOND), new Duration(7200.0, SECOND), model);
+        OTSReplication replication = new OTSReplication("rep1", new OTSSimTimeDouble(new Time(0.0, SECOND)),
+                new Duration(0.0, SECOND), new Duration(7200.0, SECOND), model);
         simulator.initialize(replication, ReplicationMode.TERMINATING);
 
-        DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel =
-            new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model, simulator);
+        DSOLPanel<Time, Duration, OTSSimTimeDouble> panel = new DSOLPanel<Time, Duration, OTSSimTimeDouble>(model, simulator);
 
         Rectangle2D extent = new Rectangle2D.Double(65000.0, 440000.0, 55000.0, 30000.0);
         Dimension size = new Dimension(1024, 768);

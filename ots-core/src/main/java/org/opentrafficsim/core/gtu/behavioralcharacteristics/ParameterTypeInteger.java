@@ -16,7 +16,7 @@ import org.opentrafficsim.core.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeInteger extends AbstractParameterType<DimensionlessUnit, Dimensionless> implements Serializable
+public class ParameterTypeInteger extends AbstractParameterType<Dimensionless> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20160400L;

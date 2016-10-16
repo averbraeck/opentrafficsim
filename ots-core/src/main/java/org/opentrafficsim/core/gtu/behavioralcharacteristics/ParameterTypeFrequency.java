@@ -2,7 +2,6 @@ package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.io.Serializable;
 
-import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Frequency;
 
 /**
@@ -16,7 +15,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeFrequency extends ParameterType<FrequencyUnit, Frequency> implements Serializable
+public class ParameterTypeFrequency extends ParameterType<Frequency> implements Serializable
 {
 
     /** */

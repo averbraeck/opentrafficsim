@@ -41,9 +41,8 @@ public class Rotation3DTest
         checkRotation3D(r3da, roll, pitch, yaw);
         r3da = new Direction3D(new DirectionVector(new double[] { roll, pitch, yaw }, AngleUnit.RADIAN, StorageType.SPARSE));
         checkRotation3D(r3da, roll, pitch, yaw);
-        r3da =
-                new Direction3D(new Direction(roll, AngleUnit.RADIAN), new Direction(pitch, AngleUnit.RADIAN), new Direction(
-                        yaw, AngleUnit.RADIAN));
+        r3da = new Direction3D(new Direction(roll, AngleUnit.RADIAN), new Direction(pitch, AngleUnit.RADIAN),
+                new Direction(yaw, AngleUnit.RADIAN));
         checkRotation3D(r3da, roll, pitch, yaw);
         try
         {
@@ -74,7 +73,8 @@ public class Rotation3DTest
         }
         try
         {
-            new Direction3D(new DirectionVector(new double[] { roll, pitch, yaw, pitch }, AngleUnit.RADIAN, StorageType.SPARSE));
+            new Direction3D(
+                    new DirectionVector(new double[] { roll, pitch, yaw, pitch }, AngleUnit.RADIAN, StorageType.SPARSE));
             fail("Long vector should have thrown an exception");
         }
         catch (ValueException ve)
@@ -87,9 +87,8 @@ public class Rotation3DTest
         checkRotation3D(r3dr, roll, pitch, yaw);
         r3dr = new Angle3D(new AngleVector(new double[] { roll, pitch, yaw }, AngleUnit.RADIAN, StorageType.SPARSE));
         checkRotation3D(r3dr, roll, pitch, yaw);
-        r3dr =
-                new Angle3D(new Angle(roll, AngleUnit.RADIAN), new Angle(pitch, AngleUnit.RADIAN), new Angle(yaw,
-                        AngleUnit.RADIAN));
+        r3dr = new Angle3D(new Angle(roll, AngleUnit.RADIAN), new Angle(pitch, AngleUnit.RADIAN),
+                new Angle(yaw, AngleUnit.RADIAN));
         checkRotation3D(r3dr, roll, pitch, yaw);
         try
         {

@@ -10,9 +10,10 @@
 
   <body>
 
-   <menu name="MODULES">
+    <menu name="MODULES">
       <item name="ots-base" href="http://opentrafficsim.org/docs/${version}/index.html" />
       <item name="ots-core" href="http://opentrafficsim.org/docs/${version}/ots-core/index.html" />
+      <item name="ots-kpi" href="http://opentrafficsim.org/docs/${version}/ots-kpi/index.html" />
       <item name="ots-road" href="http://opentrafficsim.org/docs/${version}/ots-road/index.html" />
       <item name="ots-trafficcontrol" href="http://opentrafficsim.org/docs/${version}/ots-trafficcontrol/index.html" />
       <item name="ots-parser-xml" href="http://opentrafficsim.org/docs/${version}/ots-parser-xml/index.html" />
@@ -44,7 +45,7 @@
       <item name="PMD" href="pmd.html" />
       <item name="JDepend" href="jdepend-report.html" />
     </menu>
-      
+
     <menu name="PROJECT INFO">
       <item name="About" href="index.html" />
       <item name="Project Summary" href="project-summary.html" />

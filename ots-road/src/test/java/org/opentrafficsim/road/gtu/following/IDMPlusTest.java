@@ -391,7 +391,7 @@ class IDMPlusTestModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public void constructModel(
-        final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+        final SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
         throws SimRuntimeException
     {
         // do nothing.
@@ -399,7 +399,7 @@ class IDMPlusTestModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+    public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
 
     {
         return null;

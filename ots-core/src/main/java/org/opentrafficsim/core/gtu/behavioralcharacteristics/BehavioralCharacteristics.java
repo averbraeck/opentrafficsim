@@ -6,13 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import nl.tudelft.simulation.language.reflection.ClassUtil;
-
 import org.djunits.unit.DimensionlessUnit;
-import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.Dimensionless;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.opentrafficsim.core.Throw;
+
+import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 /**
  * In this class a set of behavioral characteristics in the form of parameters can be stored for use in behavioral models.
@@ -36,24 +35,23 @@ public class BehavioralCharacteristics implements Serializable
     private static final Empty EMPTY = new Empty();
 
     /** List of parameters. */
-    private final Map<AbstractParameterType<?, ?>, DoubleScalar.Rel<?>> parameters = new HashMap<>();
+    private final Map<AbstractParameterType<?>, DoubleScalarInterface> parameters = new HashMap<>();
 
     /** List of parameters with values before last set. */
-    private final Map<AbstractParameterType<?, ?>, DoubleScalar.Rel<?>> previous = new HashMap<>();
+    private final Map<AbstractParameterType<?>, DoubleScalarInterface> previous = new HashMap<>();
 
     /**
      * Set parameter value of given parameter type.
      * @param parameterType Parameter type.
      * @param value Value.
-     * @param <U> Class of unit.
      * @param <T> Class of value.
      * @throws ParameterException If the value does not comply with value type constraints.
      */
-    public final <U extends Unit<U>, T extends DoubleScalar.Rel<U>> void setParameter(
-        final ParameterType<U, T> parameterType, final T value) throws ParameterException
+    public final <T extends DoubleScalarInterface> void setParameter(final ParameterType<T> parameterType,
+            final T value) throws ParameterException
     {
         Throw.when(value == null, ParameterException.class,
-            "Parameter of type '%s' was assigned a null value, this is not allowed.", parameterType.getId());
+                "Parameter of type '%s' was assigned a null value, this is not allowed.", parameterType.getId());
         parameterType.check(value, this);
         saveSetParameter(parameterType, value);
     }
@@ -104,12 +102,11 @@ public class BehavioralCharacteristics implements Serializable
      * Remembers the current value, or if it is not given, for possible reset.
      * @param parameterType Parameter type.
      * @param value Value.
-     * @param <U> Unit of the value.
      * @param <T> Class of the value.
      * @throws ParameterException If the value does not comply with constraints.
      */
-    private <U extends Unit<U>, T extends DoubleScalar.Rel<U>> void saveSetParameter(
-        final AbstractParameterType<U, T> parameterType, final T value) throws ParameterException
+    private <T extends DoubleScalarInterface> void saveSetParameter(
+            final AbstractParameterType<T> parameterType, final T value) throws ParameterException
     {
         parameterType.checkCheck(value);
         if (this.parameters.containsKey(parameterType))
@@ -129,10 +126,10 @@ public class BehavioralCharacteristics implements Serializable
      * @param parameterType Parameter type.
      * @throws ParameterException If the parameter was never set.
      */
-    public final void resetParameter(final AbstractParameterType<?, ?> parameterType) throws ParameterException
+    public final void resetParameter(final AbstractParameterType<?> parameterType) throws ParameterException
     {
         Throw.when(!this.previous.containsKey(parameterType), ParameterException.class,
-            "Reset on parameter of type '%s' could not be performed, it was not set.", parameterType.getId());
+                "Reset on parameter of type '%s' could not be performed, it was not set.", parameterType.getId());
         if (this.previous.get(parameterType) instanceof Empty)
         {
             // no value was set before last set, so make parameter type not set
@@ -148,14 +145,13 @@ public class BehavioralCharacteristics implements Serializable
     /**
      * Get parameter of given type.
      * @param parameterType Parameter type.
-     * @param <U> Class of unit.
      * @param <T> Class of value.
      * @return Parameter of given type.
      * @throws ParameterException If parameter was never set.
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public <U extends Unit<U>, T extends DoubleScalar.Rel<U>> T getParameter(final ParameterType<U, T> parameterType)
-        throws ParameterException
+    public <T extends DoubleScalarInterface> T getParameter(final ParameterType<T> parameterType)
+            throws ParameterException
     {
         checkContains(parameterType);
         @SuppressWarnings("unchecked")
@@ -173,7 +169,7 @@ public class BehavioralCharacteristics implements Serializable
     public final boolean getParameter(final ParameterTypeBoolean parameterType) throws ParameterException
     {
         checkContains(parameterType);
-        return this.parameters.get(parameterType).si != 0.0;
+        return this.parameters.get(parameterType).getSI() != 0.0;
     }
 
     /**
@@ -185,7 +181,7 @@ public class BehavioralCharacteristics implements Serializable
     public final int getParameter(final ParameterTypeInteger parameterType) throws ParameterException
     {
         checkContains(parameterType);
-        return (int) this.parameters.get(parameterType).si;
+        return (int) this.parameters.get(parameterType).getSI();
     }
 
     /**
@@ -197,7 +193,7 @@ public class BehavioralCharacteristics implements Serializable
     public final double getParameter(final ParameterTypeDouble parameterType) throws ParameterException
     {
         checkContains(parameterType);
-        return this.parameters.get(parameterType).si;
+        return this.parameters.get(parameterType).getSI();
     }
 
     /**
@@ -205,10 +201,10 @@ public class BehavioralCharacteristics implements Serializable
      * @param parameterType Parameter type.
      * @throws ParameterException If parameter is not present.
      */
-    private void checkContains(final AbstractParameterType<?, ?> parameterType) throws ParameterException
+    private void checkContains(final AbstractParameterType<?> parameterType) throws ParameterException
     {
         Throw.when(!contains(parameterType), ParameterException.class,
-            "Could not get parameter of type '%s' as it was not set.", parameterType.getId());
+                "Could not get parameter of type '%s' as it was not set.", parameterType.getId());
     }
 
     /**
@@ -216,7 +212,7 @@ public class BehavioralCharacteristics implements Serializable
      * @param parameterType Parameter type.
      * @return Whether the given parameter type has been set.
      */
-    public final boolean contains(final AbstractParameterType<?, ?> parameterType)
+    public final boolean contains(final AbstractParameterType<?> parameterType)
     {
         return this.parameters.containsKey(parameterType);
     }
@@ -225,7 +221,7 @@ public class BehavioralCharacteristics implements Serializable
      * Returns a safe copy of the parameters.
      * @return Safe copy of the parameters, e.g., for printing.
      */
-    public final Map<AbstractParameterType<?, ?>, DoubleScalar.Rel<?>> getParameters()
+    public final Map<AbstractParameterType<?>, DoubleScalarInterface> getParameters()
     {
         return new HashMap<>(this.parameters);
     }
@@ -233,17 +229,16 @@ public class BehavioralCharacteristics implements Serializable
     /**
      * Sets the default value of a parameter.
      * @param parameter parameter to set the default value of
-     * @param <U> Unit of the value.
      * @param <T> Class of the value.
      * @return this set of behavioral characteristics (for method chaining)
      * @throws ParameterException if the parameter type has no default value
      */
     @SuppressWarnings("unchecked")
-    public final <U extends Unit<U>, T extends DoubleScalar.Rel<U>> BehavioralCharacteristics setDefaultParameter(
-        final AbstractParameterType<U, T> parameter) throws ParameterException
+    public final <T extends DoubleScalarInterface> BehavioralCharacteristics setDefaultParameter(
+            final AbstractParameterType<T> parameter) throws ParameterException
     {
         T defaultValue;
-        if (parameter.getDefaultValue() instanceof DoubleScalar.Rel<?>)
+        if (parameter.getDefaultValue() instanceof DoubleScalarInterface)
         {
             // all types based on DJUNITS
             defaultValue = (T) parameter.getDefaultValue();
@@ -283,13 +278,12 @@ public class BehavioralCharacteristics implements Serializable
     /**
      * Sets the default values of all accessible parameters defined in the given class.
      * @param clazz class with parameters
-     * @param <U> Unit of the value.
      * @param <T> Class of the value.
      * @return this set of behavioral characteristics (for method chaining)
      */
     @SuppressWarnings("unchecked")
-    private <U extends Unit<U>, T extends DoubleScalar.Rel<U>> BehavioralCharacteristics setDefaultParametersLocal(
-        final Class<?> clazz)
+    private <T extends DoubleScalarInterface> BehavioralCharacteristics setDefaultParametersLocal(
+            final Class<?> clazz)
     {
         // set all default values using reflection
         Set<Field> fields = ClassUtil.getAllFields(clazz);
@@ -301,9 +295,9 @@ public class BehavioralCharacteristics implements Serializable
                 try
                 {
                     field.setAccessible(true);
-                    AbstractParameterType<U, T> p = (AbstractParameterType<U, T>) field.get(clazz);
+                    AbstractParameterType<T> p = (AbstractParameterType<T>) field.get(clazz);
                     T defaultValue;
-                    if (p.getDefaultValue() instanceof DoubleScalar.Rel<?>)
+                    if (p.getDefaultValue() instanceof DoubleScalarInterface)
                     {
                         // all types based on DJUNITS
                         defaultValue = (T) p.getDefaultValue();
@@ -311,14 +305,13 @@ public class BehavioralCharacteristics implements Serializable
                     else if (p.getDefaultValue() instanceof Boolean)
                     {
                         // boolean
-                        defaultValue =
-                            (T) new Dimensionless((boolean) p.getDefaultValue() ? 1.0 : 0.0, DimensionlessUnit.SI);
+                        defaultValue = (T) new Dimensionless((boolean) p.getDefaultValue() ? 1.0 : 0.0, DimensionlessUnit.SI);
                     }
                     else
                     {
                         // double or integer
                         defaultValue =
-                            (T) new Dimensionless(((Number) p.getDefaultValue()).doubleValue(), DimensionlessUnit.SI);
+                                (T) new Dimensionless(((Number) p.getDefaultValue()).doubleValue(), DimensionlessUnit.SI);
                     }
                     saveSetParameter(p, defaultValue);
                 }
@@ -340,14 +333,14 @@ public class BehavioralCharacteristics implements Serializable
 
         return this;
     }
-    
+
     /**
      * Sets all behavioral characteristics from the given set in this set.
      * @param behavioralCharacteristics set of behavioral characteristics to include in this set
      */
     public final void setAll(final BehavioralCharacteristics behavioralCharacteristics)
     {
-        for (AbstractParameterType<?, ?> key : behavioralCharacteristics.parameters.keySet())
+        for (AbstractParameterType<?> key : behavioralCharacteristics.parameters.keySet())
         {
             this.parameters.put(key, behavioralCharacteristics.parameters.get(key));
         }
@@ -358,7 +351,7 @@ public class BehavioralCharacteristics implements Serializable
     {
         StringBuilder out = new StringBuilder("BehavioralCharacteristics [");
         String sep = "";
-        for (AbstractParameterType<?, ?> apt : this.parameters.keySet())
+        for (AbstractParameterType<?> apt : this.parameters.keySet())
         {
             try
             {
@@ -377,7 +370,8 @@ public class BehavioralCharacteristics implements Serializable
     /**
      * Class to put in a HashMap to recognize that no value was set at some point.
      * <p>
-     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 14, 2016 <br>

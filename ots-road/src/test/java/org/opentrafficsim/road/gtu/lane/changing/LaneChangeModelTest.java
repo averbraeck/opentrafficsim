@@ -319,7 +319,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
     /** {@inheritDoc} */
     @Override
     public void constructModel(
-            SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+            SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
             throws SimRuntimeException
     {
         // DO NOTHING
@@ -327,7 +327,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+    public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
 
     {
         return null;
