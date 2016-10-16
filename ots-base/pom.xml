@@ -659,7 +659,6 @@
     <dependency>
       <groupId>dsol</groupId>
       <artifactId>dsol-base</artifactId>
-      <version>${dsol.version}</version>
     </dependency>
 
     <dependency>
@@ -700,7 +699,49 @@
 
       <dependency>
         <groupId>dsol</groupId>
+        <artifactId>dsol-base</artifactId>
+        <version>${dsol.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>dsol</groupId>
+        <artifactId>dsol-event</artifactId>
+        <version>${dsol.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>dsol</groupId>
+        <artifactId>dsol-naming</artifactId>
+        <version>${dsol.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>dsol</groupId>
+        <artifactId>dsol-introspection</artifactId>
+        <version>${dsol.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>dsol</groupId>
         <artifactId>dsol-core</artifactId>
+        <version>${dsol.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>dsol</groupId>
+        <artifactId>dsol-swing</artifactId>
+        <version>${dsol.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>dsol</groupId>
+        <artifactId>dsol-fx</artifactId>
+        <version>${dsol.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>dsol</groupId>
+        <artifactId>dsol-web</artifactId>
         <version>${dsol.version}</version>
       </dependency>
 
@@ -798,30 +839,6 @@
         <groupId>org.jfree</groupId>
         <artifactId>jfreechart</artifactId>
         <version>${jfreechart.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>dsol</groupId>
-        <artifactId>dsol-swing</artifactId>
-        <version>${dsol.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>dsol</groupId>
-        <artifactId>dsol-fx</artifactId>
-        <version>${dsol.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>dsol</groupId>
-        <artifactId>dsol-base</artifactId>
-        <version>${dsol.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>dsol</groupId>
-        <artifactId>dsol-web</artifactId>
-        <version>${dsol.version}</version>
       </dependency>
 
       <dependency>
