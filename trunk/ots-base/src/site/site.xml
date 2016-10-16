@@ -22,6 +22,8 @@
       <item name="ots-parser-shape" href="http://opentrafficsim.org/docs/${version}/ots-parser-shape/index.html" />
       <item name="ots-parser-vissim" href="http://opentrafficsim.org/docs/${version}/ots-parser-vissim/index.html" />
       <item name="ots-imb" href="http://opentrafficsim.org/docs/${version}/ots-imb/index.html" />
+      <item name="ots-imb-kpi" href="http://opentrafficsim.org/docs/${version}/ots-imb-kpi/index.html" />
+      <item name="ots-imb-road" href="http://opentrafficsim.org/docs/${version}/ots-imb-road/index.html" />
       <item name="ots-rail" href="http://opentrafficsim.org/docs/${version}/ots-rail/index.html" />
       <item name="ots-water" href="http://opentrafficsim.org/docs/${version}/ots-water/index.html" />
       <item name="ots-demo" href="http://opentrafficsim.org/docs/${version}/ots-demo/index.html" />

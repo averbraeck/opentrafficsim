@@ -21,12 +21,13 @@
   <dependencies>
     <dependency>
       <groupId>opentrafficsim</groupId>
-      <artifactId>ots-road</artifactId> <!-- TODO SHOULD BE CHANGED TO ots-base LATER -->
+      <artifactId>ots-base</artifactId>
     </dependency>   
     <dependency>
-      <groupId>opentrafficsim</groupId>
-      <artifactId>ots-parser-xml</artifactId> <!-- TODO SHOULD BE REMOVED LATER -->
-    </dependency>   </dependencies>
+      <groupId>dsol</groupId>
+      <artifactId>dsol-event</artifactId>
+    </dependency>   
+  </dependencies>
 
   <contributors>
     <contributor>
