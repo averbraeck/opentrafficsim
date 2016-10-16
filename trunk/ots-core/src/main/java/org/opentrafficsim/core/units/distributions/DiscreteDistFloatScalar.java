@@ -2,13 +2,12 @@ package org.opentrafficsim.core.units.distributions;
 
 import java.io.Serializable;
 
-import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.AngleSolidUnit;
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.AreaUnit;
 import org.djunits.unit.DensityUnit;
+import org.djunits.unit.DimensionlessUnit;
 import org.djunits.unit.ElectricalChargeUnit;
 import org.djunits.unit.ElectricalCurrentUnit;
 import org.djunits.unit.ElectricalPotentialUnit;
@@ -31,6 +30,8 @@ import org.djunits.unit.Unit;
 import org.djunits.unit.VolumeUnit;
 import org.djunits.value.Absolute;
 import org.djunits.value.Relative;
+import org.djunits.value.vfloat.scalar.AbstractFloatScalarAbs;
+import org.djunits.value.vfloat.scalar.AbstractFloatScalarRel;
 import org.djunits.value.vfloat.scalar.FloatAbsoluteTemperature;
 import org.djunits.value.vfloat.scalar.FloatAcceleration;
 import org.djunits.value.vfloat.scalar.FloatAngle;
@@ -62,6 +63,8 @@ import org.djunits.value.vfloat.scalar.FloatTime;
 import org.djunits.value.vfloat.scalar.FloatTorque;
 import org.djunits.value.vfloat.scalar.FloatVolume;
 
+import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
+
 /**
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -78,8 +81,8 @@ public interface DiscreteDistFloatScalar
      * @param <T> The absolute floatscalar type
      * @param <U> The unit type used
      */
-    class Abs<T extends FloatScalar.Abs<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar implements Absolute,
-            Serializable
+    class Abs<T extends AbstractFloatScalarAbs<U, T, ?>, U extends Unit<U>> extends AbstractDiscreteDistScalar
+            implements Absolute, Serializable
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -140,8 +143,8 @@ public interface DiscreteDistFloatScalar
      * @param <T> The absolute float scalar type
      * @param <U> The unit type used
      */
-    class Rel<T extends FloatScalar.Rel<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar implements Relative,
-            Serializable
+    class Rel<T extends AbstractFloatScalarRel<U, T>, U extends Unit<U>> extends AbstractDiscreteDistScalar
+            implements Relative, Serializable
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -188,7 +191,7 @@ public interface DiscreteDistFloatScalar
                     return (T) new FloatDensity((float) getDistribution().draw(), (DensityUnit) getUnit());
 
                 case "DimensionlessUnit":
-                    return (T) new FloatDimensionless.Rel(getDistribution().draw(), getUnit());
+                    return (T) new FloatDimensionless(getDistribution().draw(), (DimensionlessUnit) getUnit());
 
                 case "ElectricalChargeUnit":
                     return (T) new FloatElectricalCharge((float) getDistribution().draw(), (ElectricalChargeUnit) getUnit());

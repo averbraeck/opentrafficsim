@@ -16,12 +16,8 @@ import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -110,10 +106,10 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
         outputProperties.add(new BooleanProperty("DensityPlot", "Density", "Density contour plot", true, false, 0));
         outputProperties.add(new BooleanProperty("FlowPlot", "Flow", "Flow contour plot", true, false, 1));
         outputProperties.add(new BooleanProperty("SpeedPlot", "Speed", "Speed contour plot", true, false, 2));
-        outputProperties.add(new BooleanProperty("AccelerationPlot", "Acceleration", "Acceleration contour plot", true, false,
-                3));
-        outputProperties.add(new BooleanProperty("TrajectoryPlot", "Trajectories", "Trajectory (time/distance) diagram", true,
-                false, 4));
+        outputProperties
+                .add(new BooleanProperty("AccelerationPlot", "Acceleration", "Acceleration contour plot", true, false, 3));
+        outputProperties.add(
+                new BooleanProperty("TrajectoryPlot", "Trajectories", "Trajectory (time/distance) diagram", true, false, 4));
         this.properties.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
                 outputProperties, true, 1000));
     }
@@ -157,13 +153,14 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
                                     + "the acceleration that a vehicle will make taking into account "
                                     + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
                                     + "curvature of the road) capabilities of the vehicle and personality "
-                                    + "of the driver.</html>", new String[] { "IDM", "IDM+" }, 1, false, 1));
-                    propertyList.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car", new Acceleration(1.0,
-                            METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length(2.0, METER),
-                            new Duration(1.0, SECOND), 2));
-                    propertyList.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck", new Acceleration(0.5,
-                            METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER),
-                            new Duration(1.0, SECOND), 3));
+                                    + "of the driver.</html>",
+                            new String[] { "IDM", "IDM+" }, 1, false, 1));
+                    propertyList.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car",
+                            new Acceleration(1.0, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
+                            new Length(2.0, METER), new Duration(1.0, SECOND), 2));
+                    propertyList.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck",
+                            new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2),
+                            new Length(2.0, METER), new Duration(1.0, SECOND), 3));
                     circularLane.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND),
                             propertyList, null, true);
                 }
@@ -374,7 +371,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+    public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
@@ -495,9 +492,8 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
                 double angle = Math.PI * (1 + i) / (1 + coordsHalf1.length);
                 coordsHalf1[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
-            this.lane1 =
-                    LaneFactory.makeMultiLane(this.network, "Lane1", start, halfway, coordsHalf1, 1, laneType, this.speedLimit,
-                            this.simulator, LongitudinalDirectionality.DIR_PLUS)[0];
+            this.lane1 = LaneFactory.makeMultiLane(this.network, "Lane1", start, halfway, coordsHalf1, 1, laneType,
+                    this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS)[0];
             this.path.add(this.lane1);
 
             OTSPoint3D[] coordsHalf2 = new OTSPoint3D[127];
@@ -506,9 +502,8 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
                 double angle = Math.PI + Math.PI * (1 + i) / (1 + coordsHalf2.length);
                 coordsHalf2[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
-            this.lane2 =
-                    LaneFactory.makeMultiLane(this.network, "Lane2", halfway, start, coordsHalf2, 1, laneType, this.speedLimit,
-                            this.simulator, LongitudinalDirectionality.DIR_PLUS)[0];
+            this.lane2 = LaneFactory.makeMultiLane(this.network, "Lane2", halfway, start, coordsHalf2, 1, laneType,
+                    this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS)[0];
             this.path.add(this.lane2);
 
             // Put the (not very evenly spaced) cars on track1
@@ -536,7 +531,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
                 pos += actualHeadway;
             }
             // Schedule regular updates of the graph
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<>(0.999, SECOND), this, this, "drawGraphs", null);
+            this.simulator.scheduleEventAbs(new Time(0.999, SECOND), this, this, "drawGraphs", null);
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException
                 | PropertyException exception)
@@ -600,12 +595,10 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
                 throw new GTUException("gtuFollowingModel is null");
             }
             BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
-            LaneBasedIndividualGTU gtu =
-                    new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength, new Length(1.8, METER),
-                            new Speed(200, KM_PER_HOUR), this.simulator, this.network);
-            LaneBasedStrategicalPlanner strategicalPlanner =
-                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedGTUFollowingTacticalPlanner(
-                            gtuFollowingModel, gtu), gtu);
+            LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
+                    new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, this.network);
+            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                    new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
             gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
                     this.gtuColorer);
         }
@@ -617,7 +610,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
+    public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
     {
         return null;
     }

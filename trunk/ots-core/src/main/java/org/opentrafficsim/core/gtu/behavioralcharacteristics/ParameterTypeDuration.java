@@ -2,7 +2,6 @@ package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.io.Serializable;
 
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 
 /**
@@ -16,7 +15,7 @@ import org.djunits.value.vdouble.scalar.Duration;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeDuration extends ParameterType<TimeUnit, Duration> implements Serializable
+public class ParameterTypeDuration extends ParameterType<Duration> implements Serializable
 {
 
     /** */

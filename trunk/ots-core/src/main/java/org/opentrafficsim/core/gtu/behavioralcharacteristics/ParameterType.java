@@ -2,8 +2,7 @@ package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.io.Serializable;
 
-import org.djunits.unit.Unit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.opentrafficsim.core.Throw;
 
 /**
@@ -15,11 +14,10 @@ import org.opentrafficsim.core.Throw;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
- * @param <U> Unit of the value.
  * @param <T> Class of the value.
  */
-public class ParameterType<U extends Unit<U>, T extends DoubleScalar.Rel<U>> extends AbstractParameterType<U, T> implements
-        Serializable
+public class ParameterType<T extends DoubleScalarInterface> extends AbstractParameterType<T>
+        implements Serializable
 {
 
     /** */

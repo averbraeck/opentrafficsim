@@ -12,14 +12,14 @@ import java.util.Random;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
-import nl.tudelft.simulation.language.d3.CartesianPoint;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.junit.Test;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
+
+import nl.tudelft.simulation.language.d3.CartesianPoint;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Test the methods in OTSPoint.
@@ -40,9 +40,8 @@ public class OTSPoint3DTest
     {
         OTSPoint3D previousPoint = null;
         int previousHashCode = 0;
-        double[] values =
-                { Double.NEGATIVE_INFINITY, -99999999, -Math.PI, -1, -0.0000001, 0, 0.0000001, 1, Math.PI, 99999999,
-                        Double.MAX_VALUE, Double.POSITIVE_INFINITY, Double.NaN };
+        double[] values = { Double.NEGATIVE_INFINITY, -99999999, -Math.PI, -1, -0.0000001, 0, 0.0000001, 1, Math.PI, 99999999,
+                Double.MAX_VALUE, Double.POSITIVE_INFINITY, Double.NaN };
         for (double x : values)
         {
             for (double y : values)
@@ -170,9 +169,8 @@ public class OTSPoint3DTest
         for (int i = 0; i < numPoints; i++)
         {
             double radius = i * growthPerRevolution / pointsPerRevolution;
-            spiralPoints[i] =
-                    new OTSPoint3D(radius * Math.cos(i * rotationPerPoint), radius * Math.sin(i * rotationPerPoint), i
-                            * heightGainPerPoint);
+            spiralPoints[i] = new OTSPoint3D(radius * Math.cos(i * rotationPerPoint), radius * Math.sin(i * rotationPerPoint),
+                    i * heightGainPerPoint);
         }
         OTSLine3D line = new OTSLine3D(spiralPoints);
         // System.out.println("line is " + line);
@@ -207,15 +205,12 @@ public class OTSPoint3DTest
             {
                 for (double rotation = 0; rotation < 2 * Math.PI; rotation += 0.5)
                 {
-                    OTSPoint3D p1 =
-                            makeRotatedTranslatedPoint(new OTSPoint3D(-2, 0, 100 * (doubleRandom.nextDouble() - 0.5)),
-                                    rotation, xTranslation, yTranslation);
-                    OTSPoint3D p2 =
-                            makeRotatedTranslatedPoint(new OTSPoint3D(2, 0, 100 * (doubleRandom.nextDouble() - 0.5)), rotation,
-                                    xTranslation, yTranslation);
-                    OTSPoint3D q1 =
-                            makeRotatedTranslatedPoint(new OTSPoint3D(0, 10, 100 * (doubleRandom.nextDouble() - 0.5)),
-                                    rotation, xTranslation, yTranslation);
+                    OTSPoint3D p1 = makeRotatedTranslatedPoint(new OTSPoint3D(-2, 0, 100 * (doubleRandom.nextDouble() - 0.5)),
+                            rotation, xTranslation, yTranslation);
+                    OTSPoint3D p2 = makeRotatedTranslatedPoint(new OTSPoint3D(2, 0, 100 * (doubleRandom.nextDouble() - 0.5)),
+                            rotation, xTranslation, yTranslation);
+                    OTSPoint3D q1 = makeRotatedTranslatedPoint(new OTSPoint3D(0, 10, 100 * (doubleRandom.nextDouble() - 0.5)),
+                            rotation, xTranslation, yTranslation);
 
                     for (int x = -4; x <= 4; x++)
                     {
@@ -230,9 +225,8 @@ public class OTSPoint3DTest
                         checkIntersection(shouldBeNull, OTSPoint3D.intersectionOfLineSegments(p2, p1, q1, q2));
                         // reverse order of both p and q
                         checkIntersection(shouldBeNull, OTSPoint3D.intersectionOfLineSegments(p2, p1, q2, q1));
-                        q2 =
-                                makeRotatedTranslatedPoint(new OTSPoint3D(x, 1, 100 * (doubleRandom.nextDouble() - 0.5)),
-                                        rotation, xTranslation, yTranslation);
+                        q2 = makeRotatedTranslatedPoint(new OTSPoint3D(x, 1, 100 * (doubleRandom.nextDouble() - 0.5)), rotation,
+                                xTranslation, yTranslation);
                         checkIntersection(true, OTSPoint3D.intersectionOfLineSegments(p1, p2, q1, q2));
                         // reverse order of q
                         checkIntersection(true, OTSPoint3D.intersectionOfLineSegments(p1, p2, q2, q1));

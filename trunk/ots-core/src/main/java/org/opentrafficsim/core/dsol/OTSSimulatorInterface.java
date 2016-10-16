@@ -1,12 +1,14 @@
 package org.opentrafficsim.core.dsol;
 
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Time;
+
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 
 /**
  * Typed extension of the SimulatorInterface without remote exceptions.
@@ -19,7 +21,7 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public interface OTSSimulatorInterface extends
-    SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
+    SimulatorInterface<Time, Duration, OTSSimTimeDouble>
 {
     /** {@inheritDoc} */
     @Override
@@ -27,7 +29,7 @@ public interface OTSSimulatorInterface extends
 
     /** {@inheritDoc} */
     @Override
-    void initialize(Replication<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> replication,
+    void initialize(Replication<Time, Duration, OTSSimTimeDouble> replication,
         ReplicationMode replicationMode) throws SimRuntimeException;
 
     /** {@inheritDoc} */

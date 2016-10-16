@@ -97,8 +97,8 @@ public class VerifyRequiredMethods
                 }
                 else if (c.isEnum())
                 {
-                    System.out.println("Class " + c.getName() + " does not have to override toString because this class "
-                            + "is an enum");
+                    System.out.println(
+                            "Class " + c.getName() + " does not have to override toString because this class " + "is an enum");
                 }
                 else
                 {
@@ -138,8 +138,8 @@ public class VerifyRequiredMethods
                 }
                 else if (ClassList.isAnonymousInnerClass(c))
                 {
-                    System.err.println("Class " + c.getName()
-                            + " is an anonymous inner class and should NOT implement Serializable");
+                    System.err.println(
+                            "Class " + c.getName() + " is an anonymous inner class and should NOT implement Serializable");
                 }
                 else if (Exception.class.isAssignableFrom(c))
                 {
@@ -154,8 +154,8 @@ public class VerifyRequiredMethods
             {
                 if (c.isEnum())
                 {
-                    System.err.println("Class " + c.getName()
-                            + " is an enum and should (by inheritence) implement Serializable");
+                    System.err
+                            .println("Class " + c.getName() + " is an enum and should (by inheritence) implement Serializable");
                 }
                 else if (!ClassList.hasNonStaticFields(c))
                 {
@@ -174,8 +174,8 @@ public class VerifyRequiredMethods
                 }
                 else if (Exception.class.isAssignableFrom(c))
                 {
-                    System.err.println("Class " + c.getName()
-                            + " is an Exception and should (but does NOT) implement Serializable");
+                    System.err.println(
+                            "Class " + c.getName() + " is an Exception and should (but does NOT) implement Serializable");
                 }
                 else
                 {

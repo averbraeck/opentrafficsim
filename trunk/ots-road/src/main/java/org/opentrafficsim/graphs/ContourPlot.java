@@ -25,7 +25,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.LengthVector;
@@ -728,7 +728,7 @@ public abstract class ContourPlot extends AbstractOTSPlot
      * This is only implemented for the time axis.
      * @param newUpperLimit DoubleScalar&lt;?&gt; new upper limit for the X range
      */
-    public abstract void extendXRange(DoubleScalar<?> newUpperLimit);
+    public abstract void extendXRange(DoubleScalarInterface newUpperLimit);
 
     /**
      * Increment the data of one bin.

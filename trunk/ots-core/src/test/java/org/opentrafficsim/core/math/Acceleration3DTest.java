@@ -82,22 +82,19 @@ public class Acceleration3DTest
         {
             // Ignore expected exception
         }
-        s3d =
-                new Acceleration3D(new Acceleration(x, AccelerationUnit.SI), new Acceleration(y, AccelerationUnit.SI),
-                        new Acceleration(z, AccelerationUnit.SI));
+        s3d = new Acceleration3D(new Acceleration(x, AccelerationUnit.SI), new Acceleration(y, AccelerationUnit.SI),
+                new Acceleration(z, AccelerationUnit.SI));
         checkAcceleration(s3d, x, y, z);
-        s3d =
-                new Acceleration3D(new Acceleration(x, AccelerationUnit.STANDARD_GRAVITY), new Acceleration(y,
-                        AccelerationUnit.STANDARD_GRAVITY), new Acceleration(z, AccelerationUnit.STANDARD_GRAVITY));
+        s3d = new Acceleration3D(new Acceleration(x, AccelerationUnit.STANDARD_GRAVITY),
+                new Acceleration(y, AccelerationUnit.STANDARD_GRAVITY), new Acceleration(z, AccelerationUnit.STANDARD_GRAVITY));
         checkAcceleration(s3d, x * 9.80665, y * 9.80665, z * 9.80665);
         double theta = Math.PI * 0.4;
         double phi = Math.PI * 0.3;
         double length = 10;
-        s3d =
-                new Acceleration3D(new Acceleration(length, AccelerationUnit.SI), new Direction(theta, AngleUnit.RADIAN),
-                        new Direction(phi, AngleUnit.RADIAN));
-        checkAcceleration(s3d, length * Math.cos(phi) * Math.sin(theta), length * Math.sin(phi) * Math.sin(theta), length
-                * Math.cos(theta));
+        s3d = new Acceleration3D(new Acceleration(length, AccelerationUnit.SI), new Direction(theta, AngleUnit.RADIAN),
+                new Direction(phi, AngleUnit.RADIAN));
+        checkAcceleration(s3d, length * Math.cos(phi) * Math.sin(theta), length * Math.sin(phi) * Math.sin(theta),
+                length * Math.cos(theta));
     }
 
     /**

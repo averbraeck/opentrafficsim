@@ -2,11 +2,11 @@ package org.opentrafficsim.core.dsol;
 
 import java.io.Serializable;
 
-import nl.tudelft.simulation.dsol.simtime.SimTime;
-
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+
+import nl.tudelft.simulation.dsol.simtime.SimTime;
 
 /**
  * OTS uses a DoubleScalar.Abs&lt;TimeUnit&gt; to represent simulation start time and a DoubleScalar.Rel&lt;timeUnit&gt; to
@@ -19,33 +19,32 @@ import org.djunits.value.vdouble.scalar.Time;
  *          initial version Aug 3, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
-        implements Serializable
+public class OTSSimTimeDouble extends SimTime<Time, Duration, OTSSimTimeDouble> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20140815L;
 
     /** The time. */
-    private DoubleScalar.Abs<TimeUnit> time;
+    private Time time;
 
     /**
      * @param time DoubleSclaar.Abs&lt;TimeUnit&gt;
      */
-    public OTSSimTimeDouble(final DoubleScalar.Abs<TimeUnit> time)
+    public OTSSimTimeDouble(final Time time)
     {
         super(time);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void add(final DoubleScalar.Rel<TimeUnit> simTime)
+    public final void add(final Duration simTime)
     {
         this.time = this.time.plus(simTime);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void subtract(final DoubleScalar.Rel<TimeUnit> simTime)
+    public final void subtract(final Duration simTime)
     {
         this.time = this.time.minus(simTime);
     }
@@ -69,19 +68,19 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
     @Override
     public final OTSSimTimeDouble copy()
     {
-        return new OTSSimTimeDouble(new DoubleScalar.Abs<>(this.time.getInUnit(), this.time.getUnit()));
+        return new OTSSimTimeDouble(new Time(this.time.getInUnit(), this.time.getUnit()));
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void set(final DoubleScalar.Abs<TimeUnit> value)
+    public final void set(final Time value)
     {
         this.time = value;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<TimeUnit> get()
+    public final Time get()
     {
         return this.time;
     }
@@ -96,9 +95,9 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<TimeUnit> minus(final OTSSimTimeDouble absoluteTime)
+    public final Duration minus(final OTSSimTimeDouble absoluteTime)
     {
-        DoubleScalar.Rel<TimeUnit> rel = DoubleScalar.minus(this.time, absoluteTime.get());
+        Duration rel = this.time.minus(absoluteTime.get());
         return rel;
     }
 

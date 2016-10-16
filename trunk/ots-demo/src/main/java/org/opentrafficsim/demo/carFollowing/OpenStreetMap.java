@@ -15,11 +15,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
@@ -122,13 +119,14 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
                                     + "the acceleration that a vehicle will make taking into account "
                                     + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
                                     + "curvature of the road) capabilities of the vehicle and personality "
-                                    + "of the driver.</html>", new String[] { "IDM", "IDM+" }, 1, false, 1));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car", new Acceleration(1.0,
-                            METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length(2.0, METER),
-                            new Duration(1.0, SECOND), 2));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck", new Acceleration(0.5,
-                            METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER),
-                            new Duration(1.0, SECOND), 3));
+                                    + "of the driver.</html>",
+                            new String[] { "IDM", "IDM+" }, 1, false, 1));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car",
+                            new Acceleration(1.0, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
+                            new Length(2.0, METER), new Duration(1.0, SECOND), 2));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck",
+                            new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2),
+                            new Length(2.0, METER), new Duration(1.0, SECOND), 3));
                     osm.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND),
                             localProperties, null, true);
                 }
@@ -229,9 +227,8 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
             exception.printStackTrace();
             return null;
         }
-        this.model =
-                new OSMModel(getUserModifiedProperties(), this.osmNetwork, this.warningListener, this.progressListener,
-                        converter);
+        this.model = new OSMModel(getUserModifiedProperties(), this.osmNetwork, this.warningListener, this.progressListener,
+                converter);
         Iterator<Node> count = this.otsNetwork.getNodeMap().values().iterator();
         Rectangle2D area = null;
         while (count.hasNext())
@@ -334,7 +331,7 @@ class OSMModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+    public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
         OTSNetwork otsNetwork = new OTSNetwork(this.osmNetwork.getName());
@@ -361,8 +358,8 @@ class OSMModel implements OTSModelInterface
             }
         }
         Convert.findSinksandSources(this.osmNetwork, this.progressListener);
-        this.progressListener.progress(new ProgressEvent(this.osmNetwork, "Creation the lanes on "
-                + this.osmNetwork.getLinks().size() + " links"));
+        this.progressListener.progress(
+                new ProgressEvent(this.osmNetwork, "Creation the lanes on " + this.osmNetwork.getLinks().size() + " links"));
         double total = this.osmNetwork.getLinks().size();
         double counter = 0;
         double nextPercentage = 5.0;
@@ -393,7 +390,7 @@ class OSMModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
+    public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
     {
         return this.simulator;
     }

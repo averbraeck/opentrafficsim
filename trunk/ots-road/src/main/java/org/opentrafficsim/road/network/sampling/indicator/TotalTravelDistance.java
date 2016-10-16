@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.sampling.indicator;
 
-import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.road.network.sampling.Query;
@@ -17,7 +16,7 @@ import org.opentrafficsim.road.network.sampling.TrajectoryGroup;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TotalTravelDistance extends AbstractIndicator<LengthUnit, Length>
+public class TotalTravelDistance extends AbstractIndicator<Length>
 {
 
     /** {@inheritDoc} */

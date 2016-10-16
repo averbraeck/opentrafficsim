@@ -17,15 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
-import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -76,6 +70,10 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Create a plot that characterizes a lane change graph.
@@ -183,35 +181,31 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
                 int endLeftKey = data.addSeries("End of no lane change to left");
                 for (double speedDifference = startSpeedDifference; speedDifference <= endSpeedDifference; speedDifference += 1)
                 {
-                    Length criticalHeadway =
-                            lcs.findDecisionPoint(LaneChangeGraph.LOWERBOUND, MIDPOINT, speed, new Speed(speedDifference,
-                                    KM_PER_HOUR), laneChangeModel, true);
+                    Length criticalHeadway = lcs.findDecisionPoint(LaneChangeGraph.LOWERBOUND, MIDPOINT, speed,
+                            new Speed(speedDifference, KM_PER_HOUR), laneChangeModel, true);
                     if (null != criticalHeadway)
                     {
                         data.addXYPair(beginRightKey, speedDifference, criticalHeadway.getInUnit(METER));
                     }
-                    criticalHeadway =
-                            lcs.findDecisionPoint(MIDPOINT, LaneChangeGraph.UPPERBOUND, speed, new Speed(speedDifference,
-                                    KM_PER_HOUR), laneChangeModel, true);
+                    criticalHeadway = lcs.findDecisionPoint(MIDPOINT, LaneChangeGraph.UPPERBOUND, speed,
+                            new Speed(speedDifference, KM_PER_HOUR), laneChangeModel, true);
                     if (null != criticalHeadway)
                     {
                         data.addXYPair(endRightKey, speedDifference, criticalHeadway.getInUnit(METER));
                     }
-                    criticalHeadway =
-                            lcs.findDecisionPoint(LaneChangeGraph.LOWERBOUND, MIDPOINT, speed, new Speed(speedDifference,
-                                    KM_PER_HOUR), laneChangeModel, false);
+                    criticalHeadway = lcs.findDecisionPoint(LaneChangeGraph.LOWERBOUND, MIDPOINT, speed,
+                            new Speed(speedDifference, KM_PER_HOUR), laneChangeModel, false);
                     if (null != criticalHeadway)
                     {
                         data.addXYPair(beginLeftKey, speedDifference, criticalHeadway.getInUnit(METER));
                     }
                     else
                     {
-                        lcs.findDecisionPoint(LaneChangeGraph.LOWERBOUND, MIDPOINT, speed, new Speed(speedDifference,
-                                KM_PER_HOUR), laneChangeModel, false);
+                        lcs.findDecisionPoint(LaneChangeGraph.LOWERBOUND, MIDPOINT, speed,
+                                new Speed(speedDifference, KM_PER_HOUR), laneChangeModel, false);
                     }
-                    criticalHeadway =
-                            lcs.findDecisionPoint(MIDPOINT, LaneChangeGraph.UPPERBOUND, speed, new Speed(speedDifference,
-                                    KM_PER_HOUR), laneChangeModel, false);
+                    criticalHeadway = lcs.findDecisionPoint(MIDPOINT, LaneChangeGraph.UPPERBOUND, speed,
+                            new Speed(speedDifference, KM_PER_HOUR), laneChangeModel, false);
                     if (null != criticalHeadway)
                     {
                         data.addXYPair(endLeftKey, speedDifference, criticalHeadway.getInUnit(METER));
@@ -232,8 +226,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
      * @throws SimRuntimeException on ???
      * @throws GTUException on error during GTU construction
      */
-    public static void buildGUI(final String[] args) throws NamingException, NetworkException, SimRuntimeException,
-            GTUException
+    public static void buildGUI(final String[] args) throws NamingException, NetworkException, SimRuntimeException, GTUException
     {
         JPanel mainPanel = new JPanel(new BorderLayout());
         lcs = new LaneChangeGraph("Lane change graphs", mainPanel);
@@ -249,9 +242,8 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         for (int index = 0; index < STANDARDSPEEDS.length; index++)
         {
             lcs.charts[1][index] =
-                    new ChartPanel(
-                            lcs.createChart(String.format("Altruistic reference car at %.0fkm/h", STANDARDSPEEDS[index]),
-                                    STANDARDSPEEDS[index]));
+                    new ChartPanel(lcs.createChart(String.format("Altruistic reference car at %.0fkm/h", STANDARDSPEEDS[index]),
+                            STANDARDSPEEDS[index]));
             chartsPanel.setCell(lcs.charts[1][index], index, 1);
         }
         lcs.pack();
@@ -288,45 +280,39 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         LaneType laneType = new LaneType("CarLane", compatibility);
         final Speed speedLimit = new Speed(120, KM_PER_HOUR);
 
-        Lane[] lanes =
-                LaneFactory.makeMultiLane(network, "Road with two lanes", new OTSNode(network, "From", new OTSPoint3D(
-                        LOWERBOUND.getSI(), 0, 0)), new OTSNode(network, "To", new OTSPoint3D(UPPERBOUND.getSI(), 0, 0)), null,
-                        2, laneType, speedLimit, null, LongitudinalDirectionality.DIR_PLUS);
+        Lane[] lanes = LaneFactory.makeMultiLane(network, "Road with two lanes",
+                new OTSNode(network, "From", new OTSPoint3D(LOWERBOUND.getSI(), 0, 0)),
+                new OTSNode(network, "To", new OTSPoint3D(UPPERBOUND.getSI(), 0, 0)), null, 2, laneType, speedLimit, null,
+                LongitudinalDirectionality.DIR_PLUS);
         // Create the reference vehicle
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
-        initialLongitudinalPositions.add(new DirectedLanePosition(lanes[mergeRight ? 0 : 1], new Length(0, METER),
-                GTUDirectionality.DIR_PLUS));
+        initialLongitudinalPositions
+                .add(new DirectedLanePosition(lanes[mergeRight ? 0 : 1], new Length(0, METER), GTUDirectionality.DIR_PLUS));
 
         // The reference car only needs a simulator
         // But that needs a model (which this class implements)
         SimpleSimulator simpleSimulator =
                 new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND), this);
-        this.carFollowingModel =
-                new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length(
-                        2, METER), new Duration(1, SECOND), 1d);
-        this.carFollowingModel =
-                new IDMOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length(2,
-                        METER), new Duration(1, SECOND), 1d);
+        this.carFollowingModel = new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
+                new Acceleration(1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d);
+        this.carFollowingModel = new IDMOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
+                new Length(2, METER), new Duration(1, SECOND), 1d);
 
         BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
-        LaneBasedIndividualGTU referenceCar =
-                new LaneBasedIndividualGTU("ReferenceCar", gtuType, new Length(4, METER), new Length(2, METER), new Speed(150,
-                        KM_PER_HOUR), simpleSimulator, this.network);
-        LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
-                        this.carFollowingModel, laneChangeModel, referenceCar), referenceCar);
+        LaneBasedIndividualGTU referenceCar = new LaneBasedIndividualGTU("ReferenceCar", gtuType, new Length(4, METER),
+                new Length(2, METER), new Speed(150, KM_PER_HOUR), simpleSimulator, this.network);
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                new LaneBasedCFLCTacticalPlanner(this.carFollowingModel, laneChangeModel, referenceCar), referenceCar);
         referenceCar.init(strategicalPlanner, initialLongitudinalPositions, referenceSpeed);
         Collection<Headway> sameLaneGTUs = new LinkedHashSet<>();
-        sameLaneGTUs.add(new HeadwayGTUSimple(referenceCar.getId(), referenceCar.getGTUType(), Length.ZERO, referenceCar
-                .getLength(), referenceCar.getSpeed(), null));
+        sameLaneGTUs.add(new HeadwayGTUSimple(referenceCar.getId(), referenceCar.getGTUType(), Length.ZERO,
+                referenceCar.getLength(), referenceCar.getSpeed(), null));
         // TODO play with the speed limit
         // TODO play with the preferredLaneRouteIncentive
-        LaneMovementStep lowResult =
-                computeLaneChange(referenceCar, sameLaneGTUs, speedLimit, laneChangeModel, low, lanes[1], speedDifference,
-                        mergeRight);
-        LaneMovementStep highResult =
-                computeLaneChange(referenceCar, sameLaneGTUs, speedLimit, laneChangeModel, high, lanes[1], speedDifference,
-                        mergeRight);
+        LaneMovementStep lowResult = computeLaneChange(referenceCar, sameLaneGTUs, speedLimit, laneChangeModel, low, lanes[1],
+                speedDifference, mergeRight);
+        LaneMovementStep highResult = computeLaneChange(referenceCar, sameLaneGTUs, speedLimit, laneChangeModel, high, lanes[1],
+                speedDifference, mergeRight);
         Length mid = null;
         if (lowResult.getLaneChange() != highResult.getLaneChange())
         {
@@ -337,9 +323,8 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
             {
                 Length mutableMid = low.plus(high).divideBy(2);
                 mid = mutableMid;
-                LaneMovementStep midResult =
-                        computeLaneChange(referenceCar, sameLaneGTUs, speedLimit, laneChangeModel, mid, lanes[1],
-                                speedDifference, mergeRight);
+                LaneMovementStep midResult = computeLaneChange(referenceCar, sameLaneGTUs, speedLimit, laneChangeModel, mid,
+                        lanes[1], speedDifference, mergeRight);
                 // System.out.println(String.format ("mid %.2fm: %s", mid.getSI(), midResult));
                 if (midResult.getLaneChange() != lowResult.getLaneChange())
                 {
@@ -392,18 +377,15 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         LaneBasedIndividualGTU otherCar =
                 new LaneBasedIndividualGTU("otherCar", referenceCar.getGTUType(), new Length(4, METER), new Length(2, METER),
                         new Speed(150, KM_PER_HOUR), referenceCar.getSimulator(), this.network);
-        LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
-                        this.carFollowingModel, laneChangeModel, otherCar), otherCar);
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                new LaneBasedCFLCTacticalPlanner(this.carFollowingModel, laneChangeModel, otherCar), otherCar);
         otherCar.init(strategicalPlanner, initialLongitudinalPositions, referenceCar.getSpeed().plus(deltaV));
         Collection<Headway> preferredLaneGTUs = new LinkedHashSet<>();
         Collection<Headway> nonPreferredLaneGTUs = new LinkedHashSet<>();
-        Length referenceCarPosition =
-                referenceCar.position(referenceCar.positions(referenceCar.getReference()).keySet().iterator().next(),
-                        referenceCar.getReference());
-        Headway otherHeadwayGTU =
-                new HeadwayGTUSimple(otherCar.getId(), otherCar.getGTUType(), otherCarPosition.minus(referenceCarPosition),
-                        otherCar.getLength(), otherCar.getSpeed(), null);
+        Length referenceCarPosition = referenceCar.position(
+                referenceCar.positions(referenceCar.getReference()).keySet().iterator().next(), referenceCar.getReference());
+        Headway otherHeadwayGTU = new HeadwayGTUSimple(otherCar.getId(), otherCar.getGTUType(),
+                otherCarPosition.minus(referenceCarPosition), otherCar.getLength(), otherCar.getSpeed(), null);
         if (mergeRight)
         {
             preferredLaneGTUs.add(otherHeadwayGTU);
@@ -414,11 +396,10 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         }
         // System.out.println(referenceCar);
         // System.out.println(otherCar);
-        LaneMovementStep result =
-                laneChangeModel.computeLaneChangeAndAcceleration(referenceCar, sameLaneGTUs, mergeRight ? preferredLaneGTUs
-                        : null, mergeRight ? null : nonPreferredLaneGTUs, speedLimit,
-                        new Acceleration(0.3, METER_PER_SECOND_2), new Acceleration(0.1, METER_PER_SECOND_2), new Acceleration(
-                                -0.3, METER_PER_SECOND_2));
+        LaneMovementStep result = laneChangeModel.computeLaneChangeAndAcceleration(referenceCar, sameLaneGTUs,
+                mergeRight ? preferredLaneGTUs : null, mergeRight ? null : nonPreferredLaneGTUs, speedLimit,
+                new Acceleration(0.3, METER_PER_SECOND_2), new Acceleration(0.1, METER_PER_SECOND_2),
+                new Acceleration(-0.3, METER_PER_SECOND_2));
         // System.out.println(result);
         sameLaneGTUs.remove(otherHeadwayGTU);
         otherCar.destroy();
@@ -456,7 +437,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(final SimulatorInterface<Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+    public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
             throws SimRuntimeException, RemoteException
     {
         // Do nothing
@@ -464,8 +445,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface<Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-            throws RemoteException
+    public final SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
     {
         return null;
     }

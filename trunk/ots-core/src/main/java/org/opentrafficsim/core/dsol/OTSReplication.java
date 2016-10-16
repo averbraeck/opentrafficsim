@@ -2,11 +2,11 @@ package org.opentrafficsim.core.dsol;
 
 import javax.naming.NamingException;
 
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Time;
+
 import nl.tudelft.simulation.dsol.experiment.Experiment;
 import nl.tudelft.simulation.dsol.experiment.Replication;
-
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -17,16 +17,13 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  *          initial version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class OTSReplication extends
-    Replication<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
+public class OTSReplication extends Replication<Time, Duration, OTSSimTimeDouble>
 {
     /**
      * @param experiment Experiment
      * @throws NamingException when the context for the replication cannot be created
      */
-    public OTSReplication(
-        final Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> experiment)
-        throws NamingException
+    public OTSReplication(final Experiment<Time, Duration, OTSSimTimeDouble> experiment) throws NamingException
     {
         super(experiment);
     }
@@ -40,9 +37,8 @@ public class OTSReplication extends
      * @param model OTSModelInterface; the model
      * @throws NamingException when the context for the replication cannot be created
      */
-    public OTSReplication(final String id, final OTSSimTimeDouble startTime,
-        final DoubleScalar.Rel<TimeUnit> warmupPeriod, final DoubleScalar.Rel<TimeUnit> runLength,
-        final OTSModelInterface model) throws NamingException
+    public OTSReplication(final String id, final OTSSimTimeDouble startTime, final Duration warmupPeriod,
+            final Duration runLength, final OTSModelInterface model) throws NamingException
     {
         super(id, startTime, warmupPeriod, runLength, model);
     }

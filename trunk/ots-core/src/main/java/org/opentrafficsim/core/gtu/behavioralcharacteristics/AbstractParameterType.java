@@ -3,8 +3,7 @@ package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 import java.io.Serializable;
 import java.util.IllegalFormatException;
 
-import org.djunits.unit.Unit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.Type;
 
@@ -19,11 +18,10 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
- * @param <U> Unit of the value.
  * @param <T> Class of the value.
  */
-public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleScalar.Rel<U>> extends
-    Type<AbstractParameterType<?, ?>> implements Serializable
+public abstract class AbstractParameterType<T extends DoubleScalarInterface> extends
+    Type<AbstractParameterType<?>> implements Serializable
 {
 
     /** */
@@ -297,7 +295,7 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
         {
             return;
         }
-        Throw.when(this.check.fails(value.si), ParameterException.class, this.check.failMessage(), this.id);
+        Throw.when(this.check.fails(value.getSI()), ParameterException.class, this.check.failMessage(), this.id);
     }
 
     /**
@@ -338,7 +336,7 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
         {
             return false;
         }
-        AbstractParameterType<?, ?> other = (AbstractParameterType<?, ?>) obj;
+        AbstractParameterType<?> other = (AbstractParameterType<?>) obj;
         if (!this.id.equals(other.id))
         {
             return false;

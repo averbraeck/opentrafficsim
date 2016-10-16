@@ -1,7 +1,6 @@
 package org.opentrafficsim.kpi.sampling.indicator;
 
-import org.djunits.unit.Unit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.kpi.sampling.Query;
 
@@ -16,13 +15,12 @@ import org.opentrafficsim.kpi.sampling.Query;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
- * @param <U> class of the unit
  * @param <T> class of the value
  */
 // TODO standard deviation, percentiles, min/max
 // XXX think about using Tally and Persistent for some of the indicators. Maybe extend Indicator to TallyIndicator?
 // XXX Persistent is already a time-weighed indicator that calculates mean, std, min, max, and confidence interval.
-public abstract class AbstractIndicator<U extends Unit<U>, T extends DoubleScalar<U>>
+public abstract class AbstractIndicator<T extends DoubleScalarInterface>
 {
 
     /** Last query. */

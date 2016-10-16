@@ -7,7 +7,7 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.djunits.value.vdouble.vector.MutableAccelerationVector;
 import org.djunits.value.vdouble.vector.MutableTimeVector;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -63,7 +63,7 @@ public class AccelerationContourPlot extends ContourPlot
 
     /** {@inheritDoc} */
     @Override
-    public final void extendXRange(final DoubleScalar<?> newUpperLimit)
+    public final void extendXRange(final DoubleScalarInterface newUpperLimit)
     {
         if (null == this.cumulativeTimes)
         {

@@ -1,18 +1,9 @@
 package org.opentrafficsim.demo.carFollowing;
 
-import java.lang.reflect.Field;
-import java.util.Set;
-
-import nl.tudelft.simulation.language.reflection.ClassUtil;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterType;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeBoolean;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeInteger;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 
 /**
@@ -37,14 +28,14 @@ public final class DefaultsFactory
     {
         //
     }
-    
+
     /**
      * Returns a default set of behavioral characteristics.
      * @return Default set of behavioral characteristics.
      */
     public static BehavioralCharacteristics getDefaultBehavioralCharacteristics()
     {
-        
+
         BehavioralCharacteristics bc = new BehavioralCharacteristics().setDefaultParameters(ParameterTypes.class);
 
         // demos use different value from default LMRS value
@@ -58,7 +49,7 @@ public final class DefaultsFactory
         }
 
         return bc;
-        
+
     }
 
 }

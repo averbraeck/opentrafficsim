@@ -428,7 +428,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> arg0)
+    public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0)
             throws SimRuntimeException
     {
         // Do nothing
@@ -436,7 +436,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+    public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
 
     {
         return this.simulator;

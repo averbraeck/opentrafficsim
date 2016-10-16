@@ -1,6 +1,5 @@
 package org.opentrafficsim.kpi.sampling.indicator;
 
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -19,7 +18,7 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 // TODO something better than a global reference speed defined at the indicator
-public class TotalDelay extends AbstractIndicator<TimeUnit, Duration>
+public class TotalDelay extends AbstractIndicator<Duration>
 {
 
     /** Reference speed for delay. */

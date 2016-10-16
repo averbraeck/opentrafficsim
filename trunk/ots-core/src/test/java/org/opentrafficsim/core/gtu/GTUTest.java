@@ -10,8 +10,6 @@ import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -67,15 +65,14 @@ public class GTUTest implements OTSModelInterface
      * @throws OTSGeometryException should not happen uncaught; if it does the test has failed
      */
     @Test
-    public final void testAbstractGTU() throws GTUException, SimRuntimeException, NetworkException, NamingException,
-            RemoteException, OTSGeometryException
+    public final void testAbstractGTU()
+            throws GTUException, SimRuntimeException, NetworkException, NamingException, RemoteException, OTSGeometryException
     {
         TestGTU firstGTU = null;
         TestGTU lastGTU = null;
         OTSNetwork perceivableContext = new OTSNetwork("network");
-        OTSDEVSSimulatorInterface simulator =
-                new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI), new Duration(9999, TimeUnit.SI),
-                        this);
+        OTSDEVSSimulatorInterface simulator = new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI),
+                new Duration(9999, TimeUnit.SI), this);
         StrategicalPlanner strategicalPlanner = new StrategicalPlanner()
         {
 
@@ -157,7 +154,7 @@ public class GTUTest implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(final SimulatorInterface<Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+    public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
             throws SimRuntimeException, RemoteException
     {
         // Not used
@@ -165,8 +162,7 @@ public class GTUTest implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface<Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-            throws RemoteException
+    public final SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
     {
         return null;
     }
@@ -188,7 +184,7 @@ class TestGTU extends AbstractGTU
      */
     TestGTU(final String id, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
 
-    final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
+            final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
     {
         super(id, gtuType, simulator, perceivableContext);
     }

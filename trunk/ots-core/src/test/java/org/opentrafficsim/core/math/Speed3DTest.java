@@ -85,16 +85,14 @@ public class Speed3DTest
         }
         s3d = new Speed3D(new Speed(x, SpeedUnit.SI), new Speed(y, SpeedUnit.SI), new Speed(z, SpeedUnit.SI));
         checkSpeed(s3d, x, y, z);
-        s3d =
-                new Speed3D(new Speed(x, SpeedUnit.KM_PER_HOUR), new Speed(y, SpeedUnit.KM_PER_HOUR), new Speed(z,
-                        SpeedUnit.KM_PER_HOUR));
+        s3d = new Speed3D(new Speed(x, SpeedUnit.KM_PER_HOUR), new Speed(y, SpeedUnit.KM_PER_HOUR),
+                new Speed(z, SpeedUnit.KM_PER_HOUR));
         checkSpeed(s3d, x / 3.6, y / 3.6, z / 3.6);
         double theta = Math.PI * 0.4;
         double phi = Math.PI * 0.3;
         double length = 10;
-        s3d =
-                new Speed3D(new Speed(length, SpeedUnit.SI), new Direction(theta, AngleUnit.RADIAN), new Direction(phi,
-                        AngleUnit.RADIAN));
+        s3d = new Speed3D(new Speed(length, SpeedUnit.SI), new Direction(theta, AngleUnit.RADIAN),
+                new Direction(phi, AngleUnit.RADIAN));
         checkSpeed(s3d, length * Math.cos(phi) * Math.sin(theta), length * Math.sin(phi) * Math.sin(theta),
                 length * Math.cos(theta));
     }

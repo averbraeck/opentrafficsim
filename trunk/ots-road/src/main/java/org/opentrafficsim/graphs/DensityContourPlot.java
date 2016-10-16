@@ -6,8 +6,7 @@ import java.util.List;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.vector.MutableDoubleVector;
+import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.djunits.value.vdouble.vector.MutableTimeVector;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
@@ -48,7 +47,7 @@ public class DensityContourPlot extends ContourPlot
     }
 
     /** Storage for the total time spent in each cell. */
-    private ArrayList<MutableDoubleVector.Abs<TimeUnit>> cumulativeTimes;
+    private ArrayList<MutableTimeVector> cumulativeTimes;
 
     /** {@inheritDoc} */
     @Override
@@ -59,11 +58,11 @@ public class DensityContourPlot extends ContourPlot
 
     /** {@inheritDoc} */
     @Override
-    public final void extendXRange(final DoubleScalar<?> newUpperLimit)
+    public final void extendXRange(final DoubleScalarInterface newUpperLimit)
     {
         if (null == this.cumulativeTimes)
         {
-            this.cumulativeTimes = new ArrayList<MutableDoubleVector.Abs<TimeUnit>>();
+            this.cumulativeTimes = new ArrayList<MutableTimeVector>();
         }
         final int highestBinNeeded =
             (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit) * this.getXAxis().getCurrentGranularity()
@@ -72,7 +71,7 @@ public class DensityContourPlot extends ContourPlot
         {
             try
             {
-                this.cumulativeTimes.add(new MutableTimeVector.Abs(new double[this.getYAxis().getBinCount()],
+                this.cumulativeTimes.add(new MutableTimeVector(new double[this.getYAxis().getBinCount()],
                     TimeUnit.SECOND, StorageType.DENSE));
             }
             catch (ValueException exception)
@@ -91,7 +90,7 @@ public class DensityContourPlot extends ContourPlot
         {
             return;
         }
-        MutableDoubleVector.Abs<TimeUnit> values = this.cumulativeTimes.get(timeBin);
+        MutableTimeVector values = this.cumulativeTimes.get(timeBin);
         try
         {
             values.setSI(distanceBin, values.getSI(distanceBin) + duration);
@@ -117,7 +116,7 @@ public class DensityContourPlot extends ContourPlot
         {
             for (int timeBinIndex = firstTimeBin; timeBinIndex < endTimeBin; timeBinIndex++)
             {
-                MutableDoubleVector.Abs<TimeUnit> values = this.cumulativeTimes.get(timeBinIndex);
+                MutableTimeVector values = this.cumulativeTimes.get(timeBinIndex);
                 for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
                 {
                     cumulativeTimeInSI += values.getSI(distanceBinIndex);

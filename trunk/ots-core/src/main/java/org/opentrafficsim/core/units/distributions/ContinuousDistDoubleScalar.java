@@ -2,13 +2,12 @@ package org.opentrafficsim.core.units.distributions;
 
 import java.io.Serializable;
 
-import nl.tudelft.simulation.jstats.distributions.DistContinuous;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.AngleSolidUnit;
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.AreaUnit;
 import org.djunits.unit.DensityUnit;
+import org.djunits.unit.DimensionlessUnit;
 import org.djunits.unit.ElectricalChargeUnit;
 import org.djunits.unit.ElectricalCurrentUnit;
 import org.djunits.unit.ElectricalPotentialUnit;
@@ -32,6 +31,8 @@ import org.djunits.unit.VolumeUnit;
 import org.djunits.value.Absolute;
 import org.djunits.value.Relative;
 import org.djunits.value.vdouble.scalar.AbsoluteTemperature;
+import org.djunits.value.vdouble.scalar.AbstractDoubleScalarAbs;
+import org.djunits.value.vdouble.scalar.AbstractDoubleScalarRel;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.AngleSolid;
@@ -62,6 +63,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.scalar.Torque;
 import org.djunits.value.vdouble.scalar.Volume;
 
+import nl.tudelft.simulation.jstats.distributions.DistContinuous;
+
 /**
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -78,8 +81,8 @@ public interface ContinuousDistDoubleScalar
      * @param <T> The absolute DoubleScalar type
      * @param <U> The unit type used
      */
-    class Abs<T extends DoubleScalar.Abs<U>, U extends Unit<U>> extends AbstractContinuousDistScalar implements Absolute,
-            Serializable
+    class Abs<T extends AbstractDoubleScalarAbs<U, T, ?>, U extends Unit<U>> extends AbstractContinuousDistScalar
+            implements Absolute, Serializable
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -141,8 +144,8 @@ public interface ContinuousDistDoubleScalar
      * @param <T> The absolute DoubleScalar type
      * @param <U> The unit type used
      */
-    class Rel<T extends DoubleScalar.Rel<U>, U extends Unit<U>> extends AbstractContinuousDistScalar implements Relative,
-            Serializable
+    class Rel<T extends AbstractDoubleScalarRel<U, T>, U extends Unit<U>> extends AbstractContinuousDistScalar
+            implements Relative, Serializable
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -189,7 +192,7 @@ public interface ContinuousDistDoubleScalar
                     return (T) new Density(getDistribution().draw(), (DensityUnit) getUnit());
 
                 case "DimensionlessUnit":
-                    return (T) new Dimensionless.Rel(getDistribution().draw(), getUnit());
+                    return (T) new Dimensionless(getDistribution().draw(), (DimensionlessUnit) getUnit());
 
                 case "ElectricalChargeUnit":
                     return (T) new ElectricalCharge(getDistribution().draw(), (ElectricalChargeUnit) getUnit());

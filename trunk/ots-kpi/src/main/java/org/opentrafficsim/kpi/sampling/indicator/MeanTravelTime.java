@@ -3,7 +3,6 @@ package org.opentrafficsim.kpi.sampling.indicator;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
@@ -21,7 +20,7 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class MeanTravelTime extends AbstractIndicator<TimeUnit, Duration>
+public class MeanTravelTime extends AbstractIndicator<Duration>
 {
 
     /** Mean speed indicator. */

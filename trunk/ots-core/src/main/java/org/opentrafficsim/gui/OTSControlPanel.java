@@ -43,6 +43,13 @@ import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 import javax.swing.text.MaskFormatter;
 
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.simulationengine.WrappableAnimation;
+
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
@@ -53,13 +60,6 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.language.io.URLResource;
-
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.simulationengine.WrappableAnimation;
 
 /**
  * Peter's improved simulation control panel.
@@ -546,9 +546,9 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
      * @return simulator.
      */
     @SuppressWarnings("unchecked")
-    public final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+    public final DEVSSimulator<Time, Duration, OTSSimTimeDouble> getSimulator()
     {
-        return (DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>) this.simulator;
+        return (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) this.simulator;
     }
 
     /** {@inheritDoc} */

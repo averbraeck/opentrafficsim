@@ -6,14 +6,9 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -25,6 +20,9 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Test the GTUCharacteristics class
@@ -59,12 +57,10 @@ public class GTUCharacteristicsTest implements OTSModelInterface
         Length widthB = new Length(2.5, LengthUnit.METER);
         Speed maximumSpeedA = new Speed(180, SpeedUnit.KM_PER_HOUR);
         Speed maximumSpeedB = new Speed(130, SpeedUnit.KM_PER_HOUR);
-        OTSDEVSSimulatorInterface simulatorA =
-                new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI), new Duration(1000,
-                        TimeUnit.SECOND), this);
-        OTSDEVSSimulatorInterface simulatorB =
-                new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI), new Duration(1000,
-                        TimeUnit.SECOND), this);
+        OTSDEVSSimulatorInterface simulatorA = new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI),
+                new Duration(1000, TimeUnit.SECOND), this);
+        OTSDEVSSimulatorInterface simulatorB = new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI),
+                new Duration(1000, TimeUnit.SECOND), this);
         OTSNetwork networkA = new OTSNetwork("testGTUCharacteristics A");
         OTSNetwork networkB = new OTSNetwork("testGTUCharacteristics B");
         GTUCharacteristics gtucA =
@@ -88,12 +84,11 @@ public class GTUCharacteristicsTest implements OTSModelInterface
     }
 
     /** ... */
-    private SimulatorInterface<Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator;
+    private SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator;
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(
-            final SimulatorInterface<Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+    public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
         this.simulator = theSimulator;
@@ -101,8 +96,7 @@ public class GTUCharacteristicsTest implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface<Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-            throws RemoteException
+    public final SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
     {
         return this.simulator;
     }
