@@ -6,7 +6,8 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.Throw;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Class with curvature info for curvature speed limit type.

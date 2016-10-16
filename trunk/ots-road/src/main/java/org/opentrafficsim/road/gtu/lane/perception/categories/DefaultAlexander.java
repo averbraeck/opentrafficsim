@@ -14,7 +14,6 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -33,6 +32,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanne
 import org.opentrafficsim.road.gtu.lane.tactical.LanePathInfo;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>

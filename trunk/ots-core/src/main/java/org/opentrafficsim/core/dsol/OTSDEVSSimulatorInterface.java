@@ -31,7 +31,7 @@ public interface OTSDEVSSimulatorInterface
 
     /** {@inheritDoc} */
     @Override
-    void scheduleEvent(SimEventInterface<OTSSimTimeDouble> event) throws SimRuntimeException;
+    SimEventInterface<OTSSimTimeDouble> scheduleEvent(SimEventInterface<OTSSimTimeDouble> event) throws SimRuntimeException;
 
     /**
      * schedules a methodCall at a relative duration. The executionTime is thus simulator.getSimulatorTime()+relativeDuration.
@@ -41,10 +41,11 @@ public interface OTSDEVSSimulatorInterface
      * @param target the target
      * @param method the method
      * @param args the arguments.
+     * @return the simulation event so it can be cancelled later
      * @throws SimRuntimeException whenever the event is scheduled in the past.
      */
-    void scheduleEventRel(Duration relativeDelay, short priority, Object source, Object target, String method, Object[] args)
-            throws SimRuntimeException;
+    SimEventInterface<OTSSimTimeDouble> scheduleEventRel(Duration relativeDelay, short priority, Object source, Object target,
+            String method, Object[] args) throws SimRuntimeException;
 
     /**
      * schedules a methodCall at a relative duration. The executionTime is thus simulator.getSimulatorTime()+relativeDuration.
@@ -53,54 +54,58 @@ public interface OTSDEVSSimulatorInterface
      * @param target the target
      * @param method the method
      * @param args the arguments.
+     * @return the simulation event so it can be cancelled later
      * @throws SimRuntimeException whenever the event is scheduled in the past.
      */
-    void scheduleEventRel(Duration relativeDelay, Object source, Object target, String method, Object[] args)
-            throws SimRuntimeException;
+    SimEventInterface<OTSSimTimeDouble> scheduleEventRel(Duration relativeDelay, Object source, Object target, String method,
+            Object[] args) throws SimRuntimeException;
 
     /** {@inheritDoc} */
     @Override
-    void scheduleEventAbs(OTSSimTimeDouble absoluteTime, short priority, Object source, Object target, String method,
+    SimEventInterface<OTSSimTimeDouble> scheduleEventAbs(OTSSimTimeDouble absoluteTime, short priority, Object source,
+            Object target, String method, Object[] args) throws SimRuntimeException;
+
+    /**
+     * schedules a methodCall at an absolute time.
+     * @param absoluteTime the exact time to schedule the method on the simulator.
+     * @param source the source of the event
+     * @param target the target
+     * @param method the method
+     * @param args the arguments.
+     * @return the simulation event so it can be cancelled later
+     * @throws SimRuntimeException whenever the event is scheduled in the past.
+     */
+    SimEventInterface<OTSSimTimeDouble> scheduleEventAbs(Time absoluteTime, Object source, Object target, String method,
             Object[] args) throws SimRuntimeException;
 
     /**
      * schedules a methodCall at an absolute time.
      * @param absoluteTime the exact time to schedule the method on the simulator.
-     * @param source the source of the event
-     * @param target the target
-     * @param method the method
-     * @param args the arguments.
-     * @throws SimRuntimeException whenever the event is scheduled in the past.
-     */
-    void scheduleEventAbs(Time absoluteTime, Object source, Object target, String method, Object[] args)
-            throws SimRuntimeException;
-
-    /**
-     * schedules a methodCall at an absolute time.
-     * @param absoluteTime the exact time to schedule the method on the simulator.
      * @param priority the priority compared to other events scheduled at the same time.
      * @param source the source of the event
      * @param target the target
      * @param method the method
      * @param args the arguments.
+     * @return the simulation event so it can be cancelled later
      * @throws SimRuntimeException whenever the event is scheduled in the past.
      */
-    void scheduleEventAbs(Time absoluteTime, short priority, Object source, Object target, String method, Object[] args)
-            throws SimRuntimeException;
+    SimEventInterface<OTSSimTimeDouble> scheduleEventAbs(Time absoluteTime, short priority, Object source, Object target,
+            String method, Object[] args) throws SimRuntimeException;
 
     /** {@inheritDoc} */
     @Override
-    void scheduleEventAbs(OTSSimTimeDouble absoluteTime, Object source, Object target, String method, Object[] args)
-            throws SimRuntimeException;
+    SimEventInterface<OTSSimTimeDouble> scheduleEventAbs(OTSSimTimeDouble absoluteTime, Object source, Object target,
+            String method, Object[] args) throws SimRuntimeException;
 
     /** {@inheritDoc} */
     @Override
-    void scheduleEventNow(short priority, Object source, Object target, String method, Object[] args)
-            throws SimRuntimeException;
+    SimEventInterface<OTSSimTimeDouble> scheduleEventNow(short priority, Object source, Object target, String method,
+            Object[] args) throws SimRuntimeException;
 
     /** {@inheritDoc} */
     @Override
-    void scheduleEventNow(Object source, Object target, String method, Object[] args) throws SimRuntimeException;
+    SimEventInterface<OTSSimTimeDouble> scheduleEventNow(Object source, Object target, String method, Object[] args)
+            throws SimRuntimeException;
 
     /** {@inheritDoc} */
     @Override

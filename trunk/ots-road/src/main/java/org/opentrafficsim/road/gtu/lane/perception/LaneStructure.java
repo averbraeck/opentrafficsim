@@ -8,9 +8,10 @@ import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.LateralDirectionality;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * This data structure can clearly indicate the lane structure ahead of us, e.g. in the following situation:

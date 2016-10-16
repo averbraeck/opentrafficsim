@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 import org.djunits.unit.DimensionlessUnit;
 import org.djunits.value.vdouble.scalar.Dimensionless;
-import org.opentrafficsim.core.Throw;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Wrapper class for int parameters.

@@ -10,11 +10,11 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.animation.PaintPolygons;
 import org.opentrafficsim.core.object.StaticObject;
+
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 /**
  * <p>

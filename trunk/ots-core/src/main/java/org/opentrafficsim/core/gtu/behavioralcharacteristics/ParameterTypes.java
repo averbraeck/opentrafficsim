@@ -11,7 +11,8 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.Throw;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Predefined list of common parameter types.

@@ -1,5 +1,16 @@
 package org.opentrafficsim.core.network.factory.xml.units;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Position;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+
 import nl.tudelft.simulation.jstats.distributions.DistBeta;
 import nl.tudelft.simulation.jstats.distributions.DistConstant;
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
@@ -15,17 +26,6 @@ import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.distributions.DistWeibull;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Position;
-import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 
 /**
  * <p>

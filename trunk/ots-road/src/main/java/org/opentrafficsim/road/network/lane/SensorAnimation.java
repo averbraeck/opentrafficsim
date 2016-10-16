@@ -9,10 +9,10 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 /**
  * sink sensor animation.

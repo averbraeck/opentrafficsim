@@ -9,10 +9,9 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
-import org.jfree.ui.HorizontalAlignment;
 import org.opentrafficsim.core.network.NetworkException;
+
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>

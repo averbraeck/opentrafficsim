@@ -15,7 +15,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.immutablecollections.ImmutableIterator;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -23,6 +22,8 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.sampling.meta.MetaDataSet;
 import org.opentrafficsim.road.network.sampling.meta.MetaDataType;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * A query defines which subset of trajectory information should be included. This is in terms of space-time regions, and in

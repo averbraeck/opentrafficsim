@@ -5,11 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.network.lane.Lane;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * A LaneStructureRecord contains information about the lanes that can be accessed from this lane by a GTUType. It tells whether

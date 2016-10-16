@@ -36,6 +36,8 @@
         <module>../ots-water</module>
         <module>../ots-demo</module>
         <module>../ots-imb</module>
+        <module>../ots-imb-kpi</module>
+        <module>../ots-imb-road</module>
         <module>../ots-parser-xml</module>
         <module>../ots-parser-opendrive</module>
         <module>../ots-parser-osm</module>
@@ -53,7 +55,7 @@
 
     <ots.version>${project.version}</ots.version>
     <djunits.version>2.00.00</djunits.version>
-    <dsol.version>3.00.21</dsol.version>
+    <dsol.version>3.01.00</dsol.version>
     <junit.version>4.11</junit.version>
     <java3d.version>1.5.1</java3d.version>
     <geotools.version>12.0</geotools.version>
@@ -655,6 +657,12 @@
 
   <dependencies>
     <dependency>
+      <groupId>dsol</groupId>
+      <artifactId>dsol-base</artifactId>
+      <version>${dsol.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
@@ -694,6 +702,12 @@
         <groupId>dsol</groupId>
         <artifactId>dsol-core</artifactId>
         <version>${dsol.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>opentrafficsim</groupId>
+        <artifactId>ots-base</artifactId>
+        <version>${ots.version}</version>
       </dependency>
 
       <dependency>
@@ -765,6 +779,18 @@
       <dependency>
         <groupId>opentrafficsim</groupId>
         <artifactId>ots-imb</artifactId>
+        <version>${ots.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>opentrafficsim</groupId>
+        <artifactId>ots-imb-road</artifactId>
+        <version>${ots.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>opentrafficsim</groupId>
+        <artifactId>ots-imb-kpi</artifactId>
         <version>${ots.version}</version>
       </dependency>
 

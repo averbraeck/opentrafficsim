@@ -2,8 +2,9 @@ package org.opentrafficsim.road.network.sampling;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.road.network.lane.LaneDirection;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>

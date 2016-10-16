@@ -22,11 +22,12 @@ import org.djunits.value.vfloat.vector.FloatAccelerationVector;
 import org.djunits.value.vfloat.vector.FloatLengthVector;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
 import org.djunits.value.vfloat.vector.FloatTimeVector;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.road.network.sampling.data.ExtendedDataType;
 import org.opentrafficsim.road.network.sampling.meta.MetaData;
 import org.opentrafficsim.road.network.sampling.meta.MetaDataType;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Contains position, speed, acceleration and time data of a GTU, over some section. Position is relative to the start of the

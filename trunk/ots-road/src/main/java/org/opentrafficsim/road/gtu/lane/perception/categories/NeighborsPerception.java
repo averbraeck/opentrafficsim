@@ -9,7 +9,6 @@ import java.util.TreeSet;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -31,6 +30,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanne
 import org.opentrafficsim.road.gtu.lane.tactical.LanePathInfo;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Perception of surrounding traffic on the own road, i.e. without crossing traffic.

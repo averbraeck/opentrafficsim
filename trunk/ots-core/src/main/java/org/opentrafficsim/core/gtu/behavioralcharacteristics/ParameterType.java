@@ -3,7 +3,8 @@ package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
-import org.opentrafficsim.core.Throw;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Wrapper class for parameters of any quantity in JUnits.

@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.opentrafficsim.core.Throw;
-import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -22,6 +20,8 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Strategical planner, route-based, with personal driving characteristics, which contain settings for the tactical planner. The

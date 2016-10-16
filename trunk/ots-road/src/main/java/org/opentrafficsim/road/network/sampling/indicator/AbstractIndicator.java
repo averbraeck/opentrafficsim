@@ -2,8 +2,9 @@ package org.opentrafficsim.road.network.sampling.indicator;
 
 import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.road.network.sampling.Query;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Abstract indicator which stores the last calculated value and returns it in {@code getValue()} for an equal query, start time

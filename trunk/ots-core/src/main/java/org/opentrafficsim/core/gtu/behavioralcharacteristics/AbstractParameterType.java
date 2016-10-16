@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.util.IllegalFormatException;
 
 import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.Type;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Defines meta-information of a parameter, defining the parameter uniquely.

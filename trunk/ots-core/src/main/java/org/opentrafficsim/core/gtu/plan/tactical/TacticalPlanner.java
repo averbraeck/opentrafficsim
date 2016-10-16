@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.gtu.plan.tactical;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -10,6 +8,8 @@ import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
+
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Tactical planners generate operational plans that are in line with reaching the goals of the strategical plan. The modeler is

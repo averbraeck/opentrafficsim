@@ -8,7 +8,6 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.AngleUnit;
 import org.djunits.value.vdouble.scalar.Direction;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
@@ -18,6 +17,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>

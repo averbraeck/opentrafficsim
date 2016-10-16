@@ -3,9 +3,10 @@ package org.opentrafficsim.road.gtu.lane.tactical.toledo;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>

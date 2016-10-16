@@ -5,11 +5,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.Type;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.immutablecollections.ImmutableHashSet;
 import org.opentrafficsim.core.immutablecollections.ImmutableSet;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Lane type to indicate compatibility with GTU types. The id of a LaneType should be unique. This is, however, not checked or

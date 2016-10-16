@@ -8,8 +8,9 @@ import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.FrequencyVector;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.network.Node;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Extension of ODMatrix where all input and output can be given in number of trips. All data that is defined in number of trips

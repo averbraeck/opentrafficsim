@@ -16,7 +16,6 @@ import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
@@ -24,8 +23,9 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
-import org.opentrafficsim.core.Throw;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>

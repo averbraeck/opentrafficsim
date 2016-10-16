@@ -6,10 +6,10 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.Path2D;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Paint a line as a Path2D.Double

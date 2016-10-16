@@ -3,10 +3,10 @@ package org.opentrafficsim.core.network.route;
 import java.io.Serializable;
 import java.util.List;
 
-import nl.tudelft.simulation.jstats.streams.StreamInterface;
-
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.ProbabilityException;
+
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * Generate one of a set of routes, based on a discrete probability density function.
