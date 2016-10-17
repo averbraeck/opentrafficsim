@@ -78,7 +78,7 @@ public abstract class ModelEvent
         }
 
     }
-    
+
     /**
      * New event.
      */
@@ -86,31 +86,31 @@ public abstract class ModelEvent
     {
         /** UID. */
         final int uid;
-        
+
         /** Name of the model. */
         final String modelName;
-        
+
         /** The controller. */
         final String controller;
-        
+
         /** The priority. */
         final int priority;
-        
+
         /** The state. */
         final int state;
-        
+
         /** The IMB federation. */
         final String federation;
-        
+
         /** Private event name. */
         final String privateEventName;
-        
+
         /** Controller private event name. */
         final String controllerPrivateEventName;
-        
+
         /**
          * Construct a new NewEvent from data received over IMB.
-         * @param payload TByteBuffer; the data that was receive over IMB
+         * @param payload TByteBuffer; the received IMB data
          */
         public NewEvent(final TByteBuffer payload)
         {
@@ -151,7 +151,85 @@ public abstract class ModelEvent
             payload.qWrite(this.privateEventName);
             payload.qWrite(this.controllerPrivateEventName);
         }
-        
+
     }
+
+    /**
+     * New event.
+     */
+    class ChangeEvent extends ModelEvent
+    {
+        /** UID. */
+        final int uid;
+
+        /** The state. */
+        final int state;
+
+        /** The IMB federation. */
+        final String federation;
+
+        /**
+         * Construct a new ChangeEvent from data received over IMB.
+         * @param payload TByteBuffer; the received IMB data
+         */
+        public ChangeEvent(TByteBuffer payload)
+        {
+            this.uid = payload.readInt32();
+            this.state = payload.readInt32();
+            this.federation = payload.readString();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        void prepare(TByteBuffer payload)
+        {
+            payload.prepare(this.uid);
+            payload.prepare(this.state);
+            payload.prepare(this.federation);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        void qWrite(TByteBuffer payload)
+        {
+            payload.qWrite(this.uid);
+            payload.qWrite(this.state);
+            payload.qWrite(this.federation);
+        }
+
+    }
+    
+    /**
+     * Delete event.
+     */
+    class DeleteEvent extends ModelEvent
+    {
+        /** UID. */
+        final int uid;
+
+        /**
+         * Construct a new DeleteEvent from data received over IMB.
+         * @param payload TByteBuffer; the received IMB data
+         */
+        public DeleteEvent(TByteBuffer payload)
+        {
+            this.uid = payload.readInt32();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        void prepare(TByteBuffer payload)
+        {
+            payload.prepare(this.uid);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        void qWrite(TByteBuffer payload)
+        {
+            payload.qWrite(this.uid);
+        }
+        
+    }    
 
 }
