@@ -10,7 +10,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.language.Throw;
+
+import org.opentrafficsim.trafficcontrol.TrafficController;
 
 /**
  * TrafCOD evaluator.
@@ -21,8 +25,14 @@ import nl.tudelft.simulation.language.Throw;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Oct 5, 2016 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class Evaluator
+public class Evaluator extends EventProducer implements TrafficController
 {
+    /** */
+    private static final long serialVersionUID = 20161014L;
+
+    /** Name of this TrafCod controller. */
+    final String controllerName;
+
     /** Version of the supported TrafCOD files. */
     final static int TRAFCOD_VERSION = 100;
 
@@ -43,6 +53,9 @@ public class Evaluator
 
     /** The TrafCOD variables. */
     final Map<String, Variable> variables = new HashMap<>();
+
+    /** The detectors. */
+    final Map<String, Variable> detectors = new HashMap<>();
 
     /** Comment starter in TrafCOD. */
     final static String COMMENT_START = "#";
@@ -80,13 +93,22 @@ public class Evaluator
     /** Rule that is currently being evaluated. */
     private Object[] currentRule;
 
+    /** The current time in units of 0.1 s */
+    private int currentTime10 = 0;
+
+    /** Event that is fired whenever a traffic light changes state. */
+    public static final EventType TRAFFIC_LIGHT_CHANGED = new EventType("TrafficLightChanged");
+
     /**
      * @param trafCodURL String; the URL of the TrafCOD rules
+     * @param controllerName String; name of this traffic light controller
      * @throws Exception when a rule cannot be parsed
      */
-    public Evaluator(final String trafCodURL) throws Exception
+    public Evaluator(final String trafCodURL, String controllerName) throws Exception
     {
         Throw.whenNull(trafCodURL, "trafCodURL may not be null");
+        Throw.whenNull(controllerName, "controllerName may not be null");
+        this.controllerName = controllerName;
         URL url = new URL(trafCodURL);
         BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
         String inputLine;
@@ -155,7 +177,7 @@ public class Evaluator
                     String structureNumberString = commentStripped.substring(STRUCTURE_PREFIX.length()).trim();
                     try
                     {
-                        this.structureNumber = Integer.parseInt(structureNumberString);
+                        this.setStructureNumber(Integer.parseInt(structureNumberString));
                     }
                     catch (NumberFormatException nfe)
                     {
@@ -256,6 +278,7 @@ public class Evaluator
                             EnumSet.of(PrintFlags.ID, PrintFlags.VALUE, PrintFlags.INITTIMER, PrintFlags.REINITTIMER,
                                     PrintFlags.S, PrintFlags.E)));
         }
+        evalExprs();
     }
 
     /**
@@ -289,6 +312,13 @@ public class Evaluator
         int changeCount = 0;
         for (Object[] rule : this.tokenisedRules)
         {
+            System.out.println("Evaluating rule " + printRule(rule, true));
+            for (Object o : rule)
+            {
+                System.out.print(o + " ");
+            }
+            System.out.println("");
+
             if (evalRule(rule))
             {
                 changeCount++;
@@ -305,6 +335,7 @@ public class Evaluator
      */
     private boolean evalRule(final Object[] rule) throws Exception
     {
+        boolean result = false;
         Token ruleType = (Token) rule[0];
         Variable destination = (Variable) rule[1];
         if (destination.isTimer())
@@ -349,15 +380,81 @@ public class Evaluator
         this.currentToken = 2; // Point to first token of the RHS
         this.stack.clear();
         evalExpr(0);
-
-        return false;
+        if (this.currentToken < this.currentRule.length && Token.CLOSE_PAREN == this.currentRule[this.currentToken])
+        {
+            throw new Exception("Too man closing parentheses");
+        }
+        int resultValue = pop();
+        if (Token.END_RULE == ruleType)
+        {
+            // Invert the result
+            if (0 == resultValue)
+            {
+                resultValue = destination.getValue(); // preserve the current value
+            }
+            else
+            {
+                resultValue = 0;
+            }
+        }
+        if (destination.isTimer())
+        {
+            if (resultValue != 0 && Token.END_RULE == ruleType)
+            {
+                if (destination.getValue() == 0)
+                {
+                    result = true;
+                }
+                // TODO Handle traced streams
+                int timerValue10 = destination.getTimerMax();
+                if (timerValue10 < 1)
+                {
+                    // Cheat
+                    timerValue10 = 1;
+                }
+                destination.setValue(timerValue10, this.currentTime10);
+            }
+            else if (0 == resultValue && Token.END_RULE == ruleType && destination.getValue() != 0)
+            {
+                result = true;
+                destination.setValue(0, this.currentTime10);
+            }
+            // TODO handle tracing
+        }
+        else if (destination.getValue() != resultValue)
+        {
+            result = true;
+            destination.setValue(resultValue, this.currentTime10);
+            if (destination.isOutput())
+            {
+                fireEvent(TRAFFIC_LIGHT_CHANGED,
+                        new Object[] { this.controllerName, destination.getStartSource(), destination.getColor() });
+            }
+            // TODO handle tracing
+        }
+        // TODO handle tracing
+        return result;
     }
+
+    /** Binding strength of relational operators. */
+    private static final int BIND_RELATIONAL_OPERATOR = 1;
+
+    /** Binding strength of addition and subtraction. */
+    private static final int BIND_ADDITION = 2;
+
+    /** Binding strength of multiplication and division. */
+    private static final int BIND_MULTIPLY = 3;
 
     /** Binding strength of unary minus. */
     private static int BIND_UNARY_MINUS = 4;
 
     /**
-     * Evaluate an expression.
+     * Evaluate an expression. <br>
+     * The methods evalExpr and evalRHS together evaluate an expression. This is done using recursion and a stack. The argument
+     * <cite>bindingStrength</cite> that is passed around is the binding strength of the last preceding pending operator. if a
+     * binary operator with the same or a lower strength is encountered, the pending operator must be applied first. On the
+     * other hand of a binary operator with higher binding strength is encountered, that operator takes precedence over the
+     * pending operator. To evaluate an expression, call <cite>evalExpr</cite> with a <cite>bindingStrength</cite> value of 0.
      * @param bindingStrength int; the binding strength of a not yet applied binary operator (higher value must be applied
      *            first)
      * @throws Exception when the expression is not valid
@@ -396,6 +493,11 @@ public class Evaluator
                 break;
 
             case START:
+                if (Token.VARIABLE != nextToken || this.currentToken >= this.currentRule.length - 1)
+                {
+                    throw new Exception("Missing variable after S");
+                }
+                nextToken = this.currentRule[++this.currentToken];
                 if (!(nextToken instanceof Variable))
                 {
                     throw new Exception("Missing variable after S");
@@ -405,6 +507,11 @@ public class Evaluator
                 break;
 
             case END:
+                if (Token.VARIABLE != nextToken || this.currentToken >= this.currentRule.length - 1)
+                {
+                    throw new Exception("Missing variable after E");
+                }
+                nextToken = this.currentRule[++this.currentToken];
                 if (!(nextToken instanceof Variable))
                 {
                     throw new Exception("Missing variable after E");
@@ -443,10 +550,127 @@ public class Evaluator
         }
         evalRHS(bindingStrength);
     }
-    
-    private void evalRHS(final int bindingStrength)
+
+    /**
+     * Evaluate the right-hand-side of an expression.
+     * @param bindingStrength int; the binding strength of the most recent, not yet applied, binary operator
+     * @throws Exception
+     */
+    private void evalRHS(final int bindingStrength) throws Exception
     {
-        
+        while (true)
+        {
+            if (this.currentToken >= this.currentRule.length)
+            {
+                return;
+            }
+            Token token = (Token) this.currentRule[this.currentToken];
+            switch (token)
+            {
+                case CLOSE_PAREN:
+                    return;
+
+                case TIMES:
+                    if (BIND_MULTIPLY <= bindingStrength)
+                    {
+                        return; // apply pending operator now
+                    }
+                    /*-
+                     * apply pending operator later 
+                     * 1: evaluate the RHS operand. 
+                     * 2: multiply the top-most two operands on the
+                     * stack and push the result on the stack.
+                     */
+                    this.currentToken++;
+                    evalExpr(BIND_MULTIPLY);
+                    push(pop() * pop() == 0 ? 0 : 1);
+                    break;
+
+                case EQ:
+                case NOTEQ:
+                case LE:
+                case LEEQ:
+                case GT:
+                case GTEQ:
+                    if (BIND_RELATIONAL_OPERATOR <= bindingStrength)
+                    {
+                        return; // apply pending operator now
+                    }
+                    /*-
+                     * apply pending operator later 
+                     * 1: evaluate the RHS operand. 
+                     * 2: compare the top-most two operands on the
+                     * stack and push the result on the stack.
+                     */
+                    this.currentToken++;
+                    evalExpr(BIND_RELATIONAL_OPERATOR);
+                    switch (token)
+                    {
+                        case EQ:
+                            push(pop() == pop() ? 1 : 0);
+                            break;
+
+                        case NOTEQ:
+                            push(pop() != pop() ? 1 : 0);
+                            break;
+
+                        case GT:
+                            push(pop() < pop() ? 1 : 0);
+                            break;
+
+                        case GTEQ:
+                            push(pop() <= pop() ? 1 : 0);
+                            break;
+
+                        case LE:
+                            push(pop() > pop() ? 1 : 0);
+                            break;
+
+                        case LEEQ:
+                            push(pop() >= pop() ? 1 : 0);
+                            break;
+
+                        default:
+                            throw new Exception("Bad relational operator");
+                    }
+                    break;
+
+                case PLUS:
+                    if (BIND_ADDITION <= bindingStrength)
+                    {
+                        return; // apply pending operator now
+                    }
+                    /*-
+                     * apply pending operator later 
+                     * 1: evaluate the RHS operand. 
+                     * 2: add (OR) the top-most two operands on the
+                     * stack and push the result on the stack.
+                     */
+                    this.currentToken++;
+                    evalExpr(BIND_ADDITION);
+                    push(pop() + pop() == 0 ? 0 : 1);
+                    break;
+
+                case MINUS:
+                    if (BIND_ADDITION <= bindingStrength)
+                    {
+                        return; // apply pending operator now
+                    }
+                    /*-
+                     * apply pending operator later 
+                     * 1: evaluate the RHS operand. 
+                     * 2: subtract the top-most two operands on the
+                     * stack and push the result on the stack.
+                     */
+                    this.currentToken++;
+                    evalExpr(BIND_ADDITION);
+                    push(-pop() + pop());
+                    break;
+
+                default:
+                    throw new Exception("Missing binary operator");
+            }
+        }
     }
 
     /**
@@ -626,17 +850,17 @@ public class Evaluator
         REINIT_TIMER,
         /** Unary minus operator. */
         UNARY_MINUS,
-        /** Less than or equal to ("<="). */
+        /** Less than or equal to (<cite><=</cite>). */
         LEEQ,
-        /** Not equal to ("<>"). */
+        /** Not equal to (<cite><></cite>). */
         NOTEQ,
-/** Less than ("<"). */
+        /** Less than (<cite>&lt;</cite>). */
         LE,
-        /** Greater than or equal to (">="). */
+        /** Greater than or equal to (<cite>>=</cite>). */
         GTEQ,
-        /** Greater than (">"). */
+        /** Greater than (<cite>></cite>). */
         GT,
-        /** Equals to ("="). */
+        /** Equals to (<cite>=</cite>). */
         EQ,
         /** True if following variable has just started. */
         START,
@@ -988,6 +1212,10 @@ public class Evaluator
             // Create and install a new variable
             variable = new Variable(name, stream);
             this.variables.put(key, variable);
+            if (variable.isDetector())
+            {
+                this.detectors.put(key, variable);
+            }
         }
         if (flags.contains(Flags.HAS_START_RULE))
         {
@@ -1007,7 +1235,33 @@ public class Evaluator
      */
     public static void main(final String[] args) throws Exception
     {
-        Evaluator evaluator = new Evaluator("file:///d:/cppb/trafcod/otsim/simpel.tfc");
+        Evaluator evaluator = new Evaluator("file:///d:/cppb/trafcod/otsim/simpel.tfc", "Simpel TrafCOD controller");
+    }
+
+    /**
+     * Retrieve the structure number.
+     * @return int; the structureNumber
+     */
+    public int getStructureNumber()
+    {
+        return this.structureNumber;
+    }
+
+    /**
+     * Set the structure number.
+     * @param structureNumber int; the new structureNumber.
+     */
+    public void setStructureNumber(int structureNumber)
+    {
+        this.structureNumber = structureNumber;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateDetector(String detectorId, boolean detectingGTU)
+    {
+        Variable detector = this.detectors.get(detectorId);
+        detector.setValue(detectingGTU ? 1 : 0, this.currentTime10);
     }
 
 }
@@ -1183,7 +1437,7 @@ class Variable
     int timerMax10;
 
     /** Output color (if this is an export variable). */
-    int newColor;
+    int color;
 
     /** Name of this variable (without the traffic stream). */
     final String name;
@@ -1223,6 +1477,74 @@ class Variable
         {
             this.flags.add(Flags.IS_DETECTOR);
         }
+    }
+
+    /**
+     * Retrieve the color for an output Variable.
+     * @return int; the color code for this Variable
+     * @throws Exception if this Variable is not an output
+     */
+    public int getColor() throws Exception
+    {
+        if (!this.flags.contains(Flags.IS_OUTPUT))
+        {
+            throw new Exception("Stream is not an output");
+        }
+        return this.color;
+    }
+
+    /**
+     * Report whether a change in this variable must be published.
+     * @return boolean; true if this Variable is an output; false if this Variable is not an output
+     */
+    public boolean isOutput()
+    {
+        return this.flags.contains(Flags.IS_OUTPUT);
+    }
+
+    /**
+     * Report if this Variable is a detector.
+     * @return boolean; true if this Variable is a detector; false if this Variable is not a detector
+     */
+    public boolean isDetector()
+    {
+        return this.name.startsWith("D");
+    }
+
+    /**
+     * @param newValue int; the new value of this Variable
+     * @param timeStamp10 int; the time stamp of this update
+     */
+    public void setValue(int newValue, int timeStamp10)
+    {
+        if (this.value != newValue)
+        {
+            this.updateTime10 = timeStamp10;
+            setFlag(Flags.CHANGED);
+            if (0 == newValue)
+            {
+                setFlag(Flags.END);
+            }
+            else
+            {
+                setFlag(Flags.START);
+            }
+        }
+        this.value = newValue;
+    }
+
+    /**
+     * Retrieve the start value of this timer in units of 0.1 seconds (1 second is represented by the value 10).
+     * @return int; the timerMax10 value
+     * @throws Exception
+     */
+    public int getTimerMax() throws Exception
+    {
+        if (!this.isTimer())
+        {
+            throw new Exception("This is not a timer");
+        }
+        return this.timerMax10;
     }
 
     /**
@@ -1298,11 +1620,11 @@ class Variable
 
     /**
      * Make this variable an output variable and set the output value.
-     * @param outputValue int; the output value
+     * @param colorValue int; the output value
      */
-    public void setOutput(int outputValue)
+    public void setOutput(int colorValue)
     {
-        this.newColor = outputValue;
+        this.color = colorValue;
         this.flags.add(Flags.IS_OUTPUT);
     }
 
