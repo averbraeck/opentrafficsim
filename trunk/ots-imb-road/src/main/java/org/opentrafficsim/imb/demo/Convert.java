@@ -95,70 +95,103 @@ public class Convert
     {
         for (List<Object> line : linesList)
         {
-            List<String> xc = (List<String>) line.get(0);
-            List<String> yc = (List<String>) line.get(1);
-
-            Coordinate cf = new Coordinate(Double.parseDouble(xc.get(0)), Double.parseDouble(yc.get(0)));
-            String sf = "N" + (nodes.size() + 1) + dir;
-            if (!coordinateMap.keySet().contains(cf))
+            writeNodes(line, dir, nodes, 0, 1);
+            if (line.get(5).toString().equalsIgnoreCase("true"))
             {
-                System.out.println("<NODE NAME=" + "\"" + sf + "\" COORDINATE=\"" + cf + "\" />");
-                nodes.add(sf);
-                coordinateMap.put(cf, sf);
+                writeNodes(line, dir, nodes, 11, 12);
             }
-
-            Coordinate cl =
-                    new Coordinate(Double.parseDouble(xc.get(xc.size() - 1)), Double.parseDouble(yc.get(yc.size() - 1)));
-            String sl = "N" + (nodes.size() + 1) + dir;
-            if (!coordinateMap.keySet().contains(cl))
+            if (line.get(6).toString().equalsIgnoreCase("true"))
             {
-                System.out.println("<NODE NAME=" + "\"" + sl + "\" COORDINATE=\"" + cl + "\" />");
-                nodes.add(sl);
-                coordinateMap.put(cl, sl);
+                writeNodes(line, dir, nodes, 16, 17);
             }
         }
         System.out.println();
+    }
+
+    private static void writeNodes(final List<Object> line, final String dir, final List<String> nodes, final int xi,
+            final int yi)
+    {
+        List<String> xc = (List<String>) line.get(xi);
+        List<String> yc = (List<String>) line.get(yi);
+
+        Coordinate cf = new Coordinate(Double.parseDouble(xc.get(0)), Double.parseDouble(yc.get(0)));
+        String sf = "N" + (nodes.size() + 1) + dir;
+        if (!coordinateMap.keySet().contains(cf))
+        {
+            System.out.println("<NODE NAME=" + "\"" + sf + "\" COORDINATE=\"" + cf + "\" />");
+            nodes.add(sf);
+            coordinateMap.put(cf, sf);
+        }
+
+        Coordinate cl = new Coordinate(Double.parseDouble(xc.get(xc.size() - 1)), Double.parseDouble(yc.get(yc.size() - 1)));
+        String sl = "N" + (nodes.size() + 1) + dir;
+        if (!coordinateMap.keySet().contains(cl))
+        {
+            System.out.println("<NODE NAME=" + "\"" + sl + "\" COORDINATE=\"" + cl + "\" />");
+            nodes.add(sl);
+            coordinateMap.put(cl, sl);
+        }
     }
 
     private static void writeLinks(final List<List<Object>> linesList, final String dir, final List<String> links)
     {
         for (List<Object> line : linesList)
         {
-            List<String> xc = (List<String>) line.get(0);
-            List<String> yc = (List<String>) line.get(1);
-
-            Coordinate cf = new Coordinate(Double.parseDouble(xc.get(0)), Double.parseDouble(yc.get(0)));
-            Coordinate cl =
-                    new Coordinate(Double.parseDouble(xc.get(xc.size() - 1)), Double.parseDouble(yc.get(yc.size() - 1)));
-
-            String nodef = coordinateMap.get(cf);
-            String nodel = coordinateMap.get(cl);
-
-            String linkName = "L" + (links.size() + 1) + dir;
-            int nrLanes = Integer.parseInt((String) line.get(2));
-
-            System.out.print(
-                    "<LINK NAME=\"" + linkName + "\" NODESTART=\"" + nodef + "\" NODEEND=\"" + nodel + "\" ROADLAYOUT=\"");
-            System.out.println((nrLanes == 1) ? "HW1\">" : (nrLanes == 2) ? "HW2\">" : (nrLanes == 3) ? "HW3\">" : "HW4\">");
-            if (xc.size() > 2)
+            writeLinks(line, dir, links, 0, 1, 2, 0.0, 0.0);
+            if (line.get(5).toString().equalsIgnoreCase("true"))
             {
-                System.out.print("<POLYLINE INTERMEDIATEPOINTS=\"");
-                boolean first = true;
-                for (int i = 1; i < xc.size() - 1; i++)
-                {
-                    System.out.print((first ? "" : " ") + "(" + xc.get(i) + "," + yc.get(i) + ")");
-                    first = false;
-                }
-                System.out.println("\" />");
+                writeLinks(line, dir, links, 11, 12, 14, 0.0, 0.0); // merge
             }
-            else
+            if (line.get(6).toString().equalsIgnoreCase("true"))
             {
-                System.out.println("<STRAIGHT />");
+                writeLinks(line, dir, links, 16, 17, 19, 0.0, 0.0); // diverge
             }
-            System.out.println("</LINK>\n");
-            links.add(linkName);
-
         }
+    }
+
+    private static void writeLinks(final List<Object> line, final String dir, final List<String> links, final int xi,
+            final int yi, final int li, final double startOffset, final double endOffset)
+    {
+        List<String> xc = (List<String>) line.get(xi);
+        List<String> yc = (List<String>) line.get(yi);
+
+        Coordinate cf = new Coordinate(Double.parseDouble(xc.get(0)), Double.parseDouble(yc.get(0)));
+        Coordinate cl = new Coordinate(Double.parseDouble(xc.get(xc.size() - 1)), Double.parseDouble(yc.get(yc.size() - 1)));
+
+        String nodef = coordinateMap.get(cf);
+        String nodel = coordinateMap.get(cl);
+
+        String linkName = "L" + (links.size() + 1) + dir;
+        int nrLanes = Integer.parseInt((String) line.get(li));
+
+        System.out.print("<LINK NAME=\"" + linkName + "\" NODESTART=\"" + nodef + "\" NODEEND=\"" + nodel + "\" ROADLAYOUT=\"");
+        System.out.print((nrLanes == 1) ? "HW1\"" : (nrLanes == 2) ? "HW2\"" : (nrLanes == 3) ? "HW3\"" : "HW4\"");
+        if (startOffset != 0.0)
+        {
+            System.out.print(" OFFSETSTART=\"" + startOffset + " m\"");
+        }
+        if (endOffset != 0.0)
+        {
+            System.out.print(" OFFSETEND=\"" + endOffset + " m\"");
+        }
+        System.out.println(">");
+        if (xc.size() > 2)
+        {
+            System.out.print("<POLYLINE INTERMEDIATEPOINTS=\"");
+            boolean first = true;
+            for (int i = 1; i < xc.size() - 1; i++)
+            {
+                System.out.print((first ? "" : " ") + "(" + xc.get(i) + "," + yc.get(i) + ")");
+                first = false;
+            }
+            System.out.println("\" />");
+        }
+        else
+        {
+            System.out.println("<STRAIGHT />");
+        }
+        System.out.println("</LINK>\n");
+        links.add(linkName);
     }
 
     private static void writeRoutes(final String dir, final List<String> nodes, final boolean reverse)
@@ -201,9 +234,9 @@ public class Convert
         writeNodes(linesEB, "EB", nodesEB);
         writeNodes(linesWB, "WB", nodesWB);
 
-        writeRoutes("RouteEB", nodesEB, false);
-        writeRoutes("RouteWB", nodesWB, true);
-        System.out.println();
+        // writeRoutes("RouteEB", nodesEB, false);
+        // writeRoutes("RouteWB", nodesWB, true);
+        // System.out.println();
 
         writeLinks(linesEB, "EB", linksEB);
         writeLinks(linesWB, "WB", linksWB);
