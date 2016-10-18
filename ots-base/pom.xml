@@ -662,6 +662,11 @@
     </dependency>
 
     <dependency>
+        <groupId>org.djunits</groupId>
+        <artifactId>djunits</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>

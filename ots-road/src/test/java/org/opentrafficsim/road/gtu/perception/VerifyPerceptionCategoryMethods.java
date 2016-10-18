@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
+import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
-import org.opentrafficsim.core.gtu.perception.TimeStampedObject;
 import org.opentrafficsim.road.ClassList;
 
 /**

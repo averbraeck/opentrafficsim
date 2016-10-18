@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
+import org.opentrafficsim.base.TimeStampedObject;
 
 /**
  * Test the TimeStampedObject class.
