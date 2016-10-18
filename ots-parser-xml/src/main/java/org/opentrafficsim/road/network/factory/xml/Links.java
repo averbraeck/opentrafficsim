@@ -405,7 +405,7 @@ final class Links
                     "Making link, but link " + linkTag.name + " has no filled straight, arc, or bezier curve");
         }
 
-        OTSLine3D designLine = new OTSLine3D(coordinates);
+        OTSLine3D designLine = OTSLine3D.createAndCleanOTSLine3D(coordinates);
 
         // Directionality has to be added later when the lanes and their direction are known.
         CrossSectionLink link = new CrossSectionLink(parser.network, linkTag.name, linkTag.nodeStartTag.node,
