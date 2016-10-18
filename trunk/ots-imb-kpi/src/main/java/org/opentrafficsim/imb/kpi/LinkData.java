@@ -156,7 +156,7 @@ public class LinkData implements LinkDataInterface
     public String toString()
     {
         return "LinkData [linkName=" + this.linkName + ", startNode=" + this.startNode + ", endNode=" + this.endNode
-                + ", length=" + this.length + ", laneDataList=" + this.laneDataList + "]";
+                + ", length=" + this.length + ", laneDataList.size()=" + this.laneDataList.size() + "]";
     }
 
 }
