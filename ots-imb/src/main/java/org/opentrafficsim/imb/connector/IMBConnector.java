@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.opentrafficsim.imb.IMBException;
+import org.opentrafficsim.imb.transceiver.Transceiver;
 
 import nl.tno.imb.TByteBuffer;
 import nl.tno.imb.TConnection;
@@ -76,8 +77,6 @@ public class IMBConnector implements Connector
             public void dispatch(TEventEntry aEvent, TByteBuffer aPayload)
             {
                 String shortIMBEventName = aEvent.getEventName().substring(aEvent.getEventName().indexOf('.') + 1);
-                System.out.println(shortIMBEventName + " -> " + aPayload);
-
                 if (!IMBConnector.this.imbTransceiverMap.containsKey(shortIMBEventName))
                 {
                     // TODO error handling

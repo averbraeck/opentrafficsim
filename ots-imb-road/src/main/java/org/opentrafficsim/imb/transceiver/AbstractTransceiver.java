@@ -7,7 +7,6 @@ import java.util.Map;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
-import org.opentrafficsim.imb.connector.Transceiver;
 
 import nl.tno.imb.TByteBuffer;
 import nl.tudelft.simulation.event.EventInterface;
@@ -27,7 +26,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class AbstractTransceiver extends EventProducer implements Transceiver
+public abstract class AbstractTransceiver extends EventProducer implements EventTransceiver
 {
     /** */
     private static final long serialVersionUID = 20160909L;
