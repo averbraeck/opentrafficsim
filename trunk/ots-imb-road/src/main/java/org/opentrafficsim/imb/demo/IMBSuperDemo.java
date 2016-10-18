@@ -143,6 +143,7 @@ public class IMBSuperDemo implements UNITS
         final ArrayList<WrappableAnimation> demonstrations = new ArrayList<>();
         demonstrations.add(new CircularRoadIMB());
         demonstrations.add(new N201IMB());
+        demonstrations.add(new A58IMB());
 
         // final JPanel left = new LabeledPanel("Simulation Settings");
         this.simulationSelection = new LabeledPanel("Network");
