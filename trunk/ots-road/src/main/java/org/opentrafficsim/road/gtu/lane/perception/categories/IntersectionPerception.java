@@ -3,15 +3,13 @@ package org.opentrafficsim.road.gtu.lane.perception.categories;
 import java.util.Map;
 import java.util.SortedSet;
 
+import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.perception.TimeStampedObject;
-import org.opentrafficsim.road.gtu.lane.perception.EnvironmentState.ViewingDirection;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
-import org.opentrafficsim.road.network.lane.conflict.Conflict;
 
 /**
  * Perceives traffic lights and intersection conflicts.

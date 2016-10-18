@@ -5,10 +5,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.opentrafficsim.base.immutablecollections.ImmutableHashSet;
+import org.opentrafficsim.base.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.Type;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.immutablecollections.ImmutableHashSet;
-import org.opentrafficsim.core.immutablecollections.ImmutableSet;
 
 import nl.tudelft.simulation.language.Throw;
 

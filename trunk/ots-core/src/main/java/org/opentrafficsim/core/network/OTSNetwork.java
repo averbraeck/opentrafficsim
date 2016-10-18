@@ -10,11 +10,11 @@ import java.util.Set;
 
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleWeightedGraph;
+import org.opentrafficsim.base.immutablecollections.Immutable;
+import org.opentrafficsim.base.immutablecollections.ImmutableHashMap;
+import org.opentrafficsim.base.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.immutablecollections.Immutable;
-import org.opentrafficsim.core.immutablecollections.ImmutableHashMap;
-import org.opentrafficsim.core.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.PerceivableContext;

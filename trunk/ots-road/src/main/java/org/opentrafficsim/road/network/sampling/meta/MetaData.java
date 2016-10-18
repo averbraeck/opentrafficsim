@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.opentrafficsim.core.immutablecollections.ImmutableIterator;
+import org.opentrafficsim.base.immutablecollections.ImmutableIterator;
 
 /**
  * Collection of objects, one object per meta data type included.

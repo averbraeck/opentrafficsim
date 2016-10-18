@@ -14,9 +14,9 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
-import org.opentrafficsim.core.immutablecollections.Immutable;
-import org.opentrafficsim.core.immutablecollections.ImmutableArrayList;
-import org.opentrafficsim.core.immutablecollections.ImmutableList;
+import org.opentrafficsim.base.immutablecollections.Immutable;
+import org.opentrafficsim.base.immutablecollections.ImmutableArrayList;
+import org.opentrafficsim.base.immutablecollections.ImmutableList;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.event.EventType;

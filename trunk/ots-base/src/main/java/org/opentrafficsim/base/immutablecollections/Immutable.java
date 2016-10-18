@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.immutablecollections;
+package org.opentrafficsim.base.immutablecollections;
 
 /**
  * Indicate whether the immutable collection contains a COPY of the collection (neither changeable by the user of the immutable

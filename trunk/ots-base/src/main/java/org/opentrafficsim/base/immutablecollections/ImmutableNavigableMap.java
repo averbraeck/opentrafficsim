@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.immutablecollections;
+package org.opentrafficsim.base.immutablecollections;
 
 import java.util.Collections;
 import java.util.Comparator;

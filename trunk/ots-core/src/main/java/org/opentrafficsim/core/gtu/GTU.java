@@ -6,13 +6,13 @@ import java.io.Serializable;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.immutablecollections.ImmutableMap;
+import org.opentrafficsim.base.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
-import org.opentrafficsim.core.immutablecollections.ImmutableMap;
-import org.opentrafficsim.core.immutablecollections.ImmutableSet;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.event.EventProducerInterface;

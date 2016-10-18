@@ -1,6 +1,8 @@
-package org.opentrafficsim.core.immutablecollections;
+package org.opentrafficsim.base.immutablecollections;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.RandomAccess;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -8,7 +10,7 @@ import java.util.stream.Stream;
 import nl.tudelft.simulation.language.Throw;
 
 /**
- * An abstract base class for an immutable wrapper for a Set.
+ * An abstract base class for an immutable wrapper for a List.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -18,138 +20,161 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
- * @param <E> the type of content of this Set
+ * @param <E> the type of content of this List
  */
-public abstract class ImmutableAbstractSet<E> implements ImmutableSet<E>
+public abstract class ImmutableAbstractList<E> implements ImmutableList<E>, RandomAccess
 {
     /** */
     private static final long serialVersionUID = 20160507L;
 
-    /** the set that is wrapped, without giving access to methods that can change it. */
-    private final Collection<E> collection;
+    /** the list that is wrapped, without giving access to methods that can change it. */
+    private final List<E> list;
 
     /** COPY stores a safe, internal copy of the collection; WRAP stores a pointer to the original collection. */
     private final Immutable copyOrWrap;
 
     /**
-     * Construct an abstract immutable set. Make sure that the argument is a safe copy of the set of the right type!
-     * @param collection a safe copy of the collection to use as the immutable set
+     * Construct an abstract immutable list. Make sure that the argument is a safe copy of the list or pointer to the list of
+     * the right type!
+     * @param list a safe copy of the list, or pointer to the list to use as the immutable list
      * @param copy indicate whether the immutable is a copy or a wrap
      */
-    protected ImmutableAbstractSet(final Collection<E> collection, final boolean copy)
+    protected ImmutableAbstractList(final List<E> list, final boolean copy)
     {
-        Throw.whenNull(collection, "the collection argument cannot be null");
-        this.collection = collection;
+        Throw.whenNull(list, "the list argument cannot be null");
+        this.list = list;
         this.copyOrWrap = copy ? Immutable.COPY : Immutable.WRAP;
     }
 
     /**
-     * Prepare the set of the right type for use a subclass. Implement e.g. as follows:
+     * Prepare the list of the right type for use a subclass. Implement e.g. as follows:
      * 
      * <pre>
      * {@literal @}Override
-     * protected ArraySet&lt;E&gt; getSet()
+     * protected ArrayList&lt;E&gt; getList()
      * {
-     *     return (ArraySet&lt;E&gt;) super.getSet();
+     *     return (ArrayList&lt;E&gt;) super.getList();
      * }
      * </pre>
-     * @return the set of the right type for use a subclass
+     * 
+     * @return the list of the right type for use a subclass
      */
     @SuppressWarnings("checkstyle:designforextension")
-    protected Collection<E> getSet()
+    protected List<E> getList()
     {
-        return this.collection;
+        return this.list;
     }
 
     /** {@inheritDoc} */
     @Override
     public final Collection<E> toCollection()
     {
-        return toSet();
+        return toList();
     }
 
     /** {@inheritDoc} */
     @Override
     public final int size()
     {
-        return this.collection.size();
+        return this.list.size();
     }
 
     /** {@inheritDoc} */
     @Override
     public final boolean isEmpty()
     {
-        return this.collection.isEmpty();
+        return this.list.isEmpty();
     }
 
     /** {@inheritDoc} */
     @Override
     public final boolean contains(final Object o)
     {
-        return this.collection.contains(o);
+        return this.list.contains(o);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final int indexOf(final Object o)
+    {
+        return this.list.indexOf(o);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final int lastIndexOf(final Object o)
+    {
+        return this.list.lastIndexOf(o);
     }
 
     /** {@inheritDoc} */
     @Override
     public final Object[] toArray()
     {
-        return this.collection.toArray();
+        return this.list.toArray();
     }
 
     /** {@inheritDoc} */
     @Override
     public final <T> T[] toArray(final T[] a)
     {
-        return this.collection.toArray(a);
+        return this.list.toArray(a);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final E get(final int index)
+    {
+        return this.list.get(index);
     }
 
     /** {@inheritDoc} */
     @Override
     public final ImmutableIterator<E> iterator()
     {
-        return new ImmutableIterator<E>(this.collection.iterator());
+        return new ImmutableIterator<E>(this.list.iterator());
     }
 
     /** {@inheritDoc} */
     @Override
     public final void forEach(final Consumer<? super E> action)
     {
-        this.collection.forEach(action);
+        this.list.forEach(action);
     }
 
     /** {@inheritDoc} */
     @Override
     public final Spliterator<E> spliterator()
     {
-        return this.collection.spliterator();
+        return this.list.spliterator();
     }
 
     /** {@inheritDoc} */
     @Override
     public final boolean containsAll(final Collection<?> c)
     {
-        return this.collection.containsAll(c);
+        return this.list.containsAll(c);
     }
 
     /** {@inheritDoc} */
     @Override
     public final boolean containsAll(final ImmutableCollection<?> c)
     {
-        return this.collection.containsAll(c.toCollection());
+        return this.list.containsAll(c.toCollection());
     }
 
     /** {@inheritDoc} */
     @Override
     public final Stream<E> stream()
     {
-        return this.collection.stream();
+        return this.list.stream();
     }
 
     /** {@inheritDoc} */
     @Override
     public final Stream<E> parallelStream()
     {
-        return this.collection.parallelStream();
+        return this.list.parallelStream();
     }
 
     /** {@inheritDoc} */
@@ -166,7 +191,7 @@ public abstract class ImmutableAbstractSet<E> implements ImmutableSet<E>
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.collection == null) ? 0 : this.collection.hashCode());
+        result = prime * result + ((this.list == null) ? 0 : this.list.hashCode());
         return result;
     }
 
@@ -181,13 +206,13 @@ public abstract class ImmutableAbstractSet<E> implements ImmutableSet<E>
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ImmutableAbstractSet<?> other = (ImmutableAbstractSet<?>) obj;
-        if (this.collection == null)
+        ImmutableAbstractList<?> other = (ImmutableAbstractList<?>) obj;
+        if (this.list == null)
         {
-            if (other.collection != null)
+            if (other.list != null)
                 return false;
         }
-        else if (!this.collection.equals(other.collection))
+        else if (!this.list.equals(other.list))
             return false;
         return true;
     }
@@ -197,6 +222,6 @@ public abstract class ImmutableAbstractSet<E> implements ImmutableSet<E>
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "Immutable[" + this.collection.toString() + "]";
+        return "Immutable[" + this.list.toString() + "]";
     }
 }

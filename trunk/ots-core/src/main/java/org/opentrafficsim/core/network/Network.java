@@ -3,8 +3,8 @@ package org.opentrafficsim.core.network;
 import java.util.List;
 import java.util.Set;
 
+import org.opentrafficsim.base.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
 
