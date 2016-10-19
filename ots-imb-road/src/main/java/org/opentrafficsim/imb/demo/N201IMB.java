@@ -250,7 +250,7 @@ public class N201IMB extends AbstractWrappableAnimation
             Query query = N201ODfactory.getQuery(this.network, new RoadSampler(this.simulator));
             try
             {
-                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network, query,
+                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network.getId(), query,
                         new Duration(30, TimeUnit.SECOND));
             }
             catch (IMBException exception)
