@@ -14,6 +14,8 @@ import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.meta.MetaData;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataType;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * Sampler is the highest level organizer for sampling.
  * <p>
@@ -25,7 +27,6 @@ import org.opentrafficsim.kpi.sampling.meta.MetaDataType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-// TODO add precondition checks as soon as Throw works in ots-kpi, in this and other classes.
 public abstract class Sampler
 {
 
@@ -50,7 +51,7 @@ public abstract class Sampler
      */
     public final void registerSpaceTimeRegion(final SpaceTimeRegion spaceTimeRegion)
     {
-        //Throw.whenNull(spaceTimeRegion, "SpaceTimeRegion may not be null.");
+        Throw.whenNull(spaceTimeRegion, "SpaceTimeRegion may not be null.");
         Time firstPossibleDataTime;
         if (this.trajectories.containsKey(spaceTimeRegion.getLaneDirection()))
         {
@@ -60,10 +61,9 @@ public abstract class Sampler
         {
             firstPossibleDataTime = now();
         }
-        // TODO Throw
-        // Throw.when(spaceTimeRegion.getStartTime().lt(firstPossibleDataTime), IllegalStateException.class,
-        // "Space time region with start time %s is defined while data is available from %s onwards.",
-        // spaceTimeRegion.getStartTime(), firstPossibleDataTime);
+        Throw.when(spaceTimeRegion.getStartTime().lt(firstPossibleDataTime), IllegalStateException.class,
+                "Space time region with start time %s is defined while data is available from %s onwards.",
+                spaceTimeRegion.getStartTime(), firstPossibleDataTime);
         if (this.trajectories.containsKey(spaceTimeRegion.getLaneDirection()))
         {
             this.endTimes.put(spaceTimeRegion.getLaneDirection(),
@@ -103,7 +103,7 @@ public abstract class Sampler
      */
     public final void registerMetaDataTypes(final Set<MetaDataType<?>> metaDataTypes)
     {
-        //Throw.whenNull(metaDataTypes, "MetaDataTypes may not be null.");
+        Throw.whenNull(metaDataTypes, "MetaDataTypes may not be null.");
         this.registeredMetaDataTypes.addAll(metaDataTypes);
     }
 
@@ -113,7 +113,7 @@ public abstract class Sampler
      */
     public final void registerExtendedDataType(final ExtendedDataType<?> extendedDataType)
     {
-        //Throw.whenNull(extendedDataType, "ExtendedDataType may not be null.");
+        Throw.whenNull(extendedDataType, "ExtendedDataType may not be null.");
         this.extendedDataTypes.add(extendedDataType);
     }
 
@@ -123,7 +123,7 @@ public abstract class Sampler
      */
     public final void startRecording(final KpiLaneDirection kpiLaneDirection)
     {
-        //Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
+        Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
         if (this.trajectories.containsKey(kpiLaneDirection))
         {
             return;
@@ -144,7 +144,7 @@ public abstract class Sampler
      */
     public final void stopRecording(final KpiLaneDirection kpiLaneDirection)
     {
-        //Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
+        Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
         if (!this.trajectories.containsKey(kpiLaneDirection) || this.endTimes.get(kpiLaneDirection).gt(now()))
         {
             return;
@@ -170,12 +170,12 @@ public abstract class Sampler
     public final void processGtuAddEvent(final KpiLaneDirection kpiLaneDirection, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
     {
-        //Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
-        //Throw.whenNull(position, "Position may not be null.");
-        //Throw.whenNull(speed, "Speed may not be null.");
-        //Throw.whenNull(acceleration, "Acceleration may not be null.");
-        //Throw.whenNull(time, "Time may not be null.");
-        //Throw.whenNull(gtu, "GtuDataInterface may not be null.");
+        Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
+        Throw.whenNull(position, "Position may not be null.");
+        Throw.whenNull(speed, "Speed may not be null.");
+        Throw.whenNull(acceleration, "Acceleration may not be null.");
+        Throw.whenNull(time, "Time may not be null.");
+        Throw.whenNull(gtu, "GtuDataInterface may not be null.");
         String gtuId = gtu.getId();
         Trajectory trajectory = new Trajectory(gtu, makeMetaData(gtu), this.extendedDataTypes, kpiLaneDirection);
         if (!this.trajectoryPerGtu.containsKey(gtuId))
@@ -201,12 +201,12 @@ public abstract class Sampler
     public final void processGtuMoveEvent(final KpiLaneDirection kpiLaneDirection, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
     {
-        //Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
-        //Throw.whenNull(position, "Position may not be null.");
-        //Throw.whenNull(speed, "Speed may not be null.");
-        //Throw.whenNull(acceleration, "Acceleration may not be null.");
-        //Throw.whenNull(time, "Time may not be null.");
-        //Throw.whenNull(gtu, "GtuDataInterface may not be null.");
+        Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
+        Throw.whenNull(position, "Position may not be null.");
+        Throw.whenNull(speed, "Speed may not be null.");
+        Throw.whenNull(acceleration, "Acceleration may not be null.");
+        Throw.whenNull(time, "Time may not be null.");
+        Throw.whenNull(gtu, "GtuDataInterface may not be null.");
         String gtuId = gtu.getId();
         if (this.trajectoryPerGtu.containsKey(gtuId) && this.trajectoryPerGtu.get(gtuId).containsKey(kpiLaneDirection))
         {
@@ -226,15 +226,21 @@ public abstract class Sampler
     public final void processGtuRemoveEvent(final KpiLaneDirection kpiLaneDirection, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
     {
-        //Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
-        //Throw.whenNull(position, "Position may not be null.");
-        //Throw.whenNull(speed, "Speed may not be null.");
-        //Throw.whenNull(acceleration, "Acceleration may not be null.");
-        //Throw.whenNull(time, "Time may not be null.");
-        //Throw.whenNull(gtu, "GtuDataInterface may not be null.");
         processGtuMoveEvent(kpiLaneDirection, position, speed, acceleration, time, gtu);
+        processGtuRemoveEvent(kpiLaneDirection, gtu);
+    }
+    
+    /**
+     * Finalizes a trajectory.
+     * @param kpiLaneDirection lane direction the gtu is at
+     * @param gtu gtu
+     */
+    public final void processGtuRemoveEvent(final KpiLaneDirection kpiLaneDirection, final GtuDataInterface gtu)
+    {
+        Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
+        Throw.whenNull(gtu, "GtuDataInterface may not be null.");
         String gtuId = gtu.getId();
-        if (this.trajectoryPerGtu.get(gtuId) != null)
+        if (this.trajectoryPerGtu.containsKey(gtuId))
         {
             this.trajectoryPerGtu.get(gtuId).remove(kpiLaneDirection);
             if (this.trajectoryPerGtu.get(gtuId).isEmpty())

@@ -5,6 +5,8 @@ import java.io.Serializable;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * Store one position, direction and lane of a GTU.
  * <p>
@@ -34,15 +36,14 @@ public class KpiDirectedLanePosition implements Serializable
      * Construct a new DirectedLanePosition.
      * @param lane Lane; the lane for the position
      * @param position Length; the position on the lane, relative to the cross section link (design line)
-     * @param gtuDirection GTUDirectionality; the direction the vehicle is driving to -- either in the direction of the design
-     *            line, or against it
+     * @param gtuDirection KpiGtuDirectionality; the direction the vehicle is driving to -- either in the direction of the
+     *            design line, or against it
      */
     public KpiDirectedLanePosition(final LaneDataInterface lane, final Length position, final KpiGtuDirectionality gtuDirection)
     {
-        // TODO Throw
-        // Throw.when(lane == null, GTUException.class, "lane is null");
-        // Throw.when(position == null, GTUException.class, "position is null");
-        // Throw.when(gtuDirection == null, GTUException.class, "gtuDirection is null");
+        Throw.whenNull(lane, "lane is null");
+        Throw.whenNull(position, "position is null");
+        Throw.whenNull(gtuDirection, "gtuDirection is null");
         this.lane = lane;
         this.position = position;
         this.gtuDirection = gtuDirection;

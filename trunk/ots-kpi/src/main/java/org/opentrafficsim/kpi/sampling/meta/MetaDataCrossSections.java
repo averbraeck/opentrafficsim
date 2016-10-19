@@ -10,6 +10,8 @@ import org.opentrafficsim.kpi.sampling.KpiDirectedLanePosition;
 import org.opentrafficsim.kpi.sampling.TrajectoryAcceptList;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * Accepts trajectories that have passed all cross sections as defined in a query.
  * <p>
@@ -45,6 +47,8 @@ public class MetaDataCrossSections extends MetaDataType<CrossSection>
     @Override
     public final void accept(final TrajectoryAcceptList trajectoryAcceptList, final Set<CrossSection> querySet)
     {
+        Throw.whenNull(trajectoryAcceptList, "Trajectory accept list may not be null.");
+        Throw.whenNull(querySet, "Qeury set may not be null.");
         Set<CrossSection> crossedCrossSections = new HashSet<>();
         // Loop over trajectoryList/trajectoryGroupList combo
         for (int i = 0; i < trajectoryAcceptList.size(); i++)
@@ -88,7 +92,7 @@ public class MetaDataCrossSections extends MetaDataType<CrossSection>
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "MetaDataCrossSections: " + super.toString();
+        return "MetaDataCrossSections: [id=" + getId() + "]";
     }
 
 }

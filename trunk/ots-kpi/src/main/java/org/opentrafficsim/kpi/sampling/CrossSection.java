@@ -5,8 +5,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.opentrafficsim.base.immutablecollections.ImmutableIterator;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.interfaces.LinkDataInterface;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * A cross sections contains locations on lanes that together make up a cross section. It is not required that this is on a
@@ -35,6 +38,7 @@ public class CrossSection implements Serializable
      */
     public CrossSection(final Set<KpiDirectedLanePosition> directedLanePositions)
     {
+        Throw.whenNull(directedLanePositions, "Directed lane positions may not be null.");
         this.directedLanePositions = new HashSet<>(directedLanePositions);
     }
 
@@ -47,6 +51,8 @@ public class CrossSection implements Serializable
      */
     public CrossSection(final LinkDataInterface link, final KpiGtuDirectionality direction, final double fraction) throws SamplingException
     {
+        Throw.whenNull(link, "Link lane positions may not be null.");
+        Throw.whenNull(direction, "Direction may not be null.");
         this.directedLanePositions = new HashSet<>();
         for (LaneDataInterface lane : link.getLaneDatas())
         {
@@ -77,9 +83,7 @@ public class CrossSection implements Serializable
      */
     public final Iterator<KpiDirectedLanePosition> getIterator()
     {
-        // TODO use immutable
-        // return new ImmutableIterator<>(this.directedLanePositions.iterator());
-        return this.directedLanePositions.iterator();
+         return new ImmutableIterator<>(this.directedLanePositions.iterator());
     }
 
     /** {@inheritDoc} */

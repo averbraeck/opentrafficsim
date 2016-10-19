@@ -16,8 +16,8 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.djunits</groupId>
-      <artifactId>djunits</artifactId>
+      <groupId>opentrafficsim</groupId>
+      <artifactId>ots-base</artifactId>
     </dependency>
     
   </dependencies>

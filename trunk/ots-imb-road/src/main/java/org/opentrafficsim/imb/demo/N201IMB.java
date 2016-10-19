@@ -36,9 +36,9 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.NodeTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SensorGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.StatisticsGTULaneTransceiver;
+import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
-import org.opentrafficsim.road.network.sampling.Query;
-import org.opentrafficsim.road.network.sampling.Sampler;
+import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
@@ -247,7 +247,7 @@ public class N201IMB extends AbstractWrappableAnimation
             {
                 exception.printStackTrace();
             }
-            Query query = N201ODfactory.getQuery(this.network, new Sampler(this.simulator));
+            Query query = N201ODfactory.getQuery(this.network, new RoadSampler(this.simulator));
             try
             {
                 new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network, query,

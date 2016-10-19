@@ -1,10 +1,15 @@
 package org.opentrafficsim.kpi.sampling.meta;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import org.opentrafficsim.base.immutablecollections.ImmutableIterator;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Collection of object sets, one object set per meta data type included. This defines constraints to which meta data has to
@@ -37,6 +42,7 @@ public class MetaDataSet
      */
     public MetaDataSet(final MetaDataSet metaDataSet)
     {
+        Throw.whenNull(metaDataSet, "Meta data set may not be null.");
         for (MetaDataType<?> metaDataType : metaDataSet.metaDataMap.keySet())
         {
             this.metaDataMap.put(metaDataType, metaDataSet.metaDataMap.get(metaDataType));
@@ -50,6 +56,8 @@ public class MetaDataSet
      */
     public final <T> void put(final MetaDataType<T> metaDataType, final Set<T> values)
     {
+        Throw.whenNull(metaDataType, "Meta data type may not be null.");
+        Throw.whenNull(values, "Values may not be null.");
         this.metaDataMap.put(metaDataType, values);
     }
 
@@ -78,7 +86,7 @@ public class MetaDataSet
      */
     public final Set<MetaDataType<?>> getMetaDataTypes()
     {
-        return this.metaDataMap.keySet();
+        return new HashSet<>(this.metaDataMap.keySet());
     }
 
     /**
@@ -94,9 +102,7 @@ public class MetaDataSet
      */
     public final Iterator<Entry<MetaDataType<?>, Set<?>>> getMetaDataSetIterator()
     {
-        // TODO immutable
-        //return new ImmutableIterator<>(this.metaDataMap.entrySet().iterator());
-        return this.metaDataMap.entrySet().iterator();
+        return new ImmutableIterator<>(this.metaDataMap.entrySet().iterator());
     }
 
     /** {@inheritDoc} */

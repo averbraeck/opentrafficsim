@@ -33,7 +33,6 @@ public class GtuData implements GtuDataInterface
      */
     public GtuData(final String id, final GtuTypeData gtuType, final RouteData route)
     {
-        super();
         this.id = id;
         this.gtuType = gtuType;
         this.route = route;

@@ -3,6 +3,8 @@ package org.opentrafficsim.kpi.sampling;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -40,10 +42,15 @@ public class SpaceTimeRegion
      * @throws IllegalArgumentException if start time is larger than end time
      */
     SpaceTimeRegion(final KpiLaneDirection laneDirection, final Length startPosition, final Length endPosition,
-        final Time startTime, final Time endTime)
+            final Time startTime, final Time endTime)
     {
-        // TODO Throw
-        //Throw.when(endTime.lt(startTime), IllegalArgumentException.class, "Start time is larger than end time.");
+        Throw.whenNull(startPosition, "Start position may not be null.");
+        Throw.whenNull(endPosition, "End position may not be null.");
+        Throw.whenNull(startTime, "Start time may not be null.");
+        Throw.whenNull(endTime, "End time may not be null.");
+        Throw.when(endPosition.lt(startPosition), IllegalArgumentException.class,
+                "End position should be greater than start position.");
+        Throw.when(endTime.lt(startTime), IllegalArgumentException.class, "End time should be greater than start time.");
         this.laneDirection = laneDirection;
         this.startPosition = startPosition;
         this.endPosition = endPosition;

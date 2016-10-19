@@ -1,17 +1,32 @@
 package org.opentrafficsim.imb.kpi;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.connector.IMBConnector;
 import org.opentrafficsim.imb.transceiver.Transceiver;
+import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
+import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
+import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.Sampler;
+import org.opentrafficsim.kpi.sampling.meta.MetaDataGtuType;
+import org.opentrafficsim.kpi.sampling.meta.MetaDataSet;
 
 import nl.tno.imb.TByteBuffer;
 import nl.tno.imb.TEventEntry;
@@ -34,7 +49,7 @@ public class IMBSampler extends Sampler
     private final IMBConnector imbConnector;
 
     /** The last received timestamp. */
-    private final Time lastTimestamp = Time.ZERO;
+    private Time lastTimestamp = Time.ZERO;
 
     /** The recording start times per KpiLaneDirection. */
     private final Map<KpiLaneDirection, Time> startRecordingMap = new HashMap<>();
@@ -53,6 +68,9 @@ public class IMBSampler extends Sampler
 
     /** the gtus. */
     protected final Map<String, GtuData> gtus = new HashMap<>();
+
+    /** last lane of gtus. */
+    protected final Map<String, KpiLaneDirection> lastLanes = new HashMap<>();
 
     /** the default gtu type (for now). */
     protected final GtuTypeData defaultGtuType;
@@ -87,7 +105,7 @@ public class IMBSampler extends Sampler
     }
 
     /**
-     * Constructor which uses the operational plan updates of GTU's as sampling interval.
+     * Constructor which starts the IMB connection, with listeners for nodes, links, lanes and gtu's.
      * @param host String; name of the IMB hub
      * @param port int; port number of the IMB hub
      * @param modelName String; local model name
@@ -110,15 +128,56 @@ public class IMBSampler extends Sampler
 
         Transceiver nodeTransceiver = new NodeTransceiver(this, this.imbConnector);
         this.imbConnector.register(nodeTransceiver.getId(), nodeTransceiver);
-        
+
         Transceiver linkTransceiver = new LinkTransceiver(this, this.imbConnector);
         this.imbConnector.register(linkTransceiver.getId(), linkTransceiver);
-        
+
         Transceiver laneTransceiver = new LaneTransceiver(this, this.imbConnector);
         this.imbConnector.register(laneTransceiver.getId(), laneTransceiver);
 
         Transceiver gtuTransceiver = new GTUTransceiver(this, this.imbConnector);
         this.imbConnector.register(gtuTransceiver.getId(), gtuTransceiver);
+
+    }
+
+    /**
+     * @return query covering the entire N201
+     */
+    private Query getQuery()
+    {
+        // String[] southBound = new String[] { "L1a", "L2a", "L3a4a", "L5a", "L6a", "L7a", "L8a9a", "L10a11a", "L12a",
+        // "L13a14a",
+        // "L15a16a", "L17a", "L18a19a", "L20a21a", "L22a", "L23a24a", "L25a", "L26a", "L27a", "L28a29a", "L30a", "L31a",
+        // "L32a", "L33a", "L34a", "L35a", "L36a", "L37a", "L38a", "L39a", "L40a", "L41a", "L42a", "L43a", "L44a", "L45a",
+        // "L46a", "L47a48a", "L49a" };
+        String[] southBound = new String[] { "L2a" };
+        String[] northBound = new String[] { "L49b", "L48b47b", "L46b", "L45b", "L44b", "L43b", "L42b", "L41b", "L40b", "L39b",
+                "L38b", "L37b", "L36b", "L35b", "L34b", "L33b", "L32b", "L31b", "L30b", "L29b28b", "L27b", "L26b", "L25b",
+                "L24b23b", "L22b21b", "L20b", "L19b18b", "L17b16b", "L15b", "L14b13b", "L12b", "L11b", "L10b", "L9b8b", "L7b",
+                "L6b", "L5b", "L4b3b", "L2b", "L1b" };
+        MetaDataSet metaDataSet = new MetaDataSet();
+        Set<GtuTypeDataInterface> gtuTypes = new HashSet<>();
+        gtuTypes.add(new GtuTypeData("car"));
+        gtuTypes.add(new GtuTypeData("bus"));
+        metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+        Query query = new Query(this, "N201 both directions", metaDataSet, new Frequency(2.0, FrequencyUnit.PER_MINUTE));
+        // addSpaceTimeRegions(query, northBound);
+        addSpaceTimeRegions(query, southBound);
+        return query;
+    }
+
+    /**
+     * @param query query
+     * @param network network
+     * @param links link names
+     */
+    private void addSpaceTimeRegions(final Query query, final String[] links)
+    {
+        for (String link : links)
+        {
+            query.addSpaceTimeRegionLink(this.links.get(link), KpiGtuDirectionality.DIR_PLUS, new Length(0.0, LengthUnit.SI),
+                    this.links.get(link).getLength(), new Time(0.0, TimeUnit.SI), new Time(1.0, TimeUnit.HOUR));
+        }
     }
 
     /** {@inheritDoc} */
@@ -163,14 +222,87 @@ public class IMBSampler extends Sampler
      * @param timeStamp
      * @param gtuId
      * @param laneId
+     * @param forward
      * @param longitudinalPosition
      * @param speed
      * @param acceleration
      */
-    protected void sample(double timeStamp, String gtuId, String laneId, double longitudinalPosition, double speed,
-            double acceleration)
+    protected void sample(double timeStamp, String gtuId, String laneId, boolean forward, double longitudinalPosition,
+            double speed, double acceleration)
     {
-        // TODO
+        // update clock
+        updateClock(timeStamp);
+        if (!this.lanes.containsKey(laneId))
+        {
+            // lane not part of this network
+            return;
+        }
+        KpiLaneDirection kpiLaneDirection = new KpiLaneDirection(this.lanes.get(laneId),
+                forward ? KpiGtuDirectionality.DIR_PLUS : KpiGtuDirectionality.DIR_MINUS);
+        GtuData gtu = this.gtus.get(gtuId);
+        if (this.lastLanes.containsKey(gtuId) && contains(this.lastLanes.get(gtuId))
+                && !this.lastLanes.get(gtuId).equals(kpiLaneDirection))
+        {
+            processGtuRemoveEvent(this.lastLanes.get(gtuId), gtu);
+        }
+        if ((!this.lastLanes.containsKey(gtuId) || !this.lastLanes.get(gtuId).equals(kpiLaneDirection))
+                && contains(kpiLaneDirection))
+        {
+            processGtuAddEvent(kpiLaneDirection, new Length(longitudinalPosition, LengthUnit.SI),
+                    new Speed(speed, SpeedUnit.SI), new Acceleration(acceleration, AccelerationUnit.SI), now(), gtu);
+        }
+        else if (contains(kpiLaneDirection))
+        {
+            // move on current
+            processGtuMoveEvent(kpiLaneDirection, new Length(longitudinalPosition, LengthUnit.SI),
+                    new Speed(speed, SpeedUnit.SI), new Acceleration(acceleration, AccelerationUnit.SI), now(), gtu);
+        }
+        this.lastLanes.put(gtuId, kpiLaneDirection);
+    }
+
+    /** trigger query only once. */
+    private boolean queryObtained = false;
+
+    /**
+     * Updates clock and triggers timed events.
+     * @param timeStamp most recent time stamp
+     */
+    protected void updateClock(double timeStamp)
+    {
+        if (!this.queryObtained)
+        {
+            getQuery();
+            this.queryObtained = true;
+        }
+        if (this.lastTimestamp.si >= timeStamp)
+        {
+            return;
+        }
+        this.lastTimestamp = new Time(timeStamp, TimeUnit.SI);
+        Iterator<KpiLaneDirection> iterator = this.startRecordingMap.keySet().iterator();
+        while (iterator.hasNext())
+        {
+            KpiLaneDirection kpiLaneDirection = iterator.next();
+            if (now().ge(this.startRecordingMap.get(kpiLaneDirection)))
+            {
+                System.out.println(
+                        "IMB sampler: started recording on lane " + ((LaneData) kpiLaneDirection.getLaneData()).getLaneName());
+                startRecording(kpiLaneDirection);
+            }
+            iterator.remove();
+        }
+        iterator = this.stopRecordingMap.keySet().iterator();
+        while (iterator.hasNext())
+        {
+            KpiLaneDirection kpiLaneDirection = iterator.next();
+            if (now().ge(this.stopRecordingMap.get(kpiLaneDirection)))
+            {
+                System.out.println(
+                        "IMB sampler: stopped recording on lane " + ((LaneData) kpiLaneDirection.getLaneData()).getLaneName());
+                stopRecording(kpiLaneDirection);
+            }
+            iterator.remove();
+        }
     }
 
     /* ************************************************************************************************************** */
@@ -192,7 +324,6 @@ public class IMBSampler extends Sampler
          */
         public GTUTransceiver(final IMBSampler sampler, final IMBConnector imbConnector)
         {
-            super();
             this.imbConnector = imbConnector;
             this.sampler = sampler;
         }
@@ -215,7 +346,8 @@ public class IMBSampler extends Sampler
                     double rotZ = imbPayload.readDouble();
                     String networkId = imbPayload.readString();
                     String linkId = imbPayload.readString();
-                    String laneId = imbPayload.readString();
+                    // TODO laneId should be unique on its own
+                    String laneId = linkId + "." + imbPayload.readString();
                     double longitudinalPosition = imbPayload.readDouble();
                     double length = imbPayload.readDouble();
                     double width = imbPayload.readDouble();
@@ -239,7 +371,8 @@ public class IMBSampler extends Sampler
                     double rotZ = imbPayload.readDouble();
                     String networkId = imbPayload.readString();
                     String linkId = imbPayload.readString();
-                    String laneId = imbPayload.readString();
+                    // TODO laneId should be unique on its own
+                    String laneId = linkId + "." + imbPayload.readString();
                     double longitudinalPosition = imbPayload.readDouble();
                     double speed = imbPayload.readDouble();
                     double acceleration = imbPayload.readDouble();
@@ -248,7 +381,7 @@ public class IMBSampler extends Sampler
                     double odometer = imbPayload.readDouble();
                     boolean forward = true;
 
-                    this.sampler.sample(timeStamp, gtuId, laneId, longitudinalPosition, speed, acceleration);
+                    this.sampler.sample(timeStamp, gtuId, laneId, forward, longitudinalPosition, speed, acceleration);
 
                     break;
                 }
@@ -296,7 +429,6 @@ public class IMBSampler extends Sampler
          */
         public NodeTransceiver(final IMBSampler sampler, final IMBConnector imbConnector)
         {
-            super();
             this.imbConnector = imbConnector;
             this.sampler = sampler;
         }
@@ -372,7 +504,6 @@ public class IMBSampler extends Sampler
          */
         public LinkTransceiver(final IMBSampler sampler, final IMBConnector imbConnector)
         {
-            super();
             this.imbConnector = imbConnector;
             this.sampler = sampler;
         }
@@ -463,7 +594,6 @@ public class IMBSampler extends Sampler
          */
         public LaneTransceiver(final IMBSampler sampler, final IMBConnector imbConnector)
         {
-            super();
             this.imbConnector = imbConnector;
             this.sampler = sampler;
         }
@@ -481,7 +611,8 @@ public class IMBSampler extends Sampler
                     double timeStamp = imbPayload.readDouble();
                     String networkId = imbPayload.readString();
                     String linkId = imbPayload.readString();
-                    String laneId = imbPayload.readString();
+                    // TODO laneId should be unique on its own
+                    String laneId = linkId + "." + imbPayload.readString();
                     int laneNumber = imbPayload.readInt32();
                     int dlNumPoints = imbPayload.readInt32();
                     double len = 0.0;
@@ -500,6 +631,10 @@ public class IMBSampler extends Sampler
                     }
                     Length length = new Length(len, LengthUnit.SI);
                     LaneData laneData = new LaneData(this.sampler.links.get(linkId), laneId, length);
+                    if (this.sampler.lanes.containsKey(laneId))
+                    {
+                        System.out.println("Lanes not unique.");
+                    }
                     this.sampler.lanes.put(laneId, laneData);
                     break;
                 }

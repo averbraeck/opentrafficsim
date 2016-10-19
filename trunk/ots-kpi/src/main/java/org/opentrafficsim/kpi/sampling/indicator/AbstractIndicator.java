@@ -4,6 +4,8 @@ import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.kpi.sampling.Query;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * Abstract indicator which stores the last calculated value and returns it in {@code getValue()} for an equal query, start time
  * and end time.
@@ -17,9 +19,6 @@ import org.opentrafficsim.kpi.sampling.Query;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> class of the value
  */
-// TODO standard deviation, percentiles, min/max
-// XXX think about using Tally and Persistent for some of the indicators. Maybe extend Indicator to TallyIndicator?
-// XXX Persistent is already a time-weighed indicator that calculates mean, std, min, max, and confidence interval.
 public abstract class AbstractIndicator<T extends DoubleScalarInterface>
 {
 
@@ -56,10 +55,9 @@ public abstract class AbstractIndicator<T extends DoubleScalarInterface>
      */
     public final T getValue(final Query query, final Time startTime, final Time endTime)
     {
-        // TODO Throw
-        //Throw.whenNull(query, "Query may not be null.");
-        //Throw.whenNull(startTime, "Start time may not be null.");
-        //Throw.whenNull(endTime, "End time may not be null.");
+        Throw.whenNull(query, "Query may not be null.");
+        Throw.whenNull(startTime, "Start time may not be null.");
+        Throw.whenNull(endTime, "End time may not be null.");
         if (this.lastQuery == null || !this.lastQuery.equals(query) || !this.lastStartTime.equals(startTime)
                 || !this.lastEndTime.equals(endTime))
         {

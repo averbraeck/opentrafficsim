@@ -3,6 +3,8 @@ package org.opentrafficsim.kpi.sampling.meta;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.interfaces.NodeDataInterface;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * Accepts trajectories with a destination node included in a set in a query.
  * <p>
@@ -29,6 +31,7 @@ public class MetaDataDestination extends MetaDataType<NodeDataInterface>
     @Override
     public final NodeDataInterface getValue(final GtuDataInterface gtu)
     {
+        Throw.whenNull(gtu, "GTU may not be null.");
         return gtu.getDestinationNodeData();
     }
 
@@ -37,7 +40,7 @@ public class MetaDataDestination extends MetaDataType<NodeDataInterface>
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "MetaDataDestination " + super.toString();
+        return "MetaDataDestination: [id=" + getId() + "]";
     }
 
 }

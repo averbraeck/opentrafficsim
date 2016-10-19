@@ -5,6 +5,8 @@ import java.io.Serializable;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -32,7 +34,8 @@ public class KpiLaneDirection implements Serializable
      */
     public KpiLaneDirection(final LaneDataInterface lane, final KpiGtuDirectionality direction)
     {
-        super();
+        Throw.whenNull(lane, "Lane may not be null.");
+        Throw.whenNull(direction, "Direction may not be null.");
         this.lane = lane;
         this.direction = direction;
     }
@@ -61,6 +64,7 @@ public class KpiLaneDirection implements Serializable
      */
     public final Length getPositionInDirection(Length position)
     {
+        Throw.whenNull(position, "Position may not be null.");
         return this.direction.equals(KpiGtuDirectionality.DIR_PLUS) ? position : this.lane.getLength().minus(position);
     }
 

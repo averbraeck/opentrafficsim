@@ -1,6 +1,7 @@
 package org.opentrafficsim.kpi.sampling.indicator;
 
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.kpi.sampling.Query;
@@ -8,6 +9,7 @@ import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 
 /**
+ * Sum of trajectory durations minus the sum of trajectory lengths divided by a reference speed.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -36,16 +38,18 @@ public class TotalDelay extends AbstractIndicator<Duration>
     @Override
     public final Duration calculate(final Query query, final Time startTime, final Time endTime)
     {
-        Duration sum = Duration.ZERO;
+        Duration sumTime = Duration.ZERO;
+        Length sumDist = Length.ZERO;
         for (TrajectoryGroup trajectoryGroup : query.getTrajectoryGroups(startTime, endTime))
         {
             // TODO: use data points and limit speed per interval
             for (Trajectory trajectory : trajectoryGroup.getTrajectories())
             {
-                sum = sum.plus(trajectory.getTotalDuration().minus(trajectory.getTotalLength().divideBy(this.referenceSpeed)));
+                sumTime = sumTime.plus(trajectory.getTotalDuration());
+                sumDist = sumDist.plus(trajectory.getTotalLength());
             }
         }
-        return sum;
+        return sumTime.minus(sumDist.divideBy(this.referenceSpeed));
     }
 
     /** {@inheritDoc} */

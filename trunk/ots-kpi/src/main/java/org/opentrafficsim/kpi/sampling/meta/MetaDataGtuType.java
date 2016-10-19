@@ -3,6 +3,8 @@ package org.opentrafficsim.kpi.sampling.meta;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * Accepts trajectories with a GTUType included in a set in a query.
  * <p>
@@ -29,6 +31,7 @@ public class MetaDataGtuType extends MetaDataType<GtuTypeDataInterface>
     @Override
     public final GtuTypeDataInterface getValue(final GtuDataInterface gtu)
     {
+        Throw.whenNull(gtu, "GTU may not be null.");
         return gtu.getGtuTypeData();
     }
     
@@ -37,7 +40,7 @@ public class MetaDataGtuType extends MetaDataType<GtuTypeDataInterface>
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "MetaDataGTUType: " + super.toString();
+        return "MetaDataGTUType: [id=" + getId() + "]";
     }
 
 }

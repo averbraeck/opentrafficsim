@@ -3,6 +3,8 @@ package org.opentrafficsim.kpi.sampling.meta;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.interfaces.RouteDataInterface;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * Accepts trajectories with a Route included in a set in a query.
  * <p>
@@ -29,6 +31,7 @@ public class MetaDataRoute extends MetaDataType<RouteDataInterface>
     @Override
     public final RouteDataInterface getValue(final GtuDataInterface gtu)
     {
+        Throw.whenNull(gtu, "GTU may not be null.");
         return gtu.getRouteData();
     }
     
@@ -37,7 +40,7 @@ public class MetaDataRoute extends MetaDataType<RouteDataInterface>
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "MetaDataRoute: " + super.toString();
+        return "MetaDataRoute: [id=" + getId() + "]";
     }
 
 }

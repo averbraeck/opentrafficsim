@@ -1,6 +1,7 @@
-package org.opentrafficsim.imb.kpi;
+package org.opentrafficsim.road.network.sampling;
 
-import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
+import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.kpi.interfaces.NodeDataInterface;
 
 /**
  * <p>
@@ -12,63 +13,74 @@ import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class GtuTypeData implements GtuTypeDataInterface
+public class NodeData implements NodeDataInterface
 {
-    /** type name. */
-    private final String  gtuTypeName;
+
+    /** Node. */
+    private final Node node;
 
     /**
-     * @param gtuTypeName gtu type name
+     * @param node node
      */
-    public GtuTypeData(final String gtuTypeName)
+    public NodeData(final Node node)
     {
-        this.gtuTypeName = gtuTypeName;
+        this.node = node;
     }
 
     /**
-     * @return gtuTypeName
+     * @return node.
      */
-    public final String getGtuTypeName()
+    public final Node getNode()
     {
-        return this.gtuTypeName;
+        return this.node;
     }
 
     /** {@inheritDoc} */
     @Override
-    public int hashCode()
+    public final int hashCode()
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.gtuTypeName == null) ? 0 : this.gtuTypeName.hashCode());
+        result = prime * result + ((this.node == null) ? 0 : this.node.hashCode());
         return result;
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj)
+    public final boolean equals(final Object obj)
     {
         if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        GtuTypeData other = (GtuTypeData) obj;
-        if (this.gtuTypeName == null)
         {
-            if (other.gtuTypeName != null)
-                return false;
+            return true;
         }
-        else if (!this.gtuTypeName.equals(other.gtuTypeName))
+        if (obj == null)
+        {
             return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        NodeData other = (NodeData) obj;
+        if (this.node == null)
+        {
+            if (other.node != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.node.equals(other.node))
+        {
+            return false;
+        }
         return true;
     }
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
-        return "GtuTypeData [gtuTypeName=" + this.gtuTypeName + "]";
+        return "NodeData [node=" + this.node + "]";
     }
-
+    
 }

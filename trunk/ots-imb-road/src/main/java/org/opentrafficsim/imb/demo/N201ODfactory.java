@@ -1,7 +1,9 @@
 package org.opentrafficsim.imb.demo;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
@@ -27,6 +29,12 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
+import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
+import org.opentrafficsim.kpi.sampling.Query;
+import org.opentrafficsim.kpi.sampling.Sampler;
+import org.opentrafficsim.kpi.sampling.meta.MetaDataGtuType;
+import org.opentrafficsim.kpi.sampling.meta.MetaDataSet;
 import org.opentrafficsim.road.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -41,9 +49,8 @@ import org.opentrafficsim.road.gtu.strategical.od.ODMatrixTrips;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.sampling.Query;
-import org.opentrafficsim.road.network.sampling.Sampler;
-import org.opentrafficsim.road.network.sampling.meta.MetaDataSet;
+import org.opentrafficsim.road.network.sampling.GtuTypeData;
+import org.opentrafficsim.road.network.sampling.LinkData;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -223,7 +230,12 @@ public class N201ODfactory
                 "L38b", "L37b", "L36b", "L35b", "L34b", "L33b", "L32b", "L31b", "L30b", "L29b28b", "L27b", "L26b", "L25b",
                 "L24b23b", "L22b21b", "L20b", "L19b18b", "L17b16b", "L15b", "L14b13b", "L12b", "L11b", "L10b", "L9b8b", "L7b",
                 "L6b", "L5b", "L4b3b", "L2b", "L1b" };
-        Query query = new Query(sampling, "N201 both directions", new MetaDataSet(),
+        MetaDataSet metaDataSet = new MetaDataSet();
+        Set<GtuTypeDataInterface> gtuTypes = new HashSet<>();
+        gtuTypes.add(new GtuTypeData(new GTUType("CAR")));
+        gtuTypes.add(new GtuTypeData(new GTUType("BUS")));
+        metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+        Query query = new Query(sampling, "N201 both directions", metaDataSet,
                 new Frequency(2.0, FrequencyUnit.PER_MINUTE));
         // addSpaceTimeRegions(query, network, northBound);
         addSpaceTimeRegions(query, network, southBound);
@@ -239,8 +251,8 @@ public class N201ODfactory
     {
         for (String link : links)
         {
-            query.addSpaceTimeRegionLink((CrossSectionLink) network.getLink(link), GTUDirectionality.DIR_PLUS, Length.ZERO,
-                    network.getLink(link).getLength(), Time.ZERO, new Time(1.0, TimeUnit.HOUR));
+            query.addSpaceTimeRegionLink(new LinkData((CrossSectionLink) network.getLink(link)), KpiGtuDirectionality.DIR_PLUS,
+                    Length.ZERO, network.getLink(link).getLength(), new Time(0, TimeUnit.SI), new Time(1.0, TimeUnit.HOUR));
         }
     }
 
