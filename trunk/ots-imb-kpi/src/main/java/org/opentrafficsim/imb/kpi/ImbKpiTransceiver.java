@@ -1,5 +1,6 @@
-package org.opentrafficsim.imb.transceiver.urbanstrategy;
+package org.opentrafficsim.imb.kpi;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,11 +11,9 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.connector.Connector.IMBEventType;
-import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.indicator.MeanSpeed;
 import org.opentrafficsim.kpi.sampling.indicator.MeanTravelTime;
@@ -23,9 +22,6 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalDelay;
 import org.opentrafficsim.kpi.sampling.indicator.TotalNumberOfStops;
 import org.opentrafficsim.kpi.sampling.indicator.TotalTravelDistance;
 import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * OTS can publish messages about statistics or Key Performance Indicators (KPIs) of the relation between GTUs and a part of the
@@ -263,11 +259,15 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class StatisticsGTULaneTransceiver extends AbstractTransceiver
+public class ImbKpiTransceiver implements Serializable
 {
+    
     /** */
     private static final long serialVersionUID = 20160923L;
 
+    /** IMB connector. */
+    private final Connector connector;
+    
     /** The query for the statistic. */
     private final Query query;
 
@@ -287,31 +287,32 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
 
     private MeanTripLength meanTripLength = new MeanTripLength();
 
-    private TotalDelay totalDelay = new TotalDelay(new Speed(80.0, SpeedUnit.KM_PER_HOUR));
+    private TotalDelay totalDelay = new TotalDelay(new Speed(130.0, SpeedUnit.KM_PER_HOUR));
 
     private TotalNumberOfStops totalNumberOfStops = new TotalNumberOfStops();
+    
+    private Time updateTime = Time.ZERO;
 
     // TODO implement DELETE message
 
     /**
      * Construct a new StatisticsGTULaneTransceiver.
      * @param connector Connector; the IMB connector
-     * @param simulator SimpleSimulatorInterface; the simulator
+     * @param time Time; time of creation
      * @param networkId String; the network id
      * @param query Query; the statistics query
      * @param transmissionInterval Duration; the interval between generation of graphs
-     * @throws IMBException when the message cannot be posted, or the scheduling of the publish event fails
      */
-    public StatisticsGTULaneTransceiver(final Connector connector, SimpleSimulatorInterface simulator, String networkId,
+    public ImbKpiTransceiver(final Connector connector, Time time, String networkId,
             final Query query, final Duration transmissionInterval) throws IMBException
     {
-        super("StatisticsGTULane", connector, simulator);
+        this.connector = connector;
         this.query = query;
         this.networkId = networkId;
         this.transmissionInterval = transmissionInterval;
 
         List<Object> newMessage = new ArrayList<>();
-        newMessage.add(getSimulator().getSimulatorTime().getTime().si);
+        newMessage.add(time.si);
         newMessage.add(query.getId());
         newMessage.add(query.toString());
         newMessage.add(this.networkId);
@@ -321,25 +322,35 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
         newMessage.add(true); // TODO totalTrajectory
         newMessage.add(transmissionInterval.si);
 
-        getConnector().postIMBMessage("StatisticsGTULane", IMBEventType.NEW, newMessage.toArray());
-
-        try
+        this.connector.postIMBMessage("StatisticsGTULane", IMBEventType.NEW, newMessage.toArray());
+        sendStatisticsUpdate();
+    }
+    
+    /**
+     * Notifies about time, such that statistics over some period (very recently ended) can be gathered and published.
+     * @param time
+     */
+    public void notifyTime(Time time)
+    {
+        if (time.gt(this.updateTime))
         {
-            simulator.scheduleEventRel(this.transmissionInterval, this, this, "sendStatisticsUpdate", new Object[] {});
-        }
-        catch (SimRuntimeException exception)
-        {
-            throw new IMBException(exception);
+            try
+            {
+                sendStatisticsUpdate();
+            }
+            catch (IMBException exception)
+            {
+                throw new RuntimeException("Cannot send statistics update.", exception);
+            }
         }
     }
 
     /**
      * @throws IMBException when the transmission of the IMB message fails
-     * @throws SimRuntimeException when the scheduling of the next publish event fails
      */
-    public void sendStatisticsUpdate() throws IMBException, SimRuntimeException
+    public void sendStatisticsUpdate() throws IMBException
     {
-        double time = getSimulator().getSimulatorTime().getTime().si;
+        double time = this.updateTime.si;
         Length tdist = this.totalTravelDistance.getValue(this.query, new Time(time, TimeUnit.SI));
         Duration ttt = this.totalTravelTime.getValue(this.query, new Time(time, TimeUnit.SI));
         Speed ms = this.meanSpeed.getValue(this.query, new Time(time, TimeUnit.SI));
@@ -355,12 +366,12 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
         System.out.println("Mean trip length " + mtl);
         System.out.println("Total delay " + tdel);
         System.out.println("Number of stops " + nos);
-        getConnector().postIMBMessage(
+        this.connector.postIMBMessage(
                 "StatisticsGTULane",
                 IMBEventType.CHANGE,
-                new Object[] { getSimulator().getSimulatorTime().getTime().si, this.query.getId(), tdist.si, ttt.si, ms.si,
+                new Object[] { time, this.query.getId(), tdist.si, ttt.si, ms.si,
                         mtt.si, tdel.si, mtl.si, nos.si });
-        getSimulator().scheduleEventRel(this.transmissionInterval, this, this, "sendStatisticsUpdate", new Object[] {});
+        this.updateTime = this.updateTime.plus(this.transmissionInterval);
     }
 
 }
