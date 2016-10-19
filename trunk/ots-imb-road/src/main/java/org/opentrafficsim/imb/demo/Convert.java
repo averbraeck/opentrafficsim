@@ -6,8 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import nl.tudelft.simulation.language.io.URLResource;
 
@@ -30,7 +32,11 @@ public class Convert
 
     private static Map<Coordinate, String> coordinateMap = new HashMap<>();
 
+    private static Map<String, Integer> nodeMaxLanesMap = new HashMap<>();
+
     private static List<String> linksEB = new ArrayList<>();
+    
+    private static Set<String> mainNodes = new HashSet<>();
 
     private static List<String> linksWB = new ArrayList<>();
 
@@ -122,6 +128,10 @@ public class Convert
             nodes.add(sf);
             coordinateMap.put(cf, sf);
         }
+        if (!nodeMaxLanesMap.containsKey(sf))
+        {
+            nodeMaxLanesMap.put(sf, 0);
+        }
 
         Coordinate cl = new Coordinate(Double.parseDouble(xc.get(xc.size() - 1)), Double.parseDouble(yc.get(yc.size() - 1)));
         String sl = "N" + (nodes.size() + 1) + dir;
@@ -130,6 +140,10 @@ public class Convert
             System.out.println("<NODE NAME=" + "\"" + sl + "\" COORDINATE=\"" + cl + "\" />");
             nodes.add(sl);
             coordinateMap.put(cl, sl);
+        }
+        if (!nodeMaxLanesMap.containsKey(sl))
+        {
+            nodeMaxLanesMap.put(sl, 0);
         }
     }
 
@@ -140,11 +154,11 @@ public class Convert
             writeLinks(line, dir, links, 0, 1, 2, 0.0, 0.0);
             if (line.get(5).toString().equalsIgnoreCase("true"))
             {
-                writeLinks(line, dir, links, 11, 12, 14, 0.0, 0.0); // merge
+                writeLinks(line, dir, links, 11, 12, 14, 0.0, -3.5); // merge
             }
             if (line.get(6).toString().equalsIgnoreCase("true"))
             {
-                writeLinks(line, dir, links, 16, 17, 19, 0.0, 0.0); // diverge
+                writeLinks(line, dir, links, 16, 17, 19, -3.5, 0.0); // diverge
             }
         }
     }
@@ -164,15 +178,26 @@ public class Convert
         String linkName = "L" + (links.size() + 1) + dir;
         int nrLanes = Integer.parseInt((String) line.get(li));
 
+        nodeMaxLanesMap.put(nodef, Math.max(nodeMaxLanesMap.get(nodef), nrLanes));
+        nodeMaxLanesMap.put(nodel, Math.max(nodeMaxLanesMap.get(nodel), nrLanes));
+        
+        if (xi == 0)
+        {
+            mainNodes.add(nodef);
+            mainNodes.add(nodel);
+        }
+        
         System.out.print("<LINK NAME=\"" + linkName + "\" NODESTART=\"" + nodef + "\" NODEEND=\"" + nodel + "\" ROADLAYOUT=\"");
         System.out.print((nrLanes == 1) ? "HW1\"" : (nrLanes == 2) ? "HW2\"" : (nrLanes == 3) ? "HW3\"" : "HW4\"");
         if (startOffset != 0.0)
         {
-            System.out.print(" OFFSETSTART=\"" + startOffset + " m\"");
+            int n = nodeMaxLanesMap.get(nodef) - 1;
+            System.out.print(" OFFSETSTART=\"" + startOffset * n + " m\"");
         }
         if (endOffset != 0.0)
         {
-            System.out.print(" OFFSETEND=\"" + endOffset + " m\"");
+            int n = nodeMaxLanesMap.get(nodel) - 1;
+            System.out.print(" OFFSETEND=\"" + endOffset * n + " m\"");
         }
         System.out.println(">");
         if (xc.size() > 2)
@@ -190,19 +215,53 @@ public class Convert
         {
             System.out.println("<STRAIGHT />");
         }
+        
+        if (linkName.equals("L2EB"))
+        {
+            System.out.println("<GENERATOR LANE=\"A2\" POSITION=\"20m\" GTU=\"CAR\" IAT=\"EXPO(5) s\" "
+                    + "INITIALSPEED=\"CONST(0.0) m/s\" GTUCOLORER=\"ID\" ROUTE=\"RouteEB\" />");
+            System.out.println("<GENERATOR LANE=\"A3\" POSITION=\"20m\" GTU=\"CAR\" IAT=\"EXPO(5) s\" "
+                    + "INITIALSPEED=\"CONST(0.0) m/s\" GTUCOLORER=\"ID\" ROUTE=\"RouteEB\" />");
+        }
+        
+        if (linkName.equals("L36EB"))
+        {
+            System.out.println("<SINK LANE=\"A1\" POSITION=\"200m\" />");
+            System.out.println("<SINK LANE=\"A2\" POSITION=\"200m\" />");
+            System.out.println("<SINK LANE=\"A3\" POSITION=\"200m\" />");
+        }
+        
+        if (linkName.equals("L2WB"))
+        {
+            System.out.println("<GENERATOR LANE=\"A2\" POSITION=\"20m\" GTU=\"CAR\" IAT=\"EXPO(5) s\" "
+                    + "INITIALSPEED=\"CONST(0.0) m/s\" GTUCOLORER=\"ID\" ROUTE=\"RouteWB\" />");
+            System.out.println("<GENERATOR LANE=\"A3\" POSITION=\"20m\" GTU=\"CAR\" IAT=\"EXPO(5) s\" "
+                    + "INITIALSPEED=\"CONST(0.0) m/s\" GTUCOLORER=\"ID\" ROUTE=\"RouteWB\" />");
+        }
+
+        if (linkName.equals("L34WB"))
+        {
+            System.out.println("<SINK LANE=\"A1\" POSITION=\"200m\" />");
+            System.out.println("<SINK LANE=\"A2\" POSITION=\"200m\" />");
+            System.out.println("<SINK LANE=\"A3\" POSITION=\"200m\" />");
+        }
+
         System.out.println("</LINK>\n");
         links.add(linkName);
     }
 
-    private static void writeRoutes(final String dir, final List<String> nodes, final boolean reverse)
+    private static void writeRoutes(final String routeName, final List<String> nodes, final boolean reverse)
     {
-        System.out.print("<ROUTE NAME=\"" + dir + "\" NODELIST=\"");
+        System.out.print("<ROUTE NAME=\"" + routeName + "\" NODELIST=\"");
         if (!reverse)
         {
             System.out.print(nodes.get(0));
             for (int i = 1; i < nodes.size(); i++)
             {
-                System.out.print(" " + nodes.get(i));
+                if (mainNodes.contains(nodes.get(i)))
+                {
+                    System.out.print(" " + nodes.get(i));
+                }
             }
         }
         else
@@ -210,7 +269,10 @@ public class Convert
             System.out.print(nodes.get(nodes.size() - 1));
             for (int i = nodes.size() - 2; i >= 0; --i)
             {
-                System.out.print(" " + nodes.get(i));
+                if (mainNodes.contains(nodes.get(i)))
+                {
+                    System.out.print(" " + nodes.get(i));
+                }
             }
         }
         System.out.println("\" />");
@@ -234,12 +296,12 @@ public class Convert
         writeNodes(linesEB, "EB", nodesEB);
         writeNodes(linesWB, "WB", nodesWB);
 
-        // writeRoutes("RouteEB", nodesEB, false);
-        // writeRoutes("RouteWB", nodesWB, true);
-        // System.out.println();
-
         writeLinks(linesEB, "EB", linksEB);
         writeLinks(linesWB, "WB", linksWB);
+
+        writeRoutes("RouteEB", nodesEB, false);
+        writeRoutes("RouteWB", nodesWB, false);
+        System.out.println();
     }
 
     /** */
