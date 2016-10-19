@@ -6,6 +6,8 @@ import java.util.List;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * Contains all trajectories pertaining to a certain space-time region.
  * <p>
@@ -24,11 +26,11 @@ public class TrajectoryGroup
     /** Start time of trajectories. */
     private final Time startTime;
 
-    /** Minimum position of the section. */
-    private final Length minLength;
+    /** Start position of the section. */
+    private final Length startPosition;
 
-    /** Maximum position of the section. */
-    private final Length maxLength;
+    /** End position of the section. */
+    private final Length endPosition;
 
     /** Direction for which the trajectories have been sampled. */
     private final KpiLaneDirection laneDirection;
@@ -43,24 +45,30 @@ public class TrajectoryGroup
      */
     public TrajectoryGroup(final Time startTime, final KpiLaneDirection laneDirection)
     {
-        this.startTime = startTime;
-        this.minLength = Length.ZERO;
-        this.maxLength = laneDirection.getLaneData().getLength();
-        this.laneDirection = laneDirection;
+        this(startTime, Length.ZERO, laneDirection == null ? null : laneDirection.getLaneData().getLength(), laneDirection);
     }
 
     /**
      * @param startTime start time of trajectory group
-     * @param minLength length of the section
-     * @param maxLength length of the section
+     * @param startPosition start position
+     * @param endPosition end position
      * @param laneDirection lane direction
      */
-    public TrajectoryGroup(final Time startTime, final Length minLength, final Length maxLength,
+    public TrajectoryGroup(final Time startTime, final Length startPosition, final Length endPosition,
             final KpiLaneDirection laneDirection)
     {
+        Throw.whenNull(startTime, "Start time may not be null.");
+        // keep before position check; prevents "End position may not be null" due to missing direction in other constructor
+        Throw.whenNull(laneDirection, "Lane direction time may not be null."); 
+        Throw.whenNull(startPosition, "Start position may not be null");
+        Throw.whenNull(endPosition, "End position may not be null");
+        Length length0 = laneDirection.getPositionInDirection(startPosition);
+        Length length1 = laneDirection.getPositionInDirection(endPosition);
+        Throw.when(length0.gt(length1), IllegalArgumentException.class,
+                "Start position should be smaller than end position in the direction of travel");
         this.startTime = startTime;
-        this.minLength = minLength;
-        this.maxLength = maxLength;
+        this.startPosition = startPosition;
+        this.endPosition = endPosition;
         this.laneDirection = laneDirection;
     }
 
@@ -86,7 +94,7 @@ public class TrajectoryGroup
      */
     public final Length getLength()
     {
-        return this.maxLength.minus(this.minLength);
+        return this.endPosition.minus(this.startPosition);
     }
 
     /**
@@ -99,7 +107,7 @@ public class TrajectoryGroup
     {
         return this.trajectories.contains(trajectory);
     }
-    
+
     /**
      * Returns the number of trajectories in this group.
      * @return number of trajectories in this group
@@ -126,8 +134,8 @@ public class TrajectoryGroup
      */
     public final TrajectoryGroup getTrajectoryGroup(final Length x0, final Length x1)
     {
-        Length minLenght = Length.max(x0, this.minLength);
-        Length maxLenght = Length.min(x1, this.maxLength);
+        Length minLenght = Length.max(x0, this.startPosition);
+        Length maxLenght = Length.min(x1, this.endPosition);
         TrajectoryGroup out = new TrajectoryGroup(this.startTime, minLenght, maxLenght, this.laneDirection);
         for (Trajectory trajectory : this.trajectories)
         {
@@ -186,8 +194,8 @@ public class TrajectoryGroup
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.laneDirection == null) ? 0 : this.laneDirection.hashCode());
-        result = prime * result + ((this.maxLength == null) ? 0 : this.maxLength.hashCode());
-        result = prime * result + ((this.minLength == null) ? 0 : this.minLength.hashCode());
+        result = prime * result + ((this.endPosition == null) ? 0 : this.endPosition.hashCode());
+        result = prime * result + ((this.startPosition == null) ? 0 : this.startPosition.hashCode());
         result = prime * result + ((this.startTime == null) ? 0 : this.startTime.hashCode());
         result = prime * result + ((this.trajectories == null) ? 0 : this.trajectories.hashCode());
         return result;
@@ -221,25 +229,25 @@ public class TrajectoryGroup
         {
             return false;
         }
-        if (this.maxLength == null)
+        if (this.endPosition == null)
         {
-            if (other.maxLength != null)
+            if (other.endPosition != null)
             {
                 return false;
             }
         }
-        else if (!this.maxLength.equals(other.maxLength))
+        else if (!this.endPosition.equals(other.endPosition))
         {
             return false;
         }
-        if (this.minLength == null)
+        if (this.startPosition == null)
         {
-            if (other.minLength != null)
+            if (other.startPosition != null)
             {
                 return false;
             }
         }
-        else if (!this.minLength.equals(other.minLength))
+        else if (!this.startPosition.equals(other.startPosition))
         {
             return false;
         }
@@ -272,8 +280,8 @@ public class TrajectoryGroup
     @Override
     public final String toString()
     {
-        return "TrajectoryGroup [startTime=" + this.startTime + ", minLength=" + this.minLength + ", maxLength="
-                + this.maxLength + ", laneDirection=" + this.laneDirection + "]";
+        return "TrajectoryGroup [startTime=" + this.startTime + ", minLength=" + this.startPosition + ", maxLength="
+                + this.endPosition + ", laneDirection=" + this.laneDirection + "]";
     }
 
 }

@@ -4,6 +4,8 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -29,6 +31,7 @@ public class SpeedLimit extends ExtendedDataType<Speed>
     @Override
     public final Speed getValue(final GtuDataInterface gtu)
     {
+        Throw.whenNull(gtu, "GTU may not be null.");
         // well...
         return new Speed(Math.random() * 80.0, SpeedUnit.KM_PER_HOUR);
     }

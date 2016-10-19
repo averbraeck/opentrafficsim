@@ -6,6 +6,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.opentrafficsim.base.immutablecollections.ImmutableIterator;
+
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * Collection of objects, one object per meta data type included.
  * <p>
@@ -36,6 +40,7 @@ public class MetaData
      */
     public MetaData(final MetaData metaData)
     {
+        Throw.whenNull(metaData, "Meta data may not be null.");
         for (MetaDataType<?> metaDataType : metaData.metaDataMap.keySet())
         {
             this.metaDataMap.put(metaDataType, metaData.metaDataMap.get(metaDataType));
@@ -49,6 +54,7 @@ public class MetaData
      */
     public final <T> void put(final MetaDataType<T> metaDataType, final T value)
     {
+        Throw.whenNull(metaDataType, "Meta data type may not be null.");
         this.metaDataMap.put(metaDataType, value);
     }
 
@@ -93,9 +99,7 @@ public class MetaData
      */
     public final Iterator<Entry<MetaDataType<?>, Object>> getMetaDataIterator()
     {
-        // TODO Immutable
-        //return new ImmutableIterator<>(this.metaDataMap.entrySet().iterator());
-        return this.metaDataMap.entrySet().iterator();
+        return new ImmutableIterator<>(this.metaDataMap.entrySet().iterator());
     }
 
     /** {@inheritDoc} */

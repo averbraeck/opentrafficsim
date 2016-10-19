@@ -15,10 +15,13 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.immutablecollections.ImmutableIterator;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.interfaces.LinkDataInterface;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataSet;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataType;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * A query defines which subset of trajectory information should be included. This is in terms of space-time regions, and in
@@ -74,8 +77,7 @@ public final class Query
      * @param interval interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampling, final String description, final MetaDataSet metaDataSet,
-            final Duration interval)
+    public Query(final Sampler sampling, final String description, final MetaDataSet metaDataSet, final Duration interval)
     {
         this(sampling, description, metaDataSet, null, interval);
     }
@@ -104,10 +106,9 @@ public final class Query
     public Query(final Sampler sampling, final String description, final MetaDataSet metaDataSet,
             final Frequency updateFrequency, final Duration interval)
     {
-        // TODO Throw
-        //Throw.whenNull(sampling, "Sampling may not be null.");
-        //Throw.whenNull(description, "Description may not be null.");
-        //Throw.whenNull(metaDataSet, "Meta data may not be null.");
+        Throw.whenNull(sampling, "Sampling may not be null.");
+        Throw.whenNull(description, "Description may not be null.");
+        Throw.whenNull(metaDataSet, "Meta data may not be null.");
         this.sampling = sampling;
         this.metaDataSet = new MetaDataSet(metaDataSet);
         this.description = description;
@@ -169,34 +170,51 @@ public final class Query
      * Defines a region in space and time for which this query is valid. All lanes in the link are included.
      * @param link link
      * @param direction direction
-     * @param xStart start position
-     * @param xEnd end position
-     * @param tStart start time
-     * @param tEnd end time
+     * @param startPosition start position
+     * @param endPosition end position
+     * @param startTime start time
+     * @param endTime end time
      */
-    public void addSpaceTimeRegionLink(final LinkDataInterface link, final KpiGtuDirectionality direction, final Length xStart,
-            final Length xEnd, final Time tStart, final Time tEnd)
+    public void addSpaceTimeRegionLink(final LinkDataInterface link, final KpiGtuDirectionality direction,
+            final Length startPosition, final Length endPosition, final Time startTime, final Time endTime)
     {
+        Throw.whenNull(link, "Link may not be null.");
+        Throw.whenNull(direction, "Direction may not be null.");
+        Throw.whenNull(startPosition, "Start position may not be null.");
+        Throw.whenNull(endPosition, "End position may not be null.");
+        Throw.whenNull(startTime, "Start time may not be null.");
+        Throw.whenNull(endTime, "End time may not be null.");
+        Throw.when(endPosition.lt(startPosition), IllegalArgumentException.class,
+                "End position should be greater than start position.");
+        Throw.when(endTime.lt(startTime), IllegalArgumentException.class, "End time should be greater than start time.");
         for (LaneDataInterface lane : link.getLaneDatas())
         {
-            Length x0 = new Length(lane.getLength().si * xStart.si / link.getLength().si, LengthUnit.SI);
-            Length x1 = new Length(lane.getLength().si * xEnd.si / link.getLength().si, LengthUnit.SI);
-            addSpaceTimeRegion(new KpiLaneDirection(lane, direction), x0, x1, tStart, tEnd);
+            Length x0 = new Length(lane.getLength().si * startPosition.si / link.getLength().si, LengthUnit.SI);
+            Length x1 = new Length(lane.getLength().si * endPosition.si / link.getLength().si, LengthUnit.SI);
+            addSpaceTimeRegion(new KpiLaneDirection(lane, direction), x0, x1, startTime, endTime);
         }
     }
 
     /**
      * Defines a region in space and time for which this query is valid.
      * @param laneDirection lane direction
-     * @param xStart start position
-     * @param xEnd end position
-     * @param tStart start time
-     * @param tEnd end time
+     * @param startPosition start position
+     * @param endPosition end position
+     * @param startTime start time
+     * @param endTime end time
      */
-    public void addSpaceTimeRegion(final KpiLaneDirection laneDirection, final Length xStart, final Length xEnd,
-            final Time tStart, final Time tEnd)
+    public void addSpaceTimeRegion(final KpiLaneDirection laneDirection, final Length startPosition, final Length endPosition,
+            final Time startTime, final Time endTime)
     {
-        SpaceTimeRegion spaceTimeRegion = new SpaceTimeRegion(laneDirection, xStart, xEnd, tStart, tEnd);
+        Throw.whenNull(laneDirection, "Lane direction may not be null.");
+        Throw.whenNull(startPosition, "Start position may not be null.");
+        Throw.whenNull(endPosition, "End position may not be null.");
+        Throw.whenNull(startTime, "Start time may not be null.");
+        Throw.whenNull(endTime, "End time may not be null.");
+        Throw.when(endPosition.lt(startPosition), IllegalArgumentException.class,
+                "End position should be greater than start position.");
+        Throw.when(endTime.lt(startTime), IllegalArgumentException.class, "End time should be greater than start time.");
+        SpaceTimeRegion spaceTimeRegion = new SpaceTimeRegion(laneDirection, startPosition, endPosition, startTime, endTime);
         this.sampling.registerSpaceTimeRegion(spaceTimeRegion);
         this.spaceTimeRegions.add(spaceTimeRegion);
     }
@@ -214,9 +232,7 @@ public final class Query
      */
     public Iterator<SpaceTimeRegion> getSpaceTimeIterator()
     {
-        // TODO immutable
-        //return new ImmutableIterator<>(this.spaceTimeRegions.iterator());
-        return this.spaceTimeRegions.iterator();
+         return new ImmutableIterator<>(this.spaceTimeRegions.iterator());
     }
 
     /**
@@ -227,11 +243,12 @@ public final class Query
      * @param endTime start time of interval to get trajectory groups for
      * @param <T> underlying class of meta data type and its value
      * @return list of trajectory groups in accordance with the query
-     * @throws RuntimeException if a meta data type returned a boolean array with incorrect length
      */
     @SuppressWarnings("unchecked")
     public <T> List<TrajectoryGroup> getTrajectoryGroups(final Time startTime, final Time endTime)
     {
+        Throw.whenNull(startTime, "Start t may not be null.");
+        Throw.whenNull(endTime, "End t may not be null.");
         // Step 1) gather trajectories per GTU, truncated over space and time
         Map<String, TrajectoryAcceptList> trajectoryAcceptLists = new HashMap<>();
         List<TrajectoryGroup> trajectoryGroupList = new ArrayList<>();

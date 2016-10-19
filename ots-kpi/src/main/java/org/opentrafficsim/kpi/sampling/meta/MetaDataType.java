@@ -5,7 +5,10 @@ import java.util.Set;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.TrajectoryAcceptList;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
+ * Abstract class for defining a type of meta data.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -27,6 +30,7 @@ public abstract class MetaDataType<T>
      */
     public MetaDataType(final String id)
     {
+        Throw.whenNull(id, "Id may not be null.");
         this.id = id;
     }
 
@@ -64,6 +68,8 @@ public abstract class MetaDataType<T>
     @SuppressWarnings("checkstyle:designforextension")
     public void accept(final TrajectoryAcceptList trajectoryAcceptList, final Set<T> querySet)
     {
+        Throw.whenNull(trajectoryAcceptList, "Trajectory accept list may not be null.");
+        Throw.whenNull(querySet, "Qeury set may not be null.");
         if (trajectoryAcceptList.getTrajectory(0).contains(this)
                 && querySet.contains(trajectoryAcceptList.getTrajectory(0).getMetaData(this)))
         {

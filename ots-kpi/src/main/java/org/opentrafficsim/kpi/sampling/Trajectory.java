@@ -27,6 +27,8 @@ import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.meta.MetaData;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataType;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * Contains position, speed, acceleration and time data of a GTU, over some section. Position is relative to the start of the
  * lane in the direction of travel, also when trajectories have been truncated at a position x &gt; 0. Note that this regards
@@ -87,7 +89,7 @@ public final class Trajectory
     public Trajectory(final GtuDataInterface gtu, final MetaData metaData, final Set<ExtendedDataType<?>> extendedData,
             final KpiLaneDirection kpiLaneDirection)
     {
-        this(gtu.getId(), metaData, extendedData, kpiLaneDirection);
+        this(gtu == null ? null : gtu.getId(), metaData, extendedData, kpiLaneDirection);
     }
 
     /**
@@ -100,6 +102,10 @@ public final class Trajectory
     private Trajectory(final String gtuId, final MetaData metaData, final Set<ExtendedDataType<?>> extendedData,
             final KpiLaneDirection kpiLaneDirection)
     {
+        Throw.whenNull(gtuId, "GTU may not be null.");
+        Throw.whenNull(metaData, "Meta data may not be null.");
+        Throw.whenNull(extendedData, "Extended data may not be null.");
+        Throw.whenNull(kpiLaneDirection, "Lane direction may not be null.");
         this.gtuId = gtuId;
         this.metaData = new MetaData(metaData);
         for (ExtendedDataType<?> dataType : extendedData)
@@ -134,6 +140,11 @@ public final class Trajectory
     public void add(final Length position, final Speed speed, final Acceleration acceleration, final Time time,
             final GtuDataInterface gtu)
     {
+        Throw.whenNull(position, "Position may not be null.");
+        Throw.whenNull(speed, "Speed may not be null.");
+        Throw.whenNull(acceleration, "Acceleration may not be null.");
+        Throw.whenNull(time, "Time may not be null.");
+        Throw.whenNull(gtu, "GTU may not be null.");
         if (this.size == this.x.length)
         {
             int cap = this.size + (this.size >> 1);
@@ -283,7 +294,7 @@ public final class Trajectory
      */
     public Length getTotalLength()
     {
-        // TODO don't allow empty trajectories
+        // TODO do not allow empty trajectory
         // Throw.when(this.size == 0, IllegalStateException.class, "Empty trajectory does not have a length.");
         if (this.size == 0)
         {
@@ -298,7 +309,7 @@ public final class Trajectory
      */
     public Duration getTotalDuration()
     {
-        // TODO don't allow empty trajectories
+        // TODO do not allow empty trajectory
         // Throw.when(this.size == 0, IllegalStateException.class, "Empty trajectory does not have a duration.");
         if (this.size == 0)
         {
@@ -315,7 +326,7 @@ public final class Trajectory
     {
         return this.metaData.contains(metaDataType);
     }
-    
+
     /**
      * @param metaDataType meta data type
      * @param <T> class of meta data
@@ -324,11 +335,6 @@ public final class Trajectory
     public <T> T getMetaData(final MetaDataType<T> metaDataType)
     {
         return this.metaData.get(metaDataType);
-        // Counter c;
-        // Tally t;
-        // nl.tudelft.simulation.dsol.statistics.Tally<SimTime<?,?,T>> t2;
-        // Persistent p;
-        // nl.tudelft.simulation.dsol.statistics.Persistent<SimTime<?,?,T>> p2;
     }
 
     /**
@@ -349,138 +355,132 @@ public final class Trajectory
     @SuppressWarnings("unchecked")
     public <T> List<T> getExtendedData(final ExtendedDataType<T> extendedDataType) throws SamplingException
     {
-        // TODO Throw
-        // Throw.when(!this.extendedData.containsKey(extendedDataType), SamplingException.class,
-        // "Extended data type %s is not in the trajectory.", extendedDataType);
+        Throw.when(!this.extendedData.containsKey(extendedDataType), SamplingException.class,
+                "Extended data type %s is not in the trajectory.", extendedDataType);
         return (List<T>) this.extendedData.get(extendedDataType);
     }
 
     /**
      * Copies the trajectory but with a subset of the data. Longitudinal entry is only true if the original trajectory has true,
      * and the subset is from the start.
-     * @param minLength minimum length
-     * @param maxLength maximum length
+     * @param startPosition start position
+     * @param endPosition end position
      * @return subset of the trajectory
      * @throws NullPointerException if an input is null
      * @throws IllegalArgumentException of minLength is smaller than maxLength
      */
-    public Trajectory subSet(final Length minLength, final Length maxLength)
+    public Trajectory subSet(final Length startPosition, final Length endPosition)
     {
-        // TODO Throw
-        // Throw.whenNull(minLength, "minLength may not be null");
-        // Throw.whenNull(maxLength, "maxLength may not be null");
-        Length length0 = this.kpiLaneDirection.getPositionInDirection(minLength);
-        Length length1 = this.kpiLaneDirection.getPositionInDirection(maxLength);
-        // TODO Throw
-        // Throw.when(length0.gt(length1), IllegalArgumentException.class, "minLength should be smaller than maxLength in the
-        // direction of travel");
+        Throw.whenNull(startPosition, "Start position may not be null");
+        Throw.whenNull(endPosition, "End position may not be null");
+        Length length0 = this.kpiLaneDirection.getPositionInDirection(startPosition);
+        Length length1 = this.kpiLaneDirection.getPositionInDirection(endPosition);
+        Throw.when(length0.gt(length1), IllegalArgumentException.class,
+                "Start position should be smaller than end position in the direction of travel");
         return subSet(spaceBoundaries(length0, length1));
     }
 
     /**
      * Copies the trajectory but with a subset of the data. Longitudinal entry is only true if the original trajectory has true,
      * and the subset is from the start.
-     * @param minTime minimum time
-     * @param maxTime maximum time
+     * @param startTime start time
+     * @param endTime end time
      * @return subset of the trajectory
      * @throws NullPointerException if an input is null
      * @throws IllegalArgumentException of minTime is smaller than maxTime
      */
-    public Trajectory subSet(final Time minTime, final Time maxTime)
+    public Trajectory subSet(final Time startTime, final Time endTime)
     {
-        // TODO Throw
-        // Throw.whenNull(minTime, "minTime may not be null");
-        // Throw.whenNull(maxTime, "maxTime may not be null");
-        // Throw.when(minTime.gt(maxTime), IllegalArgumentException.class, "minTime should be smaller than maxTime");
-        return subSet(timeBoundaries(minTime, maxTime));
+        Throw.whenNull(startTime, "Start time may not be null");
+        Throw.whenNull(endTime, "End time may not be null");
+        Throw.when(startTime.gt(endTime), IllegalArgumentException.class, "Start time should be smaller than end time.");
+        return subSet(timeBoundaries(startTime, endTime));
     }
 
     /**
      * Copies the trajectory but with a subset of the data. Longitudinal entry is only true if the original trajectory has true,
      * and the subset is from the start.
-     * @param minLength minimum length
-     * @param maxLength maximum length
-     * @param minTime minimum time
-     * @param maxTime maximum time
+     * @param startPosition start position
+     * @param endPosition end position
+     * @param startTime start time
+     * @param endTime end time
      * @return subset of the trajectory
      * @throws NullPointerException if an input is null
      * @throws IllegalArgumentException of minLength/Time is smaller than maxLength/Time
      */
-    public Trajectory subSet(final Length minLength, final Length maxLength, final Time minTime, final Time maxTime)
+    public Trajectory subSet(final Length startPosition, final Length endPosition, final Time startTime, final Time endTime)
     {
         // could use this.subSet(minLength, maxLength).subSet(minTime, maxTime), but that copies twice
-        // TODO Throw
-        // Throw.whenNull(minLength, "minLength may not be null");
-        // Throw.whenNull(maxLength, "maxLength may not be null");
-        Length length0 = this.kpiLaneDirection.getPositionInDirection(minLength);
-        Length length1 = this.kpiLaneDirection.getPositionInDirection(maxLength);
-        // TODO Throw
-        // Throw.when(length0.gt(length1), IllegalArgumentException.class, "minLength should be smaller than maxLength in the
-        // direction of travel");
-        // Throw.whenNull(minTime, "minTime may not be null");
-        // Throw.whenNull(maxTime, "maxTime may not be null");
-        // Throw.when(minTime.gt(maxTime), IllegalArgumentException.class, "minTime should be smaller than maxTime");
-        return subSet(spaceBoundaries(length0, length1).intersect(timeBoundaries(minTime, maxTime)));
+        Throw.whenNull(startPosition, "Start position may not be null");
+        Throw.whenNull(endPosition, "End position may not be null");
+        Length length0 = this.kpiLaneDirection.getPositionInDirection(startPosition);
+        Length length1 = this.kpiLaneDirection.getPositionInDirection(endPosition);
+        Throw.when(length0.gt(length1), IllegalArgumentException.class,
+                "Start position should be smaller than end position in the direction of travel");
+        Throw.whenNull(startTime, "Start time may not be null");
+        Throw.whenNull(endTime, "End time may not be null");
+        Throw.when(startTime.gt(endTime), IllegalArgumentException.class, "Start time should be smaller than end time.");
+        return subSet(spaceBoundaries(length0, length1).intersect(timeBoundaries(startTime, endTime)));
     }
 
     /**
      * Determine spatial boundaries.
-     * @param minLength minimum length
-     * @param maxLength maximum length
+     * @param startPosition start position
+     * @param endPosition end position
      * @return spatial boundaries
      */
-    private Boundaries spaceBoundaries(final Length minLength, final Length maxLength)
+    private Boundaries spaceBoundaries(final Length startPosition, final Length endPosition)
     {
         int from = 0;
         double fFrom = 0;
-        while (minLength.si > this.x[from + 1] && from < this.size - 1)
+        while (startPosition.si > this.x[from + 1] && from < this.size - 1)
         {
             from++;
         }
-        if (this.x[from] < minLength.si)
+        if (this.x[from] < startPosition.si)
         {
-            fFrom = (minLength.si - this.x[from]) / (this.x[from + 1] - this.x[from]);
+            fFrom = (startPosition.si - this.x[from]) / (this.x[from + 1] - this.x[from]);
         }
         int to = this.size - 1;
         double fTo = 0;
-        while (maxLength.si < this.x[to] && to > 0)
+        while (endPosition.si < this.x[to] && to > 0)
         {
             to--;
         }
         if (to < this.size - 1)
         {
-            fTo = (maxLength.si - this.x[to]) / (this.x[to + 1] - this.x[to]);
+            fTo = (endPosition.si - this.x[to]) / (this.x[to + 1] - this.x[to]);
         }
         return new Boundaries(from, fFrom, to, fTo);
     }
 
     /**
-     * Determine spatial boundaries.
-     * @param minTime minimum time
-     * @param maxTime maximum time
+     * Determine temporal boundaries.
+     * @param startTime start time
+     * @param endTime end time
      * @return spatial boundaries
      */
-    private Boundaries timeBoundaries(final Time minTime, final Time maxTime)
+    private Boundaries timeBoundaries(final Time startTime, final Time endTime)
     {
         int from = 0;
         double fFrom = 0;
-        while (minTime.si > this.t[from + 1] && from < this.size - 1)
+        while (startTime.si > this.t[from + 1] && from < this.size - 1)
         {
             from++;
         }
-        if (this.t[from] < minTime.si)
+        if (this.t[from] < startTime.si)
         {
-            fFrom = (minTime.si - this.t[from]) / (this.t[from + 1] - this.t[from]);
+            fFrom = (startTime.si - this.t[from]) / (this.t[from + 1] - this.t[from]);
         }
         int to = this.size - 1;
         double fTo = 0;
-        while (maxTime.si < this.t[to] && to > 0)
+        while (endTime.si < this.t[to] && to > 0)
         {
             to--;
         }
         if (to < this.size - 1)
         {
-            fTo = (maxTime.si - this.t[to]) / (this.t[to + 1] - this.t[to]);
+            fTo = (endTime.si - this.t[to]) / (this.t[to + 1] - this.t[to]);
         }
         return new Boundaries(from, fFrom, to, fTo);
     }
@@ -686,18 +686,16 @@ public final class Trajectory
          */
         Boundaries(final int from, final double fFrom, final int to, final double fTo)
         {
-            // TODO Throw
-            // Throw.when(from < 0 || from > Trajectory.this.size() - 1, IllegalArgumentException.class,
-            // "Argument from (%d) is out of bounds.", from);
-            // Throw.when(fFrom < 0 || fFrom > 1, IllegalArgumentException.class, "Argument fFrom (%f) is out of bounds.",
-            // fFrom);
-            // Throw.when(from == Trajectory.this.size() && fFrom > 0, IllegalArgumentException.class,
-            // "Arguments from (%d) and fFrom (%f) are out of bounds.", from, fFrom);
-            // Throw.when(to < 0 || to >= Trajectory.this.size(), IllegalArgumentException.class,
-            // "Argument to (%d) is out of bounds.", to);
-            // Throw.when(fTo < 0 || fTo > 1, IllegalArgumentException.class, "Argument fTo (%f) is out of bounds.", fTo);
-            // Throw.when(to == Trajectory.this.size() && fTo > 0, IllegalArgumentException.class,
-            // "Arguments to (%d) and fTo (%f) are out of bounds.", to, fTo);
+            Throw.when(from < 0 || from > Trajectory.this.size() - 1, IllegalArgumentException.class,
+                    "Argument from (%d) is out of bounds.", from);
+            Throw.when(fFrom < 0 || fFrom > 1, IllegalArgumentException.class, "Argument fFrom (%f) is out of bounds.", fFrom);
+            Throw.when(from == Trajectory.this.size() && fFrom > 0, IllegalArgumentException.class,
+                    "Arguments from (%d) and fFrom (%f) are out of bounds.", from, fFrom);
+            Throw.when(to < 0 || to >= Trajectory.this.size(), IllegalArgumentException.class,
+                    "Argument to (%d) is out of bounds.", to);
+            Throw.when(fTo < 0 || fTo > 1, IllegalArgumentException.class, "Argument fTo (%f) is out of bounds.", fTo);
+            Throw.when(to == Trajectory.this.size() && fTo > 0, IllegalArgumentException.class,
+                    "Arguments to (%d) and fTo (%f) are out of bounds.", to, fTo);
             this.from = from;
             this.fFrom = fFrom;
             this.to = to;

@@ -1,6 +1,7 @@
-package org.opentrafficsim.imb.kpi;
+package org.opentrafficsim.road.network.sampling;
 
-import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
+import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.kpi.interfaces.RouteDataInterface;
 
 /**
  * <p>
@@ -12,63 +13,74 @@ import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class GtuTypeData implements GtuTypeDataInterface
+public class RouteData implements RouteDataInterface
 {
-    /** type name. */
-    private final String  gtuTypeName;
+    
+    /** Route. */
+    private final Route route;
 
     /**
-     * @param gtuTypeName gtu type name
+     * @param route route
      */
-    public GtuTypeData(final String gtuTypeName)
+    public RouteData(final Route route)
     {
-        this.gtuTypeName = gtuTypeName;
+        this.route = route;
     }
 
     /**
-     * @return gtuTypeName
+     * @return route.
      */
-    public final String getGtuTypeName()
+    public final Route getRoute()
     {
-        return this.gtuTypeName;
+        return this.route;
     }
 
     /** {@inheritDoc} */
     @Override
-    public int hashCode()
+    public final int hashCode()
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.gtuTypeName == null) ? 0 : this.gtuTypeName.hashCode());
+        result = prime * result + ((this.route == null) ? 0 : this.route.hashCode());
         return result;
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj)
+    public final boolean equals(final Object obj)
     {
         if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        GtuTypeData other = (GtuTypeData) obj;
-        if (this.gtuTypeName == null)
         {
-            if (other.gtuTypeName != null)
-                return false;
+            return true;
         }
-        else if (!this.gtuTypeName.equals(other.gtuTypeName))
+        if (obj == null)
+        {
             return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        RouteData other = (RouteData) obj;
+        if (this.route == null)
+        {
+            if (other.route != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.route.equals(other.route))
+        {
+            return false;
+        }
         return true;
     }
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
-        return "GtuTypeData [gtuTypeName=" + this.gtuTypeName + "]";
+        return "RouteData [route=" + this.route + "]";
     }
-
+    
 }

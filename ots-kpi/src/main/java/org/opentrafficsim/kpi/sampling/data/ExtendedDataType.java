@@ -4,6 +4,8 @@ import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * Type class to define different types of data by which trajectories can be extended beyond the basic t, x, v, a. Extend this 
  * class to define a new data type.
@@ -29,8 +31,7 @@ public abstract class ExtendedDataType<T>
      */
     public ExtendedDataType(final String id)
     {
-        // TODO Throw
-        //Throw.whenNull(id, "Id may nog be null.");
+        Throw.whenNull(id, "Id may nog be null.");
         this.id = id;
     }
     
@@ -60,6 +61,8 @@ public abstract class ExtendedDataType<T>
     @SuppressWarnings({ "unchecked", "checkstyle:parameternumber", "checkstyle:designforextension" })
     public <U extends Unit<U>> T interpolate(final T value0, final T value1, final double f)
     {
+        Throw.whenNull(value0, "Values to interpolate may not be null.");
+        Throw.whenNull(value1, "Values to interpolate may not be null.");
         if (value0 instanceof DoubleScalar.Rel<?>)
         {
             return (T) DoubleScalar.interpolate((DoubleScalar.Rel<U>) value0, (DoubleScalar.Rel<U>) value1, f);

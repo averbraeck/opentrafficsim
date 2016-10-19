@@ -6,6 +6,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.opentrafficsim.base.immutablecollections.ImmutableIterator;
+
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * Set of trajectories to be accepted or rejected for a query.
  * <p>
@@ -42,13 +46,12 @@ public class TrajectoryAcceptList
      */
     public final void addTrajectory(final Trajectory trajectory, final TrajectoryGroup trajectoryGroup)
     {
-        // TODO Throw
-        //Throw.whenNull(trajectory, "Trajectory may not be null.");
-        //Throw.whenNull(trajectoryGroup, "Trajectory group may not be null.");
-        //Throw.when(!trajectoryGroup.contains(trajectory), IllegalArgumentException.class,
-        //        "The trajectory should be contained within the trajectory group.");
-        //Throw.when(this.gtuId != null && !this.gtuId.equals(trajectory.getGtuId()), IllegalArgumentException.class,
-        //        "Trajectories of different GTU's may not be in a single trajectory accept list.");
+        Throw.whenNull(trajectory, "Trajectory may not be null.");
+        Throw.whenNull(trajectoryGroup, "Trajectory group may not be null.");
+        Throw.when(!trajectoryGroup.contains(trajectory), IllegalArgumentException.class,
+                "The trajectory should be contained within the trajectory group.");
+        Throw.when(this.gtuId != null && !this.gtuId.equals(trajectory.getGtuId()), IllegalArgumentException.class,
+                "Trajectories of different GTU's may not be in a single trajectory accept list.");
         this.gtuId = trajectory.getGtuId();
         this.trajectoryList.add(trajectory);
         this.trajectoryGroupList.add(trajectoryGroup);
@@ -88,9 +91,7 @@ public class TrajectoryAcceptList
      */
     public final Iterator<Trajectory> getTrajectoryIterator()
     {
-        // TODO immutable
-        //return new ImmutableIterator<>(this.trajectoryList.iterator());
-        return this.trajectoryList.iterator();
+         return new ImmutableIterator<>(this.trajectoryList.iterator());
     }
 
     /**
@@ -98,9 +99,7 @@ public class TrajectoryAcceptList
      */
     public final Iterator<TrajectoryGroup> getTrajectoryGroupIterator()
     {
-        // TODO immutable
-        //return new ImmutableIterator<>(this.trajectoryGroupList.iterator());
-        return this.trajectoryGroupList.iterator();
+         return new ImmutableIterator<>(this.trajectoryGroupList.iterator());
     }
 
     /**
@@ -131,9 +130,8 @@ public class TrajectoryAcceptList
      */
     public final void acceptTrajectory(final Trajectory trajectory, final boolean accept)
     {
-        // TODO Throw
-        //Throw.when(!this.trajectoryList.contains(trajectory), IllegalArgumentException.class,
-        //        "The trajectory is not part of the trajectory accept list.");
+        Throw.when(!this.trajectoryList.contains(trajectory), IllegalArgumentException.class,
+                "The trajectory is not part of the trajectory accept list.");
         this.trajectoryMap.put(trajectory, accept);
     }
 
@@ -167,9 +165,8 @@ public class TrajectoryAcceptList
      */
     public final boolean isAccepted(final Trajectory trajectory)
     {
-        // TODO Throw
-        //Throw.when(!this.trajectoryList.contains(trajectory), IllegalArgumentException.class,
-        //        "The trajectory is not part of the trajectory accept list.");
+        Throw.when(!this.trajectoryList.contains(trajectory), IllegalArgumentException.class,
+                "The trajectory is not part of the trajectory accept list.");
         return this.trajectoryMap.get(trajectory);
     }
 
