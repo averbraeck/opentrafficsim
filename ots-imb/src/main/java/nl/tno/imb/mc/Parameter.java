@@ -82,9 +82,9 @@ public class Parameter
     }
     
     /**
-     * 
-     * @param payload
-     * @throws IMBException
+     * Construct a new Parameter from the next object in a TByteBuffer.
+     * @param payload TByteBuffer; the received IMB data
+     * @throws IMBException when the received type cannot be converted to a Parameter sub-type
      */
     public Parameter (final TByteBuffer payload) throws IMBException
     {
@@ -253,32 +253,33 @@ public class Parameter
         return this.valueList;
     }
 
+    /**
+     * IMB integer numbers and our corresponding enum values.
+     */
+    public enum ParameterType
+    {
+        /** Float parameter. */
+        FLOAT(0),
+        /** Boolean parameter. */
+        BOOLEAN(1),
+        /** Integer parameter. */
+        INTEGER(2),
+        /** String parameter. */
+        STRING(3);
+
+        /** The IMB integer value used for this ParameterType. */
+        public final int value;
+        
+        /**
+         * Construct a new ParameterType.
+         * @param value int; the IMB integer value for the new ParameterType
+         */
+        ParameterType(final int value)
+        {
+            this.value = value;
+        }
+        
+    };
+    
 }
 
-/**
- * IMB integer numbers and our corresponding enum values.
- */
-enum ParameterType
-{
-    /** Float parameter. */
-    FLOAT(0),
-    /** Boolean parameter. */
-    BOOLEAN(1),
-    /** Integer parameter. */
-    INTEGER(2),
-    /** String parameter. */
-    STRING(3);
-
-    /** The IMB integer value used for this ParameterType. */
-    public final int value;
-    
-    /**
-     * Construct a new ParameterType.
-     * @param value int; the IMB integer value for the new ParameterType
-     */
-    ParameterType(final int value)
-    {
-        this.value = value;
-    }
-    
-};
