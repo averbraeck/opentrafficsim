@@ -29,7 +29,7 @@ import org.opentrafficsim.trafficcontrol.TrafficController;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Oct 5, 2016 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class Evaluator extends EventProducer implements TrafficController
+public class TrafCOD extends EventProducer implements TrafficController
 {
     /** */
     private static final long serialVersionUID = 20161014L;
@@ -108,7 +108,7 @@ public class Evaluator extends EventProducer implements TrafficController
      * @param controllerName String; name of this traffic light controller
      * @throws Exception when a rule cannot be parsed
      */
-    public Evaluator(final String trafCodURL, String controllerName) throws Exception
+    public TrafCOD(final String trafCodURL, String controllerName) throws Exception
     {
         Throw.whenNull(trafCodURL, "trafCodURL may not be null");
         Throw.whenNull(controllerName, "controllerName may not be null");
@@ -1239,7 +1239,7 @@ public class Evaluator extends EventProducer implements TrafficController
      */
     public static void main(final String[] args) throws Exception
     {
-        Evaluator evaluator = new Evaluator("file:///d:/cppb/trafcod/otsim/simpel.tfc", "Simpel TrafCOD controller");
+        TrafCOD evaluator = new TrafCOD("file:///d:/cppb/trafcod/otsim/simpel.tfc", "Simpel TrafCOD controller");
     }
 
     /**
