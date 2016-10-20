@@ -9,11 +9,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.language.Throw;
 
+import org.opentrafficsim.road.network.lane.Sensor;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
+import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 
 /**
@@ -1262,6 +1266,14 @@ public class Evaluator extends EventProducer implements TrafficController
     {
         Variable detector = this.detectors.get(detectorId);
         detector.setValue(detectingGTU ? 1 : 0, this.currentTime10);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TrafficController constructController(String controlProgramURL, Set<TrafficLight> trafficLights,
+            Set<Sensor> sensors, SimpleSimulatorInterface simulator)
+    {
+        return null;
     }
 
 }
