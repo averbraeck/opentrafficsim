@@ -90,7 +90,7 @@ public class OTSIMBConnector extends IMBConnector
                     System.err.println("Ignoring property " + ap);
             }
         }
-        Throw.when(host == null, IMBException.class, "host could not be resolved");
+        Throw.when(host == null, IMBException.class, "host may not be null");
         System.out.println("IMB: connecting to " + host + ":" + port);
         return new OTSIMBConnector(host, port, modelName, modelId, federation);
     }
