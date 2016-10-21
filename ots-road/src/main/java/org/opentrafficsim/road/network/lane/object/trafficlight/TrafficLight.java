@@ -25,6 +25,12 @@ public interface TrafficLight extends Locatable, ObjectInterface
      * @param trafficLightColor set the trafficLightColor
      */
     void setTrafficLightColor(TrafficLightColor trafficLightColor);
+    
+    /**
+     * Return the id of the traffic light. 
+     * @return String; the id of the traffic light
+     */
+    String getId();
 
 }
 

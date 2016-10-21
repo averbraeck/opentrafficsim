@@ -4,6 +4,8 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import nl.tudelft.simulation.language.Throw;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -29,6 +31,9 @@ public class SimpleTrafficLight extends AbstractCSEObject implements TrafficLigh
 
     /** The color of the traffic light. */
     private TrafficLightColor trafficLightColor;
+    
+    /** Id of the traffic light. */
+    private final String id;
 
     /**
      * @param id traffic light id
@@ -42,6 +47,8 @@ public class SimpleTrafficLight extends AbstractCSEObject implements TrafficLigh
     {
         super(AbstractCSEObject.createRectangleOnCSE(lane, position, new Length(0.5, LengthUnit.METER),
                 lane.getWidth(position).multiplyBy(0.8), new Length(0.5, LengthUnit.METER)), new Length(0.5, LengthUnit.METER));
+        Throw.whenNull(id, "Id may not be null");
+        this.id = id;
         this.trafficLightColor = TrafficLightColor.RED;
 
         try
@@ -78,6 +85,13 @@ public class SimpleTrafficLight extends AbstractCSEObject implements TrafficLigh
     public String toString()
     {
         return "SimpleTrafficLight [trafficLightColor=" + this.trafficLightColor + "]";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getId()
+    {
+        return this.id;
     }
 
 }
