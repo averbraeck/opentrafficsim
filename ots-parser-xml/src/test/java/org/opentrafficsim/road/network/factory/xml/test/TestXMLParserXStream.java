@@ -18,10 +18,10 @@ import javax.swing.WindowConstants;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.base.modelproperties.AbstractProperty;
+import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -38,9 +38,6 @@ import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
-import org.opentrafficsim.simulationengine.WrappableAnimation;
-import org.opentrafficsim.simulationengine.properties.AbstractProperty;
-import org.opentrafficsim.simulationengine.properties.PropertyException;
 import org.xml.sax.SAXException;
 
 import com.thoughtworks.xstream.XStream;

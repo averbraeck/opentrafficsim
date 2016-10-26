@@ -35,7 +35,7 @@ public class Convert
     private static Map<String, Integer> nodeMaxLanesMap = new HashMap<>();
 
     private static List<String> linksEB = new ArrayList<>();
-    
+
     private static Set<String> mainNodes = new HashSet<>();
 
     private static List<String> linksWB = new ArrayList<>();
@@ -177,27 +177,34 @@ public class Convert
 
         String linkName = "L" + (links.size() + 1) + dir;
         int nrLanes = Integer.parseInt((String) line.get(li));
+        int offset = xi == 0 ? Integer.parseInt((String) line.get(li + 1)) : nrLanes;
 
         nodeMaxLanesMap.put(nodef, Math.max(nodeMaxLanesMap.get(nodef), nrLanes));
         nodeMaxLanesMap.put(nodel, Math.max(nodeMaxLanesMap.get(nodel), nrLanes));
-        
+
         if (xi == 0)
         {
             mainNodes.add(nodef);
             mainNodes.add(nodel);
         }
-        
+
         System.out.print("<LINK NAME=\"" + linkName + "\" NODESTART=\"" + nodef + "\" NODEEND=\"" + nodel + "\" ROADLAYOUT=\"");
-        System.out.print((nrLanes == 1) ? "HW1\"" : (nrLanes == 2) ? "HW2\"" : (nrLanes == 3) ? "HW3\"" : "HW4\"");
+        if (nrLanes - offset == 0)
+        {
+            System.out.print((nrLanes == 1) ? "HW1\"" : (nrLanes == 2) ? "HW2\"" : (nrLanes == 3) ? "HW3\"" : "HW4\"");
+        }
+        else
+        {
+            System.out.print(
+                    (nrLanes == 1) ? "HW1\"" : (nrLanes == 2) ? "HW2AFSLAG\"" : (nrLanes == 3) ? "HW3AFSLAG\"" : "HW4AFSLAG\"");
+        }
         if (startOffset != 0.0)
         {
-            int n = nodeMaxLanesMap.get(nodef) - 1;
-            System.out.print(" OFFSETSTART=\"" + startOffset * n + " m\"");
+            System.out.print(" OFFSETSTART=\"" + startOffset + " m\"");
         }
         if (endOffset != 0.0)
         {
-            int n = nodeMaxLanesMap.get(nodel) - 1;
-            System.out.print(" OFFSETEND=\"" + endOffset * n + " m\"");
+            System.out.print(" OFFSETEND=\"" + endOffset + " m\"");
         }
         System.out.println(">");
         if (xc.size() > 2)
@@ -215,27 +222,26 @@ public class Convert
         {
             System.out.println("<STRAIGHT />");
         }
-        
+
         if (linkName.equals("L2EB"))
         {
+            System.out.println("<GENERATOR LANE=\"A1\" POSITION=\"20m\" GTU=\"CAR\" IAT=\"EXPO(5) s\" "
+                    + "INITIALSPEED=\"CONST(0.0) m/s\" GTUCOLORER=\"ID\" ROUTE=\"RouteEB\" />");
             System.out.println("<GENERATOR LANE=\"A2\" POSITION=\"20m\" GTU=\"CAR\" IAT=\"EXPO(5) s\" "
                     + "INITIALSPEED=\"CONST(0.0) m/s\" GTUCOLORER=\"ID\" ROUTE=\"RouteEB\" />");
-            System.out.println("<GENERATOR LANE=\"A3\" POSITION=\"20m\" GTU=\"CAR\" IAT=\"EXPO(5) s\" "
-                    + "INITIALSPEED=\"CONST(0.0) m/s\" GTUCOLORER=\"ID\" ROUTE=\"RouteEB\" />");
         }
-        
+
         if (linkName.equals("L36EB"))
         {
             System.out.println("<SINK LANE=\"A1\" POSITION=\"200m\" />");
             System.out.println("<SINK LANE=\"A2\" POSITION=\"200m\" />");
-            System.out.println("<SINK LANE=\"A3\" POSITION=\"200m\" />");
         }
-        
+
         if (linkName.equals("L2WB"))
         {
-            System.out.println("<GENERATOR LANE=\"A2\" POSITION=\"20m\" GTU=\"CAR\" IAT=\"EXPO(5) s\" "
+            System.out.println("<GENERATOR LANE=\"A1\" POSITION=\"20m\" GTU=\"CAR\" IAT=\"EXPO(5) s\" "
                     + "INITIALSPEED=\"CONST(0.0) m/s\" GTUCOLORER=\"ID\" ROUTE=\"RouteWB\" />");
-            System.out.println("<GENERATOR LANE=\"A3\" POSITION=\"20m\" GTU=\"CAR\" IAT=\"EXPO(5) s\" "
+            System.out.println("<GENERATOR LANE=\"A2\" POSITION=\"20m\" GTU=\"CAR\" IAT=\"EXPO(5) s\" "
                     + "INITIALSPEED=\"CONST(0.0) m/s\" GTUCOLORER=\"ID\" ROUTE=\"RouteWB\" />");
         }
 
@@ -243,7 +249,6 @@ public class Convert
         {
             System.out.println("<SINK LANE=\"A1\" POSITION=\"200m\" />");
             System.out.println("<SINK LANE=\"A2\" POSITION=\"200m\" />");
-            System.out.println("<SINK LANE=\"A3\" POSITION=\"200m\" />");
         }
 
         System.out.println("</LINK>\n");

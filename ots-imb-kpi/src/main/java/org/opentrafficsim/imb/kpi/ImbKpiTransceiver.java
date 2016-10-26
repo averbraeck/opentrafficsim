@@ -302,6 +302,7 @@ public class ImbKpiTransceiver implements Serializable
      * @param networkId String; the network id
      * @param query Query; the statistics query
      * @param transmissionInterval Duration; the interval between generation of graphs
+     * @throws IMBException when the post of the IMB message fails
      */
     public ImbKpiTransceiver(final Connector connector, Time time, String networkId,
             final Query query, final Duration transmissionInterval) throws IMBException

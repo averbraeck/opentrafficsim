@@ -1,4 +1,4 @@
-package org.opentrafficsim.simulationengine.properties;
+package org.opentrafficsim.base.modelproperties;
 
 import java.io.Serializable;
 

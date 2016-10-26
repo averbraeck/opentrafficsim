@@ -38,31 +38,31 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-
 import org.djunits.locale.DefaultLocale;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.modelproperties.AbstractProperty;
+import org.opentrafficsim.base.modelproperties.BooleanProperty;
+import org.opentrafficsim.base.modelproperties.CompoundProperty;
+import org.opentrafficsim.base.modelproperties.ContinuousProperty;
+import org.opentrafficsim.base.modelproperties.IntegerProperty;
+import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
+import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.base.modelproperties.SelectionProperty;
+import org.opentrafficsim.base.modelproperties.StringProperty;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.gui.LabeledPanel;
 import org.opentrafficsim.gui.ProbabilityDistributionEditor;
 import org.opentrafficsim.gui.SimulatorFrame;
 import org.opentrafficsim.imb.connector.OTSIMBConnector;
+import org.opentrafficsim.road.modelproperties.IDMPropertySet;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
-import org.opentrafficsim.simulationengine.properties.AbstractProperty;
-import org.opentrafficsim.simulationengine.properties.BooleanProperty;
-import org.opentrafficsim.simulationengine.properties.CompoundProperty;
-import org.opentrafficsim.simulationengine.properties.ContinuousProperty;
-import org.opentrafficsim.simulationengine.properties.IDMPropertySet;
-import org.opentrafficsim.simulationengine.properties.IntegerProperty;
-import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionProperty;
-import org.opentrafficsim.simulationengine.properties.PropertyException;
-import org.opentrafficsim.simulationengine.properties.SelectionProperty;
-import org.opentrafficsim.simulationengine.properties.StringProperty;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * Several demos in one application.
