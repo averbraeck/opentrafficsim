@@ -1,49 +1,49 @@
-package org.opentrafficsim.simulationengine.properties;
+package org.opentrafficsim.base.modelproperties;
 
 import java.io.Serializable;
 
 /**
- * Continuous property.
+ * Integer property.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$,
- * initial version 30 dec. 2014 <br>
+ * $LastChangedDate: 2016-05-28 11:33:31 +0200 (Sat, 28 May 2016) $, @version $Revision: 2051 $, by $Author: averbraeck $,
+ * initial version 18 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ContinuousProperty extends AbstractProperty<Double> implements Serializable
+public class IntegerProperty extends AbstractProperty<Integer> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;
 
-    /** The current value. */
-    private Double value;
+    /** The current value of the property. */
+    private Integer value;
 
     /** Format string to display the value of the property. */
     private String format;
 
     /** The minimum value of the property. */
-    private Double minimumValue;
+    private Integer minimumValue;
 
     /** The maximum value of the property. */
-    private Double maximumValue;
+    private Integer maximumValue;
 
     /**
-     * Construct a ContinousProperty.
+     * Construct an IntegerProperty.
      * @param key String; the unique key of the new property
-     * @param shortName String; the short name of the new ContinuousProperty
-     * @param description String; description of the new ContinuousProperty (may use HTML mark up)
-     * @param initialValue Double; the initial value of the new ContinuousProperty
-     * @param minimumValue Double; the minimum value of the new ContinuousProperty
-     * @param maximumValue Double; the maximumValue of the new ContinuousProperty
+     * @param shortName String; the short name of the new IntegerProperty
+     * @param description String; description of the new IntegerProperty (may use HTML mark up)
+     * @param initialValue Integer; the initial value of the new IntegerProperty
+     * @param minimumValue Integer; the minimum value of the new IntegerProperty
+     * @param maximumValue Integer; the maximumValue of the new IntegerProperty
      * @param formatString String; format string to display the value
-     * @param readOnly boolean; if true this ContinuousProperty can not be altered
-     * @param displayPriority int; the displayPriority of the new ContinuousProperty
+     * @param readOnly boolean; if true this IntegerProperty can not be altered
+     * @param displayPriority int; the display priority of the new IntegerProperty
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public ContinuousProperty(final String key, final String shortName, final String description, final Double initialValue,
-            final Double minimumValue, final Double maximumValue, final String formatString, final boolean readOnly,
+    public IntegerProperty(final String key, final String shortName, final String description, final Integer initialValue,
+            final Integer minimumValue, final Integer maximumValue, final String formatString, final boolean readOnly,
             final int displayPriority)
     {
         super(key, displayPriority, shortName, description);
@@ -56,30 +56,32 @@ public class ContinuousProperty extends AbstractProperty<Double> implements Seri
 
     /** {@inheritDoc} */
     @Override
-    public final Double getValue()
+    public final Integer getValue()
     {
         return this.value;
     }
 
     /**
-     * @return the minimum value
+     * Retrieve the minimum value of this IntegerProperty.
+     * @return Integer; the minimum value of this IntegerProperty
      */
-    public final Double getMinimumValue()
+    public final Integer getMinimumValue()
     {
         return this.minimumValue;
     }
 
     /**
-     * @return the minimum value
+     * Retrieve the maximum value of this IntegerProperty.
+     * @return Integer; the maximum value of this IntegerProperty
      */
-    public final Double getMaximumValue()
+    public final Integer getMaximumValue()
     {
         return this.maximumValue;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void setValue(final Double newValue) throws PropertyException
+    public final void setValue(final Integer newValue) throws PropertyException
     {
         if (isReadOnly())
         {
@@ -110,9 +112,9 @@ public class ContinuousProperty extends AbstractProperty<Double> implements Seri
 
     /** {@inheritDoc} */
     @Override
-    public final AbstractProperty<Double> deepCopy()
+    public final AbstractProperty<Integer> deepCopy()
     {
-        return new ContinuousProperty(getKey(), getShortName(), getDescription(), this.value, this.minimumValue,
+        return new IntegerProperty(getKey(), getShortName(), getDescription(), this.value, this.maximumValue,
                 this.maximumValue, this.format, isReadOnly(), getDisplayPriority());
     }
 

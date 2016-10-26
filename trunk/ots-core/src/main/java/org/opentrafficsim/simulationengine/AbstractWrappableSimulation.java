@@ -7,9 +7,9 @@ import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.modelproperties.AbstractProperty;
+import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.simulationengine.properties.AbstractProperty;
-import org.opentrafficsim.simulationengine.properties.PropertyException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
