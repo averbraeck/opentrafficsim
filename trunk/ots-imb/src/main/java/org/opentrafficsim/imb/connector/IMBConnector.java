@@ -49,7 +49,20 @@ public class IMBConnector implements Connector
         Throw.when(port <= 0 || port > 65535, IMBException.class, "port should be beween 1 and 65535");
 
         this.connection = new TConnection(host, port, modelName, modelId, federation);
-        Throw.when(!this.connection.isConnected(), IMBException.class, "No connection to broker");
+        Throw.when(!this.connection.isConnected(), IMBException.class, "No connection to IMB hub on " + host + ":" + port);
+    }
+    
+    /**
+     * Construct an IMBConnector that re-uses an existing TConnection.
+     * @param connection TConnection; the existing TConnection
+     * @throws IMBException when the connection is not connected to an IMB hub
+     */
+    public IMBConnector(final TConnection connection) throws IMBException
+    {
+        Throw.whenNull(connection, "conneciton cannot be null");
+        
+        this.connection = connection;
+        Throw.when(!this.connection.isConnected(), IMBException.class, "No connection to IMB hub");
     }
 
     /** {@inheritDoc} */

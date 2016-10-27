@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.opentrafficsim.imb.IMBException;
+import org.opentrafficsim.imb.SelfWrapper;
 
 import nl.tno.imb.TByteBuffer;
 
@@ -21,7 +22,7 @@ import nl.tno.imb.TByteBuffer;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ModelParameters
+public class ModelParameters implements SelfWrapper
 {
 
     /** The stored parameters. */
@@ -46,7 +47,7 @@ public class ModelParameters
             String parameterName = parameter.getName();
             if (this.nameMap.containsKey(parameterName))
             {
-                throw new IMBException("Duplicate parameter name \"" + parameterName + ")");
+                throw new IMBException("Duplicate parameter name \"" + parameterName + "\")");
             }
             this.parameters.add(parameter);
             this.nameMap.put(parameterName, parameter);
@@ -122,9 +123,23 @@ public class ModelParameters
     }
 
     /**
-     * Prepare this ModelParameters object for transmission over IMB.
-     * @param payload TByteBuffer; the IMB buffer
+     * Add a parameter. The name of the parameter must be unique.
+     * @param parameter Parameter
+     * @return boolean; true if the parameter was added
      */
+    public boolean addParameter(final Parameter parameter)
+    {
+        if (this.nameMap.containsKey(parameter.getName()))
+        {
+            return false;
+        }
+        this.parameters.add(parameter);
+        this.nameMap.put(parameter.getName(), parameter);
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public void prepare(TByteBuffer payload)
     {
         payload.prepare(this.parameters.size());
@@ -134,10 +149,8 @@ public class ModelParameters
         }
     }
 
-    /**
-     * Prepare this ModelParameters object for transmission over IMB.
-     * @param payload TByteBuffer; the IMB buffer
-     */
+    /** {@inheritDoc} */
+    @Override
     public void qWrite(TByteBuffer payload)
     {
         payload.qWrite(this.parameters.size());
@@ -145,6 +158,23 @@ public class ModelParameters
         {
             this.parameters.get(index).qWrite(payload);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        StringBuilder result = new StringBuilder();
+        result.append("ModelParameters [parameters=");
+        String separator = "";
+        for (Parameter parameter : this.parameters)
+        {
+            result.append(separator);
+            result.append(parameter.getName() + ":" + parameter.getValue());
+            separator = ", ";
+        }
+        result.append("]");
+        return result.toString();
     }
 
 }
