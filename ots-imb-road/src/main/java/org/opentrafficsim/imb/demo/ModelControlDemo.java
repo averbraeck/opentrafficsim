@@ -46,6 +46,7 @@ import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.ContinuousProperty;
 import org.opentrafficsim.base.modelproperties.IntegerProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.core.dsol.OTSDEVSRealTimeClock;
@@ -440,7 +441,7 @@ public class ModelControlDemo extends ModelStarter
                 // Get car-following model name
                 String carFollowingModelName = null;
                 CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
-                AbstractProperty<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+                Property<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
                 if (null == cfmp)
                 {
                     throw new Error("Cannot find \"Car following model\" property");

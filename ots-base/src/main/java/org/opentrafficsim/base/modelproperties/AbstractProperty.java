@@ -116,7 +116,7 @@ public abstract class AbstractProperty<T> implements Property<T>, Iterable<Abstr
      * @return AbstractProperty; the matching AbstractProperty, or null if no property with the specified key exists in the
      *         group.
      */
-    public final AbstractProperty<?> findByKey(final String propertyKey)
+    public final Property<?> findByKey(final String propertyKey)
     {
         if (this.key.equals(propertyKey))
         {

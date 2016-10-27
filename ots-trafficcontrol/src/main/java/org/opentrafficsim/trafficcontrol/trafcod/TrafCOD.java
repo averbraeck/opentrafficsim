@@ -3,21 +3,49 @@ package org.opentrafficsim.trafficcontrol.trafcod;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.language.Throw;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.formatter.EngineeringFormatter;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
+import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.OTSLink;
+import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.Sensor;
+import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
+import org.opentrafficsim.simulationengine.SimpleSimulator;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 
 /**
@@ -39,6 +67,9 @@ public class TrafCOD extends EventProducer implements TrafficController
 
     /** Version of the supported TrafCOD files. */
     final static int TRAFCOD_VERSION = 100;
+
+    /** The evaluation interval of TrafCOD. */
+    final static Duration EVALUATION_INTERVAL = new Duration(0.1, TimeUnit.SECOND);
 
     /** Text leading up to the TrafCOD version number. */
     private final static String VERSION_PREFIX = "trafcod-version=";
@@ -103,15 +134,27 @@ public class TrafCOD extends EventProducer implements TrafficController
     /** Event that is fired whenever a traffic light changes state. */
     public static final EventType TRAFFIC_LIGHT_CHANGED = new EventType("TrafficLightChanged");
 
+    /** The simulation engine. */
+    private final DEVSSimulator<Time, Duration, OTSSimTimeDouble> simulator;
+
     /**
-     * @param trafCodURL String; the URL of the TrafCOD rules
      * @param controllerName String; name of this traffic light controller
+     * @param trafCodURL String; the URL of the TrafCOD rules
+     * @param trafficLights Set&lt;TrafficLight&gt;; the traffic lights. The ids of the traffic lights must end with two digits
+     *            that match the stream numbers as used in the traffic control program
+     * @param sensors Set&lt;Sensor&gt;; the traffic sensors. The ids of the traffic sensors must end with three digits; the
+     *            first two of those must match the stream and sensor numbers used in the traffic control program
+     * @param simulator DEVSSimulator&lt;Time, Duration, OTSSimTimeDouble&gt;; the simulation engine
      * @throws Exception when a rule cannot be parsed
      */
-    public TrafCOD(final String trafCodURL, String controllerName) throws Exception
+    public TrafCOD(String controllerName, final String trafCodURL, final Set<TrafficLight> trafficLights,
+            final Set<Sensor> sensors, final DEVSSimulator<Time, Duration, OTSSimTimeDouble> simulator) throws Exception
     {
         Throw.whenNull(trafCodURL, "trafCodURL may not be null");
         Throw.whenNull(controllerName, "controllerName may not be null");
+        Throw.whenNull(trafficLights, "trafficLights may not be null");
+        Throw.whenNull(simulator, "simulator may not be null");
+        this.simulator = simulator;
         this.controllerName = controllerName;
         URL url = new URL(trafCodURL);
         BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -255,7 +298,31 @@ public class TrafCOD extends EventProducer implements TrafficController
                         installVariable(nameAndStream.getName(), nameAndStream.getStream(), EnumSet.noneOf(Flags.class),
                                 locationDescription);
                 int value = Integer.parseInt(fields[1]);
-                variable.setOutput(value);
+                // TODO create the set of traffic lights of this stream only once (not repeat for each possible color)
+                Set<TrafficLight> trafficLightsOfStream = new HashSet<>();
+                for (TrafficLight trafficLight : trafficLights)
+                {
+                    String id = trafficLight.getId();
+                    if (id.length() < 2)
+                    {
+                        throw new Exception("Id of traffic light " + trafficLight + " does not end on two digits");
+                    }
+                    String streamLetters = id.substring(id.length() - 2);
+                    if (!Character.isDigit(streamLetters.charAt(0)) || ! Character.isDigit(streamLetters.charAt(1)))
+                    {
+                        throw new Exception("Id of traffic light " + trafficLight + " does not end on two digits");
+                    }
+                    int stream = Integer.parseInt(streamLetters);
+                    if (variable.getStream() == stream)
+                    {
+                        trafficLightsOfStream.add(trafficLight);
+                    }
+                }
+                if (trafficLightsOfStream.size() == 0)
+                {
+                    throw new Exception("No traffic light provided that matches stream " + variable.getStream());
+                }
+                variable.setOutput(value, trafficLightsOfStream);
                 continue;
             }
             this.trafcodRules.add(trimmedLine);
@@ -273,6 +340,15 @@ public class TrafCOD extends EventProducer implements TrafficController
             }
         }
         in.close();
+        for (Variable variable : this.variables.values())
+        {
+            if (variable.isDetector())
+            {
+                String detectorName = variable.selectedFieldsToString(EnumSet.of(PrintFlags.ID));
+                int detectorNumber = variable.getStream() * 10 + detectorName.charAt(detectorName.length() - 1) - '0';
+                
+            }
+        }
         System.out.println("Installed " + this.variables.size() + " variables");
         for (String key : this.variables.keySet())
         {
@@ -282,24 +358,25 @@ public class TrafCOD extends EventProducer implements TrafficController
                             EnumSet.of(PrintFlags.ID, PrintFlags.VALUE, PrintFlags.INITTIMER, PrintFlags.REINITTIMER,
                                     PrintFlags.S, PrintFlags.E)));
         }
-        evalExprs();
+        this.simulator.scheduleEventNow(this, this, "evalExprs", null);
     }
 
     /**
      * Evaluate all expressions until no more changes occur.
-     * @return int; number of iteration loops performed
-     * @throws Exception when evalution of a fule fails
+     * @throws Exception when evaluation of a rule fails
      */
-    private int evalExprs() throws Exception
+    @SuppressWarnings("unused")
+    private void evalExprs() throws Exception
     {
+        System.out.println("TrafCOD: time is " + EngineeringFormatter.format(this.simulator.getSimulatorTime().get().si));
         for (int loop = 0; loop < this.maxLoopCount; loop++)
         {
             if (evalExpressionsOnce() == 0)
             {
-                return loop;
+                break;
             }
         }
-        return this.maxLoopCount;
+        this.simulator.scheduleEventRel(EVALUATION_INTERVAL, this, this, "evalExprs", null);
     }
 
     /**
@@ -1239,7 +1316,65 @@ public class TrafCOD extends EventProducer implements TrafficController
      */
     public static void main(final String[] args) throws Exception
     {
-        TrafCOD evaluator = new TrafCOD("file:///d:/cppb/trafcod/otsim/simpel.tfc", "Simpel TrafCOD controller");
+        OTSModelInterface model = new OTSModelInterface()
+        {
+            /** */
+            private static final long serialVersionUID = 20161020L;
+
+            /** The TrafCOD evaluator. */
+            private TrafCOD trafCOD;
+
+            @Override
+            public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
+                    throws SimRuntimeException, RemoteException
+            {
+                try
+                {
+                    Network network = new OTSNetwork("TrafCOD test network");
+                    Node nodeX = new OTSNode(network, "Crossing", new OTSPoint3D(0, 0, 0));
+                    Node nodeS = new OTSNode(network, "South", new OTSPoint3D(0, -100, 0));
+                    Node nodeE = new OTSNode(network, "East", new OTSPoint3D(100, 0, 0));
+                    Node nodeN = new OTSNode(network, "North", new OTSPoint3D(0, 100, 0));
+                    Node nodeW = new OTSNode(network, "West", new OTSPoint3D(-100, 0, 0));
+                    Map<GTUType, LongitudinalDirectionality> directionalityMap = new HashMap<>();
+                    Link linkSX = new OTSLink(network, "LinkSX", nodeS, nodeX, LinkType.ALL, null, directionalityMap);
+                    Link linkXN = new OTSLink(network, "LinkSX", nodeX, nodeN, LinkType.ALL, null, directionalityMap);
+                    Link linkWX = new OTSLink(network, "LinkSX", nodeW, nodeX, LinkType.ALL, null, directionalityMap);
+                    Link linkXE = new OTSLink(network, "LinkSX", nodeX, nodeE, LinkType.ALL, null, directionalityMap);
+                    Length laneWidth = new Length(3, LengthUnit.METER);
+                    //FIXME work in progress Lane lane = new Lane((CrossSectionLink) linkSX, "laneSX", Length.ZERO, Length.ZERO, laneWidth, laneWidth, null, null);
+                    Set<TrafficLight> trafficLights = new HashSet<>();
+                    trafficLights.add(new SimpleTrafficLight("TL08", null, null, (OTSDEVSSimulatorInterface) theSimulator));
+                    trafficLights.add(new SimpleTrafficLight("TL11", null, null, (OTSDEVSSimulatorInterface) theSimulator));
+                    this.trafCOD =
+                            new TrafCOD("Simple TrafCOD controller", "file:///d:/cppb/trafcod/otsim/simpel.tfc", trafficLights, null,
+                                    (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator);
+                }
+                catch (Exception exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+
+            @Override
+            public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+            {
+                return this.trafCOD.getSimulator();
+            }
+
+        };
+        SimpleSimulator testSimulator = new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(1, TimeUnit.HOUR), model);
+        testSimulator.runUpToAndIncluding(new Time(1, TimeUnit.HOUR));
+
+    }
+
+    /**
+     * Retrieve the simulator.
+     * @return SimulatorInterface<Time, Duration, OTSSimTimeDouble>
+     */
+    protected SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
+    {
+        return this.simulator;
     }
 
     /**
@@ -1266,14 +1401,6 @@ public class TrafCOD extends EventProducer implements TrafficController
     {
         Variable detector = this.detectors.get(detectorId);
         detector.setValue(detectingGTU ? 1 : 0, this.currentTime10);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public TrafficController constructController(String controlProgramURL, Set<TrafficLight> trafficLights,
-            Set<Sensor> sensors, SimpleSimulatorInterface simulator)
-    {
-        return null;
     }
 
 }
@@ -1449,7 +1576,7 @@ class Variable
     int timerMax10;
 
     /** Output color (if this is an export variable). */
-    int color;
+    TrafficLightColor color;
 
     /** Name of this variable (without the traffic stream). */
     final String name;
@@ -1471,6 +1598,9 @@ class Variable
 
     /** Source of end rule. */
     String endSource;
+
+    /** The traffic light (only set if this Variable is an output(. */
+    private Set<TrafficLight> trafficLights;
 
     /**
      * Construct a new Variable.
@@ -1496,7 +1626,7 @@ class Variable
      * @return int; the color code for this Variable
      * @throws Exception if this Variable is not an output
      */
-    public int getColor() throws Exception
+    public TrafficLightColor getColor() throws Exception
     {
         if (!this.flags.contains(Flags.IS_OUTPUT))
         {
@@ -1540,6 +1670,13 @@ class Variable
             else
             {
                 setFlag(Flags.START);
+            }
+            if (isOutput())
+            {
+                for (TrafficLight trafficLight : this.trafficLights)
+                {
+                    trafficLight.setTrafficLightColor(this.color);
+                }
             }
         }
         this.value = newValue;
@@ -1633,11 +1770,30 @@ class Variable
     /**
      * Make this variable an output variable and set the output value.
      * @param colorValue int; the output value
+     * @param trafficLights Set&lt;TrafficLight&gt;; the traffic light that must be update when this output becomes active
+     * @throws Exception when the <cite>colorValue</cite> is invalid
      */
-    public void setOutput(int colorValue)
+    public void setOutput(int colorValue, Set<TrafficLight> trafficLights) throws Exception
     {
-        this.color = colorValue;
+        TrafficLightColor newColor;
+        switch (colorValue)
+        {
+            case 'R':
+                newColor = TrafficLightColor.RED;
+                break;
+            case 'G':
+                newColor = TrafficLightColor.GREEN;
+                break;
+            case 'Y':
+                newColor = TrafficLightColor.YELLOW;
+                break;
+            default:
+                throw new Exception("Bad color value: " + colorValue);
+        }
+
+        this.color = newColor;
         this.flags.add(Flags.IS_OUTPUT);
+        this.trafficLights = trafficLights;
     }
 
     /**
