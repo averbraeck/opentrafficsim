@@ -16,6 +16,10 @@ import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -28,6 +32,7 @@ import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.ContinuousProperty;
 import org.opentrafficsim.base.modelproperties.IntegerProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -67,10 +72,6 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Circular lane simulation demo.
@@ -382,7 +383,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
         {
             String carFollowingModelName = null;
             CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
-            AbstractProperty<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+            Property<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
             if (null == cfmp)
             {
                 throw new SimRuntimeException("Cannot find \"Car following model\" property");

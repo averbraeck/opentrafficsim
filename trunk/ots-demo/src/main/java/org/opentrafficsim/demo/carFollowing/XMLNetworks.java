@@ -15,6 +15,15 @@ import java.util.Set;
 import javax.naming.NamingException;
 import javax.swing.JPanel;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.jstats.distributions.DistContinuous;
+import nl.tudelft.simulation.jstats.distributions.DistErlang;
+import nl.tudelft.simulation.jstats.distributions.DistUniform;
+import nl.tudelft.simulation.jstats.streams.MersenneTwister;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -29,6 +38,7 @@ import org.opentrafficsim.base.modelproperties.AbstractProperty;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.ContinuousProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.core.distributions.Distribution;
@@ -96,15 +106,6 @@ import org.opentrafficsim.road.network.lane.SinkSensor;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.jstats.distributions.DistContinuous;
-import nl.tudelft.simulation.jstats.distributions.DistErlang;
-import nl.tudelft.simulation.jstats.distributions.DistUniform;
-import nl.tudelft.simulation.jstats.streams.MersenneTwister;
-import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * <p>
@@ -367,7 +368,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             // Get car-following model name
             String carFollowingModelName = null;
             CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
-            AbstractProperty<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+            Property<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
             if (null == cfmp)
             {
                 throw new Error("Cannot find \"Car following model\" property");

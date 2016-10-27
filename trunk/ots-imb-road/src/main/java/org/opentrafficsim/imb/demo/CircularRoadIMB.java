@@ -17,6 +17,12 @@ import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.Throw;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
@@ -31,6 +37,7 @@ import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.ContinuousProperty;
 import org.opentrafficsim.base.modelproperties.IntegerProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -98,12 +105,6 @@ import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.language.Throw;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Circular road simulation demo.
@@ -252,7 +253,7 @@ public class CircularRoadIMB extends AbstractWrappableAnimation implements UNITS
     protected final JPanel makeCharts(SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
     {
         // Make the tab with the plots
-        AbstractProperty<?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
+        Property<?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
         if (null == output)
         {
             throw new Error("Cannot find output properties");
@@ -512,7 +513,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
             // Get car-following model name
             String carFollowingModelName = null;
             CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
-            AbstractProperty<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+            Property<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
             if (null == cfmp)
             {
                 throw new Error("Cannot find \"Car following model\" property");

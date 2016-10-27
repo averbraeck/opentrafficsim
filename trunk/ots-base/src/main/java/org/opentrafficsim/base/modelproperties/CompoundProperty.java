@@ -28,7 +28,7 @@ public class CompoundProperty extends AbstractProperty<List<AbstractProperty<?>>
     private final List<AbstractProperty<?>> value = new ArrayList<AbstractProperty<?>>();
 
     /** Map of all AbstractProperties known in this property group. */
-    private Map<String, AbstractProperty<?>> propertyGroup = new HashMap<String, AbstractProperty<?>>();
+    private Map<String, Property<?>> propertyGroup = new HashMap<>();
 
     /**
      * Construct a CompoundProperty.
@@ -208,12 +208,12 @@ public class CompoundProperty extends AbstractProperty<List<AbstractProperty<?>>
      *            parent which we are now part of and we must use that in lieu of our own; if null; we are being removed from
      *            our parent and we must rebuild our own property group
      */
-    protected final void setPropertyGroup(final Map<String, AbstractProperty<?>> newPropertyGroup)
+    protected final void setPropertyGroup(final Map<String, Property<?>> newPropertyGroup)
     {
         if (null == newPropertyGroup)
         {
             // Rebuild the property group (after removal from parent
-            this.propertyGroup = new HashMap<String, AbstractProperty<?>>();
+            this.propertyGroup = new HashMap<String, Property<?>>();
             for (AbstractProperty<?> ap : this.value)
             {
                 this.propertyGroup.put(ap.getKey(), ap);
@@ -334,7 +334,7 @@ public class CompoundProperty extends AbstractProperty<List<AbstractProperty<?>>
      * Retrieve the property group. DO NOT MODIFY the result.
      * @return Map&lt;String, AbstractProperty&lt;?&gt;&gt;; the property group map
      */
-    protected final Map<String, AbstractProperty<?>> getPropertyGroup()
+    protected final Map<String, Property<?>> getPropertyGroup()
     {
         return this.propertyGroup;
     }

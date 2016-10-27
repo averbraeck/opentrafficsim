@@ -20,6 +20,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.jstats.distributions.DistContinuous;
+import nl.tudelft.simulation.jstats.distributions.DistTriangular;
+import nl.tudelft.simulation.jstats.streams.MersenneTwister;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
@@ -33,6 +42,7 @@ import org.opentrafficsim.base.modelproperties.AbstractProperty;
 import org.opentrafficsim.base.modelproperties.BooleanProperty;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -86,15 +96,6 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
-import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.jstats.distributions.DistContinuous;
-import nl.tudelft.simulation.jstats.distributions.DistTriangular;
-import nl.tudelft.simulation.jstats.streams.MersenneTwister;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Simplest contour plots demonstration.
@@ -235,7 +236,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
     {
 
         // Make the tab with the plots
-        AbstractProperty<?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
+        Property<?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
         if (null == output)
         {
             throw new Error("Cannot find output properties");
@@ -468,7 +469,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             sinkLane.addSensor(sensor, GTUType.ALL);
             String carFollowingModelName = null;
             CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
-            AbstractProperty<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+            Property<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
             if (null == cfmp)
             {
                 throw new Error("Cannot find \"Car following model\" property");
