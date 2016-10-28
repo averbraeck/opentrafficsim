@@ -1,6 +1,5 @@
 package org.opentrafficsim.base.modelproperties;
 
-import java.util.Iterator;
 
 /**
  * User readable and settable properties.
@@ -14,7 +13,7 @@ import java.util.Iterator;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> Type of the property
  */
-public interface Property<T>
+public interface Property<T> extends Iterable<Property<?>>
 {
     /**
      * Retrieve the current value of the property.
@@ -68,18 +67,17 @@ public interface Property<T>
     AbstractProperty<T> deepCopy();
 
     /**
-     * Return an iterator.
-     * @return Iterator&lt;AbstractProperty&gt;; iterator that will visit this property (if this is not compound), or all
-     *         sub-properties (if this is compound)
-     */
-    Iterator<AbstractProperty<T>> iterator();
-    
-    /**
      * Retrieve a Property anywhere in this group that has the specified key.
      * @param propertyKey String; the key
      * @return AbstractProperty; the matching AbstractProperty, or null if no property with the specified key exists in the
      *         group.
      */
     Property<?> findByKey(String propertyKey);
+
+    /**
+     * Retrieve the key of this Property. The key is set at time of construction and it is immutable.
+     * @return String; the key of this Property
+     */
+    String getKey();
 
 }

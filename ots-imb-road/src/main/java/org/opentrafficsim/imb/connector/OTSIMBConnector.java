@@ -1,13 +1,13 @@
 package org.opentrafficsim.imb.connector;
 
-import org.opentrafficsim.base.modelproperties.AbstractProperty;
+import nl.tudelft.simulation.language.Throw;
+
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.IntegerProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.StringProperty;
 import org.opentrafficsim.imb.IMBException;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>
@@ -66,7 +66,7 @@ public class OTSIMBConnector extends IMBConnector
         int modelId = 1;
         String federation = "OTS_RT";
 
-        for (AbstractProperty<?> ap : compoundProperty)
+        for (Property<?> ap : compoundProperty)
         {
             switch (ap.getKey())
             {

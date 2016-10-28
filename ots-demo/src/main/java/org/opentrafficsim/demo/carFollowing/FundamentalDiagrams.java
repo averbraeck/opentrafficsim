@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -13,14 +14,18 @@ import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.AbstractProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -58,10 +63,6 @@ import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 /**
  * Demonstrate the FundamentalDiagram plot.
  * <p>
@@ -92,8 +93,8 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                             + "capabilities of the vehicle and personality of the driver.</html>",
                     new String[] { "IDM", "IDM+" }, 1, false, 500));
             this.properties.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
-                    "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
-                    new Double[] { 0.8, 0.2 }, false, 10));
+                    "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" }, new Double[] {
+                            0.8, 0.2 }, false, 10));
         }
         catch (PropertyException exception)
         {
@@ -125,8 +126,8 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                 try
                 {
                     FundamentalDiagrams fundamentalDiagrams = new FundamentalDiagrams();
-                    fundamentalDiagrams.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND),
-                            new Duration(3600.0, SECOND), fundamentalDiagrams.getProperties(), null, true);
+                    fundamentalDiagrams.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0,
+                            SECOND), fundamentalDiagrams.getProperties(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -163,8 +164,9 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
             FundamentalDiagram fd;
             try
             {
-                fd = new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getSI() + "m", new Duration(1, MINUTE),
-                        this.model.getLane(), detectorLocation, simulator);
+                fd =
+                        new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getSI() + "m", new Duration(1,
+                                MINUTE), this.model.getLane(), detectorLocation, simulator);
                 fd.setTitle("Density Contour Graph");
                 fd.setExtendedState(Frame.MAXIMIZED_BOTH);
                 this.model.getFundamentalDiagrams().add(fd);
@@ -199,13 +201,12 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
 
     /**
      * Simulate a single lane road of 5 km length. Vehicles are generated at a constant rate of 1500 veh/hour. At time 300s a
-     * blockade is inserted at position 4 km; this blockade is removed at time 500s. The used car following algorithm is IDM+
-     * <a href="http://opentrafficsim.org/downloads/MOTUS%20reference.pdf"><i>Integrated Lane Change Model with Relaxation and
+     * blockade is inserted at position 4 km; this blockade is removed at time 500s. The used car following algorithm is IDM+ <a
+     * href="http://opentrafficsim.org/downloads/MOTUS%20reference.pdf"><i>Integrated Lane Change Model with Relaxation and
      * Synchronization</i>, by Wouter J. Schakel, Victor L. Knoop and Bart van Arem, 2012</a>. <br>
      * Output is a set of FundamentalDiagram plots for various point along the lane.
      * <p>
-     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author$,
@@ -257,10 +258,10 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
         private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
         /** The fundamental diagram plots. */
-        private ArrayList<FundamentalDiagram> fundamentalDiagrams = new ArrayList<>();
+        private List<FundamentalDiagram> fundamentalDiagrams = new ArrayList<>();
 
         /** User settable properties. */
-        private ArrayList<AbstractProperty<?>> properties = null;
+        private List<Property<?>> fundamentalDiagramProperties = null;
 
         /** The random number generator used to decide what kind of GTU to generate. */
         private Random randomGenerator = new Random(12345);
@@ -272,9 +273,9 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
          * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
          * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
          */
-        public FundamentalDiagramPlotsModel(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer)
+        FundamentalDiagramPlotsModel(final List<Property<?>> properties, final GTUColorer gtuColorer)
         {
-            this.properties = properties;
+            this.fundamentalDiagramProperties = properties;
             this.gtuColorer = gtuColorer;
         }
 
@@ -292,14 +293,16 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                 Set<GTUType> compatibility = new HashSet<>();
                 compatibility.add(this.gtuType);
                 LaneType laneType = new LaneType("CarLane", compatibility);
-                this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit,
-                        this.simulator, LongitudinalDirectionality.DIR_PLUS);
+                this.lane =
+                        LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator,
+                                LongitudinalDirectionality.DIR_PLUS);
                 CrossSectionLink endLink =
                         LaneFactory.makeLink(this.network, "endLink", to, end, null, LongitudinalDirectionality.DIR_PLUS);
                 // No overtaking, single lane
-                Lane sinkLane = new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
-                        this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
-                        LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.None());
+                Lane sinkLane =
+                        new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
+                                this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0),
+                                laneType, LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.None());
                 Sensor sensor = new SinkSensor(sinkLane, new Length(10.0, METER), this.simulator);
                 sinkLane.addSensor(sensor, GTUType.ALL);
             }
@@ -310,7 +313,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
 
             // create SinkLane
 
-            for (AbstractProperty<?> p : this.properties)
+            for (Property<?> p : this.fundamentalDiagramProperties)
             {
                 if (p instanceof SelectionProperty)
                 {
@@ -320,21 +323,21 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                         String modelName = sp.getValue();
                         if (modelName.equals("IDM"))
                         {
-                            this.carFollowingModelCars = new IDMOld(new Acceleration(1, METER_PER_SECOND_2),
-                                    new Acceleration(1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND),
-                                    1d);
-                            this.carFollowingModelTrucks = new IDMOld(new Acceleration(0.5, METER_PER_SECOND_2),
-                                    new Acceleration(1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND),
-                                    1d);
+                            this.carFollowingModelCars =
+                                    new IDMOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5,
+                                            METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d);
+                            this.carFollowingModelTrucks =
+                                    new IDMOld(new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.5,
+                                            METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d);
                         }
                         else if (modelName.equals("IDM+"))
                         {
-                            this.carFollowingModelCars = new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
-                                    new Acceleration(1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND),
-                                    1d);
-                            this.carFollowingModelTrucks = new IDMPlusOld(new Acceleration(0.5, METER_PER_SECOND_2),
-                                    new Acceleration(1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND),
-                                    1d);
+                            this.carFollowingModelCars =
+                                    new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5,
+                                            METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d);
+                            this.carFollowingModelTrucks =
+                                    new IDMPlusOld(new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.5,
+                                            METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d);
                         }
                         else
                         {
@@ -403,10 +406,12 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                 // LaneBasedBehavioralCharacteristics drivingCharacteristics =
                 // new LaneBasedBehavioralCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
 
-                this.block = new LaneBasedIndividualGTU("999999", this.gtuType, new Length(4, METER), new Length(1.8, METER),
-                        new Speed(0.0, KM_PER_HOUR), this.simulator, this.network);
-                LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
-                        new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, this.block), this.block);
+                this.block =
+                        new LaneBasedIndividualGTU("999999", this.gtuType, new Length(4, METER), new Length(1.8, METER),
+                                new Speed(0.0, KM_PER_HOUR), this.simulator, this.network);
+                LaneBasedStrategicalPlanner strategicalPlanner =
+                        new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                                new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, this.block), this.block);
                 this.block.initWithAnimation(strategicalPlanner, initialPositions, new Speed(0.0, KM_PER_HOUR),
                         DefaultCarAnimation.class, this.gtuColorer);
             }
@@ -448,10 +453,12 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                 // LaneBasedBehavioralCharacteristics drivingCharacteristics =
                 // new LaneBasedBehavioralCharacteristics(gtuFollowingModel, this.laneChangeModel);
 
-                LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
-                        new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, this.network);
-                LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
-                        new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
+                LaneBasedIndividualGTU gtu =
+                        new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength, new Length(1.8,
+                                METER), new Speed(200, KM_PER_HOUR), this.simulator, this.network);
+                LaneBasedStrategicalPlanner strategicalPlanner =
+                        new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                                new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
                 gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
                         this.gtuColorer);
 
@@ -485,7 +492,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
         /**
          * @return fundamentalDiagramPlots
          */
-        public final ArrayList<FundamentalDiagram> getFundamentalDiagrams()
+        public final List<FundamentalDiagram> getFundamentalDiagrams()
         {
             return this.fundamentalDiagrams;
         }

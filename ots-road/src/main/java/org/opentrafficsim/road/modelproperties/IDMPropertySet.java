@@ -8,9 +8,9 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.base.modelproperties.AbstractProperty;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.ContinuousProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 
 /**
@@ -48,7 +48,7 @@ public final class IDMPropertySet
     public static CompoundProperty makeIDMPropertySet(final String key, final String carType, final Acceleration a,
             final Acceleration b, final Length s0, final Duration tSafe, final int displayPriority) throws PropertyException
     {
-        ArrayList<AbstractProperty<?>> subProperties = new ArrayList<AbstractProperty<?>>();
+        ArrayList<Property<?>> subProperties = new ArrayList<>();
         subProperties.add(new ContinuousProperty(key + "a", "a", "maximum acceleration [m/s/s]", a.doubleValue(), 0.5, 5.0,
                 "maximum acceleration %.2fm/s\u00b2", false, 0));
         subProperties.add(new ContinuousProperty(key + "b", "b", "safe deceleration [m/s/s]", b.doubleValue(), 1.0, 4.0,
@@ -68,7 +68,7 @@ public final class IDMPropertySet
      */
     public static Acceleration getA(final CompoundProperty set)
     {
-        return new Acceleration(findSubProperty("a", set), AccelerationUnit.METER_PER_SECOND_2);
+        return new Acceleration(findSubProperty(set.getKey() + "a", set), AccelerationUnit.METER_PER_SECOND_2);
     }
 
     /**
@@ -78,7 +78,7 @@ public final class IDMPropertySet
      */
     public static Acceleration getB(final CompoundProperty set)
     {
-        return new Acceleration(findSubProperty("b", set), AccelerationUnit.METER_PER_SECOND_2);
+        return new Acceleration(findSubProperty(set.getKey() + "b", set), AccelerationUnit.METER_PER_SECOND_2);
     }
 
     /**
@@ -88,7 +88,7 @@ public final class IDMPropertySet
      */
     public static Length getS0(final CompoundProperty set)
     {
-        return new Length(findSubProperty("s0", set), LengthUnit.METER);
+        return new Length(findSubProperty(set.getKey() + "s0", set), LengthUnit.METER);
     }
 
     /**
@@ -98,7 +98,7 @@ public final class IDMPropertySet
      */
     public static Duration getTSafe(final CompoundProperty set)
     {
-        return new Duration(findSubProperty("tSafe", set), TimeUnit.SECOND);
+        return new Duration(findSubProperty(set.getKey() + "tSafe", set), TimeUnit.SECOND);
     }
 
     /**
@@ -109,7 +109,7 @@ public final class IDMPropertySet
      */
     private static Double findSubProperty(final String key, final CompoundProperty set)
     {
-        AbstractProperty<?> pp = set.findSubPropertyByKey(key);
+        Property<?> pp = set.findSubPropertyByKey(key);
         if (null == pp)
         {
             throw new RuntimeException("Cannot find sub property " + key);

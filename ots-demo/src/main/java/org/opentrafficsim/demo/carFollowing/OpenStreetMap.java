@@ -15,13 +15,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.AbstractProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -48,9 +51,6 @@ import org.opentrafficsim.road.network.factory.osm.output.Convert;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -103,7 +103,7 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
                 try
                 {
                     OpenStreetMap osm = new OpenStreetMap();
-                    ArrayList<AbstractProperty<?>> localProperties = osm.getProperties();
+                    List<Property<?>> localProperties = osm.getProperties();
                     try
                     {
                         localProperties.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
@@ -320,7 +320,7 @@ class OSMModel implements OTSModelInterface
      * @param pL ProgressListener; the receiver of progress events
      * @param converter Convert; the output converter
      */
-    public OSMModel(final ArrayList<AbstractProperty<?>> properties, final OSMNetwork osmNetwork, final WarningListener wL,
+    OSMModel(final List<Property<?>> properties, final OSMNetwork osmNetwork, final WarningListener wL,
             final ProgressListener pL, final Convert converter)
     {
         this.osmNetwork = osmNetwork;

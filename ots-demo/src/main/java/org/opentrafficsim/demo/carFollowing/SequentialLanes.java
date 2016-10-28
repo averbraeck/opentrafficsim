@@ -9,7 +9,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
@@ -32,7 +31,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.AbstractProperty;
 import org.opentrafficsim.base.modelproperties.BooleanProperty;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
@@ -103,11 +101,11 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
 
     /**
      * Create a SequentialLanes simulation.
-     * @throws PropertyException
+     * @throws PropertyException when the provided properties could not be handled
      */
     public SequentialLanes() throws PropertyException
     {
-        ArrayList<AbstractProperty<?>> outputProperties = new ArrayList<>();
+        List<Property<?>> outputProperties = new ArrayList<>();
         outputProperties.add(new BooleanProperty("DensityPlot", "Density", "Density contour plot", true, false, 0));
         outputProperties.add(new BooleanProperty("FlowPlot", "Flow", "Flow contour plot", true, false, 1));
         outputProperties.add(new BooleanProperty("SpeedPlot", "Speed", "Speed contour plot", true, false, 2));
@@ -136,13 +134,14 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
     {
         SwingUtilities.invokeLater(new Runnable()
         {
+            @SuppressWarnings("synthetic-access")
             @Override
             public void run()
             {
                 try
                 {
                     SequentialLanes sequential = new SequentialLanes();
-                    ArrayList<AbstractProperty<?>> localProperties = sequential.getProperties();
+                    List<Property<?>> localProperties = sequential.getProperties();
                     try
                     {
                         localProperties.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
@@ -218,7 +217,7 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts(SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
+    protected final JPanel makeCharts(final SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
     {
         // Make the tab with the plots
         Property<?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
@@ -230,7 +229,7 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
         if (output instanceof CompoundProperty)
         {
             CompoundProperty outputProperties = (CompoundProperty) output;
-            for (AbstractProperty<?> ap : outputProperties.getValue())
+            for (Property<?> ap : outputProperties.getValue())
             {
                 if (ap instanceof BooleanProperty)
                 {
@@ -345,7 +344,7 @@ class SequentialModel implements OTSModelInterface, UNITS
     private final OTSNetwork network = new OTSNetwork("network");
 
     /** The nodes of our network in the order that all GTUs will visit them. */
-    private ArrayList<OTSNode> nodes = new ArrayList<>();
+    private List<OTSNode> nodes = new ArrayList<>();
 
     /** The car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModelOld carFollowingModelCars;
@@ -375,13 +374,13 @@ class SequentialModel implements OTSModelInterface, UNITS
     private Length maximumDistance = new Length(2001, METER);
 
     /** The contour plots. */
-    private ArrayList<LaneBasedGTUSampler> plots = new ArrayList<>();
+    private List<LaneBasedGTUSampler> plots = new ArrayList<>();
 
     /** The random number generator used to decide what kind of GTU to generate. */
     private Random randomGenerator = new Random(12345);
 
     /** User settable properties. */
-    private ArrayList<AbstractProperty<?>> properties = null;
+    private List<Property<?>> properties = null;
 
     /** The sequence of Lanes that all vehicles will follow. */
     private List<Lane> path = new ArrayList<>();
@@ -396,7 +395,7 @@ class SequentialModel implements OTSModelInterface, UNITS
      * @param properties the user settable properties
      * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
      */
-    SequentialModel(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer)
+    SequentialModel(final List<Property<?>> properties, final GTUColorer gtuColorer)
     {
         this.properties = properties;
         this.gtuColorer = gtuColorer;
@@ -499,11 +498,8 @@ class SequentialModel implements OTSModelInterface, UNITS
             {
                 throw new Error("\"Car following model\" property has wrong type");
             }
-            Iterator<AbstractProperty<List<AbstractProperty<?>>>> iterator =
-                    new CompoundProperty("", "", "", this.properties, false, 0).iterator();
-            while (iterator.hasNext())
+            for (Property<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
             {
-                AbstractProperty<?> ap = iterator.next();
                 if (ap instanceof SelectionProperty)
                 {
                     SelectionProperty sp = (SelectionProperty) ap;
@@ -579,7 +575,7 @@ class SequentialModel implements OTSModelInterface, UNITS
     /**
      * @return contourPlots
      */
-    public final ArrayList<LaneBasedGTUSampler> getPlots()
+    public final List<LaneBasedGTUSampler> getPlots()
     {
         return this.plots;
     }

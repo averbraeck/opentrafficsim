@@ -8,17 +8,25 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
+import nl.javel.gisbeans.io.esri.CoordinateTransform;
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.Throw;
+import nl.tudelft.simulation.language.io.URLResource;
+
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.AbstractProperty;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -47,13 +55,6 @@ import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.xml.sax.SAXException;
-
-import nl.javel.gisbeans.io.esri.CoordinateTransform;
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.language.Throw;
-import nl.tudelft.simulation.language.io.URLResource;
 
 /**
  * <p>
@@ -88,8 +89,8 @@ public class N201IMB extends AbstractWrappableAnimation
                 {
                     N201IMB n201Model = new N201IMB();
                     // 1 hour simulation run for testing
-                    n201Model.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
-                            new Duration(10.0, TimeUnit.HOUR), new ArrayList<AbstractProperty<?>>(), null, true);
+                    n201Model.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND), new Duration(
+                            10.0, TimeUnit.HOUR), new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -139,7 +140,7 @@ public class N201IMB extends AbstractWrappableAnimation
     /**
      * @return the saved user properties for a next run
      */
-    private ArrayList<AbstractProperty<?>> getSavedUserModifiedProperties()
+    private List<Property<?>> getSavedUserModifiedProperties()
     {
         return this.savedUserModifiedProperties;
     }
@@ -179,7 +180,7 @@ public class N201IMB extends AbstractWrappableAnimation
         private OTSDEVSSimulatorInterface simulator;
 
         /** User settable properties. */
-        private ArrayList<AbstractProperty<?>> modelProperties = null;
+        private List<Property<?>> modelProperties = null;
 
         /** the network as created by the AbstractWrappableIMBAnimation. */
         private final OTSNetwork network;
@@ -192,7 +193,7 @@ public class N201IMB extends AbstractWrappableAnimation
          * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
          * @param network Network; the network
          */
-        N201Model(final ArrayList<AbstractProperty<?>> modelProperties, final GTUColorer gtuColorer, final OTSNetwork network)
+        N201Model(final List<Property<?>> modelProperties, final GTUColorer gtuColorer, final OTSNetwork network)
         {
             this.modelProperties = modelProperties;
             this.network = network;
@@ -200,8 +201,7 @@ public class N201IMB extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(
-                final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
+        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
                 throws SimRuntimeException
         {
             System.out.println("N201IMB: constructModel called; Connecting to IMB");
@@ -210,7 +210,7 @@ public class N201IMB extends AbstractWrappableAnimation
             try
             {
                 CompoundProperty imbSettings = null;
-                for (AbstractProperty<?> property : this.modelProperties)
+                for (Property<?> property : this.modelProperties)
                 {
                     if (property.getKey().equals(OTSIMBConnector.PROPERTY_KEY))
                     {
@@ -242,16 +242,16 @@ public class N201IMB extends AbstractWrappableAnimation
                 // ODMatrixTrips matrix = N201ODfactory.get(network);
                 // N201ODfactory.makeGeneratorsFromOD(network, matrix, this.simulator);
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
-                    | OTSGeometryException exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
+                    | GTUException | OTSGeometryException exception)
             {
                 exception.printStackTrace();
             }
             Query query = N201ODfactory.getQuery(this.network, new RoadSampler(this.simulator));
             try
             {
-                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network.getId(), query,
-                        new Duration(30, TimeUnit.SECOND));
+                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network.getId(), query, new Duration(30,
+                        TimeUnit.SECOND));
             }
             catch (IMBException exception)
             {

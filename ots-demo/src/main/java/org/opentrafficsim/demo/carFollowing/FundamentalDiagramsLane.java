@@ -14,14 +14,18 @@ import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.AbstractProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -58,10 +62,6 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Demonstrate the FundamentalDiagram plot.
@@ -154,7 +154,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts(SimpleSimulatorInterface simulator) throws OTSSimulationException
+    protected final JPanel makeCharts(final SimpleSimulatorInterface simulator) throws OTSSimulationException
     {
         final int panelsPerRow = 3;
         TablePanel charts = new TablePanel(3, panelsPerRow);
@@ -260,10 +260,10 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
         private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
         /** The fundamental diagram plots. */
-        private ArrayList<FundamentalDiagramLane> fundamentalDiagramsLane = new ArrayList<>();
+        private List<FundamentalDiagramLane> fundamentalDiagramsLane = new ArrayList<>();
 
         /** User settable properties. */
-        private ArrayList<AbstractProperty<?>> properties = null;
+        private List<Property<?>> fundamentalDiagramsLaneProperties = null;
 
         /** The random number generator used to decide what kind of GTU to generate. */
         private Random randomGenerator = new Random(12345);
@@ -275,9 +275,9 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
          * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
          * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
          */
-        public FundamentalDiagramLanePlotsModel(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer)
+        FundamentalDiagramLanePlotsModel(final List<Property<?>> properties, final GTUColorer gtuColorer)
         {
-            this.properties = properties;
+            this.fundamentalDiagramsLaneProperties = properties;
             this.gtuColorer = gtuColorer;
         }
 
@@ -319,7 +319,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 exception.printStackTrace();
             }
 
-            for (AbstractProperty<?> p : this.properties)
+            for (Property<?> p : this.fundamentalDiagramsLaneProperties)
             {
                 if (p instanceof SelectionProperty)
                 {
@@ -489,7 +489,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
         /**
          * @return fundamentalDiagramPlots
          */
-        public final ArrayList<FundamentalDiagramLane> getFundamentalDiagrams()
+        public final List<FundamentalDiagramLane> getFundamentalDiagrams()
         {
             return this.fundamentalDiagramsLane;
         }

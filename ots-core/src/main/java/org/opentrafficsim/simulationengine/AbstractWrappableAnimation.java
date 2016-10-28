@@ -7,14 +7,17 @@ import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.AbstractProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.gtu.animation.DefaultSwitchableGTUColorer;
@@ -22,8 +25,6 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.gui.OTSAnimationPanel;
 import org.opentrafficsim.gui.SimulatorFrame;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * <p>
@@ -42,11 +43,11 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /** The properties exhibited by this simulation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected ArrayList<AbstractProperty<?>> properties = new ArrayList<AbstractProperty<?>>();
+    protected List<Property<?>> properties = new ArrayList<>();
 
     /** The properties after (possible) editing by the user. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected ArrayList<AbstractProperty<?>> savedUserModifiedProperties;
+    protected List<Property<?>> savedUserModifiedProperties;
 
     /** Use EXIT_ON_CLOSE when true, DISPOSE_ON_CLOSE when false on closing of the window. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -87,7 +88,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public SimpleAnimator buildAnimator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final ArrayList<AbstractProperty<?>> userModifiedProperties, final Rectangle rect, final boolean eoc)
+            final List<Property<?>> userModifiedProperties, final Rectangle rect, final boolean eoc)
             throws SimRuntimeException, NamingException, OTSSimulationException, PropertyException
     {
         this.savedUserModifiedProperties = userModifiedProperties;
@@ -158,9 +159,9 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /** {@inheritDoc} */
     @Override
-    public final ArrayList<AbstractProperty<?>> getProperties()
+    public final ArrayList<Property<?>> getProperties()
     {
-        return new ArrayList<AbstractProperty<?>>(this.properties);
+        return new ArrayList<Property<?>>(this.properties);
     }
 
     /** {@inheritDoc} */
@@ -174,7 +175,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /** {@inheritDoc} */
     @Override
-    public final ArrayList<AbstractProperty<?>> getUserModifiedProperties()
+    public final List<Property<?>> getUserModifiedProperties()
     {
         return this.savedUserModifiedProperties;
     }

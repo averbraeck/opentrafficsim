@@ -15,7 +15,7 @@ import java.util.Iterator;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <T> type of the property
  */
-public abstract class AbstractProperty<T> implements Property<T>, Iterable<AbstractProperty<T>>, Serializable
+public abstract class AbstractProperty<T> implements Property<T>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;
@@ -75,7 +75,7 @@ public abstract class AbstractProperty<T> implements Property<T>, Iterable<Abstr
 
     /** {@inheritDoc} */
     @Override
-    public final Iterator<AbstractProperty<T>> iterator()
+    public final Iterator<Property<?>> iterator()
     {
         return new PropertyIterator(this);
     }
@@ -164,7 +164,7 @@ public abstract class AbstractProperty<T> implements Property<T>, Iterable<Abstr
      * initial version jan. 2015 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class PropertyIterator implements Iterator<AbstractProperty<T>>, Serializable
+    class PropertyIterator implements Iterator<Property<?>>, Serializable
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -173,16 +173,16 @@ public abstract class AbstractProperty<T> implements Property<T>, Iterable<Abstr
         private int currentIndex;
 
         /** Full list of AbstractProperties. */
-        private final ArrayList<AbstractProperty<T>> list;
+        private final ArrayList<Property<?>> list;
 
         /**
          * Construct a new PropertyIterator.
          * @param ap AbstractProperty; root of the tree to iterate over
          */
-        PropertyIterator(final AbstractProperty<T> ap)
+        PropertyIterator(final Property<T> ap)
         {
             this.currentIndex = 0;
-            this.list = new ArrayList<AbstractProperty<T>>();
+            this.list = new ArrayList<Property<?>>();
             addToList(ap);
         }
 
@@ -191,15 +191,14 @@ public abstract class AbstractProperty<T> implements Property<T>, Iterable<Abstr
          * Compound properties are included <b>before</b> their contents.
          * @param cp AbstractProperty&lt;T&gt;; the property to add (if compound it and all it's children are added)
          */
-        @SuppressWarnings("unchecked")
-        private void addToList(final AbstractProperty<T> cp)
+        private void addToList(final Property<?> cp)
         {
             this.list.add(cp);
             if (cp instanceof CompoundProperty)
             {
-                for (AbstractProperty<?> ap : ((CompoundProperty) cp).getValue())
+                for (Property<?> ap : ((CompoundProperty) cp).getValue())
                 {
-                    addToList((AbstractProperty<T>) ap);
+                    addToList(ap);
                 }
             }
         }
@@ -213,7 +212,7 @@ public abstract class AbstractProperty<T> implements Property<T>, Iterable<Abstr
 
         /** {@inheritDoc} */
         @Override
-        public AbstractProperty<T> next()
+        public Property<?> next()
         {
             return this.list.get(this.currentIndex++);
         }

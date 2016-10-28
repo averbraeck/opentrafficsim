@@ -7,7 +7,6 @@ import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,7 +33,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.AbstractProperty;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.ContinuousProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
@@ -229,13 +227,13 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     private final Network network = new OTSNetwork("network");
 
     /** The plots. */
-    private ArrayList<LaneBasedGTUSampler> plots = new ArrayList<>();
+    private List<LaneBasedGTUSampler> plots = new ArrayList<>();
 
     /** User settable properties. */
-    private ArrayList<AbstractProperty<?>> properties = null;
+    private List<Property<?>> properties = null;
 
     /** The sequence of Lanes that all vehicles will follow. */
-    private ArrayList<List<Lane>> paths = new ArrayList<>();
+    private List<List<Lane>> paths = new ArrayList<>();
 
     /** The average headway (inter-vehicle time). */
     private Duration averageHeadway;
@@ -292,7 +290,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
      * @param userModifiedProperties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user modified) properties
      * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
      */
-    XMLNetworkModel(final ArrayList<AbstractProperty<?>> userModifiedProperties, final GTUColorer gtuColorer)
+    XMLNetworkModel(final List<Property<?>> userModifiedProperties, final GTUColorer gtuColorer)
     {
         this.gtuColorer = gtuColorer;
         if (this.gtuColorer instanceof SwitchableGTUColorer)
@@ -325,7 +323,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     /**
      * @return plots
      */
-    public final ArrayList<LaneBasedGTUSampler> getPlots()
+    public final List<LaneBasedGTUSampler> getPlots()
     {
         return this.plots;
     }
@@ -383,11 +381,8 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             }
 
             // Get car-following model parameter
-            Iterator<AbstractProperty<List<AbstractProperty<?>>>> iterator =
-                    new CompoundProperty("", "", "", this.properties, false, 0).iterator();
-            while (iterator.hasNext())
+            for (Property<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
             {
-                AbstractProperty<?> ap = iterator.next();
                 if (ap instanceof CompoundProperty)
                 {
                     cp = (CompoundProperty) ap;
@@ -494,10 +489,8 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             }
 
             // Get remaining properties
-            iterator = new CompoundProperty("", "", "", this.properties, false, 0).iterator();
-            while (iterator.hasNext())
+            for (Property<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
             {
-                AbstractProperty<?> ap = iterator.next();
                 if (ap instanceof SelectionProperty)
                 {
                     SelectionProperty sp = (SelectionProperty) ap;
@@ -1033,7 +1026,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         /** The legend. */
         private List<LegendEntry> legend = new ArrayList<>();
 
-        /** */
+        /** ... */
         DirectionGTUColorer()
         {
             super();

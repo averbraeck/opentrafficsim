@@ -19,13 +19,13 @@ import java.util.Map;
  * initial version 30 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CompoundProperty extends AbstractProperty<List<AbstractProperty<?>>> implements Serializable
+public class CompoundProperty extends AbstractProperty<List<Property<?>>> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;
 
     /** Properties directly contained in this one. */
-    private final List<AbstractProperty<?>> value = new ArrayList<AbstractProperty<?>>();
+    private final List<Property<?>> value = new ArrayList<>();
 
     /** Map of all AbstractProperties known in this property group. */
     private Map<String, Property<?>> propertyGroup = new HashMap<>();
@@ -41,13 +41,13 @@ public class CompoundProperty extends AbstractProperty<List<AbstractProperty<?>>
      * @throws PropertyException if <cite>key</cite> is already in use
      */
     public CompoundProperty(final String key, final String shortName, final String description,
-            final List<AbstractProperty<?>> initialValue, final boolean readOnly, final int displayPriority)
+            final List<Property<?>> initialValue, final boolean readOnly, final int displayPriority)
             throws PropertyException
     {
         super(key, displayPriority, shortName, description);
         if (null != initialValue)
         {
-            for (AbstractProperty<?> ap : initialValue)
+            for (Property<?> ap : initialValue)
             {
                 add(ap);
             }
@@ -57,41 +57,41 @@ public class CompoundProperty extends AbstractProperty<List<AbstractProperty<?>>
 
     /** {@inheritDoc} */
     @Override
-    public final List<AbstractProperty<?>> getValue()
+    public final List<Property<?>> getValue()
     {
-        return new ArrayList<AbstractProperty<?>>(this.value); // return a defensive copy
+        return new ArrayList<Property<?>>(this.value); // return a defensive copy
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void setValue(final List<AbstractProperty<?>> newValue) throws PropertyException
+    public final void setValue(final List<Property<?>> newValue) throws PropertyException
     {
-        for (AbstractProperty<?> ap : getValue())
+        for (Property<?> ap : getValue())
         {
             remove(ap); // make good use of the fact that getValue makes a defensive copy
         }
-        for (AbstractProperty<?> ap : newValue)
+        for (Property<?> ap : newValue)
         {
             add(ap);
         }
     }
 
     /**
-     * Find an embedded AbstractProperty that has a specified shortName. <br>
+     * Find an embedded Property that has a specified shortName. <br>
      * Return the first matching one, or null if none of the embedded AbstractProperties has the specified name.
-     * @param key String; the key of the sought embedded AbstractProperty
-     * @return AbstractProperty&lt;?&gt;; the first matching embedded AbstractProperty or null if there is no embedded
-     *         AbstractProperty with the specified name
+     * @param key String; the key of the sought embedded Property
+     * @return Property&lt;?&gt;; the first matching embedded AbstractProperty or null if there is no embedded
+     *         Property with the specified name
      */
-    public final AbstractProperty<?> findSubPropertyByKey(final String key)
+    public final Property<?> findSubPropertyByKey(final String key)
     {
         // System.out.println("Searching property " + name);
-        Iterator<AbstractProperty<List<AbstractProperty<?>>>> i = this.iterator();
+        Iterator<Property<?>> i = this.iterator();
         while (i.hasNext())
         {
-            AbstractProperty<?> ap = i.next();
+            Property<?> ap = i.next();
             // System.out.println("Inspecting " + ap.getKey());
-            if (ap.getShortName().equals(key))
+            if (ap.getKey().equals(key))
             {
                 return ap;
             }
@@ -100,12 +100,12 @@ public class CompoundProperty extends AbstractProperty<List<AbstractProperty<?>>
     }
 
     /**
-     * Add an AbstractProperty at a specified position.
-     * @param index int; the position where the AbstractProperty must be added
-     * @param ap AbstractProperty; the property to add
+     * Add a Property at a specified position.
+     * @param index int; the position where the Property must be added
+     * @param ap Property; the property to add
      * @throws PropertyException when this CompoundProperty is read-only, or index is out of range
      */
-    public final void add(final int index, final AbstractProperty<?> ap) throws PropertyException
+    public final void add(final int index, final Property<?> ap) throws PropertyException
     {
         if (isReadOnly())
         {
@@ -120,7 +120,7 @@ public class CompoundProperty extends AbstractProperty<List<AbstractProperty<?>>
             throw new PropertyException("AbstractProperty " + ap + " is already registered in property group of " + this);
         }
         // Recursively verify that there are no collisions on the key
-        for (AbstractProperty<?> subProperty : ap)
+        for (Property<?> subProperty : ap)
         {
             if (this.propertyGroup.containsKey(subProperty.getKey()))
             {
@@ -129,7 +129,7 @@ public class CompoundProperty extends AbstractProperty<List<AbstractProperty<?>>
             }
         }
         // Add all sub-properties to this property group
-        for (AbstractProperty<?> subProperty : ap)
+        for (Property<?> subProperty : ap)
         {
             this.propertyGroup.put(subProperty.getKey(), subProperty);
             if (subProperty instanceof CompoundProperty)
@@ -139,15 +139,15 @@ public class CompoundProperty extends AbstractProperty<List<AbstractProperty<?>>
             }
         }
         this.value.add(index, ap);
-        ap.setParent(this);
+        ((AbstractProperty<?>) ap).setParent(this);
     }
 
     /**
-     * Add an AbstractProperty at the end of the list.
-     * @param ap AbstractProperty; the property to add
+     * Add a Property at the end of the list.
+     * @param ap Property; the property to add
      * @throws PropertyException when this CompoundProperty is read-only
      */
-    public final void add(final AbstractProperty<?> ap) throws PropertyException
+    public final void add(final Property<?> ap) throws PropertyException
     {
         add(this.value.size(), ap);
     }
@@ -168,8 +168,8 @@ public class CompoundProperty extends AbstractProperty<List<AbstractProperty<?>>
             throw new PropertyException("index is out of range");
         }
         this.propertyGroup.remove(this.value.get(index));
-        AbstractProperty<?> removed = this.value.remove(index);
-        removed.setParent(null);
+        Property<?> removed = this.value.remove(index);
+        ((AbstractProperty<?>) removed).setParent(null);
         if (removed instanceof CompoundProperty)
         {
             ((CompoundProperty) removed).setPropertyGroup(null); // let child CompoundProperty rebuild its property group
@@ -182,7 +182,7 @@ public class CompoundProperty extends AbstractProperty<List<AbstractProperty<?>>
      * @throws PropertyException when the supplied property cannot be removed (probably because it is not part of this
      *             CompoundProperty)
      */
-    public final void remove(final AbstractProperty<?> removeMe) throws PropertyException
+    public final void remove(final Property<?> removeMe) throws PropertyException
     {
         int i = this.value.indexOf(removeMe);
         if (i < 0)
@@ -214,7 +214,7 @@ public class CompoundProperty extends AbstractProperty<List<AbstractProperty<?>>
         {
             // Rebuild the property group (after removal from parent
             this.propertyGroup = new HashMap<String, Property<?>>();
-            for (AbstractProperty<?> ap : this.value)
+            for (Property<?> ap : this.value)
             {
                 this.propertyGroup.put(ap.getKey(), ap);
             }
@@ -222,7 +222,7 @@ public class CompoundProperty extends AbstractProperty<List<AbstractProperty<?>>
         else
         {
             this.propertyGroup = newPropertyGroup;
-            for (AbstractProperty<?> ap : this)
+            for (Property<?> ap : this)
             {
                 this.propertyGroup.put(ap.getKey(), ap);
             }
@@ -235,7 +235,7 @@ public class CompoundProperty extends AbstractProperty<List<AbstractProperty<?>>
      * @return AbstractProperty; the sub property at the specified index
      * @throws PropertyException when index is out of range
      */
-    public final AbstractProperty<?> get(final int index) throws PropertyException
+    public final Property<?> get(final int index) throws PropertyException
     {
         if (index < 0 || index >= this.value.size())
         {
@@ -248,15 +248,15 @@ public class CompoundProperty extends AbstractProperty<List<AbstractProperty<?>>
      * Return the sub-items in display order.
      * @return ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the sub-items in display order
      */
-    public final List<AbstractProperty<?>> displayOrderedValue()
+    public final List<Property<?>> displayOrderedValue()
     {
-        List<AbstractProperty<?>> result = new ArrayList<AbstractProperty<?>>(this.value);
-        final List<AbstractProperty<?>> list = this.value;
-        Collections.sort(result, new Comparator<AbstractProperty<?>>()
+        List<Property<?>> result = new ArrayList<>(this.value);
+        final List<Property<?>> list = this.value;
+        Collections.sort(result, new Comparator<Property<?>>()
         {
 
             @Override
-            public int compare(final AbstractProperty<?> arg0, final AbstractProperty<?> arg1)
+            public int compare(final Property<?> arg0, final Property<?> arg1)
             {
                 int dp0 = arg0.getDisplayPriority();
                 int dp1 = arg1.getDisplayPriority();
@@ -300,7 +300,7 @@ public class CompoundProperty extends AbstractProperty<List<AbstractProperty<?>>
         StringBuilder result = new StringBuilder();
         result.append("<table border=\"1\">");
         result.append("<tr><th align=\"left\">" + getShortName() + "</th></tr>\n");
-        for (AbstractProperty<?> ap : displayOrderedValue())
+        for (Property<?> ap : displayOrderedValue())
         {
             result.append("<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;" + ap.htmlStateDescription() + "</td></tr>\n");
         }
@@ -310,10 +310,10 @@ public class CompoundProperty extends AbstractProperty<List<AbstractProperty<?>>
 
     /** {@inheritDoc} */
     @Override
-    public final AbstractProperty<List<AbstractProperty<?>>> deepCopy()
+    public final CompoundProperty deepCopy()
     {
-        ArrayList<AbstractProperty<?>> copyOfValue = new ArrayList<AbstractProperty<?>>();
-        for (AbstractProperty<?> ap : this.value)
+        ArrayList<Property<?>> copyOfValue = new ArrayList<>();
+        for (Property<?> ap : this.value)
         {
             copyOfValue.add(ap.deepCopy());
         }

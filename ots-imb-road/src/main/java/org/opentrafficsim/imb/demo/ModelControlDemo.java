@@ -7,7 +7,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
@@ -40,7 +39,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.AbstractProperty;
 import org.opentrafficsim.base.modelproperties.BooleanProperty;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.ContinuousProperty;
@@ -139,6 +137,34 @@ public class ModelControlDemo extends ModelStarter
         System.out.println("startModel called");
         System.out.println("parameters: " + parameters);
         System.out.println("Connection: " + this.connection);
+        List<Property<?>> properties = CircularRoadIMB.getSupportedProperties();
+        for (String parameterName : parameters.getParameterNames())
+        {
+            for (Property<?> property : properties)
+            {
+                for (Property<?> p : property)
+                {
+                    if (parameterName.equals(p.getKey()))
+                    {
+                        // FIXME: never happens
+                        if (p instanceof ProbabilityDistributionProperty)
+                        {
+                            ProbabilityDistributionProperty pdp = (ProbabilityDistributionProperty)p;
+                            Double[] values = pdp.getValue();
+                            values[1] = (double) parameters.getParameterByName(parameterName).getValue();
+                            try
+                            {
+                                pdp.setValue(values);
+                            }
+                            catch (PropertyException exception)
+                            {
+                                exception.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+        }
         // Create the simulation
         try
         {
@@ -170,6 +196,8 @@ public class ModelControlDemo extends ModelStarter
         try
         {
             ((Simulator<Time, Duration, OTSSimTimeDouble>) this.model.getSimulator()).cleanUp();
+            this.model.closeWindow();
+            this.model = null;
         }
         catch (RemoteException exception)
         {
@@ -181,14 +209,18 @@ public class ModelControlDemo extends ModelStarter
     @Override
     public void quitApplication()
     {
-        try
+        if (null != this.model)
         {
-            // clean up; even if stopModel was not called before quitApplication
-            ((Simulator<Time, Duration, OTSSimTimeDouble>) this.model.getSimulator()).cleanUp();
-        }
-        catch (RemoteException exception)
-        {
-            exception.printStackTrace();
+            try
+            {
+                // clean up; even if stopModel was not called before quitApplication
+                ((Simulator<Time, Duration, OTSSimTimeDouble>) this.model.getSimulator()).cleanUp();
+            }
+            catch (Exception exception)
+            {
+                System.out.println("caught Exception in quitApplication:");
+                exception.printStackTrace();
+            }
         }
         System.out.println("quitApplication called");
     }
@@ -199,7 +231,23 @@ public class ModelControlDemo extends ModelStarter
     {
         System.out.println("serving parameter request");
         System.out.println("received parameters: " + parameters);
-        parameters.addParameter(new Parameter("Parameter name", "String value"));
+        double currentTruckFraction = Double.NaN;
+        List<Property<?>> propertyList = CircularRoadIMB.getSupportedProperties();
+        for (Property<?> property : propertyList)
+        {
+            Property<?> truckFraction = property.findByKey("TrafficComposition");
+            if (null != truckFraction)
+            {
+                currentTruckFraction = ((ProbabilityDistributionProperty) truckFraction).getValue()[1];
+                break;
+            }
+        }
+        if (Double.isNaN(currentTruckFraction))
+        {
+            currentTruckFraction = 0.2;
+            System.out.println("Could not find the traffic composition property");
+        }
+        parameters.addParameter(new Parameter("Truck fraction (range 0.0 - 1.0)", currentTruckFraction));
         System.out.println("(possibly) modified paramters: " + parameters);
     }
 
@@ -269,13 +317,13 @@ public class ModelControlDemo extends ModelStarter
         private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
         /** The plots. */
-        private ArrayList<LaneBasedGTUSampler> plots = new ArrayList<LaneBasedGTUSampler>();
+        private List<LaneBasedGTUSampler> plots = new ArrayList<LaneBasedGTUSampler>();
 
         /** User settable properties. */
-        private final List<AbstractProperty<?>> properties;
+        private final List<Property<?>> properties;
 
         /** The sequence of Lanes that all vehicles will follow. */
-        private ArrayList<List<Lane>> paths = new ArrayList<List<Lane>>();
+        private List<List<Lane>> paths = new ArrayList<>();
 
         /** The random number generator used to decide what kind of GTU to generate. */
         private Random randomGenerator = new Random(12345);
@@ -295,6 +343,9 @@ public class ModelControlDemo extends ModelStarter
         /** Connector to the IMB hub. */
         private final IMBConnector imbConnector;
 
+        /** The window with the animation. */
+        private JFrame frame;
+
         /**
          * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
          * @param network Network; the network
@@ -302,7 +353,7 @@ public class ModelControlDemo extends ModelStarter
          * @param imbConnector IMBConnector; connection to the IMB hub
          * @throws PropertyException
          */
-        CircularRoadIMB(final GTUColorer gtuColorer, final OTSNetwork network, final List<AbstractProperty<?>> properties,
+        CircularRoadIMB(final GTUColorer gtuColorer, final OTSNetwork network, final List<Property<?>> properties,
                 final IMBConnector imbConnector) throws PropertyException
         {
             this.properties = properties;
@@ -315,9 +366,9 @@ public class ModelControlDemo extends ModelStarter
          * Construct and return the list of properties that the user may modify.
          * @return List&lt;AbstractProperty&gt;; the list of properties that the user may modify
          */
-        public static List<AbstractProperty<?>> getSupportedProperties()
+        public static List<Property<?>> getSupportedProperties()
         {
-            List<AbstractProperty<?>> result = new ArrayList<>();
+            List<Property<?>> result = new ArrayList<>();
             result.add(new SelectionProperty("LaneChanging", "Lane changing",
                     "<html>The lane change strategies vary in politeness.<br>"
                             + "Two types are implemented:<ul><li>Egoistic (looks only at personal gain).</li>"
@@ -332,7 +383,7 @@ public class ModelControlDemo extends ModelStarter
                     "Density %.1f veh/km", false, 11));
             result.add(new ContinuousProperty("DensityVariability", "Density variability",
                     "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, "%.1f", false, 12));
-            ArrayList<AbstractProperty<?>> outputProperties = new ArrayList<AbstractProperty<?>>();
+            List<Property<?>> outputProperties = new ArrayList<>();
             try
             {
                 for (int lane = 1; lane <= 2; lane++)
@@ -398,13 +449,13 @@ public class ModelControlDemo extends ModelStarter
             AnimationPanel panel = null;
             if (theSimulator instanceof AnimatorInterface)
             {
-                JFrame frame = new JFrame("Circular Road Simulation with IMB Model Control");
+                this.frame = new JFrame("Circular Road Simulation with IMB Model Control");
                 panel =
                         new AnimationPanel(new Rectangle2D.Double(-1000, -1000, 2000, 2000), new Dimension(1000, 1000),
                                 theSimulator);
-                frame.add(panel);
-                frame.setSize(new Dimension(1000, 1000));
-                frame.setVisible(true);
+                this.frame.add(panel);
+                this.frame.setSize(new Dimension(1000, 1000));
+                this.frame.setVisible(true);
                 // Tell the animation to build the list of animation objects.
                 panel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, theSimulator, null));
             }
@@ -456,11 +507,8 @@ public class ModelControlDemo extends ModelStarter
                 }
 
                 // Get car-following model parameter
-                Iterator<AbstractProperty<List<AbstractProperty<?>>>> iterator =
-                        new CompoundProperty("", "", "", this.properties, false, 0).iterator();
-                while (iterator.hasNext())
+                for (Property<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
                 {
-                    AbstractProperty<?> ap = iterator.next();
                     if (ap instanceof CompoundProperty)
                     {
                         CompoundProperty cp = (CompoundProperty) ap;
@@ -529,10 +577,8 @@ public class ModelControlDemo extends ModelStarter
                 }
 
                 // Get remaining properties
-                iterator = new CompoundProperty("", "", "", this.properties, false, 0).iterator();
-                while (iterator.hasNext())
+                for (Property<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
                 {
-                    AbstractProperty<?> ap = iterator.next();
                     if (ap instanceof SelectionProperty)
                     {
                         SelectionProperty sp = (SelectionProperty) ap;
@@ -712,6 +758,23 @@ public class ModelControlDemo extends ModelStarter
         }
 
         /**
+         * Close and destroy the window. Please shut down and cleanup the simulator first.
+         */
+        @SuppressWarnings("unchecked")
+        public void closeWindow()
+        {
+            try
+            {
+                ((Simulator<Time, Duration, OTSSimTimeDouble>) this.simulator).cleanUp();
+            }
+            catch (Exception exception)
+            {
+                exception.printStackTrace();
+            }
+            this.frame.dispose();
+        }
+
+        /**
          * Notify the contour plots that the underlying data has changed.
          */
         protected final void drawGraphs()
@@ -784,7 +847,7 @@ public class ModelControlDemo extends ModelStarter
         /**
          * @return plots
          */
-        public final ArrayList<LaneBasedGTUSampler> getPlots()
+        public final List<LaneBasedGTUSampler> getPlots()
         {
             return this.plots;
         }
