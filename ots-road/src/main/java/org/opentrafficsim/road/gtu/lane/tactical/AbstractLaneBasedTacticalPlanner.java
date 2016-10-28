@@ -18,6 +18,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
+import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
@@ -82,6 +83,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         perception.addPerceptionCategory(new InfrastructurePerception(perception));
         perception.addPerceptionCategory(new NeighborsPerception(perception));
         perception.addPerceptionCategory(new IntersectionPerception(perception));
+        perception.addPerceptionCategory(new EgoPerception(perception));
         this.lanePerception = perception;
     }
 

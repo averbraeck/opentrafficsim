@@ -107,11 +107,11 @@ public class OperationalPlan implements Serializable
         double durationSI = 0.0;
         for (int i = 0; i < this.operationalPlanSegmentList.size(); i++)
         {
-            if (Math.abs(v0.si) < DRIFTING_SPEED_SI)
+            Segment segment = this.operationalPlanSegmentList.get(i);
+            if (Math.abs(v0.si) < DRIFTING_SPEED_SI && segment.accelerationSI(0.0) == 0.0)
             {
                 v0 = Speed.ZERO;
             }
-            Segment segment = this.operationalPlanSegmentList.get(i);
             segment.setV0(v0);
             this.segmentStartTimesRelSI[i] = durationSI;
             distanceSI += segment.distanceSI();

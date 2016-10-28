@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.perception.headway;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -51,11 +52,11 @@ public class HeadwayTrafficLight extends AbstractHeadway
     }
 
     /**
-     * @return the traffic light object for further observation.
+     * @return the traffic light color.
      */
-    public final SimpleTrafficLight getTrafficLight()
+    public final TrafficLightColor getTrafficLightColor()
     {
-        return this.trafficLight;
+        return this.trafficLight.getTrafficLightColor();
     }
 
     /** {@inheritDoc} */

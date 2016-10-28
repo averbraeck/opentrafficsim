@@ -1,15 +1,22 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.road.gtu.lane.perception.EnvironmentState.ViewingDirection;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
+import org.opentrafficsim.road.network.lane.conflict.Conflict;
+import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 
 /**
  * Perceives traffic lights and intersection conflicts.
@@ -30,10 +37,10 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
     private static final long serialVersionUID = 20160811L;
 
     /** Set of traffic lights. */
-    private Map<RelativeLane, TimeStampedObject<SortedSet<HeadwayTrafficLight>>> trafficLights;
+    private Map<RelativeLane, TimeStampedObject<SortedSet<HeadwayTrafficLight>>> trafficLights = new HashMap<>();
 
     /** Set of conflicts. */
-    private Map<RelativeLane, TimeStampedObject<SortedSet<HeadwayConflict>>> conflicts;
+    private Map<RelativeLane, TimeStampedObject<SortedSet<HeadwayConflict>>> conflicts = new HashMap<>();
 
     /**
      * @param perception perception
@@ -58,15 +65,21 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
      */
     public final void updateTrafficLights() throws GTUException, ParameterException
     {
-        // TODO probably will not be a SortedSet...
-        // XXX for (RelativeLane lane : getPerception().getLaneStructure().getCrossSection(getTimestamp()))
+        this.trafficLights.clear();
+        for (RelativeLane lane : getPerception().getLaneStructure().getCrossSection())
         {
-            // TODO TrafficLight is not yet a LaneBasedObject
-            // for (TrafficLight trafficLight : getPerception().getEnvironmentState().getSortedObjects(
-            // ViewingDirection.FORWARD, lane, TrafficLight.class))
-            // {
-            //
-            // }
+            SortedSet<HeadwayTrafficLight> set = new TreeSet<>();
+            this.trafficLights.put(lane, new TimeStampedObject<>(set, getTimestamp()));
+            Map<Length, Set<SimpleTrafficLight>> map = new HashMap<>();
+            // TODO SimpleTrafficLight is not yet a LaneBasedObject
+            //        getPerception().getEnvironmentState().getSortedObjects(ViewingDirection.FORWARD, lane, SimpleTrafficLight.class);
+            for (Length length : map.keySet())
+            {
+                for (SimpleTrafficLight trafficLight : map.get(length))
+                {
+                    set.add(new HeadwayTrafficLight(trafficLight, length));
+                }
+            }
         }
     }
 
@@ -77,15 +90,22 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
      */
     public final void updateConflicts() throws GTUException, ParameterException
     {
-        // TODO probably will not be a SortedSet...
-//        for (RelativeLane lane : getPerception().getLaneStructure().getCrossSection(getTimestamp()))
-//        {
-//             for (Conflict conflict : getPerception().getEnvironmentState().getSortedObjects(
-//             ViewingDirection.FORWARD, lane, Conflict.class))
-//             {
-//                 
-//             }
-//        }
+        this.conflicts.clear();
+        for (RelativeLane lane : getPerception().getLaneStructure().getCrossSection())
+        {
+            SortedSet<HeadwayConflict> set = new TreeSet<>();
+            this.conflicts.put(lane, new TimeStampedObject<>(set, getTimestamp()));
+            Map<Length, Set<Conflict>> map =
+                    getPerception().getEnvironmentState().getSortedObjects(ViewingDirection.FORWARD, lane, Conflict.class);
+            for (Length length : map.keySet())
+            {
+                for (Conflict conflict : map.get(length))
+                {
+                    // TODO needs a lot of input
+                    //set.add(new HeadwayConflict(...))
+                }
+            }
+        }
     }
 
     /**

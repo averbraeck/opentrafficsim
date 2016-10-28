@@ -515,7 +515,7 @@ public final class LaneOperationalPlanBuilder
                 this.laneChangeDirectionality = laneChangeDirection;
             }
             // add current time step
-            this.laneChangeProgress.plus(timeStep);
+            this.laneChangeProgress = this.laneChangeProgress.plus(timeStep);
             // get lateral fraction at end of current time step
             double fraction = this.laneChangeProgress.divideBy(this.laneChangeDuration).si;
             if (fraction >= 1.0)
@@ -530,7 +530,7 @@ public final class LaneOperationalPlanBuilder
         /** {@inheritDoc} */
         public final String toString()
         {
-            return "LaneChange [" + this.laneChangeDuration + " of " + this.laneChangeDuration + " to "
+            return "LaneChange [" + this.laneChangeProgress + " of " + this.laneChangeDuration + " to "
                 + this.laneChangeDirectionality + "]";
         }
 

@@ -1,13 +1,14 @@
 package org.opentrafficsim.road.gtu.lane.perception.headway;
 
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
+import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
 /**
  * Container for a reference to information about a (lane based) GTU and a headway. The Headway can store information about GTUs
@@ -61,7 +62,7 @@ public class HeadwayGTUReal extends AbstractHeadwayGTU
         super(gtu.getId(), gtu.getGTUType(), distance, true, gtu.getLength(), gtu.getSpeed(), gtu.getAcceleration(), gtuStatus);
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
         this.behavioralCharacteristics = gtu.getBehavioralCharacteristics();
-        this.speedLimitInfo = null; // TODO obtain speed limit info from GTU
+        this.speedLimitInfo = getSpeedLimitInfo(gtu);
     }
 
     /**
@@ -79,7 +80,29 @@ public class HeadwayGTUReal extends AbstractHeadwayGTU
             .getAcceleration());
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
         this.behavioralCharacteristics = gtu.getBehavioralCharacteristics();
-        this.speedLimitInfo = null; // TODO obtain speed limit info from GTU
+        this.speedLimitInfo = getSpeedLimitInfo(gtu);
+    }
+    
+    /**
+     * Creates speed limit prospect for given GTU.
+     * @param gtu gtu to the the speed limit prospect for
+     * @return speed limit prospect for given GTU
+     */
+    // TODO this is a simple fix, and getReferenceLane()
+    private SpeedLimitInfo getSpeedLimitInfo(final LaneBasedGTU gtu)
+    {
+        SpeedLimitInfo sli = new SpeedLimitInfo();
+        sli.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, gtu.getMaximumSpeed());
+        try
+        {
+            sli.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN,
+                    gtu.getReferencePosition().getLane().getSpeedLimit(gtu.getGTUType()));
+        }
+        catch (NetworkException | GTUException exception)
+        {
+            throw new RuntimeException("Could not obtain speed limit from lane for perception.", exception);
+        }
+        return sli;
     }
 
     /** {@inheritDoc} */
