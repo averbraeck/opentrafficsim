@@ -575,7 +575,10 @@ public class TConnection {
                 }
             } catch (Exception ex) {
                 if (isConnected())
+                {
                     System.out.println("## Exception in ReadCommands loop: " + ex.getMessage());
+                    ex.printStackTrace();
+                }
             }
         } while ((Command != TEventEntry.IC_END_OF_SESSION) && isConnected());
     }

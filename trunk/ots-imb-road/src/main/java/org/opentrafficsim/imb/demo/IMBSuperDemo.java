@@ -15,6 +15,7 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.naming.NamingException;
 import javax.swing.BoxLayout;
@@ -38,18 +39,20 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+
 import org.djunits.locale.DefaultLocale;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.AbstractProperty;
 import org.opentrafficsim.base.modelproperties.BooleanProperty;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.ContinuousProperty;
 import org.opentrafficsim.base.modelproperties.IntegerProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.base.modelproperties.StringProperty;
@@ -61,8 +64,6 @@ import org.opentrafficsim.imb.connector.OTSIMBConnector;
 import org.opentrafficsim.road.modelproperties.IDMPropertySet;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * Several demos in one application.
@@ -85,7 +86,7 @@ public class IMBSuperDemo implements UNITS
 
     /** Properties of the currently selected demonstration. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected ArrayList<AbstractProperty<?>> activeProperties = null;
+    protected List<Property<?>> activeProperties = null;
 
     /** The properties of the connection to an IMB hub. */
     private CompoundProperty imbProperties;
@@ -169,7 +170,7 @@ public class IMBSuperDemo implements UNITS
         centerPanel.add(imbControls, BorderLayout.NORTH);
         this.propertyPanel = new JPanel();
         this.propertyPanel.setLayout(new BoxLayout(this.propertyPanel, BoxLayout.Y_AXIS));
-        rebuildPropertyPanel(new ArrayList<AbstractProperty<?>>());
+        rebuildPropertyPanel(new ArrayList<Property<?>>());
         mainPanel.add(centerPanel, BorderLayout.CENTER);
         this.descriptionPanel = new LabeledPanel("Description");
         this.descriptionPanel.setLayout(new BorderLayout());
@@ -261,7 +262,7 @@ public class IMBSuperDemo implements UNITS
      * Regenerate the contents of the propertyPanel.
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the demo-specific properties to display
      */
-    final void rebuildPropertyPanel(final ArrayList<AbstractProperty<?>> properties)
+    final void rebuildPropertyPanel(final List<Property<?>> properties)
     {
         this.propertyPanel.removeAll();
         try
@@ -281,7 +282,7 @@ public class IMBSuperDemo implements UNITS
                 {
                     boolean movedAny = false;
                     // Move the properties that has display priority < 100 into the simulationSettings group.
-                    for (AbstractProperty<?> ap : properties)
+                    for (Property<?> ap : properties)
                     {
                         if (ap.getDisplayPriority() < 100)
                         {
@@ -321,7 +322,7 @@ public class IMBSuperDemo implements UNITS
             }
             properties.add(0, simulationSettings);
             boolean fixedDummy = false;
-            for (AbstractProperty<?> p : new CompoundProperty("", "", "", properties, false, 0).displayOrderedValue())
+            for (Property<?> p : new CompoundProperty("", "", "", properties, false, 0).displayOrderedValue())
             {
                 JPanel propertySubPanel = makePropertyEditor(p);
                 if (!fixedDummy)
@@ -349,7 +350,7 @@ public class IMBSuperDemo implements UNITS
      * @param ap AbstractProperty; the abstract property for which an editor must be created
      * @return JPanel
      */
-    final JPanel makePropertyEditor(final AbstractProperty<?> ap)
+    final JPanel makePropertyEditor(final Property<?> ap)
     {
         JPanel result;
         if (ap instanceof SelectionProperty)
@@ -538,7 +539,7 @@ public class IMBSuperDemo implements UNITS
             CompoundProperty cp = (CompoundProperty) ap;
             result = new LabeledPanel(ap.getShortName());
             result.setLayout(new BoxLayout(result, BoxLayout.Y_AXIS));
-            for (AbstractProperty<?> subProperty : cp.displayOrderedValue())
+            for (Property<?> subProperty : cp.displayOrderedValue())
             {
                 result.add(makePropertyEditor(subProperty));
             }

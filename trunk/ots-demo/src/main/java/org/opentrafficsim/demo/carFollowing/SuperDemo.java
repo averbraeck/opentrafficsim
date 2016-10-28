@@ -15,6 +15,7 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.naming.NamingException;
 import javax.swing.BoxLayout;
@@ -38,18 +39,20 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+
 import org.djunits.locale.DefaultLocale;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.AbstractProperty;
 import org.opentrafficsim.base.modelproperties.BooleanProperty;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.ContinuousProperty;
 import org.opentrafficsim.base.modelproperties.IntegerProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.base.modelproperties.StringProperty;
@@ -60,8 +63,6 @@ import org.opentrafficsim.gui.SimulatorFrame;
 import org.opentrafficsim.road.modelproperties.IDMPropertySet;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * Several demos in one application.
@@ -84,7 +85,7 @@ public class SuperDemo implements UNITS
 
     /** Properties of the currently selected demonstration. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected ArrayList<AbstractProperty<?>> activeProperties = null;
+    protected List<Property<?>> activeProperties = null;
 
     /** Panel with the description of the currently selected demonstration. */
     LabeledPanel descriptionPanel;
@@ -158,7 +159,7 @@ public class SuperDemo implements UNITS
         final JPanel centerPanel = new JPanel(new BorderLayout());
         this.propertyPanel = new JPanel();
         this.propertyPanel.setLayout(new BoxLayout(this.propertyPanel, BoxLayout.Y_AXIS));
-        rebuildPropertyPanel(new ArrayList<AbstractProperty<?>>());
+        rebuildPropertyPanel(new ArrayList<Property<?>>());
         mainPanel.add(centerPanel, BorderLayout.CENTER);
         this.descriptionPanel = new LabeledPanel("Description");
         this.descriptionPanel.setLayout(new BorderLayout());
@@ -223,8 +224,7 @@ public class SuperDemo implements UNITS
                     simulation.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND),
                             SuperDemo.this.activeProperties, null, false);
                 }
-                catch (SimRuntimeException | NetworkException | NamingException | OTSSimulationException
-                        | PropertyException exception)
+                catch (SimRuntimeException | NetworkException | NamingException | OTSSimulationException | PropertyException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -252,13 +252,14 @@ public class SuperDemo implements UNITS
      * Regenerate the contents of the propertyPanel.
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the demo-specific properties to display
      */
-    final void rebuildPropertyPanel(final ArrayList<AbstractProperty<?>> properties)
+    final void rebuildPropertyPanel(final List<Property<?>> properties)
     {
         this.propertyPanel.removeAll();
         try
         {
-            CompoundProperty simulationSettings = new CompoundProperty("SimulationSettings", "Simulation settings",
-                    "Select the simulation network and traffic composition", null, false, 0);
+            CompoundProperty simulationSettings =
+                    new CompoundProperty("SimulationSettings", "Simulation settings",
+                            "Select the simulation network and traffic composition", null, false, 0);
             /*
              * This is ugly, but it gets the job done... Insert a dummy property at the top and later replace the property
              * editor for the dummy property by the simulationSelection JPanel.
@@ -271,7 +272,7 @@ public class SuperDemo implements UNITS
                 {
                     boolean movedAny = false;
                     // Move the properties that has display priority < 100 into the simulationSettings group.
-                    for (AbstractProperty<?> ap : properties)
+                    for (Property<?> ap : properties)
                     {
                         if (ap.getDisplayPriority() < 100)
                         {
@@ -290,8 +291,9 @@ public class SuperDemo implements UNITS
                 simulationSettings.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
                         "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
                         new Double[] { 0.8, 0.2 }, false, 5));
-                CompoundProperty modelSelection = new CompoundProperty("ModelSelection", "Model selection",
-                        "Modeling specific settings", null, false, 300);
+                CompoundProperty modelSelection =
+                        new CompoundProperty("ModelSelection", "Model selection", "Modeling specific settings", null, false,
+                                300);
                 modelSelection.add(new SelectionProperty("SimulationScale", "Simulation scale",
                         "Level of detail of the simulation", new String[] { "Micro", "Macro", "Meta" }, 0, true, 0));
                 modelSelection.add(new SelectionProperty("CarFollowingModel", "Car following model",
@@ -299,18 +301,18 @@ public class SuperDemo implements UNITS
                                 + "the acceleration that a vehicle will make taking into account "
                                 + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
                                 + "curvature of the road) capabilities of the vehicle and personality "
-                                + "of the driver.</html>",
-                        new String[] { "IDM", "IDM+" }, 1, false, 1));
-                modelSelection.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car", new Acceleration(1.0, METER_PER_SECOND_2),
-                        new Acceleration(1.5, METER_PER_SECOND_2), new Length(2.0, METER), new Duration(1.0, SECOND), 2));
-                modelSelection.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck",
-                        new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2),
-                        new Length(2.0, METER), new Duration(1.0, SECOND), 3));
+                                + "of the driver.</html>", new String[] { "IDM", "IDM+" }, 1, false, 1));
+                modelSelection.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car",
+                        new Acceleration(1.0, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length(2.0,
+                                METER), new Duration(1.0, SECOND), 2));
+                modelSelection.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck", new Acceleration(0.5,
+                        METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER), new Duration(
+                        1.0, SECOND), 3));
                 properties.add(properties.size() > 0 ? 1 : 0, modelSelection);
             }
             properties.add(0, simulationSettings);
             boolean fixedDummy = false;
-            for (AbstractProperty<?> p : new CompoundProperty("", "", "", properties, false, 0).displayOrderedValue())
+            for (Property<?> p : new CompoundProperty("", "", "", properties, false, 0).displayOrderedValue())
             {
                 JPanel propertySubPanel = makePropertyEditor(p);
                 if (!fixedDummy)
@@ -337,7 +339,7 @@ public class SuperDemo implements UNITS
      * @param ap AbstractProperty; the abstract property for which an editor must be created
      * @return JPanel
      */
-    final JPanel makePropertyEditor(final AbstractProperty<?> ap)
+    final JPanel makePropertyEditor(final Property<?> ap)
     {
         JPanel result;
         if (ap instanceof SelectionProperty)
@@ -424,8 +426,9 @@ public class SuperDemo implements UNITS
             slider.setMinimum(ip.getMinimumValue());
             slider.setValue(ip.getValue());
             slider.setPaintTicks(true);
-            final JLabel currentValue = new JLabel(
-                    String.format(DefaultLocale.getLocale(), ip.getFormatString(), ip.getValue()), SwingConstants.RIGHT);
+            final JLabel currentValue =
+                    new JLabel(String.format(DefaultLocale.getLocale(), ip.getFormatString(), ip.getValue()),
+                            SwingConstants.RIGHT);
             slider.addChangeListener(new ChangeListener()
             {
                 @Override
@@ -461,10 +464,11 @@ public class SuperDemo implements UNITS
             final int useSteps = 1000;
             slider.setMaximum(useSteps);
             slider.setMinimum(0);
-            slider.setValue(
-                    (int) (useSteps * (cp.getValue() - cp.getMinimumValue()) / (cp.getMaximumValue() - cp.getMinimumValue())));
-            final JLabel currentValue = new JLabel(
-                    String.format(DefaultLocale.getLocale(), cp.getFormatString(), cp.getValue()), SwingConstants.RIGHT);
+            slider.setValue((int) (useSteps * (cp.getValue() - cp.getMinimumValue()) / (cp.getMaximumValue() - cp
+                    .getMinimumValue())));
+            final JLabel currentValue =
+                    new JLabel(String.format(DefaultLocale.getLocale(), cp.getFormatString(), cp.getValue()),
+                            SwingConstants.RIGHT);
             slider.addChangeListener(new ChangeListener()
             {
                 @Override
@@ -524,7 +528,7 @@ public class SuperDemo implements UNITS
             CompoundProperty cp = (CompoundProperty) ap;
             result = new LabeledPanel(ap.getShortName());
             result.setLayout(new BoxLayout(result, BoxLayout.Y_AXIS));
-            for (AbstractProperty<?> subProperty : cp.displayOrderedValue())
+            for (Property<?> subProperty : cp.displayOrderedValue())
             {
                 result.add(makePropertyEditor(subProperty));
             }
@@ -540,7 +544,7 @@ public class SuperDemo implements UNITS
             {
 
                 @Override
-                public void insertUpdate(DocumentEvent e)
+                public void insertUpdate(final DocumentEvent e)
                 {
                     try
                     {
@@ -553,7 +557,7 @@ public class SuperDemo implements UNITS
                 }
 
                 @Override
-                public void removeUpdate(DocumentEvent e)
+                public void removeUpdate(final DocumentEvent e)
                 {
                     try
                     {
@@ -566,7 +570,7 @@ public class SuperDemo implements UNITS
                 }
 
                 @Override
-                public void changedUpdate(DocumentEvent e)
+                public void changedUpdate(final DocumentEvent e)
                 {
                     try
                     {

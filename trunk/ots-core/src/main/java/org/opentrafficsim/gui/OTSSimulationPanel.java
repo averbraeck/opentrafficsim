@@ -9,15 +9,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
-import org.opentrafficsim.base.modelproperties.AbstractProperty;
-import org.opentrafficsim.base.modelproperties.CompoundProperty;
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.simulationengine.WrappableAnimation;
-
 import nl.tudelft.simulation.dsol.gui.swing.Console;
 import nl.tudelft.simulation.dsol.gui.swing.StatusBar;
 import nl.tudelft.simulation.dsol.gui.swing.TabbedContentPane;
+
+import org.opentrafficsim.base.modelproperties.CompoundProperty;
+import org.opentrafficsim.base.modelproperties.Property;
+import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.simulationengine.WrappableAnimation;
 
 /**
  * GUI with simulator, console, control panel, status bar, etc.
@@ -72,12 +72,12 @@ public class OTSSimulationPanel extends JPanel
         this.tabbedPane.addTab("console", new JScrollPane(this.console));
 
         // Let's add the properties of the simulation model as a tab
-        List<AbstractProperty<?>> propertyList =
+        List<Property<?>> propertyList =
                 new CompoundProperty("", "", "", wrappableAnimation.getUserModifiedProperties(), true, 0).displayOrderedValue();
         StringBuilder html = new StringBuilder();
         html.append("<html><table border=\"1\"><tr><th colspan=\"" + propertyList.size() + "\">Settings</th></tr><tr>");
 
-        for (AbstractProperty<?> ap : propertyList)
+        for (Property<?> ap : propertyList)
         {
             html.append("<td valign=\"top\">" + ap.htmlStateDescription() + "</td>");
         }

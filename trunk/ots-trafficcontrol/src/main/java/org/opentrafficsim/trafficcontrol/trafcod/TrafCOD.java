@@ -21,27 +21,34 @@ import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.language.Throw;
 
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.formatter.EngineeringFormatter;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Sensor;
+import org.opentrafficsim.road.network.lane.TrafficLightSensor;
+import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
@@ -308,7 +315,7 @@ public class TrafCOD extends EventProducer implements TrafficController
                         throw new Exception("Id of traffic light " + trafficLight + " does not end on two digits");
                     }
                     String streamLetters = id.substring(id.length() - 2);
-                    if (!Character.isDigit(streamLetters.charAt(0)) || ! Character.isDigit(streamLetters.charAt(1)))
+                    if (!Character.isDigit(streamLetters.charAt(0)) || !Character.isDigit(streamLetters.charAt(1)))
                     {
                         throw new Exception("Id of traffic light " + trafficLight + " does not end on two digits");
                     }
@@ -346,7 +353,7 @@ public class TrafCOD extends EventProducer implements TrafficController
             {
                 String detectorName = variable.selectedFieldsToString(EnumSet.of(PrintFlags.ID));
                 int detectorNumber = variable.getStream() * 10 + detectorName.charAt(detectorName.length() - 1) - '0';
-                
+
             }
         }
         System.out.println("Installed " + this.variables.size() + " variables");
@@ -1342,13 +1349,19 @@ public class TrafCOD extends EventProducer implements TrafficController
                     Link linkWX = new OTSLink(network, "LinkSX", nodeW, nodeX, LinkType.ALL, null, directionalityMap);
                     Link linkXE = new OTSLink(network, "LinkSX", nodeX, nodeE, LinkType.ALL, null, directionalityMap);
                     Length laneWidth = new Length(3, LengthUnit.METER);
-                    //FIXME work in progress Lane lane = new Lane((CrossSectionLink) linkSX, "laneSX", Length.ZERO, Length.ZERO, laneWidth, laneWidth, null, null);
+                    Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
+                    Lane laneSX =
+                            new Lane((CrossSectionLink) linkSX, "laneSX", Length.ZERO, laneWidth, LaneType.ALL,
+                                    LongitudinalDirectionality.DIR_PLUS, speedLimit, new OvertakingConditions.None());
+                    TrafficLightSensor d082 =
+                            new TrafficLightSensor("D082", laneSX, new Length(50, LengthUnit.METER), new Length(20,
+                                    LengthUnit.METER), (OTSDEVSSimulatorInterface) theSimulator);
                     Set<TrafficLight> trafficLights = new HashSet<>();
                     trafficLights.add(new SimpleTrafficLight("TL08", null, null, (OTSDEVSSimulatorInterface) theSimulator));
                     trafficLights.add(new SimpleTrafficLight("TL11", null, null, (OTSDEVSSimulatorInterface) theSimulator));
                     this.trafCOD =
-                            new TrafCOD("Simple TrafCOD controller", "file:///d:/cppb/trafcod/otsim/simpel.tfc", trafficLights, null,
-                                    (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator);
+                            new TrafCOD("Simple TrafCOD controller", "file:///d:/cppb/trafcod/otsim/simpel.tfc", trafficLights,
+                                    null, (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator);
                 }
                 catch (Exception exception)
                 {

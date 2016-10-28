@@ -1,8 +1,12 @@
 package nl.tno.imb.mc;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.opentrafficsim.base.modelproperties.CompoundProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.imb.IMBException;
 
 import nl.tno.imb.TByteBuffer;
@@ -281,5 +285,85 @@ public class Parameter
         
     };
     
+    /**
+     * Really simple iterator for properties.
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * <p>
+     * $LastChangedDate: 2016-05-28 11:33:31 +0200 (Sat, 28 May 2016) $, @version $Revision: 2051 $, by $Author: averbraeck $,
+     * initial version jan. 2015 <br>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     */
+    class PropertyIterator implements Iterator<Property<?>>, Serializable
+    {
+        /** */
+        private static final long serialVersionUID = 20150000L;
+
+        /** Next in line in the main CompoundProperty. */
+        private int currentIndex;
+
+        /** Full list of AbstractProperties. */
+        private final ArrayList<Property<?>> list;
+
+        /**
+         * Construct a new PropertyIterator.
+         * @param ap Property; root of the tree to iterate over
+         */
+        PropertyIterator(final Property<?> ap)
+        {
+            this.currentIndex = 0;
+            this.list = new ArrayList<Property<?>>();
+            addToList(ap);
+        }
+
+        /**
+         * Recursively add all properties to the list. <br>
+         * Compound properties are included <b>before</b> their contents.
+         * @param cp Property&lt;T&gt;; the property to add (if compound it and all it's children are added)
+         */
+        private void addToList(final Property<?> cp)
+        {
+            this.list.add(cp);
+            if (cp instanceof CompoundProperty)
+            {
+                for (Property<?> ap : ((CompoundProperty) cp).getValue())
+                {
+                    addToList(ap);
+                }
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean hasNext()
+        {
+            return this.currentIndex < this.list.size();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Property<?> next()
+        {
+            return this.list.get(this.currentIndex++);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void remove()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "PropertyIterator [currentIndex=" + this.currentIndex + ", list=" + this.list + "]";
+        }
+
+    }
+
+
 }
 

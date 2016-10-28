@@ -1,17 +1,17 @@
 package org.opentrafficsim.simulationengine;
 
 import java.awt.Rectangle;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.naming.NamingException;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.AbstractProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.network.NetworkException;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * Requirements for demonstration that can be shown in the SuperDemo.
@@ -31,8 +31,8 @@ public interface WrappableAnimation
      * @param warmupPeriod Duration; the warm up period of the simulation (use new Duration(0, SECOND) if you don't know what
      *            this is)
      * @param runLength Duration; the duration of the simulation
-     * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user-modified) properties. This list must
-     *            contain all the properties returned by getProperties(); any additional properties may be ignored
+     * @param properties List&lt;Property&lt;?&gt;&gt;; the (possibly user-modified) properties. This list must contain all the
+     *            properties returned by getProperties(); any additional properties may be ignored
      * @param rect the x, y, width and height for the window to rebuild. Use null for maximized screen.
      * @param exitOnClose Use EXIT_ON_CLOSE when true, DISPOSE_ON_CLOSE when false on closing of the window.
      * @return SimpleSimulation; the new simulation
@@ -43,9 +43,9 @@ public interface WrappableAnimation
      *             fails
      * @throws PropertyException when one of the user modified properties has the empty string as key
      */
-    SimpleSimulatorInterface buildAnimator(final Time startTime, final Duration warmupPeriod,
-        final Duration runLength, ArrayList<AbstractProperty<?>> properties, Rectangle rect, boolean exitOnClose)
-        throws SimRuntimeException, NetworkException, NamingException, OTSSimulationException, PropertyException;
+    SimpleSimulatorInterface buildAnimator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
+            List<Property<?>> properties, Rectangle rect, boolean exitOnClose) throws SimRuntimeException, NetworkException,
+            NamingException, OTSSimulationException, PropertyException;
 
     /**
      * Restart (rebuild) the simulation.
@@ -57,8 +57,8 @@ public interface WrappableAnimation
      * @throws OTSSimulationException when the (re)construction of the simulation model fails
      * @throws PropertyException when one of the user modified properties has the empty string as key
      */
-    SimpleSimulatorInterface rebuildSimulator(Rectangle rect) throws SimRuntimeException, NetworkException,
-        NamingException, OTSSimulationException, PropertyException;
+    SimpleSimulatorInterface rebuildSimulator(Rectangle rect) throws SimRuntimeException, NetworkException, NamingException,
+            OTSSimulationException, PropertyException;
 
     /**
      * Return a very short description of the simulation.
@@ -76,15 +76,15 @@ public interface WrappableAnimation
      * Retrieve a list of visible properties of the simulation. <br>
      * The caller can modify the returned result. If the internal format is also an ArrayList it is highly recommended to make a
      * protective copy and return that.
-     * @return ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the list of visible properties
+     * @return List&lt;Property&lt;?&gt;&gt;; the list of visible properties
      */
-    ArrayList<AbstractProperty<?>> getProperties();
+    List<Property<?>> getProperties();
 
     /**
      * Retrieve a list of properties as the user has modified them.
-     * @return ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the list of visible properties
+     * @return ArrayList&lt;Property&lt;?&gt;&gt;; the list of visible properties
      */
-    ArrayList<AbstractProperty<?>> getUserModifiedProperties();
+    List<Property<?>> getUserModifiedProperties();
 
     /**
      * Stop the timers and threads that are connected when disposing of this wrappable simulation.
