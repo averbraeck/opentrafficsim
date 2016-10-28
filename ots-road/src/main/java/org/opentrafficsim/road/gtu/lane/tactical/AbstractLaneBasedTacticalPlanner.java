@@ -26,7 +26,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultAlexander;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
@@ -78,7 +78,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         setCarFollowingModel(carFollowingModel);
         this.gtu = gtu;
         CategorialLanePerception perception = new CategorialLanePerception(gtu);
-        perception.addPerceptionCategory(new DefaultAlexander(perception));
+        perception.addPerceptionCategory(new DefaultSimplePerception(perception));
         perception.addPerceptionCategory(new InfrastructurePerception(perception));
         perception.addPerceptionCategory(new NeighborsPerception(perception));
         perception.addPerceptionCategory(new IntersectionPerception(perception));

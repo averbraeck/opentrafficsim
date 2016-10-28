@@ -45,7 +45,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
+public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
 {
 
     /** */
@@ -84,7 +84,7 @@ public class DefaultAlexander extends LaneBasedAbstractPerceptionCategory
     /**
      * @param perception perception
      */
-    public DefaultAlexander(final LanePerception perception)
+    public DefaultSimplePerception(final LanePerception perception)
     {
         super(perception);
     }
