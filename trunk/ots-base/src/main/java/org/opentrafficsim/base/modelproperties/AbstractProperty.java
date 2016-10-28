@@ -52,7 +52,7 @@ public abstract class AbstractProperty<T> implements Property<T>, Iterable<Abstr
         this.shortName = shortName;
         this.description = description;
     }
-    
+
     /**
      * Finalize the readOnly flag.
      * @param readOnlyValue the readonly property value to set
@@ -61,7 +61,7 @@ public abstract class AbstractProperty<T> implements Property<T>, Iterable<Abstr
     {
         this.readOnly = readOnlyValue;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final int getDisplayPriority()
@@ -109,13 +109,9 @@ public abstract class AbstractProperty<T> implements Property<T>, Iterable<Abstr
     {
         return this.key;
     }
-    
-    /**
-     * Retrieve an AbstractProperty anywhere in this group that has the specified key.
-     * @param propertyKey String; the key
-     * @return AbstractProperty; the matching AbstractProperty, or null if no property with the specified key exists in the
-     *         group.
-     */
+
+    /** {@inheritDoc} */
+    @Override
     public final Property<?> findByKey(final String propertyKey)
     {
         if (this.key.equals(propertyKey))
@@ -141,10 +137,11 @@ public abstract class AbstractProperty<T> implements Property<T>, Iterable<Abstr
     {
         this.parentProperty = newParent;
     }
-    
+
     /**
      * Retrieve the parent property.
-     * @return AbstractProperty&lt;?&gt;; the CompoundProperty that is the parent of this AbstractProperty (result is null if this property is not contained in a CompoundProperty)
+     * @return AbstractProperty&lt;?&gt;; the CompoundProperty that is the parent of this AbstractProperty (result is null if
+     *         this property is not contained in a CompoundProperty)
      */
     protected final CompoundProperty getParent()
     {
