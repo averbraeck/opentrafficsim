@@ -73,5 +73,13 @@ public interface Property<T>
      *         sub-properties (if this is compound)
      */
     Iterator<AbstractProperty<T>> iterator();
+    
+    /**
+     * Retrieve a Property anywhere in this group that has the specified key.
+     * @param propertyKey String; the key
+     * @return AbstractProperty; the matching AbstractProperty, or null if no property with the specified key exists in the
+     *         group.
+     */
+    Property<?> findByKey(String propertyKey);
 
 }
