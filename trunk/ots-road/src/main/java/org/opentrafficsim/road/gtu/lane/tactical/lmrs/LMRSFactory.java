@@ -56,6 +56,7 @@ public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Seria
         behavioralCharacteristics.setAll(this.defaultCarFollowingBehavioralCharacteristics);
         behavioralCharacteristics.setDefaultParameters(ParameterTypes.class);
         behavioralCharacteristics.setDefaultParameters(LmrsUtil.class);
+        behavioralCharacteristics.setDefaultParameters(IncentiveSpeedWithCourtesy.class);
         return behavioralCharacteristics;
     }
 
@@ -63,7 +64,9 @@ public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Seria
     @Override
     public final LMRS create(final LaneBasedGTU gtu) throws GTUException
     {
-        return new LMRS(this.carFollowingModelFactory.generateCarFollowingModel(), gtu);
+        LMRS lmrs = new LMRS(this.carFollowingModelFactory.generateCarFollowingModel(), gtu);
+        lmrs.setDefaultIncentives();
+        return lmrs;
     }
     
     /** {@inheritDoc} */

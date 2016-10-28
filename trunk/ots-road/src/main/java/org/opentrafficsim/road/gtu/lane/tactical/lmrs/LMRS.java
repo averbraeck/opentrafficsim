@@ -10,6 +10,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
@@ -38,8 +39,8 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
  * Arem, B. (2012), <a href="http://victorknoop.eu/research/papers/TRB2012_LMRS_reviewed.pdf">LMRS: Integrated Lane Change Model
  * with Relaxation and Synchronization</a>, Transportation Research Records: Journal of the Transportation Research Board, No.
  * 2316, pp. 47-57. Note in the official versions of TRB and TRR some errors appeared due to the typesetting of the papers (not
- * in the preprint provided here). A list of errata for the official versions is found <a
- * href="http://victorknoop.eu/research/papers/Erratum_LMRS.pdf">here</a>.
+ * in the preprint provided here). A list of errata for the official versions is found
+ * <a href="http://victorknoop.eu/research/papers/Erratum_LMRS.pdf">here</a>.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -117,19 +118,18 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     /** {@inheritDoc} */
     @Override
     public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
-        throws OperationalPlanException, GTUException, NetworkException, ParameterException
+            throws OperationalPlanException, GTUException, NetworkException, ParameterException
     {
         // obtain objects to get info
         getPerception().perceive();
-        SpeedLimitProspect slp =
-            getPerception().getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(RelativeLane.CURRENT);
+        SpeedLimitProspect slp = getPerception().getPerceptionCategory(InfrastructurePerception.class)
+                .getSpeedLimitProspect(RelativeLane.CURRENT);
         SpeedLimitInfo sli = slp.getSpeedLimitInfo(Length.ZERO);
         BehavioralCharacteristics bc = getGtu().getBehavioralCharacteristics();
 
         // LMRS
-        SimpleOperationalPlan simplePlan =
-            LmrsUtil.determinePlan(getGtu(), startTime, this.lmrsStatus, getCarFollowingModel(), this.laneChange,
-                getPerception(), this.mandatoryIncentives, this.voluntaryIncentives);
+        SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(getGtu(), startTime, this.lmrsStatus, getCarFollowingModel(),
+                this.laneChange, getPerception(), this.mandatoryIncentives, this.voluntaryIncentives);
 
         // speed limits
         Speed speed = getGtu().getSpeed();
@@ -137,14 +137,15 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
 
         // traffic lights
         // TODO traffic lights on route, possible on different lane (and possibly close)
-        simplePlan.minimumAcceleration(TrafficLightUtil.respondToTrafficLights(bc, getPerception().getPerceptionCategory(
-            IntersectionPerception.class).getTrafficLights(RelativeLane.CURRENT), getCarFollowingModel(), speed, sli));
+        simplePlan.minimumAcceleration(TrafficLightUtil.respondToTrafficLights(bc,
+                getPerception().getPerceptionCategory(IntersectionPerception.class).getTrafficLights(RelativeLane.CURRENT),
+                getCarFollowingModel(), speed, sli));
 
         // conflicts
-        simplePlan.minimumAcceleration(ConflictUtil.approachConflicts(bc, getPerception().getPerceptionCategory(
-            IntersectionPerception.class).getConflicts(RelativeLane.CURRENT), getPerception().getPerceptionCategory(
-            NeighborsPerception.class).getLeaders(RelativeLane.CURRENT), getCarFollowingModel(), getGtu().getLength(), speed,
-            sli, this.yieldPlans));
+        simplePlan.minimumAcceleration(ConflictUtil.approachConflicts(bc,
+                getPerception().getPerceptionCategory(IntersectionPerception.class).getConflicts(RelativeLane.CURRENT),
+                getPerception().getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT),
+                getCarFollowingModel(), getGtu().getLength(), speed, sli, this.yieldPlans));
 
         // create plan
         return buildPlanFromSimplePlan(getGtu(), startTime, bc, simplePlan, this.laneChange);

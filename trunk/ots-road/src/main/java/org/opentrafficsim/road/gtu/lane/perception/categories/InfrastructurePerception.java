@@ -40,18 +40,18 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
 
     /** Infrastructure lane change info per relative lane. */
     private final Map<RelativeLane, TimeStampedObject<SortedSet<InfrastructureLaneChangeInfo>>> infrastructureLaneChangeInfo =
-        new HashMap<>();
+            new HashMap<>();
 
     /** Speed limit prospect per relative lane. */
     private final Map<RelativeLane, TimeStampedObject<SpeedLimitProspect>> speedLimitProspect = new HashMap<>();
 
     /** Legal Lane change possibilities per relative lane and lateral direction. */
     private final Map<RelativeLane, Map<LateralDirectionality, TimeStampedObject<Length>>> legalLaneChangePossibility =
-        new HashMap<>();
+            new HashMap<>();
 
     /** Physical Lane change possibilities per relative lane and lateral direction. */
     private final Map<RelativeLane, Map<LateralDirectionality, TimeStampedObject<Length>>> physicalLaneChangePossibility =
-        new HashMap<>();
+            new HashMap<>();
 
     /** Cross-section. */
     private TimeStampedObject<SortedSet<RelativeLane>> crossSection;
@@ -90,28 +90,21 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
     public final void updateInfrastructureLaneChangeInfo(final RelativeLane lane) throws GTUException, ParameterException
     {
         if (this.infrastructureLaneChangeInfo.containsKey(lane)
-            && this.infrastructureLaneChangeInfo.get(lane).getTimestamp().equals(getTimestamp()))
+                && this.infrastructureLaneChangeInfo.get(lane).getTimestamp().equals(getTimestamp()))
         {
             // already done at this time
             return;
         }
         updateCrossSection();
         checkLaneIsInCrossSection(lane);
-        
-        // TODO remove this if-statement and its contents
-        if (true)
-        {
-            this.infrastructureLaneChangeInfo.put(RelativeLane.CURRENT, new TimeStampedObject<>(new TreeSet<>(),
-                getTimestamp()));
-            return;
-        }
 
         // start at requested lane
         SortedSet<InfrastructureLaneChangeInfo> resultSet = new TreeSet<>();
         Map<LaneStructureRecord, InfrastructureLaneChangeInfo> currentSet = new HashMap<>();
         Map<LaneStructureRecord, InfrastructureLaneChangeInfo> nextSet = new HashMap<>();
         LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(lane, getTimestamp());
-        currentSet.put(record, new InfrastructureLaneChangeInfo(0, record.getLane().getLength()));
+        currentSet.put(record,
+                new InfrastructureLaneChangeInfo(0, record.getLane().getLength().plus(record.getStartDistance())));
         while (!currentSet.isEmpty())
         {
             // move lateral
@@ -122,18 +115,16 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
                 while (laneRecord.getLeft() != null && !nextSet.containsKey(laneRecord.getLeft()))
                 {
                     InfrastructureLaneChangeInfo info =
-                        new InfrastructureLaneChangeInfo(nextSet.get(laneRecord).getRequiredNumberOfLaneChanges() + 1,
-                            nextSet.get(laneRecord).getRemainingDistance().minus(
-                                laneRecord.getLane().getLength().plus(laneRecord.getLeft().getLane().getLength())));
+                            new InfrastructureLaneChangeInfo(nextSet.get(laneRecord).getRequiredNumberOfLaneChanges() + 1,
+                                    laneRecord.getStartDistance().plus(laneRecord.getLane().getLength()));
                     nextSet.put(laneRecord.getLeft(), info);
                     laneRecord = laneRecord.getLeft();
                 }
                 while (laneRecord.getRight() != null && !nextSet.containsKey(laneRecord.getRight()))
                 {
                     InfrastructureLaneChangeInfo info =
-                        new InfrastructureLaneChangeInfo(nextSet.get(laneRecord).getRequiredNumberOfLaneChanges() + 1,
-                            nextSet.get(laneRecord).getRemainingDistance().minus(
-                                laneRecord.getLane().getLength().plus(laneRecord.getRight().getLane().getLength())));
+                            new InfrastructureLaneChangeInfo(nextSet.get(laneRecord).getRequiredNumberOfLaneChanges() + 1,
+                                    laneRecord.getStartDistance().plus(laneRecord.getLane().getLength()));
                     nextSet.put(laneRecord.getRight(), info);
                     laneRecord = laneRecord.getRight();
                 }
@@ -151,13 +142,12 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
                     for (LaneStructureRecord next : laneRecord.getNext())
                     {
                         InfrastructureLaneChangeInfo info =
-                            new InfrastructureLaneChangeInfo(currentSet.get(laneRecord).getRequiredNumberOfLaneChanges(),
-                                currentSet.get(laneRecord).getRemainingDistance().plus(next.getLane().getLength()));
+                                new InfrastructureLaneChangeInfo(currentSet.get(laneRecord).getRequiredNumberOfLaneChanges(),
+                                        currentSet.get(laneRecord).getRemainingDistance().plus(next.getLane().getLength()));
                         nextSet.put(next, info);
                     }
                     // take best ok
-                    if (bestOk == null
-                        || currentSet.get(laneRecord).getRequiredNumberOfLaneChanges() < bestOk
+                    if (bestOk == null || currentSet.get(laneRecord).getRequiredNumberOfLaneChanges() < bestOk
                             .getRequiredNumberOfLaneChanges())
                     {
                         bestOk = currentSet.get(laneRecord);
@@ -166,8 +156,7 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
                 else
                 {
                     // take best not ok
-                    if (bestNotOk == null
-                        || currentSet.get(laneRecord).getRequiredNumberOfLaneChanges() < bestNotOk
+                    if (bestNotOk == null || currentSet.get(laneRecord).getRequiredNumberOfLaneChanges() < bestNotOk
                             .getRequiredNumberOfLaneChanges())
                     {
                         bestNotOk = currentSet.get(laneRecord);
@@ -184,7 +173,7 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
         }
 
         // save
-        this.infrastructureLaneChangeInfo.put(RelativeLane.CURRENT, new TimeStampedObject<>(resultSet, getTimestamp()));
+        this.infrastructureLaneChangeInfo.put(lane, new TimeStampedObject<>(resultSet, getTimestamp()));
     }
 
     /**
@@ -224,7 +213,7 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
      * @throws GTUException if the GTU was not initialized or if the lane is not in the cross section
      * @throws ParameterException if a parameter is not defined
      */
-    // TODO implement this method
+    // TODO implement this method, current implementation is a simple fix
     public final void updateSpeedLimitProspect(final RelativeLane lane) throws GTUException, ParameterException
     {
         updateCrossSection();
@@ -240,7 +229,7 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
         {
             throw new RuntimeException("Could not obtain speed limit from lane for perception.", exception);
         }
-        this.speedLimitProspect.put(RelativeLane.CURRENT, new TimeStampedObject<>(slp, getTimestamp()));
+        this.speedLimitProspect.put(lane, new TimeStampedObject<>(slp, getTimestamp()));
     }
 
     /**
@@ -250,16 +239,24 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
      * @throws GTUException if the GTU was not initialized or if the lane is not in the cross section
      * @throws ParameterException if a parameter is not defined
      */
-    // TODO implement this method
     public final void updateLegalLaneChangePossibility(final RelativeLane lane, final LateralDirectionality lat)
-        throws GTUException, ParameterException
+            throws GTUException, ParameterException
     {
         updateCrossSection();
         checkLaneIsInCrossSection(lane);
-        Map<LateralDirectionality, TimeStampedObject<Length>> map = new HashMap<>();
-        map.put(LateralDirectionality.LEFT, new TimeStampedObject<>(Length.ZERO, getTimestamp()));
-        map.put(LateralDirectionality.RIGHT, new TimeStampedObject<>(Length.ZERO, getTimestamp()));
-        this.legalLaneChangePossibility.put(RelativeLane.CURRENT, map);
+        LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(lane, getTimestamp());
+        Length dist = Length.ZERO;
+        while (record != null && record.getLeft() != null)
+        {
+            dist = record.getStartDistance().plus(record.getLane().getLength());
+            // TODO splits
+            record = record.getNext().isEmpty() ? null : record.getNext().get(0);
+        }
+        if (this.legalLaneChangePossibility.get(lane) == null)
+        {
+            this.legalLaneChangePossibility.put(lane, new HashMap<>());
+        }
+        this.legalLaneChangePossibility.get(lane).put(lat, new TimeStampedObject<>(dist, getTimestamp()));
     }
 
     /**
@@ -269,9 +266,9 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
      * @throws GTUException if the GTU was not initialized or if the lane is not in the cross section
      * @throws ParameterException if a parameter is not defined
      */
-    // TODO implement this method
+    // TODO implement this method, lane map needs support for this (and legal lane changes)
     public final void updatePhysicalLaneChangePossibility(final RelativeLane lane, final LateralDirectionality lat)
-        throws GTUException, ParameterException
+            throws GTUException, ParameterException
     {
         updateCrossSection();
         checkLaneIsInCrossSection(lane);
@@ -288,7 +285,7 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
     private void checkLaneIsInCrossSection(final RelativeLane lane) throws GTUException
     {
         Throw.when(!getCrossSection().contains(lane), GTUException.class,
-            "The requeasted lane %s is not in the most recent cross section.", lane);
+                "The requeasted lane %s is not in the most recent cross section.", lane);
     }
 
     /**
@@ -304,23 +301,12 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
             // already done at this time
             return;
         }
-        
-        // TODO remove this if-statement and its contents
-        if (true)
-        {
-            SortedSet<RelativeLane> set = new TreeSet<>();
-            set.add(RelativeLane.CURRENT);
-            this.crossSection = new TimeStampedObject<>(set, getTimestamp());
-            return;
-        }
-        
-        this.crossSection =
-            new TimeStampedObject<>(getPerception().getLaneStructure().getCrossSection(getTimestamp()), getTimestamp());
+        this.crossSection = new TimeStampedObject<>(getPerception().getLaneStructure().getCrossSection(), getTimestamp());
         // remove all mappings related to lanes no longer in the set
-        getPerception().getLaneStructure().removeInvalidMappings(this.infrastructureLaneChangeInfo, getTimestamp());
-        getPerception().getLaneStructure().removeInvalidMappings(this.speedLimitProspect, getTimestamp());
-        getPerception().getLaneStructure().removeInvalidMappings(this.legalLaneChangePossibility, getTimestamp());
-        getPerception().getLaneStructure().removeInvalidMappings(this.physicalLaneChangePossibility, getTimestamp());
+        getPerception().getLaneStructure().removeInvalidMappings(this.infrastructureLaneChangeInfo);
+        getPerception().getLaneStructure().removeInvalidMappings(this.speedLimitProspect);
+        getPerception().getLaneStructure().removeInvalidMappings(this.legalLaneChangePossibility);
+        getPerception().getLaneStructure().removeInvalidMappings(this.physicalLaneChangePossibility);
     }
 
     /**
@@ -342,6 +328,7 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
      *     (-)        Lane-drop: 1 lane change  in 100m (100m per lane change, critical)
      *     (--------) Off-ramp:  3 lane changes in 600m (200m per lane change)
      * </pre>
+     * 
      * @param lane relative lateral lane
      * @return infrastructure lane change info of a lane
      */
@@ -412,11 +399,12 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
      *     (-)        Lane-drop: 1 lane change  in 100m (100m per lane change, critical)
      *     (--------) Off-ramp:  3 lane changes in 600m (200m per lane change)
      * </pre>
+     * 
      * @param lane relative lateral lane
      * @return time stamped infrastructure lane change info of a lane
      */
     public final TimeStampedObject<SortedSet<InfrastructureLaneChangeInfo>> getTimeStampedInfrastructureLaneChangeInfo(
-        final RelativeLane lane)
+            final RelativeLane lane)
     {
         return this.infrastructureLaneChangeInfo.get(lane);
     }
@@ -439,7 +427,7 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
      * @throws NullPointerException if {@code lat == null}
      */
     public final TimeStampedObject<Length> getTimeStampedLegalLaneChangePossibility(final RelativeLane fromLane,
-        final LateralDirectionality lat)
+            final LateralDirectionality lat)
     {
         return this.legalLaneChangePossibility.get(fromLane).get(lat);
     }
@@ -452,7 +440,7 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
      * @throws NullPointerException if {@code lat == null}
      */
     public final TimeStampedObject<Length> getTimeStampedPhysicalLaneChangePossibility(final RelativeLane fromLane,
-        final LateralDirectionality lat)
+            final LateralDirectionality lat)
     {
         return this.physicalLaneChangePossibility.get(fromLane).get(lat);
     }

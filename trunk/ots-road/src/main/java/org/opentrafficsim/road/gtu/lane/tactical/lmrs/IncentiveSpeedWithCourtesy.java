@@ -104,7 +104,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
 
         // right desire
         Dimensionless dRight;
-        if (perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection().contains(RelativeLane.LEFT))
+        if (perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection().contains(RelativeLane.RIGHT))
         {
             Speed vRight = anticipationSpeed(RelativeLane.RIGHT, behavioralCharacteristics, perception, carFollowingModel);
             dRight = aGain.multiplyBy(vRight.minus(vCur)).divideBy(vGain);

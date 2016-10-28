@@ -1,10 +1,12 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.Node;
@@ -43,32 +45,37 @@ public class LaneStructureRecord implements Serializable
     /** The right LSR or null if not available. Left and right are relative to the <b>driving</b> direction. */
     private LaneStructureRecord right;
 
-    /** Whether this lane has no next records as the lane structure was cut-off. */
-    private boolean cutOffEnd = false;
+    /** Where this lane was cut-off resulting in no next lanes, if so. */
+    private Length cutOffEnd = null;
 
-    /** Whether this lane has no previous records as the lane structure was cut-off. */
-    private boolean cutOffStart = false;
+    /** Where this lane was cut-off resulting in no prev lanes, if so. */
+    private Length cutOffStart = null;
+
+    /** Distance to start of the record, negative for backwards. */
+    private final Length startDistance;
 
     /**
      * The next LSRs. The list is empty if no LSRs are available. Next is relative to the driving direction, not to the design
      * line direction.
      */
-    private List<LaneStructureRecord> nextList;
+    private List<LaneStructureRecord> nextList = new ArrayList<>();
 
     /**
      * The previous LSRs. The list is empty if no LSRs are available. Previous is relative to the driving direction, not to the
      * design line direction.
      */
-    private List<LaneStructureRecord> prevList;
+    private List<LaneStructureRecord> prevList = new ArrayList<>();
 
     /**
      * @param lane the lane of the LSR
      * @param direction the direction on which we process this lane
+     * @param startDistance distance to start of the record, negative for backwards
      */
-    public LaneStructureRecord(final Lane lane, final GTUDirectionality direction)
+    public LaneStructureRecord(final Lane lane, final GTUDirectionality direction, final Length startDistance)
     {
         this.lane = lane;
         this.gtuDirectionality = direction;
+        this.startDistance = startDistance;
     }
 
     /**
@@ -76,7 +83,8 @@ public class LaneStructureRecord implements Serializable
      */
     public final Node getFromNode()
     {
-        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getStartNode() : this.lane.getParentLink().getEndNode();
+        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getStartNode()
+                : this.lane.getParentLink().getEndNode();
     }
 
     /**
@@ -84,7 +92,19 @@ public class LaneStructureRecord implements Serializable
      */
     public final Node getToNode()
     {
-        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getEndNode() : this.lane.getParentLink().getStartNode();
+        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getEndNode()
+                : this.lane.getParentLink().getStartNode();
+    }
+
+    /**
+     * Returns total distance towards the object at the given position. This method accounts for the GTU directionality.
+     * @param longitudinalPosition position on the design line
+     * @return total distance towards the object at the given position
+     */
+    public final Length getDistanceToPosition(final Length longitudinalPosition)
+    {
+        return this.startDistance.plus(
+                this.gtuDirectionality.isPlus() ? longitudinalPosition : this.lane.getLength().minus(longitudinalPosition));
     }
 
     /**
@@ -189,9 +209,9 @@ public class LaneStructureRecord implements Serializable
      *            not to the design line direction.
      * @throws GTUException if the records is cut-off at the end
      */
-    public final void setNextList(final List<LaneStructureRecord> nextList)  throws GTUException
+    public final void setNextList(final List<LaneStructureRecord> nextList) throws GTUException
     {
-        Throw.when(this.cutOffEnd && !nextList.isEmpty(), GTUException.class,
+        Throw.when(this.cutOffEnd != null && !nextList.isEmpty(), GTUException.class,
                 "Cannot set next records to a record that was cut-off at the end.");
         this.nextList = nextList;
     }
@@ -202,7 +222,7 @@ public class LaneStructureRecord implements Serializable
      */
     public final void addNext(final LaneStructureRecord next) throws GTUException
     {
-        Throw.when(this.cutOffEnd, GTUException.class,
+        Throw.when(this.cutOffEnd != null, GTUException.class,
                 "Cannot add next records to a record that was cut-off at the end.");
         this.nextList.add(next);
     }
@@ -223,7 +243,7 @@ public class LaneStructureRecord implements Serializable
      */
     public final void setPrevList(final List<LaneStructureRecord> prevList) throws GTUException
     {
-        Throw.when(this.cutOffStart && !prevList.isEmpty(), GTUException.class,
+        Throw.when(this.cutOffStart != null && !prevList.isEmpty(), GTUException.class,
                 "Cannot set previous records to a record that was cut-off at the start.");
         this.prevList = prevList;
     }
@@ -234,47 +254,67 @@ public class LaneStructureRecord implements Serializable
      */
     public final void addPrev(final LaneStructureRecord prev) throws GTUException
     {
-        Throw.when(this.cutOffStart, GTUException.class,
-            "Cannot add previous records to a record that was cut-off at the start.");
+        Throw.when(this.cutOffStart != null, GTUException.class,
+                "Cannot add previous records to a record that was cut-off at the start.");
         this.prevList.add(prev);
     }
 
     /**
      * Sets this record as being cut-off, i.e. there are no next records due to cut-off.
+     * @param cutOffEnd where this lane was cut-off (in the driving direction) resulting in no prev lanes
      * @throws GTUException if there are next records
      */
-    public final void setCutOffEnd() throws GTUException
+    public final void setCutOffEnd(final Length cutOffEnd) throws GTUException
     {
         Throw.when(!this.nextList.isEmpty(), GTUException.class,
-            "Setting lane record as cut-off end, but there are next records.");
-        this.cutOffEnd = true;
+                "Setting lane record with cut-off end, but there are next records.");
+        this.cutOffEnd = cutOffEnd;
     }
 
     /**
      * Sets this record as being cut-off, i.e. there are no previous records due to cut-off.
+     * @param cutOffStart where this lane was cut-off (in the driving direction) resulting in no next lanes
      * @throws GTUException if there are previous records
      */
-    public final void setCutOffStart() throws GTUException
+    public final void setCutOffStart(final Length cutOffStart) throws GTUException
     {
         Throw.when(!this.prevList.isEmpty(), GTUException.class,
-            "Setting lane record as cut-off start, but there are previous records.");
-        this.cutOffStart = true;
+                "Setting lane record with cut-off start, but there are previous records.");
+        this.cutOffStart = cutOffStart;
     }
-    
+
     /**
      * Returns whether this lane has no next records as the lane structure was cut-off.
      * @return whether this lane has no next records as the lane structure was cut-off
      */
     public final boolean isCutOffEnd()
     {
-        return this.cutOffEnd;
+        return this.cutOffEnd != null;
     }
-    
+
     /**
      * Returns whether this lane has no previous records as the lane structure was cut-off.
      * @return whether this lane has no previous records as the lane structure was cut-off
      */
     public final boolean isCutOffStart()
+    {
+        return this.cutOffStart != null;
+    }
+    
+    /**
+     * Returns distance where the structure was cut-off.
+     * @return distance where the structure was cut-off
+     */
+    public final Length getCutOffEnd()
+    {
+        return this.cutOffEnd;
+    }
+
+    /**
+     * Returns distance where the structure was cut-off.
+     * @return distance where the structure was cut-off
+     */
+    public final Length getCutOffStart()
     {
         return this.cutOffStart;
     }
@@ -295,12 +335,20 @@ public class LaneStructureRecord implements Serializable
         return this.gtuDirectionality;
     }
 
+    /**
+     * @return startDistance.
+     */
+    public final Length getStartDistance()
+    {
+        return this.startDistance;
+    }
+
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
         return "LaneStructureRecord [lane=" + this.lane + ", direction=" + this.gtuDirectionality + ", left=" + this.left
-            + ", right=" + this.right + ", nextList=" + this.nextList + "]";
+                + ", right=" + this.right + ", nextList=" + this.nextList + "]";
     }
 
 }

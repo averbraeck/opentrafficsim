@@ -1,8 +1,11 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 
@@ -10,6 +13,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.road.network.lane.LaneBasedObject;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -80,31 +84,36 @@ import nl.tudelft.simulation.language.Throw;
  * initial version Feb 20, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class LaneStructure implements Serializable
+public class LaneStructure implements EnvironmentState, Serializable
 {
     /** */
     private static final long serialVersionUID = 20160400L;
 
-    /** The length of this structure, to see if it needs updating. */
-    private Length length;
-
     /** The lanes from which we observe the situation. */
     private LaneStructureRecord rootLSR;
-
+    
+    /** Look ahead distance. */
+    private Length lookAhead;
+    
     /** Lane structure records of the cross section. */
-    private TreeMap<RelativeLane, LaneStructureRecord> crossSectionRecords;
+    private TreeMap<RelativeLane, LaneStructureRecord> crossSectionRecords = new TreeMap<>();
 
-    /** Time of last cross section update. */
-    private Time crossSectionUpdateTime;
+//    /** Time of last cross section update. */
+//    private Time crossSectionUpdateTime;
+    
+    /** Lane structure records grouped per relative lane. */
+    private final Map<RelativeLane, Set<LaneStructureRecord>> relativeLaneMap = new HashMap<>(); 
 
     /**
-     * @param initialRootLSR the initial rot record.
+     * @param rootLSR the root record.
+     * @param lookAhead look ahead distance
      */
-    public LaneStructure(final LaneStructureRecord initialRootLSR)
+    public LaneStructure(final LaneStructureRecord rootLSR, final Length lookAhead)
     {
-        setRootLSR(initialRootLSR);
+        this.rootLSR = rootLSR;
+        this.lookAhead = lookAhead;
     }
-
+    
     /**
      * @return rootLSR
      */
@@ -114,163 +123,146 @@ public class LaneStructure implements Serializable
     }
 
     /**
-     * @param rootLSR set rootLSR
-     */
-    public final void setRootLSR(final LaneStructureRecord rootLSR)
-    {
-        this.rootLSR = rootLSR;
-    }
-
-    /**
-     * @return length
-     */
-    public final Length getLength()
-    {
-        return this.length;
-    }
-
-    /**
      * Returns the cross section.
-     * @param now current time to check if the cross section needs to be updated
      * @return cross section
      */
-    public final SortedSet<RelativeLane> getCrossSection(final Time now)
+    public final SortedSet<RelativeLane> getCrossSection()
     {
-        updateCrossSection(now);
+        //updateCrossSection(now);
         return this.crossSectionRecords.navigableKeySet();
     }
     
-    /**
-     * @param now current time to check if the cross section needs to be updated
-     */
-    private void updateCrossSection(final Time now)
-    {
-        if (this.crossSectionRecords == null || now.gt(this.crossSectionUpdateTime))
-        {
-            this.crossSectionRecords = new TreeMap<>();
-            // current lane
-            this.crossSectionRecords.put(RelativeLane.CURRENT, getRootLSR());
-            // left
-            LaneStructureRecord lane = getRootLSR();
-            int left = 1;
-            while (lane.getLeft() != null)
-            {
-                RelativeLane relLane = new RelativeLane(LateralDirectionality.LEFT, left);
-                this.crossSectionRecords.put(relLane, lane.getLeft());
-                left++;
-                lane = lane.getLeft();
-            }
-            addFirstMergeToCrossSection(lane, LateralDirectionality.LEFT, left);
-            // right
-            lane = getRootLSR();
-            int right = 1;
-            while (lane.getRight() != null)
-            {
-                RelativeLane relLane = new RelativeLane(LateralDirectionality.RIGHT, right);
-                this.crossSectionRecords.put(relLane, lane.getRight());
-                right++;
-                lane = lane.getRight();
-            }
-            addFirstMergeToCrossSection(lane, LateralDirectionality.RIGHT, right);
-        }
-    }
-    
-    /**
-     * Adds a single lane of the other link to the current cross section at a merge.
-     * @param farMost record on far-most left or right side of current link
-     * @param dir direction to search in, left or right
-     * @param n number of lanes in left or right direction that the next lane will be
-     */
-    private void
-        addFirstMergeToCrossSection(final LaneStructureRecord farMost, final LateralDirectionality dir, final int n)
-    {
-        Length cumulLengthDown = farMost.getLane().getLength();
-        LaneStructureRecord next = getNextOnSide(farMost, dir);
-        LaneStructureRecord mergeRecord = null; // first downstream record past merge
-        while (next != null)
-        {
-            if (next.isLinkMerge())
-            {
-                mergeRecord = next;
-                next = null;
-            }
-            else
-            {
-                cumulLengthDown = cumulLengthDown.plus(next.getLane().getLength());
-                next = getNextOnSide(next, dir);
-            }
-        }
-        if (mergeRecord != null)
-        {
-            LaneStructureRecord adjacentRecord =
-                dir.equals(LateralDirectionality.LEFT) ? mergeRecord.getLeft() : mergeRecord.getRight();
-            if (adjacentRecord == null)
-            {
-                // merge is on other side, add nothing
-                return;
-            }
-            adjacentRecord = getPrevOnSide(adjacentRecord, dir);
-            Length cumulLengthUp = Length.ZERO;
-            while (adjacentRecord != null)
-            {
-                cumulLengthUp = cumulLengthUp.plus(adjacentRecord.getLane().getLength());
-                if (cumulLengthUp.ge(cumulLengthDown))
-                {
-                    RelativeLane relLane = new RelativeLane(dir, n);
-                    this.crossSectionRecords.put(relLane, adjacentRecord);
-                    return;
-                }
-                adjacentRecord = getPrevOnSide(adjacentRecord, dir);
-            }
-        }
-    }
-    
-    /**
-     * Returns the correct next record for searching the next merge.
-     * @param lane current lane record
-     * @param dir direction of search
-     * @return correct next record for searching the next merge
-     */
-    private LaneStructureRecord getNextOnSide(final LaneStructureRecord lane, final LateralDirectionality dir)
-    {
-        if (lane.getNext().size() == 1)
-        {
-            return lane.getNext().get(0);
-        }
-        for (LaneStructureRecord next : lane.getNext())
-        {
-            if ((dir.equals(LateralDirectionality.LEFT) && next.getLeft() == null)
-                || (dir.equals(LateralDirectionality.RIGHT) && next.getRight() == null))
-            {
-                return next;
-            }
-        }
-        return null;
-    }
-    
-    /**
-     * Returns the correct previous record for searching upstream from the next merge.
-     * @param lane current lane record
-     * @param dir direction of search
-     * @return correct previous record for searching upstream from the next merge
-     */
-    private LaneStructureRecord getPrevOnSide(final LaneStructureRecord lane, final LateralDirectionality dir)
-    {
-        if (lane.getPrev().size() == 1)
-        {
-            return lane.getPrev().get(0);
-        }
-        for (LaneStructureRecord prev : lane.getPrev())
-        {
-            // note: looking left from current link, requires looking right from left adjacent link at merge
-            if ((dir.equals(LateralDirectionality.LEFT) && prev.getRight() == null)
-                || (dir.equals(LateralDirectionality.RIGHT) && prev.getLeft() == null))
-            {
-                return prev;
-            }
-        }
-        return null;
-    }
+//    /**
+//     * @param now current time to check if the cross section needs to be updated
+//     */
+//    private void updateCrossSection(final Time now)
+//    {
+//        if (this.crossSectionRecords == null || now.gt(this.crossSectionUpdateTime))
+//        {
+//            this.crossSectionRecords = new TreeMap<>();
+//            // current lane
+//            this.crossSectionRecords.put(RelativeLane.CURRENT, getRootLSR());
+//            // left
+//            LaneStructureRecord lane = getRootLSR();
+//            int left = 1;
+//            while (lane.getLeft() != null)
+//            {
+//                RelativeLane relLane = new RelativeLane(LateralDirectionality.LEFT, left);
+//                this.crossSectionRecords.put(relLane, lane.getLeft());
+//                left++;
+//                lane = lane.getLeft();
+//            }
+//            addFirstMergeToCrossSection(lane, LateralDirectionality.LEFT, left);
+//            // right
+//            lane = getRootLSR();
+//            int right = 1;
+//            while (lane.getRight() != null)
+//            {
+//                RelativeLane relLane = new RelativeLane(LateralDirectionality.RIGHT, right);
+//                this.crossSectionRecords.put(relLane, lane.getRight());
+//                right++;
+//                lane = lane.getRight();
+//            }
+//            addFirstMergeToCrossSection(lane, LateralDirectionality.RIGHT, right);
+//        }
+//    }
+//    
+//    /**
+//     * Adds a single lane of the other link to the current cross section at a merge.
+//     * @param farMost record on far-most left or right side of current link
+//     * @param dir direction to search in, left or right
+//     * @param n number of lanes in left or right direction that the next lane will be
+//     */
+//    private void
+//        addFirstMergeToCrossSection(final LaneStructureRecord farMost, final LateralDirectionality dir, final int n)
+//    {
+//        Length cumulLengthDown = farMost.getLane().getLength();
+//        LaneStructureRecord next = getNextOnSide(farMost, dir);
+//        LaneStructureRecord mergeRecord = null; // first downstream record past merge
+//        while (next != null)
+//        {
+//            if (next.isLinkMerge())
+//            {
+//                mergeRecord = next;
+//                next = null;
+//            }
+//            else
+//            {
+//                cumulLengthDown = cumulLengthDown.plus(next.getLane().getLength());
+//                next = getNextOnSide(next, dir);
+//            }
+//        }
+//        if (mergeRecord != null)
+//        {
+//            LaneStructureRecord adjacentRecord =
+//                dir.equals(LateralDirectionality.LEFT) ? mergeRecord.getLeft() : mergeRecord.getRight();
+//            if (adjacentRecord == null)
+//            {
+//                // merge is on other side, add nothing
+//                return;
+//            }
+//            adjacentRecord = getPrevOnSide(adjacentRecord, dir);
+//            Length cumulLengthUp = Length.ZERO;
+//            while (adjacentRecord != null)
+//            {
+//                cumulLengthUp = cumulLengthUp.plus(adjacentRecord.getLane().getLength());
+//                if (cumulLengthUp.ge(cumulLengthDown))
+//                {
+//                    RelativeLane relLane = new RelativeLane(dir, n);
+//                    this.crossSectionRecords.put(relLane, adjacentRecord);
+//                    return;
+//                }
+//                adjacentRecord = getPrevOnSide(adjacentRecord, dir);
+//            }
+//        }
+//    }
+//    
+//    /**
+//     * Returns the correct next record for searching the next merge.
+//     * @param lane current lane record
+//     * @param dir direction of search
+//     * @return correct next record for searching the next merge
+//     */
+//    private LaneStructureRecord getNextOnSide(final LaneStructureRecord lane, final LateralDirectionality dir)
+//    {
+//        if (lane.getNext().size() == 1)
+//        {
+//            return lane.getNext().get(0);
+//        }
+//        for (LaneStructureRecord next : lane.getNext())
+//        {
+//            if ((dir.equals(LateralDirectionality.LEFT) && next.getLeft() == null)
+//                || (dir.equals(LateralDirectionality.RIGHT) && next.getRight() == null))
+//            {
+//                return next;
+//            }
+//        }
+//        return null;
+//    }
+//    
+//    /**
+//     * Returns the correct previous record for searching upstream from the next merge.
+//     * @param lane current lane record
+//     * @param dir direction of search
+//     * @return correct previous record for searching upstream from the next merge
+//     */
+//    private LaneStructureRecord getPrevOnSide(final LaneStructureRecord lane, final LateralDirectionality dir)
+//    {
+//        if (lane.getPrev().size() == 1)
+//        {
+//            return lane.getPrev().get(0);
+//        }
+//        for (LaneStructureRecord prev : lane.getPrev())
+//        {
+//            // note: looking left from current link, requires looking right from left adjacent link at merge
+//            if ((dir.equals(LateralDirectionality.LEFT) && prev.getRight() == null)
+//                || (dir.equals(LateralDirectionality.RIGHT) && prev.getLeft() == null))
+//            {
+//                return prev;
+//            }
+//        }
+//        return null;
+//    }
     
     /**
      * @param lane lane to check
@@ -280,20 +272,18 @@ public class LaneStructure implements Serializable
      */
     public final LaneStructureRecord getLaneLSR(final RelativeLane lane, final Time now)  throws GTUException
     {
-        updateCrossSection(now);
+        //updateCrossSection(now);
         Throw.when(!this.crossSectionRecords.containsKey(lane), GTUException.class,
-            "The requeasted lane %s is not in the most recent cross section.", lane);
+            "The requested lane %s is not in the most recent cross section.", lane);
         return this.crossSectionRecords.get(lane);
     }
     
     /**
      * Removes all mappings to relative lanes that are not in the most recent cross section.
      * @param map map to clear mappings from
-     * @param now current time to check if the cross section needs to be updated
      */
-    public final void removeInvalidMappings(final Map<RelativeLane, ?> map, final Time now)
+    public final void removeInvalidMappings(final Map<RelativeLane, ?> map)
     {
-        updateCrossSection(now);
         Iterator<RelativeLane> iterator = map.keySet().iterator();
         while (iterator.hasNext())
         {
@@ -305,11 +295,42 @@ public class LaneStructure implements Serializable
         }
     }
 
+    /**
+     * Adds a lane structure record in a mapping from relative lanes.
+     * @param lsr lane structure record
+     * @param relativeLane relative lane
+     */
+    public final void addLaneStructureRecord(final LaneStructureRecord lsr, final RelativeLane relativeLane)
+    {
+        if (!this.relativeLaneMap.containsKey(relativeLane))
+        {
+            this.relativeLaneMap.put(relativeLane, new HashSet<>());
+        }
+        this.relativeLaneMap.get(relativeLane).add(lsr);
+        if (lsr.getStartDistance().le(Length.ZERO) && lsr.getStartDistance().plus(lsr.getLane().getLength()).ge(Length.ZERO))
+        {
+            this.crossSectionRecords.put(relativeLane, lsr);
+        }
+    }
+    
+    /**
+     * {@inheritDoc} 
+     * Returns objects over a maximum length of the look ahead distance downstream, or as far as the lane map goes. Upstream,
+     * only the map limits included objects.
+     */
+    @Override
+    public final <T extends LaneBasedObject> TreeMap<Length, Set<T>> getSortedObjects(final ViewingDirection viewingDirection,
+            final RelativeLane relativeLane, final Class<T> clazz)
+    {
+        // TODO
+        return new TreeMap<>();
+    }
+    
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "LaneStructure [length=" + this.length + ", rootLSR=" + this.rootLSR + "]";
+        return "LaneStructure [rootLSR=" + this.rootLSR + "]";
     }
 
 }
