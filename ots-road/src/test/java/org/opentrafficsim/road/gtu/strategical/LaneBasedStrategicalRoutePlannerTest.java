@@ -18,7 +18,7 @@ import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.DefaultTestParameters;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
@@ -39,7 +39,7 @@ public class LaneBasedStrategicalRoutePlannerTest
     /**
      * Test the nextLinkDirection method.
      * @throws GTUException if not caught this test has failed
-     * @throws NetworkException  if not caught this test has failed
+     * @throws NetworkException if not caught this test has failed
      * @throws OTSGeometryException when construction of design line fails
      */
     @Test
@@ -55,8 +55,7 @@ public class LaneBasedStrategicalRoutePlannerTest
         OTSLine3D designLine = new OTSLine3D(fromNode.getPoint(), toNode.getPoint());
         OTSLink link = new OTSLink(network, "link", fromNode, toNode, LinkType.ALL, designLine, directionalityMap);
         CarFollowingModel cfm = new IDMPlus();
-        LaneBasedGTUFollowingLaneChangeTacticalPlanner tacticalPlanner =
-                new LaneBasedGTUFollowingLaneChangeTacticalPlanner(null, null);
+        LaneBasedCFLCTacticalPlanner tacticalPlanner = new LaneBasedCFLCTacticalPlanner(null, null, null);
         BehavioralCharacteristics bc = DefaultTestParameters.create();
         LaneBasedStrategicalRoutePlanner lbsrp = new LaneBasedStrategicalRoutePlanner(bc, tacticalPlanner, null);
 

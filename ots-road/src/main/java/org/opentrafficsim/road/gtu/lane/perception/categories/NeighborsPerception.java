@@ -914,7 +914,7 @@ public class NeighborsPerception extends LaneBasedAbstractPerceptionCategory
         for (Lane lane : getGtu().positions(getGtu().getRear()).keySet())
         {
             Headway closest =
-                headwayRecursiveBackwardSI(lane, getGtu().getLanes().get(lane), getGtu().position(lane, getGtu().getRear(),
+                headwayRecursiveBackwardSI(lane, getGtu().getDirection(lane), getGtu().position(lane, getGtu().getRear(),
                     time).getSI(), 0.0, -maxDistanceSI, time);
             if (closest.getDistance().si < -maxDistanceSI && closest.getDistance().si < -foundHeadway.getDistance().si)
             {

@@ -18,7 +18,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
@@ -281,7 +280,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         List<Lane> lanes = buildLanePathInfo(getGtu(), forwardHeadway).getLanes();
         if (initiatedLaneChange.isNone())
         {
-            Length firstLanePosition = getGtu().position(getReferenceLane(getGtu()), RelativePosition.REFERENCE_POSITION);
+            Length firstLanePosition = getGtu().getReferencePosition().getPosition();
             try
             {
                 return LaneOperationalPlanBuilder.buildAccelerationPlan(getGtu(), lanes, firstLanePosition, startTime,

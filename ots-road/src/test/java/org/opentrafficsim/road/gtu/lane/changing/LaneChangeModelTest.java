@@ -216,7 +216,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
                                 METER_PER_SECOND_2), new Acceleration(-0.3, METER_PER_SECOND_2));
         // System.out.println(laneChangeModelResult.toString());
         assertEquals("Vehicle want to change to the right lane", LateralDirectionality.RIGHT,
-                laneChangeModelResult.getLaneChange());
+                laneChangeModelResult.getLaneChangeDirection());
         Length rear = car.position(lanes[0], car.getRear());
         Length front = car.position(lanes[0], car.getFront());
         Length reference = car.position(lanes[0], RelativePosition.REFERENCE_POSITION);
@@ -262,7 +262,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
                                     METER_PER_SECOND_2), new Acceleration(-0.3, METER_PER_SECOND_2));
             // System.out.println(laneChangeModelResult.toString());
             assertEquals("Vehicle cannot to change to the right lane because that would result in an immediate collision",
-                    null, laneChangeModelResult.getLaneChange());
+                    null, laneChangeModelResult.getLaneChangeDirection());
         }
         for (double pos = 0; pos < 180; pos += 5) // beyond 180m, a GTU gets a plan beyond the 200m long network
         {

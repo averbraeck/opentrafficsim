@@ -233,7 +233,7 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
         slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.MAX_VEHICLE_SPEED, getGtu().getMaximumSpeed());
         try
         {
-            slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.FIXED_SIGN, getGtu().getLanes().keySet().iterator().next()
+            slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.FIXED_SIGN, getGtu().getReferencePosition().getLane()
                 .getSpeedLimit(getGtu().getGTUType()));
         }
         catch (NetworkException exception)

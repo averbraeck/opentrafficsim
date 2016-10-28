@@ -93,7 +93,7 @@ public class LaneMovementStep implements Serializable
      *         </tr>
      *         </table>
      */
-    public final LateralDirectionality getLaneChange()
+    public final LateralDirectionality getLaneChangeDirection()
     {
         return this.laneChange;
     }

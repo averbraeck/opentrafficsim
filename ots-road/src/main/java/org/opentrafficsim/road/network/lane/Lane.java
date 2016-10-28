@@ -652,7 +652,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @throws NetworkException when GTU not on this lane.
      * @throws SimRuntimeException when method cannot be scheduled.
      */
-    public final void scheduleTriggers(final LaneBasedGTU gtu, final double referenceStartSI, final double referenceMoveSI)
+    public final void scheduleSensorTriggers(final LaneBasedGTU gtu, final double referenceStartSI, final double referenceMoveSI)
             throws NetworkException, SimRuntimeException
     {
         for (List<Sensor> sensorList : getSensorMap(gtu.getGTUType()).values())
@@ -793,21 +793,17 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * Remove a GTU from the GTU list of this lane.
      * @param gtu the GTU to remove.
+     * @param removeFromParentLink when the GTU leaves the last lane of the parentLink of this Lane
      */
-    public final void removeGTU(final LaneBasedGTU gtu)
+    public final void removeGTU(final LaneBasedGTU gtu, final boolean removeFromParentLink)
     {
         this.gtuList.remove(gtu);
         fireTimedEvent(Lane.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size() },
                 gtu.getSimulator().getSimulatorTime());
-        for (Lane otherLane : gtu.getLanes().keySet())
+        if (removeFromParentLink)
         {
-            if (this != otherLane && this.parentLink == otherLane.parentLink)
-            {
-                return; // The GTU is still on an other lane of our parent link
-            }
+            this.parentLink.removeGTU(gtu);
         }
-        // The GTU is no longer on any lane of our parent link; remove the GTU from our parent link.
-        this.parentLink.removeGTU(gtu);
     }
 
     /**
