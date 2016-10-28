@@ -56,7 +56,7 @@ public interface Property<T>
 
     /**
      * Generate a description of the state of this property in HTML (excluding the &lt;html&gt; at the start and the
-     * &lt;/html&gt; at the end. The result can be embedded in a html-table.
+     * &lt;/html&gt; at the end. The result can be embedded in a cell of a html-table.
      * @return String; the description of this property and the current state in HTML
      */
     String htmlStateDescription();
