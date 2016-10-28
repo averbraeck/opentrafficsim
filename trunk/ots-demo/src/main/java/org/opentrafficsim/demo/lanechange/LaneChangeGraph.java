@@ -314,7 +314,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         LaneMovementStep highResult = computeLaneChange(referenceCar, sameLaneGTUs, speedLimit, laneChangeModel, high, lanes[1],
                 speedDifference, mergeRight);
         Length mid = null;
-        if (lowResult.getLaneChange() != highResult.getLaneChange())
+        if (lowResult.getLaneChangeDirection() != highResult.getLaneChangeDirection())
         {
             // Use bisection to home in onto the decision point
             final double delta = 0.1; // [m]
@@ -326,7 +326,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
                 LaneMovementStep midResult = computeLaneChange(referenceCar, sameLaneGTUs, speedLimit, laneChangeModel, mid,
                         lanes[1], speedDifference, mergeRight);
                 // System.out.println(String.format ("mid %.2fm: %s", mid.getSI(), midResult));
-                if (midResult.getLaneChange() != lowResult.getLaneChange())
+                if (midResult.getLaneChangeDirection() != lowResult.getLaneChangeDirection())
                 {
                     high = mid;
                     highResult = midResult;

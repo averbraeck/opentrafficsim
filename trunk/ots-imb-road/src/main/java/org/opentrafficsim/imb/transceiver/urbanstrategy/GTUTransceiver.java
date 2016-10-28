@@ -18,6 +18,7 @@ import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
 import org.opentrafficsim.imb.transceiver.OTSToIMBTransformer;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.event.EventInterface;
@@ -347,10 +348,10 @@ public class GTUTransceiver extends AbstractTransceiver
                 this.notify(new TimedEvent<OTSSimTimeDouble>(Network.GTU_ADD_EVENT, this.network, gtu.getId(),
                         gtu.getSimulator().getSimulatorTime()));
                 LaneBasedGTU laneBasedGTU = (LaneBasedGTU) gtu;
-                Lane referenceLane = laneBasedGTU.getLanes().keySet().iterator().next();
+                DirectedLanePosition dlp = laneBasedGTU.getReferencePosition();
                 this.notify(new TimedEvent<OTSSimTimeDouble>(LaneBasedGTU.LANEBASED_INIT_EVENT, gtu,
                         new Object[] { gtu.getId(), gtu.getLocation(), gtu.getLength(), gtu.getWidth(), gtu.getBaseColor(),
-                                referenceLane, laneBasedGTU.position(referenceLane, laneBasedGTU.getReference()) },
+                                dlp.getLane(), dlp.getGtuDirection() },
                         gtu.getSimulator().getSimulatorTime()));
             }
             catch (RemoteException | GTUException exception)

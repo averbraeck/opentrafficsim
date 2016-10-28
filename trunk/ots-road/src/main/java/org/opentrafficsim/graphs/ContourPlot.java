@@ -193,15 +193,16 @@ public abstract class ContourPlot extends AbstractOTSPlot
         {
             Object[] content = (Object[]) event.getContent();
             LaneBasedGTU gtu = (LaneBasedGTU) content[1];
-            boolean interest = false;
-            for (Lane lane : gtu.getLanes().keySet())
+            Lane lane = null;
+            try
             {
-                if (getPath().contains(lane))
-                {
-                    interest = true;
-                }
+                lane = gtu.getReferencePosition().getLane();
             }
-            if (!interest)
+            catch (GTUException exception)
+            {
+                // ignore - lane will be null
+            }
+            if (lane == null || !getPath().contains(lane))
             {
                 this.gtusOfInterest.remove(gtu);
                 gtu.removeListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);

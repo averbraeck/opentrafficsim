@@ -14,15 +14,6 @@ import java.util.Set;
 import javax.naming.NamingException;
 import javax.swing.JPanel;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.jstats.distributions.DistContinuous;
-import nl.tudelft.simulation.jstats.distributions.DistErlang;
-import nl.tudelft.simulation.jstats.distributions.DistUniform;
-import nl.tudelft.simulation.jstats.streams.MersenneTwister;
-import nl.tudelft.simulation.jstats.streams.StreamInterface;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -76,8 +67,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedTemplateGTUType;
 import org.opentrafficsim.road.gtu.lane.LaneBasedTemplateGTUTypeDistribution;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingChange0TacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -104,6 +93,15 @@ import org.opentrafficsim.road.network.lane.SinkSensor;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.jstats.distributions.DistContinuous;
+import nl.tudelft.simulation.jstats.distributions.DistErlang;
+import nl.tudelft.simulation.jstats.distributions.DistUniform;
+import nl.tudelft.simulation.jstats.streams.MersenneTwister;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * <p>
@@ -134,7 +132,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
                 0, false, 0));
         this.properties.add(new SelectionProperty("TacticalPlanner", "Tactical planner",
                 "<html>The tactical planner determines if a lane change is desired and possible.</html>",
-                new String[] { "MOBIL", "Verbraeck", "Verbraeck0" }, 0, false, 600));
+                new String[] { "MOBIL", "LMRS", "Toledo" }, 0, false, 600));
         this.properties.add(new SelectionProperty("LaneChanging", "Lane changing",
                 "<html>The lane change friendliness (if used -- eg just for MOBIL.</html>",
                 new String[] { "Egoistic", "Altruistic" }, 0, false, 600));
@@ -504,24 +502,6 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                                     this.routeGenerator);
                             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                                     new LaneBasedCFLCTacticalPlannerFactory(this.carFollowingModelTrucks, this.laneChangeModel),
-                                    this.routeGenerator);
-                        }
-                        else if ("Verbraeck".equals(tacticalPlannerName))
-                        {
-                            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LaneBasedGTUFollowingLaneChangeTacticalPlannerFactory(this.carFollowingModelCars),
-                                    this.routeGenerator);
-                            this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LaneBasedGTUFollowingLaneChangeTacticalPlannerFactory(this.carFollowingModelTrucks),
-                                    this.routeGenerator);
-                        }
-                        else if ("Verbraeck0".equals(tacticalPlannerName))
-                        {
-                            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LaneBasedGTUFollowingChange0TacticalPlannerFactory(this.carFollowingModelCars),
-                                    this.routeGenerator);
-                            this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LaneBasedGTUFollowingChange0TacticalPlannerFactory(this.carFollowingModelTrucks),
                                     this.routeGenerator);
                         }
                         else if ("LMRS".equals(tacticalPlannerName))

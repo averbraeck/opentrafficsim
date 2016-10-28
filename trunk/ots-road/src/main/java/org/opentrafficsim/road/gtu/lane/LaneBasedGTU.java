@@ -2,9 +2,6 @@ package org.opentrafficsim.road.gtu.lane;
 
 import java.util.Map;
 
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
-import nl.tudelft.simulation.event.EventType;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -12,9 +9,14 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+import nl.tudelft.simulation.event.EventType;
 
 /**
  * This interface defines a lane based GTU.
@@ -38,11 +40,6 @@ public interface LaneBasedGTU extends GTU
     LaneBasedTacticalPlanner getTacticalPlanner();
 
     /**
-     * @return a safe copy of the lanes on which the GTU is registered.
-     */
-    Map<Lane, GTUDirectionality> getLanes();
-
-    /**
      * insert GTU at a certain position. This can happen at setup (first initialization), and after a lane change of the GTU.
      * The relative position that will be registered is the referencePosition (dx, dy, dz) = (0, 0, 0). Front and rear positions
      * are relative towards this position.
@@ -60,6 +57,13 @@ public interface LaneBasedGTU extends GTU
      * @throws GTUException when leaveLane should not be called
      */
     void leaveLane(Lane lane) throws GTUException;
+
+    /**
+     * Change lanes instantaneously.
+     * @param laneChangeDirection the direction to change to
+     * @throws GTUException in case lane change fails
+     */
+    void changeLaneInstantaneously(LateralDirectionality laneChangeDirection) throws GTUException;
 
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
@@ -161,6 +165,21 @@ public interface LaneBasedGTU extends GTU
     Length projectedPosition(Lane projectionLane, RelativePosition relativePosition, Time when) throws GTUException;
 
     /**
+     * Return the current Lane, position and directionality of the GTU.
+     * @return DirectedLanePosition; the current Lane, position and directionality of the GTU
+     * @throws GTUException in case the reference position of the GTU cannot be found on the lanes in its current path
+     */
+    DirectedLanePosition getReferencePosition() throws GTUException;
+    
+    /**
+     * Return the directionality of a lane on which the GTU is registered for its current operational plan.
+     * @param lane Lane; the lane for which we want to know the direction
+     * @return GTUDirectionality; the direction on the given lane
+     * @throws GTUException in case the GTU is not registered on the Lane
+     */
+    GTUDirectionality getDirection(Lane lane) throws GTUException;
+    
+    /**
      * Add an event to the list of lane triggers scheduled for this GTU.
      * @param lane Lane; the lane on which the event occurs
      * @param event SimeEvent&lt;OTSSimTimeDouble&gt; the event
@@ -215,4 +234,5 @@ public interface LaneBasedGTU extends GTU
      * Payload: [String gtuId, Lane lane]
      */
     EventType LANE_EXIT_EVENT = new EventType("LANE.EXIT");
+
 }
