@@ -18,7 +18,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultAlexander;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -76,14 +76,14 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         LanePathInfo lanePathInfo = buildLanePathInfo(laneBasedGTU, maxDistance);
 
         // look at the conditions for headway
-        Headway headway = perception.getPerceptionCategory(DefaultAlexander.class).getForwardHeadway();
+        Headway headway = perception.getPerceptionCategory(DefaultSimplePerception.class).getForwardHeadway();
         AccelerationStep accelerationStep = null;
         if (headway.getDistance().ge(maxDistance))
         {
             // TODO I really don't like this -- if there is a lane drop at 20 m, the GTU should stop...
             accelerationStep =
                 ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStepWithNoLeader(laneBasedGTU,
-                    lanePathInfo.getPath().getLength(), perception.getPerceptionCategory(DefaultAlexander.class)
+                    lanePathInfo.getPath().getLength(), perception.getPerceptionCategory(DefaultSimplePerception.class)
                         .getSpeedLimit());
         }
         else
@@ -91,7 +91,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
             accelerationStep =
                 ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStep(laneBasedGTU, headway.getSpeed(),
                     headway.getDistance(), lanePathInfo.getPath().getLength(), perception.getPerceptionCategory(
-                        DefaultAlexander.class).getSpeedLimit());
+                        DefaultSimplePerception.class).getSpeedLimit());
         }
 
         // see if we have to continue standing still. In that case, generate a stand still plan

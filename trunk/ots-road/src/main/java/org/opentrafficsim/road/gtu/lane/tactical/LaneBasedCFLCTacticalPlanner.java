@@ -31,7 +31,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultAlexander;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
@@ -121,11 +121,11 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             Length maximumForwardHeadway = laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
             Length maximumReverseHeadway = laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACKOLD);
             Time now = getGtu().getSimulator().getSimulatorTime().getTime();
-            Speed speedLimit = perception.getPerceptionCategory(DefaultAlexander.class).getSpeedLimit();
+            Speed speedLimit = perception.getPerceptionCategory(DefaultSimplePerception.class).getSpeedLimit();
 
             // look at the conditions for headway on the current lane
-            Headway sameLaneLeader = perception.getPerceptionCategory(DefaultAlexander.class).getForwardHeadway();
-            Headway sameLaneFollower = perception.getPerceptionCategory(DefaultAlexander.class).getBackwardHeadway();
+            Headway sameLaneLeader = perception.getPerceptionCategory(DefaultSimplePerception.class).getForwardHeadway();
+            Headway sameLaneFollower = perception.getPerceptionCategory(DefaultSimplePerception.class).getBackwardHeadway();
             Collection<Headway> sameLaneTraffic = new ArrayList<Headway>();
             if (sameLaneLeader.getObjectType().isGtu())
             {
@@ -146,9 +146,9 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             // - we are in the right lane and drive at max speed or we accelerate maximally
             // - there are no other lanes
             Collection<Headway> leftLaneTraffic =
-                    perception.getPerceptionCategory(DefaultAlexander.class).getNeighboringHeadwaysLeft();
+                    perception.getPerceptionCategory(DefaultSimplePerception.class).getNeighboringHeadwaysLeft();
             Collection<Headway> rightLaneTraffic =
-                    perception.getPerceptionCategory(DefaultAlexander.class).getNeighboringHeadwaysRight();
+                    perception.getPerceptionCategory(DefaultSimplePerception.class).getNeighboringHeadwaysRight();
 
             // FIXME: whether we drive on the right should be stored in some central place.
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;
@@ -315,7 +315,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
         Length longitudinalPosition = dlp.getPosition();
         if (null != direction)
         {
-            lane = getPerception().getPerceptionCategory(DefaultAlexander.class).bestAccessibleAdjacentLane(lane, direction,
+            lane = getPerception().getPerceptionCategory(DefaultSimplePerception.class).bestAccessibleAdjacentLane(lane, direction,
                     longitudinalPosition);
         }
         if (null == lane)
@@ -368,7 +368,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
         Length longitudinalPosition = dlp.getPosition();
         if (null != direction)
         {
-            lane = getPerception().getPerceptionCategory(DefaultAlexander.class).bestAccessibleAdjacentLane(lane, direction,
+            lane = getPerception().getPerceptionCategory(DefaultSimplePerception.class).bestAccessibleAdjacentLane(lane, direction,
                     longitudinalPosition);
         }
         if (null == lane)

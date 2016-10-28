@@ -33,7 +33,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultAlexander;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.AbstractSensor;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -126,7 +126,7 @@ public class XMLNetworkGeneratorTest implements UNITS
                         {
                             // TODO repair headway in such a way that vehicle does not have to brake (safe distance)
                             System.err.println("Speed of GTU " + gtu + "<> 10 m/s: " + gtu.getSpeed() + ", headway = "
-                                    + gtu.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
+                                    + gtu.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
                                             .getForwardHeadway().getDistance());
                             // fail("Speed of GTU " + gtu + "<> 10 m/s: " + gtu.getSpeed() + ", headway = "
                             // + gtu.headway(new Length(250.0, METER)));

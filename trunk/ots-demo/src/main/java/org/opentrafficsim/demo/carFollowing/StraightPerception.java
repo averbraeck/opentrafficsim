@@ -72,7 +72,7 @@ import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultAlexander;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LanePathInfo;
@@ -805,13 +805,13 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             Length maxDistance = lanePathInfo.getPath().getLength();
 
             // look at the conditions for headway
-            Headway headway = getPerception().getPerceptionCategory(DefaultAlexander.class).getForwardHeadway();
+            Headway headway = getPerception().getPerceptionCategory(DefaultSimplePerception.class).getForwardHeadway();
             AccelerationStep accelerationStep = null;
             if (headway.getDistance().le(maxDistance))
             {
                 accelerationStep =
                         ((GTUFollowingModelOld) this.getCarFollowingModel()).computeAccelerationStepWithNoLeader(getGtu(),
-                                maxDistance, getPerception().getPerceptionCategory(DefaultAlexander.class).getSpeedLimit());
+                                maxDistance, getPerception().getPerceptionCategory(DefaultSimplePerception.class).getSpeedLimit());
             }
             else
             {
@@ -819,7 +819,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                 accelerationStep =
                         ((GTUFollowingModelOld) this.getCarFollowingModel()).computeAccelerationStep(getGtu(),
                                 headway.getSpeed(), headway.getDistance(), maxDistance,
-                                getPerception().getPerceptionCategory(DefaultAlexander.class).getSpeedLimit());
+                                getPerception().getPerceptionCategory(DefaultSimplePerception.class).getSpeedLimit());
             }
 
             // see if we have to continue standing still. In that case, generate a stand still plan

@@ -37,7 +37,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultAlexander;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
@@ -181,7 +181,7 @@ public class LaneBasedGTUTest implements UNITS
         // TODO see how we can ask the vehicle to look this far ahead
         truck.getTacticalPlanner().getPerception().perceive();
         Headway leader =
-                truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class).getForwardHeadway();
+                truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class).getForwardHeadway();
         assertTrue(
                 "With one vehicle in the network forward headway should return a value larger than zero, and smaller than maxDistance",
                 forwardMaxDistance.getSI() >= leader.getDistance().si && leader.getDistance().si > 0);
@@ -189,7 +189,7 @@ public class LaneBasedGTUTest implements UNITS
         // TODO see how we can ask the vehicle to look this far behind
         Length reverseMaxDistance = truck.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACKOLD);
         Headway follower =
-                truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class).getBackwardHeadway();
+                truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class).getBackwardHeadway();
         assertTrue(
                 "With one vehicle in the network reverse headway should return a value less than zero, and smaller than |maxDistance|",
                 Math.abs(reverseMaxDistance.getSI()) >= Math.abs(follower.getDistance().si) && follower.getDistance().si < 0);
@@ -222,7 +222,7 @@ public class LaneBasedGTUTest implements UNITS
                 // leader = truck.headway(forwardMaxDistance);
                 // TODO see how we can ask the vehicle to look 'forwardMaxDistance' ahead
                 leader =
-                        truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
+                        truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
                                 .getForwardHeadway();
                 double actualHeadway = leader.getDistance().si;
                 double expectedHeadway =
@@ -245,7 +245,7 @@ public class LaneBasedGTUTest implements UNITS
                 }
                 // TODO follower = truck.headway(reverseMaxDistance);
                 follower =
-                        truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
+                        truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
                                 .getBackwardHeadway();
                 double actualReverseHeadway = follower.getDistance().si;
                 double expectedReverseHeadway =
@@ -277,7 +277,7 @@ public class LaneBasedGTUTest implements UNITS
                         }
                     }
                     leader =
-                            truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
+                            truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
                                     .getForwardHeadway();
                     actualHeadway = leader.getDistance().si;
                     expectedHeadway =
@@ -297,7 +297,7 @@ public class LaneBasedGTUTest implements UNITS
                         assertEquals("Leader id should be null", null, leaderGtuId);
                     }
                     follower =
-                            truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
+                            truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
                                     .getBackwardHeadway();
                     actualReverseHeadway = follower.getDistance().si;
                     expectedReverseHeadway =
@@ -318,7 +318,7 @@ public class LaneBasedGTUTest implements UNITS
                     }
                 }
                 Collection<Headway> leftParallel =
-                        truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
+                        truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
                                 .getParallelHeadwaysLeft();
                 int expectedLeftSize =
                         laneRank + carLanesCovered - 1 < truckFromLane - 1 || laneRank >= truckUpToLane
@@ -337,7 +337,7 @@ public class LaneBasedGTUTest implements UNITS
                 }
                 assertTrue("car was not found in rightParallel", foundCar);
                 Collection<Headway> rightParallel =
-                        truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultAlexander.class)
+                        truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
                                 .getParallelHeadwaysRight();
                 int expectedRightSize =
                         laneRank + carLanesCovered - 1 <= truckFromLane || laneRank > truckUpToLane + 1
