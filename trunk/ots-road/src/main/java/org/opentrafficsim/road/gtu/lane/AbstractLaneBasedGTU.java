@@ -280,6 +280,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             lanesToBeRemoved.remove(adjacentLane); // don't remove lanes we might end up
         }
 
+        // TODO shouldn't this loop over lanesToBeRemoved?
         for (Lane lane : lanesCopy.keySet())
         {
             leaveLane(lane);
@@ -287,6 +288,59 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
         System.out.println(this + " changes lane from " + lanesCopy.keySet() + " to "
                 + this.lanesCurrentOperationalPlan.keySet() + " at time " + getSimulator().getSimulatorTime().get());
+    }
+    
+    /**
+     * Register on lanes in target lane.
+     * @param laneChangeDirection direction of lane change
+     * @throws GTUException exception
+     */
+    // TODO this is a simple fix, should be based on path
+    public final void initLaneChange(final LateralDirectionality laneChangeDirection) throws GTUException
+    {
+        Map<Lane, GTUDirectionality> lanesCopy = new HashMap<>(this.lanesCurrentOperationalPlan);
+        Map<Lane, Double> fractionalLanePositions = new HashMap<>();
+        for (Lane lane : lanesCopy.keySet())
+        {
+            fractionalLanePositions.put(lane, fractionalPosition(lane, getReference()));
+        }
+        for (Lane lane : lanesCopy.keySet())
+        {
+            Lane adjacentLane = lane.accessibleAdjacentLanes(laneChangeDirection, getGTUType()).iterator().next();
+            System.out.println("GTU " + getId() + " registered on lane " + adjacentLane);
+            enterLane(adjacentLane, adjacentLane.getLength().multiplyBy(fractionalLanePositions.get(lane)),
+                    lanesCopy.get(lane));
+        }
+    }
+    
+    /**
+     * Unregister on lanes in source lane.
+     * @param laneChangeDirection direction of lane change
+     * @throws GTUException exception
+     */
+    // TODO this is a simple fix, should be based on path
+    public final void finalizeLaneChange(final LateralDirectionality laneChangeDirection) throws GTUException
+    {
+        Map<Lane, GTUDirectionality> lanesCopy = new HashMap<>(this.lanesCurrentOperationalPlan);
+        Set<Lane> lanesToBeRemoved = new HashSet<>(lanesCopy.keySet());
+        Map<Lane, Double> fractionalLanePositions = new HashMap<>();
+        for (Lane lane : lanesCopy.keySet())
+        {
+            fractionalLanePositions.put(lane, fractionalPosition(lane, getReference()));
+        }
+        for (Lane lane : lanesCopy.keySet())
+        {
+            Lane adjacentLane = lane.accessibleAdjacentLanes(laneChangeDirection, getGTUType()).iterator().next();
+            if (lanesCopy.keySet().contains(adjacentLane))
+            {
+                lanesToBeRemoved.add(lane);
+            }
+        }
+        for (Lane lane : lanesToBeRemoved)
+        {
+            System.out.println("GTU " + getId() + " unregistered on lane " + lane);
+            leaveLane(lane);
+        }
     }
 
     /** {@inheritDoc} */

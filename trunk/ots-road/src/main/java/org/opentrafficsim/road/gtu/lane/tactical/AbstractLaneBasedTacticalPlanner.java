@@ -80,6 +80,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         this.gtu = gtu;
         CategorialLanePerception perception = new CategorialLanePerception(gtu);
         perception.addPerceptionCategory(new DefaultSimplePerception(perception));
+        // TODO Specific tactical planners should knwo which perception categories to use
+        // SSMDEMO below categories can be disabled
         perception.addPerceptionCategory(new InfrastructurePerception(perception));
         perception.addPerceptionCategory(new NeighborsPerception(perception));
         perception.addPerceptionCategory(new IntersectionPerception(perception));
