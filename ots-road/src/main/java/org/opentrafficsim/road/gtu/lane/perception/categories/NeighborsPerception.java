@@ -83,13 +83,13 @@ public class NeighborsPerception extends LaneBasedAbstractPerceptionCategory
         this.firstLeaders.clear();
         this.firstFollowers.clear();
         this.gtuAlongside.clear();
-        if (getPerception().getLaneStructure().getCrossSection().contains(RelativeLane.LEFT))
+        if (getPerception().getLaneStructure().getRootLSR().getLeft() != null)
         {
             updateFirstLeaders(LateralDirectionality.LEFT);
             updateFirstFollowers(LateralDirectionality.LEFT);
             updateGtuAlongside(LateralDirectionality.LEFT);
         }
-        if (getPerception().getLaneStructure().getCrossSection().contains(RelativeLane.RIGHT))
+        if (getPerception().getLaneStructure().getRootLSR().getRight() != null)
         {
             updateFirstLeaders(LateralDirectionality.RIGHT);
             updateFirstFollowers(LateralDirectionality.RIGHT);

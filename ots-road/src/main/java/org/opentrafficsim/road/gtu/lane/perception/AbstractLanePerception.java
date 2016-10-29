@@ -158,8 +158,6 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
             final Length downSplit, final Length up, final Length upMerge)
     {
         // Build initial lateral set
-        // System.out.println("START with root from " + rootLSR.getStartDistance() + " till "
-        //        + rootLSR.getStartDistance().plus(rootLSR.getLane().getLength()));
         Set<LaneStructureRecord> recordSet = new HashSet<>();
         Set<Lane> laneSet = new HashSet<>();
         recordSet.add(rootLSR);
@@ -177,7 +175,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
                         constructRecord(lane, current.getDirection(), lane.getLength().multiplyBy(-fraction), relativeLane);
                 if (latDirection.isLeft())
                 {
-                    if (lane.accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType).contains(current))
+                    if (lane.accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType).contains(current.getLane()))
                     {
                         adjacentRecord.setRight(current);
                     }
@@ -185,7 +183,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
                 }
                 else
                 {
-                    if (lane.accessibleAdjacentLanes(LateralDirectionality.LEFT, gtuType).contains(current))
+                    if (lane.accessibleAdjacentLanes(LateralDirectionality.LEFT, gtuType).contains(current.getLane()))
                     {
                         adjacentRecord.setLeft(current);
                     }
@@ -452,7 +450,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
                     Length start = laneRecord.getStartDistance().minus(laneRecord.getLane().getLength());
                     minStart.put(prevLink, Length.min(minStart.get(prevLink), start));
                     LaneStructureRecord prevRecord = constructRecord(prevLane,
-                            laneRecord.getLane().nextLanes(gtuType).get(prevLane), start, relativeLane);
+                            laneRecord.getLane().prevLanes(gtuType).get(prevLane), start, relativeLane);
                     if (start.le(up))
                     {
                         prevRecord.setCutOffStart(up.minus(start));
