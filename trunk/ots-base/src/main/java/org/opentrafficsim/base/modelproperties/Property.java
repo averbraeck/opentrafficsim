@@ -80,4 +80,11 @@ public interface Property<T> extends Iterable<Property<?>>
      */
     String getKey();
 
+    /**
+     * Retrieve the parent property.
+     * @return Property&lt;?&gt;; the CompoundProperty that is the parent of this AbstractProperty (result is null if
+     *         this property is not contained in a CompoundProperty)
+     */
+    CompoundProperty getParent();
+
 }

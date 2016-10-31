@@ -138,17 +138,15 @@ public abstract class AbstractProperty<T> implements Property<T>, Serializable
         this.parentProperty = newParent;
     }
 
-    /**
-     * Retrieve the parent property.
-     * @return AbstractProperty&lt;?&gt;; the CompoundProperty that is the parent of this AbstractProperty (result is null if
-     *         this property is not contained in a CompoundProperty)
-     */
-    protected final CompoundProperty getParent()
+    /** {@inheritDoc} */
+    @Override
+    public final CompoundProperty getParent()
     {
         return this.parentProperty;
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return this.getShortName();
