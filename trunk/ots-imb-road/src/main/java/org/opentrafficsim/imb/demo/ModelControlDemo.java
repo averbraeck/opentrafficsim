@@ -128,6 +128,34 @@ public class ModelControlDemo extends ModelStarter
         super(args, providedModelName, providedModelId);
     }
 
+    /**
+     * Find a particular property in a list of (compound) properties. <br>
+     * Re-computing the keyPath is somewhat inefficient. Could be improved if we do not use the iterator of Property.
+     * @param properties List&lt;Property&lt;?&gt;&gt;; the list
+     * @param key String; the key path of the sought property
+     * @return Property&lt;?&gt;; the first matching property, or null if no property with the given key was found
+     */
+    private Property<?> findPropertyInList(final List<Property<?>> properties, final String key)
+    {
+        for (Property<?> property : properties)
+        {
+            for (Property<?> p : property)
+            {
+                String keyPath = p.getKey();
+                for (Property<?> parent = p.getParent(); null != parent; parent = parent.getParent())
+                {
+                    keyPath = parent.getKey() + "." + keyPath;
+                }
+                // System.out.println("Comparing property key path " + keyPath + " to key " + key);
+                if (key.equals(keyPath))
+                {
+                    return property;
+                }
+            }
+        }
+        return null;
+    }
+
     /** {@inheritDoc} */
     @Override
     public void startModel(final ModelParameters parameters, final TConnection tConnection)
@@ -135,40 +163,68 @@ public class ModelControlDemo extends ModelStarter
         System.out.println("startModel called");
         System.out.println("parameters: " + parameters);
         System.out.println("Connection: " + this.connection);
+        String dataSource = null;
         List<Property<?>> properties = CircularRoadIMB.getSupportedProperties();
+
         for (String parameterName : parameters.getParameterNames())
         {
-            for (Property<?> property : properties)
+            if (parameterName.equals("Federation"))
             {
-                for (Property<?> p : property)
+                continue;
+            }
+            else if (parameterName.equals("DataSource"))
+            {
+                dataSource = (String) parameters.getParameterByName(parameterName).getValue();
+                continue;
+            }
+            int pos = parameterName.indexOf(" (");
+            if (pos < 0)
+            {
+                System.out.println("ignoring parameter " + parameterName);
+                continue;
+            }
+            String strippedName = parameterName.substring(0, pos);
+            switch (strippedName)
+            {
+                case "Truck fraction":
                 {
-                    if (parameterName.equals(p.getKey()))
+                    Property<?> p = findPropertyInList(properties, "TrafficComposition");
+                    if (null == p || !(p instanceof ProbabilityDistributionProperty))
                     {
-                        // FIXME: never happens
-                        if (p instanceof ProbabilityDistributionProperty)
+                        System.err.println("Property " + p + " is not a ProbalityDistributionProperty");
+                    }
+                    else
+                    {
+                        ProbabilityDistributionProperty pdp = (ProbabilityDistributionProperty) p;
+                        Double[] values = pdp.getValue();
+                        values[1] = (double) parameters.getParameterByName(parameterName).getValue();
+                        values[0] = 1.0 - values[1];
+                        try
                         {
-                            ProbabilityDistributionProperty pdp = (ProbabilityDistributionProperty)p;
-                            Double[] values = pdp.getValue();
-                            values[1] = (double) parameters.getParameterByName(parameterName).getValue();
-                            try
-                            {
-                                pdp.setValue(values);
-                            }
-                            catch (PropertyException exception)
-                            {
-                                exception.printStackTrace();
-                            }
+                            System.out.println("Setting TrafficComposition to " + values);
+                            pdp.setValue(values);
+                        }
+                        catch (PropertyException exception)
+                        {
+                            exception.printStackTrace();
                         }
                     }
+                    break;
                 }
+                default:
+                    System.out.println("Ignoring parameter " + parameterName);
+                    break;
             }
         }
-        // Create the simulation
+        System.out.println("Not doing anything with dataSource " + dataSource);
+        // TODO: do something with the dataSource
         try
         {
+            IMBConnector simulationIMBConnector = new IMBConnector(this.connection);
+            System.out.println("IMBConnector for simulation is " + simulationIMBConnector);
             this.model =
-                    new CircularRoadIMB(new DefaultSwitchableGTUColorer(), new OTSNetwork(""),
-                            CircularRoadIMB.getSupportedProperties(), new IMBConnector(tConnection));
+                    new CircularRoadIMB(new DefaultSwitchableGTUColorer(), new OTSNetwork(""), properties,
+                            simulationIMBConnector);
             Replication<Time, Duration, OTSSimTimeDouble> replication =
                     new Replication<Time, Duration, OTSSimTimeDouble>("rep1", new OTSSimTimeDouble(Time.ZERO), Duration.ZERO,
                             new Duration(1, TimeUnit.HOUR), this.model);
@@ -181,9 +237,6 @@ public class ModelControlDemo extends ModelStarter
         {
             exception.printStackTrace();
         }
-        // new Boat42SwingApplication("MM1 Queue model", new Boat42Panel(model, simulator));
-        //
-        // this.simulation = ...
     }
 
     /** {@inheritDoc} */
