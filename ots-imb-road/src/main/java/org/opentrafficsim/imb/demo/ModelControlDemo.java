@@ -244,15 +244,22 @@ public class ModelControlDemo extends ModelStarter
     public void stopModel()
     {
         System.out.println("stopModel called");
-        try
+        if (null != this.model)
         {
-            ((Simulator<Time, Duration, OTSSimTimeDouble>) this.model.getSimulator()).cleanUp();
-            this.model.closeWindow();
-            this.model = null;
+            try
+            {
+                ((Simulator<Time, Duration, OTSSimTimeDouble>) this.model.getSimulator()).cleanUp();
+                this.model.closeWindow();
+                this.model = null;
+            }
+            catch (RemoteException exception)
+            {
+                exception.printStackTrace();
+            }
         }
-        catch (RemoteException exception)
+        else
         {
-            exception.printStackTrace();
+            System.err.println("stopModel called, but no model is running");
         }
     }
 
