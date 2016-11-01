@@ -203,17 +203,17 @@ public abstract class ModelStarter
             modelName = settings.getSetting(MODEL_NAME_SWITCH, DEFAULT_MODEL_NAME);
             modelId = Integer.parseInt(settings.getSetting(MODEL_ID_SWITCH, DEFAULT_MODEL_ID));
         }
-        System.out.println("IMB " + this.remoteHost + ":" + this.remotePort);
+        System.out.println("IMB " + this.remoteHost + ":" + this.getRemotePort());
         System.out.println("Controller " + this.controller);
         System.out.println("ControllersEventName " + this.controllersEventName);
         System.out.println("ControllerPrivateEventName " + this.controllerPrivateEventName);
         System.out.println("LinkID " + linkId);
         System.out.println("ModelName " + modelName);
         System.out.println("ModelID " + modelId);
-        this.connection = new TConnection(this.remoteHost, this.remotePort, modelName, modelId, "");
+        this.connection = new TConnection(this.remoteHost, this.getRemotePort(), modelName, modelId, "");
         if (!this.connection.isConnected())
         {
-            throw new IMBException("Could not connect to " + this.remoteHost + ":" + this.remotePort);
+            throw new IMBException("Could not connect to " + this.remoteHost + ":" + this.getRemotePort());
         }
         this.privateModelEvent =
                 this.connection.subscribe(this.controllerPrivateEventName + EVENT_NAME_PART_SEPARATOR + modelName
@@ -591,6 +591,24 @@ public abstract class ModelStarter
     public void signalModelState(final ModelState newState) throws IMBException
     {
         signalModelState(newState, this.connection.getFederation());
+    }
+
+    /**
+     * Retrieve the remote port number.
+     * @return int; the remote port number
+     */
+    public int getRemotePort()
+    {
+        return this.remotePort;
+    }
+
+    /**
+     * Retrieve the remote host name.
+     * @return String; the name of the remote host
+     */
+    public String getRemoteHost()
+    {
+        return this.remoteHost;
     }
 
 }
