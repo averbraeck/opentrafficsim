@@ -31,14 +31,12 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -163,8 +161,7 @@ public class TrafCOD extends EventProducer implements TrafficController
         Throw.whenNull(simulator, "simulator may not be null");
         this.simulator = simulator;
         this.controllerName = controllerName;
-        URL url = new URL(trafCodURL);
-        BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+        BufferedReader in = new BufferedReader(new InputStreamReader(new URL(trafCodURL).openStream()));
         String inputLine;
         int lineno = 0;
         while ((inputLine = in.readLine()) != null)
