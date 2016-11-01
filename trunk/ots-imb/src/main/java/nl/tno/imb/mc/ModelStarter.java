@@ -358,7 +358,7 @@ public abstract class ModelStarter
                                 case IDLE:
                                     if (ModelState.LOCK == this.state)
                                     {
-                                        this.state = ModelState.LOCK;
+                                        this.state = ModelState.IDLE;
                                     }
                                     break;
 
@@ -388,15 +388,6 @@ public abstract class ModelStarter
                             TEventEntry.EK_NORMAL_EVENT,
                             ObjectArrayToIMB.objectArrayToIMBPayload(new Object[] { ModelCommand.DEFAULT_PARAMETERS.getValue(),
                                     this.connection.getUniqueClientID(), modelParameters }), false);
-                    // TByteBuffer parameterPayload = new TByteBuffer();
-                    // parameterPayload.prepare(ModelCommand.DEFAULT_PARAMETERS.getValue());
-                    // parameterPayload.prepare(this.connection.getUniqueClientID());
-                    // modelParameters.prepare(parameterPayload);
-                    // parameterPayload.prepareApply();
-                    // parameterPayload.qWrite(ModelCommand.DEFAULT_PARAMETERS.getValue());
-                    // parameterPayload.qWrite(this.connection.getUniqueClientID());
-                    // modelParameters.qWrite(parameterPayload);
-                    // this.connection.signalEvent(returnEventName, TEventEntry.EK_NORMAL_EVENT, parameterPayload, false);
                 }
                 break;
             }
@@ -445,15 +436,6 @@ public abstract class ModelStarter
                 ObjectArrayToIMB.objectArrayToIMBPayload(
                         new Object[] { ModelCommand.MODEL.getValue(), TEventEntry.ACTION_DELETE,
                                 this.connection.getUniqueClientID() }).getBuffer());
-        // TByteBuffer payload = new TByteBuffer();
-        // payload.prepare(ModelCommand.MODEL.getValue());
-        // payload.prepare(TEventEntry.ACTION_DELETE);
-        // payload.prepare(this.connection.getUniqueClientID());
-        // payload.prepareApply();
-        // payload.qWrite(ModelCommand.MODEL.getValue());
-        // payload.qWrite(TEventEntry.ACTION_DELETE);
-        // payload.qWrite(this.connection.getUniqueClientID());
-        // this.controllersEvent.signalEvent(TEventEntry.EK_NORMAL_EVENT, payload.getBuffer());
     }
 
     /**
@@ -466,15 +448,6 @@ public abstract class ModelStarter
     {
         this.privateControllerEvent.signalEvent(TEventEntry.EK_NORMAL_EVENT,
                 ObjectArrayToIMB.objectArrayToIMBPayload(new Object[] { ModelCommand.INIT.getValue() }).getBuffer());
-        // InitEvent modelInitEvent =
-        // new InitEvent(linkId, this.connection.getUniqueClientID(), modelName, this.privateModelEvent.getEventName());
-        // TByteBuffer payload = new TByteBuffer();
-        // payload.prepare(ModelCommand.INIT.getValue());
-        // modelInitEvent.prepare(payload);
-        // payload.prepareApply();
-        // payload.qWrite(ModelCommand.INIT.getValue());
-        // modelInitEvent.qWrite(payload);
-        // this.privateControllerEvent.signalEvent(TEventEntry.EK_NORMAL_EVENT, payload.getBuffer());
     }
 
     /**
@@ -492,14 +465,6 @@ public abstract class ModelStarter
         payload =
                 ObjectArrayToIMB.objectArrayToIMBPayload(new Object[] { ModelCommand.MODEL.getValue(), TEventEntry.ACTION_NEW,
                         newEvent });
-        // TByteBuffer payload = new TByteBuffer();
-        // payload.prepare(ModelCommand.MODEL.getValue());
-        // payload.prepare(TEventEntry.ACTION_NEW);
-        // newEvent.prepare(payload);
-        // payload.prepareApply();
-        // payload.qWrite(ModelCommand.MODEL.getValue());
-        // payload.qWrite(TEventEntry.ACTION_NEW);
-        // newEvent.qWrite(payload);
         if (eventName.length() == 0)
         {
             this.controllersEvent.signalEvent(TEventEntry.EK_NORMAL_EVENT, payload.getBuffer());
@@ -513,14 +478,6 @@ public abstract class ModelStarter
             payload =
                     ObjectArrayToIMB.objectArrayToIMBPayload(new Object[] { ModelCommand.PROGRESS.getValue(),
                             this.connection.getUniqueClientID(), this.progress });
-            // payload.clear();
-            // payload.prepare(ModelCommand.PROGRESS.getValue());
-            // payload.prepare(this.connection.getUniqueClientID());
-            // payload.prepare(this.progress);
-            // payload.prepareApply();
-            // payload.qWrite(ModelCommand.PROGRESS.getValue());
-            // payload.qWrite(this.connection.getUniqueClientID());
-            // payload.qWrite(this.progress);
             if (eventName.length() == 0)
             {
                 this.controllersEvent.signalEvent(TEventEntry.EK_NORMAL_EVENT, payload.getBuffer());
@@ -545,15 +502,6 @@ public abstract class ModelStarter
                         .objectArrayToIMBPayload(
                                 new Object[] { ModelCommand.PROGRESS.getValue(), this.connection.getUniqueClientID(),
                                         currentProgress }).getBuffer());
-        // TByteBuffer payload = new TByteBuffer();
-        // payload.prepare(ModelCommand.PROGRESS.getValue());
-        // payload.prepare(this.connection.getUniqueClientID());
-        // payload.prepare(currentProgress);
-        // payload.prepareApply();
-        // payload.qWrite(ModelCommand.PROGRESS.getValue());
-        // payload.qWrite(this.connection.getUniqueClientID());
-        // payload.qWrite(currentProgress);
-        // this.controllersEvent.signalEvent(TEventEntry.EK_NORMAL_EVENT, payload.getBuffer());
         this.progress = currentProgress;
     }
 
@@ -571,15 +519,6 @@ public abstract class ModelStarter
                 ObjectArrayToIMB.objectArrayToIMBPayload(
                         new Object[] { ModelCommand.MODEL.getValue(), TEventEntry.ACTION_CHANGE, modelChangeEvent })
                         .getBuffer());
-        // TByteBuffer payload = new TByteBuffer();
-        // payload.prepare(ModelCommand.MODEL.getValue());
-        // payload.prepare(TEventEntry.ACTION_CHANGE);
-        // modelChangeEvent.prepare(payload);
-        // payload.prepareApply();
-        // payload.qWrite(ModelCommand.MODEL.getValue());
-        // payload.qWrite(TEventEntry.ACTION_CHANGE);
-        // modelChangeEvent.qWrite(payload);
-        // this.controllersEvent.signalEvent(TEventEntry.EK_NORMAL_EVENT, payload.getBuffer());
         System.out.println("New model state " + newState + " on " + federation);
     }
 
