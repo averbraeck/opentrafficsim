@@ -282,24 +282,38 @@ public class ModelControlDemo extends ModelStarter
     {
         System.out.println("serving parameter request");
         System.out.println("received parameters: " + parameters);
-        double currentTruckFraction = Double.NaN;
         List<Property<?>> propertyList = CircularRoadIMB.getSupportedProperties();
+        Property<?> truckFraction = findByKeyInList(propertyList, "TrafficComposition");
+        if (null != truckFraction)
+        {
+            parameters.addParameter(new Parameter("Truck fraction (range 0.0 - 1.0)",
+                    ((ProbabilityDistributionProperty) truckFraction).getValue()[1]));
+        }
+        System.out.println("(possibly) modified paramters: " + parameters);
+    }
+
+    /**
+     * Find a property with the specified key in a List of properties.
+     * @param propertyList List&lt;Property&lt;?&gt;&gt;; the list
+     * @param key String; the key
+     * @return Property&lt;?&gt; or null if none of the entries in the list contained a property with the specified key
+     */
+    private Property<?> findByKeyInList(final List<Property<?>> propertyList, final String key)
+    {
+        Property<?> result = null;
         for (Property<?> property : propertyList)
         {
-            Property<?> truckFraction = property.findByKey("TrafficComposition");
-            if (null != truckFraction)
+            Property<?> p = property.findByKey(key);
+            if (null != p)
             {
-                currentTruckFraction = ((ProbabilityDistributionProperty) truckFraction).getValue()[1];
-                break;
+                if (null != result)
+                {
+                    System.err.println("Duplicate property with key " + key + " in provided list");
+                }
+                result = p;
             }
         }
-        if (Double.isNaN(currentTruckFraction))
-        {
-            currentTruckFraction = 0.2;
-            System.out.println("Could not find the traffic composition property");
-        }
-        parameters.addParameter(new Parameter("Truck fraction (range 0.0 - 1.0)", currentTruckFraction));
-        System.out.println("(possibly) modified paramters: " + parameters);
+        return result;
     }
 
     /**
