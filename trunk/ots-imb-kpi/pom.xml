@@ -13,6 +13,11 @@
   <name>Stand-alone OTS-KPI module for IMB </name>
   <description>Project that can calculate KPI's received from the IMB bus</description>
 
+  <!-- Don't make javadoc crash on the HTML tags for the IMB table such as STYLE  -->
+  <properties>
+    <additionalparam>-Xdoclint:accessibility,reference,syntax</additionalparam>
+  </properties>
+
   <dependencies>
   
     <dependency>
