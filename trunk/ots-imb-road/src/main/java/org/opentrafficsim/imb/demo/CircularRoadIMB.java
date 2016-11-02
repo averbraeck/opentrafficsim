@@ -468,7 +468,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
     public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
-        System.out.println("CirularRoadIMB: constructModel called; Connecting to IMB");
+        System.out.println("CircularRoadIMB: constructModel called; Connecting to IMB");
         SimpleAnimator imbAnimator = (SimpleAnimator) theSimulator;
         try
         {
