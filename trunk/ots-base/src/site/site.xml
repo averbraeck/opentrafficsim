@@ -11,7 +11,8 @@
   <body>
 
    <menu name="MODULES">
-      <item name="ots-base" href="http://opentrafficsim.org/docs/${version}/index.html" />
+      <item name="ots" href="http://opentrafficsim.org/docs/${version}/index.html" />
+      <item name="ots-base" href="http://opentrafficsim.org/docs/${version}/ots-base/index.html" />
       <item name="ots-core" href="http://opentrafficsim.org/docs/${version}/ots-core/index.html" />
       <item name="ots-kpi" href="http://opentrafficsim.org/docs/${version}/ots-kpi/index.html" />
       <item name="ots-road" href="http://opentrafficsim.org/docs/${version}/ots-road/index.html" />
