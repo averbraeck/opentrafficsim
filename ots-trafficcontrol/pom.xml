@@ -3,9 +3,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>opentrafficsim</groupId>
-		<artifactId>ots-base</artifactId>
+		<artifactId>ots</artifactId>
 		<version>0.12.00</version>
-		<relativePath>../ots-base/pom.xml</relativePath>
+		<relativePath>../ots/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>ots-trafficcontrol</artifactId>
