@@ -57,6 +57,9 @@ public class OperationalPlan implements Serializable
     /** The duration of executing the entire operational plan. */
     private final Duration totalDuration;
 
+    /** The length of the entire operational plan. */
+    private final Length totalLength;
+
     /** The speed at the end of the operational plan. */
     private final Speed endSpeed;
 
@@ -125,12 +128,17 @@ public class OperationalPlan implements Serializable
         }
         catch (OTSGeometryException exception)
         {
-            // System.err.println("About to throw OperationalPlanException: st = " + startTime + ", ss = " + startSpeed
-            // + ", seg = " + operationalPlanSegmentList + ", distanceSI = " + distanceSI + ", path = " + path);
             throw new OperationalPlanException(exception);
         }
         this.totalDuration = new Duration(durationSI, TimeUnit.SI);
+        this.totalLength = new Length(distanceSI, LengthUnit.SI);
         this.endSpeed = v0;
+
+        double pathDistanceDeviation = Math.abs(this.totalLength.si - this.path.getLengthSI()) / this.totalLength.si;
+        if (pathDistanceDeviation < -0.01 || pathDistanceDeviation > 0.01)
+        {
+            System.err.println("path length and driven distance deviate more than 1% for operationalPlan: " + this);
+        }
     }
 
     /**
@@ -150,11 +158,11 @@ public class OperationalPlan implements Serializable
         this.startSpeed = Speed.ZERO;
         this.endSpeed = Speed.ZERO;
         this.totalDuration = duration;
+        this.totalLength = Length.ZERO;
 
         // make a path
-        OTSPoint3D p2 =
-                new OTSPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
-                        waitPoint.z);
+        OTSPoint3D p2 = new OTSPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
+                waitPoint.z);
         try
         {
             this.path = new OTSLine3D(new OTSPoint3D(waitPoint), p2);
@@ -226,6 +234,15 @@ public class OperationalPlan implements Serializable
     public final Duration getTotalDuration()
     {
         return this.totalDuration;
+    }
+
+    /**
+     * Return the distance the entire operational plan will cover.
+     * @return the distance of the entire operational plan
+     */
+    public final Length getTotalLength()
+    {
+        return this.totalLength;
     }
 
     /**
@@ -346,17 +363,18 @@ public class OperationalPlan implements Serializable
     {
         if (time.lt(this.startTime))
         {
-            throw new OperationalPlanException(this.gtu + ", t = " + time
-                    + "SegmentProgress cannot be determined for time before startTime " + getStartTime()
-                    + " of this OperationalPlan");
+            throw new OperationalPlanException(
+                    this.gtu + ", t = " + time + "SegmentProgress cannot be determined for time before startTime "
+                            + getStartTime() + " of this OperationalPlan");
         }
         double cumulativeDistance = 0;
         for (int i = 0; i < this.segmentStartTimesRelSI.length - 1; i++)
         {
             if (this.startTime.si + this.segmentStartTimesRelSI[i + 1] >= time.si)
             {
-                return new SegmentProgress(this.operationalPlanSegmentList.get(i), new Time(this.startTime.si
-                        + this.segmentStartTimesRelSI[i], TimeUnit.SI), new Length(cumulativeDistance, LengthUnit.SI));
+                return new SegmentProgress(this.operationalPlanSegmentList.get(i),
+                        new Time(this.startTime.si + this.segmentStartTimesRelSI[i], TimeUnit.SI),
+                        new Length(cumulativeDistance, LengthUnit.SI));
             }
         }
         throw new OperationalPlanException(this.gtu + ", t = " + time
@@ -377,8 +395,9 @@ public class OperationalPlan implements Serializable
             double distanceOfSegment = segment.distanceSI();
             if (distanceOfSegment > remainingDistanceSI)
             {
-                return new Time(timeAtStartOfSegment
-                        + segment.timeAtDistance(new Length(remainingDistanceSI, LengthUnit.SI)).si, TimeUnit.SI);
+                return new Time(
+                        timeAtStartOfSegment + segment.timeAtDistance(new Length(remainingDistanceSI, LengthUnit.SI)).si,
+                        TimeUnit.SI);
             }
             remainingDistanceSI -= distanceOfSegment;
             timeAtStartOfSegment += segment.getDurationSI();
@@ -398,12 +417,8 @@ public class OperationalPlan implements Serializable
         Segment segment = sp.getSegment();
         Duration deltaT = time.minus(sp.getSegmentStartTime());
         double distanceTraveledInSegment = segment.distanceSI(deltaT.si);
-        double startDistance = sp.getSegmentStartPosition().si; 
+        double startDistance = sp.getSegmentStartPosition().si;
         double fraction = (startDistance + distanceTraveledInSegment) / this.path.getLengthSI();
-        // double fraction =
-        // (sp.getSegmentStartPosition().si + sp.getSegment().distanceSI(time.minus(sp.getSegmentStartTime()).si))
-        // / this.path.getLengthSI();
-        // System.out.println(fraction);
         DirectedPoint p = new DirectedPoint();
         try
         {

@@ -18,8 +18,8 @@ import org.opentrafficsim.core.gtu.GTUException;
  * sharp bends. Therefore, algorithms implementing headway should only project the <i>reference point</i> of the reference
  * object on the center line of the adjacent lane, and then calculate the forward position and backward position on the adjacent
  * lane based on the reference point. Still, our human perception of what is parallel and what not, is not reflected by
- * fractional positions. See examples in <a href=
- * "http://simulation.tudelft.nl:8085/browse/OTS-113">http://simulation.tudelft.nl:8085/browse/OTS-113</a>.
+ * fractional positions. See examples in
+ * <a href= "http://simulation.tudelft.nl:8085/browse/OTS-113">http://simulation.tudelft.nl:8085/browse/OTS-113</a>.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -42,8 +42,8 @@ public class HeadwayObject extends AbstractHeadway
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
      * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
      */
-    public HeadwayObject(final String id, final Length distance, final Speed speed,
-        final Acceleration acceleration) throws GTUException
+    public HeadwayObject(final String id, final Length distance, final Speed speed, final Acceleration acceleration)
+            throws GTUException
     {
         super(ObjectType.OBJECT, id, distance, speed, acceleration);
     }
@@ -70,7 +70,7 @@ public class HeadwayObject extends AbstractHeadway
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public HeadwayObject(final String id, final Length overlapFront, final Length overlap, final Length overlapRear,
-        final Speed speed, final Acceleration acceleration) throws GTUException
+            final Speed speed, final Acceleration acceleration) throws GTUException
     {
         super(ObjectType.OBJECT, id, overlapFront, overlap, overlapRear, speed, acceleration);
     }
@@ -83,11 +83,12 @@ public class HeadwayObject extends AbstractHeadway
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public HeadwayObject(final String id, final Length overlapFront, final Length overlap, final Length overlapRear) throws GTUException
+    public HeadwayObject(final String id, final Length overlapFront, final Length overlap, final Length overlapRear)
+            throws GTUException
     {
         super(ObjectType.OBJECT, id, overlapFront, overlap, overlapRear);
     }
-    
+
     /**
      * Construct a new Headway information object, for a moving object ahead of us or behind us.
      * @param id the id of the object for comparison purposes, can not be null.
@@ -98,7 +99,7 @@ public class HeadwayObject extends AbstractHeadway
      * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
      */
     public HeadwayObject(final String id, final Length distance, final Length length, final Speed speed,
-        final Acceleration acceleration) throws GTUException
+            final Acceleration acceleration) throws GTUException
     {
         super(ObjectType.OBJECT, id, distance, length, speed, acceleration);
     }
@@ -127,7 +128,7 @@ public class HeadwayObject extends AbstractHeadway
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public HeadwayObject(final String id, final Length overlapFront, final Length overlap, final Length overlapRear,
-        final Length length, final Speed speed, final Acceleration acceleration) throws GTUException
+            final Length length, final Speed speed, final Acceleration acceleration) throws GTUException
     {
         super(ObjectType.OBJECT, id, overlapFront, overlap, overlapRear, length, speed, acceleration);
     }
@@ -142,7 +143,7 @@ public class HeadwayObject extends AbstractHeadway
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public HeadwayObject(final String id, final Length overlapFront, final Length overlap, final Length overlapRear,
-        final Length length) throws GTUException
+            final Length length) throws GTUException
     {
         super(ObjectType.OBJECT, id, overlapFront, overlap, overlapRear, length);
     }

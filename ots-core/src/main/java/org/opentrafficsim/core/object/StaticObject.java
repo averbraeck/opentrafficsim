@@ -5,7 +5,10 @@ import java.io.Serializable;
 import javax.media.j3d.Bounds;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.NetworkException;
 
 import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -86,6 +89,21 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
     public String toString()
     {
         return "StaticObject3D [geometry=" + getGeometry() + ", height=" + this.height + "]";
+    }
+
+    /**
+     * Clone the StaticObject for e.g., copying a network.
+     * @param newNetwork the new network to which the clone belongs
+     * @param newSimulator the new simulator for this network
+     * @param animation whether to (re)create animation or not
+     * @return a clone of this object
+     * @throws NetworkException in case the cloning fails
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    public StaticObject clone(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
+            throws NetworkException
+    {
+        return new StaticObject(this.geometry, this.height);
     }
 
 }

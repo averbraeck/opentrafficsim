@@ -139,6 +139,7 @@ public class SuperDemo implements UNITS
         demonstrations.add(new CircularRoad());
         demonstrations.add(new XMLNetworks());
         demonstrations.add(new OpenStreetMap());
+        demonstrations.add(new CrossingTrafficLights());
         // final JPanel left = new LabeledPanel("Simulation Settings");
         this.simulationSelection = new LabeledPanel("Network");
         this.simulationSelection.setLayout(new GridBagLayout());
@@ -601,7 +602,7 @@ class CleverRadioButton extends JRadioButton
     private static final long serialVersionUID = 20141217L;
 
     /** The WrappableAnimation. */
-    private final WrappableAnimation imbAnimation;
+    private final WrappableAnimation animation;
 
     /**
      * Construct a JRadioButton that also stores a WrappableAnimation.
@@ -611,7 +612,7 @@ class CleverRadioButton extends JRadioButton
     CleverRadioButton(final WrappableAnimation animation)
     {
         super(animation.shortName());
-        this.imbAnimation = animation;
+        this.animation = animation;
     }
 
     /**
@@ -620,6 +621,6 @@ class CleverRadioButton extends JRadioButton
      */
     public final WrappableAnimation getAnimation()
     {
-        return this.imbAnimation;
+        return this.animation;
     }
 }

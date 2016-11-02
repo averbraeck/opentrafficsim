@@ -12,8 +12,7 @@ import java.util.TreeMap;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.network.lane.LaneBasedObject;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -332,5 +331,4 @@ public class LaneStructure implements EnvironmentState, Serializable
     {
         return "LaneStructure [rootLSR=" + this.rootLSR + "]";
     }
-
 }

@@ -1,4 +1,6 @@
-package org.opentrafficsim.road.network.factory;
+package org.opentrafficsim.core.gis;
+
+import org.opentrafficsim.core.gis.CoordinateTransformLonLatToXY;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
 
@@ -12,7 +14,7 @@ import nl.javel.gisbeans.io.esri.CoordinateTransform;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class Test
+public class TestCoordinateTransformLonLatToXY
 {
 
     /**

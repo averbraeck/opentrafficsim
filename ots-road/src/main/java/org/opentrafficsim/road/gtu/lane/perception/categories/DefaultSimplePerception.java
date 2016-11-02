@@ -27,10 +27,12 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayDistance;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayObject;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LanePathInfo;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -767,7 +769,7 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
     }
 
     /**
-     * Determine the positive headway on a lane, or null if no GTU can be found on this lane.
+     * Determine the positive headway on a lane, or null if no GTU or blocking object can be found on this lane.
      * @param laneDirection the lane and direction to look
      * @param startPosSI the start position to look from in meters
      * @param cumDistSI the cumulative distance that has already been observed on other lanes
@@ -782,14 +784,26 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
         Lane lane = laneDirection.getLane();
         LaneBasedGTU laneBasedGTU = lane.getGtuAhead(new Length(startPosSI, LengthUnit.SI), laneDirection.getDirection(),
                 RelativePosition.REAR, now);
-        if (laneBasedGTU == null)
+        List<LaneBasedObject> laneBasedObjects =
+                lane.getObjectAhead(new Length(startPosSI, LengthUnit.SI), laneDirection.getDirection());
+        if (laneBasedGTU == null && laneBasedObjects == null)
         {
             return null;
         }
-        double distanceSI = Math.abs(laneBasedGTU.position(lane, laneBasedGTU.getRear()).si - startPosSI);
-        return new HeadwayGTUSimple(laneBasedGTU.getId(), laneBasedGTU.getGTUType(),
-                new Length(cumDistSI + distanceSI, LengthUnit.SI), laneBasedGTU.getLength(), laneBasedGTU.getSpeed(),
+        double gtuDistanceSI = laneBasedGTU == null ? Double.MAX_VALUE
+                : Math.abs(laneBasedGTU.position(lane, laneBasedGTU.getRear()).si - startPosSI);
+        double objectDistanceSI = laneBasedObjects == null ? Double.MAX_VALUE
+                : Math.abs(laneBasedObjects.get(0).getLongitudinalPosition().si - startPosSI);
+        if (gtuDistanceSI < objectDistanceSI)
+        {
+            return new HeadwayGTUSimple(laneBasedGTU.getId(), laneBasedGTU.getGTUType(),
+                new Length(cumDistSI + gtuDistanceSI, LengthUnit.SI), laneBasedGTU.getLength(), laneBasedGTU.getSpeed(),
                 laneBasedGTU.getAcceleration());
+        }
+        else
+        {
+            return new HeadwayObject(laneBasedGTU.getId(), new Length(cumDistSI + objectDistanceSI, LengthUnit.SI));
+        }
     }
 
     /**

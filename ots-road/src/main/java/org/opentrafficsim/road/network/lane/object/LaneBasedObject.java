@@ -1,9 +1,13 @@
-package org.opentrafficsim.road.network.lane;
+package org.opentrafficsim.road.network.lane.object;
 
 import javax.media.j3d.Bounds;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.object.ObjectInterface;
+import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -27,9 +31,6 @@ public interface LaneBasedObject extends ObjectInterface
     /** @return the position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane. */
     Length getLongitudinalPosition();
 
-    /** @return the length of the object in the longitudinal direction, on the center line of the lane */
-    Length getLength();
-
     /**
      * Return the location without throwing a RemoteException.
      * @return DirectedPoint; the location
@@ -43,4 +44,28 @@ public interface LaneBasedObject extends ObjectInterface
      */
     @Override
     Bounds getBounds();
+
+    /**
+     * Make a geometry perpendicular to the center line of the lane at the given position.
+     * @param lane Lane; the lane where the sensor resides
+     * @param position Length; The length of the object in the longitudinal direction, on the center line of the lane
+     * @return a geometry perpendicular to the center line that describes the sensor
+     */
+    static OTSLine3D makeGeometry(final Lane lane, final Length position)
+    {
+        DirectedPoint sp = lane.getCenterLine().getLocationExtended(position);
+        double w45 = 0.45 * lane.getWidth(position).si;
+        double a = sp.getRotZ() + Math.PI / 2.0;
+        OTSPoint3D p1 = new OTSPoint3D(sp.x + w45 * Math.cos(a), sp.y - w45 * Math.sin(a), sp.z + 0.0001);
+        OTSPoint3D p2 = new OTSPoint3D(sp.x - w45 * Math.cos(a), sp.y + w45 * Math.sin(a), sp.z + 0.0001);
+        try
+        {
+            return new OTSLine3D(p1, p2);
+        }
+        catch (OTSGeometryException exception)
+        {
+            throw new RuntimeException(exception);
+        }
+    }
+
 }

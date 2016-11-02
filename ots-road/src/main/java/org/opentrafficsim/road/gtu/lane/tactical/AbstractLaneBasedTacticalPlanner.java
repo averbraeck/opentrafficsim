@@ -18,7 +18,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
@@ -28,9 +27,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
@@ -80,12 +76,12 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         this.gtu = gtu;
         CategorialLanePerception perception = new CategorialLanePerception(gtu);
         perception.addPerceptionCategory(new DefaultSimplePerception(perception));
-        // TODO Specific tactical planners should knwo which perception categories to use
+        // TODO Specific tactical planners should know which perception categories to use
         // SSMDEMO below categories can be disabled
-        perception.addPerceptionCategory(new InfrastructurePerception(perception));
-        perception.addPerceptionCategory(new NeighborsPerception(perception));
-        perception.addPerceptionCategory(new IntersectionPerception(perception));
-        perception.addPerceptionCategory(new EgoPerception(perception));
+        // perception.addPerceptionCategory(new InfrastructurePerception(perception));
+        // perception.addPerceptionCategory(new NeighborsPerception(perception));
+        // perception.addPerceptionCategory(new IntersectionPerception(perception));
+        // perception.addPerceptionCategory(new EgoPerception(perception));
         this.lanePerception = perception;
     }
 
@@ -303,7 +299,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         while (lengthForward.lt(maxHeadway) && nextSplitNode == null)
         {
             // calculate the number of "outgoing" links
-            Set<Link> links = lastNode.getLinks(); // safe copy
+            Set<Link> links = lastNode.getLinks().toSet(); // safe copy
             Iterator<Link> linkIterator = links.iterator();
             while (linkIterator.hasNext())
             {
@@ -516,7 +512,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         while (lengthForward.lt(maxHeadway))
         {
             // calculate the number of "outgoing" links
-            Set<Link> links = lastNode.getLinks(); // is a safe copy
+            Set<Link> links = lastNode.getLinks().toSet(); // is a safe copy
             Iterator<Link> linkIterator = links.iterator();
             while (linkIterator.hasNext())
             {

@@ -4,7 +4,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.road.network.lane.LaneBasedObject;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
  * Provides 'friendly' access to the LaneStructure from a GTU point of view.

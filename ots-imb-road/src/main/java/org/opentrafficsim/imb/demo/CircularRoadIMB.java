@@ -35,8 +35,8 @@ import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -86,11 +86,13 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.modelproperties.IDMPropertySet;
 import org.opentrafficsim.road.network.factory.LaneFactory;
-import org.opentrafficsim.road.network.lane.AbstractSensor;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.SensorAnimation;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
+import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SensorAnimation;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
@@ -100,7 +102,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.Throw;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Circular road simulation demo.
@@ -878,7 +879,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
                 final RelativePosition.TYPE triggerPosition, final OTSDEVSSimulatorInterface simulator)
                 throws NetworkException, OTSGeometryException
         {
-            super(id, lane, position, triggerPosition, simulator, Length.ZERO, makeGeometry(lane, position));
+            super(id, lane, position, triggerPosition, simulator, LaneBasedObject.makeGeometry(lane, position));
             try
             {
                 new SensorAnimation(this, position, simulator, Color.RED);
@@ -887,23 +888,6 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
             {
                 exception.printStackTrace();
             }
-        }
-
-        /**
-         * Make a geometry perpendicular to the center line of the lane at the given position.
-         * @param lane Lane; the lane where the sensor resides
-         * @param position Length; The length of the object in the longitudinal direction, on the center line of the lane
-         * @return a geometry perpendicular to the center line that describes the sensor
-         * @throws OTSGeometryException when the line is ill-formed
-         */
-        private static final OTSLine3D makeGeometry(final Lane lane, final Length position) throws OTSGeometryException
-        {
-            DirectedPoint sp = lane.getCenterLine().getLocationExtended(position);
-            double w45 = 0.45 * lane.getWidth(position).si;
-            double a = sp.getRotZ() + Math.PI / 2.0;
-            OTSPoint3D p1 = new OTSPoint3D(sp.x + w45 * Math.cos(a), sp.y - w45 * Math.sin(a), sp.z + 0.0001);
-            OTSPoint3D p2 = new OTSPoint3D(sp.x - w45 * Math.cos(a), sp.y + w45 * Math.sin(a), sp.z + 0.0001);
-            return new OTSLine3D(p1, p2);
         }
 
         /** {@inheritDoc} */
@@ -919,5 +903,26 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
         {
             return "SimpleSilentSensor [Lane=" + this.getLane() + "]";
         }
+        
+        /** {@inheritDoc} */
+        @Override
+        @SuppressWarnings("checkstyle:designforextension")
+        public SimpleSilentSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+                final boolean animation) throws NetworkException
+        {
+            Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
+            Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
+                    "simulator should be a DEVSSimulator");
+            try
+            {
+                return new SimpleSilentSensor(getId(), (Lane) newCSE, getLongitudinalPosition(), getPositionType(),
+                        (OTSDEVSSimulatorInterface) newSimulator);
+            }
+            catch (OTSGeometryException exception)
+            {
+                throw new NetworkException(exception);
+            }
+        }
+
     }
 }

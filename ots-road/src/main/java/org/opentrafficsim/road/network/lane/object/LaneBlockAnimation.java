@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.network.lane.object.animation;
+package org.opentrafficsim.road.network.lane.object;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -13,7 +13,6 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.animation.PaintPolygons;
-import org.opentrafficsim.road.network.lane.object.CSEBlock;
 
 /**
  * Draw a road block.
@@ -26,7 +25,7 @@ import org.opentrafficsim.road.network.lane.object.CSEBlock;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CSEBlockAnimation extends Renderable2D implements Serializable
+public class LaneBlockAnimation extends Renderable2D implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20160400L;
@@ -45,7 +44,7 @@ public class CSEBlockAnimation extends Renderable2D implements Serializable
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public CSEBlockAnimation(final CSEBlock source, final OTSSimulatorInterface simulator, final Color fillColor)
+    public LaneBlockAnimation(final LaneBlock source, final OTSSimulatorInterface simulator, final Color fillColor)
         throws NamingException, RemoteException
     {
         super(source, simulator);
@@ -59,7 +58,7 @@ public class CSEBlockAnimation extends Renderable2D implements Serializable
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         graphics.setColor(this.fillColor);
-        PaintPolygons.paintMultiPolygon(graphics, this.fillColor, POINT_000, ((CSEBlock) this.source).getGeometry(),
+        PaintPolygons.paintMultiPolygon(graphics, this.fillColor, POINT_000, ((LaneBlock) this.source).getGeometry(),
             true);
     }
 

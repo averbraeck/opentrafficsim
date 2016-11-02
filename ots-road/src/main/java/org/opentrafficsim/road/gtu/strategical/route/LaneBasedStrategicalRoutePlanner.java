@@ -151,7 +151,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         }
 
         // if we only have one way to go, don't bother about the route yet
-        Set<Link> links = node.getLinks();
+        Set<Link> links = node.getLinks().toSet();
         for (Iterator<Link> linkIterator = links.iterator(); linkIterator.hasNext();)
         {
             Link link = linkIterator.next();
@@ -192,11 +192,6 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                 }
             }
         }
-
-        // if (node.getId().contains("68.158"))
-        // {
-        // System.err.println(node + ", cleaning... links = " + links);
-        // }
 
         if (links.size() == 1)
         {

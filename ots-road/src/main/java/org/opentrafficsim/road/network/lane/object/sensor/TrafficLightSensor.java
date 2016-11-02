@@ -1,13 +1,18 @@
-package org.opentrafficsim.road.network.lane;
+package org.opentrafficsim.road.network.lane.object.sensor;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
+import org.opentrafficsim.road.network.lane.Lane;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * This traffic light sensor reports whether it whether any GTUs are within its area. The area is a sub-section of a Lane. This
@@ -29,6 +34,9 @@ public class TrafficLightSensor
     /** The sensor that detects when the rear of a GTU leaves the sensor area. */
     private final FlankSensor downSensor;
 
+    /** The distance between the up and down sensor. */
+    private final Length length;
+    
     /** GTUs detected by the upSensor, but not yet removed by the downSensor. */
     private final Set<LaneBasedGTU> currentGTUs = new HashSet<>();
 
@@ -45,9 +53,38 @@ public class TrafficLightSensor
     {
         this.upSensor = new FlankSensor(id + ".UP", lane, position, simulator, true, this.currentGTUs);
         this.downSensor = new FlankSensor(id + ".DN", lane, position.plus(length), simulator, false, this.currentGTUs);
+        this.length = length;
     }
 
     // TODO figure out how to detect GTUs that leave the sensor sideways
+
+    /**
+     * Clone the TrafficLightSensor for e.g., copying a network.
+     * @param newCSE the new cross section element to which the clone belongs
+     * @param newSimulator the new simulator for this network
+     * @param animation whether to (re)create animation or not
+     * @return a clone of this object
+     * @throws NetworkException in case the cloning fails
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    public TrafficLightSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+            final boolean animation) throws NetworkException
+    {
+        Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
+        Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
+                "simulator should be a DEVSSimulator");
+        String newId = this.upSensor.getId().substring(0, this.upSensor.getId().length() - 4);
+        return new TrafficLightSensor(newId, (Lane) newCSE, this.upSensor.getLongitudinalPosition(), this.length,
+                (OTSDEVSSimulatorInterface) newSimulator);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "TrafficLightSensor [upSensor=" + this.upSensor + ", downSensor=" + this.downSensor + ", length=" + this.length
+                + ", currentGTUs=" + this.currentGTUs + "]";
+    }
 
 }
 
@@ -103,6 +140,25 @@ class FlankSensor extends AbstractSensor
                 // TODO fire a sensor becomes unoccupied event
             }
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public FlankSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+            final boolean animation) throws NetworkException
+    {
+        Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
+        Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
+                "simulator should be a DEVSSimulator");
+        return new FlankSensor(getId(), (Lane) newCSE, getLongitudinalPosition(), (OTSDEVSSimulatorInterface) newSimulator,
+                this.up, new HashSet<LaneBasedGTU>());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "FlankSensor [currentGTUs=" + this.currentGTUs + ", up=" + this.up + "]";
     }
 
 }

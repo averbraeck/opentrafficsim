@@ -11,6 +11,9 @@ import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
 import org.djunits.value.vdouble.scalar.Direction;
+import org.opentrafficsim.base.immutablecollections.ImmutableHashSet;
+import org.opentrafficsim.base.immutablecollections.ImmutableSet;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 
@@ -52,6 +55,9 @@ public class OTSNode implements Node, Locatable, Serializable
 
     /** The links connected to the Node. */
     private final Set<Link> links = new HashSet<Link>();
+    
+    /** The cached immutable set of links to return. */
+    private ImmutableSet<Link> cachedLinks = null;
 
     /**
      * Map with connections per GTU type. When this map is null, the all connections that are possible for the GTU type will be
@@ -128,6 +134,7 @@ public class OTSNode implements Node, Locatable, Serializable
     public final void addLink(final Link link)
     {
         this.links.add(link);
+        this.cachedLinks = null; // invalidate the cache
     }
 
     /** {@inheritDoc} */
@@ -135,6 +142,7 @@ public class OTSNode implements Node, Locatable, Serializable
     public final void removeLink(final Link link)
     {
         this.links.remove(link);
+        this.cachedLinks = null; // invalidate the cache
     }
 
     /**
@@ -260,10 +268,13 @@ public class OTSNode implements Node, Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final Set<Link> getLinks()
+    public final ImmutableSet<Link> getLinks()
     {
-        // returns a safe copy
-        return new HashSet<Link>(this.links);
+        if (this.cachedLinks == null)
+        {
+            this.cachedLinks = new ImmutableHashSet<>(this.links);
+        }
+        return this.cachedLinks;
     }
 
     /** {@inheritDoc} */
@@ -404,4 +415,56 @@ public class OTSNode implements Node, Locatable, Serializable
             return false;
         return true;
     }
+
+    /**
+     * Clone the OTSode for e.g., copying a network.
+     * @param newNetwork the new network to which the clone belongs
+     * @param newSimulator the new simulator for this network
+     * @param animation whether to (re)create animation or not
+     * @return a clone of this object
+     * @throws NetworkException in case the cloning fails
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    public OTSNode clone1(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
+            throws NetworkException
+    {
+        return new OTSNode(newNetwork, this.id, this.point, this.direction, this.slope);
+    }
+
+    /**
+     * Complete the cloning of the OTSode for e.g., copying a network. Call this method after all the links have been
+     * constructed in the new network.
+     * @param newNetwork the new network to which the clone belongs
+     * @param newSimulator the new simulator for this network
+     * @param animation whether to (re)create animation or not
+     * @return the completed clone
+     * @throws NetworkException in case the cloning fails
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    public OTSNode clone2(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
+            throws NetworkException
+    {
+        OTSNode clone = (OTSNode) newNetwork.getNode(this.id);
+        if (this.connections != null)
+        {
+            Map<GTUType, Map<Link, Set<Link>>> newConnections = new HashMap<>();
+            for (GTUType gtuType : this.connections.keySet())
+            {
+                Map<Link, Set<Link>> newConnMap = new HashMap<>();
+                for (Link link : this.connections.get(gtuType).keySet())
+                {
+                    Set<Link> newLinkSet = new HashSet<>();
+                    for (Link setLink : this.connections.get(gtuType).get(link))
+                    {
+                        newLinkSet.add(newNetwork.getLink(setLink.getId()));
+                    }
+                    newConnMap.put(newNetwork.getLink(link.getId()), newLinkSet);
+                }
+                newConnections.put(gtuType, newConnMap);
+            }
+            clone.connections = newConnections;
+        }
+        return clone;
+    }
+
 }

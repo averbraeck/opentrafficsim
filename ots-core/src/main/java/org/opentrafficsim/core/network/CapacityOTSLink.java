@@ -3,6 +3,7 @@ package org.opentrafficsim.core.network;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUType;
 
@@ -38,7 +39,7 @@ public class CapacityOTSLink extends OTSLink implements Capacity
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    public CapacityOTSLink(final Network network, final String id, final OTSNode startNode, final OTSNode endNode,
+    public CapacityOTSLink(final Network network, final String id, final Node startNode, final Node endNode,
             final LinkType linkType, final OTSLine3D designLine, final Frequency capacity,
             final Map<GTUType, LongitudinalDirectionality> directionalityMap) throws NetworkException
     {
@@ -59,12 +60,28 @@ public class CapacityOTSLink extends OTSLink implements Capacity
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    public CapacityOTSLink(final Network network, final String id, final OTSNode startNode, final OTSNode endNode,
+    public CapacityOTSLink(final Network network, final String id, final Node startNode, final Node endNode,
             final LinkType linkType, final OTSLine3D designLine, final Frequency capacity,
             final LongitudinalDirectionality directionality) throws NetworkException
     {
         super(network, id, startNode, endNode, linkType, designLine, directionality);
         this.capacity = capacity;
+    }
+
+    /**
+     * Clone a link for a new network.
+     * @param newNetwork the new network to which the clone belongs
+     * @param newSimulator the new simulator for this network
+     * @param animation whether to (re)create animation or not
+     * @param link the link to clone from
+     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
+     *             or the end node of the link are not registered in the network.
+     */
+    protected CapacityOTSLink(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation,
+            final CapacityOTSLink link) throws NetworkException
+    {
+        super(newNetwork, newSimulator, animation, link);
+        this.capacity = link.capacity;
     }
 
     /** {@inheritDoc} */
@@ -87,4 +104,14 @@ public class CapacityOTSLink extends OTSLink implements Capacity
     {
         return "CapacityOTSLink [capacity=" + this.capacity + "]";
     }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public CapacityOTSLink clone(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
+            throws NetworkException
+    {
+        return new CapacityOTSLink(newNetwork, newSimulator, animation, this);
+    }
+
 }

@@ -219,7 +219,7 @@ public class StripeAnimation extends Renderable2D implements Serializable
      * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      */
-    public static enum TYPE
+    public enum TYPE
     {
         /** Single solid line. */
         SOLID,

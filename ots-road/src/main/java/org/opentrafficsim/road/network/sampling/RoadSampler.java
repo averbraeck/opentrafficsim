@@ -417,4 +417,11 @@ public class RoadSampler extends Sampler implements EventListenerInterface
         return true;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "RoadSampler [samplingInterval=" + this.samplingInterval + ", eventPerGtu=" + this.eventPerGtu + "]";
+    }
+
 }

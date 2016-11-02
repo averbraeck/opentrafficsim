@@ -22,6 +22,7 @@ import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -35,14 +36,16 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
-import org.opentrafficsim.road.network.lane.AbstractSensor;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.io.URLResource;
 
 /**
@@ -99,8 +102,8 @@ public class XMLNetworkGeneratorTest implements UNITS
             assertNotNull(lane23);
 
             // add a sensor to check the time the vehicles pass
-            lane23.addSensor(new ReportingSensor("LANE23.START", lane23, new Length(1E-4, LengthUnit.SI), RelativePosition.REFERENCE,
-                    simulator), GTUType.ALL);
+            lane23.addSensor(new ReportingSensor("LANE23.START", lane23, new Length(1E-4, LengthUnit.SI),
+                    RelativePosition.REFERENCE, simulator), GTUType.ALL);
 
             simulator.setSpeedFactor(1000);
             simulator.start();
@@ -126,8 +129,9 @@ public class XMLNetworkGeneratorTest implements UNITS
                         {
                             // TODO repair headway in such a way that vehicle does not have to brake (safe distance)
                             System.err.println("Speed of GTU " + gtu + "<> 10 m/s: " + gtu.getSpeed() + ", headway = "
-                                    + gtu.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
-                                            .getForwardHeadway().getDistance());
+                                    + gtu.getTacticalPlanner().getPerception()
+                                            .getPerceptionCategory(DefaultSimplePerception.class).getForwardHeadway()
+                                            .getDistance());
                             // fail("Speed of GTU " + gtu + "<> 10 m/s: " + gtu.getSpeed() + ", headway = "
                             // + gtu.headway(new Length(250.0, METER)));
                         }
@@ -217,6 +221,20 @@ public class XMLNetworkGeneratorTest implements UNITS
         {
             return "ReportingSensor [id=" + this.id + "]";
         }
+
+        /** {@inheritDoc} */
+        @Override
+        @SuppressWarnings("checkstyle:designforextension")
+        public ReportingSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+                final boolean animation) throws NetworkException
+        {
+            Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
+            Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
+                    "simulator should be a DEVSSimulator");
+            return new ReportingSensor(getId(), (Lane) newCSE, getLongitudinalPosition(), getPositionType(),
+                    (OTSDEVSSimulatorInterface) newSimulator);
+        }
+
     }
 
     /**
@@ -251,8 +269,7 @@ public class XMLNetworkGeneratorTest implements UNITS
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
         @Override
-        public final void constructModel(
-                final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
+        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;

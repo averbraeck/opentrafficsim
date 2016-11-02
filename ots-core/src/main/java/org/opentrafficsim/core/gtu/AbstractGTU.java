@@ -48,12 +48,12 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
     /** The id of the GTU. */
     private final String id;
-    
+
     /** unique number of the GTU. */
     private final int uniqueNumber;
-    
+
     /** the unique number counter. */
-    private static int UNIQUE_NUMBER = 0;
+    private static int staticUNIQUENUMBER = 0;
 
     /** The type of GTU, e.g. TruckType, CarType, BusType. */
     private final GTUType gtuType;
@@ -119,7 +119,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         Throw.when(simulator == null, GTUException.class, "simulator is null for GTU with id %s", id);
 
         this.id = id;
-        this.uniqueNumber = ++UNIQUE_NUMBER;
+        this.uniqueNumber = ++staticUNIQUENUMBER;
         this.gtuType = gtuType;
         this.simulator = simulator;
         this.odometer = Length.ZERO;
@@ -459,7 +459,8 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     {
         if (this.operationalPlan == null)
         {
-            System.err.println("No operational plan for GTU " + this.id + " at t=" + this.getSimulator().getSimulatorTime().getTime());
+            System.err.println(
+                    "No operational plan for GTU " + this.id + " at t=" + this.getSimulator().getSimulatorTime().getTime());
             return new DirectedPoint(0, 0, 0);
         }
         try

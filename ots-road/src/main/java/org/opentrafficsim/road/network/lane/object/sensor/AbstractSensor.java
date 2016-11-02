@@ -1,13 +1,17 @@
-package org.opentrafficsim.road.network.lane;
+package org.opentrafficsim.road.network.lane.object.sensor;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
+import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
 
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -45,15 +49,14 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the sensor.
      * @param simulator OTSDEVSSimulatorInterface; the simulator (needed to generate the animation).
-     * @param length Length; The length of the object in the longitudinal direction, on the center line of the lane
      * @param geometry the geometry of the object, which provides its location and bounds as well
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final OTSDEVSSimulatorInterface simulator, final Length length,
-            final OTSLine3D geometry) throws NetworkException
+            final RelativePosition.TYPE positionType, final OTSDEVSSimulatorInterface simulator, final OTSLine3D geometry)
+            throws NetworkException
     {
-        super(lane, longitudinalPosition, length, geometry);
+        super(lane, longitudinalPosition, geometry);
         Throw.when(simulator == null, NullPointerException.class, "simulator is null");
         Throw.when(positionType == null, NullPointerException.class, "positionType is null");
         Throw.when(id == null, NullPointerException.class, "id is null");
@@ -75,7 +78,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
             final RelativePosition.TYPE positionType, final OTSDEVSSimulatorInterface simulator) throws NetworkException
     {
-        this(id, lane, longitudinalPosition, positionType, simulator, Length.ZERO, makeGeometry(lane, longitudinalPosition));
+        this(id, lane, longitudinalPosition, positionType, simulator, makeGeometry(lane, longitudinalPosition));
     }
 
     /**
@@ -208,5 +211,10 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
         }
         return 0;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public abstract AbstractSensor clone(CrossSectionElement newCSE, OTSSimulatorInterface newSimulator, boolean animation)
+            throws NetworkException;
 
 }

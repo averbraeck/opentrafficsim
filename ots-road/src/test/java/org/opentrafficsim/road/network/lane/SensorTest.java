@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -38,6 +39,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationMode
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.LaneFactory;
+import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 /**
@@ -182,6 +184,14 @@ class TriggerSensor extends AbstractSensor
     public void triggerResponse(final LaneBasedGTU gtu)
     {
         // TODO check that the sensor is triggered at the right time.
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public AbstractSensor clone(CrossSectionElement newCSE, OTSSimulatorInterface newSimulator, boolean animation)
+            throws NetworkException
+    {
+        return null;
     }
 
 }

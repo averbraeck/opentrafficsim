@@ -15,7 +15,7 @@ import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.Sensor;
+import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 
 import nl.tudelft.simulation.event.Event;
 import nl.tudelft.simulation.event.EventInterface;
@@ -443,7 +443,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             Sensor sensor = (Sensor) content[1];
             Lane lane = sensor.getLane();
             double longitudinalPosition = sensor.getLongitudinalPosition().si;
-            double length = sensor.getLength().si;
+            double length = 0.0; // sensor has zero length right now
             DirectedPoint pos = sensor.getLocation();
             String triggerPosition = sensor.getPositionType().toString();
             double timestamp = getSimulator().getSimulatorTime().getTime().si;

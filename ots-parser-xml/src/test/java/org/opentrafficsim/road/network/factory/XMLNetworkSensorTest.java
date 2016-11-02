@@ -21,6 +21,7 @@ import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -32,15 +33,16 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
-import org.opentrafficsim.road.network.lane.AbstractSensor;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.io.URLResource;
 
 /**
@@ -239,6 +241,20 @@ public class XMLNetworkSensorTest implements UNITS
         {
             return "ReportingSensor [id=" + this.id + "]";
         }
+        
+        /** {@inheritDoc} */
+        @Override
+        @SuppressWarnings("checkstyle:designforextension")
+        public ReportingSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+                final boolean animation) throws NetworkException
+        {
+            Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
+            Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
+                    "simulator should be a DEVSSimulator");
+            return new ReportingSensor(getId(), (Lane) newCSE, getLongitudinalPosition(), getPositionType(),
+                    (OTSDEVSSimulatorInterface) newSimulator);
+        }
+
     }
 
     /**

@@ -15,8 +15,6 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingConstants;
 import javax.swing.event.EventListenerList;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.SpeedUnit;
@@ -39,13 +37,17 @@ import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.network.lane.AbstractSensor;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * The Fundamental Diagram Graph; see <a href="http://en.wikipedia.org/wiki/Fundamental_diagram_of_traffic_flow"> Wikipedia:
@@ -594,6 +596,15 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
         public final String toString()
         {
             return "FlowSensor []";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public FlowSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+                final boolean animation) throws NetworkException
+        {
+            Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
+            return new FlowSensor((Lane) newCSE);
         }
 
     }

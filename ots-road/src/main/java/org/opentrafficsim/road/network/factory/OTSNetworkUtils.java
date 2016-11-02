@@ -4,7 +4,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.network.lane.AbstractSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 
 import com.thoughtworks.xstream.XStream;
 

@@ -40,7 +40,7 @@ public final class Test
     {
         String result = "";
         for (OTSLine3D.OffsetMethod offsetMethod : new OTSLine3D.OffsetMethod[] { OTSLine3D.OffsetMethod.JTS,
-                OTSLine3D.OffsetMethod.PK, OTSLine3D.OffsetMethod.AV })
+                OTSLine3D.OffsetMethod.PK })
         {
             result += timeLimitedCheckOffsetLine(reference, offset, offsetMethod, 5000);
             result += timeLimitedCheckOffsetLine(reference, -offset, offsetMethod, 5000);
@@ -496,9 +496,6 @@ public final class Test
             {
                 case PK:
                     return OTSOffsetLinePK.offsetLine(referenceLine, offset);
-
-                case AV:
-                    return OTSBufferingAV.offsetLine(referenceLine, offset);
 
                 case JTS:
                     return OTSBufferingJTS.offsetGeometryOLD(referenceLine, offset);
