@@ -138,21 +138,27 @@ public class ModelControlDemo extends ModelStarter
      */
     private Property<?> findPropertyInList(final List<Property<?>> properties, final String key)
     {
-        for (Property<?> property : properties)
+        try
         {
-            for (Property<?> p : property)
+            CompoundProperty propertyContainer = new CompoundProperty("", "", "", properties, false, 0);
+            for (Property<?> p : propertyContainer)
             {
                 String keyPath = p.getKey();
-                for (Property<?> parent = p.getParent(); null != parent; parent = parent.getParent())
+                for (Property<?> parent = p.getParent(); null != parent && propertyContainer != parent; parent =
+                        parent.getParent())
                 {
                     keyPath = parent.getKey() + "." + keyPath;
                 }
                 // System.out.println("Comparing property key path " + keyPath + " to key " + key);
                 if (key.equals(keyPath))
                 {
-                    return property;
+                    return p;
                 }
             }
+        }
+        catch (PropertyException exception)
+        {
+            exception.printStackTrace();
         }
         return null;
     }
@@ -164,63 +170,59 @@ public class ModelControlDemo extends ModelStarter
         System.out.println("startModel called");
         System.out.println("parameters: " + parameters);
         System.out.println("Connection: " + this.connection);
-        String dataSource = null;
-        List<Property<?>> properties = CircularRoadIMB.getSupportedProperties();
 
-        for (String parameterName : parameters.getParameterNames())
-        {
-            if (parameterName.equals("Federation"))
-            {
-                continue;
-            }
-            else if (parameterName.equals("DataSource"))
-            {
-                dataSource = (String) parameters.getParameterByName(parameterName).getValue();
-                continue;
-            }
-            int pos = parameterName.indexOf(" (");
-            if (pos < 0)
-            {
-                System.out.println("ignoring parameter " + parameterName);
-                continue;
-            }
-            String strippedName = parameterName.substring(0, pos);
-            switch (strippedName)
-            {
-                case "Truck fraction":
-                {
-                    Property<?> p = findPropertyInList(properties, "TrafficComposition");
-                    if (null == p || !(p instanceof ProbabilityDistributionProperty))
-                    {
-                        System.err.println("Property " + p + " is not a ProbalityDistributionProperty");
-                    }
-                    else
-                    {
-                        ProbabilityDistributionProperty pdp = (ProbabilityDistributionProperty) p;
-                        Double[] values = pdp.getValue();
-                        values[1] = (double) parameters.getParameterByName(parameterName).getValue();
-                        values[0] = 1.0 - values[1];
-                        try
-                        {
-                            System.out.println("Setting TrafficComposition to " + values);
-                            pdp.setValue(values);
-                        }
-                        catch (PropertyException exception)
-                        {
-                            exception.printStackTrace();
-                        }
-                    }
-                    break;
-                }
-                default:
-                    System.out.println("Ignoring parameter " + parameterName);
-                    break;
-            }
-        }
-        System.out.println("Not doing anything with dataSource " + dataSource);
-        // TODO: do something with the dataSource
         try
         {
+            List<Property<?>> properties = new CircularRoadIMB(null, null, null, null).getSupportedProperties();
+            for (String parameterName : parameters.getParameterNames())
+            {
+                if (parameterName.equals("Federation"))
+                {
+                    continue;
+                }
+                else if (parameterName.equals("DataSource"))
+                {
+                    continue;
+                }
+                int pos = parameterName.indexOf(" (");
+                if (pos < 0)
+                {
+                    System.out.println("ignoring parameter " + parameterName);
+                    continue;
+                }
+                String strippedName = parameterName.substring(0, pos);
+                switch (strippedName)
+                {
+                    case "Truck fraction":
+                    {
+                        Property<?> p = findPropertyInList(properties, "TrafficComposition");
+                        if (null == p || !(p instanceof ProbabilityDistributionProperty))
+                        {
+                            System.err.println("Property " + p + " is not a ProbalityDistributionProperty");
+                        }
+                        else
+                        {
+                            ProbabilityDistributionProperty pdp = (ProbabilityDistributionProperty) p;
+                            Double[] values = pdp.getValue();
+                            values[1] = (double) parameters.getParameterByName(parameterName).getValue();
+                            values[0] = 1.0 - values[1];
+                            try
+                            {
+                                System.out.println("Setting TrafficComposition to " + values);
+                                pdp.setValue(values);
+                            }
+                            catch (PropertyException exception)
+                            {
+                                exception.printStackTrace();
+                            }
+                        }
+                        break;
+                    }
+                    default:
+                        System.out.println("Ignoring parameter " + parameterName);
+                        break;
+                }
+            }
             IMBConnector simulationIMBConnector = new IMBConnector(this.connection);
             System.out.println("IMBConnector for simulation is " + simulationIMBConnector);
             this.model = new CircularRoadIMB(new DefaultSwitchableGTUColorer(), new OTSNetwork(""), properties,
@@ -232,9 +234,9 @@ public class ModelControlDemo extends ModelStarter
             signalModelState(ModelState.READY);
             System.out.println("Reported ModelState.READY");
         }
-        catch (PropertyException | IMBException | SimRuntimeException | NamingException exception)
+        catch (PropertyException | IMBException | NamingException | SimRuntimeException exception1)
         {
-            exception.printStackTrace();
+            exception1.printStackTrace();
         }
     }
 
@@ -288,14 +290,21 @@ public class ModelControlDemo extends ModelStarter
     {
         System.out.println("serving parameter request");
         System.out.println("received parameters: " + parameters);
-        List<Property<?>> propertyList = CircularRoadIMB.getSupportedProperties();
-        Property<?> truckFraction = findByKeyInList(propertyList, "TrafficComposition");
-        if (null != truckFraction)
+        try
         {
-            parameters.addParameter(new Parameter("Truck fraction (range 0.0 - 1.0)",
-                    ((ProbabilityDistributionProperty) truckFraction).getValue()[1]));
+            List<Property<?>> propertyList = new CircularRoadIMB(null, null, null, null).getSupportedProperties();
+            Property<?> truckFraction = findByKeyInList(propertyList, "TrafficComposition");
+            if (null != truckFraction)
+            {
+                parameters.addParameter(new Parameter("Truck fraction (range 0.0 - 1.0)",
+                        ((ProbabilityDistributionProperty) truckFraction).getValue()[1]));
+            }
+            System.out.println("(possibly) modified paramters: " + parameters);
         }
-        System.out.println("(possibly) modified paramters: " + parameters);
+        catch (PropertyException exception)
+        {
+            exception.printStackTrace();
+        }
     }
 
     /**
@@ -438,7 +447,7 @@ public class ModelControlDemo extends ModelStarter
          * Construct and return the list of properties that the user may modify.
          * @return List&lt;AbstractProperty&gt;; the list of properties that the user may modify
          */
-        public static List<Property<?>> getSupportedProperties()
+        public List<Property<?>> getSupportedProperties()
         {
             List<Property<?>> result = new ArrayList<>();
             result.add(new SelectionProperty("LaneChanging", "Lane changing",
@@ -537,7 +546,7 @@ public class ModelControlDemo extends ModelStarter
             {
                 try
                 {
-                    System.out.println("CirularRoadIMB: constructModel called; Connecting to IMB");
+                    System.out.println("CircularRoadIMB: constructModel called; Connecting to IMB");
                     new NetworkTransceiver(this.imbConnector, imbAnimator, this.network);
                     new NodeTransceiver(this.imbConnector, imbAnimator, this.network);
                     new LinkGTUTransceiver(this.imbConnector, imbAnimator, this.network);
