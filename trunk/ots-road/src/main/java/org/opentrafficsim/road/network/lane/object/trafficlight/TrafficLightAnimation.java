@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.network.lane.object.animation;
+package org.opentrafficsim.road.network.lane.object.trafficlight;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -10,7 +10,6 @@ import javax.naming.NamingException;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.animation.PaintPolygons;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 

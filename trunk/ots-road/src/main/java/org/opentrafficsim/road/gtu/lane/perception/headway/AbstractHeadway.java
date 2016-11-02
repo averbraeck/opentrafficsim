@@ -20,8 +20,8 @@ import nl.tudelft.simulation.language.Throw;
  * sharp bends. Therefore, algorithms implementing headway should only project the <i>reference point</i> of the reference GTU
  * on the center line of the adjacent lane, and then calculate the forward position and backward position on the adjacent lane
  * based on the reference point. Still, our human perception of what is parallel and what not, is not reflected by fractional
- * positions. See examples in <a href=
- * "http://simulation.tudelft.nl:8085/browse/OTS-113">http://simulation.tudelft.nl:8085/browse/OTS-113</a>.
+ * positions. See examples in
+ * <a href= "http://simulation.tudelft.nl:8085/browse/OTS-113">http://simulation.tudelft.nl:8085/browse/OTS-113</a>.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -103,8 +103,8 @@ public abstract class AbstractHeadway implements Headway
     private final ObjectType objectType;
 
     /**
-     * Construct a new Headway information object, for an object in front, behind, or in parallel with us. TODO fix this
-     * javadoc; there are obvious inconsistencies between this javadoc and the code below.
+     * Construct a new Headway information object, for an object in front, behind, or in parallel with us. <br>
+     * TODO fix this javadoc; there are obvious inconsistencies between this javadoc and the code below.
      * @param objectType the perceived object type, can be null if object type unknown.
      * @param id the id of the object for comparison purposes, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
@@ -118,8 +118,8 @@ public abstract class AbstractHeadway implements Headway
      */
     @SuppressWarnings("checkstyle:parameternumber")
     private AbstractHeadway(final ObjectType objectType, final String id, final Length distance, final Length length,
-        final Speed speed, final Acceleration acceleration, final Length overlapFront, final Length overlap,
-        final Length overlapRear) throws GTUException
+            final Speed speed, final Acceleration acceleration, final Length overlapFront, final Length overlap,
+            final Length overlapRear) throws GTUException
     {
         Throw.when(id == null, GTUException.class, "Object id of a headway cannot be null");
         this.id = id;
@@ -130,17 +130,17 @@ public abstract class AbstractHeadway implements Headway
         this.acceleration = acceleration;
 
         Throw.when(distance != null && (overlap != null || overlapFront != null || overlapRear != null), GTUException.class,
-            "overlap parameter cannot be null for front / rear headway with id = %s", id);
+                "overlap parameter cannot be null for front / rear headway with id = %s", id);
         this.distance = distance;
 
         Throw.when(distance == null && (overlap == null || overlapFront == null || overlapRear == null), GTUException.class,
-            "overlap parameter cannot be null for parallel headway with id = %s", id);
+                "overlap parameter cannot be null for parallel headway with id = %s", id);
         Throw.when(overlap != null && overlap.si < 0, GTUException.class, "overlap cannot be negative; id = %s", id);
         this.overlap = overlap;
         this.overlapFront = overlapFront;
         this.overlapRear = overlapRear;
     }
-    
+
     /**
      * Construct a new Headway information object, for a moving object ahead of us or behind us.
      * @param objectType the perceived object type, can be null if object type unknown.
@@ -150,8 +150,8 @@ public abstract class AbstractHeadway implements Headway
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public AbstractHeadway(final ObjectType objectType, final String id, final Length distance,
-        final Speed speed, final Acceleration acceleration) throws GTUException
+    public AbstractHeadway(final ObjectType objectType, final String id, final Length distance, final Speed speed,
+            final Acceleration acceleration) throws GTUException
     {
         this(objectType, id, distance, null, speed, acceleration, null, null, null);
     }
@@ -163,8 +163,7 @@ public abstract class AbstractHeadway implements Headway
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public AbstractHeadway(final ObjectType objectType, final String id, final Length distance)
-        throws GTUException
+    public AbstractHeadway(final ObjectType objectType, final String id, final Length distance) throws GTUException
     {
         this(objectType, id, distance, null, null, null, null, null, null);
     }
@@ -182,8 +181,7 @@ public abstract class AbstractHeadway implements Headway
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractHeadway(final ObjectType objectType, final String id, final Length overlapFront, final Length overlap,
-        final Length overlapRear, final Speed speed, final Acceleration acceleration)
-        throws GTUException
+            final Length overlapRear, final Speed speed, final Acceleration acceleration) throws GTUException
     {
         this(objectType, id, null, null, speed, acceleration, overlapFront, overlap, overlapRear);
     }
@@ -198,7 +196,7 @@ public abstract class AbstractHeadway implements Headway
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public AbstractHeadway(final ObjectType objectType, final String id, final Length overlapFront, final Length overlap,
-        final Length overlapRear) throws GTUException
+            final Length overlapRear) throws GTUException
     {
         this(objectType, id, null, null, null, null, overlapFront, overlap, overlapRear);
     }
@@ -214,7 +212,7 @@ public abstract class AbstractHeadway implements Headway
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public AbstractHeadway(final ObjectType objectType, final String id, final Length distance, final Length length,
-        final Speed speed, final Acceleration acceleration) throws GTUException
+            final Speed speed, final Acceleration acceleration) throws GTUException
     {
         this(objectType, id, distance, length, speed, acceleration, null, null, null);
         Throw.whenNull(length, "Length may not be null.");
@@ -229,7 +227,7 @@ public abstract class AbstractHeadway implements Headway
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public AbstractHeadway(final ObjectType objectType, final String id, final Length distance, final Length length)
-        throws GTUException
+            throws GTUException
     {
         this(objectType, id, distance, length, null, null, null, null, null);
         Throw.whenNull(length, "Length may not be null.");
@@ -249,8 +247,8 @@ public abstract class AbstractHeadway implements Headway
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractHeadway(final ObjectType objectType, final String id, final Length overlapFront, final Length overlap,
-        final Length overlapRear, final Length length, final Speed speed, final Acceleration acceleration)
-        throws GTUException
+            final Length overlapRear, final Length length, final Speed speed, final Acceleration acceleration)
+            throws GTUException
     {
         this(objectType, id, null, length, speed, acceleration, overlapFront, overlap, overlapRear);
         Throw.whenNull(length, "Length may not be null.");
@@ -267,7 +265,7 @@ public abstract class AbstractHeadway implements Headway
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public AbstractHeadway(final ObjectType objectType, final String id, final Length overlapFront, final Length overlap,
-        final Length overlapRear, final Length length) throws GTUException
+            final Length overlapRear, final Length length) throws GTUException
     {
         this(objectType, id, null, length, null, null, overlapFront, overlap, overlapRear);
         Throw.whenNull(length, "Length may not be null.");
@@ -376,7 +374,7 @@ public abstract class AbstractHeadway implements Headway
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
     @Override
     public boolean equals(final Object obj)
     {
@@ -451,7 +449,7 @@ public abstract class AbstractHeadway implements Headway
             return String.format("Parallel to object %s of type %s with speed %s", getId(), getObjectType(), getSpeed());
         }
         return String.format("Headway %s to object %s of type %s with speed %s", getDistance(), getId(), getObjectType(),
-            getSpeed());
+                getSpeed());
     }
 
 }

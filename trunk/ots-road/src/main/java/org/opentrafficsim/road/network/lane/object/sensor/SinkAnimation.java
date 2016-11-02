@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.network.lane;
+package org.opentrafficsim.road.network.lane.object.sensor;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -9,7 +9,6 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
@@ -26,40 +25,34 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SensorAnimation extends Renderable2D implements Serializable
+public class SinkAnimation extends Renderable2D implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150130L;
-
+    
     /** The half width left and right of the center line that is used to draw the block. */
     private final double halfWidth;
-
-    /** The color of the sensor. */
-    private final Color color;
 
     /**
      * Construct the DefaultCarAnimation for a LaneBlock (road block).
      * @param source the Car to draw
-     * @param sensorPosition the position of the sensor on the lane to deterine the width of the lane at that point
      * @param simulator the simulator to schedule on
-     * @param color the display color of the sensor
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public SensorAnimation(final Sensor source, final Length sensorPosition, final OTSSimulatorInterface simulator,
-            final Color color) throws NamingException, RemoteException
+    public SinkAnimation(final SinkSensor source, final OTSSimulatorInterface simulator) throws NamingException,
+        RemoteException
     {
         super(source, simulator);
-        this.halfWidth = 0.45 * source.getLane().getWidth(sensorPosition).getSI();
-        this.color = color;
+        this.halfWidth = 0.4 * source.getLane().getWidth(0.0).getSI();
     }
 
     /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        graphics.setColor(this.color);
-        Rectangle2D rectangle = new Rectangle2D.Double(-this.halfWidth, -0.25, 2 * this.halfWidth, 0.5);
+        graphics.setColor(Color.YELLOW);
+        Rectangle2D rectangle = new Rectangle2D.Double(-0.25, -this.halfWidth, 0.5, 2 * this.halfWidth);
         graphics.fill(rectangle);
     }
 
@@ -67,6 +60,6 @@ public class SensorAnimation extends Renderable2D implements Serializable
     @Override
     public final String toString()
     {
-        return "SensorAnimation [getSource()=" + this.getSource() + "]";
+        return "SinkAnimation [getSource()=" + this.getSource() + "]";
     }
 }

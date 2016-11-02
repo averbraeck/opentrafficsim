@@ -1,10 +1,16 @@
 package org.opentrafficsim.road.network.lane;
 
+import java.awt.Color;
+import java.rmi.RemoteException;
 import java.util.List;
 
+import javax.naming.NamingException;
+
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.network.animation.ShoulderAnimation;
 
 /**
  * <p>
@@ -33,8 +39,8 @@ public class Shoulder extends CrossSectionElement
      * @throws NetworkException when id equal to null or not unique
      */
     public Shoulder(final CrossSectionLink parentLink, final String id, final Length lateralPositionStart,
-        final Length lateralPositionEnd, final Length beginWidth, final Length endWidth)
-        throws OTSGeometryException, NetworkException
+            final Length lateralPositionEnd, final Length beginWidth, final Length endWidth)
+            throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralPositionStart, lateralPositionEnd, beginWidth, endWidth);
     }
@@ -47,8 +53,8 @@ public class Shoulder extends CrossSectionElement
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public Shoulder(final CrossSectionLink parentLink, final String id, final Length lateralPosition,
-        final Length width) throws OTSGeometryException, NetworkException
+    public Shoulder(final CrossSectionLink parentLink, final String id, final Length lateralPosition, final Length width)
+            throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralPosition, width);
     }
@@ -57,16 +63,31 @@ public class Shoulder extends CrossSectionElement
      * @param parentLink Cross Section Link to which the element belongs.
      * @param id String; the id of the lane. Should be unique within the parentLink.
      * @param crossSectionSlices The offsets and widths at positions along the line, relative to the design line of the parent
-     *            link. If there is just one with and offset, there should just be one element in the list with Length = 0.
-     *            If there are more slices, the last one should be at the length of the design line. If not, a NetworkException
-     *            is thrown.
+     *            link. If there is just one with and offset, there should just be one element in the list with Length = 0. If
+     *            there are more slices, the last one should be at the length of the design line. If not, a NetworkException is
+     *            thrown.
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     public Shoulder(final CrossSectionLink parentLink, final String id, final List<CrossSectionSlice> crossSectionSlices)
-        throws OTSGeometryException, NetworkException
+            throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, crossSectionSlices);
+    }
+
+    /**
+     * Clone a Shoulder for a new network.
+     * @param newParentLink the new link to which the clone belongs
+     * @param newSimulator the new simulator for this network
+     * @param animation whether to (re)create animation or not
+     * @param cse the element to clone from
+     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
+     *             or the end node of the link are not registered in the network.
+     */
+    protected Shoulder(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator,
+            final boolean animation, final Shoulder cse) throws NetworkException
+    {
+        super(newParentLink, newSimulator, animation, cse);
     }
 
     /** {@inheritDoc} */
@@ -82,7 +103,28 @@ public class Shoulder extends CrossSectionElement
     public String toString()
     {
         return String.format("Shoulder offset %.2fm..%.2fm, width %.2fm..%.2fm", getDesignLineOffsetAtBegin().getSI(),
-            getDesignLineOffsetAtEnd().getSI(), getBeginWidth().getSI(), getEndWidth().getSI());
+                getDesignLineOffsetAtEnd().getSI(), getBeginWidth().getSI(), getEndWidth().getSI());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public Shoulder clone(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator,
+            final boolean animation) throws NetworkException
+    {
+        try
+        {
+            Shoulder newShoulder = new Shoulder(newParentLink, newSimulator, animation, this);
+            if (animation)
+            {
+                new ShoulderAnimation(newShoulder, newSimulator, Color.GREEN);
+            }
+            return newShoulder;
+        }
+        catch (NamingException | RemoteException exception)
+        {
+            throw new NetworkException(exception);
+        }
     }
 
 }

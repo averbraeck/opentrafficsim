@@ -4,15 +4,16 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.language.Throw;
-
-import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.object.AbstractCSEObject;
-import org.opentrafficsim.road.network.lane.object.animation.TrafficLightAnimation;
+import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>
@@ -24,29 +25,28 @@ import org.opentrafficsim.road.network.lane.object.animation.TrafficLightAnimati
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SimpleTrafficLight extends AbstractCSEObject implements TrafficLight
+public class SimpleTrafficLight extends AbstractLaneBasedObject implements TrafficLight
 {
     /** */
     private static final long serialVersionUID = 201601001L;
 
     /** The color of the traffic light. */
     private TrafficLightColor trafficLightColor;
-    
+
     /** Id of the traffic light. */
     private final String id;
 
     /**
      * @param id traffic light id
      * @param lane lane where the traffic light is located
-     * @param position position of the traffic light on the lane, in the design direction
+     * @param longitudinalPosition position of the traffic light on the lane, in the design direction
      * @param simulator simulator on which to schedule color changes
-     * @throws OTSGeometryException on failure to place the object
+     * @throws NetworkException on failure to place the object
      */
-    public SimpleTrafficLight(final String id, final Lane lane, final Length position,
-            final OTSDEVSSimulatorInterface simulator) throws OTSGeometryException
+    public SimpleTrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
+            final OTSDEVSSimulatorInterface simulator) throws NetworkException
     {
-        super(AbstractCSEObject.createRectangleOnCSE(lane, position, new Length(0.5, LengthUnit.METER),
-                lane.getWidth(position).multiplyBy(0.8), new Length(0.5, LengthUnit.METER)), new Length(0.5, LengthUnit.METER));
+        super(lane, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition));
         Throw.whenNull(id, "Id may not be null");
         this.id = id;
         this.trafficLightColor = TrafficLightColor.RED;
@@ -92,6 +92,15 @@ public class SimpleTrafficLight extends AbstractCSEObject implements TrafficLigh
     public String getId()
     {
         return this.id;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SimpleTrafficLight clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+            final boolean animation) throws NetworkException
+    {
+        // TODO
+        return null;
     }
 
 }

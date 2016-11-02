@@ -16,18 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import nl.javel.gisbeans.io.esri.CoordinateTransform;
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.jstats.distributions.DistConstant;
-import nl.tudelft.simulation.jstats.distributions.DistExponential;
-import nl.tudelft.simulation.jstats.distributions.DistTriangular;
-import nl.tudelft.simulation.jstats.distributions.DistUniform;
-import nl.tudelft.simulation.jstats.streams.MersenneTwister;
-import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.io.URLResource;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
@@ -43,6 +31,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.gis.CoordinateTransformLonLatToXY;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -66,7 +55,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.factory.CoordinateTransformLonLatToXY;
 import org.opentrafficsim.road.network.factory.opendrive.GeneratorAnimation;
 import org.opentrafficsim.road.network.factory.opendrive.OpenDriveNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
@@ -74,12 +62,24 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
-import org.opentrafficsim.road.network.lane.Sensor;
-import org.opentrafficsim.road.network.lane.SinkSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.xml.sax.SAXException;
+
+import nl.javel.gisbeans.io.esri.CoordinateTransform;
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.jstats.distributions.DistConstant;
+import nl.tudelft.simulation.jstats.distributions.DistExponential;
+import nl.tudelft.simulation.jstats.distributions.DistTriangular;
+import nl.tudelft.simulation.jstats.distributions.DistUniform;
+import nl.tudelft.simulation.jstats.streams.MersenneTwister;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import nl.tudelft.simulation.language.io.URLResource;
 
 /**
  * <p>

@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.network.lane.object.trafficlight;
 
-import org.opentrafficsim.core.object.ObjectInterface;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
@@ -15,7 +15,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface TrafficLight extends Locatable, ObjectInterface
+public interface TrafficLight extends Locatable, LaneBasedObject
 {
     /** @return the trafficLightColor */
     TrafficLightColor getTrafficLightColor();

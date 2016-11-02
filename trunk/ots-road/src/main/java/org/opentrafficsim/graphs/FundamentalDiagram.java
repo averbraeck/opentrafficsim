@@ -40,15 +40,18 @@ import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.network.lane.AbstractSensor;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * The Fundamental Diagram Graph; see <a href="http://en.wikipedia.org/wiki/Fundamental_diagram_of_traffic_flow"> Wikipedia:
@@ -170,8 +173,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @throws NetworkException on network inconsistency
      */
     public FundamentalDiagram(final String caption, final Duration aggregationTime, final Lane lane, final Length position,
-            final OTSDEVSSimulatorInterface simulator)
-            throws NetworkException
+            final OTSDEVSSimulatorInterface simulator) throws NetworkException
     {
         if (aggregationTime.getSI() <= 0)
         {
@@ -628,6 +630,18 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         public final String toString()
         {
             return "FundamentalDiagramSensor at " + getLongitudinalPosition();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public FundamentalDiagramSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+                final boolean animation) throws NetworkException
+        {
+            Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
+            Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
+                    "simulator should be a DEVSSimulator");
+            return new FundamentalDiagramSensor((Lane) newCSE, getLongitudinalPosition(),
+                    (OTSDEVSSimulatorInterface) newSimulator);
         }
 
     }

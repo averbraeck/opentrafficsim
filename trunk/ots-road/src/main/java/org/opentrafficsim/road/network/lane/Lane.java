@@ -1,14 +1,20 @@
 package org.opentrafficsim.road.network.lane;
 
+import java.awt.Color;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
@@ -16,6 +22,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -27,7 +34,12 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
+import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
+import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
@@ -98,6 +110,13 @@ public class Lane extends CrossSectionElement implements Serializable
     // TODO allow for direction-dependent sensors
     private final SortedMap<Double, List<GTUTypeSensor>> sensors = new TreeMap<>();
 
+    /**
+     * Objects on the lane can be observed by the GTU. Examples are signs, speed signs, blocks, and traffic lights. They are
+     * sorted by longitudinal position.
+     */
+    // TODO allow for direction-dependent lane objects
+    private final SortedMap<Double, List<LaneBasedObject>> laneBasedObjects = new TreeMap<>();
+
     /** GTUs ordered by increasing longitudinal position; increasing in the direction of the center line. */
     private final List<LaneBasedGTU> gtuList = new ArrayList<LaneBasedGTU>();
 
@@ -154,6 +173,18 @@ public class Lane extends CrossSectionElement implements Serializable
      * Payload: Object[] {String sensorId, Sensor sensor}
      */
     public static final EventType SENSOR_REMOVE_EVENT = new EventType("SENSOR.REMOVE");
+
+    /**
+     * The event type for pub/sub indicating the addition of a LaneBasedObject to the lane. <br>
+     * Payload: Object[] {LaneBasedObject laneBasedObject}
+     */
+    public static final EventType OBJECT_ADD_EVENT = new EventType("OBJECT.ADD");
+
+    /**
+     * The event type for pub/sub indicating the removal of a LaneBasedObject from the lane. <br>
+     * Payload: Object[] {LaneBasedObject laneBasedObject}
+     */
+    public static final EventType OBJECT_REMOVE_EVENT = new EventType("OBJECT.REMOVE");
 
     /**
      * Construct a new Lane.
@@ -336,6 +367,26 @@ public class Lane extends CrossSectionElement implements Serializable
         this.speedLimitMap = new LinkedHashMap<>();
         this.speedLimitMap.put(GTUType.ALL, speedLimit);
         this.overtakingConditions = overtakingConditions;
+    }
+
+    /**
+     * Clone a Lane for a new network.
+     * @param newParentLink the new link to which the clone belongs
+     * @param newSimulator the new simulator for this network
+     * @param animation whether to (re)create animation or not
+     * @param cse the element to clone from
+     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
+     *             or the end node of the link are not registered in the network.
+     */
+    protected Lane(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator, final boolean animation,
+            final Lane cse) throws NetworkException
+    {
+        super(newParentLink, newSimulator, animation, cse);
+        this.laneType = cse.laneType;
+        this.directionalityMap = new HashMap<GTUType, LongitudinalDirectionality>(cse.directionalityMap);
+        this.speedLimitMap = new HashMap<GTUType, Speed>(cse.speedLimitMap);
+        this.overtakingConditions = cse.overtakingConditions;
+
     }
 
     // TODO constructor calls with this(...)
@@ -652,8 +703,8 @@ public class Lane extends CrossSectionElement implements Serializable
      * @throws NetworkException when GTU not on this lane.
      * @throws SimRuntimeException when method cannot be scheduled.
      */
-    public final void scheduleSensorTriggers(final LaneBasedGTU gtu, final double referenceStartSI, final double referenceMoveSI)
-            throws NetworkException, SimRuntimeException
+    public final void scheduleSensorTriggers(final LaneBasedGTU gtu, final double referenceStartSI,
+            final double referenceMoveSI) throws NetworkException, SimRuntimeException
     {
         for (List<Sensor> sensorList : getSensorMap(gtu.getGTUType()).values())
         {
@@ -705,13 +756,124 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
+     * Insert a laneBasedObject at the right place in the laneBasedObject list of this Lane.
+     * @param laneBasedObject LaneBasedObject; the laneBasedObject to add
+     * @throws NetworkException when the position of the laneBasedObject is beyond (or before) the range of this Lane
+     */
+    public final void addLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException
+    {
+        double position = laneBasedObject.getLongitudinalPosition().si;
+        if (position < 0 || position > getLength().getSI())
+        {
+            throw new NetworkException(
+                    "Illegal position for laneBasedObject " + position + " valid range is 0.." + getLength().getSI());
+        }
+        List<LaneBasedObject> laneBasedObjectList = this.laneBasedObjects.get(position);
+        if (null == laneBasedObjectList)
+        {
+            laneBasedObjectList = new ArrayList<LaneBasedObject>(1);
+            this.laneBasedObjects.put(position, laneBasedObjectList);
+        }
+        laneBasedObjectList.add(laneBasedObject);
+        fireEvent(Lane.OBJECT_ADD_EVENT, new Object[] { laneBasedObject });
+    }
+
+    /**
+     * Remove a laneBasedObject from the laneBasedObject list of this Lane.
+     * @param laneBasedObject Sensoe; the laneBasedObject to remove.
+     * @throws NetworkException when the laneBasedObject was not found on this Lane
+     */
+    public final void removeLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException
+    {
+        fireEvent(Lane.OBJECT_REMOVE_EVENT, new Object[] { laneBasedObject });
+        List<LaneBasedObject> laneBasedObjectList =
+                this.laneBasedObjects.get(laneBasedObject.getLongitudinalPosition().getSI());
+        if (null == laneBasedObjectList)
+        {
+            throw new NetworkException("No laneBasedObject at " + laneBasedObject.getLongitudinalPosition().si);
+        }
+        laneBasedObjectList.remove(laneBasedObject);
+        if (laneBasedObjectList.isEmpty())
+        {
+            this.laneBasedObjects.remove(laneBasedObject.getLongitudinalPosition().doubleValue());
+        }
+    }
+
+    /**
+     * Retrieve the list of LaneBasedObjects of this Lane in the specified distance range. The resulting list is a defensive
+     * copy.
+     * @param minimumPosition Length; the minimum distance on the Lane (exclusive)
+     * @param maximumPosition Length; the maximum distance on the Lane (inclusive)
+     * @return List&lt;LaneBasedObject&gt;; list of the laneBasedObject in the specified range. This is a defensive copy.
+     */
+    public final List<LaneBasedObject> getLaneBasedObjects(final Length minimumPosition, final Length maximumPosition)
+    {
+        List<LaneBasedObject> laneBasedObjectList = new ArrayList<>(1);
+        for (List<LaneBasedObject> lbol : this.laneBasedObjects.values())
+        {
+            for (LaneBasedObject lbo : lbol)
+            {
+                if (lbo.getLongitudinalPosition().gt(minimumPosition) && lbo.getLongitudinalPosition().le(maximumPosition))
+                {
+                    laneBasedObjectList.add(lbo);
+                }
+            }
+        }
+        return laneBasedObjectList;
+    }
+
+    /**
+     * Retrieve the list of all LaneBasedObjects of this Lane. The resulting list is a defensive copy.
+     * @return List&lt;LaneBasedObject&gt;; list of the laneBasedObjects, in ascending order for the location on the Lane
+     */
+    public final List<LaneBasedObject> getLaneBasedObjects()
+    {
+        if (this.laneBasedObjects == null)
+        {
+            return new ArrayList<>();
+        }
+        List<LaneBasedObject> laneBasedObjectList = new ArrayList<>(1);
+        for (List<LaneBasedObject> lbol : this.laneBasedObjects.values())
+        {
+            for (LaneBasedObject lbo : lbol)
+            {
+                laneBasedObjectList.add(lbo);
+            }
+        }
+        return laneBasedObjectList;
+    }
+
+    /**
+     * Retrieve the list of LaneBasedObjects of this Lane. The resulting Map is a defensive copy.
+     * @return SortedMap&lt;Double, List&lt;LaneBasedObject&gt;&gt;; all laneBasedObjects on this lane
+     */
+    public final SortedMap<Double, List<LaneBasedObject>> getLaneBasedObjectMap()
+    {
+        SortedMap<Double, List<LaneBasedObject>> laneBasedObjectMap = new TreeMap<>();
+        for (double d : this.laneBasedObjects.keySet())
+        {
+            List<LaneBasedObject> laneBasedObjectList = new ArrayList<>(1);
+            for (LaneBasedObject lbo : this.laneBasedObjects.get(d))
+            {
+                laneBasedObjectList.add(lbo);
+            }
+            laneBasedObjectMap.put(d, laneBasedObjectList);
+        }
+        return laneBasedObjectMap;
+    }
+
+    /**
      * Transform a fraction on the lane to a relative length (can be less than zero or larger than the lane length).
      * @param fraction double; fraction relative to the lane length.
      * @return Length; the longitudinal length corresponding to the fraction.
      */
     public final Length position(final double fraction)
     {
-        return new Length(this.getLength().getInUnit() * fraction, this.getLength().getUnit());
+        if (this.length.getUnit().isBaseSIUnit())
+        {
+            return new Length(this.length.si * fraction, LengthUnit.SI);
+        }
+        return new Length(this.length.getInUnit() * fraction, this.length.getUnit());
     }
 
     /**
@@ -721,7 +883,7 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final double positionSI(final double fraction)
     {
-        return this.getLength().getSI() * fraction;
+        return this.length.si * fraction;
     }
 
     /**
@@ -731,7 +893,7 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final double fraction(final Length position)
     {
-        return position.getSI() / this.getLength().getSI();
+        return position.si / this.length.si;
     }
 
     /**
@@ -741,7 +903,7 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final double fractionSI(final double positionSI)
     {
-        return positionSI / this.getLength().getSI();
+        return positionSI / this.length.si;
     }
 
     /**
@@ -839,6 +1001,43 @@ public class Lane extends CrossSectionElement implements Serializable
                 if (gtu.position(this, gtu.getRelativePositions().get(relativePosition), when).lt(position))
                 {
                     return gtu;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the first object where the relativePosition is in front of a certain position on the lane, in a driving direction on
+     * this lane, compared to the DESIGN LINE. Perception should iterate over results from this method to see what is most
+     * limiting.
+     * @param position Length; the position after which the relative position of an object will be searched.
+     * @param direction GTUDirectionality; whether we are looking in the the center line direction or against the center line
+     *            direction.
+     * @return Set&lt;LaneBasedObject&gt;; the first object(s) after a position on this lane in the given direction, or null if
+     *         no object could be found.
+     */
+    public final List<LaneBasedObject> getObjectAhead(final Length position, final GTUDirectionality direction)
+    {
+        if (direction.equals(GTUDirectionality.DIR_PLUS))
+        {
+            for (double distance : this.laneBasedObjects.keySet())
+            {
+                if (distance > position.si)
+                {
+                    return new ArrayList<>(this.laneBasedObjects.get(distance));
+                }
+            }
+        }
+        else
+        {
+            NavigableMap<Double, List<LaneBasedObject>> reverseLBO =
+                    (NavigableMap<Double, List<LaneBasedObject>>) this.laneBasedObjects;
+            for (double distance : reverseLBO.descendingKeySet())
+            {
+                if (distance < position.si)
+                {
+                    return new ArrayList<>(this.laneBasedObjects.get(distance));
                 }
             }
         }
@@ -1224,15 +1423,22 @@ public class Lane extends CrossSectionElement implements Serializable
         return String.format("Lane %s of %s", getId(), link.getId());
     }
 
+    /** Cache of the hashCode. */
+    private Integer cachedHashCode = null;
+
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
     public int hashCode()
     {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((this.laneType == null) ? 0 : this.laneType.hashCode());
-        return result;
+        if (this.cachedHashCode == null)
+        {
+            final int prime = 31;
+            int result = super.hashCode();
+            result = prime * result + ((this.laneType == null) ? 0 : this.laneType.hashCode());
+            this.cachedHashCode = result;
+        }
+        return this.cachedHashCode;
     }
 
     /** {@inheritDoc} */
@@ -1255,6 +1461,60 @@ public class Lane extends CrossSectionElement implements Serializable
         else if (!this.laneType.equals(other.laneType))
             return false;
         return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public Lane clone(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator, final boolean animation)
+            throws NetworkException
+    {
+        try
+        {
+            Lane newLane = new Lane(newParentLink, newSimulator, animation, this);
+            // nextLanes, prevLanes, nextNeighbors, rightNeighbors are filled at first request
+
+            SortedMap<Double, List<GTUTypeSensor>> newSensorMap = new TreeMap<>();
+            for (double distance : this.sensors.keySet())
+            {
+                List<GTUTypeSensor> newSensorList = new ArrayList<>();
+                for (GTUTypeSensor gtuTypeSensor : this.sensors.get(distance))
+                {
+                    AbstractSensor sensor = (AbstractSensor) gtuTypeSensor.getSensor();
+                    GTUTypeSensor newSensor =
+                            new GTUTypeSensor(gtuTypeSensor.getGtuType(), sensor.clone(newLane, newSimulator, animation));
+                    newSensorList.add(newSensor);
+                }
+                newSensorMap.put(distance, newSensorList);
+            }
+            newLane.sensors.clear();
+            newLane.sensors.putAll(newSensorMap);
+
+            SortedMap<Double, List<LaneBasedObject>> newLaneBasedObjectMap = new TreeMap<>();
+            for (double distance : this.laneBasedObjects.keySet())
+            {
+                List<LaneBasedObject> newLaneBasedObjectList = new ArrayList<>();
+                for (LaneBasedObject lbo : this.laneBasedObjects.get(distance))
+                {
+                    AbstractLaneBasedObject laneBasedObject = (AbstractLaneBasedObject) lbo;
+                    LaneBasedObject newLbo = laneBasedObject.clone(newLane, newSimulator, animation);
+                    newLaneBasedObjectList.add(newLbo);
+                }
+                newLaneBasedObjectMap.put(distance, newLaneBasedObjectList);
+            }
+            newLane.laneBasedObjects.clear();
+            newLane.laneBasedObjects.putAll(newLaneBasedObjectMap);
+
+            if (animation)
+            {
+                new LaneAnimation(newLane, newSimulator, Color.DARK_GRAY, false);
+            }
+            return newLane;
+        }
+        catch (NamingException | RemoteException exception)
+        {
+            throw new NetworkException(exception);
+        }
     }
 
     /**

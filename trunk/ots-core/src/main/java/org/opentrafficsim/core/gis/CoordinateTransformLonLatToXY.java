@@ -1,10 +1,11 @@
-package org.opentrafficsim.road.network.factory;
+package org.opentrafficsim.core.gis;
 
 import java.io.Serializable;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
 
 /**
+ * Transformation from lat-lon to X-Y in meters. Source: https://en.wikipedia.org/wiki/Geographic_coordinate_system.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -38,10 +39,10 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform, Seria
     private double lonToM;
 
     /** Earth constants. */
-    private static final double Re = 6378137;
+    private static final double RE = 6378137;
 
     /** Earth constants. */
-    private static final double Rp = 6356752.31424518;
+    private static final double RP = 6356752.31424518;
 
     /**
      * Transformation from: https://en.wikipedia.org/wiki/Geographic_coordinate_system.
@@ -61,7 +62,7 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform, Seria
 
     /** {@inheritDoc} */
     @Override
-    public float[] floatTransform(double lon, double lat)
+    public final float[] floatTransform(final double lon, final double lat)
     {
         double[] dt = doubleTransform(lon, lat);
         return new float[]{(float) dt[0], (float) dt[1]};
@@ -73,7 +74,7 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform, Seria
      * @param lat double; latitude in degrees
      * @return double[]
      */
-    public double[] doubleTransformWSG84toCartesianXY(double lon, double lat)
+    public final double[] doubleTransformWSG84toCartesianXY(final double lon, final double lat)
     {
         double latrad = lat / 180.0 * Math.PI;
         double lonrad = lon / 180.0 * Math.PI;
@@ -83,7 +84,7 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform, Seria
         double coslon = Math.cos(lonrad);
         double sinlon = Math.sin(lonrad);
 
-        double term1 = (Re * Re * coslat) / Math.sqrt(Re * Re * coslat * coslat + Rp * Rp * sinlat * sinlat);
+        double term1 = (RE * RE * coslat) / Math.sqrt(RE * RE * coslat * coslat + RP * RP * sinlat * sinlat);
 
         double term2 = lat * coslat + term1;
 
@@ -93,7 +94,9 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform, Seria
         return new double[]{x, y};
     }
 
-    public double[] doubleTransform(double lon, double lat)
+    /**{@inheritDoc} */
+    @Override
+    public final double[] doubleTransform(final double lon, final double lat)
     {
         double x = (lon - this.lonCenter) * this.lonToM;
         double y = (lat - this.latCenter) * this.latToM;

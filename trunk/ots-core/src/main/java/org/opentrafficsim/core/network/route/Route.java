@@ -6,13 +6,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 
 /**
  * A Route consists of a list of Nodes. A route does not have to be complete. As long as all 'splitting' nodes are part of the
- * route and have a valid successor node (connected by a Link), the strategical planner is able to make a plan. An extension
- * of the Route class exists that contains a complete route, where all nodes on the route have to be present and connected.
+ * route and have a valid successor node (connected by a Link), the strategical planner is able to make a plan. An extension of
+ * the Route class exists that contains a complete route, where all nodes on the route have to be present and connected.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -163,4 +165,23 @@ public class Route implements Serializable
         return "Route [id=" + this.id + ", nodes=" + this.nodes + "]";
     }
 
+    /**
+     * Clone the Route.
+     * @param newNetwork the new network
+     * @param newSimulator the new simulator for this network
+     * @param animation whether to (re)create animation or not
+     * @return a clone of this route
+     * @throws NetworkException in case the cloning fails
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    public Route clone(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
+            throws NetworkException
+    {
+        Route newRoute = new Route(this.id);
+        for (Node node : this.nodes)
+        {
+            newRoute.addNode(newNetwork.getNode(node.getId()));
+        }
+        return newRoute;
+    }
 }

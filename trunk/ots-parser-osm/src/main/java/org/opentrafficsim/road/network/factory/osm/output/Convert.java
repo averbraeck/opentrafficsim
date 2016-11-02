@@ -43,9 +43,9 @@ import org.opentrafficsim.road.network.factory.osm.events.WarningListener;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.SinkSensor;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
+import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
 import com.vividsolutions.jts.geom.Coordinate;
 

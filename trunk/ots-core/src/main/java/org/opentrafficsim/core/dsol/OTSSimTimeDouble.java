@@ -68,6 +68,10 @@ public class OTSSimTimeDouble extends SimTime<Time, Duration, OTSSimTimeDouble> 
     @Override
     public final OTSSimTimeDouble copy()
     {
+        if (this.time.getUnit().equals(this.time.getUnit().getStandardUnit()))
+        {
+            return new OTSSimTimeDouble(this.time);
+        }
         return new OTSSimTimeDouble(new Time(this.time.getInUnit(), this.time.getUnit()));
     }
 

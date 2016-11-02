@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.IllegalFormatException;
 
 import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
-import org.opentrafficsim.core.Type;
+import org.opentrafficsim.base.Type;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.tudelft.simulation.language.Throw;

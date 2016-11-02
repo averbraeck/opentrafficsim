@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.media.j3d.Bounds;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -83,9 +84,9 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    public OTSLink(final Network network, final String id, final Node startNode, final Node endNode,
-            final LinkType linkType, final OTSLine3D designLine,
-            final Map<GTUType, LongitudinalDirectionality> directionalityMap) throws NetworkException
+    public OTSLink(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
+            final OTSLine3D designLine, final Map<GTUType, LongitudinalDirectionality> directionalityMap)
+            throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
@@ -120,12 +121,27 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    public OTSLink(final Network network, final String id, final Node startNode, final Node endNode,
-            final LinkType linkType, final OTSLine3D designLine, final LongitudinalDirectionality directionality)
-            throws NetworkException
+    public OTSLink(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
+            final OTSLine3D designLine, final LongitudinalDirectionality directionality) throws NetworkException
     {
         this(network, id, startNode, endNode, linkType, designLine, new HashMap<GTUType, LongitudinalDirectionality>());
         addDirectionality(GTUType.ALL, directionality);
+    }
+
+    /**
+     * Clone a link for a new network.
+     * @param newNetwork the new network to which the clone belongs
+     * @param newSimulator the new simulator for this network
+     * @param animation whether to (re)create animation or not
+     * @param link the link to clone from
+     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
+     *             or the end node of the link are not registered in the network.
+     */
+    protected OTSLink(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation,
+            final OTSLink link) throws NetworkException
+    {
+        this(newNetwork, link.id, newNetwork.getNode(link.startNode.getId()), newNetwork.getNode(link.endNode.getId()),
+                link.linkType, link.designLine, new HashMap<>(link.directionalityMap));
     }
 
     /** {@inheritDoc} */
@@ -164,8 +180,8 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         if (!this.gtus.contains(gtu))
         {
             this.gtus.add(gtu);
-            fireTimedEvent(Link.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() }, gtu.getSimulator()
-                    .getSimulatorTime());
+            fireTimedEvent(Link.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() },
+                    gtu.getSimulator().getSimulatorTime());
         }
     }
 
@@ -176,8 +192,8 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         if (this.gtus.contains(gtu))
         {
             this.gtus.remove(gtu);
-            fireTimedEvent(Link.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() }, gtu.getSimulator()
-                    .getSimulatorTime());
+            fireTimedEvent(Link.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() },
+                    gtu.getSimulator().getSimulatorTime());
         }
     }
 
@@ -235,6 +251,14 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     public final OTSLine3D getDesignLine()
     {
         return this.designLine;
+    }
+
+    /**
+     * @return directionalityMap the directionality map. Only for internal use in (sub)classes.
+     */
+    protected final Map<GTUType, LongitudinalDirectionality> getDirectionalityMap()
+    {
+        return this.directionalityMap;
     }
 
     /** {@inheritDoc} */
@@ -321,5 +345,20 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         else if (!this.startNode.equals(other.startNode))
             return false;
         return true;
+    }
+
+    /**
+     * Clone the OTSLink for e.g., copying a network.
+     * @param newNetwork the new network to which the clone belongs
+     * @param newSimulator the new simulator for this network
+     * @param animation whether to (re)create animation or not
+     * @return a clone of this object
+     * @throws NetworkException in case the cloning fails
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    public OTSLink clone(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
+            throws NetworkException
+    {
+        return new OTSLink(newNetwork, newSimulator, animation, this);
     }
 }

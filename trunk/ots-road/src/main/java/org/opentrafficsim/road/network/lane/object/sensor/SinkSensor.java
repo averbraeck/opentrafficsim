@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.network.lane;
+package org.opentrafficsim.road.network.lane.object.sensor;
 
 import java.rmi.RemoteException;
 
@@ -6,9 +6,14 @@ import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
+import org.opentrafficsim.road.network.lane.Lane;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * sensor that deletes the GTU.
@@ -59,4 +64,17 @@ public class SinkSensor extends AbstractSensor
     {
         return "SinkSensor [Lane=" + this.getLane() + "]";
     }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public SinkSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator, final boolean animation)
+            throws NetworkException
+    {
+        Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
+        Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
+                "simulator should be a DEVSSimulator");
+        return new SinkSensor((Lane) newCSE, getLongitudinalPosition(), (OTSDEVSSimulatorInterface) newSimulator);
+    }
+
 }

@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.network.lane;
+package org.opentrafficsim.road.network.lane.object.sensor;
 
 import java.awt.Color;
 import java.rmi.RemoteException;
@@ -7,9 +7,14 @@ import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
+import org.opentrafficsim.road.network.lane.Lane;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Sensor that prints which GTU triggers it.
@@ -55,7 +60,7 @@ public class SimpleReportingSensor extends AbstractSensor
     @Override
     public final void triggerResponse(final LaneBasedGTU gtu)
     {
-        //System.out.println(this + " triggered by " + getPositionType().getName() + " of " + gtu);
+        // System.out.println(this + " triggered by " + getPositionType().getName() + " of " + gtu);
     }
 
     /** {@inheritDoc} */
@@ -64,4 +69,18 @@ public class SimpleReportingSensor extends AbstractSensor
     {
         return "Sensor [Lane=" + this.getLane() + "]";
     }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public SimpleReportingSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+            final boolean animation) throws NetworkException
+    {
+        Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
+        Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
+                "simulator should be a DEVSSimulator");
+        return new SimpleReportingSensor(getId(), (Lane) newCSE, getLongitudinalPosition(), getPositionType(),
+                (OTSDEVSSimulatorInterface) newSimulator);
+    }
+
 }

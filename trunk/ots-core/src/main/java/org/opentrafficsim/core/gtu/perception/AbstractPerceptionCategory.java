@@ -3,7 +3,7 @@ package org.opentrafficsim.core.gtu.perception;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.Type;
+import org.opentrafficsim.base.Type;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;

@@ -1,9 +1,13 @@
-package org.opentrafficsim.road.network.lane;
+package org.opentrafficsim.road.network.lane.object;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.StaticObject;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
+import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -31,34 +35,28 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
     /** The position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane. */
     private final Length longitudinalPosition;
 
-    /** The length of the object in the longitudinal direction, on the center line of the lane. */
-    private final Length length;
-
     /**
      * Construct a new LanebasedObject with the required fields.
      * @param lane Lane; The lane for which this is a sensor
      * @param longitudinalPosition Length; The position (between 0.0 and the length of the Lane) of the sensor on the design
      *            line of the lane
-     * @param length Length; The length of the object in the longitudinal direction, on the center line of the lane
      * @param geometry the geometry of the object, which provides its location and bounds as well
      * @param height the height of the object, in case it is a 3D object
      * @throws NetworkException when the position on the lane is out of bounds
      */
-    public AbstractLaneBasedObject(final Lane lane, final Length longitudinalPosition, final Length length,
-            final OTSLine3D geometry, final Length height) throws NetworkException
+    public AbstractLaneBasedObject(final Lane lane, final Length longitudinalPosition, final OTSLine3D geometry,
+            final Length height) throws NetworkException
     {
         super(geometry, height);
 
         Throw.whenNull(lane, "lane is null");
         Throw.whenNull(longitudinalPosition, "longitudinal position is null");
         Throw.whenNull(geometry, "geometry is null");
-        Throw.whenNull(length, "length is null");
         Throw.when(longitudinalPosition.si < 0.0 || longitudinalPosition.si > lane.getCenterLine().getLengthSI(),
                 NetworkException.class, "Position of the object on the lane is out of bounds");
 
         this.lane = lane;
         this.longitudinalPosition = longitudinalPosition;
-        this.length = length;
     }
 
     /**
@@ -66,14 +64,13 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
      * @param lane Lane; The lane for which this is a sensor
      * @param longitudinalPosition Length; The position (between 0.0 and the length of the Lane) of the sensor on the design
      *            line of the lane
-     * @param length Length; The length of the object in the longitudinal direction, on the center line of the lane
      * @param geometry the geometry of the object, which provides its location and bounds as well
      * @throws NetworkException when the position on the lane is out of bounds
      */
-    public AbstractLaneBasedObject(final Lane lane, final Length longitudinalPosition, final Length length,
-            final OTSLine3D geometry) throws NetworkException
+    public AbstractLaneBasedObject(final Lane lane, final Length longitudinalPosition, final OTSLine3D geometry)
+            throws NetworkException
     {
-        this(lane, longitudinalPosition, length, geometry, Length.ZERO);
+        this(lane, longitudinalPosition, geometry, Length.ZERO);
     }
 
     /** {@inheritDoc} */
@@ -92,9 +89,22 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
 
     /** {@inheritDoc} */
     @Override
-    public final Length getLength()
+    public final StaticObject clone(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
+            throws NetworkException
     {
-        return this.length;
+        throw new NetworkException("LaneBasedObjects should be cloned with the clone(lane, simulator, animation) method");
     }
+
+    /**
+     * Clone the LAneBasedObject for e.g., copying a network.
+     * @param newCSE the new cross section element to which the clone belongs
+     * @param newSimulator the new simulator for this network
+     * @param animation whether to (re)create animation or not
+     * @return a clone of this object
+     * @throws NetworkException in case the cloning fails
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    public abstract AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+            final boolean animation) throws NetworkException;
 
 }

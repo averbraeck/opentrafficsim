@@ -12,7 +12,7 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.road.network.lane.Sensor;
+import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 
 /**
  * Draw a road block.

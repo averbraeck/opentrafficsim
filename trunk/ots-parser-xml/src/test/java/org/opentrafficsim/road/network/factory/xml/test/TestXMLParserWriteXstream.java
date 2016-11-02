@@ -4,6 +4,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import javax.naming.NamingException;
@@ -11,8 +13,14 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.djunits.unit.FrequencyUnit;
+import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
@@ -25,7 +33,18 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.kpi.sampling.Query;
+import org.opentrafficsim.kpi.sampling.data.SpeedLimit;
+import org.opentrafficsim.kpi.sampling.indicator.MeanSpeed;
+import org.opentrafficsim.kpi.sampling.indicator.MeanTravelTime;
+import org.opentrafficsim.kpi.sampling.indicator.MeanTripLength;
+import org.opentrafficsim.kpi.sampling.indicator.TotalDelay;
+import org.opentrafficsim.kpi.sampling.indicator.TotalNumberOfStops;
+import org.opentrafficsim.kpi.sampling.indicator.TotalTravelDistance;
+import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
+import org.opentrafficsim.road.network.factory.OTSNetworkUtils;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
@@ -46,11 +65,8 @@ import nl.tudelft.simulation.language.io.URLResource;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class TestXMLParser extends AbstractWrappableAnimation
+public class TestXMLParserWriteXstream extends AbstractWrappableAnimation
 {
-    /** */
-    private static final long serialVersionUID = 1L;
-
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
@@ -65,9 +81,9 @@ public class TestXMLParser extends AbstractWrappableAnimation
             {
                 try
                 {
-                    TestXMLParser xmlParser = new TestXMLParser();
+                    TestXMLParserWriteXstream xmlParserWriteXStream = new TestXMLParserWriteXstream();
                     // 1 hour simulation run for testing
-                    xmlParser.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                    xmlParserWriteXStream.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
                             new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
@@ -110,7 +126,7 @@ public class TestXMLParser extends AbstractWrappableAnimation
     @Override
     protected final OTSModelInterface makeModel(final GTUColorer colorer)
     {
-        return new TestXMLModel();
+        return new TestXMLModelWriteXStream();
     }
 
     /** {@inheritDoc} */
@@ -141,7 +157,7 @@ public class TestXMLParser extends AbstractWrappableAnimation
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class TestXMLModel implements OTSModelInterface
+    class TestXMLModelWriteXStream implements OTSModelInterface
     {
         /** */
         private static final long serialVersionUID = 20141121L;
@@ -151,21 +167,26 @@ public class TestXMLParser extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
+        public final void constructModel(
+                final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
-            // URL url = URLResource.getResource("/PNH1.xml");
-            // URL url = URLResource.getResource("/offset-example.xml");
-            // URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
-            // URL url = URLResource.getResource("/straight-road-new-gtu-example_2.xml");
-            // URL url = URLResource.getResource("/Circuit.xml");
+            long millis = System.currentTimeMillis();
             URL url = URLResource.getResource("/N201v8.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             OTSNetwork network;
             try
             {
                 network = nlp.build(url);
+                System.out.println("parsing took : " + (System.currentTimeMillis() - millis) + " ms");
+
+                millis = System.currentTimeMillis();
+                String xml = OTSNetworkUtils.toXml(network);
+                System.out.println("making XML took : " + (System.currentTimeMillis() - millis) + " ms");
+                millis = System.currentTimeMillis();
+                Files.write(Paths.get("e://temp/network.txt"), xml.getBytes());
+                System.out.println("writing took : " + (System.currentTimeMillis() - millis) + " ms");
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
                     | OTSGeometryException exception)
@@ -194,4 +215,5 @@ public class TestXMLParser extends AbstractWrappableAnimation
         }
 
     }
+
 }

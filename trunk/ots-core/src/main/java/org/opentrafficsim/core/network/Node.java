@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Direction;
+import org.opentrafficsim.base.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 
@@ -54,7 +55,7 @@ public interface Node extends Locatable, Serializable
     void removeLink(Link link);
 
     /** @return a safe copy of the links connected to this Node */
-    Set<Link> getLinks();
+    ImmutableSet<Link> getLinks();
 
     /**
      * Determine the links connecting from the previous link via this Node for the given GTU type.

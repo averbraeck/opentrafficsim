@@ -40,8 +40,8 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.Sensor;
-import org.opentrafficsim.road.network.lane.SinkSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 

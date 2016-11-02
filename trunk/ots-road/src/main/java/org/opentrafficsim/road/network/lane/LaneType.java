@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.opentrafficsim.base.immutablecollections.ImmutableHashSet;
 import org.opentrafficsim.base.immutablecollections.ImmutableSet;
-import org.opentrafficsim.core.Type;
+import org.opentrafficsim.base.Type;
 import org.opentrafficsim.core.gtu.GTUType;
 
 import nl.tudelft.simulation.language.Throw;
@@ -98,7 +98,6 @@ public class LaneType extends Type<LaneType> implements Serializable
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + this.compatibilitySet.hashCode();
         result = prime * result + this.id.hashCode();
         return result;
     }
@@ -115,8 +114,6 @@ public class LaneType extends Type<LaneType> implements Serializable
         if (getClass() != obj.getClass())
             return false;
         LaneType other = (LaneType) obj;
-        if (!this.compatibilitySet.equals(other.compatibilitySet))
-            return false;
         if (!this.id.equals(other.id))
             return false;
         return true;

@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -44,9 +45,8 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public RoadMarkerAlong(final CrossSectionLink parentLink, final Length startCenterPosition,
-        final Length endCenterPosition, final Length beginWidth, final Length endWidth)
-        throws OTSGeometryException, NetworkException
+    public RoadMarkerAlong(final CrossSectionLink parentLink, final Length startCenterPosition, final Length endCenterPosition,
+            final Length beginWidth, final Length endWidth) throws OTSGeometryException, NetworkException
     {
         super(parentLink, UUID.randomUUID().toString(), startCenterPosition, endCenterPosition, beginWidth, endWidth);
     }
@@ -60,8 +60,8 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public RoadMarkerAlong(final CrossSectionLink parentLink, final Length lateralCenterPosition,
-        final Length width) throws OTSGeometryException, NetworkException
+    public RoadMarkerAlong(final CrossSectionLink parentLink, final Length lateralCenterPosition, final Length width)
+            throws OTSGeometryException, NetworkException
     {
         super(parentLink, UUID.randomUUID().toString(), lateralCenterPosition, width);
     }
@@ -71,16 +71,32 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
      * the StartNode towards the EndNode as the longitudinal direction.
      * @param parentLink Cross Section Link to which the element belongs.
      * @param crossSectionSlices The offsets and widths at positions along the line, relative to the design line of the parent
-     *            link. If there is just one with and offset, there should just be one element in the list with Length = 0.
-     *            If there are more slices, the last one should be at the length of the design line. If not, a NetworkException
-     *            is thrown.
+     *            link. If there is just one with and offset, there should just be one element in the list with Length = 0. If
+     *            there are more slices, the last one should be at the length of the design line. If not, a NetworkException is
+     *            thrown.
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     public RoadMarkerAlong(final CrossSectionLink parentLink, final List<CrossSectionSlice> crossSectionSlices)
-        throws OTSGeometryException, NetworkException
+            throws OTSGeometryException, NetworkException
     {
         super(parentLink, UUID.randomUUID().toString(), crossSectionSlices);
+    }
+
+    /**
+     * Clone a RoadMarkerAlong for a new network.
+     * @param newCrossSectionLink the new link to which the clone belongs
+     * @param newSimulator the new simulator for this network
+     * @param animation whether to (re)create animation or not
+     * @param cse the element to clone from
+     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
+     *             or the end node of the link are not registered in the network.
+     */
+    protected RoadMarkerAlong(final CrossSectionLink newCrossSectionLink, final OTSSimulatorInterface newSimulator,
+            final boolean animation, final RoadMarkerAlong cse) throws NetworkException
+    {
+        super(newCrossSectionLink, newSimulator, animation, cse);
+        this.permeabilityMap.putAll(cse.permeabilityMap);
     }
 
     /** {@inheritDoc} */
@@ -151,6 +167,14 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
             return false;
         }
         return this.permeabilityMap.get(gtuType).contains(lateralDirection);
+    }
+
+    /**
+     * @return permeabilityMap for internal use in (sub)classes.
+     */
+    protected final Map<GTUType, Set<LateralDirectionality>> getPermeabilityMap()
+    {
+        return this.permeabilityMap;
     }
 
 }

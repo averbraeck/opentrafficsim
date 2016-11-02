@@ -48,7 +48,7 @@ import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePl
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.SinkSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 /**

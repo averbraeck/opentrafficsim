@@ -92,7 +92,7 @@ public class OTSLine3D implements Locatable, Serializable
     }
 
     /**
-     * Construct a new OTSLine3D.
+     * Construct a new OTSLine3D, and immediately make the length-indexed line.
      * @param pts the array of points to construct this OTSLine3D from.
      * @throws OTSGeometryException when the provided points do not constitute a valid line (too few points or identical
      *             adjacent points)
@@ -104,6 +104,8 @@ public class OTSLine3D implements Locatable, Serializable
             throw new OTSGeometryException("Degenerate OTSLine3D; has " + pts.length + " point"
                 + (pts.length != 1 ? "s" : ""));
         }
+        this.lengthIndexedLine = new double[pts.length];
+        this.lengthIndexedLine[0] = 0.0;
         for (int i = 1; i < pts.length; i++)
         {
             if (pts[i - 1].x == pts[i].x && pts[i - 1].y == pts[i].y && pts[i - 1].z == pts[i].z)
@@ -111,6 +113,7 @@ public class OTSLine3D implements Locatable, Serializable
                 throw new OTSGeometryException("Degenerate OTSLine3D; point " + (i - 1)
                     + " has the same x, y and z as point " + i);
             }
+            this.lengthIndexedLine[i] = this.lengthIndexedLine[i - 1] + pts[i - 1].distanceSI(pts[i]);
         }
         this.points = pts;
     }
@@ -122,10 +125,7 @@ public class OTSLine3D implements Locatable, Serializable
         JTS,
 
         /** Peter Knoppers. */
-        PK,
-
-        /** Alexander Verbraeck. */
-        AV;
+        PK;
     };
 
     /** Which offset line method to use... */
@@ -145,9 +145,6 @@ public class OTSLine3D implements Locatable, Serializable
             {
                 case PK:
                     return OTSOffsetLinePK.offsetLine(this, offset);
-
-                case AV:
-                    return OTSBufferingAV.offsetLine(this, offset);
 
                 case JTS:
                     return OTSBufferingJTS.offsetGeometryOLD(this, offset);
@@ -645,7 +642,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @return the line
      * @throws OTSGeometryException when number of points &lt; 2
      */
-    public static OTSLine3D createAndCleanOTSLine3D(final OTSPoint3D[] points) throws OTSGeometryException
+    public static OTSLine3D createAndCleanOTSLine3D(final OTSPoint3D... points) throws OTSGeometryException
     {
         if (points.length < 2)
         {

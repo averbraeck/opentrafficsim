@@ -13,6 +13,7 @@ import org.jgrapht.graph.SimpleWeightedGraph;
 import org.opentrafficsim.base.immutablecollections.Immutable;
 import org.opentrafficsim.base.immutablecollections.ImmutableHashMap;
 import org.opentrafficsim.base.immutablecollections.ImmutableMap;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
@@ -347,7 +348,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     @Override
     public final void buildGraph(final GTUType gtuType)
     {
-        // TODO take connections into accound, and possibly do node expansion to build the graph
+        // TODO take connections into account, and possibly do node expansion to build the graph
         @SuppressWarnings("rawtypes")
         Class linkEdgeClass = LinkEdge.class;
         @SuppressWarnings("unchecked")
@@ -520,6 +521,64 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     {
         return "OTSNetwork [id=" + this.id + ", nodeMapSize=" + this.nodeMap.size() + ", linkMapSize=" + this.linkMap.size()
                 + ", routeMapSize=" + this.routeMap.size() + ", gtuMapSize=" + this.gtuMap.size() + "]";
+    }
+
+    /***************************************************************************************/
+    /*************************************** CLONE *****************************************/
+    /***************************************************************************************/
+
+    /**
+     * Clone the OTSNetwork.
+     * @param newId the new id of the network
+     * @param newSimulator the new simulator for this network
+     * @param animation whether to (re)create animation or not
+     * @return a clone of this network
+     * @throws NetworkException in case the cloning fails
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    public OTSNetwork clone(final String newId, final OTSSimulatorInterface newSimulator, final boolean animation)
+            throws NetworkException
+    {
+        OTSNetwork newNetwork = new OTSNetwork(newId);
+        
+        // clone the nodes
+        for (Node node : this.nodeMap.values())
+        {
+            ((OTSNode) node).clone1(newNetwork, newSimulator, animation);
+        }
+        
+        // clone the links
+        for (Link link : this.linkMap.values())
+        {
+            ((OTSLink) link).clone(newNetwork, newSimulator, animation);
+        }
+
+        // make the link-connections for the cloned nodes
+        for (Node node : this.nodeMap.values())
+        {
+            ((OTSNode) node).clone2(newNetwork, newSimulator, animation);
+        }
+
+        // clone the graphs that had been created for the old network
+        for (GTUType gtuType : this.linkGraphs.keySet())
+        {
+            newNetwork.buildGraph(gtuType);
+        }
+
+        // clone the routes
+        Map<GTUType, Map<String, Route>> newRouteMap = new HashMap<>();
+        for (GTUType gtuType : this.routeMap.keySet())
+        {
+            Map<String, Route> newRoutes = new HashMap<>();
+            for (Route route : this.routeMap.get(gtuType).values())
+            {
+                newRoutes.put(route.getId(), route.clone(newNetwork, newSimulator, animation));
+            }
+            newRouteMap.put(gtuType, newRoutes);
+        }
+        newNetwork.routeMap = newRouteMap;
+
+        return newNetwork;
     }
 
 }

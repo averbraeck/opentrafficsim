@@ -2,7 +2,7 @@ package org.opentrafficsim.road.network.speed;
 
 import java.io.Serializable;
 
-import org.opentrafficsim.core.Type;
+import org.opentrafficsim.base.Type;
 
 import nl.tudelft.simulation.language.Throw;
 

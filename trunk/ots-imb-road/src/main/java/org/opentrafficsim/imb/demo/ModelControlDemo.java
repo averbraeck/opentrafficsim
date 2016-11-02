@@ -36,8 +36,8 @@ import org.opentrafficsim.core.dsol.OTSDEVSRealTimeClock;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -80,11 +80,13 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.modelproperties.IDMPropertySet;
 import org.opentrafficsim.road.network.factory.LaneFactory;
-import org.opentrafficsim.road.network.lane.AbstractSensor;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.SensorAnimation;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
+import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SensorAnimation;
 
 import nl.tno.imb.TConnection;
 import nl.tno.imb.mc.ModelParameters;
@@ -99,7 +101,6 @@ import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.dsol.simulators.Simulator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Demonstrate an implementation of ModelEvent.
@@ -222,12 +223,10 @@ public class ModelControlDemo extends ModelStarter
         {
             IMBConnector simulationIMBConnector = new IMBConnector(this.connection);
             System.out.println("IMBConnector for simulation is " + simulationIMBConnector);
-            this.model =
-                    new CircularRoadIMB(new DefaultSwitchableGTUColorer(), new OTSNetwork(""), properties,
-                            simulationIMBConnector);
-            Replication<Time, Duration, OTSSimTimeDouble> replication =
-                    new Replication<Time, Duration, OTSSimTimeDouble>("rep1", new OTSSimTimeDouble(Time.ZERO), Duration.ZERO,
-                            new Duration(1, TimeUnit.HOUR), this.model);
+            this.model = new CircularRoadIMB(new DefaultSwitchableGTUColorer(), new OTSNetwork(""), properties,
+                    simulationIMBConnector);
+            Replication<Time, Duration, OTSSimTimeDouble> replication = new Replication<Time, Duration, OTSSimTimeDouble>(
+                    "rep1", new OTSSimTimeDouble(Time.ZERO), Duration.ZERO, new Duration(1, TimeUnit.HOUR), this.model);
             OTSDEVSRealTimeClock simulator = new OTSDEVSRealTimeClock();
             simulator.initialize(replication, ReplicationMode.TERMINATING);
             signalModelState(ModelState.READY);
@@ -352,7 +351,8 @@ public class ModelControlDemo extends ModelStarter
     /**
      * Simulate traffic on a circular, two-lane road.
      * <p>
-     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate: 2016-08-24 13:50:36 +0200 (Wed, 24 Aug 2016) $, @version $Revision: 2144 $, by $Author: pknoppers $,
@@ -445,10 +445,11 @@ public class ModelControlDemo extends ModelStarter
                     "<html>The lane change strategies vary in politeness.<br>"
                             + "Two types are implemented:<ul><li>Egoistic (looks only at personal gain).</li>"
                             + "<li>Altruistic (assigns effect on new and current follower the same weight as "
-                            + "the personal gain).</html>", new String[] { "Egoistic", "Altruistic" }, 0, false, 500));
+                            + "the personal gain).</html>",
+                    new String[] { "Egoistic", "Altruistic" }, 0, false, 500));
             result.add(new SelectionProperty("TacticalPlanner", "Tactical planner",
-                    "<html>The tactical planner determines if a lane change is desired and possible.</html>", new String[] {
-                            "MOBIL", "LMRS", "Toledo" }, 0, false, 600));
+                    "<html>The tactical planner determines if a lane change is desired and possible.</html>",
+                    new String[] { "MOBIL", "LMRS", "Toledo" }, 0, false, 600));
             result.add(new IntegerProperty("TrackLength", "Track length", "Circumference of the track", 2000, 500, 6000,
                     "Track length %dm", false, 10));
             result.add(new ContinuousProperty("MeanDensity", "Mean density", "Number of vehicles per km", 40.0, 5.0, 45.0,
@@ -461,16 +462,16 @@ public class ModelControlDemo extends ModelStarter
                 for (int lane = 1; lane <= 2; lane++)
                 {
                     String laneId = String.format("Lane %d ", lane);
-                    outputProperties.add(new BooleanProperty(laneId + "Density", laneId + " Density", laneId
-                            + "Density contour plot", true, false, 0));
+                    outputProperties.add(new BooleanProperty(laneId + "Density", laneId + " Density",
+                            laneId + "Density contour plot", true, false, 0));
                     outputProperties.add(new BooleanProperty(laneId + "Flow", laneId + " Flow", laneId + "Flow contour plot",
                             true, false, 1));
-                    outputProperties.add(new BooleanProperty(laneId + "Speed", laneId + " Speed",
-                            laneId + "Speed contour plot", true, false, 2));
-                    outputProperties.add(new BooleanProperty(laneId + "Acceleration", laneId + " Acceleration", laneId
-                            + "Acceleration contour plot", true, false, 3));
-                    outputProperties.add(new BooleanProperty(laneId + "Trajectories", laneId + " Trajectories", laneId
-                            + "Trajectory (time/distance) diagram", true, false, 4));
+                    outputProperties.add(new BooleanProperty(laneId + "Speed", laneId + " Speed", laneId + "Speed contour plot",
+                            true, false, 2));
+                    outputProperties.add(new BooleanProperty(laneId + "Acceleration", laneId + " Acceleration",
+                            laneId + "Acceleration contour plot", true, false, 3));
+                    outputProperties.add(new BooleanProperty(laneId + "Trajectories", laneId + " Trajectories",
+                            laneId + "Trajectory (time/distance) diagram", true, false, 4));
                 }
                 result.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
                         outputProperties, true, 1000));
@@ -482,7 +483,8 @@ public class ModelControlDemo extends ModelStarter
                                 + "the acceleration that a vehicle will make taking into account "
                                 + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
                                 + "curvature of the road) capabilities of the vehicle and personality "
-                                + "of the driver.</html>", new String[] { "IDM", "IDM+" }, 1, false, 1));
+                                + "of the driver.</html>",
+                        new String[] { "IDM", "IDM+" }, 1, false, 1));
                 result.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car", new Acceleration(1.0, METER_PER_SECOND_2),
                         new Acceleration(1.5, METER_PER_SECOND_2), new Length(2.0, METER), new Duration(1.0, SECOND), 2));
                 result.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck", new Acceleration(0.5, METER_PER_SECOND_2),
@@ -522,9 +524,8 @@ public class ModelControlDemo extends ModelStarter
             if (theSimulator instanceof AnimatorInterface)
             {
                 this.frame = new JFrame("Circular Road Simulation with IMB Model Control");
-                panel =
-                        new AnimationPanel(new Rectangle2D.Double(-1000, -1000, 2000, 2000), new Dimension(1000, 1000),
-                                theSimulator);
+                panel = new AnimationPanel(new Rectangle2D.Double(-1000, -1000, 2000, 2000), new Dimension(1000, 1000),
+                        theSimulator);
                 this.frame.add(panel);
                 this.frame.setSize(new Dimension(1000, 1000));
                 this.frame.setVisible(true);
@@ -671,12 +672,10 @@ public class ModelControlDemo extends ModelStarter
                                 // provide default parameters with the car-following model
                                 BehavioralCharacteristics defaultBehavioralCFCharacteristics = new BehavioralCharacteristics();
                                 defaultBehavioralCFCharacteristics.setDefaultParameters(AbstractIDM.class);
-                                this.strategicalPlannerGeneratorCars =
-                                        new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(new IDMPlusFactory(),
-                                                defaultBehavioralCFCharacteristics));
-                                this.strategicalPlannerGeneratorTrucks =
-                                        new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(new IDMPlusFactory(),
-                                                defaultBehavioralCFCharacteristics));
+                                this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
+                                        new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics));
+                                this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
+                                        new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics));
                             }
                             else if ("Toledo".equals(tacticalPlannerName))
                             {
@@ -740,18 +739,16 @@ public class ModelControlDemo extends ModelStarter
                     double angle = Math.PI * (1 + i) / (1 + coordsHalf1.length);
                     coordsHalf1[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
                 }
-                Lane[] lanes1 =
-                        LaneFactory.makeMultiLane(this.network, "FirstHalf", start, halfway, coordsHalf1, laneCount, laneType,
-                                this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
+                Lane[] lanes1 = LaneFactory.makeMultiLane(this.network, "FirstHalf", start, halfway, coordsHalf1, laneCount,
+                        laneType, this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
                 OTSPoint3D[] coordsHalf2 = new OTSPoint3D[127];
                 for (int i = 0; i < coordsHalf2.length; i++)
                 {
                     double angle = Math.PI + Math.PI * (1 + i) / (1 + coordsHalf2.length);
                     coordsHalf2[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
                 }
-                Lane[] lanes2 =
-                        LaneFactory.makeMultiLane(this.network, "SecondHalf", halfway, start, coordsHalf2, laneCount, laneType,
-                                this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
+                Lane[] lanes2 = LaneFactory.makeMultiLane(this.network, "SecondHalf", halfway, start, coordsHalf2, laneCount,
+                        laneType, this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
                 for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
                 {
                     this.paths.get(laneIndex).add(lanes1[laneIndex]);
@@ -761,16 +758,14 @@ public class ModelControlDemo extends ModelStarter
                 int sensorNr = 0;
                 for (Lane lane : lanes1)
                 {
-                    SimpleSilentSensor sensor =
-                            new SimpleSilentSensor("sensor " + ++sensorNr, lane, new Length(10.0, LengthUnit.METER),
-                                    RelativePosition.FRONT, imbAnimator);
+                    SimpleSilentSensor sensor = new SimpleSilentSensor("sensor " + ++sensorNr, lane,
+                            new Length(10.0, LengthUnit.METER), RelativePosition.FRONT, imbAnimator);
                     lane.addSensor(sensor, gtuType);
                 }
                 for (Lane lane : lanes2)
                 {
-                    SimpleSilentSensor sensor =
-                            new SimpleSilentSensor("sensor" + ++sensorNr, lane, new Length(20.0, LengthUnit.METER),
-                                    RelativePosition.REAR, imbAnimator);
+                    SimpleSilentSensor sensor = new SimpleSilentSensor("sensor" + ++sensorNr, lane,
+                            new Length(20.0, LengthUnit.METER), RelativePosition.REAR, imbAnimator);
                     lane.addSensor(sensor, gtuType);
                 }
                 // Put the (not very evenly spaced) cars on the track
@@ -864,9 +859,8 @@ public class ModelControlDemo extends ModelStarter
             // GTU itself
             boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
             Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
-            LaneBasedIndividualGTU gtu =
-                    new LaneBasedIndividualGTU("" + (++this.carsCreated), gtuType, vehicleLength, new Length(1.8, METER),
-                            new Speed(200, KM_PER_HOUR), this.simulator, this.network);
+            LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), gtuType, vehicleLength,
+                    new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, this.network);
 
             // strategical planner
             LaneBasedStrategicalPlanner strategicalPlanner;
@@ -965,7 +959,7 @@ public class ModelControlDemo extends ModelStarter
                     final RelativePosition.TYPE triggerPosition, final OTSDEVSSimulatorInterface simulator)
                     throws NetworkException, OTSGeometryException
             {
-                super(id, lane, position, triggerPosition, simulator, Length.ZERO, makeGeometry(lane, position));
+                super(id, lane, position, triggerPosition, simulator, LaneBasedObject.makeGeometry(lane, position));
                 try
                 {
                     new SensorAnimation(this, position, simulator, Color.RED);
@@ -974,23 +968,6 @@ public class ModelControlDemo extends ModelStarter
                 {
                     exception.printStackTrace();
                 }
-            }
-
-            /**
-             * Make a geometry perpendicular to the center line of the lane at the given position.
-             * @param lane Lane; the lane where the sensor resides
-             * @param position Length; The length of the object in the longitudinal direction, on the center line of the lane
-             * @return a geometry perpendicular to the center line that describes the sensor
-             * @throws OTSGeometryException when the line is ill-formed
-             */
-            private static final OTSLine3D makeGeometry(final Lane lane, final Length position) throws OTSGeometryException
-            {
-                DirectedPoint sp = lane.getCenterLine().getLocationExtended(position);
-                double w45 = 0.45 * lane.getWidth(position).si;
-                double a = sp.getRotZ() + Math.PI / 2.0;
-                OTSPoint3D p1 = new OTSPoint3D(sp.x + w45 * Math.cos(a), sp.y - w45 * Math.sin(a), sp.z + 0.0001);
-                OTSPoint3D p2 = new OTSPoint3D(sp.x - w45 * Math.cos(a), sp.y + w45 * Math.sin(a), sp.z + 0.0001);
-                return new OTSLine3D(p1, p2);
             }
 
             /** {@inheritDoc} */
@@ -1005,6 +982,15 @@ public class ModelControlDemo extends ModelStarter
             public final String toString()
             {
                 return "SimpleSilentSensor [Lane=" + this.getLane() + "]";
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public AbstractSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+                    final boolean animation) throws NetworkException
+            {
+                // not important in this class.
+                return null;
             }
         }
     }

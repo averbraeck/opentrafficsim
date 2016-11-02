@@ -8,6 +8,7 @@ import java.util.List;
 import javax.media.j3d.Bounds;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -101,9 +102,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             throw new NetworkException("CrossSectionElement " + id + " for " + parentLink
                     + " has a first slice with relativeLength is not equal to 0.0");
         }
-        if (this.crossSectionSlices.size() > 1
-                && this.crossSectionSlices.get(this.crossSectionSlices.size() - 1).getRelativeLength()
-                        .ne(this.parentLink.getLength()))
+        if (this.crossSectionSlices.size() > 1 && this.crossSectionSlices.get(this.crossSectionSlices.size() - 1)
+                .getRelativeLength().ne(this.parentLink.getLength()))
         {
             throw new NetworkException("CrossSectionElement " + id + " for " + parentLink
                     + " has a last slice with relativeLength is not equal to the length of the parent link");
@@ -111,9 +111,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
 
         if (this.crossSectionSlices.size() <= 2)
         {
-            this.centerLine =
-                    this.getParentLink().getDesignLine()
-                            .offsetLine(getDesignLineOffsetAtBegin().getSI(), getDesignLineOffsetAtEnd().getSI());
+            this.centerLine = this.getParentLink().getDesignLine().offsetLine(getDesignLineOffsetAtBegin().getSI(),
+                    getDesignLineOffsetAtEnd().getSI());
         }
         else
         {
@@ -131,19 +130,6 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
         this.contour = constructContour(this);
 
         this.parentLink.addCrossSectionElement(this);
-        // This commented-out code was used to find the cause of an unexpected lane narrowing in the testod.xodr network.
-        // if (new OTSPolygon3D(this.contour.getPoints()).contains(new OTSPoint3D(-180, -150)))
-        // {
-        // System.out.println("Contour contains p: " + this);
-        // OTSLine3D crossSectionDesignLine =
-        // getParentLink().getDesignLine()
-        // .offsetLine(getDesignLineOffsetAtBegin().getSI(), getDesignLineOffsetAtEnd().getSI());
-        // System.out.println(OTSGeometry.printCoordinates("#reference:\nc0,0,0\n#", crossSectionDesignLine, "\n    "));
-        // OTSLine3D rightBoundary =
-        // crossSectionDesignLine.offsetLine(-getBeginWidth().getSI() / 2, -getEndWidth().getSI() / 2);
-        // System.out.println(OTSGeometry.printCoordinates("#right boundary:\nc0,1,0\n#", rightBoundary, "\n    "));
-        // constructContour(this);
-        // }
     }
 
     // TODO use throwIf
@@ -163,12 +149,33 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
      * @throws NetworkException when id equal to null or not unique
      */
     public CrossSectionElement(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtBegin,
-            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth) throws OTSGeometryException,
-            NetworkException
+            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth)
+            throws OTSGeometryException, NetworkException
     {
-        this(parentLink, id, Arrays.asList(new CrossSectionSlice[] {
-                new CrossSectionSlice(Length.ZERO, lateralOffsetAtBegin, beginWidth),
-                new CrossSectionSlice(parentLink.getLength(), lateralOffsetAtEnd, endWidth) }));
+        this(parentLink, id,
+                Arrays.asList(new CrossSectionSlice[] { new CrossSectionSlice(Length.ZERO, lateralOffsetAtBegin, beginWidth),
+                        new CrossSectionSlice(parentLink.getLength(), lateralOffsetAtEnd, endWidth) }));
+    }
+
+    /**
+     * Clone a CrossSectionElement for a new network.
+     * @param newCrossSectionLink the new link to which the clone belongs
+     * @param newSimulator the new simulator for this network
+     * @param animation whether to (re)create animation or not
+     * @param cse the element to clone from
+     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
+     *             or the end node of the link are not registered in the network.
+     */
+    protected CrossSectionElement(final CrossSectionLink newCrossSectionLink, final OTSSimulatorInterface newSimulator,
+            final boolean animation, final CrossSectionElement cse) throws NetworkException
+    {
+        this.id = cse.id;
+        this.parentLink = newCrossSectionLink;
+        this.centerLine = cse.centerLine;
+        this.length = this.centerLine.getLength();
+        this.contour = cse.contour;
+        this.crossSectionSlices = new ArrayList<CrossSectionSlice>(cse.crossSectionSlices);
+        newCrossSectionLink.addCrossSectionElement(this);
     }
 
     /**
@@ -185,8 +192,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     public CrossSectionElement(final CrossSectionLink parentLink, final String id, final Length lateralOffset,
             final Length width) throws OTSGeometryException, NetworkException
     {
-        this(parentLink, id, Arrays
-                .asList(new CrossSectionSlice[] { new CrossSectionSlice(Length.ZERO, lateralOffset, width) }));
+        this(parentLink, id,
+                Arrays.asList(new CrossSectionSlice[] { new CrossSectionSlice(Length.ZERO, lateralOffset, width) }));
     }
 
     /**
@@ -273,10 +280,9 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             return Length.interpolate(this.getBeginWidth(), this.getEndWidth(), fractionalPosition);
         }
         int sliceNr = calculateSliceNumber(fractionalPosition);
-        return Length.interpolate(this.crossSectionSlices.get(sliceNr).getWidth(), this.crossSectionSlices.get(sliceNr + 1)
-                .getWidth(),
-                fractionalPosition - this.crossSectionSlices.get(sliceNr).getRelativeLength().si
-                        / this.parentLink.getLength().si);
+        return Length.interpolate(this.crossSectionSlices.get(sliceNr).getWidth(),
+                this.crossSectionSlices.get(sliceNr + 1).getWidth(), fractionalPosition
+                        - this.crossSectionSlices.get(sliceNr).getRelativeLength().si / this.parentLink.getLength().si);
     }
 
     /**
@@ -371,8 +377,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
         Length halfWidth;
         if (this.crossSectionSlices.size() <= 2)
         {
-            designLineOffset =
-                    Length.interpolate(getDesignLineOffsetAtBegin(), getDesignLineOffsetAtEnd(), fractionalLongitudinalPosition);
+            designLineOffset = Length.interpolate(getDesignLineOffsetAtBegin(), getDesignLineOffsetAtEnd(),
+                    fractionalLongitudinalPosition);
             halfWidth = Length.interpolate(getBeginWidth(), getEndWidth(), fractionalLongitudinalPosition).multiplyBy(0.5);
         }
         else
@@ -380,14 +386,12 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             int sliceNr = calculateSliceNumber(fractionalLongitudinalPosition);
             double startFractionalPosition =
                     this.crossSectionSlices.get(sliceNr).getRelativeLength().si / this.parentLink.getLength().si;
-            designLineOffset =
-                    Length.interpolate(this.crossSectionSlices.get(sliceNr).getDesignLineOffset(),
-                            this.crossSectionSlices.get(sliceNr + 1).getDesignLineOffset(), fractionalLongitudinalPosition
-                                    - startFractionalPosition);
-            halfWidth =
-                    Length.interpolate(this.crossSectionSlices.get(sliceNr).getWidth(),
-                            this.crossSectionSlices.get(sliceNr + 1).getWidth(),
-                            fractionalLongitudinalPosition - startFractionalPosition).multiplyBy(0.5);
+            designLineOffset = Length.interpolate(this.crossSectionSlices.get(sliceNr).getDesignLineOffset(),
+                    this.crossSectionSlices.get(sliceNr + 1).getDesignLineOffset(),
+                    fractionalLongitudinalPosition - startFractionalPosition);
+            halfWidth = Length.interpolate(this.crossSectionSlices.get(sliceNr).getWidth(),
+                    this.crossSectionSlices.get(sliceNr + 1).getWidth(),
+                    fractionalLongitudinalPosition - startFractionalPosition).multiplyBy(0.5);
         }
 
         switch (lateralDirection)
@@ -428,9 +432,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
 
         if (cse.crossSectionSlices.size() <= 2)
         {
-            OTSLine3D crossSectionDesignLine =
-                    cse.getParentLink().getDesignLine()
-                            .offsetLine(cse.getDesignLineOffsetAtBegin().getSI(), cse.getDesignLineOffsetAtEnd().getSI());
+            OTSLine3D crossSectionDesignLine = cse.getParentLink().getDesignLine()
+                    .offsetLine(cse.getDesignLineOffsetAtBegin().getSI(), cse.getDesignLineOffsetAtEnd().getSI());
             OTSLine3D rightBoundary =
                     crossSectionDesignLine.offsetLine(-cse.getBeginWidth().getSI() / 2, -cse.getEndWidth().getSI() / 2);
             OTSLine3D leftBoundary =
@@ -549,4 +552,15 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
         return true;
     }
 
+    /**
+     * Clone the CrossSectionElement for e.g., copying a network.
+     * @param newParentLink the new link to which the clone belongs
+     * @param newSimulator the new simulator for this network
+     * @param animation whether to (re)create animation or not
+     * @return a clone of this object
+     * @throws NetworkException in case the cloning fails
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    public abstract CrossSectionElement clone(final CrossSectionLink newParentLink,
+            final OTSSimulatorInterface newSimulator, final boolean animation) throws NetworkException;
 }

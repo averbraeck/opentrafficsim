@@ -51,7 +51,6 @@ public class LaneAnimation extends Renderable2D implements Serializable
         super(source, simulator);
         this.color = color;
         this.drawCenterLine = drawCenterLine;
-        System.out.println("Drawing lane " + source);
     }
 
     /** {@inheritDoc} */

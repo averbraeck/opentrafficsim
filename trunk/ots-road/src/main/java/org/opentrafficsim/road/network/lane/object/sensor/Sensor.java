@@ -1,10 +1,11 @@
-package org.opentrafficsim.road.network.lane;
+package org.opentrafficsim.road.network.lane.object.sensor;
 
 import java.io.Serializable;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 import nl.tudelft.simulation.event.EventType;
 

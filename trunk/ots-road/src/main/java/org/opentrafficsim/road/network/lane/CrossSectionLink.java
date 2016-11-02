@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
@@ -128,6 +129,27 @@ public class CrossSectionLink extends OTSLink implements Serializable
     }
 
     /**
+     * Clone a CrossSectionLink for a new network.
+     * @param newNetwork the new network to which the clone belongs
+     * @param newSimulator the new simulator for this network
+     * @param animation whether to (re)create animation or not
+     * @param link the link to clone from
+     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
+     *             or the end node of the link are not registered in the network.
+     */
+    protected CrossSectionLink(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation,
+            final CrossSectionLink link) throws NetworkException
+    {
+        super(newNetwork, newSimulator, animation, link);
+        this.laneKeepingPolicy = link.laneKeepingPolicy;
+        for (CrossSectionElement cse : link.crossSectionElementList)
+        {
+            addCrossSectionElement(cse.clone(this, newSimulator, animation));
+        }
+
+    }
+
+    /**
      * Add a cross section element at the end of the list. <br>
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction.
      * @param cse CrossSectionElement; the cross section element to add.
@@ -193,6 +215,15 @@ public class CrossSectionLink extends OTSLink implements Serializable
     {
         return "CrossSectionLink [crossSectionElementList=" + this.crossSectionElementList + ", lanes=" + this.lanes
                 + ", laneKeepingPolicy=" + this.laneKeepingPolicy + "]";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public CrossSectionLink clone(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
+            throws NetworkException
+    {
+        return new CrossSectionLink(newNetwork, newSimulator, animation, this);
     }
 
 }

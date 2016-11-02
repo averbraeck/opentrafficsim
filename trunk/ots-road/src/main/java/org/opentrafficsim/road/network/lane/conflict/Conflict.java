@@ -1,10 +1,13 @@
 package org.opentrafficsim.road.network.lane.conflict;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.lane.AbstractLaneBasedObject;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -36,6 +39,9 @@ public final class Conflict extends AbstractLaneBasedObject
 
     /** Accompanying other conflict. */
     private Conflict otherConflict;
+    
+    /** the length of the conflict along the lane centerline. */
+    private final Length length;
 
     /**
      * @param lane lane where this conflict starts
@@ -47,9 +53,10 @@ public final class Conflict extends AbstractLaneBasedObject
      * @throws NetworkException when the position on the lane is out of bounds
      */
     private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final OTSLine3D geometry,
-        final ConflictType conflictType, final ConflictRule conflictRule) throws NetworkException
+            final ConflictType conflictType, final ConflictRule conflictRule) throws NetworkException
     {
-        super(lane, longitudinalPosition, length, geometry);
+        super(lane, longitudinalPosition, geometry);
+        this.length = length;
         this.conflictType = conflictType;
         this.conflictRule = conflictRule;
     }
@@ -87,9 +94,9 @@ public final class Conflict extends AbstractLaneBasedObject
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static void generateConflictPair(final ConflictType conflictType, final Lane lane1,
-        final Length longitudinalPosition1, final Length length1, final OTSLine3D geometry1,
-        final ConflictRule conflictRule1, final Lane lane2, final Length longitudinalPosition2, final Length length2,
-        final OTSLine3D geometry2, final ConflictRule conflictRule2) throws NetworkException
+            final Length longitudinalPosition1, final Length length1, final OTSLine3D geometry1,
+            final ConflictRule conflictRule1, final Lane lane2, final Length longitudinalPosition2, final Length length2,
+            final OTSLine3D geometry2, final ConflictRule conflictRule2) throws NetworkException
     {
         // lane, longitudinalPosition, length and geometry are checked in AbstractLaneBasedObject
         Throw.whenNull(conflictType, "Conflict type may not be null.");
@@ -99,32 +106,30 @@ public final class Conflict extends AbstractLaneBasedObject
         {
             // Split with split (on split)
             Throw.when(!conflictRule1.equals(ConflictRule.SPLIT) || !conflictRule2.equals(ConflictRule.SPLIT),
-                NetworkException.class, "Both conflict rules should be split for conflict type split.");
+                    NetworkException.class, "Both conflict rules should be split for conflict type split.");
         }
         else
         {
             // Priority with give-way/stop
-            boolean check1 =
-                conflictRule1.equals(ConflictRule.PRIORITY) && !conflictRule2.equals(ConflictRule.GIVE_WAY)
+            boolean check1 = conflictRule1.equals(ConflictRule.PRIORITY) && !conflictRule2.equals(ConflictRule.GIVE_WAY)
                     && !conflictRule2.equals(ConflictRule.STOP);
-            boolean check2 =
-                conflictRule2.equals(ConflictRule.PRIORITY) && !conflictRule1.equals(ConflictRule.GIVE_WAY)
+            boolean check2 = conflictRule2.equals(ConflictRule.PRIORITY) && !conflictRule1.equals(ConflictRule.GIVE_WAY)
                     && !conflictRule1.equals(ConflictRule.STOP);
             boolean check3 = conflictRule1.equals(ConflictRule.GIVE_WAY) && !conflictRule2.equals(ConflictRule.PRIORITY);
             boolean check4 = conflictRule2.equals(ConflictRule.GIVE_WAY) && !conflictRule1.equals(ConflictRule.PRIORITY);
             boolean check5 = conflictRule1.equals(ConflictRule.STOP) && !conflictRule2.equals(ConflictRule.PRIORITY);
             boolean check6 = conflictRule2.equals(ConflictRule.STOP) && !conflictRule1.equals(ConflictRule.PRIORITY);
             Throw.when(check1 || check2 || check3 || check4 || check5 || check6, NetworkException.class,
-                "Conflict rules need to be a combination of 'PRIORITY' and 'GIVE_WAY' or 'STOP', "
-                    + "if any of these types is used.");
+                    "Conflict rules need to be a combination of 'PRIORITY' and 'GIVE_WAY' or 'STOP', "
+                            + "if any of these types is used.");
             // All-stop with all-stop
             boolean check7 = conflictRule1.equals(ConflictRule.ALL_STOP) && !conflictRule2.equals(ConflictRule.ALL_STOP);
             boolean check8 = conflictRule2.equals(ConflictRule.ALL_STOP) && !conflictRule1.equals(ConflictRule.ALL_STOP);
             Throw.when(check7 || check8, NetworkException.class,
-                "Conflict rule 'ALL_STOP' can only be combined with a conflict rule 'ALL_STOP'.");
+                    "Conflict rule 'ALL_STOP' can only be combined with a conflict rule 'ALL_STOP'.");
             // No split
             Throw.when(conflictRule1.equals(ConflictRule.SPLIT) || conflictRule2.equals(ConflictRule.SPLIT),
-                NetworkException.class, "Conflict rule 'SPLIT' may only be used on conflicts of type SPLIT.");
+                    NetworkException.class, "Conflict rule 'SPLIT' may only be used on conflicts of type SPLIT.");
         }
         Conflict conf1 = new Conflict(lane1, longitudinalPosition1, length1, geometry1, conflictType, conflictRule1);
         Conflict conf2 = new Conflict(lane2, longitudinalPosition2, length2, geometry2, conflictType, conflictRule2);
@@ -139,5 +144,17 @@ public final class Conflict extends AbstractLaneBasedObject
         return "Conflict [conflictType=" + this.conflictType + ", conflictRule=" + this.conflictRule + ", otherConflict="
                 + this.otherConflict + "]";
     }
-    
+
+    /** {@inheritDoc} */
+    @Override
+    public Conflict clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator, final boolean animation)
+            throws NetworkException
+    {
+        Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
+        Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
+                "simulator should be a DEVSSimulator");
+        return new Conflict((Lane) newCSE, getLongitudinalPosition(), this.length, getGeometry(), this.conflictType,
+                this.conflictRule);
+    }
+
 }
