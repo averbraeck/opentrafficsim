@@ -536,10 +536,10 @@ public class TrafCOD extends EventProducer implements TrafficController
     /**
      * Evaluate an expression. <br>
      * The methods evalExpr and evalRHS together evaluate an expression. This is done using recursion and a stack. The argument
-     * <cite>bindingStrength</cite> that is passed around is the binding strength of the last preceding pending operator. if a
+     * bindingStrength that is passed around is the binding strength of the last preceding pending operator. if a
      * binary operator with the same or a lower strength is encountered, the pending operator must be applied first. On the
      * other hand of a binary operator with higher binding strength is encountered, that operator takes precedence over the
-     * pending operator. To evaluate an expression, call <cite>evalExpr</cite> with a <cite>bindingStrength</cite> value of 0.
+     * pending operator. To evaluate an expression, call evalExpr with a bindingStrength value of 0.
      * @param bindingStrength int; the binding strength of a not yet applied binary operator (higher value must be applied
      *            first)
      * @throws Exception when the expression is not valid
@@ -787,7 +787,7 @@ public class TrafCOD extends EventProducer implements TrafficController
      * @param printValues boolean; if true; print the values of all encountered variable; if false; do not print the values of
      *            all encountered variable
      * @return String; a textual approximation of the original rule
-     * @throws Exception when <cite>tokens</cite> does not match the expected grammar
+     * @throws Exception when tokens does not match the expected grammar
      */
     private String printRule(Object[] tokens, final boolean printValues) throws Exception
     {
@@ -935,17 +935,17 @@ public class TrafCOD extends EventProducer implements TrafficController
         REINIT_TIMER,
         /** Unary minus operator. */
         UNARY_MINUS,
-        /** Less than or equal to (<cite><=</cite>). */
+        /** Less than or equal to (&lt;=). */
         LEEQ,
-        /** Not equal to (<cite><></cite>). */
+        /** Not equal to (!=). */
         NOTEQ,
-        /** Less than (<cite>&lt;</cite>). */
+        /** Less than (&lt;). */
         LE,
-        /** Greater than or equal to (<cite>>=</cite>). */
+        /** Greater than or equal to (&gt;=). */
         GTEQ,
-        /** Greater than (<cite>></cite>). */
+        /** Greater than (&gt;). */
         GT,
-        /** Equals to (<cite>=</cite>). */
+        /** Equals to (=). */
         EQ,
         /** True if following variable has just started. */
         START,
@@ -1244,7 +1244,7 @@ public class TrafCOD extends EventProducer implements TrafficController
     /**
      * Check if a String begins with the text of a supplied String (ignoring case).
      * @param sought String; the sought pattern (NOT a regular expression)
-     * @param supplied String; the String that might start with the <cite>sought</cite> string
+     * @param supplied String; the String that might start with the sought string
      * @return boolean; true if the supplied String begins with the sought String (case insensitive)
      */
     private boolean stringBeginsWithIgnoreCase(final String sought, final String supplied)
@@ -1316,7 +1316,7 @@ public class TrafCOD extends EventProducer implements TrafficController
     /**
      * Test code
      * @param args String; the command line arguments (not used)
-     * @throws Exception
+     * @throws Exception when network cannot be created
      */
     public static void main(final String[] args) throws Exception
     {
@@ -1380,7 +1380,7 @@ public class TrafCOD extends EventProducer implements TrafficController
 
     /**
      * Retrieve the simulator.
-     * @return SimulatorInterface<Time, Duration, OTSSimTimeDouble>
+     * @return SimulatorInterface&lt;Time, Duration, OTSSimTimeDouble&gt;
      */
     protected SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
     {
@@ -1439,7 +1439,7 @@ class NameAndStream
      * Parse a name and stream.
      * @param text String; the name and stream
      * @param locationDescription String; description of the location in the input file
-     * @throws Exception when <cite>text</cite> is not a valid TrafCOD variable name
+     * @throws Exception when text is not a valid TrafCOD variable name
      */
     public NameAndStream(final String text, final String locationDescription) throws Exception
     {
@@ -1781,7 +1781,7 @@ class Variable
      * Make this variable an output variable and set the output value.
      * @param colorValue int; the output value
      * @param trafficLights Set&lt;TrafficLight&gt;; the traffic light that must be update when this output becomes active
-     * @throws Exception when the <cite>colorValue</cite> is invalid
+     * @throws Exception when the colorValue is invalid
      */
     public void setOutput(int colorValue, Set<TrafficLight> trafficLights) throws Exception
     {
