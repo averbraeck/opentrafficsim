@@ -59,7 +59,7 @@ public class RoadSampler extends Sampler implements EventListenerInterface
     /**
      * Constructor which uses the operational plan updates of GTU's as sampling interval.
      * @param simulator simulator
-     * @throw NullPointerException if the simulator is {@code null}
+     * @throws NullPointerException if the simulator is {@code null}
      */
     public RoadSampler(final OTSDEVSSimulatorInterface simulator)
     {
@@ -72,8 +72,8 @@ public class RoadSampler extends Sampler implements EventListenerInterface
      * Constructor which uses the given frequency to determine the sampling interval.
      * @param simulator simulator
      * @param frequency sampling frequency
-     * @throw NullPointerException if an input is {@code null}
-     * @throw IllegalArgumentException if frequency is negative or zero
+     * @throws NullPointerException if an input is {@code null}
+     * @throws IllegalArgumentException if frequency is negative or zero
      */
     public RoadSampler(final OTSDEVSSimulatorInterface simulator, final Frequency frequency)
     {
