@@ -13,6 +13,11 @@
   <name>The code to link ots-road to IMB</name>
   <description>The code to link ots-road to IMB</description>
 
+  <!-- Don't make javadoc crash on the HTML tags for the IMB table such as STYLE  -->
+  <properties>
+    <additionalparam>-Xdoclint:accessibility,reference,syntax</additionalparam>
+  </properties>
+
   <dependencies>
   
     <dependency>
