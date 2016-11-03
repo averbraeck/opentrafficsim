@@ -1,13 +1,17 @@
 package org.opentrafficsim.road.network.lane.object.sensor;
 
+import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Set;
 
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.event.EventType;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -26,7 +30,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafficLightSensor extends AbstractSensor
+public class TrafficLightSensor extends AbstractSensor implements EventListenerInterface
 {
     /** */
     private static final long serialVersionUID = 20161103L;
@@ -38,7 +42,7 @@ public class TrafficLightSensor extends AbstractSensor
     public static final EventType TRAFFIC_LIGHT_SENSOR_OCCUPIED_EVENT = new EventType("TRAFFIC_LIGHT_SENSOR.OCCUPIED");
 
     /**
-     * The sensor event type for pub/sub indicating that the detector becomes unoccupied. <br>
+     * The sensor event type for pub/sub indicating that the detector becomes totally unoccupied. <br>
      * Payload: [String TrafficLightSensorId]
      */
     public static final EventType TRAFFIC_LIGHT_SENSOR_CLEARED_EVENT = new EventType("TRAFFIC_LIGHT_SENSOR.CLEARED");
@@ -62,7 +66,9 @@ public class TrafficLightSensor extends AbstractSensor
     {
         super(id, lane, position, RelativePosition.FRONT, simulator);
         this.downSensor = new DownSensor(id + ".DN", lane, position.plus(length), simulator, this);
-        // TODO detect GTUs that enter or leave the sensor sideways or in the reverse direction
+        // Set up detection of GTUs that enter or leave the sensor sideways
+        lane.addListener(this, Lane.GTU_ADD_EVENT);
+        lane.addListener(this, Lane.GTU_REMOVE_EVENT);
     }
 
     /**
@@ -71,13 +77,10 @@ public class TrafficLightSensor extends AbstractSensor
      */
     final void removeGTU(final LaneBasedGTU gtu)
     {
-        if (this.currentGTUs.remove(gtu))
+        if (this.currentGTUs.remove(gtu) && this.currentGTUs.size() == 0)
         {
-            if (this.currentGTUs.size() == 0)
-            {
-                fireTimedEvent(TrafficLightSensor.TRAFFIC_LIGHT_SENSOR_CLEARED_EVENT, new Object[] { getId() }, getSimulator()
-                        .getSimulatorTime());
-            }
+            fireTimedEvent(TrafficLightSensor.TRAFFIC_LIGHT_SENSOR_CLEARED_EVENT, new Object[] { getId() }, getSimulator()
+                    .getSimulatorTime());
         }
     }
 
@@ -85,14 +88,11 @@ public class TrafficLightSensor extends AbstractSensor
     @Override
     protected final void triggerResponse(final LaneBasedGTU gtu)
     {
-        if (this.currentGTUs.add(gtu))
+        if (this.currentGTUs.add(gtu) && this.currentGTUs.size() == 1)
         {
-            if (this.currentGTUs.size() == 1)
-            {
-                fireTimedEvent(TrafficLightSensor.TRAFFIC_LIGHT_SENSOR_OCCUPIED_EVENT, new Object[] { getId() }, getSimulator()
-                        .getSimulatorTime());
+            fireTimedEvent(TrafficLightSensor.TRAFFIC_LIGHT_SENSOR_OCCUPIED_EVENT, new Object[] { getId() }, getSimulator()
+                    .getSimulatorTime());
 
-            }
         }
     }
 
@@ -103,6 +103,40 @@ public class TrafficLightSensor extends AbstractSensor
     {
         return new TrafficLightSensor(getId(), (Lane) newCSE, getLongitudinalPosition(), this.downSensor
                 .getLongitudinalPosition().minus(this.getLongitudinalPosition()), (OTSDEVSSimulatorInterface) newSimulator);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void notify(final EventInterface event) throws RemoteException
+    {
+        if (Lane.GTU_REMOVE_EVENT.equals(event.getType()))
+        {
+            removeGTU((LaneBasedGTU) ((Object[]) event.getContent())[1]);
+            // If this GTU was registered; it will now be unregistered
+        }
+        else if (Lane.GTU_ADD_EVENT.equals(event.getType()))
+        {
+            // Determine whether the GTU is in our range
+            LaneBasedGTU gtu = (LaneBasedGTU) ((Object[]) event.getContent())[1];
+            try
+            {
+                Length frontPosition = gtu.positions(gtu.getFront()).get(getLane());
+                if (frontPosition.lt(getLongitudinalPosition()))
+                {
+                    return; // This GTU has not yet reached our position
+                }
+                Length rearPosition = gtu.positions(gtu.getRear()).get(getLane());
+                if (rearPosition.gt(this.downSensor.getLongitudinalPosition()))
+                {
+                    return; // This GTU is beyond our position
+                }
+                triggerResponse(gtu); // This GTU does cover some part of this traffic light sensor; register it
+            }
+            catch (GTUException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
     }
 
 }
@@ -149,5 +183,5 @@ class DownSensor extends AbstractSensor
     {
         return null; // Not used; the TrafficLight sensor takes care of cloning the DownSensor
     }
-    
+
 }
