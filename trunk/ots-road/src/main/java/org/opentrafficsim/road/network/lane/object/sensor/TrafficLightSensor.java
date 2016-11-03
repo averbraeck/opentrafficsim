@@ -3,6 +3,8 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 import java.util.HashSet;
 import java.util.Set;
 
+import nl.tudelft.simulation.event.EventType;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -11,8 +13,6 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * This traffic light sensor reports whether it whether any GTUs are within its area. The area is a sub-section of a Lane. This
@@ -26,17 +26,26 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafficLightSensor
+public class TrafficLightSensor extends AbstractSensor
 {
-    /** The sensor that detects when the front of a GTU starts to cover the sensor area. */
-    private final FlankSensor upSensor;
+    /** */
+    private static final long serialVersionUID = 20161103L;
+
+    /**
+     * The sensor event type for pub/sub indicating that the detector becomes occupied. <br>
+     * Payload: [String TrafficLightSensorId]
+     */
+    public static final EventType TRAFFIC_LIGHT_SENSOR_OCCUPIED_EVENT = new EventType("TRAFFIC_LIGHT_SENSOR.OCCUPIED");
+
+    /**
+     * The sensor event type for pub/sub indicating that the detector becomes unoccupied. <br>
+     * Payload: [String TrafficLightSensorId]
+     */
+    public static final EventType TRAFFIC_LIGHT_SENSOR_CLEARED_EVENT = new EventType("TRAFFIC_LIGHT_SENSOR.CLEARED");
 
     /** The sensor that detects when the rear of a GTU leaves the sensor area. */
-    private final FlankSensor downSensor;
+    private final DownSensor downSensor;
 
-    /** The distance between the up and down sensor. */
-    private final Length length;
-    
     /** GTUs detected by the upSensor, but not yet removed by the downSensor. */
     private final Set<LaneBasedGTU> currentGTUs = new HashSet<>();
 
@@ -51,39 +60,49 @@ public class TrafficLightSensor
     public TrafficLightSensor(final String id, final Lane lane, final Length position, final Length length,
             final OTSDEVSSimulatorInterface simulator) throws NetworkException
     {
-        this.upSensor = new FlankSensor(id + ".UP", lane, position, simulator, true, this.currentGTUs);
-        this.downSensor = new FlankSensor(id + ".DN", lane, position.plus(length), simulator, false, this.currentGTUs);
-        this.length = length;
+        super(id, lane, position, RelativePosition.FRONT, simulator);
+        this.downSensor = new DownSensor(id + ".DN", lane, position.plus(length), simulator, this);
+        // TODO detect GTUs that enter or leave the sensor sideways or in the reverse direction
     }
 
-    // TODO figure out how to detect GTUs that leave the sensor sideways
-
     /**
-     * Clone the TrafficLightSensor for e.g., copying a network.
-     * @param newCSE the new cross section element to which the clone belongs
-     * @param newSimulator the new simulator for this network
-     * @param animation whether to (re)create animation or not
-     * @return a clone of this object
-     * @throws NetworkException in case the cloning fails
+     * Remove a GTU from the set.
+     * @param gtu LaneBasedGTU; the GTU that must be removed
      */
-    @SuppressWarnings("checkstyle:designforextension")
-    public TrafficLightSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
-            final boolean animation) throws NetworkException
+    final void removeGTU(final LaneBasedGTU gtu)
     {
-        Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
-        Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
-                "simulator should be a DEVSSimulator");
-        String newId = this.upSensor.getId().substring(0, this.upSensor.getId().length() - 4);
-        return new TrafficLightSensor(newId, (Lane) newCSE, this.upSensor.getLongitudinalPosition(), this.length,
-                (OTSDEVSSimulatorInterface) newSimulator);
+        if (this.currentGTUs.remove(gtu))
+        {
+            if (this.currentGTUs.size() == 0)
+            {
+                fireTimedEvent(TrafficLightSensor.TRAFFIC_LIGHT_SENSOR_CLEARED_EVENT, new Object[] { getId() }, getSimulator()
+                        .getSimulatorTime());
+            }
+        }
     }
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    protected final void triggerResponse(final LaneBasedGTU gtu)
     {
-        return "TrafficLightSensor [upSensor=" + this.upSensor + ", downSensor=" + this.downSensor + ", length=" + this.length
-                + ", currentGTUs=" + this.currentGTUs + "]";
+        if (this.currentGTUs.add(gtu))
+        {
+            if (this.currentGTUs.size() == 1)
+            {
+                fireTimedEvent(TrafficLightSensor.TRAFFIC_LIGHT_SENSOR_OCCUPIED_EVENT, new Object[] { getId() }, getSimulator()
+                        .getSimulatorTime());
+
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final AbstractSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+            final boolean animation) throws NetworkException
+    {
+        return new TrafficLightSensor(getId(), (Lane) newCSE, getLongitudinalPosition(), this.downSensor
+                .getLongitudinalPosition().minus(this.getLongitudinalPosition()), (OTSDEVSSimulatorInterface) newSimulator);
     }
 
 }
@@ -91,74 +110,44 @@ public class TrafficLightSensor
 /**
  * Sub-sensor of a traffic light sensor.
  */
-class FlankSensor extends AbstractSensor
+class DownSensor extends AbstractSensor
 {
     /** */
     private static final long serialVersionUID = 20161027L;
 
-    /** The current set of GTUs covering the sensor. */
-    private final Set<LaneBasedGTU> currentGTUs;
-
-    /** If true; this sensor triggers on the front of a GTU; if false; it triggers on the rear of a GTU. */
-    private final boolean up;
+    /** The traffic light sensor that this FlankSensor is a part of. */
+    private final TrafficLightSensor parent;
 
     /**
-     * Construct a new FlankSensor.
+     * Construct a new DownSensor.
      * @param id String; name of the sensor
      * @param lane Lane; lane on which the sensor is positioned
      * @param position Length; position from the start of the lane
      * @param simulator OTSDEVSSimulatorInterface; the simulator
-     * @param up boolean; if true; this sensor will sense the front of GTUs, if false; this sensor will sens the rear of GTUs
-     * @param currentGTUs Set&lt;LaneBasedGTU&gt;; Set where the current set of GTUs covering the sensor is administrated
+     * @param parent TrafficLightSensor; the traffic light sensor that detects the up flanks and maintains the set of detected
+     *            GTUs
      * @throws NetworkException if the network is inconsistent
      */
-    FlankSensor(final String id, final Lane lane, final Length position, final OTSDEVSSimulatorInterface simulator,
-            final boolean up, final Set<LaneBasedGTU> currentGTUs) throws NetworkException
+    DownSensor(final String id, final Lane lane, final Length position, final OTSDEVSSimulatorInterface simulator,
+            final TrafficLightSensor parent) throws NetworkException
     {
-        super(id, lane, position, up ? RelativePosition.FRONT : RelativePosition.REAR, simulator);
-        this.currentGTUs = currentGTUs;
-        this.up = up;
+        super(id, lane, position, RelativePosition.REAR, simulator);
+        this.parent = parent;
     }
 
     /** {@inheritDoc} */
     @Override
     protected void triggerResponse(final LaneBasedGTU gtu)
     {
-        if (this.up)
-        {
-            if (this.currentGTUs.size() == 0)
-            {
-                // TODO fire a sensor becomes occupied event
-            }
-            this.currentGTUs.add(gtu);
-        }
-        else
-        {
-            this.currentGTUs.remove(gtu);
-            if (this.currentGTUs.size() == 0)
-            {
-                // TODO fire a sensor becomes unoccupied event
-            }
-        }
+        this.parent.removeGTU(gtu);
     }
 
     /** {@inheritDoc} */
     @Override
-    public FlankSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+    public AbstractSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
             final boolean animation) throws NetworkException
     {
-        Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
-        Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
-                "simulator should be a DEVSSimulator");
-        return new FlankSensor(getId(), (Lane) newCSE, getLongitudinalPosition(), (OTSDEVSSimulatorInterface) newSimulator,
-                this.up, new HashSet<LaneBasedGTU>());
+        return null; // Not used; the TrafficLight sensor takes care of cloning the DownSensor
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString()
-    {
-        return "FlankSensor [currentGTUs=" + this.currentGTUs + ", up=" + this.up + "]";
-    }
-
+    
 }
