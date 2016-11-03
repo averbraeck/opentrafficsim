@@ -38,11 +38,11 @@ public class SensorAnimation extends Renderable2D implements Serializable
     private final Color color;
 
     /**
-     * Construct the DefaultCarAnimation for a LaneBlock (road block).
-     * @param source the Car to draw
-     * @param sensorPosition the position of the sensor on the lane to deterine the width of the lane at that point
-     * @param simulator the simulator to schedule on
-     * @param color the display color of the sensor
+     * Construct a SensorAnimation.
+     * @param source Sensor; the Sensor to draw
+     * @param sensorPosition Length; the position of the sensor on the lane to determine the width of the lane at that point
+     * @param simulator OTSSimulatorInterface; the simulator to schedule on
+     * @param color Color; the display color of the sensor
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
