@@ -621,7 +621,7 @@
         <version>${maven.changes.version}</version>
         <configuration>
           <escapeHTML>false</escapeHTML>
-          <xmlPath>../ots-base/src/changes/changes.xml</xmlPath>
+          <xmlPath>../ots/src/changes/changes.xml</xmlPath>
           <issueManagementSystems>
             <issueManagementSystem>jira</issueManagementSystem>
           </issueManagementSystems>
