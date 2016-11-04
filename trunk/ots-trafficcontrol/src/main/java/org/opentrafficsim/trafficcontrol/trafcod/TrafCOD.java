@@ -1350,9 +1350,10 @@ public class TrafCOD extends EventProducer implements TrafficController
                     Lane laneSX =
                             new Lane((CrossSectionLink) linkSX, "laneSX", Length.ZERO, laneWidth, LaneType.ALL,
                                     LongitudinalDirectionality.DIR_PLUS, speedLimit, new OvertakingConditions.None());
-                    TrafficLightSensor d082 =
-                            new TrafficLightSensor("D082", laneSX, new Length(50, LengthUnit.METER), new Length(20,
-                                    LengthUnit.METER), (OTSDEVSSimulatorInterface) theSimulator);
+                    // XXX Adapt to new sensor structure
+                    // TrafficLightSensor d082 =
+                    // new TrafficLightSensor("D082", laneSX, new Length(50, LengthUnit.METER), new Length(20,
+                    // LengthUnit.METER), (OTSDEVSSimulatorInterface) theSimulator);
                     Set<TrafficLight> trafficLights = new HashSet<>();
                     trafficLights.add(new SimpleTrafficLight("TL08", null, null, (OTSDEVSSimulatorInterface) theSimulator));
                     trafficLights.add(new SimpleTrafficLight("TL11", null, null, (OTSDEVSSimulatorInterface) theSimulator));
