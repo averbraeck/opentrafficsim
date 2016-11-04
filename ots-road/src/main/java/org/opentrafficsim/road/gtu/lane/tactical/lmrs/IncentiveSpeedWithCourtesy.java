@@ -6,6 +6,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
@@ -59,7 +60,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
         final LanePerception perception, final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
         final Desire voluntaryDesire) throws ParameterException, OperationalPlanException
     {
-
+        
         // zero if no lane change is possible
         if (perception.getPerceptionCategory(InfrastructurePerception.class).getLegalLaneChangePossibility(
             RelativeLane.CURRENT, LateralDirectionality.LEFT).si == 0

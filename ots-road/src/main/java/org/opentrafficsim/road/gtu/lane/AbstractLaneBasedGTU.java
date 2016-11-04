@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
@@ -250,14 +252,17 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
         for (Lane lane : lanesCopy.keySet())
         {
-            Lane adjacentLane = lane.accessibleAdjacentLanes(laneChangeDirection, getGTUType()).iterator().next();
-            enterLane(adjacentLane, adjacentLane.getLength().multiplyBy(fractionalLanePositions.get(lane)),
-                    lanesCopy.get(lane));
-            lanesToBeRemoved.remove(adjacentLane); // don't remove lanes we might end up
-        }
+            Set<Lane> laneSet = lane.accessibleAdjacentLanes(laneChangeDirection, getGTUType());
+            if (laneSet.size() > 0)
+            {
+                Lane adjacentLane = laneSet.iterator().next();
+                enterLane(adjacentLane, adjacentLane.getLength().multiplyBy(fractionalLanePositions.get(lane)),
+                        lanesCopy.get(lane));
+                lanesToBeRemoved.remove(adjacentLane); // don't remove lanes we might end up
+            }
 
-        // TODO shouldn't this loop over lanesToBeRemoved?
-        for (Lane lane : lanesCopy.keySet())
+        }
+        for (Lane lane : lanesToBeRemoved)
         {
             leaveLane(lane);
         }
@@ -271,7 +276,6 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @param laneChangeDirection direction of lane change
      * @throws GTUException exception
      */
-    // TODO this is a simple fix, should be based on path
     public final void initLaneChange(final LateralDirectionality laneChangeDirection) throws GTUException
     {
         Map<Lane, GTUDirectionality> lanesCopy = new HashMap<>(this.lanesCurrentOperationalPlan);
@@ -280,42 +284,74 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             fractionalLanePositions.put(lane, fractionalPosition(lane, getReference()));
         }
+        int numRegistered = 0;
         for (Lane lane : lanesCopy.keySet())
         {
-            Lane adjacentLane = lane.accessibleAdjacentLanes(laneChangeDirection, getGTUType()).iterator().next();
-            System.out.println("GTU " + getId() + " registered on lane " + adjacentLane);
-            enterLane(adjacentLane, adjacentLane.getLength().multiplyBy(fractionalLanePositions.get(lane)),
-                    lanesCopy.get(lane));
+            Set<Lane> laneSet = lane.accessibleAdjacentLanes(laneChangeDirection, getGTUType());
+            if (laneSet.size() > 0)
+            {
+                numRegistered++;
+                Lane adjacentLane = laneSet.iterator().next();
+                enterLane(adjacentLane, adjacentLane.getLength().multiplyBy(fractionalLanePositions.get(lane)),
+                        lanesCopy.get(lane));
+            }
         }
+        Throw.when(numRegistered == 0, GTUException.class, "Gtu %s starting %s lane change, but no adjacent lane found.",
+                getId(), laneChangeDirection);
     }
 
     /**
      * Unregister on lanes in source lane.
      * @param laneChangeDirection direction of lane change
+     * @param time time to leave lanes
      * @throws GTUException exception
      */
-    // TODO this is a simple fix, should be based on path
-    public final void finalizeLaneChange(final LateralDirectionality laneChangeDirection) throws GTUException
+    public final void finalizeLaneChange(final LateralDirectionality laneChangeDirection, final Time time) throws GTUException
+    {
+        try
+        {
+            getSimulator().scheduleEventAbs(time, this, this, "executeLaneChangeFinalization",
+                    new Object[] { laneChangeDirection });
+        }
+        catch (SimRuntimeException exception)
+        {
+            throw new RuntimeException("Error when finalizing lane change.", exception);
+        }
+    }
+
+    /**
+     * Performs the finalization of a lane change by leaving the from lanes.
+     * @param laneChangeDirection direction of lane change
+     */
+    protected final void executeLaneChangeFinalization(final LateralDirectionality laneChangeDirection)
     {
         Map<Lane, GTUDirectionality> lanesCopy = new HashMap<>(this.lanesCurrentOperationalPlan);
-        Set<Lane> lanesToBeRemoved = new HashSet<>(lanesCopy.keySet());
+        Set<Lane> lanesToBeRemoved = new HashSet<>();
         Map<Lane, Double> fractionalLanePositions = new HashMap<>();
-        for (Lane lane : lanesCopy.keySet())
+        try
         {
-            fractionalLanePositions.put(lane, fractionalPosition(lane, getReference()));
-        }
-        for (Lane lane : lanesCopy.keySet())
-        {
-            Lane adjacentLane = lane.accessibleAdjacentLanes(laneChangeDirection, getGTUType()).iterator().next();
-            if (lanesCopy.keySet().contains(adjacentLane))
+            for (Lane lane : lanesCopy.keySet())
             {
-                lanesToBeRemoved.add(lane);
+
+                fractionalLanePositions.put(lane, fractionalPosition(lane, getReference()));
+            }
+            for (Lane lane : lanesCopy.keySet())
+            {
+                Iterator<Lane> iterator = lane.accessibleAdjacentLanes(laneChangeDirection, getGTUType()).iterator();
+                if (iterator.hasNext() && lanesCopy.keySet().contains(iterator.next()))
+                {
+                    lanesToBeRemoved.add(lane);
+                }
+            }
+            for (Lane lane : lanesToBeRemoved)
+            {
+                leaveLane(lane);
             }
         }
-        for (Lane lane : lanesToBeRemoved)
+        catch (GTUException exception)
         {
-            System.out.println("GTU " + getId() + " unregistered on lane " + lane);
-            leaveLane(lane);
+            // should not happen, lane was obtained from GTU
+            throw new RuntimeException("fractionalPosition on lane not possible", exception);
         }
     }
 
@@ -525,14 +561,13 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             // determine when our FRONT will pass the end of this registered lane in case of driving DIR_PLUS or
             // the start of this registered lane when driving DIR_MINUS.
             // if the time is earlier than the end of the timestep: schedule the enterLane method.
-            // TODO look if more lanes are entered in one timestep, and continue the algorithm with the remainder of the time...
             double frontPosSI = referenceStartSI + sign * getFront().getDx().getSI();
             double nextFrontPosSI = frontPosSI + sign * moveSI;
 
             // LANE WE COME FROM IS IN PLUS DIRECTION
             if (lanesCopy.get(lane).equals(GTUDirectionality.DIR_PLUS))
             {
-                if (frontPosSI <= lane.getLength().si && nextFrontPosSI > lane.getLength().si)
+                while (frontPosSI <= lane.getLength().si && nextFrontPosSI > lane.getLength().si)
                 {
                     Lane nextLane = determineNextLane(lane);
                     GTUDirectionality direction = lane.nextLanes(getGTUType()).get(nextLane);
@@ -565,6 +600,12 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                         throw new NetworkException("scheduleTriggers DIR_PLUS for GTU " + toString() + ", nextLane " + nextLane
                                 + ", direction not DIR_PLUS or DIR_MINUS");
                     }
+
+                    // TODO this does not account for the GTUDirectionality
+                    // next lane
+                    frontPosSI -= lane.getLength().si;
+                    nextFrontPosSI -= lane.getLength().si;
+                    lane = nextLane;
                 }
             }
 

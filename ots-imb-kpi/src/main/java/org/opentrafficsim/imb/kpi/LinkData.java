@@ -120,33 +120,12 @@ public class LinkData implements LinkDataInterface
         if (getClass() != obj.getClass())
             return false;
         LinkData other = (LinkData) obj;
-        if (this.endNode == null)
-        {
-            if (other.endNode != null)
-                return false;
-        }
-        else if (!this.endNode.equals(other.endNode))
-            return false;
-        if (this.length == null)
-        {
-            if (other.length != null)
-                return false;
-        }
-        else if (!this.length.equals(other.length))
-            return false;
         if (this.linkName == null)
         {
             if (other.linkName != null)
                 return false;
         }
         else if (!this.linkName.equals(other.linkName))
-            return false;
-        if (this.startNode == null)
-        {
-            if (other.startNode != null)
-                return false;
-        }
-        else if (!this.startNode.equals(other.startNode))
             return false;
         return true;
     }

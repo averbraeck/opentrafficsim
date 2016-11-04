@@ -7,6 +7,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -34,16 +35,35 @@ public class IncentiveRoute implements MandatoryIncentive
     /** {@inheritDoc} */
     @Override
     public final Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics,
-        final LanePerception perception, final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)
-        throws ParameterException, OperationalPlanException
+            final LanePerception perception, final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)
+            throws ParameterException, OperationalPlanException
     {
-        // desire to leave each lane
-        double dLeft = getDesireToLeave(behavioralCharacteristics, perception, RelativeLane.LEFT);
+        // desire to leave current lane
         double dCurr = getDesireToLeave(behavioralCharacteristics, perception, RelativeLane.CURRENT);
-        double dRigh = getDesireToLeave(behavioralCharacteristics, perception, RelativeLane.RIGHT);
-        // change to desire to change left and right
-        dLeft = dLeft < dCurr ? dCurr : dLeft > dCurr ? -dLeft : 0;
-        dRigh = dRigh < dCurr ? dCurr : dRigh > dCurr ? -dRigh : 0;
+        double dLeft;
+        if (perception.getLaneStructure().getCrossSection().contains(RelativeLane.LEFT))
+        {
+            // desire to leave left lane
+            dLeft = getDesireToLeave(behavioralCharacteristics, perception, RelativeLane.LEFT);
+            // desire to leave from current to left lane
+            dLeft = dLeft < dCurr ? dCurr : dLeft > dCurr ? -dLeft : 0;
+        }
+        else
+        {
+            dLeft = 0;
+        }
+        double dRigh;
+        if (perception.getLaneStructure().getCrossSection().contains(RelativeLane.RIGHT))
+        {
+            // desire to leave right lane
+            dRigh = getDesireToLeave(behavioralCharacteristics, perception, RelativeLane.RIGHT);
+            // desire to leave from current to right lane
+            dRigh = dRigh < dCurr ? dCurr : dRigh > dCurr ? -dRigh : 0;
+        }
+        else
+        {
+            dRigh = 0;
+        }
         return new Desire(dLeft, dRigh);
     }
 
@@ -57,14 +77,14 @@ public class IncentiveRoute implements MandatoryIncentive
      * @throws OperationalPlanException in case of perception exceptions
      */
     private double getDesireToLeave(final BehavioralCharacteristics bc, final LanePerception perception,
-        final RelativeLane lane) throws ParameterException, OperationalPlanException
+            final RelativeLane lane) throws ParameterException, OperationalPlanException
     {
         Speed v = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
         double dOut = Double.NEGATIVE_INFINITY;
         if (perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection().contains(lane))
         {
             for (InfrastructureLaneChangeInfo info : perception.getPerceptionCategory(InfrastructurePerception.class)
-                .getInfrastructureLaneChangeInfo(lane))
+                    .getInfrastructureLaneChangeInfo(lane))
             {
                 double d = getDesireToLeave(bc, info.getRemainingDistance(), info.getRequiredNumberOfLaneChanges(), v);
                 dOut = d > dOut ? d : dOut;
@@ -83,7 +103,7 @@ public class IncentiveRoute implements MandatoryIncentive
      * @throws ParameterException in case of a parameter exception
      */
     private double getDesireToLeave(final BehavioralCharacteristics bc, final Length x, final int n, final Speed v)
-        throws ParameterException
+            throws ParameterException
     {
         double d1 = 1 - x.si / (n * bc.getParameter(ParameterTypes.LOOKAHEAD).si);
         double d2 = 1 - (x.si / v.si) / (n * bc.getParameter(ParameterTypes.T0).si);

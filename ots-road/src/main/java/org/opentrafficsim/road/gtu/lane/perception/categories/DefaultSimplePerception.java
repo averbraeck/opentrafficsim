@@ -641,7 +641,7 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
     /** {@inheritDoc} */
     public final String toString()
     {
-        return "DefaultAlexander perception category";
+        return "DefaultSimplePerception";
     }
 
     /**************************************************************************************************************************/

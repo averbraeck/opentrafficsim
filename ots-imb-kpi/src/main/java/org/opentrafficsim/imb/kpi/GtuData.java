@@ -79,7 +79,6 @@ public class GtuData implements GtuDataInterface
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.gtuType == null) ? 0 : this.gtuType.hashCode());
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
         return result;
     }
@@ -95,13 +94,6 @@ public class GtuData implements GtuDataInterface
         if (getClass() != obj.getClass())
             return false;
         GtuData other = (GtuData) obj;
-        if (this.gtuType == null)
-        {
-            if (other.gtuType != null)
-                return false;
-        }
-        else if (!this.gtuType.equals(other.gtuType))
-            return false;
         if (this.id == null)
         {
             if (other.id != null)

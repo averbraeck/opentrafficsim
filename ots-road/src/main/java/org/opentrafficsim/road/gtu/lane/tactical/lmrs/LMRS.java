@@ -2,15 +2,12 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import java.util.LinkedHashSet;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
@@ -19,8 +16,8 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
+import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
@@ -30,9 +27,10 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil.LmrsStatus;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
+
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Implementation of the LMRS (Lane change Model with Relaxation and Synchronization). See Schakel, W.J., Knoop, V.L., and Van
@@ -59,9 +57,6 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
 
     /** Lane change status. */
     private final LaneChange laneChange = new LaneChange();
-
-    /** LMRS status. */
-    private final LmrsStatus lmrsStatus = new LmrsStatus();
 
     /** Set of mandatory lane change incentives. */
     private final LinkedHashSet<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
@@ -120,6 +115,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
             throws OperationalPlanException, GTUException, NetworkException, ParameterException
     {
+
         // obtain objects to get info
         getPerception().perceive();
         SpeedLimitProspect slp = getPerception().getPerceptionCategory(InfrastructurePerception.class)
@@ -128,8 +124,8 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
         BehavioralCharacteristics bc = getGtu().getBehavioralCharacteristics();
 
         // LMRS
-        SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(getGtu(), startTime, this.lmrsStatus, getCarFollowingModel(),
-                this.laneChange, getPerception(), this.mandatoryIncentives, this.voluntaryIncentives);
+        SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(getGtu(), startTime, getCarFollowingModel(), this.laneChange,
+                getPerception(), this.mandatoryIncentives, this.voluntaryIncentives);
 
         // speed limits
         Speed speed = getGtu().getSpeed();

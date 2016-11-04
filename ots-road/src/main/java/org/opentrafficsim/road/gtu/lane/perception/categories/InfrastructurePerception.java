@@ -16,6 +16,8 @@ import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
@@ -120,6 +122,9 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
                     nextSet.put(laneRecord.getLeft(), info);
                     laneRecord = laneRecord.getLeft();
                 }
+            }
+            for (LaneStructureRecord laneRecord : currentSet.keySet())
+            {
                 while (laneRecord.getRight() != null && !nextSet.containsKey(laneRecord.getRight()))
                 {
                     InfrastructureLaneChangeInfo info =
@@ -188,6 +193,27 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
         {
             return true; // always ok if cut-off
         }
+        try
+        {
+            if (route != null && route.destinationNode().equals(record.getDirection().isPlus()
+                    ? record.getLane().getParentLink().getEndNode() : record.getLane().getParentLink().getStartNode()))
+            {
+                return true;
+            }
+        }
+        catch (NetworkException exception)
+        {
+            throw new RuntimeException("Could not determine destination node.", exception);
+        }
+        for (Sensor s : record.getLane().getSensors())
+        {
+            if (s instanceof SinkSensor)
+            {
+                // TODO should be sink on routes, the above destination node method does not work if the route contains an extra
+                // node
+                return true; // ok towards sink
+            }
+        }
         if (record.getNext().isEmpty())
         {
             return false; // never ok if dead-end
@@ -222,8 +248,8 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
         slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.MAX_VEHICLE_SPEED, getGtu().getMaximumSpeed());
         try
         {
-            slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.FIXED_SIGN, getGtu().getReferencePosition().getLane()
-                .getSpeedLimit(getGtu().getGTUType()));
+            slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.FIXED_SIGN,
+                    getGtu().getReferencePosition().getLane().getSpeedLimit(getGtu().getGTUType()));
         }
         catch (NetworkException exception)
         {
@@ -246,7 +272,7 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
         checkLaneIsInCrossSection(lane);
         LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(lane, getTimestamp());
         Length dist = Length.ZERO;
-        while (record != null && record.getLeft() != null)
+        while (record != null && ((lat.isLeft() && record.getLeft() != null) || (lat.isRight() && record.getRight() != null)))
         {
             dist = record.getStartDistance().plus(record.getLane().getLength());
             // TODO splits

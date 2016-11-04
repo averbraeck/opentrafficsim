@@ -5,6 +5,8 @@ import java.io.Serializable;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.core.network.LateralDirectionality;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * Simplified plan containing only an acceleration value and possible lane change direction.
  * <p>
@@ -34,8 +36,7 @@ public class SimpleOperationalPlan implements Serializable
      */
     public SimpleOperationalPlan(final Acceleration acceleration)
     {
-        this.acceleration = acceleration;
-        this.laneChangeDirection = null;
+        this(acceleration, LateralDirectionality.NONE);
     }
 
     /**
@@ -44,6 +45,8 @@ public class SimpleOperationalPlan implements Serializable
      */
     public SimpleOperationalPlan(final Acceleration acceleration, final LateralDirectionality laneChangeDirection)
     {
+        Throw.whenNull(acceleration, "Acceleration may not be null.");
+        Throw.whenNull(laneChangeDirection, "Lane change direction may not be null.");
         this.acceleration = acceleration;
         this.laneChangeDirection = laneChangeDirection;
     }
@@ -55,9 +58,17 @@ public class SimpleOperationalPlan implements Serializable
     {
         return this.acceleration;
     }
+    
+    /**
+     * @return if lane change.
+     */
+    public final boolean isLaneChange()
+    {
+        return this.laneChangeDirection != LateralDirectionality.NONE;
+    }
 
     /**
-     * @return laneChangeDirection, may be {@code null} if no lane change.
+     * @return laneChangeDirection, may be NONE if no lane change.
      */
     public final LateralDirectionality getLaneChangeDirection()
     {

@@ -56,7 +56,6 @@ public class NodeData implements NodeDataInterface
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.nodeName == null) ? 0 : this.nodeName.hashCode());
-        result = prime * result + ((this.position == null) ? 0 : this.position.hashCode());
         return result;
     }
 
@@ -77,13 +76,6 @@ public class NodeData implements NodeDataInterface
                 return false;
         }
         else if (!this.nodeName.equals(other.nodeName))
-            return false;
-        if (this.position == null)
-        {
-            if (other.position != null)
-                return false;
-        }
-        else if (!this.position.equals(other.position))
             return false;
         return true;
     }

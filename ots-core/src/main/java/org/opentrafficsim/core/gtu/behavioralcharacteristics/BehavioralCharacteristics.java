@@ -41,6 +41,23 @@ public class BehavioralCharacteristics implements Serializable
     private final Map<AbstractParameterType<?>, DoubleScalarInterface> previous = new HashMap<>();
 
     /**
+     * Empty constructor.
+     */
+    public BehavioralCharacteristics()
+    {
+        //
+    }
+    
+    /**
+     * Constructor which creates a copy of the input set.
+     * @param behavioralCharacteristics input set
+     */
+    public BehavioralCharacteristics(final BehavioralCharacteristics behavioralCharacteristics)
+    {
+        setAll(behavioralCharacteristics);
+    }
+    
+    /**
      * Set parameter value of given parameter type.
      * @param parameterType Parameter type.
      * @param value Value.

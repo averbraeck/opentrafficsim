@@ -7,7 +7,6 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
-import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
 /**
@@ -79,7 +78,7 @@ public class HeadwayGTUReal extends AbstractHeadwayGTU
         super(gtu.getId(), gtu.getGTUType(), overlapFront, overlap, overlapRear, true, gtu.getLength(), gtu.getSpeed(), gtu
             .getAcceleration());
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
-        this.behavioralCharacteristics = gtu.getBehavioralCharacteristics();
+        this.behavioralCharacteristics = new BehavioralCharacteristics(gtu.getBehavioralCharacteristics());
         this.speedLimitInfo = getSpeedLimitInfo(gtu);
     }
     
