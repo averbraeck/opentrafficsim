@@ -75,8 +75,6 @@ public class LaneData implements LaneDataInterface
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.laneName == null) ? 0 : this.laneName.hashCode());
-        result = prime * result + ((this.length == null) ? 0 : this.length.hashCode());
-        result = prime * result + ((this.linkData == null) ? 0 : this.linkData.hashCode());
         return result;
     }
 
@@ -97,20 +95,6 @@ public class LaneData implements LaneDataInterface
                 return false;
         }
         else if (!this.laneName.equals(other.laneName))
-            return false;
-        if (this.length == null)
-        {
-            if (other.length != null)
-                return false;
-        }
-        else if (!this.length.equals(other.length))
-            return false;
-        if (this.linkData == null)
-        {
-            if (other.linkData != null)
-                return false;
-        }
-        else if (!this.linkData.equals(other.linkData))
             return false;
         return true;
     }

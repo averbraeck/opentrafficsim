@@ -1,19 +1,14 @@
 package org.opentrafficsim.imb.kpi;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -21,13 +16,9 @@ import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.connector.IMBConnector;
 import org.opentrafficsim.imb.transceiver.Transceiver;
-import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
-import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.Sampler;
-import org.opentrafficsim.kpi.sampling.meta.MetaDataGtuType;
-import org.opentrafficsim.kpi.sampling.meta.MetaDataSet;
 
 import nl.tno.imb.TByteBuffer;
 import nl.tno.imb.TEventEntry;
@@ -49,7 +40,7 @@ public class IMBSampler extends Sampler
     /** The IMBConnector. */
     private final IMBConnector imbConnector;
     
-    /** Tranceiver of statistics. */
+    /** Transceiver of statistics. */
     private ImbKpiTransceiver imbKpiTransceiver;
 
     /** The last received timestamp. */
@@ -144,69 +135,6 @@ public class IMBSampler extends Sampler
 
     }
 
-    /**
-     * @return query covering the entire N201
-     */
-    private Query getQuery()
-    {
-        
-        MetaDataSet metaDataSet = new MetaDataSet();
-        Set<GtuTypeDataInterface> gtuTypes = new HashSet<>();
-        gtuTypes.add(new GtuTypeData("car"));
-        gtuTypes.add(new GtuTypeData("truck"));
-        metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
-        
-        // ===== N201 =====
-        // String[] southBound = new String[] { "L1a", "L2a", "L3a4a", "L5a", "L6a", "L7a", "L8a9a", "L10a11a", "L12a",
-        // "L13a14a",
-        // "L15a16a", "L17a", "L18a19a", "L20a21a", "L22a", "L23a24a", "L25a", "L26a", "L27a", "L28a29a", "L30a", "L31a",
-        // "L32a", "L33a", "L34a", "L35a", "L36a", "L37a", "L38a", "L39a", "L40a", "L41a", "L42a", "L43a", "L44a", "L45a",
-        // "L46a", "L47a48a", "L49a" };
-        // String[] southBound = new String[] { "L2a" };
-        // String[] northBound = new String[] { "L49b", "L48b47b", "L46b", "L45b", "L44b", "L43b", "L42b", "L41b", "L40b", "L39b",
-        //         "L38b", "L37b", "L36b", "L35b", "L34b", "L33b", "L32b", "L31b", "L30b", "L29b28b", "L27b", "L26b", "L25b",
-        //         "L24b23b", "L22b21b", "L20b", "L19b18b", "L17b16b", "L15b", "L14b13b", "L12b", "L11b", "L10b", "L9b8b", "L7b",
-        //         "L6b", "L5b", "L4b3b", "L2b", "L1b" };
-        // Query query = new Query(this, "N201 both directions", metaDataSet, new Frequency(2.0, FrequencyUnit.PER_MINUTE));
-        // addSpaceTimeRegions(query, northBound);
-        // addSpaceTimeRegions(query, southBound);
-
-        // ===== A58 =====
-        String[] eastBound = new String[] { "L1EB", "L2EB", "L4EB", "L6EB", "L7EB", "L10EB", "L11EB", "L13EB", "L14EB", "L16EB",
-                "L17EB", "L19EB", "L20EB", "L22EB", "L23EB", "L25EB", "L26EB", "L28EB", "L29EB", "L31EB", "L32EB", "L33EB",
-                "L35EB", "L36EB" };
-        // String[] westBound = new String[] { "L1WB", "L2WB", "L5WB", "L6WB", "L8WB", "L9WB", "L11WB", "L12WB", "L14WB", "L15WB",
-        //         "L17WB", "L18WB", "L20WB", "L21WB", "L22WB", "L24WB", "L25WB", "L27WB", "L28WB", "L30WB", "L31WB", "L33WB",
-        //         "L34WB", "L36WB" };
-        Query query = new Query(this, "A58 both directions", metaDataSet, new Frequency(2.0, FrequencyUnit.PER_MINUTE));
-        addSpaceTimeRegions(query, eastBound);
-        // addSpaceTimeRegions(query, westBound);
-        
-        try
-        {
-            this.imbKpiTransceiver = new ImbKpiTransceiver(this.imbConnector, Time.ZERO, "A58 network", query,  new Duration(30, TimeUnit.SECOND));
-        }
-        catch (IMBException exception)
-        {
-            throw new RuntimeException("Cannot start ImbKpiTransceiver.", exception);
-        }
-        
-        return query;
-    }
-
-    /**
-     * @param query query
-     * @param linksIds link names
-     */
-    private void addSpaceTimeRegions(final Query query, final String[] linksIds)
-    {
-        for (String link : linksIds)
-        {
-            query.addSpaceTimeRegionLink(this.links.get(link), KpiGtuDirectionality.DIR_PLUS, new Length(0.0, LengthUnit.SI),
-                    this.links.get(link).getLength(), new Time(0.0, TimeUnit.SI), new Time(1.0, TimeUnit.HOUR));
-        }
-    }
-
     /** {@inheritDoc} */
     @Override
     public final Time now()
@@ -287,8 +215,13 @@ public class IMBSampler extends Sampler
         this.lastLanes.put(gtuId, kpiLaneDirection);
     }
 
-    /** trigger query only once. */
-    private boolean queryObtained = false;
+    /**
+     * @param imbKpiTransceiver set imbKpiTransceiver.
+     */
+    public void setImbKpiTransceiver(ImbKpiTransceiver imbKpiTransceiver)
+    {
+        this.imbKpiTransceiver = imbKpiTransceiver;
+    }
 
     /**
      * Updates clock and triggers timed events.
@@ -296,16 +229,14 @@ public class IMBSampler extends Sampler
      */
     protected void updateClock(double timeStamp)
     {
-        if (!this.queryObtained)
-        {
-            getQuery();
-            this.queryObtained = true;
-        }
         if (this.lastTimestamp.si >= timeStamp && this.lastTimestamp.si > 0)
         {
             return;
         }
-        this.imbKpiTransceiver.notifyTime(now());
+        if (this.imbKpiTransceiver != null)
+        {
+            this.imbKpiTransceiver.notifyTime(now());
+        }
         this.lastTimestamp = new Time(timeStamp, TimeUnit.SI);
         Iterator<KpiLaneDirection> iterator = this.startRecordingMap.keySet().iterator();
         while (iterator.hasNext())
@@ -470,6 +401,7 @@ public class IMBSampler extends Sampler
                     double timeStamp = imbPayload.readDouble();
                     String networkId = imbPayload.readString();
                     String nodeId = imbPayload.readString();
+                    System.out.println("Node " + nodeId + " received.");
                     double x = imbPayload.readDouble();
                     double y = imbPayload.readDouble();
                     double z = imbPayload.readDouble();
@@ -545,6 +477,7 @@ public class IMBSampler extends Sampler
                     double timeStamp = imbPayload.readDouble();
                     String networkId = imbPayload.readString();
                     String linkId = imbPayload.readString();
+                    System.out.println("Link " + linkId + " received.");
                     String startNodeId = imbPayload.readString();
                     String endNodeId = imbPayload.readString();
                     int dlNumPoints = imbPayload.readInt32();
@@ -635,8 +568,9 @@ public class IMBSampler extends Sampler
                     double timeStamp = imbPayload.readDouble();
                     String networkId = imbPayload.readString();
                     String linkId = imbPayload.readString();
-                    // TODO laneId should be unique on its own
+                    // TODO laneId should be unique on its own, or keep network, link and lane id separate
                     String laneId = linkId + "." + imbPayload.readString();
+                    System.out.println("Lane " + laneId + " received.");
                     int laneNumber = imbPayload.readInt32();
                     int dlNumPoints = imbPayload.readInt32();
                     double len = 0.0;

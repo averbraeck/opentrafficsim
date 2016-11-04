@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.management.RuntimeErrorException;
+import java.util.Map;
+import java.util.Set;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
@@ -29,6 +29,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.language.Throw;
@@ -356,13 +357,15 @@ public final class LaneOperationalPlanBuilder
             final Speed startSpeed, final Acceleration acceleration, final Duration timeStep, final LaneChange laneChange)
             throws OperationalPlanException, OTSGeometryException
     {
+        // on first call during lane change, use laneChangeDirectionality as laneChange.getDirection() is probably NONE
+        LateralDirectionality direction = laneChange.isChangingLane() ? laneChange.getDirection() : laneChangeDirectionality;
         Length fromLaneDistance =
                 new Length(startSpeed.si * timeStep.si + .5 * acceleration.si * timeStep.si * timeStep.si, LengthUnit.SI);
         // TODO also for other driving directions, additional arguments in projectFractional?
-        double fractionalLinkPositionFirst = fromLanes.get(0).getCenterLine().projectFractional(
+        double firstFractionalPosition = fromLanes.get(0).getCenterLine().projectFractional(
                 fromLanes.get(0).getParentLink().getStartNode().getDirection(),
                 fromLanes.get(0).getParentLink().getEndNode().getDirection(), startPosition.x, startPosition.y);
-        Length fromLaneFirstPosition = fromLanes.get(0).position(fractionalLinkPositionFirst);
+        Length fromLaneFirstPosition = fromLanes.get(0).position(firstFractionalPosition);
         Length cumulDistance = fromLanes.get(0).getLength().minus(fromLaneFirstPosition);
         int lastLaneIndex = 0;
         while (cumulDistance.lt(fromLaneDistance))
@@ -370,16 +373,15 @@ public final class LaneOperationalPlanBuilder
             lastLaneIndex++;
             cumulDistance = cumulDistance.plus(fromLanes.get(lastLaneIndex).getLength());
         }
-        double fractionalLinkPositionLast =
-                fromLanes.get(lastLaneIndex).getLength().minus(cumulDistance.minus(fromLaneDistance)).si
-                        / fromLanes.get(lastLaneIndex).getLength().si;
+        double lastFractionalPosition = fromLanes.get(lastLaneIndex).getLength().minus(cumulDistance.minus(fromLaneDistance)).si
+                / fromLanes.get(lastLaneIndex).getLength().si;
 
         List<Lane> toLanes = new ArrayList<>();
         for (Lane lane : fromLanes)
         {
-            if (!lane.accessibleAdjacentLanes(laneChangeDirectionality, gtu.getGTUType()).isEmpty())
+            if (!lane.accessibleAdjacentLanes(direction, gtu.getGTUType()).isEmpty())
             {
-                toLanes.add(lane.accessibleAdjacentLanes(laneChangeDirectionality, gtu.getGTUType()).iterator().next());
+                toLanes.add(lane.accessibleAdjacentLanes(direction, gtu.getGTUType()).iterator().next());
             }
             else
             {
@@ -388,16 +390,16 @@ public final class LaneOperationalPlanBuilder
             }
         }
 
-        Length toLaneFirstPosition = toLanes.get(0).position(fractionalLinkPositionFirst);
-        Length fromLaneLastPosition = fromLanes.get(lastLaneIndex).position(fractionalLinkPositionLast);
-        Length toLaneLastPosition = toLanes.get(lastLaneIndex).position(fractionalLinkPositionLast);
+        Length toLaneFirstPosition = toLanes.get(0).position(firstFractionalPosition);
+        Length fromLaneLastPosition = fromLanes.get(lastLaneIndex).position(lastFractionalPosition);
+        Length toLaneLastPosition = toLanes.get(lastLaneIndex).position(lastFractionalPosition);
 
         DirectedPoint fromFirst = fromLanes.get(0).getCenterLine().getLocation(fromLaneFirstPosition);
         DirectedPoint toFirst = toLanes.get(0).getCenterLine().getLocation(toLaneFirstPosition);
         DirectedPoint fromLast = fromLanes.get(lastLaneIndex).getCenterLine().getLocation(fromLaneLastPosition);
         DirectedPoint toLast = toLanes.get(lastLaneIndex).getCenterLine().getLocation(toLaneLastPosition);
 
-        double lastFraction = laneChange.updateAndGetFraction(timeStep, laneChangeDirectionality, gtu);
+        double lastFraction = laneChange.updateAndGetFraction(timeStep, direction, gtu);
         OTSPoint3D lastPoint = new OTSPoint3D(fromLast.x * (1 - lastFraction) + toLast.x * lastFraction,
                 fromLast.y * (1 - lastFraction) + toLast.y * lastFraction,
                 fromLast.z * (1 - lastFraction) + toLast.z * lastFraction);
@@ -405,20 +407,25 @@ public final class LaneOperationalPlanBuilder
         OTSLine3D path = new OTSLine3D(firstPoint, lastPoint);
 
         double t = timeStep.si;
-        Acceleration a = new Acceleration((2.0 * (path.getLength().si - startSpeed.si * t)) / (t * t), AccelerationUnit.SI);
-        Speed endSpeed = startSpeed.plus(a.multiplyBy(timeStep));
+        // why was this used?
+        // Acceleration a = new Acceleration((2.0 * (path.getLength().si - startSpeed.si * t)) / (t * t), AccelerationUnit.SI);
+        Speed endSpeed = startSpeed.plus(acceleration.multiplyBy(timeStep));
         ArrayList<OperationalPlan.Segment> segmentList = new ArrayList<>();
         if (endSpeed.lt(Speed.ZERO))
         {
             Duration brakingTime = startSpeed.divideBy(acceleration.multiplyBy(-1.0));
-            segmentList.add(new OperationalPlan.AccelerationSegment(brakingTime, acceleration));
+            if (brakingTime.si > 0.0)
+            {
+                segmentList.add(new OperationalPlan.AccelerationSegment(brakingTime, acceleration));
+            }
             segmentList.add(new OperationalPlan.SpeedSegment(timeStep.minus(brakingTime)));
         }
         else
         {
             segmentList.add(new OperationalPlan.AccelerationSegment(timeStep, acceleration));
         }
-        return new LaneBasedOperationalPlan(gtu, path, startTime, startSpeed, segmentList, fromLanes);
+        return new LaneBasedOperationalPlan(gtu, path, startTime, startSpeed, segmentList, fromLanes, toLanes, lastLaneIndex,
+                lastFractionalPosition);
     }
 
     /**
@@ -476,15 +483,51 @@ public final class LaneOperationalPlanBuilder
         }
 
         /**
-         * Target lane of lane change.
+         * Return lateral lane change direction.
+         * @return LateralDirectionality; lateral lane change direction
+         */
+        public final LateralDirectionality getDirection()
+        {
+            return this.laneChangeDirectionality;
+        }
+
+        /**
+         * @param laneChangeDirectionality set laneChangeDirectionality.
+         */
+        public final void setLaneChangeDirectionality(final LateralDirectionality laneChangeDirectionality)
+        {
+            this.laneChangeDirectionality = laneChangeDirectionality;
+        }
+
+        /**
+         * Second lane of lane change relative to the reference lane. Note that the reference lane may either be the source or
+         * the target lane. Thus, the second lane during a lane change may either be the left or right lane, regardless of the
+         * lane change direction.
+         * @param gtu LaneBasedGTU; gtu
          * @return target lane of lane change
          * @throws OperationalPlanException If no lane change is being performed.
          */
-        public final RelativeLane getTargetLane() throws OperationalPlanException
+        public final RelativeLane getSecondLane(final LaneBasedGTU gtu) throws OperationalPlanException
         {
             Throw.when(!isChangingLane(), OperationalPlanException.class,
                     "Target lane is requested, but no lane change is being performed.");
-            return isChangingLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT;
+            Map<Lane, Length> map;
+            DirectedLanePosition dlp;
+            try
+            {
+                map = gtu.positions(gtu.getReference());
+                dlp = gtu.getReferencePosition();
+            }
+            catch (GTUException exception)
+            {
+                throw new OperationalPlanException("Second lane of lane change could not be determined.", exception);
+            }
+            Set<Lane> accessibleLanes = dlp.getLane().accessibleAdjacentLanes(this.laneChangeDirectionality, gtu.getGTUType());
+            if (!accessibleLanes.isEmpty() && map.containsKey(accessibleLanes.iterator().next()))
+            {
+                return isChangingLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT;
+            }
+            return isChangingLeft() ? RelativeLane.RIGHT : RelativeLane.LEFT;
         }
 
         /**
@@ -531,16 +574,14 @@ public final class LaneOperationalPlanBuilder
             if (fraction >= 1.0)
             {
                 // TODO this elsewhere based on path
-                if (fraction >= 1.0)
+                try
                 {
-                    try
-                    {
-                        ((AbstractLaneBasedGTU) gtu).finalizeLaneChange(laneChangeDirection);
-                    }
-                    catch (GTUException exception)
-                    {
-                        throw new RuntimeException("Error during lane change finalization.", exception);
-                    }
+                    ((AbstractLaneBasedGTU) gtu).finalizeLaneChange(laneChangeDirection,
+                            gtu.getSimulator().getSimulatorTime().getTime().plus(timeStep));
+                }
+                catch (GTUException exception)
+                {
+                    throw new RuntimeException("Error during lane change finalization.", exception);
                 }
                 // limit by 1 and finalize lane change
                 this.laneChangeDirectionality = null;

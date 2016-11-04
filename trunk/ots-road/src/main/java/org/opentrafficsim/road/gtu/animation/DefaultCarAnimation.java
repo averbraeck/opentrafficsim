@@ -91,12 +91,14 @@ public class DefaultCarAnimation extends Renderable2D implements Serializable
         {
             try
             {
-                destroy();
+                //destroy();
+                return;
             }
             catch (Exception e)
             {
-                System.err.println("GTU: " + car.toString());
-                e.printStackTrace();
+                System.err.println("Problem with GTU.destroy(): " + car.toString());
+                //e.printStackTrace();
+                return;
             }
         }
 

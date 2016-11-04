@@ -115,7 +115,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
 
             // TODO possibly optimize by using a 'singleton' lane structure source, per GTUType
             // TODO possibly build and destroy at edges only
-            this.updateTime = getGtu().getSimulator().getSimulatorTime().getTime();
+            this.updateTime = getGtu().getSimulator().getSimulatorTime().getTime(); 
         }
         return this.laneStructure;
     }
@@ -366,7 +366,6 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
                         LaneStructureRecord recordAdjacent =
                                 constructRecord(laneAdjacent, laneRecord.getDirection(), adjacentStart, relativeLane);
                         expandSet.add(recordAdjacent);
-                        recordSet.add(recordAdjacent);
                         if (latDirection.isLeft())
                         {
                             if (laneAdjacent.accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType)
@@ -410,6 +409,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
                 buildUpstreamRecursive(expandSet, gtuType, down, startDistance.plus(upMerge), upMerge);
                 // System.out.println("<< MERGE");
             }
+            recordSet.addAll(expandSet);
         }
         return recordSet;
     }
@@ -447,7 +447,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
                     }
                     laneSets.get(prevLink).add(prevLane);
                     RelativeLane relativeLane = this.relativeLaneMap.get(laneRecord);
-                    Length start = laneRecord.getStartDistance().minus(laneRecord.getLane().getLength());
+                    Length start = laneRecord.getStartDistance().minus(prevLane.getLength());
                     minStart.put(prevLink, Length.min(minStart.get(prevLink), start));
                     LaneStructureRecord prevRecord = constructRecord(prevLane,
                             laneRecord.getLane().prevLanes(gtuType).get(prevLane), start, relativeLane);

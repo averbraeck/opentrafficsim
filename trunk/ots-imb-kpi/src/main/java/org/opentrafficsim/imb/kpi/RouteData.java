@@ -66,9 +66,7 @@ public class RouteData implements RouteDataInterface
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.endNode == null) ? 0 : this.endNode.hashCode());
         result = prime * result + ((this.routeName == null) ? 0 : this.routeName.hashCode());
-        result = prime * result + ((this.startNode == null) ? 0 : this.startNode.hashCode());
         return result;
     }
 
@@ -83,26 +81,12 @@ public class RouteData implements RouteDataInterface
         if (getClass() != obj.getClass())
             return false;
         RouteData other = (RouteData) obj;
-        if (this.endNode == null)
-        {
-            if (other.endNode != null)
-                return false;
-        }
-        else if (!this.endNode.equals(other.endNode))
-            return false;
         if (this.routeName == null)
         {
             if (other.routeName != null)
                 return false;
         }
         else if (!this.routeName.equals(other.routeName))
-            return false;
-        if (this.startNode == null)
-        {
-            if (other.startNode != null)
-                return false;
-        }
-        else if (!this.startNode.equals(other.startNode))
             return false;
         return true;
     }

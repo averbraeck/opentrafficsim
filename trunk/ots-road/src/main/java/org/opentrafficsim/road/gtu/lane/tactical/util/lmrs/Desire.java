@@ -57,11 +57,11 @@ public class Desire implements Serializable
      */
     public final double get(final LateralDirectionality dir)
     {
-        if (dir == LateralDirectionality.LEFT)
+        if (dir.equals(LateralDirectionality.LEFT))
         {
             return this.left;
         }
-        if (dir == LateralDirectionality.RIGHT)
+        if (dir.equals(LateralDirectionality.RIGHT))
         {
             return this.right;
         }

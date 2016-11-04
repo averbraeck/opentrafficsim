@@ -432,7 +432,7 @@ public class Lane extends CrossSectionElement implements Serializable
         }
 
         Set<Lane> lanes = new LinkedHashSet<>();
-        if (direction == LateralDirectionality.LEFT)
+        if (direction.equals(LateralDirectionality.LEFT))
         {
             lanes.addAll(this.leftNeighbors.get(gtuType));
         }

@@ -3,9 +3,8 @@ package org.opentrafficsim.road.gtu.lane.plan.operational;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -13,6 +12,8 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
+
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * An operational plan with some extra information about the lanes and lane changes so this information does not have to be
@@ -34,9 +35,13 @@ public class LaneBasedOperationalPlan extends OperationalPlan
 
     /** The list of lanes that are part of this plan; these will be deregistered in case of lane change. */
     private final List<Lane> referenceLaneList;
-    
+
     /** The list of new lanes to which the GTU is driving, parallel to the referenceLaneList. */
-    private final List<Lane> targetLaneList;
+    private final List<Lane> secondLaneList;
+
+    private final int lastLaneIndex;
+
+    private final double lastFractionalPosition;
 
     /**
      * Construct an operational plan without a lane change.
@@ -50,11 +55,39 @@ public class LaneBasedOperationalPlan extends OperationalPlan
      * @throws OperationalPlanException when the path is too short for the operation
      */
     public LaneBasedOperationalPlan(final LaneBasedGTU gtu, final OTSLine3D path, final Time startTime, final Speed startSpeed,
-        List<Segment> operationalPlanSegmentList, final List<Lane> referenceLaneList) throws OperationalPlanException
+            final List<Segment> operationalPlanSegmentList, final List<Lane> referenceLaneList) throws OperationalPlanException
     {
         super(gtu, path, startTime, startSpeed, operationalPlanSegmentList);
         this.referenceLaneList = referenceLaneList;
-        this.targetLaneList = null;
+        this.secondLaneList = null;
+        this.lastLaneIndex = 0;
+        this.lastFractionalPosition = 0;
+    }
+
+    /**
+     * Construct an operational plan with a lane change.
+     * @param gtu the GTU for debugging purposes
+     * @param path the path to follow from a certain time till a certain time. The path should have <i>at least</i> the length
+     * @param startTime the absolute start time when we start executing the path
+     * @param startSpeed the GTU speed when we start executing the path
+     * @param operationalPlanSegmentList the segments that make up the path with an acceleration, constant speed or deceleration
+     *            profile
+     * @param fromLaneList the list of lanes that the gtu comes from
+     * @param toLaneList the list of lanes that the gtu goes towards
+     * @param lastLaneIndex index in lane arrays of last position in plan
+     * @param lastFractionalPosition fractional position of last postition in plan
+     * @throws OperationalPlanException when the path is too short for the operation
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    public LaneBasedOperationalPlan(final LaneBasedGTU gtu, final OTSLine3D path, final Time startTime, final Speed startSpeed,
+            final List<Segment> operationalPlanSegmentList, final List<Lane> fromLaneList, final List<Lane> toLaneList,
+            final int lastLaneIndex, final double lastFractionalPosition) throws OperationalPlanException
+    {
+        super(gtu, path, startTime, startSpeed, operationalPlanSegmentList);
+        this.referenceLaneList = fromLaneList;
+        this.secondLaneList = toLaneList;
+        this.lastLaneIndex = lastLaneIndex;
+        this.lastFractionalPosition = lastFractionalPosition;
     }
 
     /**
@@ -66,22 +99,24 @@ public class LaneBasedOperationalPlan extends OperationalPlan
      * @param referenceLane the reference lane where the halting takes place
      * @throws OperationalPlanException when construction of a waiting path fails
      */
-    public LaneBasedOperationalPlan(final LaneBasedGTU gtu, final DirectedPoint waitPoint, final Time startTime, final Duration duration,
-        final Lane referenceLane) throws OperationalPlanException
+    public LaneBasedOperationalPlan(final LaneBasedGTU gtu, final DirectedPoint waitPoint, final Time startTime,
+            final Duration duration, final Lane referenceLane) throws OperationalPlanException
     {
         super(gtu, waitPoint, startTime, duration);
         this.referenceLaneList = new ArrayList<>();
         this.referenceLaneList.add(referenceLane);
-        this.targetLaneList = null;
+        this.secondLaneList = null;
+        this.lastLaneIndex = 0;
+        this.lastFractionalPosition = 0;
     }
 
     /**
-     * Check if we make a lane change.
-     * @return whether this maneuver involves a lane change.
+     * Check if we deviate from the center line.
+     * @return whether this maneuver involves deviation from the center line.
      */
-    public boolean isLaneChange()
+    public final boolean isDeviative()
     {
-        return this.targetLaneList != null;
+        return this.secondLaneList != null;
     }
 
     /**
@@ -101,18 +136,34 @@ public class LaneBasedOperationalPlan extends OperationalPlan
     }
 
     /**
-     * @return targetLaneList
+     * @return secondLaneList
      */
-    public final List<Lane> getTargetLaneList()
+    public final List<Lane> getSecondLaneList()
     {
-        return this.targetLaneList;
+        return this.secondLaneList;
+    }
+    
+    /**
+     * @return lastLaneIndex.
+     */
+    public final int getLastLaneIndex()
+    {
+        return this.lastLaneIndex;
+    }
+
+    /**
+     * @return lastFractionalPosition.
+     */
+    public final double getLastFractionalPosition()
+    {
+        return this.lastFractionalPosition;
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "LaneBasedOperationalPlan [referenceLaneList=" + this.referenceLaneList + ", targetLaneList="
-                + this.targetLaneList + "]";
+        return "LaneBasedOperationalPlan [referenceLaneList=" + this.referenceLaneList + ", secondLaneList="
+                + this.secondLaneList + "]";
     }
 }

@@ -296,7 +296,7 @@ public class ImbKpiTransceiver implements Serializable
     // TODO implement DELETE message
 
     /**
-     * Construct a new StatisticsGTULaneTransceiver.
+     * Construct a new ImbKpiTransceiver.
      * @param connector Connector; the IMB connector
      * @param time Time; time of creation
      * @param networkId String; the network id
@@ -351,14 +351,14 @@ public class ImbKpiTransceiver implements Serializable
      */
     public void sendStatisticsUpdate() throws IMBException
     {
+        Length tdist = this.totalTravelDistance.getValue(this.query, this.updateTime);
+        Duration ttt = this.totalTravelTime.getValue(this.query, this.updateTime);
+        Speed ms = this.meanSpeed.getValue(this.query, this.updateTime);
+        Duration mtt = this.meanTravelTime.getValue(this.query, this.updateTime);
+        Length mtl = this.meanTripLength.getValue(this.query, this.updateTime);
+        Duration tdel = this.totalDelay.getValue(this.query, this.updateTime);
+        Dimensionless nos = this.totalNumberOfStops.getValue(this.query, this.updateTime);
         double time = this.updateTime.si;
-        Length tdist = this.totalTravelDistance.getValue(this.query, new Time(time, TimeUnit.SI));
-        Duration ttt = this.totalTravelTime.getValue(this.query, new Time(time, TimeUnit.SI));
-        Speed ms = this.meanSpeed.getValue(this.query, new Time(time, TimeUnit.SI));
-        Duration mtt = this.meanTravelTime.getValue(this.query, new Time(time, TimeUnit.SI));
-        Length mtl = this.meanTripLength.getValue(this.query, new Time(time, TimeUnit.SI));
-        Duration tdel = this.totalDelay.getValue(this.query, new Time(time, TimeUnit.SI));
-        Dimensionless nos = this.totalNumberOfStops.getValue(this.query, new Time(time, TimeUnit.SI));
         System.out.println("===== @time " + time + " s =====");
         System.out.println("Total distance " + tdist);
         System.out.println("Total travel time " + ttt);

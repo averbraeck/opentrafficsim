@@ -615,8 +615,10 @@ public abstract class ContourPlot extends AbstractOTSPlot
         }
         else
         {
+            // move events can be given for adjacent lanes during lane changes
+            return; 
             // error -- silently ignore for now. Graphs should not cause errors.
-            System.err.println("ContouryPlot: GTU " + gtu.getId() + " is not registered on lane " + lane.toString());
+            //System.err.println("ContourPlot: GTU " + gtu.getId() + " is not registered on lane " + lane.toString());
         }
 
         try
