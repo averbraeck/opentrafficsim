@@ -11,6 +11,7 @@ import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 
 import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -30,6 +31,9 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
     /** */
     private static final long serialVersionUID = 20160400L;
 
+    /** the id. */
+    private final String id;
+
     /** The top-level 2D outline of the object. */
     private final OTSLine3D geometry;
 
@@ -37,22 +41,30 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
     private final Length height;
 
     /**
+     * @param id the id
      * @param geometry the top-level 2D outline of the object
      * @param height the height of the object
      */
-    public StaticObject(final OTSLine3D geometry, final Length height)
+    public StaticObject(final String id, final OTSLine3D geometry, final Length height)
     {
         super();
+
+        Throw.whenNull(id, "object id cannot be null");
+        Throw.whenNull(geometry, "geometry cannot be null");
+        Throw.whenNull(height, "geometry cannot be null");
+
+        this.id = id;
         this.geometry = geometry;
         this.height = height;
     }
 
     /**
+     * @param id the id
      * @param geometry the top-level 2D outline of the object
      */
-    public StaticObject(final OTSLine3D geometry)
+    public StaticObject(final String id, final OTSLine3D geometry)
     {
-        this(geometry, Length.ZERO);
+        this(id, geometry, Length.ZERO);
     }
 
     /** {@inheritDoc} */
@@ -74,6 +86,13 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
     public final DirectedPoint getLocation()
     {
         return this.geometry.getLocation();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String getId()
+    {
+        return this.id;
     }
 
     /** {@inheritDoc} */
@@ -103,7 +122,7 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
     public StaticObject clone(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
             throws NetworkException
     {
-        return new StaticObject(this.geometry, this.height);
+        return new StaticObject(this.id, this.geometry, this.height);
     }
 
 }

@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.lane.perception.headway;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 
 import nl.tudelft.simulation.language.Throw;
@@ -24,7 +24,7 @@ public class HeadwayTrafficLight extends AbstractHeadway
     private static final long serialVersionUID = 20160410L;
 
     /** the traffic light object for further observation, can not be null. */
-    private final SimpleTrafficLight trafficLight;
+    private final TrafficLight trafficLight;
 
     /**
      * Construct a new Headway information object, for a traffic light ahead of us (or behind us, although that does not seem
@@ -33,7 +33,7 @@ public class HeadwayTrafficLight extends AbstractHeadway
      * @param distance the distance to the traffic light, distance cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public HeadwayTrafficLight(final SimpleTrafficLight trafficLight, final Length distance) throws GTUException
+    public HeadwayTrafficLight(final TrafficLight trafficLight, final Length distance) throws GTUException
     {
         super(ObjectType.TRAFFICLIGHT, id(trafficLight), distance);
         this.trafficLight = trafficLight;
@@ -45,10 +45,10 @@ public class HeadwayTrafficLight extends AbstractHeadway
      * @return he id of the traffic light.
      * @throws GTUException when the trafficLight object is null
      */
-    private static String id(final SimpleTrafficLight trafficLight) throws GTUException
+    private static String id(final TrafficLight trafficLight) throws GTUException
     {
         Throw.when(trafficLight == null, GTUException.class, "Headway constructor: trafficLight == null");
-        return trafficLight.toString();
+        return trafficLight.getId();
     }
 
     /**

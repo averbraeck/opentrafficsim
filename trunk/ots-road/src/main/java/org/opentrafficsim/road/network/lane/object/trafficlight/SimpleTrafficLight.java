@@ -33,9 +33,6 @@ public class SimpleTrafficLight extends AbstractLaneBasedObject implements Traff
     /** The color of the traffic light. */
     private TrafficLightColor trafficLightColor;
 
-    /** Id of the traffic light. */
-    private final String id;
-
     /**
      * @param id traffic light id
      * @param lane lane where the traffic light is located
@@ -46,9 +43,8 @@ public class SimpleTrafficLight extends AbstractLaneBasedObject implements Traff
     public SimpleTrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
             final OTSDEVSSimulatorInterface simulator) throws NetworkException
     {
-        super(lane, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition));
+        super(id, lane, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition));
         Throw.whenNull(id, "Id may not be null");
-        this.id = id;
         this.trafficLightColor = TrafficLightColor.RED;
 
         try
@@ -85,13 +81,6 @@ public class SimpleTrafficLight extends AbstractLaneBasedObject implements Traff
     public String toString()
     {
         return "SimpleTrafficLight [trafficLightColor=" + this.trafficLightColor + "]";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getId()
-    {
-        return this.id;
     }
 
     /** {@inheritDoc} */

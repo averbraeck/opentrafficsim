@@ -70,8 +70,8 @@ public class TrafficLightAnimation extends Renderable2D implements Serializable
                 fillColor = Color.black;
                 break;
         }
-
-        PaintPolygons.paintMultiPolygon(graphics, fillColor, trafficLight.getLocation(), trafficLight.getGeometry(), true);
+        
+        PaintPolygons.paintMultiPolygon(graphics, fillColor, trafficLight.getLocation(), trafficLight.getGeometry(), false);
     }
 
     /** {@inheritDoc} */

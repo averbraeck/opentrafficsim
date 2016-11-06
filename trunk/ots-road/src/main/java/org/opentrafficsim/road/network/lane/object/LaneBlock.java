@@ -24,27 +24,30 @@ public class LaneBlock extends AbstractLaneBasedObject
     private static final long serialVersionUID = 20150724L;
 
     /**
+     * @param id the id
      * @param lane the lane where the blockage exists
      * @param longitudinalPosition the position on the lane; position where the GTUs have to stop
      * @param height the height of the blockage
      * @throws NetworkException in case object cannot be placed on the lane
      */
-    public LaneBlock(final Lane lane, final Length longitudinalPosition, final Length height) throws NetworkException
+    public LaneBlock(final String id, final Lane lane, final Length longitudinalPosition, final Length height)
+            throws NetworkException
     {
-        super(lane, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition), height);
+        super(id, lane, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition), height);
     }
 
     /**
+     * @param id the id
      * @param lane the lane where the blockage exists
      * @param longitudinalPosition the position on the lane; position where the GTUs have to stop
      * @param geometry the geometry of the lane blockage
      * @param height the height of the blockage
      * @throws NetworkException in case object cannot be placed on the lane
      */
-    public LaneBlock(final Lane lane, final Length longitudinalPosition, final OTSLine3D geometry, final Length height)
-            throws NetworkException
+    public LaneBlock(final String id, final Lane lane, final Length longitudinalPosition, final OTSLine3D geometry,
+            final Length height) throws NetworkException
     {
-        super(lane, longitudinalPosition, geometry, height);
+        super(id, lane, longitudinalPosition, geometry, height);
     }
 
     /** {@inheritDoc} */
@@ -57,8 +60,8 @@ public class LaneBlock extends AbstractLaneBasedObject
 
     /** {@inheritDoc} */
     @Override
-    public LaneBlock clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
-            final boolean animation) throws NetworkException
+    public LaneBlock clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator, final boolean animation)
+            throws NetworkException
     {
         // TODO
         return null;

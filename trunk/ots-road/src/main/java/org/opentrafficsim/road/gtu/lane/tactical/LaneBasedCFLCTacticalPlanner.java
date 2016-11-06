@@ -124,7 +124,8 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             Speed speedLimit = perception.getPerceptionCategory(DefaultSimplePerception.class).getSpeedLimit();
 
             // look at the conditions for headway on the current lane
-            Headway sameLaneLeader = perception.getPerceptionCategory(DefaultSimplePerception.class).getForwardHeadway();
+            Headway sameLaneLeader = perception.getPerceptionCategory(DefaultSimplePerception.class).getForwardHeadwayGTU();
+            // TODO how to handle objects on this lane or another lane???
             Headway sameLaneFollower = perception.getPerceptionCategory(DefaultSimplePerception.class).getBackwardHeadway();
             Collection<Headway> sameLaneTraffic = new ArrayList<Headway>();
             if (sameLaneLeader.getObjectType().isGtu())
