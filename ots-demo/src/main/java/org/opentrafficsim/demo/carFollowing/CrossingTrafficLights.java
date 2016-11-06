@@ -4,9 +4,11 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.naming.NamingException;
@@ -15,6 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -39,6 +44,7 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
@@ -54,6 +60,9 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
@@ -61,6 +70,9 @@ import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.jstats.distributions.DistTriangular;
+import nl.tudelft.simulation.jstats.streams.MersenneTwister;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * Demonstration of a crossing with traffic lights.
@@ -232,8 +244,16 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
     /** The network. */
     private final OTSNetwork network = new OTSNetwork("network");
 
-    /** The headway (inter-vehicle time). */
-    private Duration headway = new Duration(10, SECOND);
+    /** the random stream for this demo. */
+    private StreamInterface stream = new MersenneTwister(555);
+
+    /** The headway (inter-vehicle time) distribution. */
+    private ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> headwayDistribution =
+            new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(this.stream, 5, 7, 10), TimeUnit.SECOND);
+
+    /** The speed distribution. */
+    private ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedDistribution =
+            new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(this.stream, 50, 60, 70), SpeedUnit.KM_PER_HOUR);
 
     /** Number of cars created. */
     private int carsCreated = 0;
@@ -251,7 +271,7 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
     private final GTUColorer gtuColorer;
 
     /** The speed limit on all Lanes. */
-    private Speed speedLimit = new Speed(50, KM_PER_HOUR);
+    private Speed speedLimit = new Speed(80, KM_PER_HOUR);
 
     /**
      * @param properties the user settable properties
@@ -296,6 +316,8 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
             compatibility.add(this.gtuType);
             LaneType laneType = new LaneType("CarLane", compatibility);
 
+            Map<Lane, SimpleTrafficLight> trafficLights = new HashMap<>();
+
             for (int i = 0; i < 4; i++)
             {
                 for (int j = 0; j < 3; j++)
@@ -307,7 +329,22 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
                     {
                         for (Lane lane : lanes)
                         {
-                            this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", new Object[] { lane });
+                            this.simulator.scheduleEventRel(this.headwayDistribution.draw(), this, this, "generateCar",
+                                    new Object[] { lane });
+                            SimpleTrafficLight tl = new SimpleTrafficLight(lane.getId() + "_TL", lane,
+                                    new Length(lane.getLength().minus(new Length(10.0, LengthUnit.METER))), this.simulator);
+                            lane.addLaneBasedObject(tl);
+                            trafficLights.put(lane, tl);
+                            if (i == 0 || i == 2)
+                            {
+                                this.simulator.scheduleEventRel(new Duration(0.0, TimeUnit.SECOND), this, this, "changeTL",
+                                    new Object[] { tl });
+                            }
+                            else
+                            {
+                                this.simulator.scheduleEventRel(new Duration(60.0, TimeUnit.SECOND), this, this, "changeTL",
+                                        new Object[] { tl });
+                            }
                         }
                     }
                     if (j == 2)
@@ -384,6 +421,30 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
     }
 
     /**
+     * Change the traffic light to a new color.
+     * @param tl the traffic light
+     * @throws SimRuntimeException when scheduling fails
+     */
+    protected final void changeTL(final TrafficLight tl) throws SimRuntimeException
+    {
+        if (tl.getTrafficLightColor().isRed())
+        {
+            tl.setTrafficLightColor(TrafficLightColor.GREEN);
+            this.simulator.scheduleEventRel(new Duration(40.0, TimeUnit.SECOND), this, this, "changeTL", new Object[] { tl });
+        }
+        else if (tl.getTrafficLightColor().isGreen())
+        {
+            tl.setTrafficLightColor(TrafficLightColor.YELLOW);
+            this.simulator.scheduleEventRel(new Duration(20.0, TimeUnit.SECOND), this, this, "changeTL", new Object[] { tl });
+        }
+        else if (tl.getTrafficLightColor().isYellow())
+        {
+            tl.setTrafficLightColor(TrafficLightColor.RED);
+            this.simulator.scheduleEventRel(new Duration(60.0, TimeUnit.SECOND), this, this, "changeTL", new Object[] { tl });
+        }
+    }
+
+    /**
      * Generate cars at a fixed rate (implemented by re-scheduling this method).
      * @param lane the lane to generate the car on
      */
@@ -403,12 +464,12 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
             }
             BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
             LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
-                    new Length(1.8, METER), new Speed(80, KM_PER_HOUR), this.simulator, this.network);
+                    new Length(1.8, METER), this.speedDistribution.draw(), this.simulator, this.network);
             LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
                     new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
             gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
                     this.gtuColorer);
-            this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", new Object[] { lane });
+            this.simulator.scheduleEventRel(this.headwayDistribution.draw(), this, this, "generateCar", new Object[] { lane });
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
         {

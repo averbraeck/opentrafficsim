@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.lane.conflict;
 
+import java.util.UUID;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -55,7 +57,7 @@ public final class Conflict extends AbstractLaneBasedObject
     private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final OTSLine3D geometry,
             final ConflictType conflictType, final ConflictRule conflictRule) throws NetworkException
     {
-        super(lane, longitudinalPosition, geometry);
+        super(UUID.randomUUID().toString(), lane, longitudinalPosition, geometry);
         this.length = length;
         this.conflictType = conflictType;
         this.conflictRule = conflictRule;

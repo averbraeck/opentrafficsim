@@ -181,7 +181,7 @@ public class LaneBasedGTUTest implements UNITS
         // TODO see how we can ask the vehicle to look this far ahead
         truck.getTacticalPlanner().getPerception().perceive();
         Headway leader =
-                truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class).getForwardHeadway();
+                truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class).getForwardHeadwayGTU();
         assertTrue(
                 "With one vehicle in the network forward headway should return a value larger than zero, and smaller than maxDistance",
                 forwardMaxDistance.getSI() >= leader.getDistance().si && leader.getDistance().si > 0);
@@ -223,7 +223,7 @@ public class LaneBasedGTUTest implements UNITS
                 // TODO see how we can ask the vehicle to look 'forwardMaxDistance' ahead
                 leader =
                         truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
-                                .getForwardHeadway();
+                                .getForwardHeadwayGTU();
                 double actualHeadway = leader.getDistance().si;
                 double expectedHeadway =
                         laneRank + carLanesCovered - 1 < truckFromLane || laneRank > truckUpToLane
@@ -278,7 +278,7 @@ public class LaneBasedGTUTest implements UNITS
                     }
                     leader =
                             truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
-                                    .getForwardHeadway();
+                                    .getForwardHeadwayGTU();
                     actualHeadway = leader.getDistance().si;
                     expectedHeadway =
                             laneIndex < laneRank || laneIndex > laneRank + carLanesCovered - 1

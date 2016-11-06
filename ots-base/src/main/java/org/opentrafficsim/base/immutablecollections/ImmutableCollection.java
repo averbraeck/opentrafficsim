@@ -52,6 +52,7 @@ public interface ImmutableCollection<E> extends Iterable<E>, Serializable
      * guarantee). The ImmutableIterator is an Iterator where the remove() operation will throw an exception.
      * @return an <tt>ImmutableIterator</tt> over the elements in this immutable collection
      */
+    @Override
     ImmutableIterator<E> iterator();
 
     /**
@@ -151,12 +152,14 @@ public interface ImmutableCollection<E> extends Iterable<E>, Serializable
      * @param obj the object to compare this collection with
      * @return whether the objects are equal
      */
+    @Override
     boolean equals(final Object obj);
 
     /**
      * Force to redefine hashCode for the implementations of immutable collection classes.
      * @return the calculated hashCode
      */
+    @Override
     int hashCode();
 
     /**

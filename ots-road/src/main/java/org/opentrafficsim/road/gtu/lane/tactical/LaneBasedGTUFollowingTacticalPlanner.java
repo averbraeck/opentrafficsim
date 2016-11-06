@@ -56,7 +56,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
     /** {@inheritDoc} */
     @Override
     public OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
-        throws OperationalPlanException, NetworkException, GTUException, ParameterException
+            throws OperationalPlanException, NetworkException, GTUException, ParameterException
     {
         // ask Perception for the local situation
         LaneBasedGTU laneBasedGTU = getGtu();
@@ -75,24 +75,42 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         Length maxDistance = laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
         LanePathInfo lanePathInfo = buildLanePathInfo(laneBasedGTU, maxDistance);
 
-        // look at the conditions for headway
-        Headway headway = perception.getPerceptionCategory(DefaultSimplePerception.class).getForwardHeadway();
-        AccelerationStep accelerationStep = null;
-        if (headway.getDistance().ge(maxDistance))
+        // look at the conditions for headway from a GTU in front
+        Headway headwayGTU = perception.getPerceptionCategory(DefaultSimplePerception.class).getForwardHeadwayGTU();
+        AccelerationStep accelerationStepGTU = null;
+        if (headwayGTU.getDistance().ge(maxDistance))
         {
             // TODO I really don't like this -- if there is a lane drop at 20 m, the GTU should stop...
-            accelerationStep =
-                ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStepWithNoLeader(laneBasedGTU,
-                    lanePathInfo.getPath().getLength(), perception.getPerceptionCategory(DefaultSimplePerception.class)
-                        .getSpeedLimit());
+            accelerationStepGTU = ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStepWithNoLeader(
+                    laneBasedGTU, lanePathInfo.getPath().getLength(),
+                    perception.getPerceptionCategory(DefaultSimplePerception.class).getSpeedLimit());
         }
         else
         {
-            accelerationStep =
-                ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStep(laneBasedGTU, headway.getSpeed(),
-                    headway.getDistance(), lanePathInfo.getPath().getLength(), perception.getPerceptionCategory(
-                        DefaultSimplePerception.class).getSpeedLimit());
+            accelerationStepGTU = ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStep(laneBasedGTU,
+                    headwayGTU.getSpeed(), headwayGTU.getDistance(), lanePathInfo.getPath().getLength(),
+                    perception.getPerceptionCategory(DefaultSimplePerception.class).getSpeedLimit());
         }
+
+        // look at the conditions for headway from an object in front
+        Headway headwayObject = perception.getPerceptionCategory(DefaultSimplePerception.class).getForwardHeadwayObject();
+        AccelerationStep accelerationStepObject = null;
+        if (headwayObject.getDistance().ge(maxDistance))
+        {
+            accelerationStepObject = ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStepWithNoLeader(
+                    laneBasedGTU, lanePathInfo.getPath().getLength(),
+                    perception.getPerceptionCategory(DefaultSimplePerception.class).getSpeedLimit());
+        }
+        else
+        {
+            accelerationStepObject = ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStep(laneBasedGTU,
+                    headwayObject.getSpeed(), headwayObject.getDistance(), lanePathInfo.getPath().getLength(),
+                    perception.getPerceptionCategory(DefaultSimplePerception.class).getSpeedLimit());
+        }
+
+        // see which one is most limiting
+        AccelerationStep accelerationStep = accelerationStepGTU.getAcceleration().lt(accelerationStepObject.getAcceleration())
+                ? accelerationStepGTU : accelerationStepObject;
 
         // see if we have to continue standing still. In that case, generate a stand still plan
         if (accelerationStep.getAcceleration().si < 1E-6 && laneBasedGTU.getSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
@@ -109,11 +127,11 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         else
         {
             Segment segment =
-                new OperationalPlan.AccelerationSegment(accelerationStep.getDuration(), accelerationStep.getAcceleration());
+                    new OperationalPlan.AccelerationSegment(accelerationStep.getDuration(), accelerationStep.getAcceleration());
             operationalPlanSegmentList.add(segment);
         }
-        OperationalPlan op =
-            new OperationalPlan(getGtu(), lanePathInfo.getPath(), startTime, getGtu().getSpeed(), operationalPlanSegmentList);
+        OperationalPlan op = new OperationalPlan(getGtu(), lanePathInfo.getPath(), startTime, getGtu().getSpeed(),
+                operationalPlanSegmentList);
         return op;
     }
 

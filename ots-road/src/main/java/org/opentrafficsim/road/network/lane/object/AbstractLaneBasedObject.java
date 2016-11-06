@@ -37,6 +37,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
 
     /**
      * Construct a new LanebasedObject with the required fields.
+     * @param id the id
      * @param lane Lane; The lane for which this is a sensor
      * @param longitudinalPosition Length; The position (between 0.0 and the length of the Lane) of the sensor on the design
      *            line of the lane
@@ -44,14 +45,13 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
      * @param height the height of the object, in case it is a 3D object
      * @throws NetworkException when the position on the lane is out of bounds
      */
-    public AbstractLaneBasedObject(final Lane lane, final Length longitudinalPosition, final OTSLine3D geometry,
-            final Length height) throws NetworkException
+    public AbstractLaneBasedObject(final String id, final Lane lane, final Length longitudinalPosition,
+            final OTSLine3D geometry, final Length height) throws NetworkException
     {
-        super(geometry, height);
+        super(id, geometry, height);
 
         Throw.whenNull(lane, "lane is null");
         Throw.whenNull(longitudinalPosition, "longitudinal position is null");
-        Throw.whenNull(geometry, "geometry is null");
         Throw.when(longitudinalPosition.si < 0.0 || longitudinalPosition.si > lane.getCenterLine().getLengthSI(),
                 NetworkException.class, "Position of the object on the lane is out of bounds");
 
@@ -61,16 +61,17 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
 
     /**
      * Construct a new LanebasedObject with the required fields.
+     * @param id the id
      * @param lane Lane; The lane for which this is a sensor
      * @param longitudinalPosition Length; The position (between 0.0 and the length of the Lane) of the sensor on the design
      *            line of the lane
      * @param geometry the geometry of the object, which provides its location and bounds as well
      * @throws NetworkException when the position on the lane is out of bounds
      */
-    public AbstractLaneBasedObject(final Lane lane, final Length longitudinalPosition, final OTSLine3D geometry)
-            throws NetworkException
+    public AbstractLaneBasedObject(final String id, final Lane lane, final Length longitudinalPosition,
+            final OTSLine3D geometry) throws NetworkException
     {
-        this(lane, longitudinalPosition, geometry, Length.ZERO);
+        this(id, lane, longitudinalPosition, geometry, Length.ZERO);
     }
 
     /** {@inheritDoc} */

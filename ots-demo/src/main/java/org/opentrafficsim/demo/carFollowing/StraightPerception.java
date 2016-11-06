@@ -805,7 +805,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             Length maxDistance = lanePathInfo.getPath().getLength();
 
             // look at the conditions for headway
-            Headway headway = getPerception().getPerceptionCategory(DefaultSimplePerception.class).getForwardHeadway();
+            Headway headway = getPerception().getPerceptionCategory(DefaultSimplePerception.class).getForwardHeadwayGTU();
             AccelerationStep accelerationStep = null;
             if (headway.getDistance().le(maxDistance))
             {

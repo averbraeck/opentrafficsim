@@ -165,7 +165,7 @@ public abstract class AbstractHeadway implements Headway
      */
     public AbstractHeadway(final ObjectType objectType, final String id, final Length distance) throws GTUException
     {
-        this(objectType, id, distance, null, null, null, null, null, null);
+        this(objectType, id, distance, null, Speed.ZERO, Acceleration.ZERO, null, null, null);
     }
 
     /**

@@ -31,9 +31,6 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     /** */
     private static final long serialVersionUID = 20141231L;
 
-    /** The id of the sensor. */
-    private final String id;
-
     /** The relative position of the vehicle that triggers the sensor. */
     private final RelativePosition.TYPE positionType;
 
@@ -56,12 +53,11 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
             final RelativePosition.TYPE positionType, final OTSDEVSSimulatorInterface simulator, final OTSLine3D geometry)
             throws NetworkException
     {
-        super(lane, longitudinalPosition, geometry);
+        super(id, lane, longitudinalPosition, geometry);
         Throw.when(simulator == null, NullPointerException.class, "simulator is null");
         Throw.when(positionType == null, NullPointerException.class, "positionType is null");
         Throw.when(id == null, NullPointerException.class, "id is null");
         this.positionType = positionType;
-        this.id = id;
         this.simulator = simulator;
     }
 
@@ -109,7 +105,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     @Override
     public final void trigger(final LaneBasedGTU gtu)
     {
-        fireTimedEvent(Sensor.SENSOR_TRIGGER_EVENT, new Object[] { this.id, this, gtu, this.positionType },
+        fireTimedEvent(Sensor.SENSOR_TRIGGER_EVENT, new Object[] { getId(), this, gtu, this.positionType },
                 getSimulator().getSimulatorTime());
         triggerResponse(gtu);
     }
@@ -125,13 +121,6 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     public final RelativePosition.TYPE getPositionType()
     {
         return this.positionType;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String getId()
-    {
-        return this.id;
     }
 
     /** {@inheritDoc} */

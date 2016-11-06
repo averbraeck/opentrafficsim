@@ -395,7 +395,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                         getTurnIndicatorStatus(), getOdometer(), dlp.getLane(), dlp.getPosition(), dlp.getGtuDirection() },
                 getSimulator().getSimulatorTime());
 
-        if (getOperationalPlan().getAcceleration(Duration.ZERO).si < -10)
+        if (getOperationalPlan().getAcceleration(Duration.ZERO).si < -10
+                && getOperationalPlan().getSpeed(Duration.ZERO).si > 2.5)
         {
             System.err.println("(getOperationalPlan().getAcceleration(Duration.ZERO).si < -10)");
         }
