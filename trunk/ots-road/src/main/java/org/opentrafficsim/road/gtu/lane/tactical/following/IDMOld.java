@@ -96,6 +96,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     }
 
     /** {@inheritDoc} */
+    @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
         final Speed leaderSpeed, final Length headway, final Speed speedLimit)
     {
@@ -103,6 +104,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     }
 
     /** {@inheritDoc} */
+    @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
         final Speed leaderSpeed, final Length headway, final Speed speedLimit, final Duration stepSize)
     {

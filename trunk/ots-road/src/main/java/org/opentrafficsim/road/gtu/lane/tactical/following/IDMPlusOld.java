@@ -103,6 +103,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     }
 
     /** {@inheritDoc} */
+    @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
         final Speed leaderSpeed, final Length headway, final Speed speedLimit)
     {
@@ -110,6 +111,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     }
 
     /** {@inheritDoc} */
+    @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
         final Speed leaderSpeed, final Length headway, final Speed speedLimit, final Duration stepSize)
     {
