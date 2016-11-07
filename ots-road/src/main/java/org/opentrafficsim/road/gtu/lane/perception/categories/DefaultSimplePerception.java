@@ -113,7 +113,8 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
     public final void updateAll() throws GTUException, ParameterException, NetworkException
     {
         updateLanePathInfo();
-        updateForwardHeadway();
+        updateForwardHeadwayGTU();
+        updateForwardHeadwayObject();
         updateBackwardHeadway();
         updateAccessibleAdjacentLanesLeft();
         updateAccessibleAdjacentLanesRight();
@@ -125,12 +126,12 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
     }
 
     /**
-     * Update the forward headway and first object (e.g., a GTU) in front.
+     * Update the forward headway and first object (a GTU) in front.
      * @throws GTUException when the GTU was not yet initialized
      * @throws ParameterException if parameter is not defined or out of bounds
      * @throws NetworkException in case of network exception
      */
-    public final void updateForwardHeadway() throws GTUException, NetworkException, ParameterException
+    public final void updateForwardHeadwayGTU() throws GTUException, NetworkException, ParameterException
     {
         Time timestamp = getTimestamp();
         if (this.lanePathInfo == null || this.lanePathInfo.getTimestamp().ne(timestamp))
@@ -139,6 +140,22 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
         }
         Length maximumForwardHeadway = getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
         this.forwardHeadwayGTU = new TimeStampedObject<>(forwardHeadway(maximumForwardHeadway, true), timestamp);
+    }
+
+    /**
+     * Update the forward headway and first object (but not a GTU) in front.
+     * @throws GTUException when the GTU was not yet initialized
+     * @throws ParameterException if parameter is not defined or out of bounds
+     * @throws NetworkException in case of network exception
+     */
+    public final void updateForwardHeadwayObject() throws GTUException, NetworkException, ParameterException
+    {
+        Time timestamp = getTimestamp();
+        if (this.lanePathInfo == null || this.lanePathInfo.getTimestamp().ne(timestamp))
+        {
+            updateLanePathInfo();
+        }
+        Length maximumForwardHeadway = getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
         this.forwardHeadwayObject = new TimeStampedObject<>(forwardHeadway(maximumForwardHeadway, false), timestamp);
     }
 
@@ -661,6 +678,7 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return "DefaultSimplePerception";
