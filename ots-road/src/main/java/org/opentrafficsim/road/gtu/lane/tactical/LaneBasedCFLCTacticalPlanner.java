@@ -33,6 +33,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneMovementStep;
@@ -175,8 +176,18 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                 lanePathInfo = buildLanePathInfo(laneBasedGTU, maximumForwardHeadway);
             }
 
+            // incorporate traffic light
+            Headway object = getPerception().getPerceptionCategory(DefaultSimplePerception.class).getForwardHeadwayObject();
+            Acceleration a = lcmr.getGfmr().getAcceleration();
+            if (object instanceof HeadwayTrafficLight)
+            {
+                // if it was perceived, it was red, or yellow and judged as requiring to stop
+                a = Acceleration.min(a, ((GTUFollowingModelOld) getCarFollowingModel()).computeAcceleration(getGtu().getSpeed(),
+                        getGtu().getMaximumSpeed(), Speed.ZERO, object.getDistance(), speedLimit));
+            }
+            
             // build a list of lanes forward, with a maximum headway.
-            if (lcmr.getGfmr().getAcceleration().si < 1E-6 && laneBasedGTU.getSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
+            if (a.si < 1E-6 && laneBasedGTU.getSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
             {
                 return new OperationalPlan(getGtu(), locationAtStartTime, startTime, duration);
             }
@@ -184,14 +195,15 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             // build a list of lanes forward, with a maximum headway.
             OTSLine3D path = lanePathInfo.getPath();
             List<Segment> operationalPlanSegmentList = new ArrayList<>();
-            if (lcmr.getGfmr().getAcceleration().si == 0.0)
+            
+            if (a.si == 0.0)
             {
                 Segment segment = new OperationalPlan.SpeedSegment(duration);
                 operationalPlanSegmentList.add(segment);
             }
             else
             {
-                Segment segment = new OperationalPlan.AccelerationSegment(duration, lcmr.getGfmr().getAcceleration());
+                Segment segment = new OperationalPlan.AccelerationSegment(duration, a);
                 operationalPlanSegmentList.add(segment);
             }
             OperationalPlan op =
@@ -316,8 +328,8 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
         Length longitudinalPosition = dlp.getPosition();
         if (null != direction)
         {
-            lane = getPerception().getPerceptionCategory(DefaultSimplePerception.class).bestAccessibleAdjacentLane(lane, direction,
-                    longitudinalPosition);
+            lane = getPerception().getPerceptionCategory(DefaultSimplePerception.class).bestAccessibleAdjacentLane(lane,
+                    direction, longitudinalPosition);
         }
         if (null == lane)
         {
@@ -369,8 +381,8 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
         Length longitudinalPosition = dlp.getPosition();
         if (null != direction)
         {
-            lane = getPerception().getPerceptionCategory(DefaultSimplePerception.class).bestAccessibleAdjacentLane(lane, direction,
-                    longitudinalPosition);
+            lane = getPerception().getPerceptionCategory(DefaultSimplePerception.class).bestAccessibleAdjacentLane(lane,
+                    direction, longitudinalPosition);
         }
         if (null == lane)
         {
