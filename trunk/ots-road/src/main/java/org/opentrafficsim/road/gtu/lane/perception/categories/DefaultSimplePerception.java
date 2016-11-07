@@ -712,7 +712,8 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
      * @throws GTUException when there is an error with the next lanes in the network.
      * @throws NetworkException when there is a problem with the route planner
      */
-    private Headway forwardHeadway(final LanePathInfo lpi, final Length maxDistance, final boolean gtu) throws GTUException, NetworkException
+    private Headway forwardHeadway(final LanePathInfo lpi, final Length maxDistance, final boolean gtu)
+            throws GTUException, NetworkException
     {
         Throw.when(maxDistance.le(Length.ZERO), GTUException.class, "forwardHeadway: maxDistance should be positive");
 
@@ -807,7 +808,7 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
             final Time now, final boolean gtu) throws GTUException
     {
         Lane lane = laneDirection.getLane();
-        
+
         if (gtu)
         {
             LaneBasedGTU laneBasedGTU = lane.getGtuAhead(new Length(startPosSI, LengthUnit.SI), laneDirection.getDirection(),
@@ -821,9 +822,9 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
                     new Length(cumDistSI + gtuDistanceSI, LengthUnit.SI), laneBasedGTU.getLength(), laneBasedGTU.getSpeed(),
                     laneBasedGTU.getAcceleration());
         }
-        
+
         else
-            
+
         {
             List<LaneBasedObject> laneBasedObjects =
                     lane.getObjectAhead(new Length(startPosSI, LengthUnit.SI), laneDirection.getDirection());
@@ -833,7 +834,7 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
             }
             double objectDistanceSI = Math.abs(laneBasedObjects.get(0).getLongitudinalPosition().si - startPosSI);
             LaneBasedObject lbo = laneBasedObjects.get(0);
-            
+
             // handle the traffic light
             if (lbo instanceof TrafficLight)
             {
@@ -845,17 +846,18 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
                 if (tl.getTrafficLightColor().isYellow())
                 {
                     // base it for now on whether the braking distance is less than the object distance
-                    double brakingTime = Math.abs(getGtu().getSpeed().si / getGtu().getMaximumDeceleration().si * 1.1);
-                    double brakingDistanceSI = getGtu().getSpeed().si * brakingTime
-                            - 0.5 * Math.abs(getGtu().getMaximumDeceleration().si) * 1.1 * brakingTime * brakingTime;
+                    double maxDecel = 2.09;
+                    double brakingTime = getGtu().getSpeed().si / maxDecel * 1.1;
+                    double brakingDistanceSI =
+                            getGtu().getSpeed().si * brakingTime - 0.5 * maxDecel * 1.1 * brakingTime * brakingTime;
                     if (cumDistSI + objectDistanceSI > brakingDistanceSI)
                     {
                         return new HeadwayTrafficLight(tl, new Length(cumDistSI + objectDistanceSI, LengthUnit.SI));
                     }
                 }
-                return null; 
+                return null;
             }
-            
+
             // other objects are always blocking, we assume
             return new HeadwayObject(laneBasedObjects.get(0).getId(), new Length(cumDistSI + objectDistanceSI, LengthUnit.SI));
         }

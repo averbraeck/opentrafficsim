@@ -142,11 +142,11 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
                                     + "of the driver.</html>",
                             new String[] { "IDM", "IDM+" }, 1, false, 1));
                     localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car",
-                            new Acceleration(1.0, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
-                            new Length(2.0, METER), new Duration(1.0, SECOND), 2));
+                            new Acceleration(1.56, METER_PER_SECOND_2), new Acceleration(2.09, METER_PER_SECOND_2),
+                            new Length(3.0, METER), new Duration(1.2, SECOND), 2));
                     localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck",
-                            new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2),
-                            new Length(2.0, METER), new Duration(1.0, SECOND), 3));
+                            new Acceleration(0.75, METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2),
+                            new Length(3.0, METER), new Duration(1.2, SECOND), 3));
 
                     crossingTrafficLights.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND),
                             new Duration(3600.0, SECOND), localProperties, null, true);
@@ -249,7 +249,7 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
 
     /** The headway (inter-vehicle time) distribution. */
     private ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> headwayDistribution =
-            new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(this.stream, 5, 7, 10), TimeUnit.SECOND);
+            new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(this.stream, 7, 9, 15), TimeUnit.SECOND);
 
     /** The speed distribution. */
     private ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedDistribution =
@@ -342,7 +342,7 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
                             }
                             else
                             {
-                                this.simulator.scheduleEventRel(new Duration(60.0, TimeUnit.SECOND), this, this, "changeTL",
+                                this.simulator.scheduleEventRel(new Duration(75.0, TimeUnit.SECOND), this, this, "changeTL",
                                         new Object[] { tl });
                             }
                         }
@@ -430,17 +430,17 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
         if (tl.getTrafficLightColor().isRed())
         {
             tl.setTrafficLightColor(TrafficLightColor.GREEN);
-            this.simulator.scheduleEventRel(new Duration(40.0, TimeUnit.SECOND), this, this, "changeTL", new Object[] { tl });
+            this.simulator.scheduleEventRel(new Duration(60.0, TimeUnit.SECOND), this, this, "changeTL", new Object[] { tl });
         }
         else if (tl.getTrafficLightColor().isGreen())
         {
             tl.setTrafficLightColor(TrafficLightColor.YELLOW);
-            this.simulator.scheduleEventRel(new Duration(20.0, TimeUnit.SECOND), this, this, "changeTL", new Object[] { tl });
+            this.simulator.scheduleEventRel(new Duration(15.0, TimeUnit.SECOND), this, this, "changeTL", new Object[] { tl });
         }
         else if (tl.getTrafficLightColor().isYellow())
         {
             tl.setTrafficLightColor(TrafficLightColor.RED);
-            this.simulator.scheduleEventRel(new Duration(60.0, TimeUnit.SECOND), this, this, "changeTL", new Object[] { tl });
+            this.simulator.scheduleEventRel(new Duration(75.0, TimeUnit.SECOND), this, this, "changeTL", new Object[] { tl });
         }
     }
 
