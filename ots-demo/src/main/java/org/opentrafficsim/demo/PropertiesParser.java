@@ -23,6 +23,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.toledo.ToledoFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
@@ -176,6 +177,7 @@ public final class PropertiesParser
                         // provide default parameters with the car-following model
                         BehavioralCharacteristics defaultBehavioralCFCharacteristics = new BehavioralCharacteristics();
                         defaultBehavioralCFCharacteristics.setDefaultParameters(AbstractIDM.class);
+                        defaultBehavioralCFCharacteristics.setDefaultParameters(TrafficLightUtil.class);
                         return new LaneBasedStrategicalRoutePlannerFactory(
                                 new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics));
                     }

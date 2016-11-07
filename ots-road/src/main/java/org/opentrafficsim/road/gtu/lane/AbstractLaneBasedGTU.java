@@ -265,9 +265,6 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             leaveLane(lane);
         }
-
-        System.out.println(this + " changes lane from " + lanesCopy.keySet() + " to "
-                + this.lanesCurrentOperationalPlan.keySet() + " at time " + getSimulator().getSimulatorTime().get());
     }
 
     /**
