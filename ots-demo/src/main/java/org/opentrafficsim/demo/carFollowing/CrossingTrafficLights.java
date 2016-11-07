@@ -144,9 +144,6 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
                     localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car",
                             new Acceleration(1.56, METER_PER_SECOND_2), new Acceleration(2.09, METER_PER_SECOND_2),
                             new Length(3.0, METER), new Duration(1.2, SECOND), 2));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck",
-                            new Acceleration(0.75, METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2),
-                            new Length(3.0, METER), new Duration(1.2, SECOND), 3));
 
                     crossingTrafficLights.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND),
                             new Duration(3600.0, SECOND), localProperties, null, true);

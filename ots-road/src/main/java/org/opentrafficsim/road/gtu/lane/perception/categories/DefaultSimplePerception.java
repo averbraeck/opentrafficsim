@@ -847,9 +847,9 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
                 {
                     // base it for now on whether the braking distance is less than the object distance
                     double maxDecel = 2.09;
-                    double brakingTime = getGtu().getSpeed().si / maxDecel * 1.1;
+                    double brakingTime = getGtu().getSpeed().si / maxDecel;
                     double brakingDistanceSI =
-                            getGtu().getSpeed().si * brakingTime - 0.5 * maxDecel * 1.1 * brakingTime * brakingTime;
+                            getGtu().getSpeed().si * brakingTime - 0.5 * maxDecel * brakingTime * brakingTime;
                     if (cumDistSI + objectDistanceSI > brakingDistanceSI)
                     {
                         return new HeadwayTrafficLight(tl, new Length(cumDistSI + objectDistanceSI, LengthUnit.SI));
