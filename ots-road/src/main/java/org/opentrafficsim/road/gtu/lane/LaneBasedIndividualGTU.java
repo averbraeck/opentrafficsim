@@ -105,8 +105,8 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
             }
         }
 
-        setMaximumAcceleration(new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2));
-        setMaximumDeceleration(new Acceleration(-1.0, AccelerationUnit.METER_PER_SECOND_2));
+        setMaximumAcceleration(new Acceleration(1.8, AccelerationUnit.METER_PER_SECOND_2));
+        setMaximumDeceleration(new Acceleration(-3.5, AccelerationUnit.METER_PER_SECOND_2));
     }
 
     /**
