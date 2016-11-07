@@ -23,7 +23,6 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
  * This traffic light sensor reports whether it whether any GTUs are within its area. The area is a sub-section of a Lane. This
@@ -42,6 +41,9 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
 {
     /** */
     private static final long serialVersionUID = 20161103L;
+
+    /** Id of this TrafficLightSensor. */
+    final String id;
 
     /** The sensor that detects when a GTU enters the sensor area at point A. */
     private final FlankSensor entryA;
@@ -83,6 +85,8 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
             final Length positionB, final List<Lane> intermediateLanes, final TYPE entryPosition, final TYPE exitPosition,
             final OTSDEVSSimulatorInterface simulator) throws NetworkException
     {
+        Throw.whenNull(id, "id may not be null");
+        this.id = id;
         this.entryA = new FlankSensor(id + ".entryA", laneA, positionA, entryPosition, simulator, this);
         this.exitA = new FlankSensor(id + ".exitA", laneA, positionA, exitPosition, simulator, this);
         this.entryB = new FlankSensor(id + ".entryB", laneB, positionB, entryPosition, simulator, this);
@@ -139,19 +143,6 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
     }
 
     /**
-     * Remove a GTU from the set.
-     * @param gtu LaneBasedGTU; the GTU that must be removed
-     */
-    protected final void removeGTU(final LaneBasedGTU gtu)
-    {
-        if (this.currentGTUs.remove(gtu) && this.currentGTUs.size() == 0)
-        {
-            fireTimedEvent(NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT,
-                    new Object[] { getId() }, getSimulator().getSimulatorTime());
-        }
-    }
-
-    /**
      * Add a GTU to the set.
      * @param gtu LaneBasedGTU; the GTU that must be added
      */
@@ -160,6 +151,19 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
         if (this.currentGTUs.add(gtu) && this.currentGTUs.size() == 1)
         {
             fireTimedEvent(NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT,
+                    new Object[] { getId() }, getSimulator().getSimulatorTime());
+        }
+    }
+
+    /**
+     * Remove a GTU from the set.
+     * @param gtu LaneBasedGTU; the GTU that must be removed
+     */
+    protected final void removeGTU(final LaneBasedGTU gtu)
+    {
+        if (this.currentGTUs.remove(gtu) && this.currentGTUs.size() == 0)
+        {
+            fireTimedEvent(NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT,
                     new Object[] { getId() }, getSimulator().getSimulatorTime());
         }
     }
@@ -353,28 +357,28 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
     @Override
     public final TYPE getPositionTypeEntry()
     {
-        return null;
+        return this.entryA.getPositionType();
     }
 
     /** {@inheritDoc} */
     @Override
     public final TYPE getPositionTypeExit()
     {
-        return null;
+        return this.exitA.getPositionType();
     }
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedObject getLanePositionA()
+    public final Length getLanePositionA()
     {
-        return null;
+        return this.entryA.getLongitudinalPosition();
     }
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedObject getLanePositionB()
+    public final Length getLanePositionB()
     {
-        return null;
+        return this.entryB.getLongitudinalPosition();
     }
 
     /**
@@ -384,14 +388,34 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
      */
     final void signalDetection(final FlankSensor sensor, final LaneBasedGTU gtu)
     {
-        if (this.entryA == sensor || this.entryB == sensor)
+        String source =
+                this.entryA == sensor ? "entryA" : this.entryB == sensor ? "entryB" : this.exitA == sensor ? "exitA"
+                        : this.exitB == sensor ? "exitB" : "???";
+        GTUDirectionality gtuDirection = null;
+        try
+        {
+            gtuDirection = gtu.getDirection(sensor.getLane());
+        }
+        catch (GTUException exception)
+        {
+            exception.printStackTrace();
+        }
+        System.out.println("Time " + sensor.getSimulator().getSimulatorTime().get() + ": " + this.id + " " + source
+                + " triggered on " + gtu + " driving direction is " + gtuDirection);
+        if (this.entryA == sensor && gtuDirection == this.directionalityA || this.entryB == sensor
+                && gtuDirection != this.directionalityB)
         {
             addGTU(gtu);
         }
-        else
+        else if (this.exitA == sensor && gtuDirection != this.directionalityA || this.exitB == sensor
+                && gtuDirection == this.directionalityB)
         // Some exit sensor has triggered
         {
             removeGTU(gtu);
+        }
+        else
+        {
+            System.out.println("Ignoring event (GTU is driving in wrong direction)");
         }
     }
 
@@ -399,7 +423,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
     @Override
     public final String getId()
     {
-        return null;
+        return this.id;
     }
 
     /** {@inheritDoc} */
@@ -437,6 +461,7 @@ class FlankSensor extends AbstractSensor
     {
         super(id, lane, longitudinalPosition, positionType, simulator);
         this.parent = parent;
+        lane.addSensor(this, GTUType.ALL);
     }
 
     /** {@inheritDoc} */
