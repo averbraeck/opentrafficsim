@@ -9,14 +9,16 @@ import java.util.TreeSet;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.road.gtu.lane.perception.EnvironmentState.ViewingDirection;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.LaneStructure.Entry;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 /**
  * Perceives traffic lights and intersection conflicts.
@@ -70,15 +72,11 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
         {
             SortedSet<HeadwayTrafficLight> set = new TreeSet<>();
             this.trafficLights.put(lane, new TimeStampedObject<>(set, getTimestamp()));
-            Map<Length, Set<SimpleTrafficLight>> map = new HashMap<>();
-            // TODO SimpleTrafficLight is not yet a LaneBasedObject
-            //        getPerception().getEnvironmentState().getSortedObjects(ViewingDirection.FORWARD, lane, SimpleTrafficLight.class);
-            for (Length length : map.keySet())
+            SortedSet<Entry<TrafficLight>> trafficLightEntries = getPerception().getLaneStructure().getDownstreamObjects(lane,
+                    TrafficLight.class, getGtu(), RelativePosition.FRONT);
+            for (Entry<TrafficLight> trafficLightEntry : trafficLightEntries)
             {
-                for (SimpleTrafficLight trafficLight : map.get(length))
-                {
-                    set.add(new HeadwayTrafficLight(trafficLight, length));
-                }
+                set.add(new HeadwayTrafficLight(trafficLightEntry.getLaneBasedObject(), trafficLightEntry.getDistance()));
             }
         }
     }
@@ -95,15 +93,12 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
         {
             SortedSet<HeadwayConflict> set = new TreeSet<>();
             this.conflicts.put(lane, new TimeStampedObject<>(set, getTimestamp()));
-            Map<Length, Set<Conflict>> map =
-                    getPerception().getEnvironmentState().getSortedObjects(ViewingDirection.FORWARD, lane, Conflict.class);
-            for (Length length : map.keySet())
+            SortedSet<Entry<Conflict>> conflictEntries = getPerception().getLaneStructure().getDownstreamObjects(lane,
+                    Conflict.class, getGtu(), RelativePosition.FRONT);
+            for (Entry entry : conflictEntries)
             {
-                for (Conflict conflict : map.get(length))
-                {
-                    // TODO needs a lot of input
-                    //set.add(new HeadwayConflict(...))
-                }
+                // TODO
+                // set.add(new HeadwayConflict(...))
             }
         }
     }

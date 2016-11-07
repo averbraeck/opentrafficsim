@@ -105,8 +105,8 @@ public final class TrafficLightUtil
         Throw.whenNull(speed, "Speed may not be null.");
         Throw.whenNull(speedLimitInfo, "Speed limit info may not be null.");
         Throw.when(!headwayTrafficLight.isAhead(), IllegalArgumentException.class, "Traffic light must be downstream.");
-        if (headwayTrafficLight.getTrafficLightColor().equals(TrafficLightColor.RED)
-            || headwayTrafficLight.getTrafficLightColor().equals(TrafficLightColor.YELLOW))
+        if (headwayTrafficLight.getTrafficLightColor().isRed()
+            || headwayTrafficLight.getTrafficLightColor().isYellow())
         {
             // deceleration from car-following model
             SortedMap<Length, Speed> leaders = new TreeMap<>();
@@ -115,7 +115,7 @@ public final class TrafficLightUtil
                 carFollowingModel.followingAcceleration(behavioralCharacteristics, speed, speedLimitInfo, leaders);
             // compare to constant deceleration
             Length s0 = behavioralCharacteristics.getParameter(ParameterTypes.S0);
-            if (headwayTrafficLight.getDistance().lt(s0)) // constant acceleration not applicable if within s0
+            if (headwayTrafficLight.getDistance().gt(s0)) // constant acceleration not applicable if within s0
             {
                 // constant acceleration is -.5*v^2/s, where s = distance-s0 > 0
                 Acceleration aConstant =

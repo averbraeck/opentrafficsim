@@ -8,10 +8,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 import nl.tudelft.simulation.language.Throw;
@@ -72,8 +74,6 @@ import nl.tudelft.simulation.language.Throw;
  *       |                                 |                 
  *  _____V_____                       _____V_____                             
  * |_-_|_._|_-_|                     |_-_|_._|_-_|                   g
- * 
- * 
  * </pre>
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -83,25 +83,22 @@ import nl.tudelft.simulation.language.Throw;
  * initial version Feb 20, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class LaneStructure implements EnvironmentState, Serializable
+public class LaneStructure implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20160400L;
 
     /** The lanes from which we observe the situation. */
     private LaneStructureRecord rootLSR;
-    
+
     /** Look ahead distance. */
     private Length lookAhead;
-    
+
     /** Lane structure records of the cross section. */
     private TreeMap<RelativeLane, LaneStructureRecord> crossSectionRecords = new TreeMap<>();
 
-//    /** Time of last cross section update. */
-//    private Time crossSectionUpdateTime;
-    
     /** Lane structure records grouped per relative lane. */
-    private final Map<RelativeLane, Set<LaneStructureRecord>> relativeLaneMap = new HashMap<>(); 
+    private final Map<RelativeLane, Set<LaneStructureRecord>> relativeLaneMap = new HashMap<>();
 
     /**
      * @param rootLSR the root record.
@@ -112,7 +109,7 @@ public class LaneStructure implements EnvironmentState, Serializable
         this.rootLSR = rootLSR;
         this.lookAhead = lookAhead;
     }
-    
+
     /**
      * @return rootLSR
      */
@@ -127,156 +124,21 @@ public class LaneStructure implements EnvironmentState, Serializable
      */
     public final SortedSet<RelativeLane> getCrossSection()
     {
-        //updateCrossSection(now);
         return this.crossSectionRecords.navigableKeySet();
     }
-    
-//    /**
-//     * @param now current time to check if the cross section needs to be updated
-//     */
-//    private void updateCrossSection(final Time now)
-//    {
-//        if (this.crossSectionRecords == null || now.gt(this.crossSectionUpdateTime))
-//        {
-//            this.crossSectionRecords = new TreeMap<>();
-//            // current lane
-//            this.crossSectionRecords.put(RelativeLane.CURRENT, getRootLSR());
-//            // left
-//            LaneStructureRecord lane = getRootLSR();
-//            int left = 1;
-//            while (lane.getLeft() != null)
-//            {
-//                RelativeLane relLane = new RelativeLane(LateralDirectionality.LEFT, left);
-//                this.crossSectionRecords.put(relLane, lane.getLeft());
-//                left++;
-//                lane = lane.getLeft();
-//            }
-//            addFirstMergeToCrossSection(lane, LateralDirectionality.LEFT, left);
-//            // right
-//            lane = getRootLSR();
-//            int right = 1;
-//            while (lane.getRight() != null)
-//            {
-//                RelativeLane relLane = new RelativeLane(LateralDirectionality.RIGHT, right);
-//                this.crossSectionRecords.put(relLane, lane.getRight());
-//                right++;
-//                lane = lane.getRight();
-//            }
-//            addFirstMergeToCrossSection(lane, LateralDirectionality.RIGHT, right);
-//        }
-//    }
-//    
-//    /**
-//     * Adds a single lane of the other link to the current cross section at a merge.
-//     * @param farMost record on far-most left or right side of current link
-//     * @param dir direction to search in, left or right
-//     * @param n number of lanes in left or right direction that the next lane will be
-//     */
-//    private void
-//        addFirstMergeToCrossSection(final LaneStructureRecord farMost, final LateralDirectionality dir, final int n)
-//    {
-//        Length cumulLengthDown = farMost.getLane().getLength();
-//        LaneStructureRecord next = getNextOnSide(farMost, dir);
-//        LaneStructureRecord mergeRecord = null; // first downstream record past merge
-//        while (next != null)
-//        {
-//            if (next.isLinkMerge())
-//            {
-//                mergeRecord = next;
-//                next = null;
-//            }
-//            else
-//            {
-//                cumulLengthDown = cumulLengthDown.plus(next.getLane().getLength());
-//                next = getNextOnSide(next, dir);
-//            }
-//        }
-//        if (mergeRecord != null)
-//        {
-//            LaneStructureRecord adjacentRecord =
-//                dir.equals(LateralDirectionality.LEFT) ? mergeRecord.getLeft() : mergeRecord.getRight();
-//            if (adjacentRecord == null)
-//            {
-//                // merge is on other side, add nothing
-//                return;
-//            }
-//            adjacentRecord = getPrevOnSide(adjacentRecord, dir);
-//            Length cumulLengthUp = Length.ZERO;
-//            while (adjacentRecord != null)
-//            {
-//                cumulLengthUp = cumulLengthUp.plus(adjacentRecord.getLane().getLength());
-//                if (cumulLengthUp.ge(cumulLengthDown))
-//                {
-//                    RelativeLane relLane = new RelativeLane(dir, n);
-//                    this.crossSectionRecords.put(relLane, adjacentRecord);
-//                    return;
-//                }
-//                adjacentRecord = getPrevOnSide(adjacentRecord, dir);
-//            }
-//        }
-//    }
-//    
-//    /**
-//     * Returns the correct next record for searching the next merge.
-//     * @param lane current lane record
-//     * @param dir direction of search
-//     * @return correct next record for searching the next merge
-//     */
-//    private LaneStructureRecord getNextOnSide(final LaneStructureRecord lane, final LateralDirectionality dir)
-//    {
-//        if (lane.getNext().size() == 1)
-//        {
-//            return lane.getNext().get(0);
-//        }
-//        for (LaneStructureRecord next : lane.getNext())
-//        {
-//            if ((dir.equals(LateralDirectionality.LEFT) && next.getLeft() == null)
-//                || (dir.equals(LateralDirectionality.RIGHT) && next.getRight() == null))
-//            {
-//                return next;
-//            }
-//        }
-//        return null;
-//    }
-//    
-//    /**
-//     * Returns the correct previous record for searching upstream from the next merge.
-//     * @param lane current lane record
-//     * @param dir direction of search
-//     * @return correct previous record for searching upstream from the next merge
-//     */
-//    private LaneStructureRecord getPrevOnSide(final LaneStructureRecord lane, final LateralDirectionality dir)
-//    {
-//        if (lane.getPrev().size() == 1)
-//        {
-//            return lane.getPrev().get(0);
-//        }
-//        for (LaneStructureRecord prev : lane.getPrev())
-//        {
-//            // note: looking left from current link, requires looking right from left adjacent link at merge
-//            if ((dir.equals(LateralDirectionality.LEFT) && prev.getRight() == null)
-//                || (dir.equals(LateralDirectionality.RIGHT) && prev.getLeft() == null))
-//            {
-//                return prev;
-//            }
-//        }
-//        return null;
-//    }
-    
+
     /**
      * @param lane lane to check
-     * @param now current time to check if the cross section needs to be updated
      * @return record at given lane
      * @throws GTUException if the lane is not in the cross section
      */
-    public final LaneStructureRecord getLaneLSR(final RelativeLane lane, final Time now)  throws GTUException
+    public final LaneStructureRecord getLaneLSR(final RelativeLane lane) throws GTUException
     {
-        //updateCrossSection(now);
         Throw.when(!this.crossSectionRecords.containsKey(lane), GTUException.class,
-            "The requested lane %s is not in the most recent cross section.", lane);
+                "The requested lane %s is not in the most recent cross section.", lane);
         return this.crossSectionRecords.get(lane);
     }
-    
+
     /**
      * Removes all mappings to relative lanes that are not in the most recent cross section.
      * @param map map to clear mappings from
@@ -311,24 +173,227 @@ public class LaneStructure implements EnvironmentState, Serializable
             this.crossSectionRecords.put(relativeLane, lsr);
         }
     }
-    
+
     /**
-     * {@inheritDoc} 
-     * Returns objects over a maximum length of the look ahead distance downstream, or as far as the lane map goes. Upstream,
-     * only the map limits included objects.
+     * Retrieve objects on a lane of a specific type. Returns objects over a maximum length of the look ahead distance
+     * downstream from the reference position, or as far as the lane map goes.
+     * @param lane lane
+     * @param clazz class of objects to find
+     * @param <T> type of objects to find
+     * @param gtu gtu
+     * @param pos relative position to determine distance
+     * @return Sorted set of objects of requested type
+     * @throws GTUException if lane is not in current set
      */
-    @Override
-    public final <T extends LaneBasedObject> TreeMap<Length, Set<T>> getSortedObjects(final ViewingDirection viewingDirection,
-            final RelativeLane relativeLane, final Class<T> clazz)
+    @SuppressWarnings("unchecked")
+    public final <T extends LaneBasedObject> SortedSet<Entry<T>> getDownstreamObjects(final RelativeLane lane,
+            final Class<T> clazz, final GTU gtu, final RelativePosition.TYPE pos) throws GTUException
+    {
+        LaneStructureRecord record = this.getLaneLSR(lane);
+        Length ds = gtu.getRelativePositions().get(pos).getDx().minus(gtu.getReference().getDx());
+        // the list is ordered, but only for DIR_PLUS, need to do our own ordering
+        Length minimumPosition;
+        Length maximumPosition;
+        if (record.getDirection().isPlus())
+        {
+            minimumPosition = record.getStartDistance().multiplyBy(-1.0).plus(ds);
+            maximumPosition = record.getLane().getLength();
+        }
+        else
+        {
+            minimumPosition = Length.ZERO;
+            maximumPosition = record.getLane().getLength().plus(record.getStartDistance()).minus(ds);
+        }
+        SortedSet<Entry<T>> set = new TreeSet<>();
+        Length distance;
+        for (LaneBasedObject object : record.getLane().getLaneBasedObjects(minimumPosition, maximumPosition))
+        {
+            distance = record.getDistanceToPosition(object.getLongitudinalPosition()).minus(ds);
+            if (clazz.isAssignableFrom(object.getClass()) && distance.le(this.lookAhead))
+            {
+                // unchecked, but the above isAssignableFrom assures correctness
+                set.add(new Entry<>(distance, (T) object));
+            }
+        }
+        getDownstreamObjectsRecursive(set, record, clazz, ds);
+        return set;
+    }
+
+    /**
+     * Recursive search for lane based objects downstream.
+     * @param set set to store entries into
+     * @param record current record
+     * @param clazz class of objects to find
+     * @param ds distance from reference to chosen relative position
+     * @param <T> type of objects to find
+     */
+    @SuppressWarnings("unchecked")
+    private <T extends LaneBasedObject> void getDownstreamObjectsRecursive(final SortedSet<Entry<T>> set,
+            final LaneStructureRecord record, final Class<T> clazz, final Length ds)
+    {
+        if (record.getNext().isEmpty() || record.getNext().get(0).getStartDistance().gt(this.lookAhead))
+        {
+            return;
+        }
+        for (LaneStructureRecord next : record.getNext())
+        {
+            Length distance;
+            for (LaneBasedObject object : next.getLane().getLaneBasedObjects())
+            {
+                distance = next.getDistanceToPosition(object.getLongitudinalPosition()).minus(ds);
+                if (clazz.isAssignableFrom(object.getClass()) && distance.le(this.lookAhead))
+                {
+                    // unchecked, but the above isAssignableFrom assures correctness
+                    set.add(new Entry<>(distance, (T) object));
+                }
+            }
+            getDownstreamObjectsRecursive(set, next, clazz, ds);
+        }
+    }
+
+    /**
+     * Retrieve objects on a lane of a specific type. Returns upstream objects from the reference position for as far as the
+     * lane map goes.
+     * @param lane lane
+     * @param clazz class of objects to find
+     * @param <T> type of objects to find
+     * @return Sorted set of objects of requested type
+     * @throws GTUException if lane is not in current set
+     */
+    public final <T extends LaneBasedObject> SortedSet<Entry<T>> getUpstreamObjects(final RelativeLane lane,
+            final Class<T> clazz) throws GTUException
     {
         // TODO
-        return new TreeMap<>();
+        return null;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
         return "LaneStructure [rootLSR=" + this.rootLSR + "]";
     }
+
+    /**
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version Sep 15, 2016 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     * @param <T> class of lane based object contained
+     */
+    public class Entry<T extends LaneBasedObject> implements Comparable<Entry<T>>
+    {
+
+        /** Distance to lane based object. */
+        private final Length distance;
+
+        /** Lane based object. */
+        private final T laneBasedObject;
+
+        /**
+         * @param distance distance to lane based object
+         * @param laneBasedObject lane based object
+         */
+        public Entry(final Length distance, final T laneBasedObject)
+        {
+            this.distance = distance;
+            this.laneBasedObject = laneBasedObject;
+        }
+
+        /**
+         * @return distance.
+         */
+        public final Length getDistance()
+        {
+            return this.distance;
+        }
+
+        /**
+         * @return laneBasedObject.
+         */
+        public final T getLaneBasedObject()
+        {
+            return this.laneBasedObject;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final int hashCode()
+        {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((this.distance == null) ? 0 : this.distance.hashCode());
+            result = prime * result + ((this.laneBasedObject == null) ? 0 : this.laneBasedObject.hashCode());
+            return result;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final boolean equals(final Object obj)
+        {
+            if (this == obj)
+            {
+                return true;
+            }
+            if (obj == null)
+            {
+                return false;
+            }
+            if (getClass() != obj.getClass())
+            {
+                return false;
+            }
+            Entry<?> other = (Entry<?>) obj;
+            if (this.distance == null)
+            {
+                if (other.distance != null)
+                {
+                    return false;
+                }
+            }
+            else if (!this.distance.equals(other.distance))
+            {
+                return false;
+            }
+            if (this.laneBasedObject == null)
+            {
+                if (other.laneBasedObject != null)
+                {
+                    return false;
+                }
+            }
+            // laneBasedObject does not implement equals...
+            else if (!this.laneBasedObject.equals(other.laneBasedObject))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final int compareTo(final Entry<T> arg)
+        {
+            int d = this.distance.compareTo(arg.distance);
+            if (d != 0 || this.laneBasedObject.equals(arg.laneBasedObject))
+            {
+                return d; // different distance (-1 or 1), or same distance but also equal lane based object (0)
+            }
+            return 1; // same distance, unequal lane based object (1)
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "LaneStructure.Entry [distance=" + this.distance + ", laneBasedObject=" + this.laneBasedObject + "]";
+        }
+
+    }
+
 }

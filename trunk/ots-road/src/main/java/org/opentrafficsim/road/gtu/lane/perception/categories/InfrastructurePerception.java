@@ -104,7 +104,7 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
         SortedSet<InfrastructureLaneChangeInfo> resultSet = new TreeSet<>();
         Map<LaneStructureRecord, InfrastructureLaneChangeInfo> currentSet = new HashMap<>();
         Map<LaneStructureRecord, InfrastructureLaneChangeInfo> nextSet = new HashMap<>();
-        LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(lane, getTimestamp());
+        LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(lane);
         currentSet.put(record,
                 new InfrastructureLaneChangeInfo(0, record.getLane().getLength().plus(record.getStartDistance())));
         while (!currentSet.isEmpty())
@@ -270,7 +270,7 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
     {
         updateCrossSection();
         checkLaneIsInCrossSection(lane);
-        LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(lane, getTimestamp());
+        LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(lane);
         Length dist = Length.ZERO;
         while (record != null && ((lat.isLeft() && record.getLeft() != null) || (lat.isRight() && record.getRight() != null)))
         {

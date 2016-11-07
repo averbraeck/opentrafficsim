@@ -194,7 +194,7 @@ public class NeighborsPerception extends LaneBasedAbstractPerceptionCategory
         SortedSet<AbstractHeadwayGTU> headwaySet = new TreeSet<>();
         Map<LaneStructureRecord, Length> currentSet = new HashMap<>();
         Map<LaneStructureRecord, Length> nextSet = new HashMap<>();
-        LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(new RelativeLane(lat, 1), getTimestamp());
+        LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(new RelativeLane(lat, 1));
         double fraction = getGtu().fractionalPosition(getPerception().getLaneStructure().getRootLSR().getLane(),
                 getGtu().getRelativePositions().get(egoRelativePosition));
         Length pos = record.getLane().getLength().multiplyBy(fraction);
@@ -256,7 +256,7 @@ public class NeighborsPerception extends LaneBasedAbstractPerceptionCategory
         SortedSet<AbstractHeadwayGTU> headwaySet = new TreeSet<>();
         Map<LaneStructureRecord, Length> currentSet = new HashMap<>();
         Map<LaneStructureRecord, Length> prevSet = new HashMap<>();
-        LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(new RelativeLane(lat, 1), getTimestamp());
+        LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(new RelativeLane(lat, 1));
         double fraction = getGtu().fractionalPosition(getPerception().getLaneStructure().getRootLSR().getLane(),
                 getGtu().getRelativePositions().get(egoRelativePosition));
         Length pos = record.getLane().getLength().multiplyBy(fraction);
@@ -315,7 +315,7 @@ public class NeighborsPerception extends LaneBasedAbstractPerceptionCategory
         SortedSet<AbstractHeadwayGTU> headwaySet = new TreeSet<>();
         Set<LaneStructureRecord> currentSet = new HashSet<>();
         Set<LaneStructureRecord> nextSet = new HashSet<>();
-        LaneStructureRecord initRecord = getPerception().getLaneStructure().getLaneLSR(lane, getTimestamp());
+        LaneStructureRecord initRecord = getPerception().getLaneStructure().getLaneLSR(lane);
         currentSet.add(initRecord);
         Length lookahead = getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
         Length ds = getGtu().getFront().getDx().minus(getGtu().getReference().getDx());
@@ -383,7 +383,7 @@ public class NeighborsPerception extends LaneBasedAbstractPerceptionCategory
         SortedSet<AbstractHeadwayGTU> headwaySet = new TreeSet<>();
         Set<LaneStructureRecord> currentSet = new HashSet<>();
         Set<LaneStructureRecord> prevSet = new HashSet<>();
-        LaneStructureRecord initRecord = getPerception().getLaneStructure().getLaneLSR(lane, getTimestamp());
+        LaneStructureRecord initRecord = getPerception().getLaneStructure().getLaneLSR(lane);
         currentSet.add(initRecord);
         Length lookback = getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACK);
         Length dsFront = getGtu().getFront().getDx().minus(getGtu().getReference().getDx());

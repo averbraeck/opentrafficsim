@@ -37,7 +37,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -46,10 +45,16 @@ import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.demo.PropertiesParser;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
+import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
+import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -87,6 +92,15 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
 
     /** The model. */
     private CrossingTrafficLightstModel model;
+    
+    /** Fixed green time. */
+    protected static final Duration TGREEN = new Duration(41.0, TimeUnit.SI); 
+    
+    /** Fixed yellow time. */
+    protected static final Duration TYELLOW = new Duration(4.0, TimeUnit.SI); 
+    
+    /** Fixed red time. */
+    protected static final Duration TRED = new Duration(45.0, TimeUnit.SI); 
 
     /**
      * Create a CrossingTrafficLights simulation.
@@ -325,12 +339,12 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
                             trafficLights.put(lane, tl);
                             if (i == 0 || i == 2)
                             {
-                                this.simulator.scheduleEventRel(new Duration(0.0, TimeUnit.SECOND), this, this, "changeTL",
+                                this.simulator.scheduleEventRel(Duration.ZERO, this, this, "changeTL",
                                         new Object[] { tl });
                             }
                             else
                             {
-                                this.simulator.scheduleEventRel(new Duration(75.0, TimeUnit.SECOND), this, this, "changeTL",
+                                this.simulator.scheduleEventRel(CrossingTrafficLights.TRED, this, this, "changeTL",
                                         new Object[] { tl });
                             }
                         }
@@ -368,17 +382,17 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
         if (tl.getTrafficLightColor().isRed())
         {
             tl.setTrafficLightColor(TrafficLightColor.GREEN);
-            this.simulator.scheduleEventRel(new Duration(60.0, TimeUnit.SECOND), this, this, "changeTL", new Object[] { tl });
+            this.simulator.scheduleEventRel(CrossingTrafficLights.TGREEN, this, this, "changeTL", new Object[] { tl });
         }
         else if (tl.getTrafficLightColor().isGreen())
         {
             tl.setTrafficLightColor(TrafficLightColor.YELLOW);
-            this.simulator.scheduleEventRel(new Duration(15.0, TimeUnit.SECOND), this, this, "changeTL", new Object[] { tl });
+            this.simulator.scheduleEventRel(CrossingTrafficLights.TYELLOW, this, this, "changeTL", new Object[] { tl });
         }
         else if (tl.getTrafficLightColor().isYellow())
         {
             tl.setTrafficLightColor(TrafficLightColor.RED);
-            this.simulator.scheduleEventRel(new Duration(75.0, TimeUnit.SECOND), this, this, "changeTL", new Object[] { tl });
+            this.simulator.scheduleEventRel(CrossingTrafficLights.TRED, this, this, "changeTL", new Object[] { tl });
         }
     }
 

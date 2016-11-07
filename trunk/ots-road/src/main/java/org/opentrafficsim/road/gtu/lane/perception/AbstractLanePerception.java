@@ -524,10 +524,4 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
         }
     }
 
-    /** {@inheritDoc} */
-    public final EnvironmentState getEnvironmentState()
-    {
-        return this.laneStructure;
-    }
-
 }

@@ -2,7 +2,6 @@ package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
 import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.UNITINTERVAL;
 
-import java.rmi.RemoteException;
 import java.util.LinkedHashSet;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -472,14 +471,6 @@ public final class LmrsUtil
                 perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(new RelativeLane(lat, 1));
         if (!set.isEmpty())
         {
-            try
-            {
-                System.out.println("GTU " + perception.getGtu().getId() + " is synchronizing.");
-            }
-            catch (GTUException exception)
-            {
-                exception.printStackTrace();
-            }
             Acceleration aSingle =
                     singleAcceleration(set.first().getDistance(), ownSpeed, set.first().getSpeed(), desire, bc, sli, cfm);
             a = Acceleration.min(a, aSingle);
@@ -519,14 +510,6 @@ public final class LmrsUtil
                     : lat.equals(LateralDirectionality.RIGHT) && bc2.contains(DLEFT) ? bc2.getParameter(DLEFT) : 0;
             if (desire >= dCoop)
             {
-                try
-                {
-                    System.out.println("GTU " + perception.getGtu().getId() + " is cooperating.");
-                }
-                catch (GTUException exception)
-                {
-                    exception.printStackTrace();
-                }
                 Acceleration aSingle =
                         singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, bc, sli, cfm);
                 a = Acceleration.min(a, aSingle);

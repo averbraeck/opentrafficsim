@@ -602,7 +602,7 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * Retrieve the list of Sensors of this Lane in the specified distance range for the given GTUType. The sensors that are
      * triggered by GTUTypes.ALL are added as well. The resulting list is a defensive copy.
-     * @param minimumPosition Length; the minimum distance on the Lane (exclusive)
+     * @param minimumPosition Length; the minimum distance on the Lane (inclusive)
      * @param maximumPosition Length; the maximum distance on the Lane (inclusive)
      * @param gtuType the GTU type to provide the sensors for
      * @return List&lt;Sensor&gt;; list of the sensor in the specified range. This is a defensive copy.
@@ -615,7 +615,7 @@ public class Lane extends CrossSectionElement implements Serializable
             for (GTUTypeSensor gs : gtsl)
             {
                 if ((gs.getGtuType().equals(gtuType) || gs.getGtuType().equals(GTUType.ALL))
-                        && gs.getSensor().getLongitudinalPosition().gt(minimumPosition)
+                        && gs.getSensor().getLongitudinalPosition().ge(minimumPosition)
                         && gs.getSensor().getLongitudinalPosition().le(maximumPosition))
                 {
                     sensorList.add(gs.getSensor());
@@ -802,7 +802,7 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * Retrieve the list of LaneBasedObjects of this Lane in the specified distance range. The resulting list is a defensive
      * copy.
-     * @param minimumPosition Length; the minimum distance on the Lane (exclusive)
+     * @param minimumPosition Length; the minimum distance on the Lane (inclusive)
      * @param maximumPosition Length; the maximum distance on the Lane (inclusive)
      * @return List&lt;LaneBasedObject&gt;; list of the laneBasedObject in the specified range. This is a defensive copy.
      */
@@ -813,7 +813,7 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             for (LaneBasedObject lbo : lbol)
             {
-                if (lbo.getLongitudinalPosition().gt(minimumPosition) && lbo.getLongitudinalPosition().le(maximumPosition))
+                if (lbo.getLongitudinalPosition().ge(minimumPosition) && lbo.getLongitudinalPosition().le(maximumPosition))
                 {
                     laneBasedObjectList.add(lbo);
                 }
