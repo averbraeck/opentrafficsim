@@ -132,7 +132,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
                 0, false, 0));
         this.properties.add(new SelectionProperty("TacticalPlanner", "Tactical planner",
                 "<html>The tactical planner determines if a lane change is desired and possible.</html>",
-                new String[] { "MOBIL", "LMRS", "Toledo" }, 0, false, 600));
+                new String[] { "MOBIL", "MOBIL/LC", "LMRS", "Toledo" }, 0, false, 600));
         this.properties.add(new SelectionProperty("LaneChanging", "Lane changing",
                 "<html>The lane change friendliness (if used -- eg just for MOBIL.</html>",
                 new String[] { "Egoistic", "Altruistic" }, 0, false, 600));
