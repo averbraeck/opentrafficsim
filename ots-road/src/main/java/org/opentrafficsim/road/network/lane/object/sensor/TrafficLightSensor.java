@@ -190,7 +190,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
             }
             catch (GTUException exception)
             {
-                System.err.println("Caught GTU exception tryint to get the frontPositions");
+                System.err.println("Caught GTU exception trying to get the frontPositions");
                 exception.printStackTrace();
             }
         }
@@ -221,17 +221,18 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
                     {
                         continue; // Not detected on this lane
                     }
+                    // The active part of the GTU covers some part of this lane
                     if (this.entryA.getLane() != remainingLane && this.entryB.getLane() != remainingLane)
                     {
-                        // Active part of the GTU covers some part of intermediate lane
+                        // The active part covers (part of) an intermediate lane; therefore this detector detects the GTU
                         addGTU(gtu);
                         return;
                     }
-                    // The GTU is on the A lane and/or the B lane
+                    // The GTU is on the A lane and/or the B lane; in this case the driving direction matters
+                    GTUDirectionality drivingDirection = gtu.getDirection(remainingLane);
                     if (this.entryA.getLane().equals(this.entryB.getLane()))
                     {
-                        // A lane equals B lane
-                        GTUDirectionality drivingDirection = gtu.getDirection(remainingLane);
+                        // A lane equals B lane; does the active part of the GTU cover the detector?
                         // TODO: not handling backwards driving GTU
                         if (GTUDirectionality.DIR_PLUS == drivingDirection)
                         {
@@ -279,10 +280,59 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
                         }
                     }
                     else
-                    // Lane A is not equal to lane B
+                    // Lane A is not equal to lane B; the GTU is on of these
                     {
-                        System.err.println("Not handling GTU_ADD_EVENT for case where lane A is not lane B");
-                        // TODO
+                        Length detectionPosition;
+                        GTUDirectionality detectorDirectionality;
+                        if (this.entryA.getLane() == remainingLane)
+                        {
+                            detectionPosition = this.entryA.getLongitudinalPosition();
+                            detectorDirectionality = this.directionalityA;
+                        }
+                        else
+                        {
+                            detectionPosition = this.entryB.getLongitudinalPosition();
+                            detectorDirectionality = this.directionalityB;
+                        }
+                        if (GTUDirectionality.DIR_PLUS == drivingDirection)
+                        {
+                            if (GTUDirectionality.DIR_PLUS == detectorDirectionality)
+                            {
+                                if (frontPosition.ge(detectionPosition))
+                                {
+                                    addGTU(gtu);
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                if (rearPosition.le(detectionPosition))
+                                {
+                                    addGTU(gtu);
+                                    return;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // GTU is driving in direction of decreasing longitudinal distance
+                            if (GTUDirectionality.DIR_PLUS == detectorDirectionality)
+                            {
+                                if (rearPosition.ge(detectionPosition))
+                                {
+                                    addGTU(gtu);
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                if (frontPosition.le(detectionPosition))
+                                {
+                                    addGTU(gtu);
+                                    return;
+                                }
+                            }
+                        }
                     }
                 }
                 return;
@@ -292,7 +342,10 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
                 System.err.println("Caught GTU exception tryint to get the frontPositions");
                 exception.printStackTrace();
             }
-
+        }
+        else
+        {
+            System.err.println("Unexpected event: " + event);
         }
     }
 
