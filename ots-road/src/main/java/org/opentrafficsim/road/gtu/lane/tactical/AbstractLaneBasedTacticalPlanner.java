@@ -79,17 +79,9 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
     {
         setCarFollowingModel(carFollowingModel);
         this.gtu = gtu;
-        CategorialLanePerception perception = new CategorialLanePerception(gtu);
-        perception.addPerceptionCategory(new DefaultSimplePerception(perception));
-        // TODO Specific tactical planners should know which perception categories to use
-        // SSMDEMO below categories can be disabled
-        perception.addPerceptionCategory(new InfrastructurePerception(perception));
-        perception.addPerceptionCategory(new NeighborsPerception(perception));
-        perception.addPerceptionCategory(new IntersectionPerception(perception));
-        perception.addPerceptionCategory(new EgoPerception(perception));
-        this.lanePerception = perception;
+        this.lanePerception = new CategorialLanePerception(gtu);
     }
-
+    
     /** {@inheritDoc} */
     @Override
     public final LaneBasedGTU getGtu()
