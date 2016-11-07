@@ -21,12 +21,10 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
@@ -45,16 +43,13 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.demo.PropertiesParser;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
-import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.modelproperties.IDMPropertySet;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -107,7 +102,7 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
                 new String[] { "Egoistic", "Altruistic" }, 0, false, 500));
         this.properties.add(new SelectionProperty("TacticalPlanner", "Tactical planner",
                 "<html>The tactical planner determines if a lane change is desired and possible.</html>",
-                new String[] { "MOBIL", "LMRS", "Toledo" }, 0, false, 600));
+                new String[] { "MOBIL", "MOBIL/LC", "LMRS", "Toledo" }, 0, false, 600));
     }
 
     /** {@inheritDoc} */
@@ -135,17 +130,6 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
                 {
                     CrossingTrafficLights crossingTrafficLights = new CrossingTrafficLights();
                     List<Property<?>> localProperties = crossingTrafficLights.getProperties();
-                    localProperties.add(new SelectionProperty("CarFollowingModel", "Car following model",
-                            "<html>The car following model determines "
-                                    + "the acceleration that a vehicle will make taking into account "
-                                    + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
-                                    + "curvature of the road) capabilities of the vehicle and personality "
-                                    + "of the driver.</html>",
-                            new String[] { "IDM", "IDM+" }, 1, false, 1));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car",
-                            new Acceleration(1.56, METER_PER_SECOND_2), new Acceleration(2.09, METER_PER_SECOND_2),
-                            new Length(3.0, METER), new Duration(1.2, SECOND), 2));
-
                     crossingTrafficLights.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND),
                             new Duration(3600.0, SECOND), localProperties, null, true);
 
@@ -262,11 +246,17 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
     /** The car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModelOld carFollowingModel;
 
+    /** The lane change model, e.g. Egoistic for cars. */
+    private LaneChangeModel laneChangeModel;
+
     /** User settable properties. */
     private List<Property<?>> properties = null;
 
     /** The GTUColorer for the generated vehicles. */
     private final GTUColorer gtuColorer;
+
+    /** the tactical planner factory for this model. */
+    private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory;
 
     /** The speed limit on all Lanes. */
     private Speed speedLimit = new Speed(80, KM_PER_HOUR);
@@ -336,7 +326,7 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
                             if (i == 0 || i == 2)
                             {
                                 this.simulator.scheduleEventRel(new Duration(0.0, TimeUnit.SECOND), this, this, "changeTL",
-                                    new Object[] { tl });
+                                        new Object[] { tl });
                             }
                             else
                             {
@@ -356,63 +346,13 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
                 }
             }
 
-            String carFollowingModelName = null;
-            CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
-            Property<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
-            if (null == cfmp)
-            {
-                throw new Error("Cannot find \"Car following model\" property");
-            }
-            if (cfmp instanceof SelectionProperty)
-            {
-                carFollowingModelName = ((SelectionProperty) cfmp).getValue();
-            }
-            else
-            {
-                throw new Error("\"Car following model\" property has wrong type");
-            }
-            for (Property<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
-            {
-                if (ap instanceof SelectionProperty)
-                {
-                    SelectionProperty sp = (SelectionProperty) ap;
-                    if ("CarFollowingModel".equals(sp.getKey()))
-                    {
-                        carFollowingModelName = sp.getValue();
-                    }
-                }
-                else if (ap instanceof CompoundProperty)
-                {
-                    CompoundProperty cp = (CompoundProperty) ap;
-                    if (ap.getKey().equals("OutputGraphs"))
-                    {
-                        continue; // Output settings are handled elsewhere
-                    }
-                    if (ap.getKey().contains("IDM"))
-                    {
-                        Acceleration a = IDMPropertySet.getA(cp);
-                        Acceleration b = IDMPropertySet.getB(cp);
-                        Length s0 = IDMPropertySet.getS0(cp);
-                        Duration tSafe = IDMPropertySet.getTSafe(cp);
-                        GTUFollowingModelOld gtuFollowingModel = null;
-                        if (carFollowingModelName.equals("IDM"))
-                        {
-                            gtuFollowingModel = new IDMOld(a, b, s0, tSafe, 1.0);
-                        }
-                        else if (carFollowingModelName.equals("IDM+"))
-                        {
-                            gtuFollowingModel = new IDMPlusOld(a, b, s0, tSafe, 1.0);
-                        }
-                        else
-                        {
-                            throw new Error("Unknown gtu following model: " + carFollowingModelName);
-                        }
-                        this.carFollowingModel = gtuFollowingModel;
-                    }
-                }
-            }
+            this.carFollowingModel = PropertiesParser.parseGTUFollowingModelOld(this.properties, "Car");
+            this.laneChangeModel = PropertiesParser.parseLaneChangeModel(this.properties);
+            this.strategicalPlannerFactory =
+                    PropertiesParser.parseStrategicalPlannerFactory(this.properties, this.carFollowingModel, this.laneChangeModel);
         }
-        catch (SimRuntimeException | NamingException | NetworkException | OTSGeometryException | PropertyException exception)
+        catch (SimRuntimeException | NamingException | NetworkException | OTSGeometryException | PropertyException
+                | GTUException exception)
         {
             exception.printStackTrace();
         }
@@ -455,18 +395,9 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
         {
             initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
             Length vehicleLength = new Length(4, METER);
-            GTUFollowingModelOld gtuFollowingModel = this.carFollowingModel;
-            if (null == gtuFollowingModel)
-            {
-                throw new Error("gtuFollowingModel is null");
-            }
-            BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
             LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
                     new Length(1.8, METER), this.speedDistribution.draw(), this.simulator, this.network);
-//            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
-//                    new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
-            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
-                    new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, new Egoistic(), gtu), gtu);
+            LaneBasedStrategicalPlanner strategicalPlanner = this.strategicalPlannerFactory.create(gtu);
             gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
                     this.gtuColorer);
             this.simulator.scheduleEventRel(this.headwayDistribution.draw(), this, this, "generateCar", new Object[] { lane });

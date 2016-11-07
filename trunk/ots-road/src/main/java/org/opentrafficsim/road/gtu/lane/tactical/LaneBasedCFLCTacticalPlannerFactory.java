@@ -10,7 +10,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 
 /**
  * Factory to create {@code LaneBasedCFLCTacticalPlanner}.
@@ -24,7 +24,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneCha
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class LaneBasedCFLCTacticalPlannerFactory implements LaneBasedTacticalPlannerFactory<LaneBasedCFLCTacticalPlanner>, Serializable
+public class LaneBasedCFLCTacticalPlannerFactory
+        implements LaneBasedTacticalPlannerFactory<LaneBasedCFLCTacticalPlanner>, Serializable
 {
 
     /** */
@@ -34,7 +35,7 @@ public class LaneBasedCFLCTacticalPlannerFactory implements LaneBasedTacticalPla
     private GTUFollowingModelOld carFollowingModel;
 
     /** The lane change model. */
-    private AbstractLaneChangeModel laneChangeModel;
+    private LaneChangeModel laneChangeModel;
 
     /**
      * Constructor with fixed stateless car-following and lane change model.
@@ -42,7 +43,7 @@ public class LaneBasedCFLCTacticalPlannerFactory implements LaneBasedTacticalPla
      * @param laneChangeModel lane change model
      */
     public LaneBasedCFLCTacticalPlannerFactory(final GTUFollowingModelOld carFollowingModel,
-        final AbstractLaneChangeModel laneChangeModel)
+            final LaneChangeModel laneChangeModel)
     {
         this.carFollowingModel = carFollowingModel;
         this.laneChangeModel = laneChangeModel;
@@ -72,10 +73,11 @@ public class LaneBasedCFLCTacticalPlannerFactory implements LaneBasedTacticalPla
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return "LaneBasedCFLCTacticalPlannerFactory [car-following=" + this.carFollowingModel + ", lane changing="
-            + this.laneChangeModel + "]";
+                + this.laneChangeModel + "]";
     }
 
 }
