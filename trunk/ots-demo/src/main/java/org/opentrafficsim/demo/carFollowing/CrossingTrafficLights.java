@@ -45,16 +45,10 @@ import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.demo.PropertiesParser;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
-import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -94,10 +88,10 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
     private CrossingTrafficLightstModel model;
     
     /** Fixed green time. */
-    protected static final Duration TGREEN = new Duration(41.0, TimeUnit.SI); 
+    protected static final Duration TGREEN = new Duration(39.0, TimeUnit.SI); 
     
     /** Fixed yellow time. */
-    protected static final Duration TYELLOW = new Duration(4.0, TimeUnit.SI); 
+    protected static final Duration TYELLOW = new Duration(6.0, TimeUnit.SI); 
     
     /** Fixed red time. */
     protected static final Duration TRED = new Duration(45.0, TimeUnit.SI); 
