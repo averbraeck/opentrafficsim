@@ -2,6 +2,19 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="0.12.01" date="2016-11-07" description="Intermediate release">
+      <action issue="OTS-213" type="fix">
+        OTS-213 Change SimpleWeightedGraph in OTSNetwork into SimpleDirectedWeightedGraph
+      </action>
+      <action issue="OTS-214" type="add">
+        OTS-214 TrafficLight implementation for car following + instantaneous lane change model
+      </action>
+      <action issue="OTS-215" type="add">
+        OTS-215 TrafficLight implementation for LMRS
+      </action>
+    </release>
+
+
     <release version="0.12.00" date="2016-11-02" description="Sprint 7">
       <action issue="OTS-106" type="add">
         OTS-106 Traffic lights as separate objects that can be observed instead of a 'fake' GTU
