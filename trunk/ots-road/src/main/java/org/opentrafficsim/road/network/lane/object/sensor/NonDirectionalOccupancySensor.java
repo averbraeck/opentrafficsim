@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 import nl.tudelft.simulation.event.EventType;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
  * An occupancy sensor is a lane-based object that can be triggered by a relative position of the GTU (e.g., front, back) when
@@ -30,15 +30,15 @@ public interface NonDirectionalOccupancySensor extends Serializable
 
     /**
      * Return the A position of this NonDirectionalOccupancySensor.
-     * @return LaneBasedObject; the lane and position on the lane where GTU entry is detected
+     * @return Length; the lane and position on the lane where GTU entry is detected
      */
-    LaneBasedObject getLanePositionA();
+    Length getLanePositionA();
 
     /**
      * Return the B position of this NonDirectionalOccupancySensor.
-     * @return LaneBasedObject; the lane and position on the lane where GTU exit is detected
+     * @return Length; the lane and position on the lane where GTU exit is detected
      */
-    LaneBasedObject getLanePositionB();
+    Length getLanePositionB();
 
     /** @return The id of the sensor. */
     String getId();
