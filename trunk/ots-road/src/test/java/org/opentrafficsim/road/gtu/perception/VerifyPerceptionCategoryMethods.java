@@ -62,7 +62,7 @@ public class VerifyPerceptionCategoryMethods
      * The {@code *} is subtracted as field name, with first character made upper or lower case as by convention.
      */
     @Test
-    public final void perceptionCategotyTest()
+    public final void perceptionCategoryTest()
     {
         Collection<Class<?>> classList = ClassList.classList("org.opentrafficsim", true);
         for (Class<?> c : classList)
@@ -225,7 +225,7 @@ public class VerifyPerceptionCategoryMethods
     public static void main(final String[] args)
     {
         VerifyPerceptionCategoryMethods t = new VerifyPerceptionCategoryMethods();
-        t.perceptionCategotyTest();
+        t.perceptionCategoryTest();
     }
 
 }
