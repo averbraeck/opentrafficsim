@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.alg.DijkstraShortestPath;
-import org.jgrapht.graph.SimpleWeightedGraph;
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.opentrafficsim.base.immutablecollections.Immutable;
 import org.opentrafficsim.base.immutablecollections.ImmutableHashMap;
 import org.opentrafficsim.base.immutablecollections.ImmutableMap;
@@ -52,7 +52,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     private Map<GTUType, Map<String, Route>> routeMap = new HashMap<>();
 
     /** Graphs to calculate shortest paths per GTUType. */
-    private Map<GTUType, SimpleWeightedGraph<Node, LinkEdge<Link>>> linkGraphs = new HashMap<>();
+    private Map<GTUType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> linkGraphs = new HashMap<>();
 
     /** GTUs registered in this network. */
     private Map<String, GTU> gtuMap = new HashMap<>();
@@ -352,7 +352,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         @SuppressWarnings("rawtypes")
         Class linkEdgeClass = LinkEdge.class;
         @SuppressWarnings("unchecked")
-        SimpleWeightedGraph<Node, LinkEdge<Link>> graph = new SimpleWeightedGraph<Node, LinkEdge<Link>>(linkEdgeClass);
+        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = new SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>(linkEdgeClass);
         for (Node node : this.nodeMap.values())
         {
             graph.addVertex(node);
@@ -384,7 +384,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             throws NetworkException
     {
         CompleteRoute route = new CompleteRoute("Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo, gtuType);
-        SimpleWeightedGraph<Node, LinkEdge<Link>> graph = this.linkGraphs.get(gtuType);
+        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = this.linkGraphs.get(gtuType);
         if (graph == null)
         {
             buildGraph(gtuType);
@@ -423,7 +423,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     {
         CompleteRoute route = new CompleteRoute(
                 "Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo + " via " + nodesVia.toString(), gtuType);
-        SimpleWeightedGraph<Node, LinkEdge<Link>> graph = this.linkGraphs.get(gtuType);
+        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = this.linkGraphs.get(gtuType);
         if (graph == null)
         {
             buildGraph(gtuType);
