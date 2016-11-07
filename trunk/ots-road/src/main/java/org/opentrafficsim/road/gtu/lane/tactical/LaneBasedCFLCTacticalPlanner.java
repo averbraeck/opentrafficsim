@@ -96,6 +96,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
     {
         super(carFollowingModel, gtu);
         this.laneChangeModel = laneChangeModel;
+        getPerception().addPerceptionCategory(new DefaultSimplePerception(getPerception()));
     }
 
     /** {@inheritDoc} */

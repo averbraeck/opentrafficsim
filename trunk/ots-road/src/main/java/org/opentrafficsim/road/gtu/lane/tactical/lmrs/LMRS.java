@@ -8,11 +8,13 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
@@ -72,6 +74,11 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     public LMRS(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu)
     {
         super(carFollowingModel, gtu);
+        getPerception().addPerceptionCategory(new DefaultSimplePerception(getPerception()));
+        getPerception().addPerceptionCategory(new InfrastructurePerception(getPerception()));
+        getPerception().addPerceptionCategory(new NeighborsPerception(getPerception()));
+        getPerception().addPerceptionCategory(new IntersectionPerception(getPerception()));
+        getPerception().addPerceptionCategory(new EgoPerception(getPerception()));
     }
 
     /**

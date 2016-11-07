@@ -51,6 +51,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
     public LaneBasedGTUFollowingTacticalPlanner(final GTUFollowingModelOld carFollowingModel, final LaneBasedGTU gtu)
     {
         super(carFollowingModel, gtu);
+        getPerception().addPerceptionCategory(new DefaultSimplePerception(getPerception()));
     }
 
     /** {@inheritDoc} */
