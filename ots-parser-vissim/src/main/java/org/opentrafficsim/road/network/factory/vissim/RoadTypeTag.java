@@ -11,7 +11,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
-import org.opentrafficsim.road.network.factory.xml.units.LaneAttributes;
+import org.opentrafficsim.road.network.factory.vissim.units.LaneAttributes;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.w3c.dom.NamedNodeMap;
