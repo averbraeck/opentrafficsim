@@ -176,12 +176,12 @@ public class LaneStructure implements Serializable
 
     /**
      * Retrieve objects on a lane of a specific type. Returns objects over a maximum length of the look ahead distance
-     * downstream from the reference position, or as far as the lane map goes.
+     * downstream from the relative position, or as far as the lane map goes.
      * @param lane lane
      * @param clazz class of objects to find
-     * @param <T> type of objects to find
      * @param gtu gtu
-     * @param pos relative position to determine distance
+     * @param pos relative position to start search from
+     * @param <T> type of objects to find
      * @return Sorted set of objects of requested type
      * @throws GTUException if lane is not in current set
      */
@@ -196,7 +196,7 @@ public class LaneStructure implements Serializable
         Length maximumPosition;
         if (record.getDirection().isPlus())
         {
-            minimumPosition = record.getStartDistance().multiplyBy(-1.0).plus(ds);
+            minimumPosition = ds.minus(record.getStartDistance());
             maximumPosition = record.getLane().getLength();
         }
         else
@@ -252,19 +252,76 @@ public class LaneStructure implements Serializable
     }
 
     /**
-     * Retrieve objects on a lane of a specific type. Returns upstream objects from the reference position for as far as the
-     * lane map goes.
+     * Retrieve objects on a lane of a specific type. Returns upstream objects from the relative position for as far as the lane
+     * map goes. Distances to upstream objects are given as positive values.
      * @param lane lane
      * @param clazz class of objects to find
+     * @param gtu gtu
+     * @param pos relative position to start search from
      * @param <T> type of objects to find
      * @return Sorted set of objects of requested type
      * @throws GTUException if lane is not in current set
      */
+    @SuppressWarnings("unchecked")
     public final <T extends LaneBasedObject> SortedSet<Entry<T>> getUpstreamObjects(final RelativeLane lane,
-            final Class<T> clazz) throws GTUException
+            final Class<T> clazz, final GTU gtu, final RelativePosition.TYPE pos) throws GTUException
     {
-        // TODO
-        return null;
+        LaneStructureRecord record = this.getLaneLSR(lane);
+        Length ds = gtu.getReference().getDx().minus(gtu.getRelativePositions().get(pos).getDx());
+        // the list is ordered, but only for DIR_PLUS, need to do our own ordering
+        Length minimumPosition;
+        Length maximumPosition;
+        if (record.getDirection().isPlus())
+        {
+            minimumPosition = Length.ZERO;
+            maximumPosition = record.getStartDistance().multiplyBy(-1.0).minus(ds);
+        }
+        else
+        {
+            minimumPosition = record.getLane().getLength().plus(record.getStartDistance()).plus(ds);
+            maximumPosition = record.getLane().getLength();
+        }
+        SortedSet<Entry<T>> set = new TreeSet<>();
+        Length distance;
+        for (LaneBasedObject object : record.getLane().getLaneBasedObjects(minimumPosition, maximumPosition))
+        {
+            if (clazz.isAssignableFrom(object.getClass()))
+            {
+                distance = record.getDistanceToPosition(object.getLongitudinalPosition()).multiplyBy(-1.0).minus(ds);
+                // unchecked, but the above isAssignableFrom assures correctness
+                set.add(new Entry<>(distance, (T) object));
+            }
+        }
+        getUpstreamObjectsRecursive(set, record, clazz, ds);
+        return set;
+    }
+
+    /**
+     * Recursive search for lane based objects upstream.
+     * @param set set to store entries into
+     * @param record current record
+     * @param clazz class of objects to find
+     * @param ds distance from reference to chosen relative position
+     * @param <T> type of objects to find
+     */
+    @SuppressWarnings("unchecked")
+    private <T extends LaneBasedObject> void getUpstreamObjectsRecursive(final SortedSet<Entry<T>> set,
+            final LaneStructureRecord record, final Class<T> clazz, final Length ds)
+    {
+        for (LaneStructureRecord prev : record.getPrev())
+        {
+            Length distance;
+            for (LaneBasedObject object : prev.getLane().getLaneBasedObjects())
+            {
+                if (clazz.isAssignableFrom(object.getClass()))
+                {
+                    distance = prev.getDistanceToPosition(object.getLongitudinalPosition()).multiplyBy(-1.0).minus(ds);
+                    // unchecked, but the above isAssignableFrom assures correctness
+                    set.add(new Entry<>(distance, (T) object));
+                }
+            }
+            getUpstreamObjectsRecursive(set, prev, clazz, ds);
+        }
     }
 
     /** {@inheritDoc} */
