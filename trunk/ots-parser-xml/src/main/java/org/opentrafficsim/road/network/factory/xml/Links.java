@@ -660,6 +660,8 @@ final class Links
                                         ClassUtil.resolveConstructor(clazz, new Class[] { String.class, Lane.class,
                                                 Length.class, RelativePosition.TYPE.class, OTSDEVSSimulatorInterface.class });
                                 Length position = LinkTag.parseBeginEndPosition(sensorTag.positionStr, lane);
+                                // { String.class, Lane.class, Length.class, RelativePosition.TYPE.class,
+                                // OTSDEVSSimulatorInterface.class }
                                 AbstractSensor sensor = (AbstractSensor) sensorConstructor.newInstance(
                                         new Object[] { sensorTag.name, lane, position, sensorTag.triggerPosition, simulator });
                                 lane.addSensor(sensor, GTUType.ALL);
