@@ -100,7 +100,7 @@ class SensorTag implements Serializable
             try
             {
                 ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class, Length.class,
-                    RelativePosition.TYPE.class, OTSDEVSSimulatorInterface.class, Length.class, OTSLine3D.class});
+                    RelativePosition.TYPE.class, OTSDEVSSimulatorInterface.class});
             }
             catch (NoSuchMethodException nsme)
             {
