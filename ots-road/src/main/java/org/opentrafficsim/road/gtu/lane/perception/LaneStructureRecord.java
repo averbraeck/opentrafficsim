@@ -336,7 +336,7 @@ public class LaneStructureRecord implements Serializable
     }
 
     /**
-     * @return startDistance.
+     * @return distance to start in the driving direction, from the reference position
      */
     public final Length getStartDistance()
     {

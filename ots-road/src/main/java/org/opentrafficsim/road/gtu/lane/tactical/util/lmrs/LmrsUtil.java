@@ -475,7 +475,7 @@ public final class LmrsUtil
                     singleAcceleration(set.first().getDistance(), ownSpeed, set.first().getSpeed(), desire, bc, sli, cfm);
             a = Acceleration.min(a, aSingle);
         }
-        return Acceleration.max(a, b.multiplyBy(-1));
+        return Acceleration.max(a, b.multiplyBy(-1.0));
     }
 
     /**
@@ -516,7 +516,7 @@ public final class LmrsUtil
             }
         }
         
-        return Acceleration.max(a, b.multiplyBy(-1));
+        return Acceleration.max(a, b.multiplyBy(-1.0));
     }
 
     /**
