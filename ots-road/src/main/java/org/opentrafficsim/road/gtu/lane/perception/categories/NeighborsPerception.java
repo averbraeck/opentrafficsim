@@ -352,7 +352,11 @@ public class NeighborsPerception extends LaneBasedAbstractPerceptionCategory
                     // only within lookahead
                     if (distance.le(lookahead) && !gtu.equals(getGtu()))
                     {
-                        headwaySet.add(createHeadwayGtu(gtu, distance));
+                        // TODO remove this fix to ignore on-ramp block
+                        if (!gtu.getId().equals("999999"))
+                        {
+                            headwaySet.add(createHeadwayGtu(gtu, distance));
+                        }
                     }
                 }
                 // add next lanes

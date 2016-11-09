@@ -162,12 +162,12 @@ public final class PropertiesParser
                 if ("TacticalPlanner".equals(sp.getKey()))
                 {
                     String tacticalPlannerName = sp.getValue();
-                    if ("MOBIL".equals(tacticalPlannerName))
+                    if ("IDM".equals(tacticalPlannerName))
                     {
                         return new LaneBasedStrategicalRoutePlannerFactory(
                                 new LaneBasedGTUFollowingTacticalPlannerFactory(gtuFollowingModel));
                     }
-                    else if ("MOBIL/LC".equals(tacticalPlannerName))
+                    else if ("MOBIL/IDM".equals(tacticalPlannerName))
                     {
                         return new LaneBasedStrategicalRoutePlannerFactory(
                                 new LaneBasedCFLCTacticalPlannerFactory(gtuFollowingModel, laneChangeModel));

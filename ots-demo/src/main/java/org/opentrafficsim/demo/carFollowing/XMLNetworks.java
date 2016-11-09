@@ -132,7 +132,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
                 0, false, 0));
         this.properties.add(new SelectionProperty("TacticalPlanner", "Tactical planner",
                 "<html>The tactical planner determines if a lane change is desired and possible.</html>",
-                new String[] { "MOBIL", "MOBIL/LC", "LMRS", "Toledo" }, 0, false, 600));
+                new String[] { "IDM", "MOBIL/IDM", "LMRS", "Toledo" }, 0, false, 600));
         this.properties.add(new SelectionProperty("LaneChanging", "Lane changing",
                 "<html>The lane change friendliness (if used -- eg just for MOBIL.</html>",
                 new String[] { "Egoistic", "Altruistic" }, 0, false, 600));
@@ -495,7 +495,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                     if ("TacticalPlanner".equals(sp.getKey()))
                     {
                         String tacticalPlannerName = sp.getValue();
-                        if ("MOBIL".equals(tacticalPlannerName))
+                        if ("MOBIL/IDM".equals(tacticalPlannerName))
                         {
                             this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
                                     new LaneBasedCFLCTacticalPlannerFactory(this.carFollowingModelCars, this.laneChangeModel),
