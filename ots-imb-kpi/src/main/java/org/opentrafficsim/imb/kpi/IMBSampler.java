@@ -19,6 +19,7 @@ import org.opentrafficsim.imb.transceiver.Transceiver;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.Sampler;
+import org.opentrafficsim.kpi.sampling.Trajectory;
 
 import nl.tno.imb.TByteBuffer;
 import nl.tno.imb.TEventEntry;
@@ -39,7 +40,7 @@ public class IMBSampler extends Sampler
 {
     /** The IMBConnector. */
     private final IMBConnector imbConnector;
-    
+
     /** Transceiver of statistics. */
     private ImbKpiTransceiver imbKpiTransceiver;
 
@@ -208,6 +209,23 @@ public class IMBSampler extends Sampler
         }
         else if (contains(kpiLaneDirection))
         {
+            // TEST LOOP
+            for (Trajectory trajectory : getTrajectoryGroup(kpiLaneDirection).getTrajectories())
+            {
+                if (trajectory.getGtuId().equals(gtu.getId()))
+                {
+                    float[] x = trajectory.getX();
+                    float pos = (float) (kpiLaneDirection.getKpiDirection().isPlus() ? longitudinalPosition
+                            : kpiLaneDirection.getLaneData().getLength().si - longitudinalPosition);
+                    if (pos < x[x.length - 1])
+                    {
+                        System.err.println("Vehicle " + gtu.getId() + " is moving backwards on lane "
+                                + kpiLaneDirection.getLaneData() + " or direction on lane is incorrect.");
+                    }
+                    break;
+                }
+            }
+            // END TEST LOOP
             // move on current
             processGtuMoveEvent(kpiLaneDirection, new Length(longitudinalPosition, LengthUnit.SI),
                     new Speed(speed, SpeedUnit.SI), new Acceleration(acceleration, AccelerationUnit.SI), now(), gtu);
@@ -245,8 +263,8 @@ public class IMBSampler extends Sampler
             if (now().ge(this.startRecordingMap.get(kpiLaneDirection)))
             {
                 startRecording(kpiLaneDirection);
+                iterator.remove();
             }
-            iterator.remove();
         }
         iterator = this.stopRecordingMap.keySet().iterator();
         while (iterator.hasNext())
@@ -255,8 +273,8 @@ public class IMBSampler extends Sampler
             if (now().ge(this.stopRecordingMap.get(kpiLaneDirection)))
             {
                 stopRecording(kpiLaneDirection);
+                iterator.remove();
             }
-            iterator.remove();
         }
     }
 
