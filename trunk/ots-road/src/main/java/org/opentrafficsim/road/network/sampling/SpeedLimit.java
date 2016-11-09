@@ -1,8 +1,12 @@
-package org.opentrafficsim.kpi.sampling.data;
+package org.opentrafficsim.road.network.sampling;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
+import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -32,10 +36,19 @@ public class SpeedLimit extends ExtendedDataType<Speed>
     public final Speed getValue(final GtuDataInterface gtu)
     {
         Throw.whenNull(gtu, "GTU may not be null.");
-        // well...
-        return new Speed(Math.random() * 80.0, SpeedUnit.KM_PER_HOUR);
+        Throw.when(!(gtu instanceof GtuData), IllegalArgumentException.class,
+                "Extended data type speed limit is only for use with GtuData. The provided data %s is of the wrong type.", gtu);
+        LaneBasedGTU laneGtu = ((GtuData) gtu).getGtu();
+        try
+        {
+            return laneGtu.getReferencePosition().getLane().getSpeedLimit(laneGtu.getGTUType());
+        }
+        catch (NetworkException | GTUException exception)
+        {
+            throw new RuntimeException("Could not obtain speed limit.", exception);
+        }
     }
-    
+
     /** {@inheritDoc} */
     public final String toString()
     {

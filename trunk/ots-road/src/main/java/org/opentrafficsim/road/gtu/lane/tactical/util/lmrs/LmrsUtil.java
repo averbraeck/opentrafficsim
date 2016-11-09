@@ -2,7 +2,9 @@ package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
 import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.UNITINTERVAL;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -118,10 +120,13 @@ public final class LmrsUtil
             };
 
     /** Current left lane change desire. */
-    public static final ParameterTypeDouble DLEFT = new ParameterTypeDouble("dLeft", "Left lane change desire.", 0);
+    public static final ParameterTypeDouble DLEFT = new ParameterTypeDouble("dLeft", "Left lane change desire.", 0.0);
 
     /** Current right lane change desire. */
-    public static final ParameterTypeDouble DRIGHT = new ParameterTypeDouble("dRight", "Right lane change desire.", 0);
+    public static final ParameterTypeDouble DRIGHT = new ParameterTypeDouble("dRight", "Right lane change desire.", 0.0);
+
+    /** Lane change desire of current lane change. */
+    public static final ParameterTypeDouble DLC = new ParameterTypeDouble("dLaneChange", "Desire of current lane change.", 0.0);
 
     /**
      * Do not instantiate.
@@ -137,6 +142,7 @@ public final class LmrsUtil
      * @param startTime start time
      * @param carFollowingModel car-following model
      * @param laneChange lane change status
+     * @param lmrsData LMRS data
      * @param perception perception
      * @param mandatoryIncentives set of mandatory lane change incentives
      * @param voluntaryIncentives set of voluntary lane change incentives
@@ -148,8 +154,8 @@ public final class LmrsUtil
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static SimpleOperationalPlan determinePlan(final LaneBasedGTU gtu, final Time startTime,
-            final CarFollowingModel carFollowingModel, final LaneChange laneChange, final LanePerception perception,
-            final LinkedHashSet<MandatoryIncentive> mandatoryIncentives,
+            final CarFollowingModel carFollowingModel, final LaneChange laneChange, final LmrsData lmrsData,
+            final LanePerception perception, final LinkedHashSet<MandatoryIncentive> mandatoryIncentives,
             final LinkedHashSet<VoluntaryIncentive> voluntaryIncentives)
             throws GTUException, NetworkException, ParameterException, OperationalPlanException
     {
@@ -165,11 +171,16 @@ public final class LmrsUtil
                 perception.getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(RelativeLane.CURRENT);
         SpeedLimitInfo sli = slp.getSpeedLimitInfo(Length.ZERO);
         BehavioralCharacteristics bc = gtu.getBehavioralCharacteristics();
-        
+
         // regular car-following
         Speed speed = gtu.getSpeed();
-        Acceleration a = CarFollowingUtil.followLeaders(carFollowingModel, bc, speed, sli,
-                perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT));
+        SortedSet<AbstractHeadwayGTU> leaders =
+                perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
+        if (!leaders.isEmpty() && lmrsData.isNewLeader(leaders.first()))
+        {
+            initHeadwayRelaxation(bc, leaders.first());
+        }
+        Acceleration a = CarFollowingUtil.followLeaders(carFollowingModel, bc, speed, sli, leaders);
 
         // during a lane change, both leaders are followed
         LateralDirectionality initiatedLaneChange;
@@ -177,14 +188,17 @@ public final class LmrsUtil
         {
             RelativeLane secondLane = laneChange.getSecondLane(gtu);
             initiatedLaneChange = LateralDirectionality.NONE;
-            Acceleration aSecond = CarFollowingUtil.followLeaders(carFollowingModel, bc, speed, sli,
-                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(secondLane));
+            SortedSet<AbstractHeadwayGTU> secondLeaders =
+                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(secondLane);
+            Acceleration aSecond = CarFollowingUtil.followLeaders(carFollowingModel, bc, speed, sli, secondLeaders);
+            if (!secondLeaders.isEmpty() && lmrsData.isNewLeader(secondLeaders.first()))
+            {
+                initHeadwayRelaxation(bc, secondLeaders.first());
+            }
             a = Acceleration.min(a, aSecond);
         }
         else
         {
-            // relaxation
-            exponentialHeadwayRelaxation(bc);
 
             // determine lane change desire based on incentives
             Desire desire = getLaneChangeDesire(bc, perception, carFollowingModel, mandatoryIncentives, voluntaryIncentives);
@@ -206,13 +220,13 @@ public final class LmrsUtil
                 // change left
                 initiatedLaneChange = LateralDirectionality.LEFT;
                 turnIndicatorStatus = TurnIndicatorStatus.LEFT;
+                bc.setParameter(DLC, desire.getLeft());
                 setDesiredHeadway(bc, desire.getLeft());
-                SortedSet<AbstractHeadwayGTU> followers =
-                        perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(RelativeLane.LEFT);
-                if (!followers.isEmpty())
+                leaders = perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.LEFT);
+                if (!leaders.isEmpty())
                 {
-                    // TODO this actually does not affect their desired headway, behavioral characteristics are a copy...
-                    setDesiredHeadway(followers.first().getBehavioralCharacteristics(), desire.getLeft());
+                    // don't respond on its lane change desire, but remember it such that it isn't a new leader in the next step
+                    lmrsData.isNewLeader(leaders.first());
                 }
             }
             else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dFree && acceptRight)
@@ -220,13 +234,13 @@ public final class LmrsUtil
                 // change right
                 initiatedLaneChange = LateralDirectionality.RIGHT;
                 turnIndicatorStatus = TurnIndicatorStatus.RIGHT;
+                bc.setParameter(DLC, desire.getRight());
                 setDesiredHeadway(bc, desire.getRight());
-                SortedSet<AbstractHeadwayGTU> followers =
-                        perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(RelativeLane.RIGHT);
-                if (!followers.isEmpty())
+                leaders = perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.RIGHT);
+                if (!leaders.isEmpty())
                 {
-                    // TODO this actually does not affect their desired headway, behavioral characteristics are a copy...
-                    setDesiredHeadway(followers.first().getBehavioralCharacteristics(), desire.getRight());
+                    // don't respond on its lane change desire, but remember it such that it isn't a new leader in the next step
+                    lmrsData.isNewLeader(leaders.first());
                 }
             }
             else
@@ -280,16 +294,36 @@ public final class LmrsUtil
             aSync = cooperate(perception, bc, sli, carFollowingModel, speed, LateralDirectionality.RIGHT);
             a = Acceleration.min(a, aSync);
 
+            // relaxation
+            exponentialHeadwayRelaxation(bc);
+
         }
+        lmrsData.finalizeStep();
 
         return new SimpleOperationalPlan(a, initiatedLaneChange);
 
     }
 
     /**
+     * Sets the headway as a response to a new leader.
+     * @param bc behavioral characteristics
+     * @param leader leader
+     * @throws ParameterException if DLC is not present
+     */
+    private static void initHeadwayRelaxation(final BehavioralCharacteristics bc, final AbstractHeadwayGTU leader)
+            throws ParameterException
+    {
+        if (leader.getBehavioralCharacteristics().contains(DLC))
+        {
+            setDesiredHeadway(bc, leader.getBehavioralCharacteristics().getParameter(DLC));
+        }
+        // else could not be perceived
+    }
+
+    /**
      * Updates the desired headway following an exponential shape approximated with fixed time step <tt>DT</tt>.
-     * @param bc Behavioral characteristics.
-     * @throws ParameterException In case of a parameter exception.
+     * @param bc behavioral characteristics
+     * @throws ParameterException in case of a parameter exception
      */
     private static void exponentialHeadwayRelaxation(final BehavioralCharacteristics bc) throws ParameterException
     {
@@ -515,7 +549,7 @@ public final class LmrsUtil
                 a = Acceleration.min(a, aSingle);
             }
         }
-        
+
         return Acceleration.max(a, b.multiplyBy(-1.0));
     }
 
@@ -544,6 +578,50 @@ public final class LmrsUtil
         // reset T
         resetDesiredHeadway(bc);
         return a;
+    }
+
+    /**
+     * Keeps data for LMRS for a specific GTU.
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 8 nov. 2016 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public static final class LmrsData
+    {
+
+        /** Most recent leaders. */
+        private final Set<String> leaders = new HashSet<>();
+
+        /** Current leaders. */
+        private final Set<String> tempLeaders = new HashSet<>();
+
+        /**
+         * Checks if the given leader is a new leader.
+         * @param gtu gtu to check
+         * @return whether the gtu is a new leader
+         */
+        public boolean isNewLeader(final AbstractHeadwayGTU gtu)
+        {
+            this.tempLeaders.add(gtu.getId());
+            return !this.leaders.contains(gtu.getId());
+        }
+
+        /**
+         * Remembers the leaders of the current time step (those forwarded to isNewLeader()) for the next time step.
+         */
+        public void finalizeStep()
+        {
+            this.leaders.clear();
+            this.leaders.addAll(this.tempLeaders);
+            this.tempLeaders.clear();
+        }
+
     }
 
 }

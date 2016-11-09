@@ -27,6 +27,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.ConflictPlans
 import org.opentrafficsim.road.gtu.lane.tactical.util.SpeedLimitUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil.LmrsData;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -59,6 +60,9 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
 
     /** Lane change status. */
     private final LaneChange laneChange = new LaneChange();
+    
+    /** LMRS data. */
+    private final LmrsData lmrsData = new LmrsData();
 
     /** Set of mandatory lane change incentives. */
     private final LinkedHashSet<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
@@ -132,7 +136,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
 
         // LMRS
         SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(getGtu(), startTime, getCarFollowingModel(), this.laneChange,
-                getPerception(), this.mandatoryIncentives, this.voluntaryIncentives);
+                this.lmrsData, getPerception(), this.mandatoryIncentives, this.voluntaryIncentives);
 
         // speed limits
         Speed speed = getGtu().getSpeed();

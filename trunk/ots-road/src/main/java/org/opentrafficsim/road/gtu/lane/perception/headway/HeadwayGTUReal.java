@@ -60,7 +60,7 @@ public class HeadwayGTUReal extends AbstractHeadwayGTU
     {
         super(gtu.getId(), gtu.getGTUType(), distance, true, gtu.getLength(), gtu.getSpeed(), gtu.getAcceleration(), gtuStatus);
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
-        this.behavioralCharacteristics = gtu.getBehavioralCharacteristics();
+        this.behavioralCharacteristics = new BehavioralCharacteristics(gtu.getBehavioralCharacteristics());
         this.speedLimitInfo = getSpeedLimitInfo(gtu);
     }
 
