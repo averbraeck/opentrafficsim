@@ -25,6 +25,8 @@ import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePl
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * The perception module of a GTU based on lanes. It is responsible for perceiving (sensing) the environment of the GTU, which
  * includes the locations of other GTUs. Perception is done at a certain time, and the perceived information might have a
@@ -115,7 +117,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
 
             // TODO possibly optimize by using a 'singleton' lane structure source, per GTUType
             // TODO possibly build and destroy at edges only
-            this.updateTime = getGtu().getSimulator().getSimulatorTime().getTime(); 
+            this.updateTime = getGtu().getSimulator().getSimulatorTime().getTime();
         }
         return this.laneStructure;
     }
@@ -167,10 +169,13 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
         {
             LaneStructureRecord current = rootLSR;
             RelativeLane relativeLane = RelativeLane.CURRENT;
-            while (!current.getLane().accessibleAdjacentLanes(latDirection, gtuType).isEmpty())
+            Set<Lane> adjacentLanes = current.getLane().accessibleAdjacentLanes(latDirection, gtuType);
+            while (!adjacentLanes.isEmpty())
             {
+                Throw.when(adjacentLanes.size() > 1, RuntimeException.class,
+                        "Multiple adjacent lanes encountered during construction of lane map.");
                 relativeLane = latDirection.isLeft() ? relativeLane.getLeft() : relativeLane.getRight();
-                Lane lane = current.getLane().accessibleAdjacentLanes(latDirection, gtuType).iterator().next();
+                Lane lane = adjacentLanes.iterator().next();
                 LaneStructureRecord adjacentRecord =
                         constructRecord(lane, current.getDirection(), lane.getLength().multiplyBy(-fraction), relativeLane);
                 if (latDirection.isLeft())
@@ -192,14 +197,13 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
                 recordSet.add(adjacentRecord);
                 laneSet.add(lane);
                 current = adjacentRecord;
+                adjacentLanes = current.getLane().accessibleAdjacentLanes(latDirection, gtuType);
             }
         }
         try
         {
-            // System.out.println("START: downstream");
             this.ignoreSet.clear();
             buildDownstreamRecursive(recordSet, gtuType, down, up, downSplit, upMerge);
-            // System.out.println("START: upstream");
             this.ignoreSet.clear();
             buildUpstreamRecursive(recordSet, gtuType, down, up, upMerge);
         }
@@ -211,8 +215,8 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
 
     /**
      * Extends the lane structure with the downstream lanes of the current set. Per downstream link, a new set results, which
-     * are expanded laterally before performing the next downstream step. If the lateral expansion finds new lanes, the
-     * structure is expanded upstream from those over a limited distance.
+     * are extended laterally before performing the next downstream step. If the lateral extension finds new lanes, the
+     * structure is extended upstream from those lanes over a limited distance.
      * 
      * <pre>
      *  --------- ---------
@@ -222,7 +226,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
      *  --------- =============       A, B: two separate downstream links
      * |       --|-)         --|-?B
      *  ----===== ------|------
-     *     | C?(-|--   \|/   --|-?B   C: expand upstream if merge
+     *     | C?(-|--   \|/   --|-?B   C: extend upstream if merge
      *      ----- -------------
      * </pre>
      * 
@@ -264,7 +268,6 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
                     if (start.plus(nextLane.getLength()).ge(down))
                     {
                         nextRecord.setCutOffEnd(down.minus(start));
-                        // System.out.println("  end cutoff at " + down.minus(start));
                     }
                     recordSets.get(nextLink).put(relativeLane, nextRecord);
                     laneRecord.addNext(nextRecord);
@@ -286,7 +289,6 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
         {
             connectLaterally(recordSets.get(link), gtuType);
             Set<LaneStructureRecord> set = new HashSet<>(recordSets.get(link).values()); // collection to set
-            // System.out.println(">> LATERAL");
             set = extendLateral(set, gtuType, down, up, upMerge, true);
             // reduce remaining downstream length if not on route, to at most 'downSplit'
             Node nextNode = direction.isPlus() ? currentLink.getEndNode() : currentLink.getStartNode();
@@ -299,7 +301,6 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
                 // as each lane has a separate start distance, use the maximum value from maxStart
                 downLimit = Length.min(downLimit, maxStart.get(link).plus(downSplit));
             }
-            // System.out.println(">> DOWNSTREAM");
             buildDownstreamRecursive(set, gtuType, downLimit, up, downSplit, upMerge);
         }
     }
@@ -353,9 +354,12 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
                 startDistance = current.getStartDistance();
                 endDistance = current.getStartDistance().plus(current.getLane().getLength());
                 RelativeLane relativeLane = this.relativeLaneMap.get(laneRecord);
-                while (!current.getLane().accessibleAdjacentLanes(latDirection, gtuType).isEmpty())
+                Set<Lane> adjacentLanes = current.getLane().accessibleAdjacentLanes(latDirection, gtuType);
+                while (!adjacentLanes.isEmpty())
                 {
-                    Lane laneAdjacent = current.getLane().accessibleAdjacentLanes(latDirection, gtuType).iterator().next();
+                    Throw.when(adjacentLanes.size() > 1, RuntimeException.class,
+                            "Multiple adjacent lanes encountered during construction of lane map.");
+                    Lane laneAdjacent = adjacentLanes.iterator().next();
                     Length adjacentStart = downstreamBuild ? startDistance : endDistance.minus(laneAdjacent.getLength());
                     // skip is lane already in set, no effective length in structure, or in ignore list
                     if (!laneSet.contains(laneAdjacent) && !adjacentStart.plus(laneAdjacent.getLength()).le(up)
@@ -387,14 +391,13 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
                         if (adjacentStart.plus(laneAdjacent.getLength()).ge(down))
                         {
                             recordAdjacent.setCutOffEnd(down.minus(adjacentStart));
-                            // System.out.println("  end cutoff at " + down.minus(adjacentStart));
                         }
                         if (adjacentStart.le(up))
                         {
                             recordAdjacent.setCutOffStart(up.minus(adjacentStart));
-                            // System.out.println("  start cutoff at " + up.minus(adjacentStart));
                         }
                         current = recordAdjacent;
+                        adjacentLanes = current.getLane().accessibleAdjacentLanes(latDirection, gtuType);
                     }
                     else
                     {
@@ -405,9 +408,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
             if (downstreamBuild & !expandSet.isEmpty())
             {
                 // limit search range and search upstream of merge
-                // System.out.println(">> MERGE");
                 buildUpstreamRecursive(expandSet, gtuType, down, startDistance.plus(upMerge), upMerge);
-                // System.out.println("<< MERGE");
             }
             recordSet.addAll(expandSet);
         }
@@ -454,7 +455,6 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
                     if (start.le(up))
                     {
                         prevRecord.setCutOffStart(up.minus(start));
-                        // System.out.println("  start cutoff at " + up.minus(start));
                     }
                     recordSets.get(prevLink).put(relativeLane, prevRecord);
                     laneRecord.addPrev(prevRecord);
@@ -474,9 +474,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
         {
             connectLaterally(recordSets.get(link), gtuType);
             Set<LaneStructureRecord> set = new HashSet<>(recordSets.get(link).values()); // collection to set
-            // System.out.println(">> LATERAL");
             set = extendLateral(set, gtuType, down, up, upMerge, false);
-            // System.out.println(">> UPSTREAM");
             buildUpstreamRecursive(set, gtuType, down, up, upMerge);
         }
     }
@@ -492,7 +490,6 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
     private LaneStructureRecord constructRecord(final Lane lane, final GTUDirectionality direction, final Length startDistance,
             final RelativeLane relativeLane)
     {
-        // System.out.println("Record from " + startDistance + " till " + startDistance.plus(lane.getLength()));
         LaneStructureRecord record = new LaneStructureRecord(lane, direction, startDistance);
         this.laneStructure.addLaneStructureRecord(record, relativeLane);
         this.relativeLaneMap.put(record, relativeLane);

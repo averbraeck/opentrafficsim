@@ -110,7 +110,6 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
         while (!currentSet.isEmpty())
         {
             // move lateral
-            nextSet.clear();
             nextSet.putAll(currentSet);
             for (LaneStructureRecord laneRecord : currentSet.keySet())
             {
@@ -175,6 +174,7 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
                 resultSet.add(bestOk);
             }
             currentSet = nextSet;
+            nextSet = new HashMap<>();
         }
 
         // save
