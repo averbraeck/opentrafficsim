@@ -105,8 +105,8 @@ public class TrafficLightSensorTest implements EventListenerInterface
 
     /**
      * Build the test network.
-     * @param numberOfLinks int; number of consecutive links.
-     * @param directionalities String; directionalities for the consecutive lanes
+     * @param lengths double[]; The lengths of the subsequent lanes to construct; negative lengths indicate that the design
+     *            direction must be reversed
      * @param simulator OTSDEVSSimulator; the simulator
      * @return Lane[]; an array of linearly connected (single) lanes
      * @throws NetworkException ...
@@ -114,103 +114,189 @@ public class TrafficLightSensorTest implements EventListenerInterface
      * @throws NamingException ...
      * @throws SimRuntimeException ...
      */
-    private static Lane[] buildNetwork(final int numberOfLinks, final String directionalities, final OTSDEVSSimulator simulator)
-            throws NetworkException, NamingException, OTSGeometryException, SimRuntimeException
+    private static Lane[] buildNetwork(final double[] lengths, final OTSDEVSSimulator simulator) throws NetworkException,
+            NamingException, OTSGeometryException, SimRuntimeException
     {
         OTSNetwork network = new OTSNetwork("network");
         OTSNode prevNode = null;
-        Lane[] result = new Lane[numberOfLinks];
+        Lane[] result = new Lane[lengths.length];
         LaneType laneType = LaneType.ALL;
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
-        for (int nodeNumber = 0; nodeNumber <= numberOfLinks; nodeNumber++)
+        double cumulativeLength = 0;
+        for (int nodeNumber = 0; nodeNumber <= lengths.length; nodeNumber++)
         {
-            double x = 0 == nodeNumber ? 0 : numberOfLinks == nodeNumber ? 1000 : (500 + nodeNumber);
-            OTSNode node = new OTSNode(network, "node" + nodeNumber, new OTSPoint3D(x, 0, 0));
-            LongitudinalDirectionality direction = LongitudinalDirectionality.DIR_PLUS;
-            if (directionalities.length() > nodeNumber && directionalities.charAt(nodeNumber) == 'R')
-            {
-                direction = LongitudinalDirectionality.DIR_MINUS;
-            }
+            OTSNode node = new OTSNode(network, "node" + nodeNumber, new OTSPoint3D(cumulativeLength, 0, 0));
             if (null != prevNode)
             {
+                LongitudinalDirectionality direction =
+                        lengths[nodeNumber - 1] > 0 ? LongitudinalDirectionality.DIR_PLUS
+                                : LongitudinalDirectionality.DIR_MINUS;
                 OTSNode fromNode = LongitudinalDirectionality.DIR_PLUS == direction ? prevNode : node;
                 OTSNode toNode = LongitudinalDirectionality.DIR_PLUS == direction ? node : prevNode;
+                int laneOffset = LongitudinalDirectionality.DIR_PLUS == direction ? 0 : -1;
                 result[nodeNumber - 1] =
-                        LaneFactory.makeMultiLane(network, "Link" + nodeNumber, fromNode, toNode, null, 1, laneType,
-                                speedLimit, simulator, direction)[0];
+                        LaneFactory.makeMultiLane(network, "Link" + nodeNumber, fromNode, toNode, null, 1, laneOffset,
+                                laneOffset, laneType, speedLimit, simulator, direction)[0];
+                System.out.println("Created lane with center line " + result[nodeNumber - 1].getCenterLine()
+                        + ", directionality " + direction);
+            }
+            if (nodeNumber < lengths.length)
+            {
+                cumulativeLength += Math.abs(lengths[nodeNumber]);
             }
             prevNode = node;
         }
         // put a sink at halfway point of last lane
-        Lane lastLane = result[numberOfLinks - 1];
-        lastLane.addSensor(new SinkSensor(lastLane, new Length(lastLane.getLength().divideBy(2)), simulator), GTUType.ALL);
+        Lane lastLane = result[lengths.length - 1];
+        Length sinkPosition = new Length(lengths[lengths.length - 1] > 0 ? lastLane.getLength().si - 10 : 10, LengthUnit.METER);
+        lastLane.addSensor(new SinkSensor(lastLane, sinkPosition, simulator), GTUType.ALL);
         return result;
     }
 
     /**
-     * Test the constructor.
-     * @throws SimRuntimeException ...
-     * @throws OTSGeometryException ...
-     * @throws NamingException ...
-     * @throws NetworkException ...
-     * @throws GTUException ...
+     * Figure out on which lane and at which position we are when we're a given distance from the origin.
+     * @param lanes Lane[]; the sequence of lanes
+     * @param position Length; the distance
+     * @return DirectedLanePosition
+     * @throws GTUException should not happen; if it does; the test has failed
      */
-    // TODO @Test -- Peter is not yet 100% ready...
-    public final void constructorTest() throws NetworkException, NamingException, OTSGeometryException, SimRuntimeException,
-            GTUException
+    private DirectedLanePosition findLaneAndPosition(final Lane[] lanes, final Length position) throws GTUException
     {
-        OTSDEVSSimulator simulator = makeSimulator();
-        Lane lane = buildNetwork(1, "", simulator)[0];
-        OTSNetwork network = (OTSNetwork) lane.getParentLink().getNetwork();
-        Length a = new Length(100, LengthUnit.METER);
-        Length b = new Length(120, LengthUnit.METER);
-        String sensorId = "D123";
-        TYPE entryPosition = RelativePosition.FRONT;
-        TYPE exitPosition = RelativePosition.REAR;
-        TrafficLightSensor tls =
-                new TrafficLightSensor(sensorId, lane, a, lane, b, null, entryPosition, exitPosition, simulator);
-        assertEquals("Id should match the provided id", sensorId, tls.getId());
-        assertEquals("Simulator should match", simulator, tls.getSimulator());
-        assertEquals("Entry position", entryPosition, tls.getPositionTypeEntry());
-        assertEquals("Exit position", exitPosition, tls.getPositionTypeExit());
-        assertEquals("Position a", a.si, tls.getLanePositionA().si, 0.00001);
-        assertEquals("Position b", b.si, tls.getLanePositionB().si, 0.00001);
-        this.loggedEvents.clear();
-        assertEquals("event list is empty", 0, this.loggedEvents.size());
-        tls.addListener(this, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT);
-        tls.addListener(this, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT);
-        assertEquals("event list is empty", 0, this.loggedEvents.size());
-
-        GTUType gtuType = new GTUType("Truck");
-        Length gtuLength = new Length(18, LengthUnit.METER);
-        Length gtuWidth = new Length(2, LengthUnit.METER);
-        Speed maximumSpeed = new Speed(90, SpeedUnit.KM_PER_HOUR);
-        LaneBasedGTU gtu = new LaneBasedIndividualGTU("GTU1", gtuType, gtuLength, gtuWidth, maximumSpeed, simulator, network);
-        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
-        Length initialPosition = new Length(50, LengthUnit.METER);
-        initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
-        BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create();
-        LaneChangeModel laneChangeModel = new Egoistic();
-        GTUFollowingModelOld gtuFollowingModel =
-                new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.METER_PER_SECOND_2), new Duration(10,
-                        TimeUnit.SECOND));
-        LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
-                        gtuFollowingModel, laneChangeModel, gtu), gtu);
-        Speed initialSpeed = new Speed(10, SpeedUnit.METER_PER_SECOND);
-        ((AbstractLaneBasedGTU) gtu).init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
-        System.out.println("GTU is initially at " + gtu.positions(RelativePosition.REFERENCE_POSITION));
-        assertEquals("event list is empty", 0, this.loggedEvents.size());
-        Time stopTime = new Time(100, TimeUnit.SECOND);
-        simulator.runUpTo(stopTime);
-        while (simulator.getSimulatorTime().get().lt(stopTime))
+        Length remainingLength = position;
+        for (Lane lane : lanes)
         {
-            System.out.println("simulation time is now " + simulator);
-            simulator.step();
+            if (lane.getLength().ge(remainingLength))
+            {
+                boolean reverse =
+                        lane.getParentLink().getEndNode().getPoint().x < lane.getParentLink().getStartNode().getPoint().x;
+                if (reverse)
+                {
+                    remainingLength = lane.getLength().minus(remainingLength);
+                }
+                return new DirectedLanePosition(lane, remainingLength, reverse ? GTUDirectionality.DIR_MINUS
+                        : GTUDirectionality.DIR_PLUS);
+            }
+            remainingLength = remainingLength.minus(lane.getLength());
         }
-        System.out.println("simulation time is now " + simulator);
-        System.out.println("GTU is now at " + gtu.positions(RelativePosition.REFERENCE_POSITION));
-        assertEquals("event list contains 2 events", 2, this.loggedEvents.size());
+        return null;
+    }
+
+    /**
+     * Test the TrafficLightSensor.
+     * @throws SimRuntimeException if that happens (uncaught) this test has failed
+     * @throws OTSGeometryException if that happens (uncaught) this test has failed
+     * @throws NamingException if that happens (uncaught) this test has failed
+     * @throws NetworkException if that happens (uncaught) this test has failed
+     * @throws GTUException if that happens (uncaught) this test has failed
+     */
+    @Test
+    public final void trafficLightSensorTest() throws NetworkException, NamingException, OTSGeometryException,
+            SimRuntimeException, GTUException
+    {
+        double[][] lengthLists =
+                { { 101.1, -1, 1, -1, 1, -900 }, { 1000 }, { -1000 }, { 101.1, 900 }, { 101.1, 1, 1, 1, 1, 900 }, };
+        for (double[] lengthList : lengthLists)
+        {
+            for (int pos = 50; pos < 130; pos++)
+            {
+                System.out.println("Number of lanes is " + lengthList.length + " pos is " + pos);
+                OTSDEVSSimulator simulator = makeSimulator();
+                Lane[] lanes = buildNetwork(lengthList, simulator);
+                OTSNetwork network = (OTSNetwork) lanes[0].getParentLink().getNetwork();
+                Length a = new Length(100, LengthUnit.METER);
+                Length b = new Length(120, LengthUnit.METER);
+                DirectedLanePosition pA = findLaneAndPosition(lanes, a);
+                DirectedLanePosition pB = findLaneAndPosition(lanes, b);
+                String sensorId = "D123";
+                TYPE entryPosition = RelativePosition.FRONT;
+                TYPE exitPosition = RelativePosition.REAR;
+                List<Lane> intermediateLanes = null;
+                if (lanes.length > 2)
+                {
+                    intermediateLanes = new ArrayList<>();
+                    for (Lane lane : lanes)
+                    {
+                        if (lane.equals(pA.getLane()))
+                        {
+                            continue;
+                        }
+                        if (lane.equals(pB.getLane()))
+                        {
+                            break;
+                        }
+                        intermediateLanes.add(lane);
+                    }
+                }
+                TrafficLightSensor tls =
+                        new TrafficLightSensor(sensorId, pA.getLane(), pA.getPosition(), pB.getLane(), pB.getPosition(),
+                                intermediateLanes, entryPosition, exitPosition, simulator);
+                assertEquals("Id should match the provided id", sensorId, tls.getId());
+                assertEquals("Simulator should match", simulator, tls.getSimulator());
+                assertEquals("Entry position", entryPosition, tls.getPositionTypeEntry());
+                assertEquals("Exit position", exitPosition, tls.getPositionTypeExit());
+                assertEquals("Position a", pA.getPosition().si, tls.getLanePositionA().si, 0.00001);
+                assertEquals("Position b", pB.getPosition().si, tls.getLanePositionB().si, 0.00001);
+                this.loggedEvents.clear();
+                assertEquals("event list is empty", 0, this.loggedEvents.size());
+                tls.addListener(this, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT);
+                tls.addListener(this, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT);
+                assertEquals("event list is empty", 0, this.loggedEvents.size());
+
+                GTUType gtuType = new GTUType("Truck");
+                Length gtuLength = new Length(17, LengthUnit.METER);
+                Length gtuWidth = new Length(2, LengthUnit.METER);
+                Speed maximumSpeed = new Speed(90, SpeedUnit.KM_PER_HOUR);
+                LaneBasedGTU gtu =
+                        new LaneBasedIndividualGTU("GTU1", gtuType, gtuLength, gtuWidth, maximumSpeed, simulator, network);
+                Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+                Length initialPosition = new Length(pos, LengthUnit.METER);
+                DirectedLanePosition gtuPosition = findLaneAndPosition(lanes, initialPosition);
+                initialLongitudinalPositions.add(new DirectedLanePosition(gtuPosition.getLane(), gtuPosition.getPosition(),
+                        gtuPosition.getGtuDirection()));
+                BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create();
+                LaneChangeModel laneChangeModel = new Egoistic();
+                GTUFollowingModelOld gtuFollowingModel =
+                        new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.METER_PER_SECOND_2), new Duration(10,
+                                TimeUnit.SECOND));
+                LaneBasedStrategicalPlanner strategicalPlanner =
+                        new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
+                                gtuFollowingModel, laneChangeModel, gtu), gtu);
+                Speed initialSpeed = new Speed(10, SpeedUnit.METER_PER_SECOND);
+                if (lanes.length == 6 && pos >= 103)
+                {
+                    System.out.println("let op. InitialLongitudinalPositions: " + initialLongitudinalPositions);
+                }
+                ((AbstractLaneBasedGTU) gtu).init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
+                if (initialPosition.plus(gtuLength.divideBy(2)).lt(a) || initialPosition.minus(gtuLength.divideBy(2)).gt(b))
+                {
+                    assertEquals("event list is empty", 0, this.loggedEvents.size());
+                }
+                else
+                {
+                    if (1 != this.loggedEvents.size())
+                    {
+                        assertEquals("event list should contain one event (due to creation of the GTU on the detector)", 1,
+                                this.loggedEvents.size());
+                    }
+                }
+                Time stopTime = new Time(100, TimeUnit.SECOND);
+                while (simulator.getSimulatorTime().get().lt(stopTime))
+                {
+                    // System.out.println("simulation time is now " + simulator);
+                    simulator.step();
+                }
+                System.out.println("simulation time is now " + simulator);
+                if (initialPosition.minus(gtuLength.divideBy(2)).lt(b))
+                {
+                    assertEquals("event list contains 2 events", 2, this.loggedEvents.size());
+                }
+                else
+                {
+                    assertEquals("event list contains 0 events", 0, this.loggedEvents.size());
+                }
+                simulator.cleanUp();
+            }
+        }
     }
 
     /** Storage for logged events. */

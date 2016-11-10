@@ -112,7 +112,10 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
         else
         {
             this.directionalityA = findDirectionality(laneA);
-            this.directionalityB = findDirectionality(laneB);
+            this.directionalityB =
+                    GTUDirectionality.DIR_PLUS == findDirectionality(laneB) ? GTUDirectionality.DIR_MINUS
+                            : GTUDirectionality.DIR_PLUS;
+            System.out.println("Directionality on B is " + this.directionalityB);
         }
     }
 
@@ -172,6 +175,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
     @Override
     public final void notify(final EventInterface event) throws RemoteException
     {
+        System.out.println("Received notification: " + event);
         LaneBasedGTU gtu = (LaneBasedGTU) ((Object[]) event.getContent())[1];
         if (Lane.GTU_REMOVE_EVENT.equals(event.getType()))
         {
@@ -189,7 +193,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
                     removeGTU(gtu);
                 }
                 // else: GTU is still in one of our lanes and we should get another GTU_REMOVE_EVENT or the GTU will trigger one
-                // of our flank sensors
+                // of our exit flank sensors
                 return;
             }
             catch (GTUException exception)
@@ -220,6 +224,12 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
                     Length frontPosition = frontPositions.get(remainingLane);
                     Length rearPosition = rearPositions.get(remainingLane);
                     Length laneLength = remainingLane.getLength();
+                    System.out.println("frontPosition " + frontPosition + ", rearPosition " + rearPosition + ", laneLength "
+                            + laneLength + ", directionalityB " + this.directionalityB);
+                    if (laneLength.si >= 900)
+                    {
+                        System.out.println("Let op");
+                    }
                     if (frontPosition.lt(Length.ZERO) && rearPosition.lt(Length.ZERO) || frontPosition.gt(laneLength)
                             && rearPosition.gt(laneLength))
                     {
@@ -415,7 +425,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
         }
         else
         {
-            System.out.println("Ignoring event (GTU is driving in wrong direction)");
+            // System.out.println("Ignoring event (GTU is driving in wrong direction)");
         }
     }
 
