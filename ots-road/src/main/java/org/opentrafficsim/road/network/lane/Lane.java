@@ -108,7 +108,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * per GTU type, so different GTUs can trigger different sensors.
      */
     // TODO allow for direction-dependent sensors
-    private final SortedMap<Double, List<GTUTypeSensor>> sensors = new TreeMap<>();
+    private final SortedMap<Double, List<Sensor>> sensors = new TreeMap<>();
 
     /**
      * Objects on the lane can be observed by the GTU. Examples are signs, speed signs, blocks, and traffic lights. They are
@@ -546,23 +546,22 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * Insert a sensor at the right place in the sensor list of this Lane.
      * @param sensor Sensor; the sensor to add
-     * @param gtuType GTUType; the GTU type that triggers this sensor; use GTUType.ALL is all GTUs trigger it
      * @throws NetworkException when the position of the sensor is beyond (or before) the range of this Lane
      */
-    public final void addSensor(final Sensor sensor, final GTUType gtuType) throws NetworkException
+    public final void addSensor(final Sensor sensor) throws NetworkException
     {
         double position = sensor.getLongitudinalPosition().si;
         if (position < 0 || position > getLength().getSI())
         {
             throw new NetworkException("Illegal position for sensor " + position + " valid range is 0.." + getLength().getSI());
         }
-        List<GTUTypeSensor> sensorList = this.sensors.get(position);
+        List<Sensor> sensorList = this.sensors.get(position);
         if (null == sensorList)
         {
-            sensorList = new ArrayList<GTUTypeSensor>(1);
+            sensorList = new ArrayList<Sensor>(1);
             this.sensors.put(position, sensorList);
         }
-        sensorList.add(new GTUTypeSensor(gtuType, sensor));
+        sensorList.add(sensor);
         fireTimedEvent(Lane.SENSOR_ADD_EVENT, new Object[] { sensor.getId(), sensor },
                 sensor.getSimulator().getSimulatorTime());
     }
@@ -576,26 +575,15 @@ public class Lane extends CrossSectionElement implements Serializable
     {
         fireTimedEvent(Lane.SENSOR_REMOVE_EVENT, new Object[] { sensor.getId(), sensor },
                 sensor.getSimulator().getSimulatorTime());
-        List<GTUTypeSensor> sensorList = this.sensors.get(sensor.getLongitudinalPosition().getSI());
+        List<Sensor> sensorList = this.sensors.get(sensor.getLongitudinalPosition().si);
         if (null == sensorList)
         {
             throw new NetworkException("No sensor at " + sensor.getLongitudinalPosition().si);
         }
-        List<GTUTypeSensor> sensorList2 = new ArrayList<GTUTypeSensor>(1);
-        for (GTUTypeSensor gs : sensorList)
+        sensorList.remove(sensor);
+        if (sensorList.size() == 0)
         {
-            if (!gs.getSensor().equals(sensor))
-            {
-                sensorList2.add(gs);
-            }
-        }
-        if (sensorList2.size() == 0)
-        {
-            this.sensors.remove(sensor.getLongitudinalPosition().doubleValue());
-        }
-        else
-        {
-            this.sensors.put(sensor.getLongitudinalPosition().doubleValue(), sensorList2);
+            this.sensors.remove(sensor.getLongitudinalPosition().si);
         }
     }
 
@@ -610,15 +598,15 @@ public class Lane extends CrossSectionElement implements Serializable
     public final List<Sensor> getSensors(final Length minimumPosition, final Length maximumPosition, final GTUType gtuType)
     {
         List<Sensor> sensorList = new ArrayList<>(1);
-        for (List<GTUTypeSensor> gtsl : this.sensors.values())
+        for (List<Sensor> sl : this.sensors.values())
         {
-            for (GTUTypeSensor gs : gtsl)
+            for (Sensor sensor : sl)
             {
-                if ((gs.getGtuType().equals(gtuType) || gs.getGtuType().equals(GTUType.ALL))
-                        && gs.getSensor().getLongitudinalPosition().ge(minimumPosition)
-                        && gs.getSensor().getLongitudinalPosition().le(maximumPosition))
+                if ((sensor.getTriggeringGTUTypes().contains(gtuType) || sensor.getTriggeringGTUTypes().contains(GTUType.ALL))
+                        && sensor.getLongitudinalPosition().ge(minimumPosition)
+                        && sensor.getLongitudinalPosition().le(maximumPosition))
                 {
-                    sensorList.add(gs.getSensor());
+                    sensorList.add(sensor);
                 }
             }
         }
@@ -634,13 +622,13 @@ public class Lane extends CrossSectionElement implements Serializable
     public final List<Sensor> getSensors(final GTUType gtuType)
     {
         List<Sensor> sensorList = new ArrayList<>(1);
-        for (List<GTUTypeSensor> gtsl : this.sensors.values())
+        for (List<Sensor> sl : this.sensors.values())
         {
-            for (GTUTypeSensor gs : gtsl)
+            for (Sensor sensor : sl)
             {
-                if ((gs.getGtuType().equals(gtuType) || gs.getGtuType().equals(GTUType.ALL)))
+                if ((sensor.getTriggeringGTUTypes().contains(gtuType) || sensor.getTriggeringGTUTypes().contains(GTUType.ALL)))
                 {
-                    sensorList.add(gs.getSensor());
+                    sensorList.add(sensor);
                 }
             }
         }
@@ -658,11 +646,11 @@ public class Lane extends CrossSectionElement implements Serializable
             return new ArrayList<>();
         }
         List<Sensor> sensorList = new ArrayList<>(1);
-        for (List<GTUTypeSensor> gtsl : this.sensors.values())
+        for (List<Sensor> sl : this.sensors.values())
         {
-            for (GTUTypeSensor gs : gtsl)
+            for (Sensor sensor : sl)
             {
-                sensorList.add(gs.getSensor());
+                sensorList.add(sensor);
             }
         }
         return sensorList;
@@ -680,11 +668,15 @@ public class Lane extends CrossSectionElement implements Serializable
         for (double d : this.sensors.keySet())
         {
             List<Sensor> sensorList = new ArrayList<>(1);
-            for (GTUTypeSensor gs : this.sensors.get(d))
+            for (List<Sensor> sl : this.sensors.values())
             {
-                if (gs.getGtuType().equals(gtuType) || gs.getGtuType().equals(GTUType.ALL))
+                for (Sensor sensor : sl)
                 {
-                    sensorList.add(gs.getSensor());
+                    if ((sensor.getTriggeringGTUTypes().contains(gtuType)
+                            || sensor.getTriggeringGTUTypes().contains(GTUType.ALL)))
+                    {
+                        sensorList.add(sensor);
+                    }
                 }
             }
             if (sensorList.size() > 0)
@@ -1474,15 +1466,13 @@ public class Lane extends CrossSectionElement implements Serializable
             Lane newLane = new Lane(newParentLink, newSimulator, animation, this);
             // nextLanes, prevLanes, nextNeighbors, rightNeighbors are filled at first request
 
-            SortedMap<Double, List<GTUTypeSensor>> newSensorMap = new TreeMap<>();
+            SortedMap<Double, List<Sensor>> newSensorMap = new TreeMap<>();
             for (double distance : this.sensors.keySet())
             {
-                List<GTUTypeSensor> newSensorList = new ArrayList<>();
-                for (GTUTypeSensor gtuTypeSensor : this.sensors.get(distance))
+                List<Sensor> newSensorList = new ArrayList<>();
+                for (Sensor sensor : this.sensors.get(distance))
                 {
-                    AbstractSensor sensor = (AbstractSensor) gtuTypeSensor.getSensor();
-                    GTUTypeSensor newSensor =
-                            new GTUTypeSensor(gtuTypeSensor.getGtuType(), sensor.clone(newLane, newSimulator, animation));
+                    Sensor newSensor = ((AbstractSensor) sensor).clone(newLane, newSimulator, animation);
                     newSensorList.add(newSensor);
                 }
                 newSensorMap.put(distance, newSensorList);
@@ -1516,63 +1506,4 @@ public class Lane extends CrossSectionElement implements Serializable
             throw new NetworkException(exception);
         }
     }
-
-    /**
-     * The combination of GTUType and Sensor in one record.
-     * <p>
-     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * <p>
-     * $LastChangedDate: 2015-09-24 14:17:07 +0200 (Thu, 24 Sep 2015) $, @version $Revision: 1407 $, by $Author: averbraeck $,
-     * initial version Aug 28, 2015 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     */
-    private class GTUTypeSensor implements Serializable
-    {
-        /** */
-        private static final long serialVersionUID = 20150828L;
-
-        /** The GTU type that triggers this sensor; GTUType.ALL if all GTU types trigger the sensor. */
-        private final GTUType gtuType;
-
-        /** The sensor that is triggers by the gtuType. */
-        private final Sensor sensor;
-
-        /**
-         * @param gtuType the GTU type that triggers this sensor; GTUType.ALL if all GTU types trigger the sensor
-         * @param sensor the sensor that is triggers by the gtuType
-         */
-        public GTUTypeSensor(final GTUType gtuType, final Sensor sensor)
-        {
-            this.gtuType = gtuType;
-            this.sensor = sensor;
-        }
-
-        /**
-         * @return gtuType
-         */
-        public final GTUType getGtuType()
-        {
-            return this.gtuType;
-        }
-
-        /**
-         * @return sensor
-         */
-        public final Sensor getSensor()
-        {
-            return this.sensor;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public final String toString()
-        {
-            return "GTUTypeSensor [gtuType=" + this.gtuType + ", sensor=" + this.sensor + "]";
-        }
-
-    }
-
 }

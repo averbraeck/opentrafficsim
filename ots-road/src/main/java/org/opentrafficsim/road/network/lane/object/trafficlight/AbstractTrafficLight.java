@@ -1,18 +1,16 @@
 package org.opentrafficsim.road.network.lane.object.trafficlight;
 
-import java.rmi.RemoteException;
-
-import javax.naming.NamingException;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
- * Standard implementation of a traffic light.
+ * Basic, abstract implementation of a traffic light.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -22,10 +20,16 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SimpleTrafficLight extends AbstractTrafficLight
+public abstract class AbstractTrafficLight extends AbstractLaneBasedObject implements TrafficLight
 {
     /** */
     private static final long serialVersionUID = 201601001L;
+
+    /** The color of the traffic light. */
+    private TrafficLightColor trafficLightColor;
+
+    /** The simulator to schedule events on. */
+    private final OTSDEVSSimulatorInterface simulator;
 
     /**
      * @param id traffic light id
@@ -34,37 +38,31 @@ public class SimpleTrafficLight extends AbstractTrafficLight
      * @param simulator the simulator for animation and timed events
      * @throws NetworkException on failure to place the object
      */
-    public SimpleTrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
+    public AbstractTrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
             final OTSDEVSSimulatorInterface simulator) throws NetworkException
     {
-        super(id, lane, longitudinalPosition, simulator);
+        super(id, lane, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition));
 
-        try
-        {
-            new TrafficLightAnimation(this, simulator);
-        }
-        catch (RemoteException | NamingException exception)
-        {
-            throw new NetworkException(exception);
-        }
+        Throw.whenNull(simulator, "Simulator may not be null");
+        this.simulator = simulator;
+
+        this.trafficLightColor = TrafficLightColor.RED;
     }
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public String toString()
+    public final TrafficLightColor getTrafficLightColor()
     {
-        return "SimpleTrafficLight [trafficLightColor=" + getTrafficLightColor() + "]";
+        return this.trafficLightColor;
     }
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public SimpleTrafficLight clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
-            final boolean animation) throws NetworkException
+    public final void setTrafficLightColor(final TrafficLightColor trafficLightColor)
     {
-        // TODO
-        return null;
+        this.trafficLightColor = trafficLightColor;
+        fireTimedEvent(TRAFFICLIGHT_CHANGE_EVENT, new Object[] { getId(), this, trafficLightColor },
+                this.simulator.getSimulatorTime().get());
     }
 
 }

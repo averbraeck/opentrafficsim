@@ -8,6 +8,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.StaticObject;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -57,6 +58,11 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
 
         this.lane = lane;
         this.longitudinalPosition = longitudinalPosition;
+
+        if (!(this instanceof Sensor))
+        {
+            this.lane.addLaneBasedObject(this); // implements OTS-218
+        }
     }
 
     /**

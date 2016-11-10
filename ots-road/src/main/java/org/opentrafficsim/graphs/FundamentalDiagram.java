@@ -42,7 +42,6 @@ import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -603,13 +602,11 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
          * @param simulator simulator to allow animation
          * @throws NetworkException on network inconsistency
          */
-        public FundamentalDiagramSensor(final Lane lane, final Length longitudinalPosition,
+        FundamentalDiagramSensor(final Lane lane, final Length longitudinalPosition,
                 final OTSDEVSSimulatorInterface simulator) throws NetworkException
         {
             super("FUNDAMENTAL_DIAGRAM_SENSOR@" + lane.toString(), lane, longitudinalPosition, RelativePosition.REFERENCE,
                     simulator);
-            lane.addSensor(this, GTUType.ALL);
-            // System.out.println("Added sensor " + this + " to lane " + lane);
         }
 
         /** {@inheritDoc} */

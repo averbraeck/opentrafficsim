@@ -20,12 +20,10 @@ public abstract class Obstacle
     /**
      * @param waterwayLocation
      */
-    public Obstacle(WaterwayLocation waterwayLocation)
+    public Obstacle(final WaterwayLocation waterwayLocation)
     {
         super();
         this.waterwayLocation = waterwayLocation;
     }
 
-
 }
-

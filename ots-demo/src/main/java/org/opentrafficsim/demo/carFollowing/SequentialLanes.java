@@ -20,11 +20,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
-import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -73,11 +68,15 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Single lane road consisting of three consecutive links.<br>
@@ -456,8 +455,7 @@ class SequentialModel implements OTSModelInterface, UNITS
                         laneType, this.speedLimit, this.simulator, direction);
                 if (i == this.nodes.size() - 1)
                 {
-                    Sensor sensor = new SinkSensor(lanes[0], new Length(100.0, METER), this.simulator);
-                    lanes[0].addSensor(sensor, GTUType.ALL);
+                    new SinkSensor(lanes[0], new Length(100.0, METER), this.simulator);
                 }
                 this.path.add(lanes[0]);
                 links.add(lanes[0].getParentLink());
