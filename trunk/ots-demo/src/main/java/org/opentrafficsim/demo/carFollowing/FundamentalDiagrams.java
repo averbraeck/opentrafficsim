@@ -14,10 +14,6 @@ import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -57,11 +53,14 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
-import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Demonstrate the FundamentalDiagram plot.
@@ -303,8 +302,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                         new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
                                 this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0),
                                 laneType, LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.None());
-                Sensor sensor = new SinkSensor(sinkLane, new Length(10.0, METER), this.simulator);
-                sinkLane.addSensor(sensor, GTUType.ALL);
+                new SinkSensor(sinkLane, new Length(10.0, METER), this.simulator);
             }
             catch (NamingException | NetworkException | OTSGeometryException exception)
             {

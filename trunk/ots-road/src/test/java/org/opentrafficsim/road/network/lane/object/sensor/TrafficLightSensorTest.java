@@ -149,7 +149,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
         // put a sink at halfway point of last lane
         Lane lastLane = result[lengths.length - 1];
         Length sinkPosition = new Length(lengths[lengths.length - 1] > 0 ? lastLane.getLength().si - 10 : 10, LengthUnit.METER);
-        lastLane.addSensor(new SinkSensor(lastLane, sinkPosition, simulator), GTUType.ALL);
+        new SinkSensor(lastLane, sinkPosition, simulator);
         return result;
     }
 

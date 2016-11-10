@@ -642,8 +642,7 @@ public final class Convert
                         new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
                                 laneAttributes.getWidth(), laneType, directionality, speedLimit,
                                 new OvertakingConditions.LeftAndRight());
-                SinkSensor sensor = new SinkSensor(newLane, new Length(0.25, LengthUnit.METER), simulator);
-                newLane.addSensor(sensor, GTUType.ALL);
+                new SinkSensor(newLane, new Length(0.25, LengthUnit.METER), simulator);
             }
             else if (osmlink.hasTag("hasPreceding") && offset < 0 || osmlink.hasTag("hasFollowing") && offset >= 0)
             {

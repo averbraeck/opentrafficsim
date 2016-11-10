@@ -1,11 +1,17 @@
 package org.opentrafficsim.road.network.lane.object.sensor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.base.immutablecollections.ImmutableHashSet;
+import org.opentrafficsim.base.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -37,6 +43,47 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     /** The simulator for being able to generate an animation. */
     private final OTSDEVSSimulatorInterface simulator;
 
+    /** The GTU types will trigger this particular sensor. */
+    private final ImmutableSet<GTUType> triggeringGTUTypes;
+
+    /** The immutable set for all gtu type. Implements OTS-219. */
+    protected static final ImmutableSet<GTUType> GTUTYPE_SET_ALL;
+
+    static
+    {
+        Set<GTUType> gtuTypeSet = new HashSet<>();
+        gtuTypeSet.add(GTUType.ALL);
+        GTUTYPE_SET_ALL = new ImmutableHashSet<GTUType>(gtuTypeSet);
+
+    }
+
+    /**
+     * Create a sensor on a lane at a position on that lane.
+     * @param id String; the id of the sensor.
+     * @param lane Lane; the lane for which this is a sensor.
+     * @param longitudinalPosition Length; the position (between 0.0 and the length of the Lane) of the sensor on the design
+     *            line of the lane.
+     * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
+     *            the sensor.
+     * @param simulator OTSDEVSSimulatorInterface; the simulator (needed to generate the animation).
+     * @param geometry the geometry of the object, which provides its location and bounds as well
+     * @param triggeringGTUTypes Tthe GTU types will trigger this particular sensor
+     * @throws NetworkException when the position on the lane is out of bounds
+     */
+    public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
+            final RelativePosition.TYPE positionType, final OTSDEVSSimulatorInterface simulator, final OTSLine3D geometry,
+            final ImmutableSet<GTUType> triggeringGTUTypes) throws NetworkException
+    {
+        super(id, lane, longitudinalPosition, geometry);
+        Throw.when(simulator == null, NullPointerException.class, "simulator is null");
+        Throw.when(positionType == null, NullPointerException.class, "positionType is null");
+        Throw.when(id == null, NullPointerException.class, "id is null");
+        this.positionType = positionType;
+        this.simulator = simulator;
+        this.triggeringGTUTypes = triggeringGTUTypes;
+        getLane().addSensor(this); // Implements OTS-218
+    }
+
     /**
      * Create a sensor on a lane at a position on that lane.
      * @param id String; the id of the sensor.
@@ -53,12 +100,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
             final RelativePosition.TYPE positionType, final OTSDEVSSimulatorInterface simulator, final OTSLine3D geometry)
             throws NetworkException
     {
-        super(id, lane, longitudinalPosition, geometry);
-        Throw.when(simulator == null, NullPointerException.class, "simulator is null");
-        Throw.when(positionType == null, NullPointerException.class, "positionType is null");
-        Throw.when(id == null, NullPointerException.class, "id is null");
-        this.positionType = positionType;
-        this.simulator = simulator;
+        this(id, lane, longitudinalPosition, positionType, simulator, geometry, GTUTYPE_SET_ALL);
     }
 
     /**
@@ -128,6 +170,13 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     public final OTSDEVSSimulatorInterface getSimulator()
     {
         return this.simulator;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final ImmutableSet<GTUType> getTriggeringGTUTypes()
+    {
+        return this.triggeringGTUTypes;
     }
 
     /** {@inheritDoc} */

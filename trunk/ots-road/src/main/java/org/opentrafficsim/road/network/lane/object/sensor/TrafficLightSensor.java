@@ -43,7 +43,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
     private static final long serialVersionUID = 20161103L;
 
     /** Id of this TrafficLightSensor. */
-    final String id;
+    private final String id;
 
     /** The sensor that detects when a GTU enters the sensor area at point A. */
     private final FlankSensor entryA;
@@ -80,6 +80,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
      * @param exitPosition RelativePosition; the position on the GTUs that trigger the exit events
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @throws NetworkException when the network is inconsistent.
+     * TODO Possibly provide the GTUTypes that trigger the sensor as an argument for the constructor
      */
     public TrafficLightSensor(final String id, final Lane laneA, final Length positionA, final Lane laneB,
             final Length positionB, final List<Lane> intermediateLanes, final TYPE entryPosition, final TYPE exitPosition,
@@ -471,7 +472,6 @@ class FlankSensor extends AbstractSensor
     {
         super(id, lane, longitudinalPosition, positionType, simulator);
         this.parent = parent;
-        lane.addSensor(this, GTUType.ALL);
     }
 
     /** {@inheritDoc} */

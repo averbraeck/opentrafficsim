@@ -64,7 +64,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
-import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
@@ -302,8 +301,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                                 Length position = lane.getLength().lt(m25) ? m0 : m25;
                                 try
                                 {
-                                    Sensor sensor = new SinkSensor(lane, position, this.simulator);
-                                    lane.addSensor(sensor, GTUType.ALL);
+                                    new SinkSensor(lane, position, this.simulator);
                                 }
                                 catch (NetworkException exception)
                                 {
@@ -349,8 +347,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                                 Length position = lane.getLength().lt(m25) ? lane.getLength() : lane.getLength().minus(m25);
                                 try
                                 {
-                                    Sensor sensor = new SinkSensor(lane, position, this.simulator);
-                                    lane.addSensor(sensor, GTUType.ALL);
+                                    new SinkSensor(lane, position, this.simulator);
                                 }
                                 catch (NetworkException exception)
                                 {

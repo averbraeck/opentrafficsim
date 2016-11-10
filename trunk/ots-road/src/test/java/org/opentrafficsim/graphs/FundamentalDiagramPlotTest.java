@@ -15,13 +15,8 @@ import java.util.Set;
 
 import javax.swing.JLabel;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
-import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -50,6 +45,9 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -130,7 +128,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         initialLongitudinalPositions.add(new DirectedLanePosition(lane, carPosition, GTUDirectionality.DIR_PLUS));
 
         // add a sink 100 meter before the end of the lane.
-        lane.addSensor(new SinkSensor(lane, new Length(lane.getLength().getSI() - 100, METER), simulator), GTUType.ALL);
+        new SinkSensor(lane, new Length(lane.getLength().getSI() - 100, METER), simulator);
 
         simulator.runUpTo(time);
         while (simulator.isRunning())

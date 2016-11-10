@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.naming.NamingException;
 
@@ -42,8 +43,7 @@ import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
-import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
-import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
+import org.opentrafficsim.road.network.lane.object.LaneBlock;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.xml.sax.SAXException;
@@ -602,8 +602,7 @@ final class Links
                     {
                         SinkTag sinkTag = linkTag.sinkTags.get(cseTag.name);
                         Length position = LinkTag.parseBeginEndPosition(sinkTag.positionStr, lane);
-                        Sensor sensor = new SinkSensor(lane, position, simulator);
-                        lane.addSensor(sensor, GTUType.ALL);
+                        new SinkSensor(lane, position, simulator);
                     }
 
                     // BLOCK
@@ -611,7 +610,7 @@ final class Links
                     {
                         BlockTag blockTag = linkTag.blockTags.get(cseTag.name);
                         Length position = LinkTag.parseBeginEndPosition(blockTag.positionStr, lane);
-                        // TODO new CSEBlock(lane, position, simulator, null, parser.network);
+                        new LaneBlock(UUID.randomUUID().toString(), lane, position, Length.ZERO);
                     }
 
                     // TRAFFICLIGHT
@@ -662,9 +661,8 @@ final class Links
                                 Length position = LinkTag.parseBeginEndPosition(sensorTag.positionStr, lane);
                                 // { String.class, Lane.class, Length.class, RelativePosition.TYPE.class,
                                 // OTSDEVSSimulatorInterface.class }
-                                AbstractSensor sensor = (AbstractSensor) sensorConstructor.newInstance(
+                                sensorConstructor.newInstance(
                                         new Object[] { sensorTag.name, lane, position, sensorTag.triggerPosition, simulator });
-                                lane.addSensor(sensor, GTUType.ALL);
                             }
                             catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
                                     | IllegalAccessException | IllegalArgumentException | InvocationTargetException

@@ -2,7 +2,9 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 
 import java.io.Serializable;
 
+import org.opentrafficsim.base.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
@@ -33,11 +35,14 @@ public interface Sensor extends Serializable, Comparable<Sensor>, LaneBasedObjec
      */
     void trigger(LaneBasedGTU gtu);
 
-    /** @return The id of the sensor. */
-    String getId();
-
     /** @return The simulator. */
     OTSDEVSSimulatorInterface getSimulator();
+    
+    /**
+     * Return which GTU types will trigger this particular sensor.
+     * @return Set<GTUType> the GTU types will trigger this particular sensor.
+     */
+    ImmutableSet<GTUType> getTriggeringGTUTypes();  
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of a Sensor on a lane. <br>

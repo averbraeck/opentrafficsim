@@ -348,7 +348,6 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
                         for (Lane lane : lanes)
                         {
                             Sensor sensor = new SinkSensor(lane, new Length(500.0, METER), this.simulator);
-                            lane.addSensor(sensor, GTUType.ALL);
                         }
                     }
                 }

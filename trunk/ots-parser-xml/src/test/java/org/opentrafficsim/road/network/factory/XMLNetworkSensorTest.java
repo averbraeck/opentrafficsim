@@ -24,7 +24,6 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.Link;
@@ -68,13 +67,12 @@ public class XMLNetworkSensorTest implements UNITS
     // Test
     public final void testXMLNetworkSensors()
     {
-        for (double speedFactor : new double[]{10, 100, 1000})
+        for (double speedFactor : new double[] { 10, 100, 1000 })
         {
             try
             {
                 TestXMLModel model = new TestXMLModel();
-                final SimpleAnimator simulator =
-                    new SimpleAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND),
+                final SimpleAnimator simulator = new SimpleAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND),
                         new Duration(120.0, SECOND), model);
 
                 // get the nodes in the network.
@@ -111,14 +109,14 @@ public class XMLNetworkSensorTest implements UNITS
                 assertNotNull(lane23);
 
                 // add the sensors
-                lane12.addSensor(new ReportingSensor("12.E.F", lane12, new Length(lane12.getLength().getSI() - 1E-4,
-                    LengthUnit.SI), RelativePosition.FRONT, simulator), GTUType.ALL);
-                lane12.addSensor(new ReportingSensor("12.E.R", lane12, new Length(lane12.getLength().getSI() - 1E-4,
-                    LengthUnit.SI), RelativePosition.REAR, simulator), GTUType.ALL);
-                lane23.addSensor(new ReportingSensor("23.B.F", lane23, new Length(Math.ulp(0.0), LengthUnit.SI),
-                    RelativePosition.FRONT, simulator), GTUType.ALL);
-                lane23.addSensor(new ReportingSensor("23.B.R", lane23, new Length(Math.ulp(0.0), LengthUnit.SI),
-                    RelativePosition.REAR, simulator), GTUType.ALL);
+                new ReportingSensor("12.E.F", lane12, new Length(lane12.getLength().getSI() - 1E-4, LengthUnit.SI),
+                        RelativePosition.FRONT, simulator);
+                new ReportingSensor("12.E.R", lane12, new Length(lane12.getLength().getSI() - 1E-4, LengthUnit.SI),
+                        RelativePosition.REAR, simulator);
+                new ReportingSensor("23.B.F", lane23, new Length(Math.ulp(0.0), LengthUnit.SI), RelativePosition.FRONT,
+                        simulator);
+                new ReportingSensor("23.B.R", lane23, new Length(Math.ulp(0.0), LengthUnit.SI), RelativePosition.REAR,
+                        simulator);
 
                 simulator.setSpeedFactor(speedFactor);
                 simulator.start();
@@ -181,10 +179,10 @@ public class XMLNetworkSensorTest implements UNITS
          * @param positionType the type of trigger (REAR, FRONT, etc.)
          * @param id the sensor id
          * @param simulator the simulator
-         * @throws NetworkException 
+         * @throws NetworkException
          */
         public ReportingSensor(final String id, final Lane lane, final Length longitudinalPosition, final TYPE positionType,
-            final OTSDEVSSimulatorInterface simulator) throws NetworkException
+                final OTSDEVSSimulatorInterface simulator) throws NetworkException
         {
             super("REPORT@" + lane.toString(), lane, longitudinalPosition, positionType, simulator);
             this.id = id;
@@ -197,8 +195,7 @@ public class XMLNetworkSensorTest implements UNITS
         {
             try
             {
-                int gtuNumber =
-                    Integer.parseInt(gtu.getId().toString().substring(gtu.getId().toString().indexOf(':') + 1)) - 1;
+                int gtuNumber = Integer.parseInt(gtu.getId().toString().substring(gtu.getId().toString().indexOf(':') + 1)) - 1;
                 double simTimeSec = this.simulator.getSimulatorTime().getTime().doubleValue();
                 if ("12.E.F".equals(this.id))
                 {
@@ -241,7 +238,7 @@ public class XMLNetworkSensorTest implements UNITS
         {
             return "ReportingSensor [id=" + this.id + "]";
         }
-        
+
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
@@ -289,10 +286,7 @@ public class XMLNetworkSensorTest implements UNITS
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
         @Override
-        public final
-            void
-            constructModel(
-                final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
+        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
@@ -302,8 +296,8 @@ public class XMLNetworkSensorTest implements UNITS
             {
                 this.network = nlp.build(url);
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
-                | GTUException | OTSGeometryException exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
+                    | OTSGeometryException exception)
             {
                 exception.printStackTrace();
                 System.exit(-1);
@@ -312,8 +306,7 @@ public class XMLNetworkSensorTest implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<Time, Duration, OTSSimTimeDouble>
-            getSimulator()
+        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
 
         {
             return this.simulator;

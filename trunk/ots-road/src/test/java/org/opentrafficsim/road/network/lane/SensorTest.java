@@ -89,7 +89,6 @@ public class SensorTest implements UNITS
             TriggerSensor sensor =
                     new TriggerSensor(lane, longitudinalPosition, RelativePosition.REFERENCE, "Trigger@" + lane.toString(),
                             simulator);
-            lane.addSensor(sensor, GTUType.ALL);
         }
 
         Length positionA = new Length(100, METER);

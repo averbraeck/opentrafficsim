@@ -3,6 +3,7 @@ package org.opentrafficsim.road.network.lane.object.trafficlight;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.event.EventType;
 
 /**
  * <p>
@@ -27,10 +28,10 @@ public interface TrafficLight extends Locatable, LaneBasedObject
     void setTrafficLightColor(TrafficLightColor trafficLightColor);
     
     /**
-     * Return the id of the traffic light. 
-     * @return String; the id of the traffic light
+     * The <b>timed</b> event type for pub/sub indicating the change of color of a traffic light. <br>
+     * Payload: Object[] {String trafficLightId, TrafficLight trafficLight, TrafficLightColor newColor}
      */
-    String getId();
+    EventType TRAFFICLIGHT_CHANGE_EVENT = new EventType("TRAFFICLIGHT.CHANGE");
 
 }
 

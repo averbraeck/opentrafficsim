@@ -701,15 +701,13 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
             int sensorNr = 0;
             for (Lane lane : lanes1)
             {
-                SimpleSilentSensor sensor = new SimpleSilentSensor("sensor " + ++sensorNr, lane,
-                        new Length(10.0, LengthUnit.METER), RelativePosition.FRONT, imbAnimator);
-                lane.addSensor(sensor, gtuType);
+                new SimpleSilentSensor("sensor " + ++sensorNr, lane, new Length(10.0, LengthUnit.METER), RelativePosition.FRONT,
+                        imbAnimator);
             }
             for (Lane lane : lanes2)
             {
-                SimpleSilentSensor sensor = new SimpleSilentSensor("sensor" + ++sensorNr, lane,
-                        new Length(20.0, LengthUnit.METER), RelativePosition.REAR, imbAnimator);
-                lane.addSensor(sensor, gtuType);
+                new SimpleSilentSensor("sensor" + ++sensorNr, lane, new Length(20.0, LengthUnit.METER), RelativePosition.REAR,
+                        imbAnimator);
             }
             // Put the (not very evenly spaced) cars on the track
             double variability = (headway - 20) * headwayVariability;
@@ -903,7 +901,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
         {
             return "SimpleSilentSensor [Lane=" + this.getLane() + "]";
         }
-        
+
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
