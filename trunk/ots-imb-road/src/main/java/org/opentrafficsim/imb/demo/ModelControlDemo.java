@@ -232,7 +232,31 @@ public class ModelControlDemo extends ModelStarter
                             Double value = (double) parameters.getParameterByName(parameterName).getValue();
                             try
                             {
-                                System.out.println("Setting CACCpenetration to " + value);
+                                System.out.println("Setting CACC penetration to " + value);
+                                cp.setValue(value);
+                            }
+                            catch (PropertyException exception)
+                            {
+                                exception.printStackTrace();
+                            }
+                        }
+                        break;
+                    }
+
+                    case "CACC compliance":
+                    {
+                        Property<?> p = findPropertyInList(properties, "CACCCompliance");
+                        if (null == p || !(p instanceof ContinuousProperty))
+                        {
+                            System.err.println("Property " + p + " is not a ContinuousProperty");
+                        }
+                        else
+                        {
+                            ContinuousProperty cp = (ContinuousProperty) p;
+                            Double value = (double) parameters.getParameterByName(parameterName).getValue();
+                            try
+                            {
+                                System.out.println("Setting CACC compliance to " + value);
                                 cp.setValue(value);
                             }
                             catch (PropertyException exception)
@@ -329,6 +353,12 @@ public class ModelControlDemo extends ModelStarter
             {
                 parameters.addParameter(
                         new Parameter("CACC penetration (range 0.0 - 1.0)", ((ContinuousProperty) caccPenetration).getValue()));
+            }
+            Property<?> caccCompliance = findByKeyInList(propertyList, "CACCCompliance");
+            if (null != caccCompliance)
+            {
+                parameters.addParameter(new Parameter("CACC compliance (range 0.0 - 1.0)",
+                        ((ContinuousProperty) caccCompliance).getValue()));
             }
             System.out.println("(possibly) modified paramters: " + parameters);
         }
@@ -483,6 +513,8 @@ public class ModelControlDemo extends ModelStarter
             List<Property<?>> result = new ArrayList<>();
             result.add(new ContinuousProperty("CACCpenetration", "CACC penetration",
                     "<html>Fraction of vehicles equipped with CACC</html>", 0.0, 0.0, 1.0, "%.2f", false, 13));
+            result.add(new ContinuousProperty("CACCCompliance", "CACC compliance",
+                    "<html>Compliance within CADD equipped vehicle population</html>", 0.5, 0.0, 1.0, "%.2f", false, 14));
             result.add(new SelectionProperty("LaneChanging", "Lane changing",
                     "<html>The lane change strategies vary in politeness.<br>"
                             + "Two types are implemented:<ul><li>Egoistic (looks only at personal gain).</li>"
