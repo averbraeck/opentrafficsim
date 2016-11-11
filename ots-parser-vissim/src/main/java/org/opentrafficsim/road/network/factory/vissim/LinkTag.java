@@ -134,6 +134,10 @@ final class LinkTag implements Serializable {
 
     List<SensorTag> sensors = new ArrayList<>();
 
+    List<SignalHeadTag> signalHeadsToRemove = new ArrayList<>();
+
+    List<SensorTag> sensorTagsToRemove = new ArrayList<>();
+
     // a link (false) or a connector (true)
     boolean connector = false;
 
@@ -394,7 +398,7 @@ final class LinkTag implements Serializable {
                     endLinkTag.signalHeads.add(new SignalHeadTag(signalHeadTag));
                     // remove from the other part of the link
                     signalHeadTag.activeOnThisLink = false;
-                    // signalHeads.remove();
+                    linkTag.signalHeadsToRemove.add(signalHeadTag);
                 }
             }
 
@@ -411,6 +415,7 @@ final class LinkTag implements Serializable {
                     endLinkTag.sensors.add(new SensorTag(sensorTag));
                     // remove from the other part of the link
                     sensorTag.activeOnThisLink = false;
+                    linkTag.sensorTagsToRemove.add(sensorTag);
                     // sensors.remove();
                 }
             }

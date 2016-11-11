@@ -44,6 +44,8 @@ import org.opentrafficsim.road.network.factory.vissim.xsd.ROADLAYOUT;
 import org.opentrafficsim.road.network.factory.vissim.xsd.ROADTYPE;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
+import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -242,7 +244,7 @@ public class VissimNetworkLaneParser implements Serializable {
 
         // create space between connectors and links, in order to make bezier curved links between connectors and links
         // action: the connectors become shorter than they were
-        LinkTag.shortenConnectors(this);
+        // LinkTag.shortenConnectors(this);
 
         // again process nodes and links to calculate coordinates and positions for the new link/nodes
         Links.calculateNodeCoordinates(this);
@@ -416,7 +418,26 @@ public class VissimNetworkLaneParser implements Serializable {
                 speedLimit.setGTUTYPE("CAR");
                 lane.getSPEEDLIMIT().add(speedLimit);
                 rla.getLANEOrNOTRAFFICLANEOrSHOULDER().add(lane);
-
+                for (Sensor inputSensor : inputLane.getSensors()) {
+                    LINK.SENSOR sensor = new LINK.SENSOR();
+                    sensor.setNAME(inputSensor.getId());
+                    sensor.setLANE(lane.getNAME());
+                    sensor.setPOSITION(Double.toString(inputSensor.getLongitudinalPosition().getInUnit(LengthUnit.METER))
+                        + " m");
+                    sensor.setTRIGGER(" " + inputSensor.getPositionType());
+                    sensor.setCLASS("nl.grontmij.smarttraffic.model.CheckSensor");
+                    link.getLANEOVERRIDEOrGENERATOROrLISTGENERATOR().add(sensor);
+                }
+                for (LaneBasedObject inputSimpleTrafficLight : inputLane.getLaneBasedObjects()) {
+                    LINK.TRAFFICLIGHT simpleTrafficLight = new LINK.TRAFFICLIGHT();
+                    simpleTrafficLight.setNAME(inputSimpleTrafficLight.getId());
+                    simpleTrafficLight.setLANE(lane.getNAME());
+                    simpleTrafficLight.setPOSITION(Double.toString(inputSimpleTrafficLight.getLongitudinalPosition()
+                        .getInUnit(LengthUnit.METER)) + " m");
+                    simpleTrafficLight.setCLASS(
+                        "org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight");
+                    link.getLANEOVERRIDEOrGENERATOROrLISTGENERATOR().add(simpleTrafficLight);
+                }
                 ROADLAYOUT.STRIPE stripe = new ROADLAYOUT.STRIPE();
                 stripe.setTYPE("DASHED");
                 stripe.setOFFSET(inputLane.getDesignLineOffsetAtBegin().minus(inputLane.getBeginWidth().divideBy(2.0))
@@ -476,9 +497,24 @@ public class VissimNetworkLaneParser implements Serializable {
             OTSLine3D designLineOTS = LinkTag.createLineString(connectorLinkTag);
             LineString designLine = designLineOTS.getLineString();
             Double length = designLine.getLength();
-
-            // if the link is quite long....
-            if (length > 999995) {
+            // default: we replace the connector link by a bezier curved link
+            if (length < 999995) {
+                connectorLinkTag.nodeStartTag = parser.nodeTags.get(connectorLinkTag.connectorTag.fromNodeName);
+                connectorLinkTag.nodeEndTag = parser.nodeTags.get(connectorLinkTag.connectorTag.toNodeName);
+                connectorLinkTag.bezierTag = new BezierTag();
+                if (connectorLinkTag.nodeStartTag.name.equals(connectorLinkTag.nodeEndTag.name)) {
+                    this.linkTags.remove(connectorLinkTag.name);
+                    // this.connectorTags.remove(connectorLinkTag.name);
+                }
+                if (connectorLinkTag.polyLineTag != null) {
+                    connectorLinkTag.polyLineTag = null;
+                }
+                if (connectorLinkTag.straightTag != null) {
+                    connectorLinkTag.straightTag = null;
+                }
+            }
+            // if the link is quite long....we could split it but we don't do this now
+            else {
                 // get the from link
                 LinkTag pasteLinkFromTag = new LinkTag(connectorLinkTag);
                 // add a unique name
@@ -512,24 +548,6 @@ public class VissimNetworkLaneParser implements Serializable {
                     pasteLinkToTag.straightTag = null;
                 }
                 // this.linkTags.put(pasteLinkToTag.name, pasteLinkToTag);
-            }
-
-            else {
-                // get the from link
-                connectorLinkTag.nodeStartTag = parser.nodeTags.get(connectorLinkTag.connectorTag.fromNodeName);
-                connectorLinkTag.nodeEndTag = parser.nodeTags.get(connectorLinkTag.connectorTag.toNodeName);
-                connectorLinkTag.bezierTag = new BezierTag();
-                if (connectorLinkTag.nodeStartTag.name.equals(connectorLinkTag.nodeEndTag.name)) {
-                    System.out.println("");
-                    this.linkTags.remove(connectorLinkTag.name);
-                    // this.connectorTags.remove(connectorLinkTag.name);
-                }
-                if (connectorLinkTag.polyLineTag != null) {
-                    connectorLinkTag.polyLineTag = null;
-                }
-                if (connectorLinkTag.straightTag != null) {
-                    connectorLinkTag.straightTag = null;
-                }
 
             }
             // }
@@ -559,6 +577,8 @@ public class VissimNetworkLaneParser implements Serializable {
                     newLinkTags.putAll(newLinks);
                 }
             }
+            linkTag.signalHeads.removeAll(linkTag.signalHeadsToRemove);
+            linkTag.sensors.removeAll(linkTag.sensorTagsToRemove);
             // relocate the signalHeads and detectors afterwards!
         }
         if (!newLinkTags.isEmpty()) {
@@ -593,6 +613,9 @@ public class VissimNetworkLaneParser implements Serializable {
             // split the link
             Map<String, LinkTag> newLinkToTags = LinkTag.splitLink(newSplitNodeTag, linkToTag, this, position, margin,
                 isConnectorToLink);
+            linkToTag.signalHeads.removeAll(linkToTag.signalHeadsToRemove);
+            linkToTag.sensors.removeAll(linkToTag.sensorTagsToRemove);
+
             if (newLinkToTags != null) {
                 // only add if a link is split
                 connectorLinkTag.connectorTag.toNodeName = newSplitNodeTag.name;
@@ -628,10 +651,12 @@ public class VissimNetworkLaneParser implements Serializable {
 
                 // from connector to next link
                 if (position < margin) {
+                    this.nodeTags.remove(connectorLinkTag.connectorTag.toNodeName);
                     connectorLinkTag.connectorTag.toNodeName = linkToTag.nodeStartTag.name;
                 }
                 // from link to connector
                 else {
+                    this.nodeTags.remove(connectorLinkTag.connectorTag.toNodeName);
                     connectorLinkTag.connectorTag.toNodeName = linkToTag.nodeEndTag.name;
                 }
             }
@@ -645,6 +670,9 @@ public class VissimNetworkLaneParser implements Serializable {
 
             Map<String, LinkTag> newLinkFromTags = LinkTag.splitLink(newSplitNodeTag2, linkFromTag, this, position, margin,
                 isConnectorToLink);
+            linkFromTag.signalHeads.removeAll(linkFromTag.signalHeadsToRemove);
+            linkFromTag.sensors.removeAll(linkFromTag.sensorTagsToRemove);
+
             if (newLinkFromTags != null) {
                 // only add if a link is split
                 connectorLinkTag.connectorTag.fromNodeName = newSplitNodeTag2.name;
@@ -678,10 +706,12 @@ public class VissimNetworkLaneParser implements Serializable {
             } else {
                 // from connector to next link
                 if (position < margin) {
+                    this.nodeTags.remove(connectorLinkTag.connectorTag.fromNodeName);
                     connectorLinkTag.connectorTag.fromNodeName = linkFromTag.nodeStartTag.name;
                 }
                 // from link to connector
                 else {
+                    this.nodeTags.remove(connectorLinkTag.connectorTag.fromNodeName);
                     connectorLinkTag.connectorTag.fromNodeName = linkFromTag.nodeEndTag.name;
                 }
             }
