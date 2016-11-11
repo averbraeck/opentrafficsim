@@ -24,6 +24,7 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -34,6 +35,8 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor;
+import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -46,8 +49,8 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision$, by $Author$,
- * initial version Jul 25, 2015 <br>
+ * LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision$, by $Author$, initial
+ * version Jul 25, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 final class Links {
@@ -457,7 +460,33 @@ final class Links {
                 Speed speedLimit = new Speed(Double.parseDouble(linkTag.legalSpeed), SpeedUnit.KM_PER_HOUR);
                 // OvertakingConditions overtakingConditions; TODO (not clear yet)
                 Lane lane = new Lane(csl, name, lateralOffset, thisLaneWidth, laneType, linkDirection, speedLimit, null);
+                if (!linkTag.sensors.isEmpty()) {
+                    for (SensorTag sensorTag : linkTag.sensors) {
+                        if (sensorTag.laneName.equals(laneTag.laneNo)) {
+                            Length pos = new Length(Double.parseDouble(sensorTag.positionStr), LengthUnit.METER);
+                            if (pos.lt(lane.getLength())) {
+                                SimpleReportingSensor sensor = new SimpleReportingSensor(sensorTag.name, lane, pos,
+                                    RelativePosition.FRONT, simulator);
+                                lane.getSensors().add(sensor);
+                            }
+                        }
+                    }
+                }
+                if (!linkTag.signalHeads.isEmpty()) {
+                    for (SignalHeadTag signalHeadTag : linkTag.signalHeads) {
+                        if (signalHeadTag.laneName.equals(laneTag.laneNo)) {
+                            Length pos = new Length(Double.parseDouble(signalHeadTag.positionStr), LengthUnit.METER);
+                            if (pos.lt(lane.getLength())) {
+                                SimpleTrafficLight simpleTrafficLight = new SimpleTrafficLight(signalHeadTag.no, lane, pos,
+                                    simulator);
+                                lane.getLaneBasedObjects().add(simpleTrafficLight);
+                            }
+                        }
+                    }
+                }
+
                 cseList.add(lane);
+
                 lanes.add(lane);
                 linkTag.lanes.put(name, lane);
                 // update totalLaneWidth

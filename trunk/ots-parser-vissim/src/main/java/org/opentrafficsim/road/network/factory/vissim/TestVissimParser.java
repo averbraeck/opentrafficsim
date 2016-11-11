@@ -142,7 +142,7 @@ public class TestVissimParser extends AbstractWrappableAnimation {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
-            File outputFile = new File(classLoader.getResource("testEindhoven.xml").getFile());
+            File outputFile = new File(classLoader.getResource("testEindhoven1.xml").getFile());
 
             // URL inputUrl = URLResource.getResource(
             // "C:/Projecten/OTS/ots-parser-vissim/src/main/resources/ehv_eisen1_VA.inpx");
