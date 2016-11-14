@@ -31,21 +31,20 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
-import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -147,13 +146,14 @@ public class TrafCOD extends EventProducer implements TrafficController
      * @param trafCodURL String; the URL of the TrafCOD rules
      * @param trafficLights Set&lt;TrafficLight&gt;; the traffic lights. The ids of the traffic lights must end with two digits
      *            that match the stream numbers as used in the traffic control program
-     * @param sensors Set&lt;Sensor&gt;; the traffic sensors. The ids of the traffic sensors must end with three digits; the
-     *            first two of those must match the stream and sensor numbers used in the traffic control program
+     * @param sensors Set&lt;TrafficLightSensor&gt;; the traffic sensors. The ids of the traffic sensors must end with three
+     *            digits; the first two of those must match the stream and sensor numbers used in the traffic control program
      * @param simulator DEVSSimulator&lt;Time, Duration, OTSSimTimeDouble&gt;; the simulation engine
      * @throws Exception when a rule cannot be parsed
      */
     public TrafCOD(String controllerName, final String trafCodURL, final Set<TrafficLight> trafficLights,
-            final Set<Sensor> sensors, final DEVSSimulator<Time, Duration, OTSSimTimeDouble> simulator) throws Exception
+            final Set<TrafficLightSensor> sensors, final DEVSSimulator<Time, Duration, OTSSimTimeDouble> simulator)
+            throws Exception
     {
         Throw.whenNull(trafCodURL, "trafCodURL may not be null");
         Throw.whenNull(controllerName, "controllerName may not be null");
@@ -277,7 +277,7 @@ public class TrafCOD extends EventProducer implements TrafficController
                 String[] fields = varNameAndInitialValue.split(" ");
                 NameAndStream nameAndStream = new NameAndStream(fields[0], locationDescription);
                 installVariable(nameAndStream.getName(), nameAndStream.getStream(), EnumSet.noneOf(Flags.class),
-                        locationDescription);
+                        locationDescription).setFlag(Flags.INITED);
                 // The supplied initial value is ignored (in this version of the TrafCOD interpreter)!
                 continue;
             }
@@ -350,19 +350,57 @@ public class TrafCOD extends EventProducer implements TrafficController
             {
                 String detectorName = variable.selectedFieldsToString(EnumSet.of(PrintFlags.ID));
                 int detectorNumber = variable.getStream() * 10 + detectorName.charAt(detectorName.length() - 1) - '0';
-
+                TrafficLightSensor sensor = null;
+                for (TrafficLightSensor tls : sensors)
+                {
+                    if (tls.getId().endsWith(detectorName))
+                    {
+                        sensor = tls;
+                    }
+                }
+                if (null == sensor)
+                {
+                    throw new Exception("Cannot find detector " + detectorName + " among the provided sensors");
+                }
+                // TODO Find the detector and subscribe to detection events
             }
         }
         System.out.println("Installed " + this.variables.size() + " variables");
         for (String key : this.variables.keySet())
         {
+            Variable v = this.variables.get(key);
             System.out.println(key
                     + ":\t"
-                    + this.variables.get(key).selectedFieldsToString(
-                            EnumSet.of(PrintFlags.ID, PrintFlags.VALUE, PrintFlags.INITTIMER, PrintFlags.REINITTIMER,
-                                    PrintFlags.S, PrintFlags.E)));
+                    + v.selectedFieldsToString(EnumSet.of(PrintFlags.ID, PrintFlags.VALUE, PrintFlags.INITTIMER,
+                            PrintFlags.REINITTIMER, PrintFlags.S, PrintFlags.E)));
+            if (v.toString().contains("[FA08<"))
+            {
+                v.setFlag(Flags.TRACED);
+            }
+        }
+        for (String key : this.variables.keySet())
+        {
+            this.variables.get(key).initialize();
         }
         this.simulator.scheduleEventNow(this, this, "evalExprs", null);
+    }
+
+    /**
+     * Decrement all running timers.
+     * @return int; the total number of timers that expired
+     * @throws Exception Should never happen
+     */
+    private int decrementTimers() throws Exception
+    {
+        int changeCount = 0;
+        for (Variable v : this.variables.values())
+        {
+            if (v.isTimer() && v.getValue() > 0 && v.decrementTimer(this.currentTime10))
+            {
+                changeCount++;
+            }
+        }
+        return changeCount;
     }
 
     /**
@@ -373,13 +411,22 @@ public class TrafCOD extends EventProducer implements TrafficController
     private void evalExprs() throws Exception
     {
         System.out.println("TrafCOD: time is " + EngineeringFormatter.format(this.simulator.getSimulatorTime().get().si));
-        for (int loop = 0; loop < this.maxLoopCount; loop++)
+        this.currentTime10 = (int) (this.simulator.getSimulatorTime().get().si * 10);
+        // Variable tracevar = this.variables.get("FA08");
+        // System.out.println("Trace: " + tracevar);
+        decrementTimers();
+        // System.out.println("Trace (na decrement timers): " + tracevar);
+        int loop;
+        for (loop = 0; loop < this.maxLoopCount; loop++)
         {
             if (evalExpressionsOnce() == 0)
             {
                 break;
             }
+            // System.out.println("Trace na loop " + loop + ": " + tracevar);
         }
+        System.out.println("Executed " + (loop + 1) + " iteration(s)");
+        // System.out.println("Trace: " + tracevar);
         this.simulator.scheduleEventRel(EVALUATION_INTERVAL, this, this, "evalExprs", null);
     }
 
@@ -397,16 +444,16 @@ public class TrafCOD extends EventProducer implements TrafficController
         int changeCount = 0;
         for (Object[] rule : this.tokenisedRules)
         {
-            System.out.println("Evaluating rule " + printRule(rule, true));
-            for (Object o : rule)
-            {
-                System.out.print(o + " ");
-            }
-            System.out.println("");
-
+            // System.out.println("Evaluating rule " + printRule(rule, true));
+            // for (Object o : rule)
+            // {
+            // System.out.print(o + " ");
+            // }
+            // System.out.println("");
             if (evalRule(rule))
             {
                 changeCount++;
+                System.out.println("Variable changed by rule " + printRule(rule, true));
             }
         }
         return changeCount;
@@ -536,10 +583,10 @@ public class TrafCOD extends EventProducer implements TrafficController
     /**
      * Evaluate an expression. <br>
      * The methods evalExpr and evalRHS together evaluate an expression. This is done using recursion and a stack. The argument
-     * bindingStrength that is passed around is the binding strength of the last preceding pending operator. if a
-     * binary operator with the same or a lower strength is encountered, the pending operator must be applied first. On the
-     * other hand of a binary operator with higher binding strength is encountered, that operator takes precedence over the
-     * pending operator. To evaluate an expression, call evalExpr with a bindingStrength value of 0.
+     * bindingStrength that is passed around is the binding strength of the last preceding pending operator. if a binary
+     * operator with the same or a lower strength is encountered, the pending operator must be applied first. On the other hand
+     * of a binary operator with higher binding strength is encountered, that operator takes precedence over the pending
+     * operator. To evaluate an expression, call evalExpr with a bindingStrength value of 0.
      * @param bindingStrength int; the binding strength of a not yet applied binary operator (higher value must be applied
      *            first)
      * @throws Exception when the expression is not valid
@@ -791,6 +838,13 @@ public class TrafCOD extends EventProducer implements TrafficController
      */
     private String printRule(Object[] tokens, final boolean printValues) throws Exception
     {
+        EnumSet<PrintFlags> variableFlags = EnumSet.of(PrintFlags.ID);
+        if (printValues)
+        {
+            variableFlags.add(PrintFlags.VALUE);
+        }
+        EnumSet<PrintFlags> negatedVariableFlags = EnumSet.copyOf(variableFlags);
+        negatedVariableFlags.add(PrintFlags.NEGATED);
         StringBuilder result = new StringBuilder();
         for (int inPos = 0; inPos < tokens.length; inPos++)
         {
@@ -800,21 +854,19 @@ public class TrafCOD extends EventProducer implements TrafficController
                 switch ((Token) token)
                 {
                     case EQUALS_RULE:
-                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(EnumSet.of(PrintFlags.ID)));
+                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(variableFlags));
                         result.append("=");
                         break;
                     case NEG_EQUALS_RULE:
-                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(EnumSet.of(PrintFlags.ID,
-                                PrintFlags.NEGATED)));
+                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(negatedVariableFlags));
                         result.append("=");
                         break;
                     case START_RULE:
-                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(EnumSet.of(PrintFlags.ID)));
+                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(variableFlags));
                         result.append(".=");
                         break;
                     case END_RULE:
-                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(EnumSet.of(PrintFlags.ID,
-                                PrintFlags.NEGATED)));
+                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(variableFlags));
                         result.append(".=");
                         break;
                     case INIT_TIMER:
@@ -834,11 +886,10 @@ public class TrafCOD extends EventProducer implements TrafficController
                         result.append("E");
                         break;
                     case VARIABLE:
-                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(EnumSet.of(PrintFlags.ID)));
+                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(variableFlags));
                         break;
                     case NEG_VARIABLE:
-                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(EnumSet.of(PrintFlags.ID,
-                                PrintFlags.NEGATED)));
+                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(negatedVariableFlags));
                         break;
                     case CONSTANT:
                         result.append(tokens[++inPos]).toString();
@@ -1268,7 +1319,7 @@ public class TrafCOD extends EventProducer implements TrafficController
         {
             System.out.println("Whoops");
         }
-        return String.format("%s%02d", name, stream);
+        return String.format("%s%02d", name.toUpperCase(Locale.US), stream);
     }
 
     /**
@@ -1335,31 +1386,58 @@ public class TrafCOD extends EventProducer implements TrafficController
                 try
                 {
                     Network network = new OTSNetwork("TrafCOD test network");
-                    Node nodeX = new OTSNode(network, "Crossing", new OTSPoint3D(0, 0, 0));
-                    Node nodeS = new OTSNode(network, "South", new OTSPoint3D(0, -100, 0));
-                    Node nodeE = new OTSNode(network, "East", new OTSPoint3D(100, 0, 0));
-                    Node nodeN = new OTSNode(network, "North", new OTSPoint3D(0, 100, 0));
-                    Node nodeW = new OTSNode(network, "West", new OTSPoint3D(-100, 0, 0));
                     Map<GTUType, LongitudinalDirectionality> directionalityMap = new HashMap<>();
-                    Link linkSX = new OTSLink(network, "LinkSX", nodeS, nodeX, LinkType.ALL, null, directionalityMap);
-                    Link linkXN = new OTSLink(network, "LinkSX", nodeX, nodeN, LinkType.ALL, null, directionalityMap);
-                    Link linkWX = new OTSLink(network, "LinkSX", nodeW, nodeX, LinkType.ALL, null, directionalityMap);
-                    Link linkXE = new OTSLink(network, "LinkSX", nodeX, nodeE, LinkType.ALL, null, directionalityMap);
+                    directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
+                    OTSNode nodeX = new OTSNode(network, "Crossing", new OTSPoint3D(0, 0, 0));
+                    OTSNode nodeS = new OTSNode(network, "South", new OTSPoint3D(0, -100, 0));
+                    OTSNode nodeE = new OTSNode(network, "East", new OTSPoint3D(100, 0, 0));
+                    OTSNode nodeN = new OTSNode(network, "North", new OTSPoint3D(0, 100, 0));
+                    OTSNode nodeW = new OTSNode(network, "West", new OTSPoint3D(-100, 0, 0));
+                    CrossSectionLink linkNX =
+                            new CrossSectionLink(network, "LinkNX", nodeN, nodeX, LinkType.ALL, new OTSLine3D(nodeN.getPoint(),
+                                    nodeX.getPoint()), directionalityMap, LaneKeepingPolicy.KEEP_RIGHT);
+                    CrossSectionLink linkXS =
+                            new CrossSectionLink(network, "LinkXS", nodeX, nodeS, LinkType.ALL, new OTSLine3D(nodeX.getPoint(),
+                                    nodeS.getPoint()), directionalityMap, LaneKeepingPolicy.KEEP_RIGHT);
+                    CrossSectionLink linkWX =
+                            new CrossSectionLink(network, "LinkWX", nodeW, nodeX, LinkType.ALL, new OTSLine3D(nodeW.getPoint(),
+                                    nodeX.getPoint()), directionalityMap, LaneKeepingPolicy.KEEP_RIGHT);
+                    CrossSectionLink linkXE =
+                            new CrossSectionLink(network, "LinkXE", nodeX, nodeE, LinkType.ALL, new OTSLine3D(nodeX.getPoint(),
+                                    nodeE.getPoint()), directionalityMap, LaneKeepingPolicy.KEEP_RIGHT);
                     Length laneWidth = new Length(3, LengthUnit.METER);
                     Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
-                    Lane laneSX =
-                            new Lane((CrossSectionLink) linkSX, "laneSX", Length.ZERO, laneWidth, LaneType.ALL,
+                    Lane laneNX =
+                            new Lane(linkNX, "laneNX", Length.ZERO, laneWidth, LaneType.ALL,
                                     LongitudinalDirectionality.DIR_PLUS, speedLimit, new OvertakingConditions.None());
-                    // XXX Adapt to new sensor structure
-                    // TrafficLightSensor d082 =
-                    // new TrafficLightSensor("D082", laneSX, new Length(50, LengthUnit.METER), new Length(20,
-                    // LengthUnit.METER), (OTSDEVSSimulatorInterface) theSimulator);
+                    Lane laneWX =
+                            new Lane(linkWX, "laneWX", Length.ZERO, laneWidth, LaneType.ALL,
+                                    LongitudinalDirectionality.DIR_PLUS, speedLimit, new OvertakingConditions.None());
+                    new Lane(linkXS, "laneXS", Length.ZERO, laneWidth, LaneType.ALL, LongitudinalDirectionality.DIR_PLUS,
+                            speedLimit, new OvertakingConditions.None());
+                    new Lane(linkXE, "laneWX", Length.ZERO, laneWidth, LaneType.ALL, LongitudinalDirectionality.DIR_PLUS,
+                            speedLimit, new OvertakingConditions.None());
                     Set<TrafficLight> trafficLights = new HashSet<>();
-                    trafficLights.add(new SimpleTrafficLight("TL08", null, null, (OTSDEVSSimulatorInterface) theSimulator));
-                    trafficLights.add(new SimpleTrafficLight("TL11", null, null, (OTSDEVSSimulatorInterface) theSimulator));
+                    trafficLights.add(new SimpleTrafficLight("TL08", laneNX, new Length(90, LengthUnit.METER),
+                            (OTSDEVSSimulatorInterface) theSimulator));
+                    trafficLights.add(new SimpleTrafficLight("TL11", laneWX, new Length(90, LengthUnit.METER),
+                            (OTSDEVSSimulatorInterface) theSimulator));
+                    Set<TrafficLightSensor> sensors = new HashSet<>();
+                    sensors.add(new TrafficLightSensor("D081", laneWX, new Length(86, LengthUnit.METER), laneWX, new Length(88,
+                            LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
+                            (OTSDEVSSimulatorInterface) theSimulator));
+                    sensors.add(new TrafficLightSensor("D082", laneWX, new Length(50, LengthUnit.METER), laneWX, new Length(70,
+                            LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
+                            (OTSDEVSSimulatorInterface) theSimulator));
+                    sensors.add(new TrafficLightSensor("D111", laneNX, new Length(86, LengthUnit.METER), laneNX, new Length(88,
+                            LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
+                            (OTSDEVSSimulatorInterface) theSimulator));
+                    sensors.add(new TrafficLightSensor("D112", laneNX, new Length(50, LengthUnit.METER), laneNX, new Length(70,
+                            LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
+                            (OTSDEVSSimulatorInterface) theSimulator));
                     this.trafCOD =
                             new TrafCOD("Simple TrafCOD controller", "file:///d:/cppb/trafcod/otsim/simpel.tfc", trafficLights,
-                                    null, (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator);
+                                    sensors, (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator);
                 }
                 catch (Exception exception)
                 {
@@ -1374,9 +1452,15 @@ public class TrafCOD extends EventProducer implements TrafficController
             }
 
         };
-        SimpleSimulator testSimulator = new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(1, TimeUnit.HOUR), model);
-        testSimulator.runUpToAndIncluding(new Time(1, TimeUnit.HOUR));
-
+        SimpleSimulator testSimulator =
+                new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(0.2, TimeUnit.SECOND), model);
+        testSimulator.runUpToAndIncluding(new Time(0.5, TimeUnit.HOUR));
+        while (testSimulator.isRunning())
+        {
+            Thread.sleep(100);
+        }
+        testSimulator.cleanUp();
+        System.out.println("Simulation ended");
     }
 
     /**
@@ -1474,7 +1558,8 @@ class NameAndStream
             if (trimmed.charAt(1) == 'N' || trimmed.charAt(1) == 'n')
             {
                 // Move the 'N' to the end
-                trimmed = "D" + trimmed.substring(1, 3) + "N" + trimmed.substring(5);
+                trimmed = "D" + trimmed.substring(2, 5) + "N" + trimmed.substring(5);
+                this.negated = true;
             }
             this.name = "D" + trimmed.charAt(3);
             this.stream = (short) (10 * (trimmed.charAt(1) - '0') + trimmed.charAt(2) - '0');
@@ -1620,9 +1705,9 @@ class Variable
      */
     public Variable(final String name, final short stream)
     {
-        this.name = name;
+        this.name = name.toUpperCase(Locale.US);
         this.stream = stream;
-        if (name.startsWith("T"))
+        if (this.name.startsWith("T"))
         {
             this.flags.add(Flags.IS_TIMER);
         }
@@ -1630,6 +1715,53 @@ class Variable
         {
             this.flags.add(Flags.IS_DETECTOR);
         }
+    }
+
+    /**
+     * Initialize this variable if it has the INITED flag set.
+     */
+    public void initialize()
+    {
+        if (this.flags.contains(Flags.INITED))
+        {
+            if (isTimer())
+            {
+                this.value = this.timerMax10;
+            }
+            else
+            {
+                this.value = 1;
+            }
+            System.out.println("Initialized variable " + this);
+        }
+    }
+
+    /**
+     * Decrement the value of a timer.
+     * @param timeStamp10 int; the current simulator time in tenths of a second
+     * @return boolean; true if the timer expired due to this call; false if the timer is still running, or expired before this
+     *         call
+     * @throws Exception when this Variable is not a timer
+     */
+    public boolean decrementTimer(final int timeStamp10) throws Exception
+    {
+        if (!isTimer())
+        {
+            throw new Exception("Variable " + this + " is not a timer");
+        }
+        if (this.value <= 0)
+        {
+            return false;
+        }
+        if (0 == --this.value)
+        {
+            this.flags.add(Flags.CHANGED);
+            this.value = 0;
+            this.updateTime10 = timeStamp10;
+            return true;
+            // TODO handle tracing
+        }
+        return false;
     }
 
     /**
@@ -1689,6 +1821,10 @@ class Variable
                     trafficLight.setTrafficLightColor(this.color);
                 }
             }
+        }
+        if (this.flags.contains(Flags.TRACED))
+        {
+            System.out.println("Variable " + this.name + this.stream + " changes from " + this.value + " to " + newValue);
         }
         this.value = newValue;
     }
@@ -1782,10 +1918,14 @@ class Variable
      * Make this variable an output variable and set the output value.
      * @param colorValue int; the output value
      * @param trafficLights Set&lt;TrafficLight&gt;; the traffic light that must be update when this output becomes active
-     * @throws Exception when the colorValue is invalid
+     * @throws Exception when the colorValue is invalid, or this method is called more than once for this variable
      */
     public void setOutput(int colorValue, Set<TrafficLight> trafficLights) throws Exception
     {
+        if (null != this.trafficLights)
+        {
+            throw new Exception("Variable already has a set of traffic lights");
+        }
         TrafficLightColor newColor;
         switch (colorValue)
         {
@@ -1899,12 +2039,12 @@ class Variable
             {
                 result.append("D");
             }
-            else if (printFlags.contains(PrintFlags.INITTIMER))
+            else if (isTimer() && printFlags.contains(PrintFlags.INITTIMER))
             {
                 result.append("I");
                 result.append(this.name);
             }
-            else if (printFlags.contains(PrintFlags.REINITTIMER))
+            else if (isTimer() && printFlags.contains(PrintFlags.REINITTIMER))
             {
                 result.append("RI");
                 result.append(this.name);
@@ -2055,4 +2195,6 @@ enum Flags
     IS_OUTPUT,
     /** Variable must be initialized to 1 at start of control program. */
     INITED,
+    /** Variable is traced; all changes must be printed. */
+    TRACED,
 }
