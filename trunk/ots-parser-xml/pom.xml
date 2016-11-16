@@ -21,7 +21,7 @@
         <version>${wagon.maven.version}</version>
         <executions>
           <execution>
-            <id>upload-schema</id>
+            <id>upload-schema-current</id>
             <phase>deploy</phase>
             <goals>
               <goal>upload</goal>
@@ -31,6 +31,20 @@
               <includes>ots-types.xsd, ots-definitions.xsd, ots-network.xsd</includes>
               <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/docs</url>
               <toDir>current</toDir>
+              <serverId>ots-deployment</serverId>
+            </configuration>
+          </execution>
+          <execution>
+            <id>upload-schema-version</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>upload</goal>
+            </goals>
+            <configuration>
+              <fromDir>${basedir}/src/main/resources</fromDir>
+              <includes>ots-types.xsd, ots-definitions.xsd, ots-network.xsd</includes>
+              <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/docs</url>
+              <toDir>${version}</toDir>
               <serverId>ots-deployment</serverId>
             </configuration>
           </execution>

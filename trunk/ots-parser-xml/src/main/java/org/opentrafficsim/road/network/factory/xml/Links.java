@@ -30,6 +30,7 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.animation.ShoulderAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation;
@@ -411,6 +412,14 @@ final class Links
         CrossSectionLink link = new CrossSectionLink(parser.network, linkTag.name, linkTag.nodeStartTag.node,
                 linkTag.nodeEndTag.node, LinkType.ALL, designLine, new HashMap<GTUType, LongitudinalDirectionality>(),
                 linkTag.laneKeepingPolicy);
+        try
+        {
+            new LinkAnimation(link, simulator, 0.5f);
+        }
+        catch (RemoteException exception)
+        {
+            exception.printStackTrace();
+        }
         linkTag.link = link;
     }
 

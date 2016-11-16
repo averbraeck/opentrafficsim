@@ -118,8 +118,9 @@ public class TestXMLParser extends AbstractWrappableAnimation
     protected final Double makeAnimationRectangle()
     {
         // return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
-        return new Rectangle2D.Double(104000, 482000, 5000, 5000);
+        // return new Rectangle2D.Double(104000, 482000, 5000, 5000);
         // return new Rectangle2D.Double(0, 0, 5000, 5000);
+            return new Rectangle2D.Double(162000, 384500, 2000, 2000);
     }
 
     /** {@inheritDoc} */
@@ -160,7 +161,8 @@ public class TestXMLParser extends AbstractWrappableAnimation
             // URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
             // URL url = URLResource.getResource("/straight-road-new-gtu-example_2.xml");
             // URL url = URLResource.getResource("/Circuit.xml");
-            URL url = URLResource.getResource("/N201v8.xml");
+            // URL url = URLResource.getResource("/N201v8.xml");
+            URL url = URLResource.getResource("/testEindhovenGenerator3.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             OTSNetwork network;
             try
