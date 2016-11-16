@@ -19,7 +19,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.AccelerationVector;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
@@ -179,7 +178,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                 {
                     System.out.println("why you change? ");
                 }
-                
+
                 laneBasedGTU.changeLaneInstantaneously(lcmr.getLaneChangeDirection());
 
                 // create the path to drive in this timestep.
@@ -255,8 +254,8 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
         Length leftSuitability = suitability(gtu, LateralDirectionality.LEFT);
         Length currentSuitability = suitability(gtu, null);
         Length rightSuitability = suitability(gtu, LateralDirectionality.RIGHT);
-        // System.out.println(
-        // gtu.getId() + " suitability: " + leftSuitability + ", " + currentSuitability + ", " + rightSuitability);
+        System.out.println(
+                gtu.getId() + " suitability: " + leftSuitability + ", " + currentSuitability + ", " + rightSuitability);
         if (leftSuitability == NOLANECHANGENEEDED && currentSuitability == NOLANECHANGENEEDED
                 && rightSuitability == NOLANECHANGENEEDED)
         {
@@ -413,8 +412,8 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
         }
         try
         {
-            // return suitability(lane, longitudinalPosition, gtu, TIMEHORIZON);
-            return suitability(lane, lane.getLength().minus(longitudinalPosition), gtu, TIMEHORIZON);
+            return suitability(lane, longitudinalPosition, gtu, TIMEHORIZON);
+            // return suitability(lane, lane.getLength().minus(longitudinalPosition), gtu, TIMEHORIZON);
         }
         catch (NetworkException ne)
         {
@@ -451,11 +450,8 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
     private Length suitability(final Lane lane, final Length longitudinalPosition, final LaneBasedGTU gtu,
             final Duration timeHorizon) throws NetworkException
     {
-        // double remainingDistance = lane.getLength().getSI() - longitudinalPosition.getSI();
-        double remainingDistance = longitudinalPosition.getSI();
-        // double spareTime = timeHorizon.getSI() - remainingDistance / lane.getSpeedLimit(gtu.getGTUType()).getSI();
-        double spareTime = timeHorizon.getSI()
-                - (lane.getLength().getSI() - longitudinalPosition.getSI()) / lane.getSpeedLimit(gtu.getGTUType()).getSI();
+        double remainingDistance = lane.getLength().getSI() - longitudinalPosition.getSI();
+        double spareTime = timeHorizon.getSI() - remainingDistance / lane.getSpeedLimit(gtu.getGTUType()).getSI();
         // Find the first upcoming Node where there is a branch
         Node nextNode = lane.getParentLink().getEndNode();
         Link lastLink = lane.getParentLink();
@@ -578,12 +574,10 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                             // Use recursion to find out HOW suitable this continuation lane is, but don't revert back
                             // to the maximum time horizon (or we could end up in infinite recursion when there are
                             // loops in the network).
-                            // TODO distance traveled so far is lost at this point, length=0 is used...
-                            // Length value = suitability(connectingLane, new Length(0, LengthUnit.SI), gtu,
-                            // new Duration(spareTime, TimeUnit.SI));
-                            Length value = suitability(connectingLane,
-                                    new Length(remainingDistance + connectingLane.getLength().si, LengthUnit.SI), gtu,
+                            Length value = suitability(connectingLane, new Length(0, LengthUnit.SI), gtu,
                                     new Duration(spareTime, TimeUnit.SI));
+                            // This line was missing...
+                            value = value.plus(new Length(remainingDistance, LengthUnit.SI));
                             // Use the minimum of the value computed for the first split junction (if there is one)
                             // and the value computed for the second split junction.
                             suitabilityOfLanesBeforeBranch.put(l,
