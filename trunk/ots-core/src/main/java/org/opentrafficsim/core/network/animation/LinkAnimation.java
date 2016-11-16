@@ -1,9 +1,7 @@
 package org.opentrafficsim.core.network.animation;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Stroke;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -40,8 +38,8 @@ public class LinkAnimation extends Renderable2D implements Serializable
      * @throws NamingException for problems with registering in context
      * @throws RemoteException on communication failure
      */
-    public LinkAnimation(final Link source, final OTSSimulatorInterface simulator, final float width) throws NamingException,
-            RemoteException
+    public LinkAnimation(final Link source, final OTSSimulatorInterface simulator, final float width)
+            throws NamingException, RemoteException
     {
         super(source, simulator);
         this.width = width;
@@ -51,11 +49,7 @@ public class LinkAnimation extends Renderable2D implements Serializable
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        Stroke oldStroke = graphics.getStroke();
-        graphics.setStroke(new BasicStroke(this.width));
-        PaintPolygons.paintMultiPolygon(graphics, Color.RED, getSource().getLocation(), ((Link) getSource()).getDesignLine(),
-                true);
-        graphics.setStroke(oldStroke);
+        PaintLine.paintLine(graphics, Color.RED, this.width, getSource().getLocation(), ((Link) getSource()).getDesignLine());
     }
 
     /** {@inheritDoc} */
