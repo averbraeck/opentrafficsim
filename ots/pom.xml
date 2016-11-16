@@ -55,7 +55,7 @@
     <sonar.scm.disabled>true</sonar.scm.disabled>
 
     <ots.version>${project.version}</ots.version>
-    <djunits.version>2.01.00</djunits.version>
+    <djunits.version>2.01.01</djunits.version>
     <dsol.version>3.01.00</dsol.version>
     <junit.version>4.11</junit.version>
     <java3d.version>1.5.1</java3d.version>

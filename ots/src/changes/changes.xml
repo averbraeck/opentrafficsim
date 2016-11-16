@@ -2,6 +2,13 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="0.13.00" date="2016-XX-XX" description="Sprint 8">
+      <action issue="OTS-216" type="update">
+        OTS-216 Added neg() function to djunits and updated djunits in ots to version 2.01.01.
+      </action>
+    </release>
+
+
     <release version="0.12.01" date="2016-11-07" description="Intermediate release">
       <action issue="OTS-213" type="fix">
         OTS-213 Change SimpleWeightedGraph in OTSNetwork into SimpleDirectedWeightedGraph
