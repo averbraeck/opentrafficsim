@@ -9,6 +9,7 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.object.ObjectInterface;
 import org.opentrafficsim.road.network.lane.Lane;
 
+import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -53,6 +54,8 @@ public interface LaneBasedObject extends ObjectInterface
      */
     static OTSLine3D makeGeometry(final Lane lane, final Length position)
     {
+        Throw.whenNull(lane, "lane is null");
+        Throw.whenNull(position, "position is null");
         DirectedPoint sp = lane.getCenterLine().getLocationExtended(position);
         double w45 = 0.45 * lane.getWidth(position).si;
         double a = sp.getRotZ() + Math.PI / 2.0;
