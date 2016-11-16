@@ -198,8 +198,7 @@ public class A58IMB extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(
-                final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
+        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
                 throws SimRuntimeException
         {
             System.out.println("A58IMB: constructModel called; Connecting to IMB");
@@ -258,10 +257,13 @@ public class A58IMB extends AbstractWrappableAnimation
             // }
 
             // TODO
-            URL gisURL = URLResource.getResource("/A58/map.xml");
-            System.err.println("GIS-map file: " + gisURL.toString());
-            CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
-            new GisRenderable2D(this.simulator, gisURL, rdto0);
+//            URL gisURL = URLResource.getResource("/A58/map.xml");
+//            System.err.println("GIS-map file: " + gisURL.toString());
+//            CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
+//            new GisRenderable2D(this.simulator, gisURL, rdto0);
+            // URL nwbURL = URLResource.getResource("/A58/nwb.xml");
+            // System.err.println("NWB-map file: " + nwbURL.toString());
+            // new GisRenderable2D(this.simulator, nwbURL);
         }
 
         /** {@inheritDoc} */
