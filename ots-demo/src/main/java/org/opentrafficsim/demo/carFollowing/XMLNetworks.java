@@ -67,6 +67,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedTemplateGTUType;
 import org.opentrafficsim.road.gtu.lane.LaneBasedTemplateGTUTypeDistribution;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -131,7 +132,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
                 0, false, 0));
         this.properties.add(new SelectionProperty("TacticalPlanner", "Tactical planner",
                 "<html>The tactical planner determines if a lane change is desired and possible.</html>",
-                new String[] { "IDM", "MOBIL/IDM", "LMRS", "Toledo" }, 0, false, 600));
+                new String[] { "MOBIL/IDM", "DIRECTED/IDM", "LMRS", "Toledo" }, 0, false, 600));
         this.properties.add(new SelectionProperty("LaneChanging", "Lane changing",
                 "<html>The lane change friendliness (if used -- eg just for MOBIL.</html>",
                 new String[] { "Egoistic", "Altruistic" }, 0, false, 600));
@@ -501,6 +502,15 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                                     this.routeGenerator);
                             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                                     new LaneBasedCFLCTacticalPlannerFactory(this.carFollowingModelTrucks, this.laneChangeModel),
+                                    this.routeGenerator);
+                        }
+                        else if ("DIRECTED/IDM".equals(tacticalPlannerName))
+                        {
+                            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(this.carFollowingModelCars),
+                                    this.routeGenerator);
+                            this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(this.carFollowingModelTrucks),
                                     this.routeGenerator);
                         }
                         else if ("LMRS".equals(tacticalPlannerName))

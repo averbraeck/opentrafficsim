@@ -11,6 +11,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 
 import nl.tudelft.simulation.language.Throw;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * An abstract implementation of the LaneBasedObject interface with the required fields being initialized and getters for those
@@ -35,6 +36,9 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
 
     /** The position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane. */
     private final Length longitudinalPosition;
+    
+    /** The DirectedPoint that indicates the location on the lane. */
+    private final DirectedPoint location; 
 
     /**
      * Construct a new LanebasedObject with the required fields.
@@ -58,6 +62,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
 
         this.lane = lane;
         this.longitudinalPosition = longitudinalPosition;
+        this.location = lane.getCenterLine().getLocationExtended(this.longitudinalPosition);
 
         if (!(this instanceof Sensor))
         {
@@ -92,6 +97,14 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
     public final Length getLongitudinalPosition()
     {
         return this.longitudinalPosition;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public DirectedPoint getLocation()
+    {
+        return this.location;
     }
 
     /** {@inheritDoc} */

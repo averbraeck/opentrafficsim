@@ -53,6 +53,8 @@ import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
@@ -111,7 +113,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                 new String[] { "Egoistic", "Altruistic" }, 0, false, 500));
         this.properties.add(new SelectionProperty("TacticalPlanner", "Tactical planner",
                 "<html>The tactical planner determines if a lane change is desired and possible.</html>",
-                new String[] { "IDM", "MOBIL/IDM", "LMRS", "Toledo" }, 1, false, 600));
+                new String[] { "IDM", "MOBIL/IDM", "DIRECTED/IDM", "LMRS", "Toledo" }, 1, false, 600));
         this.properties.add(new IntegerProperty("TrackLength", "Track length", "Circumference of the track", 2000, 500, 6000,
                 "Track length %dm", false, 10));
         this.properties.add(new ContinuousProperty("MeanDensity", "Mean density", "Number of vehicles per km", 40.0, 5.0, 45.0,
@@ -534,6 +536,13 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
                             this.strategicalPlannerGeneratorTrucks =
                                     new LaneBasedStrategicalRoutePlannerFactory(new LaneBasedCFLCTacticalPlannerFactory(
                                             this.carFollowingModelTrucks, this.laneChangeModel));
+                        }
+                        else if ("DIRECTED/IDM".equals(tacticalPlannerName))
+                        {
+                            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(this.carFollowingModelCars));
+                            this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(this.carFollowingModelTrucks));
                         }
                         else if ("LMRS".equals(tacticalPlannerName))
                         {

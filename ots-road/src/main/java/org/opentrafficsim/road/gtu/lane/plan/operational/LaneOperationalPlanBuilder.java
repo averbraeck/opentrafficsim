@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.plan.operational;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -292,15 +291,7 @@ public final class LaneOperationalPlanBuilder
         if (startSpeed.eq(Speed.ZERO) && acceleration.le(Acceleration.ZERO))
         {
             // stand-still
-            try
-            {
-                return new LaneBasedOperationalPlan(gtu, gtu.getLocation(), startTime, timeStep, lanes.get(0));
-            }
-            catch (RemoteException exception)
-            {
-                exception.printStackTrace();
-                throw new OperationalPlanException(exception);
-            }
+            return new LaneBasedOperationalPlan(gtu, gtu.getLocation(), startTime, timeStep, lanes.get(0));
         }
         Length distance;
         ArrayList<OperationalPlan.Segment> segmentList = new ArrayList<>();

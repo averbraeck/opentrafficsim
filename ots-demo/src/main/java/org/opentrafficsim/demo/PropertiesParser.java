@@ -12,6 +12,7 @@ import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -171,6 +172,11 @@ public final class PropertiesParser
                     {
                         return new LaneBasedStrategicalRoutePlannerFactory(
                                 new LaneBasedCFLCTacticalPlannerFactory(gtuFollowingModel, laneChangeModel));
+                    }
+                    else if ("DIRECTED/IDM".equals(tacticalPlannerName))
+                    {
+                        return new LaneBasedStrategicalRoutePlannerFactory(
+                                new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(gtuFollowingModel));
                     }
                     else if ("LMRS".equals(tacticalPlannerName))
                     {
