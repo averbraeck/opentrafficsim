@@ -83,7 +83,7 @@ public class IMBSampler extends Sampler
     {
         if (args.length == 0)
         {
-            new IMBSampler("localhost", 4000, "OTS_IMB_KPI", 1, "OTS_RT");
+            new IMBSampler(new IMBConnector("localhost", 4000, "OTS_IMB_KPI", 1, "OTS_RT"));
         }
         else
         {
@@ -96,24 +96,19 @@ public class IMBSampler extends Sampler
             String modelName = args[2];
             int modelId = Integer.valueOf(args[3]);
             String federation = args[4];
-            new IMBSampler(host, port, modelName, modelId, federation);
+            new IMBSampler(new IMBConnector(host, port, modelName, modelId, federation));
         }
     }
 
     /**
-     * Constructor which starts the IMB connection, with listeners for nodes, links, lanes and gtu's.
-     * @param host String; name of the IMB hub
-     * @param port int; port number of the IMB hub
-     * @param modelName String; local model name
-     * @param modelId int; model id
-     * @param federation String; federation on the IMB hub
-     * @throws IMBException when a connection to the IMB hub could not be established
+     * Constructor with listeners for nodes, links, lanes and gtu's.
+     * @param imbConnector IMB connection
+     * @throws IMBException on connection error
      */
-    public IMBSampler(final String host, final int port, final String modelName, final int modelId, final String federation)
-            throws IMBException
+    public IMBSampler(IMBConnector imbConnector) throws IMBException
     {
-        this.imbConnector = new IMBConnector(host, port, modelName, modelId, federation);
-
+        this.imbConnector = imbConnector;
+        
         // default GTU Type and default route
         this.defaultGtuType = new GtuTypeData("car");
         NodeData nodeA = new NodeData("NodeA", new CartesianPoint(0, 0, 0));
@@ -133,9 +128,8 @@ public class IMBSampler extends Sampler
 
         Transceiver gtuTransceiver = new GTUTransceiver(this, this.imbConnector);
         this.imbConnector.register(gtuTransceiver.getId(), gtuTransceiver);
-
     }
-
+    
     /** {@inheritDoc} */
     @Override
     public final Time now()
@@ -606,6 +600,10 @@ public class IMBSampler extends Sampler
                         p1 = p2;
                     }
                     Length length = new Length(len, LengthUnit.SI);
+                    if (!this.sampler.links.containsKey(linkId))
+                    {
+                        System.out.println("Link not received.");
+                    }
                     LaneData laneData = new LaneData(this.sampler.links.get(linkId), laneId, length);
                     if (this.sampler.lanes.containsKey(laneId))
                     {

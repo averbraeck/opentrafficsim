@@ -3,6 +3,7 @@ package org.opentrafficsim.kpi.sampling.indicator;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
@@ -11,7 +12,7 @@ import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 
 /**
- * Sum of (approximate) link lengths divided by mean speed. 
+ * Sum of (approximate) link lengths divided by mean speed, divided by link length in km. 
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -21,7 +22,7 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class MeanTravelTime extends AbstractIndicator<Duration>
+public class MeanTravelTimePerKm extends AbstractIndicator<Duration>
 {
 
     /** Mean speed indicator. */
@@ -30,7 +31,7 @@ public class MeanTravelTime extends AbstractIndicator<Duration>
     /**
      * @param meanSpeed mean speed indicator
      */
-    public MeanTravelTime(final MeanSpeed meanSpeed)
+    public MeanTravelTimePerKm(final MeanSpeed meanSpeed)
     {
         this.meanSpeed = meanSpeed;
     }
@@ -49,7 +50,7 @@ public class MeanTravelTime extends AbstractIndicator<Duration>
                 links.add(trajectoryGroup.getLaneDirection().getLaneData().getLinkData());
             }
         }
-        return cumulLength.divideBy(this.meanSpeed.getValue(query, startTime, endTime));
+        return cumulLength.divideBy(this.meanSpeed.getValue(query, startTime, endTime)).divideBy(cumulLength.getInUnit(LengthUnit.KILOMETER));
     }
 
     /** {@inheritDoc} */
@@ -57,7 +58,7 @@ public class MeanTravelTime extends AbstractIndicator<Duration>
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "MeanTravelTime [meanSpeed=" + this.meanSpeed + "]";
+        return "MeanTravelTime [meanTravelTime=" + this.meanSpeed + " (per km)]";
     }
 
 }

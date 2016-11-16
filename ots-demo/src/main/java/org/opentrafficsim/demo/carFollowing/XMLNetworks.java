@@ -69,6 +69,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedTemplateGTUTypeDistribution;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
@@ -495,7 +496,16 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                     if ("TacticalPlanner".equals(sp.getKey()))
                     {
                         String tacticalPlannerName = sp.getValue();
-                        if ("MOBIL/IDM".equals(tacticalPlannerName))
+                        if ("IDM".equals(tacticalPlannerName))
+                        {
+                            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LaneBasedGTUFollowingTacticalPlannerFactory(this.carFollowingModelCars),
+                                    this.routeGenerator);
+                            this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LaneBasedGTUFollowingTacticalPlannerFactory(this.carFollowingModelTrucks),
+                                    this.routeGenerator);
+                        }
+                        else if ("MOBIL/IDM".equals(tacticalPlannerName))
                         {
                             this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
                                     new LaneBasedCFLCTacticalPlannerFactory(this.carFollowingModelCars, this.laneChangeModel),
@@ -847,9 +857,9 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         double endLinkLength = 50; // [m]
         double endX = to.getPoint().x + (endLinkLength / link.getLength().getSI()) * (to.getPoint().x - from.getPoint().x);
         double endY = to.getPoint().y + (endLinkLength / link.getLength().getSI()) * (to.getPoint().y - from.getPoint().y);
-        Node end = new OTSNode(this.network, "END", new OTSPoint3D(endX, endY, to.getPoint().z));
+        Node end = new OTSNode(this.network, link.getId() + "END", new OTSPoint3D(endX, endY, to.getPoint().z));
         CrossSectionLink endLink =
-                LaneFactory.makeLink(this.network, "endLink", to, end, null, LongitudinalDirectionality.DIR_PLUS);
+                LaneFactory.makeLink(this.network, link.getId() + "endLink", to, end, null, LongitudinalDirectionality.DIR_PLUS);
         for (Lane lane : lanes)
         {
             // Overtaking left and right allowed on the sinkLane

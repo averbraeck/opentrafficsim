@@ -33,7 +33,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.indicator.MeanSpeed;
-import org.opentrafficsim.kpi.sampling.indicator.MeanTravelTime;
+import org.opentrafficsim.kpi.sampling.indicator.MeanTravelTimePerKm;
 import org.opentrafficsim.kpi.sampling.indicator.MeanTripLength;
 import org.opentrafficsim.kpi.sampling.indicator.TotalDelay;
 import org.opentrafficsim.kpi.sampling.indicator.TotalNumberOfStops;
@@ -225,7 +225,7 @@ public class TestXMLParserKPIs extends AbstractWrappableAnimation
 
     MeanSpeed meanSpeed = new MeanSpeed(this.totalTravelDistance, this.totalTravelTime);
 
-    MeanTravelTime meanTravelTime = new MeanTravelTime(this.meanSpeed);
+    MeanTravelTimePerKm meanTravelTimePerKm = new MeanTravelTimePerKm(this.meanSpeed);
 
     MeanTripLength meanTripLength = new MeanTripLength();
 
@@ -238,7 +238,7 @@ public class TestXMLParserKPIs extends AbstractWrappableAnimation
         Length tdist = this.totalTravelDistance.getValue(query, new Time(time, TimeUnit.SI));
         Duration ttt = this.totalTravelTime.getValue(query, new Time(time, TimeUnit.SI));
         Speed ms = this.meanSpeed.getValue(query, new Time(time, TimeUnit.SI));
-        Duration mtt = this.meanTravelTime.getValue(query, new Time(time, TimeUnit.SI));
+        Duration mttpkm = this.meanTravelTimePerKm.getValue(query, new Time(time, TimeUnit.SI));
         Length mtl = this.meanTripLength.getValue(query, new Time(time, TimeUnit.SI));
         Duration tdel = this.totalDelay.getValue(query, new Time(time, TimeUnit.SI));
         Dimensionless nos = this.totalNumberOfStops.getValue(query, new Time(time, TimeUnit.SI));
@@ -246,7 +246,7 @@ public class TestXMLParserKPIs extends AbstractWrappableAnimation
         System.out.println("Total distance " + tdist);
         System.out.println("Total travel time " + ttt);
         System.out.println("Mean speed " + ms);
-        System.out.println("Mean travel time " + mtt);
+        System.out.println("Mean travel time " + mttpkm + " (per km)");
         System.out.println("Mean trip length " + mtl);
         System.out.println("Total delay " + tdel);
         System.out.println("Number of stops " + nos);

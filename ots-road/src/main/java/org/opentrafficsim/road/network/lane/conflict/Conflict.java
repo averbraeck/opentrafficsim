@@ -155,6 +155,7 @@ public final class Conflict extends AbstractLaneBasedObject
         Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
         Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
                 "simulator should be a DEVSSimulator");
+        // TODO conflict needs to be connected to the other cloned conflict
         return new Conflict((Lane) newCSE, getLongitudinalPosition(), this.length, getGeometry(), this.conflictType,
                 this.conflictRule);
     }

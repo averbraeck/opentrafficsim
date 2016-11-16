@@ -347,8 +347,8 @@ public class LaneStructureRecord implements Serializable
     @Override
     public final String toString()
     {
-        return "LaneStructureRecord [lane=" + this.lane + ", direction=" + this.gtuDirectionality + ", left=" + this.left
-                + ", right=" + this.right + ", nextList=" + this.nextList + "]";
+        // left and right may cause stack overflow
+        return "LaneStructureRecord [lane=" + this.lane + ", direction=" + this.gtuDirectionality + "]";
     }
 
 }

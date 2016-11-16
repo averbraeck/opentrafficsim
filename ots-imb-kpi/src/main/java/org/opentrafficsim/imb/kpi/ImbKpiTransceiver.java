@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -16,7 +15,7 @@ import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.connector.Connector.IMBEventType;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.indicator.MeanSpeed;
-import org.opentrafficsim.kpi.sampling.indicator.MeanTravelTime;
+import org.opentrafficsim.kpi.sampling.indicator.MeanTravelTimePerKm;
 import org.opentrafficsim.kpi.sampling.indicator.MeanTripLength;
 import org.opentrafficsim.kpi.sampling.indicator.TotalDelay;
 import org.opentrafficsim.kpi.sampling.indicator.TotalNumberOfStops;
@@ -106,7 +105,8 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
  * </tr>
  * <td>numberSpaceTimeRegions</td>
  * <td>int</td>
- * <td>number of space-time regions for this statistic</td> </tr>
+ * <td>number of space-time regions for this statistic</td>
+ * </tr>
  * <tr>
  * <td>startTime_1</td>
  * <td>double</td>
@@ -158,11 +158,6 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
  * <td>whether the lanes in the space-time regions are longitudinally connected or not</td>
  * </tr>
  * <tr>
- * <td>totalTrajectory</td>
- * <td>boolean</td>
- * <td>whether the sampling takes place of GTUs that have traveled the entire space region or not</td>
- * </tr>
- * <tr>
  * <td>transmissionInterval</td>
  * <td>double</td>
  * <td>transmission interval of the statistic in seconds</td>
@@ -191,37 +186,37 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
  * <td>the unique id for the statistic, e.g. a UUID string</td>
  * </tr>
  * <tr>
- * <td>totalGtuDistance/td>
+ * <td>totalGtuDistance</td>
  * <td>double</td>
  * <td>total distance traveled by filtered GTUs in the given time and space, in meters</td>
  * </tr>
  * <tr>
- * <td>totalGtuTravelTime/td>
+ * <td>totalGtuTravelTime</td>
  * <td>double</td>
  * <td>total travel time by filtered GTUs in the given time and space, in seconds</td>
  * </tr>
  * <tr>
- * <td>averageGtuSpeed/td>
+ * <td>averageGtuSpeed</td>
  * <td>double</td>
  * <td>average filtered GTU speed in the given time and space, in meter/second</td>
  * </tr>
  * <tr>
- * <td>averageGtuTravelTime/td>
+ * <td>averageGtuTravelTimePerKm</td>
  * <td>double</td>
- * <td>average filtered GTU travel time in the given time and space, in seconds</td>
+ * <td>average filtered GTU travel time in the given time and space, in seconds per km</td>
  * </tr>
  * <tr>
- * <td>totalGtuTimeDelay/td>
+ * <td>totalGtuTimeDelay</td>
  * <td>double</td>
  * <td>total time delay incurred by the filtered GTUs in the given time and space, in seconds</td>
  * </tr>
  * <tr>
- * <td>averageTripLength/td>
+ * <td>averageTripLength</td>
  * <td>double</td>
  * <td>average length of the trip of the filtered GTUs in the given time and space, in seconds</td>
  * </tr>
  * <tr>
- * <td>totalNumberStops/td>
+ * <td>totalNumberStops</td>
  * <td>double</td>
  * <td>total number of stops that GTUs made in the given time and space, dimensionless</td>
  * </tr>
@@ -261,13 +256,13 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
  */
 public class ImbKpiTransceiver implements Serializable
 {
-    
+
     /** */
     private static final long serialVersionUID = 20160923L;
 
     /** IMB connector. */
     private final Connector connector;
-    
+
     /** The query for the statistic. */
     private final Query query;
 
@@ -283,14 +278,14 @@ public class ImbKpiTransceiver implements Serializable
 
     private MeanSpeed meanSpeed = new MeanSpeed(this.totalTravelDistance, this.totalTravelTime);
 
-    private MeanTravelTime meanTravelTime = new MeanTravelTime(this.meanSpeed);
+    private MeanTravelTimePerKm meanTravelTimePerKm = new MeanTravelTimePerKm(this.meanSpeed);
 
     private MeanTripLength meanTripLength = new MeanTripLength();
 
     private TotalDelay totalDelay = new TotalDelay(new Speed(130.0, SpeedUnit.KM_PER_HOUR));
 
     private TotalNumberOfStops totalNumberOfStops = new TotalNumberOfStops();
-    
+
     private Time updateTime = Time.ZERO;
 
     // TODO implement DELETE message
@@ -304,8 +299,8 @@ public class ImbKpiTransceiver implements Serializable
      * @param transmissionInterval Duration; the interval between generation of graphs
      * @throws IMBException when the post of the IMB message fails
      */
-    public ImbKpiTransceiver(final Connector connector, Time time, String networkId,
-            final Query query, final Duration transmissionInterval) throws IMBException
+    public ImbKpiTransceiver(final Connector connector, Time time, String networkId, final Query query,
+            final Duration transmissionInterval) throws IMBException
     {
         this.connector = connector;
         this.query = query;
@@ -326,7 +321,7 @@ public class ImbKpiTransceiver implements Serializable
         this.connector.postIMBMessage("StatisticsGTULane", IMBEventType.NEW, newMessage.toArray());
         sendStatisticsUpdate();
     }
-    
+
     /**
      * Notifies about time, such that statistics over some period (very recently ended) can be gathered and published.
      * @param time
@@ -354,7 +349,7 @@ public class ImbKpiTransceiver implements Serializable
         Length tdist = this.totalTravelDistance.getValue(this.query, this.updateTime);
         Duration ttt = this.totalTravelTime.getValue(this.query, this.updateTime);
         Speed ms = this.meanSpeed.getValue(this.query, this.updateTime);
-        Duration mtt = this.meanTravelTime.getValue(this.query, this.updateTime);
+        Duration mttpkm = this.meanTravelTimePerKm.getValue(this.query, this.updateTime);
         Length mtl = this.meanTripLength.getValue(this.query, this.updateTime);
         Duration tdel = this.totalDelay.getValue(this.query, this.updateTime);
         Dimensionless nos = this.totalNumberOfStops.getValue(this.query, this.updateTime);
@@ -363,15 +358,12 @@ public class ImbKpiTransceiver implements Serializable
         System.out.println("Total distance " + tdist);
         System.out.println("Total travel time " + ttt);
         System.out.println("Mean speed " + ms);
-        System.out.println("Mean travel time " + mtt);
+        System.out.println("Mean travel time " + mttpkm + " (per km)");
         System.out.println("Mean trip length " + mtl);
         System.out.println("Total delay " + tdel);
         System.out.println("Number of stops " + nos);
-        this.connector.postIMBMessage(
-                "StatisticsGTULane",
-                IMBEventType.CHANGE,
-                new Object[] { time, this.query.getId(), tdist.si, ttt.si, ms.si,
-                        mtt.si, tdel.si, mtl.si, nos.si });
+        this.connector.postIMBMessage("StatisticsGTULane", IMBEventType.CHANGE,
+                new Object[] { time, this.query.getId(), tdist.si, ttt.si, ms.si, mttpkm.si, tdel.si, mtl.si, nos.si });
         this.updateTime = this.updateTime.plus(this.transmissionInterval);
     }
 

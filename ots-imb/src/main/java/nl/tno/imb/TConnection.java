@@ -1,7 +1,5 @@
 package nl.tno.imb;
 
-import nl.tno.imb.TEventEntry;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -292,7 +290,6 @@ public class TConnection {
                 NumBytesRead = this.finputStream.read(aBuffer.getBuffer(), aBuffer.getWriteCursor(), aBuffer.getwriteAvailable());
                 aBuffer.written(NumBytesRead);
                 Count += NumBytesRead;
-                System.out.println("Incrmental read of " + NumBytesRead);
             }
             return Count;
         } catch (IOException ex) {
@@ -305,11 +302,11 @@ public class TConnection {
     // commandmagic + command + payloadsize [ + payload + payloadmagic]
     private int readCommand(TByteBuffer aFixedCommandPart, TByteBuffer aPayload, TByteBuffer aPayloadCheck)
             throws IOException {
-        int NumBytesRead = this.finputStream.read(aFixedCommandPart.getBuffer(), 0, aFixedCommandPart.getLength());
-        System.out.println("readCommand: received " + NumBytesRead);
+        aFixedCommandPart.clear(aFixedCommandPart.getLength());
+        int NumBytesRead = readBytesFromNetStream(aFixedCommandPart);
+        //int NumBytesRead = finputStream.read(aFixedCommandPart.getBuffer(), 0, aFixedCommandPart.getLength());
         if (NumBytesRead > 0) {
             while (!aFixedCommandPart.compare(MAGIC_BYTES, 0)) {
-                System.out.println("NOT magic bytes");
                 int rbr = this.finputStream.read();
                 // skipped bytes because of invalid magic in read command
                 if (rbr != -1)
@@ -320,36 +317,23 @@ public class TConnection {
             // we found the magic in the stream
             int aCommand = aFixedCommandPart.peekInt32(MAGIC_BYTES.length);
             int PayloadSize = aFixedCommandPart.peekInt32(MAGIC_BYTES.length + TByteBuffer.SIZE_OF_INT32);
-            System.out.println("command is " + aCommand + "; payload size is " + PayloadSize);
             if (PayloadSize <= MAX_PAYLOAD_SIZE) {
                 aPayload.clear(PayloadSize);
                 if (PayloadSize > 0) {
                     int Len = readBytesFromNetStream(aPayload);
                     if (Len == aPayload.getLength()) {
+                        //NumBytesRead = finputStream.read(aPayloadCheck.getBuffer(), 0, aPayloadCheck.getLength());
                         aPayloadCheck.clear(TByteBuffer.SIZE_OF_INT32);
                         NumBytesRead = readBytesFromNetStream(aPayloadCheck);
-                        //NumBytesRead = this.finputStream.read(aPayloadCheck.getBuffer(), 0, aPayloadCheck.getLength());
                         if (NumBytesRead == TByteBuffer.SIZE_OF_INT32 && aPayloadCheck.compare(MAGIC_STRING_CHECK, 0))
-                        {
-                            System.out.println("readCommand: returning " + Len);
                             return aCommand;
-                        }
                         else
-                        {
-                            System.out.println("Invalid command; NumBytesRead is " + NumBytesRead);
                             return TEventEntry.IC_INVALID_COMMAND;
-                        }
                     } else
-                    {
-                        System.out.println("Payload size wrong");
                         // error, payload size mismatch
                         return TEventEntry.IC_INVALID_COMMAND;
-                    }
                 } else
-                {
-                    System.out.println("No payload");
                     return aCommand; // OK, no payload
-                }
             } else
                 return TEventEntry.IC_INVALID_COMMAND; // error, payload is over max size
         } else
@@ -651,7 +635,6 @@ public class TConnection {
                         }
                     });
                     this.freadingThread.setName("imb command reader");
-                    System.out.println("Starting imb command reader");
                     this.freadingThread.start();
                 }
                 if (this.imb2Compatible)

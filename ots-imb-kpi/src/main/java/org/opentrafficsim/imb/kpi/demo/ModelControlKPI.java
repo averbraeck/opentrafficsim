@@ -4,25 +4,23 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.SwingUtilities;
 
-import nl.tno.imb.TConnection;
-import nl.tno.imb.mc.ModelParameters;
-
 import org.opentrafficsim.imb.IMBException;
 
-
+import nl.tno.imb.TConnection;
+import nl.tno.imb.mc.ModelParameters;
+import nl.tno.imb.mc.ModelStarter;
 
 /**
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version Nov 11, 2016 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Nov 11, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ModelControlKPI extends nl.tno.imb.mc.ModelStarter
+public class ModelControlKPI extends ModelStarter
 {
     /** Thread that handles the KPI process. */
     private Thread kpiThread;
@@ -70,10 +68,11 @@ public class ModelControlKPI extends nl.tno.imb.mc.ModelStarter
     {
         System.out.println("startModel called");
         System.out.println("parameters: " + parameters);
-        
-        this.kpiThread = new Thread(new Runnable() {
-            public void run() {
-                // TODO VissimQueryKPI.doTheWork(imbConnection);
+        this.kpiThread = new Thread(new Runnable()
+        {
+            public void run()
+            {
+                VissimQueryKPI.run(parameters, imbConnection);
             }
         });
         this.kpiThread.start();
@@ -85,6 +84,18 @@ public class ModelControlKPI extends nl.tno.imb.mc.ModelStarter
     public void stopModel()
     {
         System.out.println("stopModel called");
+        System.out.println("calling kpiThread interrupt");
+        this.kpiThread.interrupt();
+        try
+        {
+            System.out.println("joining with kpiThread");
+            this.kpiThread.join();
+        }
+        catch (InterruptedException exception)
+        {
+            exception.printStackTrace();
+        }
+        System.out.println("joined with kpiThread");
     }
 
     /** {@inheritDoc} */
@@ -100,6 +111,5 @@ public class ModelControlKPI extends nl.tno.imb.mc.ModelStarter
     {
         System.out.println("Received parameter request");
     }
-
 
 }

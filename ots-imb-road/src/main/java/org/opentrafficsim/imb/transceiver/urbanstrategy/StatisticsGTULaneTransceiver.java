@@ -17,7 +17,7 @@ import org.opentrafficsim.imb.connector.Connector.IMBEventType;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.indicator.MeanSpeed;
-import org.opentrafficsim.kpi.sampling.indicator.MeanTravelTime;
+import org.opentrafficsim.kpi.sampling.indicator.MeanTravelTimePerKm;
 import org.opentrafficsim.kpi.sampling.indicator.MeanTripLength;
 import org.opentrafficsim.kpi.sampling.indicator.TotalDelay;
 import org.opentrafficsim.kpi.sampling.indicator.TotalNumberOfStops;
@@ -162,11 +162,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * <td>whether the lanes in the space-time regions are longitudinally connected or not</td>
  * </tr>
  * <tr>
- * <td>totalTrajectory</td>
- * <td>boolean</td>
- * <td>whether the sampling takes place of GTUs that have traveled the entire space region or not</td>
- * </tr>
- * <tr>
  * <td>transmissionInterval</td>
  * <td>double</td>
  * <td>transmission interval of the statistic in seconds</td>
@@ -195,37 +190,37 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * <td>the unique id for the statistic, e.g. a UUID string</td>
  * </tr>
  * <tr>
- * <td>totalGtuDistance/td>
+ * <td>totalGtuDistance</td>
  * <td>double</td>
  * <td>total distance traveled by filtered GTUs in the given time and space, in meters</td>
  * </tr>
  * <tr>
- * <td>totalGtuTravelTime/td>
+ * <td>totalGtuTravelTime</td>
  * <td>double</td>
  * <td>total travel time by filtered GTUs in the given time and space, in seconds</td>
  * </tr>
  * <tr>
- * <td>averageGtuSpeed/td>
+ * <td>averageGtuSpeed</td>
  * <td>double</td>
  * <td>average filtered GTU speed in the given time and space, in meter/second</td>
  * </tr>
  * <tr>
- * <td>averageGtuTravelTime/td>
+ * <td>averageGtuTravelTimePerKm</td>
  * <td>double</td>
- * <td>average filtered GTU travel time in the given time and space, in seconds</td>
+ * <td>average filtered GTU travel time in the given time and space, in seconds per km</td>
  * </tr>
  * <tr>
- * <td>totalGtuTimeDelay/td>
+ * <td>totalGtuTimeDelay</td>
  * <td>double</td>
  * <td>total time delay incurred by the filtered GTUs in the given time and space, in seconds</td>
  * </tr>
  * <tr>
- * <td>averageTripLength/td>
+ * <td>averageTripLength</td>
  * <td>double</td>
  * <td>average length of the trip of the filtered GTUs in the given time and space, in seconds</td>
  * </tr>
  * <tr>
- * <td>totalNumberStops/td>
+ * <td>totalNumberStops</td>
  * <td>double</td>
  * <td>total number of stops that GTUs made in the given time and space, dimensionless</td>
  * </tr>
@@ -283,7 +278,7 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
 
     private MeanSpeed meanSpeed = new MeanSpeed(this.totalTravelDistance, this.totalTravelTime);
 
-    private MeanTravelTime meanTravelTime = new MeanTravelTime(this.meanSpeed);
+    private MeanTravelTimePerKm meanTravelTimePerKm = new MeanTravelTimePerKm(this.meanSpeed);
 
     private MeanTripLength meanTripLength = new MeanTripLength();
 
@@ -343,7 +338,7 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
         Length tdist = this.totalTravelDistance.getValue(this.query, new Time(time, TimeUnit.SI));
         Duration ttt = this.totalTravelTime.getValue(this.query, new Time(time, TimeUnit.SI));
         Speed ms = this.meanSpeed.getValue(this.query, new Time(time, TimeUnit.SI));
-        Duration mtt = this.meanTravelTime.getValue(this.query, new Time(time, TimeUnit.SI));
+        Duration mttpkm = this.meanTravelTimePerKm.getValue(this.query, new Time(time, TimeUnit.SI));
         Length mtl = this.meanTripLength.getValue(this.query, new Time(time, TimeUnit.SI));
         Duration tdel = this.totalDelay.getValue(this.query, new Time(time, TimeUnit.SI));
         Dimensionless nos = this.totalNumberOfStops.getValue(this.query, new Time(time, TimeUnit.SI));
@@ -351,7 +346,7 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
         System.out.println("Total distance " + tdist);
         System.out.println("Total travel time " + ttt);
         System.out.println("Mean speed " + ms);
-        System.out.println("Mean travel time " + mtt);
+        System.out.println("Mean travel time " + mttpkm + " (per km)");
         System.out.println("Mean trip length " + mtl);
         System.out.println("Total delay " + tdel);
         System.out.println("Number of stops " + nos);
@@ -359,7 +354,7 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
                 "StatisticsGTULane",
                 IMBEventType.CHANGE,
                 new Object[] { getSimulator().getSimulatorTime().getTime().si, this.query.getId(), tdist.si, ttt.si, ms.si,
-                        mtt.si, tdel.si, mtl.si, nos.si });
+                        mttpkm.si, tdel.si, mtl.si, nos.si });
         getSimulator().scheduleEventRel(this.transmissionInterval, this, this, "sendStatisticsUpdate", new Object[] {});
     }
 
