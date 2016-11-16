@@ -14,6 +14,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
 import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
@@ -24,8 +25,16 @@ import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.toledo.ToledoFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
@@ -70,6 +79,10 @@ class GeneratorTag implements Serializable
     /** GTU mix tag. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     GTUMixTag gtuMixTag = null;
+
+    /** Tactical planner name. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    String tacticalPlannerName = null;
 
     /** Interarrival time. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -182,6 +195,11 @@ class GeneratorTag implements Serializable
         if (generatorTag.gtuTag != null && generatorTag.gtuMixTag != null)
             throw new SAXException("GENERATOR: both attribute GTU and GTUMIX defined for Lane with NAME " + laneName
                     + " of link " + linkTag.name);
+
+        if (attributes.getNamedItem("TACTICALPLANNER") != null)
+        {
+            generatorTag.tacticalPlannerName = attributes.getNamedItem("TACTICALPLANNER").getNodeValue().trim();
+        }
 
         Node iat = attributes.getNamedItem("IAT");
         if (iat == null)
@@ -302,14 +320,9 @@ class GeneratorTag implements Serializable
         Time startTime = generatorTag.startTime != null ? generatorTag.startTime : Time.ZERO;
         Time endTime = generatorTag.endTime != null ? generatorTag.endTime : new Time(Double.MAX_VALUE, TimeUnit.SI);
         Length position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, lane);
+        LaneBasedTacticalPlannerFactory<?> tacticalPlannerFactory = makeTacticalPlannerFactory(generatorTag);
         LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory =
-                new LaneBasedStrategicalRoutePlannerFactory(
-                        new LaneBasedCFLCTacticalPlannerFactory(new IDMPlusOld(), new Egoistic()), routeGenerator);
-        // BehavioralCharacteristics bc = new BehavioralCharacteristics();
-        // bc.setDefaultParameters(AbstractIDM.class);
-        // bc.setDefaultParameters(TrafficLightUtil.class);
-        // LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory =
-        // new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(new IDMPlusFactory(), bc), routeGenerator);
+                new LaneBasedStrategicalRoutePlannerFactory(tacticalPlannerFactory, routeGenerator);
         new GTUGeneratorIndividual(linkTag.name + "." + generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType, gtuClass,
                 generatorTag.initialSpeedDist, generatorTag.iatDist, generatorTag.gtuTag.lengthDist,
                 generatorTag.gtuTag.widthDist, generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime, lane,
@@ -320,6 +333,49 @@ class GeneratorTag implements Serializable
         // TODO ShortestRoute
         // TODO ShortestRouteMix
         // TODO Different strategical planner factories
+    }
+
+    /**
+     * Factories are: IDM|MOBIL/IDM|DIRECTION/IDM|LMRS|TOLEDO.
+     * @param generatorTag the tag to parse
+     * @return a LaneBasedTacticalPlannerFactory according to the tag
+     */
+    static LaneBasedTacticalPlannerFactory<?> makeTacticalPlannerFactory(final GeneratorTag generatorTag)
+    {
+        if (generatorTag.tacticalPlannerName == null || generatorTag.tacticalPlannerName.equals("IDM"))
+        {
+            return new LaneBasedGTUFollowingTacticalPlannerFactory(new IDMPlusOld());
+        }
+        if (generatorTag.tacticalPlannerName.equals("MOBIL/IDM"))
+        {
+            return new LaneBasedCFLCTacticalPlannerFactory(new IDMPlusOld(), new Egoistic());
+        }
+        if (generatorTag.tacticalPlannerName.equals("DIRECTION/IDM"))
+        {
+            return new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(new IDMPlusOld());
+        }
+        if (generatorTag.tacticalPlannerName.equals("LMRS"))
+        {
+            // provide default parameters with the car-following model
+            BehavioralCharacteristics defaultBehavioralCFCharacteristics = new BehavioralCharacteristics();
+            defaultBehavioralCFCharacteristics.setDefaultParameters(AbstractIDM.class);
+            defaultBehavioralCFCharacteristics.setDefaultParameters(TrafficLightUtil.class);
+            try
+            {
+                return new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics);
+            }
+            catch (GTUException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+        if (generatorTag.tacticalPlannerName.equals("TOLEDO"))
+        {
+            return new ToledoFactory();
+        }
+        System.err.println("Unknown generatorTag.tacticalPlannerName: " + generatorTag.tacticalPlannerName
+                + ", not one of: IDM|MOBIL/IDM|DIRECTION/IDM|LMRS|TOLEDO");
+        return new LaneBasedGTUFollowingTacticalPlannerFactory(new IDMPlusOld());
     }
 
     /** {@inheritDoc} */

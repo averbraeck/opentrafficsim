@@ -191,6 +191,12 @@
     </xsd:restriction>
   </xsd:simpleType>
 
+  <xsd:simpleType name="TACTICALPLANNERTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="IDM|MOBIL/IDM|DIRECTION/IDM|LMRS|TOLEDO"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:simpleType name="CONTDISTTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern
