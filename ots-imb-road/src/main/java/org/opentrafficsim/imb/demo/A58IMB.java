@@ -15,13 +15,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import nl.javel.gisbeans.io.esri.CoordinateTransform;
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.language.Throw;
-import nl.tudelft.simulation.language.io.URLResource;
-
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
@@ -52,6 +45,13 @@ import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.xml.sax.SAXException;
+
+import nl.javel.gisbeans.io.esri.CoordinateTransform;
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.Throw;
+import nl.tudelft.simulation.language.io.URLResource;
 
 /**
  * <p>
@@ -257,10 +257,10 @@ public class A58IMB extends AbstractWrappableAnimation
             // }
 
             // TODO
-//            URL gisURL = URLResource.getResource("/A58/map.xml");
-//            System.err.println("GIS-map file: " + gisURL.toString());
-//            CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
-//            new GisRenderable2D(this.simulator, gisURL, rdto0);
+            URL gisURL = URLResource.getResource("/A58/map.xml");
+            System.err.println("GIS-map file: " + gisURL.toString());
+            CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
+            new GisRenderable2D(this.simulator, gisURL, rdto0);
             // URL nwbURL = URLResource.getResource("/A58/nwb.xml");
             // System.err.println("NWB-map file: " + nwbURL.toString());
             // new GisRenderable2D(this.simulator, nwbURL);
