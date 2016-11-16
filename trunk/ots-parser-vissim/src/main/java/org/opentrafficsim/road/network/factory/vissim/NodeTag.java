@@ -185,6 +185,39 @@ class NodeTag implements Serializable {
 
     }
 
+    public static void removeRedundantNodeTags(final VissimNetworkLaneParser parser) {
+        Iterator<NodeTag> nodeTagValues;
+        Iterator<LinkTag> linkTagValues;
+        Iterator<LinkTag> connectoTagValues;
+        // remove redundant nodes from nodeTags
+        Map<String, NodeTag> removeNodeMap = new HashMap<>();
+        nodeTagValues = parser.nodeTags.values().iterator();
+        while (nodeTagValues.hasNext()) {
+            NodeTag nodeTag = nodeTagValues.next();
+            linkTagValues = parser.linkTags.values().iterator();
+            boolean found = false;
+            while (linkTagValues.hasNext()) {
+                LinkTag linkTag = linkTagValues.next();
+                if (linkTag.nodeStartTag.name.equals(nodeTag.name) || linkTag.nodeEndTag.name.equals(nodeTag.name)) {
+                    found = true;
+                }
+            }
+            // connectoTagValues = parser.connectorTags.values().iterator();
+            // while (connectoTagValues.hasNext()) {
+            // LinkTag linkTag = connectoTagValues.next();
+            // if (linkTag.nodeStartTag.equals(nodeTag.name) || linkTag.nodeEndTag.equals(nodeTag.name)) {
+            // found = true;
+            // }
+            // }
+            if (!found) {
+                removeNodeMap.put(nodeTag.name, nodeTag);
+            }
+        }
+        for (NodeTag nodeTag : removeNodeMap.values()) {
+            parser.nodeTags.remove(nodeTag.name);
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
     public String toString() {
