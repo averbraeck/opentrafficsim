@@ -68,83 +68,63 @@ public class VissimNetworkLaneParser implements Serializable {
     private static final long serialVersionUID = 20150723L;
 
     /** Global values from the GLOBAL tag. */
-    @SuppressWarnings("visibilitymodifier")
     protected GlobalTag globalTag;
 
     /** The UNprocessed links for further reference. */
-    @SuppressWarnings("visibilitymodifier")
     protected Map<String, NodeTag> nodeTags = new HashMap<>();
 
     /** The UNprocessed links for further reference. */
-    @SuppressWarnings("visibilitymodifier")
     protected Map<String, LinkTag> linkTags = new HashMap<>();
 
     /** The UNprocessed links for further reference. */
-    @SuppressWarnings("visibilitymodifier")
     protected Map<String, LinkTag> connectorTags = new HashMap<>();
 
     /** The UNprocessed links for further reference. */
-    @SuppressWarnings("visibilitymodifier")
     protected Map<String, LinkTag> realLinkTags = new HashMap<>();
 
     /** The UNprocessed links for further reference. */
-    @SuppressWarnings("visibilitymodifier")
     protected Map<String, SignalHeadTag> signalHeadTags = new HashMap<>();
 
     /** The UNprocessed links for further reference. */
-    @SuppressWarnings("visibilitymodifier")
     protected Map<String, SensorTag> sensorTags = new HashMap<>();
 
     /** The gtu tags for further reference. */
-    @SuppressWarnings("visibilitymodifier")
     protected Map<String, GTUTag> gtuTags = new HashMap<>();
 
     /** The gtumix tags for further reference. */
-    @SuppressWarnings("visibilitymodifier")
     protected Map<String, GTUMixTag> gtuMixTags = new HashMap<>();
 
     /** The road type tags for further reference. */
-    @SuppressWarnings("visibilitymodifier")
     protected Map<String, RoadTypeTag> roadTypeTags = new HashMap<>();
 
     /** The GTUTypes that have been created. public to make it accessible from LaneAttributes. */
-    @SuppressWarnings("visibilitymodifier")
     public Map<String, GTUType> gtuTypes = new HashMap<>();
 
     /** The LaneType tags that have been created. */
-    @SuppressWarnings("visibilitymodifier")
     protected Map<String, LaneTypeTag> laneTypeTags = new HashMap<>();
 
     /** The LaneType tags that have been created. */
-    @SuppressWarnings("visibilitymodifier")
     protected Map<String, RoadLayoutTag> roadLayoutTags = new HashMap<>();
 
     /** The RouteMix tags that have been created. */
-    @SuppressWarnings("visibilitymodifier")
     protected Map<String, RouteMixTag> routeMixTags = new HashMap<>();
 
     /** The RouteMix tags that have been created. */
-    @SuppressWarnings("visibilitymodifier")
     protected Map<String, ShortestRouteMixTag> shortestRouteMixTags = new HashMap<>();
 
     /** The RouteMix tags that have been created. */
-    @SuppressWarnings("visibilitymodifier")
     protected Map<String, ShortestRouteTag> shortestRouteTags = new HashMap<>();
 
     /** The RouteMix tags that have been created. */
-    @SuppressWarnings("visibilitymodifier")
     protected Map<String, RouteTag> routeTags = new HashMap<>();
 
     /** The LaneTypes that have been created. */
-    @SuppressWarnings("visibilitymodifier")
     protected Map<String, LaneType> laneTypes = new HashMap<>();
 
     /** The simulator for creating the animation. Null if no animation needed. */
-    @SuppressWarnings("visibilitymodifier")
     protected OTSDEVSSimulatorInterface simulator;
 
     /** The network to register the GTUs in. */
-    @SuppressWarnings("visibilitymodifier")
     protected OTSNetwork network;
 
     /*****
@@ -215,7 +195,6 @@ public class VissimNetworkLaneParser implements Serializable {
         SensorTag.parseSensor(networkXMLNodeList, this);
 
         // process nodes and links to calculate coordinates and positions
-        // org.opentrafficsim.road.network.factory.xml.
         Links.calculateNodeCoordinates(this);
 
         // add the signalHeads to the links
@@ -238,8 +217,8 @@ public class VissimNetworkLaneParser implements Serializable {
         // Split links where appropriate
         // Step 1: split links, where a connector intersects a link
         // loops through all connectors
-        // a link gets split if the connector is more than "margin" number of meters from the start or end of a link
-        Double margin = 3.0;
+        // a link gets split if the connector is more than a "margin" number of meters from the start or end of a link
+        Double margin = 5.0;
         splitLinksIntersectedByConnector(margin);
 
         // create space between connectors and links, in order to make bezier curved links between connectors and links
@@ -275,6 +254,8 @@ public class VissimNetworkLaneParser implements Serializable {
         for (LinkTag linkTag : this.linkTags.values()) {
             Links.applyRoadTypeToConnector(linkTag, this, this.simulator);
         }
+
+        NodeTag.removeRedundantNodeTags(this);
         // process the routes
         // for (RouteTag routeTag : this.routeTags.values())
         // routeTag.makeRoute();
@@ -425,7 +406,8 @@ public class VissimNetworkLaneParser implements Serializable {
                     sensor.setPOSITION(Double.toString(inputSensor.getLongitudinalPosition().getInUnit(LengthUnit.METER))
                         + " m");
                     sensor.setTRIGGER(" " + inputSensor.getPositionType());
-                    sensor.setCLASS("nl.grontmij.smarttraffic.model.CheckSensor");
+                    sensor.setCLASS("org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor");
+                    // sensor.setCLASS("nl.grontmij.smarttraffic.model.CheckSensor");
                     link.getLANEOVERRIDEOrGENERATOROrLISTGENERATOR().add(sensor);
                 }
                 for (LaneBasedObject inputSimpleTrafficLight : inputLane.getLaneBasedObjects()) {
@@ -595,9 +577,6 @@ public class VissimNetworkLaneParser implements Serializable {
     private void splitLinksIntersectedByConnector(Double margin) throws OTSGeometryException, NetworkException {
         // loop through all connector links
         for (LinkTag connectorLinkTag : this.connectorTags.values()) {
-            if (connectorLinkTag.name.equals("10125")) {
-                System.out.println("10125");
-            }
             // ***********************
             // 1: connector meets link:
             // get the position where this connector intersects the Link. Here the link will be split
