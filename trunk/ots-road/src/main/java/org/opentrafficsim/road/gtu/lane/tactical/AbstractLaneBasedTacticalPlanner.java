@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,7 +17,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
@@ -28,10 +26,6 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
@@ -81,7 +75,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         this.gtu = gtu;
         this.lanePerception = new CategorialLanePerception(gtu);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final LaneBasedGTU getGtu()
@@ -669,7 +663,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                     gtu.getLocation(), startTime, gtu.getSpeed(), simplePlan.getAcceleration(),
                     bc.getParameter(ParameterTypes.DT), laneChange);
         }
-        catch (OTSGeometryException | RemoteException exception)
+        catch (OTSGeometryException exception)
         {
             throw new OperationalPlanException(exception);
         }

@@ -83,13 +83,6 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
 
     /** {@inheritDoc} */
     @Override
-    public final DirectedPoint getLocation()
-    {
-        return this.geometry.getLocation();
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final String getId()
     {
         return this.id;
@@ -97,7 +90,16 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
 
     /** {@inheritDoc} */
     @Override
-    public final Bounds getBounds()
+    @SuppressWarnings("checkstyle:designforextension")
+    public DirectedPoint getLocation()
+    {
+        return this.geometry.getLocation();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public Bounds getBounds()
     {
         return this.geometry.getBounds();
     }

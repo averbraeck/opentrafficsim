@@ -2,6 +2,7 @@ package org.opentrafficsim.road.network.lane.object.trafficlight;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -9,7 +10,6 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.network.animation.PaintPolygons;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
@@ -29,6 +29,9 @@ public class TrafficLightAnimation extends Renderable2D implements Serializable
     /** */
     private static final long serialVersionUID = 20160000L;
 
+    /** The half width left and right of the center line that is used to draw the block. */
+    private final double halfWidth;
+
     /**
      * Construct the DefaultCarAnimation for a LaneBlock (road block).
      * @param source the CSEBlock to draw
@@ -40,8 +43,7 @@ public class TrafficLightAnimation extends Renderable2D implements Serializable
             throws NamingException, RemoteException
     {
         super(source, simulator);
-        // setTranslate(false);
-        // setRotate(false);
+        this.halfWidth = 0.45 * source.getLane().getWidth(source.getLongitudinalPosition()).getSI();
     }
 
     /**
@@ -71,7 +73,10 @@ public class TrafficLightAnimation extends Renderable2D implements Serializable
                 break;
         }
         
-        PaintPolygons.paintMultiPolygon(graphics, fillColor, trafficLight.getLocation(), trafficLight.getGeometry(), false);
+        // PaintPolygons.paintMultiPolygon(graphics, fillColor, trafficLight.getLocation(), trafficLight.getGeometry(), false);
+        graphics.setColor(fillColor);
+        Rectangle2D rectangle = new Rectangle2D.Double(-0.25, -this.halfWidth, 0.5, 2 * this.halfWidth);
+        graphics.fill(rectangle);
     }
 
     /** {@inheritDoc} */

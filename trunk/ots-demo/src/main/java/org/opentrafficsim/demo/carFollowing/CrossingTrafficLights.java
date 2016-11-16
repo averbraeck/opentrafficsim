@@ -110,7 +110,7 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
                 new String[] { "Egoistic", "Altruistic" }, 0, false, 500));
         this.properties.add(new SelectionProperty("TacticalPlanner", "Tactical planner",
                 "<html>The tactical planner determines if a lane change is desired and possible.</html>",
-                new String[] { "IDM", "MOBIL/IDM", "LMRS", "Toledo" }, 0, false, 600));
+                new String[] { "IDM", "MOBIL/IDM", "DIRECTED/IDM", "LMRS", "Toledo" }, 0, false, 600));
     }
 
     /** {@inheritDoc} */

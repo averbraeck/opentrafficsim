@@ -17,6 +17,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * This interface defines a lane based GTU.
@@ -39,6 +40,13 @@ public interface LaneBasedGTU extends GTU
     @Override
     LaneBasedTacticalPlanner getTacticalPlanner();
 
+    /** 
+     * Return the location without a RemoteException.
+     * {@inheritDoc} 
+     */
+    @Override
+    DirectedPoint getLocation();
+    
     /**
      * insert GTU at a certain position. This can happen at setup (first initialization), and after a lane change of the GTU.
      * The relative position that will be registered is the referencePosition (dx, dy, dz) = (0, 0, 0). Front and rear positions
