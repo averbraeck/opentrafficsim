@@ -112,7 +112,8 @@ public class LMRSTests extends AbstractWrappableAnimation
     @Override
     protected final Double makeAnimationRectangle()
     {
-        return new Rectangle2D.Double(-100, -100, 3200, 200);
+        return new Rectangle2D.Double(162000, 384500, 2000, 2000);
+        //return new Rectangle2D.Double(-100, -100, 3200, 200);
     }
 
     /** {@inheritDoc} */
@@ -153,9 +154,10 @@ public class LMRSTests extends AbstractWrappableAnimation
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
             //URL url = URLResource.getResource("/LMRSStraightTest.xml");
             //URL url = URLResource.getResource("/LMRSLaneDropTest.xml");
-            URL url = URLResource.getResource("/LMRSOnRampTest.xml");
+            //URL url = URLResource.getResource("/LMRSOnRampTest.xml");
             //URL url = URLResource.getResource("/LMRSOnRampTaperTest.xml");
             //URL url = URLResource.getResource("/networkv2_90km_V5.xml");
+            URL url = URLResource.getResource("D:/TU Delft/Post-doc/Projects/SimSmartMobility/SWECO/testEindhovenGenerator3.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
             {

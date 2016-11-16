@@ -267,6 +267,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         Set<Lane> correctCurrentLanes = new HashSet<>();
         DirectedLanePosition dlp = gtu.getReferencePosition();
         Lane referenceLane = dlp.getLane();
+        double refFrac = dlp.getPosition().si / referenceLane.getLength().si;
         Link lastLink = referenceLane.getParentLink();
         GTUDirectionality lastGtuDir = dlp.getGtuDirection();
         GTUDirectionality referenceLaneDirectionality = lastGtuDir;
@@ -335,7 +336,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                     if (cse instanceof Lane)
                     {
                         Lane l = (Lane) cse;
-                        if (noLaneDrop(gtu, maxHeadway, l, position, referenceLaneDirectionality))
+                        //if (noLaneDrop(gtu, maxHeadway, l, position, referenceLaneDirectionality))
+                        if (noLaneDrop(gtu, maxHeadway, l, l.getLength().multiplyBy(refFrac), referenceLaneDirectionality))
                         {
                             correctCurrentLanes.add(l);
                         }
@@ -356,7 +358,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                     if (cse instanceof Lane)
                     {
                         Lane l = (Lane) cse;
-                        if (connectsToPath(gtu, maxHeadway, l, position, referenceLaneDirectionality, ld.getLink()))
+                        //if (connectsToPath(gtu, maxHeadway, l, position, referenceLaneDirectionality, ld.getLink()))
+                        if (connectsToPath(gtu, maxHeadway, l, l.getLength().multiplyBy(refFrac), referenceLaneDirectionality, ld.getLink()))
                         {
                             correctCurrentLanes.add(l);
                         }

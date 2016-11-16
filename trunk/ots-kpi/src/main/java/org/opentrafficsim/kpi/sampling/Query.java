@@ -39,7 +39,7 @@ import nl.tudelft.simulation.language.Throw;
 public final class Query
 {
     /** unique id. */
-    private UUID uniqueId = UUID.randomUUID();
+    private final String id;
 
     /** Sampling. */
     private final Sampler sampling;
@@ -61,13 +61,76 @@ public final class Query
 
     /**
      * @param sampling sampling
+     * @param id id
+     * @param description description
+     * @param metaDataSet meta data
+     * @throws NullPointerException if sampling, description or metaDataSet is null
+     */
+    public Query(final Sampler sampling, final String id, final String description, final MetaDataSet metaDataSet)
+    {
+        this(sampling, description, metaDataSet, null, null);
+    }
+
+    /**
+     * @param sampling sampling
+     * @param id id
+     * @param description description
+     * @param metaDataSet meta data
+     * @param interval interval to gather statistics over
+     * @throws NullPointerException if sampling, description or metaDataSet is null
+     */
+    public Query(final Sampler sampling, final String id, final String description, final MetaDataSet metaDataSet, final Duration interval)
+    {
+        this(sampling, description, metaDataSet, null, interval);
+    }
+
+    /**
+     * @param sampling sampling
+     * @param id id
+     * @param description description
+     * @param metaDataSet meta data
+     * @param updateFrequency update frequency
+     * @throws NullPointerException if sampling, description or metaDataSet is null
+     */
+    public Query(final Sampler sampling, final String id, final String description, final MetaDataSet metaDataSet,
+            final Frequency updateFrequency)
+    {
+        this(sampling, description, metaDataSet, updateFrequency, null);
+    }
+
+    /**
+     * @param sampling sampling
+     * @param id id
+     * @param description description
+     * @param metaDataSet meta data
+     * @param updateFrequency update frequency
+     * @param interval interval to gather statistics over
+     * @throws NullPointerException if sampling, description or metaDataSet is null
+     */
+    public Query(final Sampler sampling, final String id, final String description, final MetaDataSet metaDataSet,
+            final Frequency updateFrequency, final Duration interval)
+    {
+        Throw.whenNull(sampling, "Sampling may not be null.");
+        Throw.whenNull(description, "Description may not be null.");
+        Throw.whenNull(metaDataSet, "Meta data may not be null.");
+        this.sampling = sampling;
+        this.metaDataSet = new MetaDataSet(metaDataSet);
+        this.id = id == null ? UUID.randomUUID().toString() : id;
+        this.description = description;
+        this.updateFrequency = updateFrequency;
+        this.interval = interval;
+        sampling.registerMetaDataTypes(metaDataSet.getMetaDataTypes());
+    }
+    
+    /**
+     * @param sampling sampling
      * @param description description
      * @param metaDataSet meta data
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
     public Query(final Sampler sampling, final String description, final MetaDataSet metaDataSet)
     {
-        this(sampling, description, metaDataSet, null, null);
+        this(sampling, null, description, metaDataSet, null, null);
     }
 
     /**
@@ -79,7 +142,7 @@ public final class Query
      */
     public Query(final Sampler sampling, final String description, final MetaDataSet metaDataSet, final Duration interval)
     {
-        this(sampling, description, metaDataSet, null, interval);
+        this(sampling, null, description, metaDataSet, null, interval);
     }
 
     /**
@@ -92,7 +155,7 @@ public final class Query
     public Query(final Sampler sampling, final String description, final MetaDataSet metaDataSet,
             final Frequency updateFrequency)
     {
-        this(sampling, description, metaDataSet, updateFrequency, null);
+        this(sampling, null, description, metaDataSet, updateFrequency, null);
     }
 
     /**
@@ -106,15 +169,7 @@ public final class Query
     public Query(final Sampler sampling, final String description, final MetaDataSet metaDataSet,
             final Frequency updateFrequency, final Duration interval)
     {
-        Throw.whenNull(sampling, "Sampling may not be null.");
-        Throw.whenNull(description, "Description may not be null.");
-        Throw.whenNull(metaDataSet, "Meta data may not be null.");
-        this.sampling = sampling;
-        this.metaDataSet = new MetaDataSet(metaDataSet);
-        this.description = description;
-        this.updateFrequency = updateFrequency;
-        this.interval = interval;
-        sampling.registerMetaDataTypes(metaDataSet.getMetaDataTypes());
+        this(sampling, null, description, metaDataSet, updateFrequency, interval);
     }
 
     /**
@@ -123,7 +178,7 @@ public final class Query
      */
     public String getId()
     {
-        return this.uniqueId.toString();
+        return this.id.toString();
     }
 
     /**
@@ -335,7 +390,7 @@ public final class Query
         result = prime * result + ((this.metaDataSet == null) ? 0 : this.metaDataSet.hashCode());
         result = prime * result + ((this.sampling == null) ? 0 : this.sampling.hashCode());
         result = prime * result + ((this.spaceTimeRegions == null) ? 0 : this.spaceTimeRegions.hashCode());
-        result = prime * result + ((this.uniqueId == null) ? 0 : this.uniqueId.hashCode());
+        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
         result = prime * result + ((this.updateFrequency == null) ? 0 : this.updateFrequency.hashCode());
         return result;
     }
@@ -412,14 +467,14 @@ public final class Query
         {
             return false;
         }
-        if (this.uniqueId == null)
+        if (this.id == null)
         {
-            if (other.uniqueId != null)
+            if (other.id != null)
             {
                 return false;
             }
         }
-        else if (!this.uniqueId.equals(other.uniqueId))
+        else if (!this.id.equals(other.id))
         {
             return false;
         }

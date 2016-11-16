@@ -1,63 +1,22 @@
 package org.opentrafficsim.imb.kpi.demo;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.djunits.unit.FrequencyUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Frequency;
-import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.imb.IMBException;
+import org.opentrafficsim.imb.connector.Connector.IMBEventType;
 import org.opentrafficsim.imb.connector.IMBConnector;
-import org.opentrafficsim.imb.kpi.IMBSampler;
-import org.opentrafficsim.imb.kpi.ImbKpiTransceiver;
-import org.opentrafficsim.imb.kpi.LaneData;
-import org.opentrafficsim.imb.kpi.LinkData;
-import org.opentrafficsim.imb.kpi.NodeData;
-import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
-import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
-import org.opentrafficsim.kpi.sampling.Query;
-import org.opentrafficsim.kpi.sampling.meta.MetaDataSet;
-
-import nl.tno.imb.TConnection;
-import nl.tno.imb.mc.ModelParameters;
-import nl.tudelft.simulation.language.d3.CartesianPoint;
 
 /**
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, initial version 4 nov. 2016 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version 9 nov. 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class VissimQueryKPI
+public class VissimImposer
 {
-
-    /**
-     * Runs the module from model control.
-     * @param parameters
-     * @param imbConnection
-     */
-    public static void run(final ModelParameters parameters, final TConnection imbConnection)
-    {
-        try
-        {
-            boolean equipment =
-                    parameters.parameterExists("equipment") ? (boolean) parameters.getParameterValue("equipment") : false;
-            start(new IMBConnector(imbConnection), equipment);
-        }
-        catch (IMBException exception)
-        {
-            throw new RuntimeException(exception);
-        }
-    }
 
     /**
      * @param args
@@ -66,107 +25,52 @@ public class VissimQueryKPI
     public static void main(String[] args) throws IMBException
     {
 
-        // connection
         String host = "vps17642.public.cloudvps.com";
         int port = 4000;
-        String modelName = "KPI Model";
-        int modelId = 3456;
+        String modelName = "VISSIM";
+        int modelId = 1;
         String federation = "OTS_RT";
-        if (args.length > 0 && args.length < 3)
-        {
-            throw new RuntimeException("Need three arguments in KPI module.");
-        }
-        if (args.length == 3)
-        {
-            host = args[0];
-            port = Integer.valueOf(args[1]);
-            federation = args[2];
-        }
 
-        IMBConnector imbConnector;
+        IMBConnector connector;
         try
         {
-            imbConnector = new IMBConnector(host, port, modelName, modelId, federation);
+            connector = new IMBConnector(host, port, modelName, modelId, federation);
         }
         catch (IMBException exception)
         {
             throw new RuntimeException(exception);
         }
-        start(imbConnector, false);
 
-    }
-
-    private static void start(final IMBConnector imbConnector, final boolean equipment)
-    {
-
-        // nodes
-        Map<String, NodeData> nodes = new HashMap<>();
-        for (int i = 0; i < net.length; i++)
+        String networkId = "DTV";
+        for (int redo = 0; redo < 100; redo++ )
         {
-            for (int j = 0; j < 2; j++)
+            for (String[] linkString : net)
             {
-                if (!nodes.containsKey(net[i][j]))
+                connector.postIMBMessage("Node", IMBEventType.NEW, new Object[] { 0.0, networkId, linkString[0], 0.0, 0.0, 0.0 });
+                connector.postIMBMessage("Node", IMBEventType.NEW, new Object[] { 0.0, networkId, linkString[1], 0.0, 0.0, 0.0 });
+            }
+            for (String[] linkString : net)
+            {
+                int points = 1 + (int) (Math.random() * 100);
+                Object[] coords = new Object[points * 3];
+                for (int i = 0; i < points*3; i++)
                 {
-                    nodes.put(net[i][j], new NodeData(net[i][j], new CartesianPoint(0.0, 0.0, 0.0)));
+                    coords[i] = Math.random();
+                }
+                Object[] linkDat =
+                        append(new Object[] { 0.0, networkId, linkString[2], linkString[0], linkString[1], points }, coords);
+                Object[] laneDat = append(new Object[] { 0.0, networkId, linkString[2], "1", 1, points }, coords);
+                connector.postIMBMessage("Link_GTU", IMBEventType.NEW, linkDat);
+                connector.postIMBMessage("Lane_GTU", IMBEventType.NEW, laneDat); // first lane sent very quickly, to test
+                int n = Integer.parseInt(linkString[4]);
+                for (int i = 2; i <= n; i++)
+                {
+                    connector.postIMBMessage("Lane_GTU", IMBEventType.NEW,
+                            append(new Object[] { 0.0, networkId, linkString[2], Integer.toString(i), i, points }, coords));
                 }
             }
         }
 
-        // links
-        Map<String, LinkData> links = new HashMap<>();
-        for (int i = 0; i < net.length; i++)
-        {
-            links.put(net[i][2], new LinkData(net[i][2], nodes.get(net[i][0]), nodes.get(net[i][1]),
-                    new Length(Double.valueOf(net[i][3]), LengthUnit.SI)));
-        }
-
-        // lanes
-        Map<String, LaneData> lanes = new HashMap<>();
-        for (int i = 0; i < net.length; i++)
-        {
-            int n = Integer.valueOf(net[i][4]);
-            for (int j = 1; j <= n; j++)
-            {
-                String id = net[i][2] + "." + j;
-                lanes.put(id, new LaneData(links.get(net[i][2]), id, links.get(net[i][2]).getLength()));
-            }
-        }
-
-        // sampler
-        IMBSampler sampler;
-        try
-        {
-            sampler = new IMBSampler(imbConnector);
-        }
-        catch (IMBException exception)
-        {
-            throw new RuntimeException("Could not connect the Vissim query KPI to the IMB.", exception);
-        }
-
-        // query
-        String queryDescription = "Default query for VISSIM model.";
-        MetaDataSet metaDataSet = new MetaDataSet();
-        Query query = new Query(sampler, "all", queryDescription, metaDataSet, new Frequency(2.0, FrequencyUnit.PER_MINUTE));
-        for (String laneId : lanes.keySet())
-        {
-            query.addSpaceTimeRegion(new KpiLaneDirection(lanes.get(laneId), KpiGtuDirectionality.DIR_PLUS), Length.ZERO,
-                    lanes.get(laneId).getLength(), Time.ZERO, new Time(1.0, TimeUnit.HOUR));
-        }
-        if (equipment)
-        {
-            // TODO, add queries and transceivers for "equipped" and "none_equipped"
-        }
-
-        // transceiver of KPI data
-        try
-        {
-            sampler.setImbKpiTransceiver(new ImbKpiTransceiver(imbConnector, Time.ZERO, imbConnector.getModelName(), query,
-                    new Duration(30.0, TimeUnit.SI)));
-        }
-        catch (IMBException exception)
-        {
-            exception.printStackTrace();
-        }
     }
 
     private static Object[] append(Object[] a, Object[] b)
