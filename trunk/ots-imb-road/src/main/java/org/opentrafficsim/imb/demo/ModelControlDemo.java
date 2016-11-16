@@ -393,8 +393,8 @@ public class ModelControlDemo extends ModelStarter
     }
 
     /**
-     * Entry point
-     * @param args
+     * Entry point.
+     * @param args String[]; the command line arguments (not used)
      * @throws InvocationTargetException
      * @throws InterruptedException
      */
