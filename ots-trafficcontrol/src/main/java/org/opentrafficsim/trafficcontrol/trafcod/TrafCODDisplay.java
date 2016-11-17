@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.rmi.RemoteException;
@@ -12,6 +15,7 @@ import java.util.Set;
 
 import javax.media.j3d.Bounds;
 import javax.swing.JPanel;
+import javax.swing.ToolTipManager;
 
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
@@ -32,10 +36,9 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColo
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Nov 15, 2016 <br>
- * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrafCODDisplay extends JPanel
+public class TrafCODDisplay extends JPanel implements MouseMotionListener, MouseListener
 {
     /** */
     private static final long serialVersionUID = 20161115L;
@@ -46,27 +49,32 @@ public class TrafCODDisplay extends JPanel
     /** The set of objects drawn on the image. */
     private Set<TrafCODObject> trafCODObjects = new HashSet<>();
 
+    /** Store the tool tip delay so we can restore it when the mouse exits this TrafCODDisplay. */
+    final int defaultInitialDelay = ToolTipManager.sharedInstance().getInitialDelay();
+
     /**
      * Construct a new TrafCODDisplay.
-     * @param image BufferedImage; the background image
+     * @param image BufferedImage; the background image. This constructor does not make a deep copy of the image. Please do not
+     *            modify the image after calling this constructor
      */
     public TrafCODDisplay(final BufferedImage image)
     {
         this.image = image;
         super.setPreferredSize(new Dimension(this.image.getWidth(), this.image.getHeight()));
+        addMouseMotionListener(this);
     }
 
     @Override
     protected void paintComponent(final Graphics g)
     {
-        super.paintComponent(g); 
+        super.paintComponent(g);
         g.drawImage(this.image, 0, 0, null);
-        for (TrafCODObject to : this.trafCODObjects)
+        for (TrafCODObject tco : this.trafCODObjects)
         {
-            to.draw((Graphics2D) g);
+            tco.draw((Graphics2D) g);
         }
     }
-    
+
     /**
      * Add one TrafCODObject to this TrafCODDisplay.
      * @param trafCODObject TrafCODObject; the TrafCOD object that must be added
@@ -76,10 +84,70 @@ public class TrafCODDisplay extends JPanel
         this.trafCODObjects.add(trafCODObject);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void mouseDragged(MouseEvent e)
+    {
+        mouseMoved(e); // Do the same as in the mouse move event
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void mouseMoved(MouseEvent e)
+    {
+        String toolTipText = null;
+        for (TrafCODObject tco : this.trafCODObjects)
+        {
+            toolTipText = tco.toolTipHit(e.getX(), e.getY());
+            if (null != toolTipText)
+            {
+                break;
+            }
+        }
+        // System.out.println("Setting tool tip text to " + toolTipText);
+        setToolTipText(toolTipText);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void mouseClicked(MouseEvent e)
+    {
+        // Ignore
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void mousePressed(MouseEvent e)
+    {
+        // Ignore
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void mouseReleased(MouseEvent e)
+    {
+        // Ignore
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void mouseEntered(MouseEvent e)
+    {
+        ToolTipManager.sharedInstance().setInitialDelay(0);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void mouseExited(MouseEvent e)
+    {
+        ToolTipManager.sharedInstance().setInitialDelay(this.defaultInitialDelay);
+    }
+
 }
 
 /**
- * Interface for objects that can draw themselves onto a Graphics2D.
+ * Interface for objects that can draw themselves onto a Graphics2D and may want to show their own tool tip text when the mouse
+ * hits them.
  */
 interface TrafCODObject
 {
@@ -88,6 +156,15 @@ interface TrafCODObject
      * @param g2 Graphics2D; the graphics context
      */
     void draw(Graphics2D g2);
+
+    /**
+     * Check if the given coordinates hit the TrafCODObject. If it does return a String to be used as a tool tip text. If the
+     * coordinates do not hit this TrafCODObject return null.
+     * @param testX int; the x-coordinate
+     * @param testY int; the y-coordinate
+     * @return String; the tool tip text or null if the coordinates do not hit the TrafCodObject
+     */
+    String toolTipHit(int testX, int testY);
 
 }
 
@@ -104,16 +181,19 @@ class DetectorImage implements TrafCODObject, EventListenerInterface
 
     /** Y-coordinate on the TrafCOD display image where this traffic light must be drawn. */
     private final int y;
-    
-    /** Fill color (reflects with the occupancy state of the detector). */
+
+    /** Tool tip text for this detector image. */
+    private final String description;
+
+    /** Fill color (used to indicate the occupancy state of the detector). */
     private Color fillColor = Color.WHITE;
 
     /** Size of the box that is drawn. */
     private static final int BOX_SIZE = 13;
-    
+
     /** Correction to make the result match that of the C++Builder version. */
     private static final int xOffset = 5;
-    
+
     /** Correction to make the result match that of the C++Builder version. */
     private static final int yOffset = 5;
 
@@ -121,15 +201,17 @@ class DetectorImage implements TrafCODObject, EventListenerInterface
      * Construct a new DetectorImage.
      * @param display TrafCODDisplay; the TrafCOD display on which this detector image will be rendered
      * @param center Point2D; the center location of the detector image on the TrafCOD display
+     * @param description String; name of the detector (displayed as tool tip text)
      */
-    public DetectorImage(final TrafCODDisplay display, Point2D center)
+    public DetectorImage(final TrafCODDisplay display, Point2D center, String description)
     {
         this.display = display;
         this.x = (int) center.getX();
         this.y = (int) center.getY();
+        this.description = description;
         display.addTrafCODObject(this);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void draw(Graphics2D g2)
@@ -146,19 +228,32 @@ class DetectorImage implements TrafCODObject, EventListenerInterface
     {
         if (event.getType().equals(NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT))
         {
-            this.fillColor = Color.black;
+            this.fillColor = Color.BLUE;
         }
         else if (event.getType().equals(NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT))
         {
-            this.fillColor = Color.white;
+            this.fillColor = Color.WHITE;
         }
         this.display.repaint();
     }
-    
+
+    /** {@inheritDoc} */
+    @Override
+    public String toolTipHit(final int testX, final int testY)
+    {
+        if (testX < xOffset + this.x - BOX_SIZE / 2 || testX >= xOffset + this.x + BOX_SIZE / 2
+                || testY < yOffset - BOX_SIZE / 2 + this.y || testY >= yOffset + this.y + BOX_SIZE / 2)
+        {
+            return null;
+        }
+        return this.description;
+    }
+
 }
 
 /**
- * Only implements setTrafficLightColor. All other methods are dummies.
+ * Draws a traffic light. <br>
+ * The implementation of TrafficLight only implements setTrafficLightColor. All other methods are dummies.
  */
 class TrafficLightImage implements TrafficLight, TrafCODObject
 {
@@ -171,6 +266,9 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
     /** Y-coordinate on the TrafCOD display image where this traffic light must be drawn. */
     private final int y;
 
+    /** Tool tip text for this traffic light image. */
+    private final String description;
+
     /** The current color. */
     private TrafficLightColor color = TrafficLightColor.BLACK;
 
@@ -178,13 +276,27 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
      * Create a traffic light image.
      * @param display TrafCODDisplay; the TrafCOD display on which this traffic light image will be rendered
      * @param center Point2D; coordinates in the image where this traffic light is centered on
+     * @param description String; tool tip text for the new traffic light image
      */
-    public TrafficLightImage(final TrafCODDisplay display, Point2D center)
+    public TrafficLightImage(final TrafCODDisplay display, final Point2D center, final String description)
     {
         this.display = display;
         this.x = (int) center.getX();
         this.y = (int) center.getY();
+        this.description = description;
         display.addTrafCODObject(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toolTipHit(int testX, int testY)
+    {
+        if (testX < this.x - DISC_SIZE / 2 || testX >= this.x + DISC_SIZE / 2 || testY < this.y - DISC_SIZE / 2
+                || testY >= this.y + DISC_SIZE / 2)
+        {
+            return null;
+        }
+        return this.description;
     }
 
     /** {@inheritDoc} */
@@ -289,7 +401,7 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
     }
 
     /** Diameter of a traffic light disk in pixels. */
-    private static final int DISK_SIZE = 11;
+    private static final int DISC_SIZE = 11;
 
     /** {@inheritDoc} */
     @Override
@@ -319,7 +431,7 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
                 return;
         }
         g2.setColor(lightColor);
-        g2.fillOval(this.x - DISK_SIZE / 2, this.y - DISK_SIZE / 2, DISK_SIZE, DISK_SIZE);
+        g2.fillOval(this.x - DISC_SIZE / 2, this.y - DISC_SIZE / 2, DISC_SIZE, DISC_SIZE);
         // System.out.println("Drawn disk in color " + lightColor);
     }
 
