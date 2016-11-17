@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
-import javax.swing.SwingUtilities;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
@@ -43,7 +42,8 @@ import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 
 /**
- * TrafCOD evaluator.
+ * TrafCOD evaluator. TrafCOD is a language for writing traffic control programs. A TrafCOD program consists of a set of rules
+ * that must be evaluated repeatedly (until no more changes occurr) every time step. The time step size is 0.1 seconds.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -90,7 +90,7 @@ public class TrafCOD extends EventProducer implements TrafficController
     final Map<String, Variable> detectors = new HashMap<>();
 
     /** Comment starter in TrafCOD. */
-    final static String COMMENT_START = "#";
+    final static String COMMENT_PREFIX = "#";
 
     /** Prefix for initialization rules. */
     private final static String INIT_PREFIX = "%init ";
@@ -111,6 +111,7 @@ public class TrafCOD extends EventProducer implements TrafficController
     private int structureNumber = -1;
 
     /** The conflict groups in order that they will be served. */
+    @SuppressWarnings("unused")
     private List<List<Short>> conflictgroups = new ArrayList<>();
 
     /** Maximum number of evaluation loops. */
@@ -135,7 +136,8 @@ public class TrafCOD extends EventProducer implements TrafficController
     private final DEVSSimulator<Time, Duration, OTSSimTimeDouble> simulator;
 
     /**
-     * @param controllerName String; name of this traffic light controller
+     * Construct a new TrafCOD traffic light controller.
+     * @param controllerName String; name of this TrafCOD traffic light controller
      * @param trafCodURL String; the URL of the TrafCOD rules
      * @param trafficLights Set&lt;TrafficLight&gt;; the traffic lights. The ids of the traffic lights must end with two digits
      *            that match the stream numbers as used in the traffic control program
@@ -174,171 +176,17 @@ public class TrafCOD extends EventProducer implements TrafficController
                 display.add(tcd);
             }
         }
+        // Initialize the variables that have a non-zero initial value
         for (Variable v : this.variablesInDefinitionOrder)
         {
             v.initialize();
         }
-        decrementTimers();
+        // The first rule evaluation should occur at t=0.1s
         this.simulator.scheduleEventRel(EVALUATION_INTERVAL, this, this, "evalExprs", null);
     }
 
     /**
-     * Construct the display of the TrafCOD machine.
-     * @param tfgFileURL String; the URL where the display information is to be read from
-     * @param sensors Set&lt;TrafficLightSensor&gt;; the traffic light sensors
-     * @return TrafCODDisplay, or null when the display information could not be read, was incomplete, or invalid
-     * @throws TrafficControlException when the tfg file is invalid
-     */
-    private TrafCODDisplay makeDisplay(final String tfgFileURL, Set<TrafficLightSensor> sensors) throws TrafficControlException
-    {
-        TrafCODDisplay result = null;
-        boolean useFirstCoordinates = true;
-        try
-        {
-            BufferedReader mapReader = new BufferedReader(new InputStreamReader(new URL(tfgFileURL).openStream()));
-            int lineno = 0;
-            String inputLine;
-            while ((inputLine = mapReader.readLine()) != null)
-            {
-                ++lineno;
-                inputLine = inputLine.trim();
-                if (inputLine.startsWith("mapfile="))
-                {
-                    System.out.println("map file description is " + inputLine);
-                    String mapFileURL = tfgFileURL;
-                    // Make a decent attempt at constructing the URL of the map file
-                    int pos = mapFileURL.length();
-                    while (--pos > 0)
-                    {
-                        char c = mapFileURL.charAt(pos);
-                        if ('/' == c || '\\' == c || ':' == c)
-                        {
-                            pos++;
-                            break;
-                        }
-                    }
-                    mapFileURL = mapFileURL.substring(0, pos) + inputLine.substring(8);
-                    BufferedImage image = ImageIO.read(new URL(mapFileURL));
-                    result = new TrafCODDisplay(image);
-                    if (mapFileURL.matches("[Bb][Mm][Pp]|[Pp][Nn][Gg]$"))
-                    {
-                        useFirstCoordinates = false;
-                    }
-                }
-                else if (inputLine.startsWith("light="))
-                {
-                    if (null == result)
-                    {
-                        throw new TrafficControlException("tfg file defines light before mapfile");
-                    }
-                    // Extract the stream number
-                    int lightNumber;
-                    try
-                    {
-                        lightNumber = Integer.parseInt(inputLine.substring(6, 8));
-                    }
-                    catch (NumberFormatException nfe)
-                    {
-                        throw new TrafficControlException("Bad traffic light number in tfg file: " + inputLine);
-                    }
-                    // Extract the coordinates and create the image
-                    TrafficLightImage tli =
-                            new TrafficLightImage(result, getCoordinates(inputLine.substring(9), useFirstCoordinates));
-                    for (Variable v : this.variablesInDefinitionOrder)
-                    {
-                        if (v.isOutput() && v.getStream() == lightNumber)
-                        {
-                            v.addOutput(tli);
-                        }
-                    }
-                }
-                else if (inputLine.startsWith("detector="))
-                {
-                    if (null == result)
-                    {
-                        throw new TrafficControlException("tfg file defines detector before mapfile");
-                    }
-
-                    int detectorStream;
-                    int detectorSubNumber;
-                    try
-                    {
-                        detectorStream = Integer.parseInt(inputLine.substring(9, 11));
-                        detectorSubNumber = Integer.parseInt(inputLine.substring(12, 13));
-                    }
-                    catch (NumberFormatException nfe)
-                    {
-                        throw new TrafficControlException("Cannot parse detector number in " + inputLine);
-                    }
-                    String detectorName = String.format("D%02d%d", detectorStream, detectorSubNumber);
-                    Variable detectorVariable = this.variables.get(detectorName);
-                    if (null == detectorVariable)
-                    {
-                        throw new TrafficControlException("tfg file defines detector " + detectorName
-                                + " which does not exist in the TrafCOD program");
-                    }
-                    DetectorImage di =  new DetectorImage(result, getCoordinates(inputLine.substring(14), useFirstCoordinates));
-                    TrafficLightSensor sensor = null;
-                    for (TrafficLightSensor tls : sensors)
-                    {
-                        if (tls.getId().endsWith(detectorName))
-                        {
-                            sensor = tls;
-                        }
-                    }
-                    if (null == sensor)
-                    {
-                        throw new TrafficControlException("Cannot find detector " + detectorName + " with number " + detectorName
-                                + " among the provided sensors");
-                    }
-                    sensor.addListener(di, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT);
-                    sensor.addListener(di, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT);
-                }
-                else
-                {
-                    System.out.println("Ignoring tfg line(" + lineno + ") \"" + inputLine + "\"");
-                }
-            }
-        }
-        catch (IOException e)
-        {
-            System.err.println("No graphics available");
-        }
-        return result;
-    }
-
-    /**
-     * Extract two coordinates from a line of text.
-     * @param line String; the text
-     * @param useFirstCoordinates boolean; if true; process the first pair of integer values; if false; use the second pair of
-     *            integer values
-     * @return Point2D
-     * @throws TrafficControlException when the coordinates could not be parsed
-     */
-    private Point2D getCoordinates(final String line, final boolean useFirstCoordinates) throws TrafficControlException
-    {
-        String work = line.replaceAll("[ ,\t]+", "\t").trim();
-        int x;
-        int y;
-        String[] fields = work.split("\t");
-        if (fields.length < (useFirstCoordinates ? 2 : 4))
-        {
-            throw new TrafficControlException("not enough fields in tfg line \"" + line + "\"");
-        }
-        try
-        {
-            x = Integer.parseInt(fields[useFirstCoordinates ? 0 : 2]);
-            y = Integer.parseInt(fields[useFirstCoordinates ? 1 : 3]);
-        }
-        catch (NumberFormatException nfe)
-        {
-            throw new TrafficControlException("Bad value in tfg line \"" + line + "\"");
-        }
-        return new Point2D.Double(x, y);
-    }
-
-    /**
-     * Load the TrafCOD file.
+     * Read and parse the TrafCOD traffic control program.
      * @param trafCodURL String; the URL where the TrafCOD file is to be read from
      * @param trafficLights Set&lt;TrafficLight&gt;; the traffic lights that may be referenced from the TrafCOD file
      * @param sensors Set&lt;TrafficLightSensor&gt;; the detectors that may be referenced from the TrafCOD file
@@ -355,18 +203,14 @@ public class TrafCOD extends EventProducer implements TrafficController
         while ((inputLine = in.readLine()) != null)
         {
             ++lineno;
-            System.out.println(lineno + ":\t" + inputLine);
+            // System.out.println(lineno + ":\t" + inputLine);
             String trimmedLine = inputLine.trim();
             if (trimmedLine.length() == 0)
             {
                 continue;
             }
-            // if (inputLine.startsWith("RITM.="))
-            // {
-            // System.out.println("Let op");
-            // }
             String locationDescription = trafCodURL + "(" + lineno + ") ";
-            if (trimmedLine.startsWith(COMMENT_START))
+            if (trimmedLine.startsWith(COMMENT_PREFIX))
             {
                 String commentStripped = trimmedLine.substring(1).trim();
                 if (stringBeginsWithIgnoreCase(VERSION_PREFIX, commentStripped))
@@ -389,7 +233,7 @@ public class TrafCOD extends EventProducer implements TrafficController
                 }
                 else if (stringBeginsWithIgnoreCase(SEQUENCE_KEY, commentStripped))
                 {
-                    while (trimmedLine.startsWith(COMMENT_START))
+                    while (trimmedLine.startsWith(COMMENT_PREFIX))
                     {
                         inputLine = in.readLine();
                         if (null == inputLine)
@@ -421,7 +265,7 @@ public class TrafCOD extends EventProducer implements TrafficController
                     String structureNumberString = commentStripped.substring(STRUCTURE_PREFIX.length()).trim();
                     try
                     {
-                        this.setStructureNumber(Integer.parseInt(structureNumberString));
+                        this.structureNumber = Integer.parseInt(structureNumberString);
                     }
                     catch (NumberFormatException nfe)
                     {
@@ -431,7 +275,7 @@ public class TrafCOD extends EventProducer implements TrafficController
                     }
                     for (int conflictMemberLine = 0; conflictMemberLine < this.conflictGroups; conflictMemberLine++)
                     {
-                        while (trimmedLine.startsWith(COMMENT_START))
+                        while (trimmedLine.startsWith(COMMENT_PREFIX))
                         {
                             inputLine = in.readLine();
                             if (null == inputLine)
@@ -529,11 +373,6 @@ public class TrafCOD extends EventProducer implements TrafficController
             if (null != tokenisedRule)
             {
                 this.tokenisedRules.add(tokenisedRule);
-                // for (Object o : tokenisedRule)
-                // {
-                // System.out.print(o + " ");
-                // }
-                // System.out.println("");
                 String untokenised = printRule(tokenisedRule, false);
                 System.out.println(untokenised);
             }
@@ -543,7 +382,7 @@ public class TrafCOD extends EventProducer implements TrafficController
         {
             if (variable.isDetector())
             {
-                String detectorName = variable.selectedFieldsToString(EnumSet.of(PrintFlags.ID));
+                String detectorName = variable.toString(EnumSet.of(PrintFlags.ID));
                 int detectorNumber = variable.getStream() * 10 + detectorName.charAt(detectorName.length() - 1) - '0';
                 TrafficLightSensor sensor = null;
                 for (TrafficLightSensor tls : sensors)
@@ -567,9 +406,168 @@ public class TrafCOD extends EventProducer implements TrafficController
             Variable v = this.variables.get(key);
             System.out.println(key
                     + ":\t"
-                    + v.selectedFieldsToString(EnumSet.of(PrintFlags.ID, PrintFlags.VALUE, PrintFlags.INITTIMER,
+                    + v.toString(EnumSet.of(PrintFlags.ID, PrintFlags.VALUE, PrintFlags.INITTIMER,
                             PrintFlags.REINITTIMER, PrintFlags.S, PrintFlags.E)));
         }
+    }
+
+    /**
+     * Construct the display of this TrafCOD machine and connect the displayed traffic lights and sensors to this TrafCOD
+     * machine.
+     * @param tfgFileURL String; the URL where the display information is to be read from
+     * @param sensors Set&lt;TrafficLightSensor&gt;; the traffic light sensors
+     * @return TrafCODDisplay, or null when the display information could not be read, was incomplete, or invalid
+     * @throws TrafficControlException when the tfg file could not be read or is invalid
+     */
+    private TrafCODDisplay makeDisplay(final String tfgFileURL, Set<TrafficLightSensor> sensors) throws TrafficControlException
+    {
+        TrafCODDisplay result = null;
+        boolean useFirstCoordinates = true;
+        try
+        {
+            BufferedReader mapReader = new BufferedReader(new InputStreamReader(new URL(tfgFileURL).openStream()));
+            int lineno = 0;
+            String inputLine;
+            while ((inputLine = mapReader.readLine()) != null)
+            {
+                ++lineno;
+                inputLine = inputLine.trim();
+                if (inputLine.startsWith("mapfile="))
+                {
+                    System.out.println("map file description is " + inputLine);
+                    String mapFileURL = tfgFileURL;
+                    // Make a decent attempt at constructing the URL of the map file
+                    int pos = mapFileURL.length();
+                    while (--pos > 0)
+                    {
+                        char c = mapFileURL.charAt(pos);
+                        if ('/' == c || '\\' == c || ':' == c)
+                        {
+                            pos++;
+                            break;
+                        }
+                    }
+                    mapFileURL = mapFileURL.substring(0, pos) + inputLine.substring(8);
+                    BufferedImage image = ImageIO.read(new URL(mapFileURL));
+                    result = new TrafCODDisplay(image);
+                    if (mapFileURL.matches("[Bb][Mm][Pp]|[Pp][Nn][Gg]$"))
+                    {
+                        useFirstCoordinates = false;
+                    }
+                }
+                else if (inputLine.startsWith("light="))
+                {
+                    if (null == result)
+                    {
+                        throw new TrafficControlException("tfg file defines light before mapfile");
+                    }
+                    // Extract the stream number
+                    int streamNumber;
+                    try
+                    {
+                        streamNumber = Integer.parseInt(inputLine.substring(6, 8));
+                    }
+                    catch (NumberFormatException nfe)
+                    {
+                        throw new TrafficControlException("Bad traffic light number in tfg file: " + inputLine);
+                    }
+                    // Extract the coordinates and create the image
+                    TrafficLightImage tli =
+                            new TrafficLightImage(result, getCoordinates(inputLine.substring(9), useFirstCoordinates),
+                                    String.format("Traffic Light %02d", streamNumber));
+                    for (Variable v : this.variablesInDefinitionOrder)
+                    {
+                        if (v.isOutput() && v.getStream() == streamNumber)
+                        {
+                            v.addOutput(tli);
+                        }
+                    }
+                }
+                else if (inputLine.startsWith("detector="))
+                {
+                    if (null == result)
+                    {
+                        throw new TrafficControlException("tfg file defines detector before mapfile");
+                    }
+
+                    int detectorStream;
+                    int detectorSubNumber;
+                    try
+                    {
+                        detectorStream = Integer.parseInt(inputLine.substring(9, 11));
+                        detectorSubNumber = Integer.parseInt(inputLine.substring(12, 13));
+                    }
+                    catch (NumberFormatException nfe)
+                    {
+                        throw new TrafficControlException("Cannot parse detector number in " + inputLine);
+                    }
+                    String detectorName = String.format("D%02d%d", detectorStream, detectorSubNumber);
+                    Variable detectorVariable = this.variables.get(detectorName);
+                    if (null == detectorVariable)
+                    {
+                        throw new TrafficControlException("tfg file defines detector " + detectorName
+                                + " which does not exist in the TrafCOD program");
+                    }
+                    DetectorImage di =
+                            new DetectorImage(result, getCoordinates(inputLine.substring(14), useFirstCoordinates),
+                                    String.format("Detector %02d%d", detectorStream, detectorSubNumber));
+                    TrafficLightSensor sensor = null;
+                    for (TrafficLightSensor tls : sensors)
+                    {
+                        if (tls.getId().endsWith(detectorName))
+                        {
+                            sensor = tls;
+                        }
+                    }
+                    if (null == sensor)
+                    {
+                        throw new TrafficControlException("Cannot find detector " + detectorName + " with number "
+                                + detectorName + " among the provided sensors");
+                    }
+                    sensor.addListener(di, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT);
+                    sensor.addListener(di, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT);
+                }
+                else
+                {
+                    System.out.println("Ignoring tfg line(" + lineno + ") \"" + inputLine + "\"");
+                }
+            }
+        }
+        catch (IOException e)
+        {
+            throw new TrafficControlException(e);
+        }
+        return result;
+    }
+
+    /**
+     * Extract two coordinates from a line of text.
+     * @param line String; the text
+     * @param useFirstCoordinates boolean; if true; process the first pair of integer values; if false; use the second pair of
+     *            integer values
+     * @return Point2D
+     * @throws TrafficControlException when the coordinates could not be parsed
+     */
+    private Point2D getCoordinates(final String line, final boolean useFirstCoordinates) throws TrafficControlException
+    {
+        String work = line.replaceAll("[ ,\t]+", "\t").trim();
+        int x;
+        int y;
+        String[] fields = work.split("\t");
+        if (fields.length < (useFirstCoordinates ? 2 : 4))
+        {
+            throw new TrafficControlException("not enough fields in tfg line \"" + line + "\"");
+        }
+        try
+        {
+            x = Integer.parseInt(fields[useFirstCoordinates ? 0 : 2]);
+            y = Integer.parseInt(fields[useFirstCoordinates ? 1 : 3]);
+        }
+        catch (NumberFormatException nfe)
+        {
+            throw new TrafficControlException("Bad value in tfg line \"" + line + "\"");
+        }
+        return new Point2D.Double(x, y);
     }
 
     /**
@@ -601,15 +599,19 @@ public class TrafCOD extends EventProducer implements TrafficController
     private void evalExprs() throws TrafficControlException, SimRuntimeException
     {
         System.out.println("TrafCOD: time is " + EngineeringFormatter.format(this.simulator.getSimulatorTime().get().si));
+        // insert some delay for testing; without this the simulation runs too fast
         try
         {
-            Thread.sleep(10);// insert some delay for testing
+            Thread.sleep(10);
         }
         catch (InterruptedException exception)
         {
             System.out.println("Sleep in evalExprs was interrupted");
             // exception.printStackTrace();
         }
+        // Contrary to the C++ builder version; this implementation decrements the times at the start of evalExprs
+        // By doing it before updating this.currentTime10; the debugging output should be very similar
+        decrementTimers();
         this.currentTime10 = (int) (this.simulator.getSimulatorTime().get().si * 10);
         int loop;
         for (loop = 0; loop < this.maxLoopCount; loop++)
@@ -620,7 +622,6 @@ public class TrafCOD extends EventProducer implements TrafficController
             }
         }
         System.out.println("Executed " + (loop + 1) + " iteration(s)");
-        decrementTimers();
         this.simulator.scheduleEventRel(EVALUATION_INTERVAL, this, this, "evalExprs", null);
     }
 
@@ -638,12 +639,6 @@ public class TrafCOD extends EventProducer implements TrafficController
         int changeCount = 0;
         for (Object[] rule : this.tokenisedRules)
         {
-            // System.out.println("Evaluating rule " + printRule(rule, true));
-            // for (Object o : rule)
-            // {
-            // System.out.print(o + " ");
-            // }
-            // System.out.println("");
             if (evalRule(rule))
             {
                 changeCount++;
@@ -664,10 +659,6 @@ public class TrafCOD extends EventProducer implements TrafficController
         boolean result = false;
         Token ruleType = (Token) rule[0];
         Variable destination = (Variable) rule[1];
-        // if (destination.toString().contains("KP") && this.currentTime10 >= 120)
-        // {
-        // System.out.println("Let op " + printRule(rule, true));
-        // }
         if (destination.isTimer())
         {
             if (destination.getFlags().contains(Flags.TIMEREXPIRED))
@@ -747,7 +738,7 @@ public class TrafCOD extends EventProducer implements TrafficController
                 int timerValue10 = destination.getTimerMax();
                 if (timerValue10 < 1)
                 {
-                    // Cheat
+                    // Cheat; ensure it will property expire on the next timer tick
                     timerValue10 = 1;
                 }
                 if (destination.getValue() != timerValue10)
@@ -796,7 +787,8 @@ public class TrafCOD extends EventProducer implements TrafficController
      * bindingStrength that is passed around is the binding strength of the last preceding pending operator. if a binary
      * operator with the same or a lower strength is encountered, the pending operator must be applied first. On the other hand
      * of a binary operator with higher binding strength is encountered, that operator takes precedence over the pending
-     * operator. To evaluate an expression, call evalExpr with a bindingStrength value of 0.
+     * operator. To evaluate an expression, call evalExpr with a bindingStrength value of 0. On return verify that currentToken
+     * has incremented to the end of the expression and that there is one value (the result) on the stack.
      * @param bindingStrength int; the binding strength of a not yet applied binary operator (higher value must be applied
      *            first)
      * @throws TrafficControlException when the expression is not valid
@@ -941,8 +933,7 @@ public class TrafCOD extends EventProducer implements TrafficController
                     /*-
                      * apply pending operator later 
                      * 1: evaluate the RHS operand. 
-                     * 2: compare the top-most two operands on the
-                     * stack and push the result on the stack.
+                     * 2: compare the top-most two operands on the stack and push the result on the stack.
                      */
                     this.currentToken++;
                     evalExpr(BIND_RELATIONAL_OPERATOR);
@@ -985,8 +976,7 @@ public class TrafCOD extends EventProducer implements TrafficController
                     /*-
                      * apply pending operator later 
                      * 1: evaluate the RHS operand. 
-                     * 2: add (OR) the top-most two operands on the
-                     * stack and push the result on the stack.
+                     * 2: add (OR) the top-most two operands on the stack and push the result on the stack.
                      */
                     this.currentToken++;
                     evalExpr(BIND_ADDITION);
@@ -1001,8 +991,7 @@ public class TrafCOD extends EventProducer implements TrafficController
                     /*-
                      * apply pending operator later 
                      * 1: evaluate the RHS operand. 
-                     * 2: subtract the top-most two operands on the
-                     * stack and push the result on the stack.
+                     * 2: subtract the top-most two operands on the stack and push the result on the stack.
                      */
                     this.currentToken++;
                     evalExpr(BIND_ADDITION);
@@ -1039,7 +1028,7 @@ public class TrafCOD extends EventProducer implements TrafficController
     }
 
     /**
-     * Print a tokenised rule.
+     * Print a tokenized rule.
      * @param tokens Object[]; the tokens
      * @param printValues boolean; if true; print the values of all encountered variable; if false; do not print the values of
      *            all encountered variable
@@ -1064,86 +1053,107 @@ public class TrafCOD extends EventProducer implements TrafficController
                 switch ((Token) token)
                 {
                     case EQUALS_RULE:
-                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(variableFlags));
+                        result.append(((Variable) tokens[++inPos]).toString(variableFlags));
                         result.append("=");
                         break;
+
                     case NEG_EQUALS_RULE:
-                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(negatedVariableFlags));
+                        result.append(((Variable) tokens[++inPos]).toString(negatedVariableFlags));
                         result.append("=");
                         break;
+
                     case START_RULE:
-                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(variableFlags));
+                        result.append(((Variable) tokens[++inPos]).toString(variableFlags));
                         result.append(".=");
                         break;
+
                     case END_RULE:
-                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(variableFlags));
+                        result.append(((Variable) tokens[++inPos]).toString(variableFlags));
                         result.append("N.=");
                         break;
+
                     case INIT_TIMER:
-                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(EnumSet.of(PrintFlags.ID,
+                        result.append(((Variable) tokens[++inPos]).toString(EnumSet.of(PrintFlags.ID,
                                 PrintFlags.INITTIMER)));
                         result.append(".=");
                         break;
+
                     case REINIT_TIMER:
-                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(EnumSet.of(PrintFlags.ID,
+                        result.append(((Variable) tokens[++inPos]).toString(EnumSet.of(PrintFlags.ID,
                                 PrintFlags.REINITTIMER)));
                         result.append(".=");
                         break;
+
                     case START:
                         result.append("S");
                         break;
+
                     case END:
                         result.append("E");
                         break;
+
                     case VARIABLE:
-                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(variableFlags));
+                        result.append(((Variable) tokens[++inPos]).toString(variableFlags));
                         break;
+
                     case NEG_VARIABLE:
-                        result.append(((Variable) tokens[++inPos]).selectedFieldsToString(variableFlags));
+                        result.append(((Variable) tokens[++inPos]).toString(variableFlags));
                         result.append("N");
                         break;
+
                     case CONSTANT:
                         result.append(tokens[++inPos]).toString();
                         break;
+
                     case UNARY_MINUS:
                     case MINUS:
                         result.append("-");
                         break;
+
                     case PLUS:
                         result.append("+");
                         break;
+
                     case TIMES:
                         result.append(".");
                         break;
+
                     case EQ:
                         result.append("=");
                         break;
+
                     case NOTEQ:
                         result.append("<>");
                         break;
+
                     case GT:
                         result.append(">");
                         break;
+
                     case GTEQ:
                         result.append(">=");
                         break;
+
                     case LE:
                         result.append("<");
                         break;
+
                     case LEEQ:
                         result.append("<=");
                         break;
+
                     case OPEN_PAREN:
                         result.append("(");
                         break;
+
                     case CLOSE_PAREN:
                         result.append(")");
                         break;
+
                     default:
                         System.out.println("<<<ERROR>>> encountered a non-Token object: " + token + " after "
                                 + result.toString());
                         throw new TrafficControlException("Unknown token");
-
                 }
             }
             else
@@ -1235,7 +1245,7 @@ public class TrafCOD extends EventProducer implements TrafficController
      * Parse one TrafCOD rule.
      * @param rawRule String; the TrafCOD rule
      * @param locationDescription String; description of the location (file, line) where the rule was found
-     * @return Object[]; array filled with the tokenised rule
+     * @return Object[]; array filled with the tokenized rule
      * @throws TrafficControlException when the rule is not a valid TrafCOD rule
      */
     private Object[] parse(final String rawRule, final String locationDescription) throws TrafficControlException
@@ -1308,6 +1318,7 @@ public class TrafCOD extends EventProducer implements TrafficController
                     state = ParserState.FIND_ASSIGN;
                     break;
                 }
+
                 case FIND_ASSIGN:
                 {
                     if ('.' == character && '=' == rule.charAt(inPos + 1))
@@ -1349,6 +1360,7 @@ public class TrafCOD extends EventProducer implements TrafficController
                     state = ParserState.MAY_UMINUS;
                     break;
                 }
+
                 case MAY_UMINUS:
                     if ('-' == character)
                     {
@@ -1387,14 +1399,17 @@ public class TrafCOD extends EventProducer implements TrafficController
                             tokens.add(Token.PLUS);
                             inPos++;
                             break;
+
                         case '-':
                             tokens.add(Token.MINUS);
                             inPos++;
                             break;
+
                         case '.':
                             tokens.add(Token.TIMES);
                             inPos++;
                             break;
+
                         case ')':
                             tokens.add(Token.CLOSE_PAREN);
                             inPos++;
@@ -1419,6 +1434,7 @@ public class TrafCOD extends EventProducer implements TrafficController
                             }
                             break;
                         }
+
                         case '>':
                         {
                             Character nextChar = rule.charAt(++inPos);
@@ -1438,6 +1454,7 @@ public class TrafCOD extends EventProducer implements TrafficController
                             }
                             break;
                         }
+
                         case '=':
                         {
                             Character nextChar = rule.charAt(++inPos);
@@ -1457,6 +1474,7 @@ public class TrafCOD extends EventProducer implements TrafficController
                             }
                             break;
                         }
+
                         case '(':
                         {
                             inPos++;
@@ -1464,6 +1482,7 @@ public class TrafCOD extends EventProducer implements TrafficController
                             state = ParserState.MAY_UMINUS;
                             break;
                         }
+
                         default:
                         {
                             if ('S' == character)
@@ -1500,7 +1519,6 @@ public class TrafCOD extends EventProducer implements TrafficController
             }
         }
         return tokens.toArray();
-
     }
 
     /**
@@ -1595,15 +1613,6 @@ public class TrafCOD extends EventProducer implements TrafficController
         return this.structureNumber;
     }
 
-    /**
-     * Set the structure number.
-     * @param structureNumber int; the new structureNumber.
-     */
-    public void setStructureNumber(int structureNumber)
-    {
-        this.structureNumber = structureNumber;
-    }
-
     /** {@inheritDoc} */
     @Override
     public void updateDetector(String detectorId, boolean detectingGTU)
@@ -1615,10 +1624,7 @@ public class TrafCOD extends EventProducer implements TrafficController
 }
 
 /**
- * Store a variable name, stream and isTimer status.
- * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, initial version Oct 6, 2016 <br>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * Store a variable name, stream, isTimer, isNegated and number characters consumed information.
  */
 class NameAndStream
 {
@@ -1635,8 +1641,8 @@ class NameAndStream
     private boolean negated = false;
 
     /**
-     * Parse a name and stream.
-     * @param text String; the name and stream
+     * Parse a TrafCOD identifier and extract all required information.
+     * @param text String; the TrafCOD identifier (may be followed by more text)
      * @param locationDescription String; description of the location in the input file
      * @throws TrafficControlException when text is not a valid TrafCOD variable name
      */
@@ -1654,10 +1660,6 @@ class NameAndStream
             {
                 break;
             }
-            // if (Character.isWhitespace(character) || '.' == character || '=' == character)
-            // {
-            // break;
-            // }
             pos++;
         }
         this.numberOfChars = pos;
@@ -1679,10 +1681,6 @@ class NameAndStream
             this.stream = (short) (10 * (trimmed.charAt(1) - '0') + trimmed.charAt(2) - '0');
             return;
         }
-        // else if (trimmed.matches("^T"))
-        // {
-        // trimmed = trimmed.substring(1);
-        // }
         StringBuilder nameBuilder = new StringBuilder();
         for (pos = 0; pos < trimmed.length(); pos++)
         {
@@ -1699,7 +1697,6 @@ class NameAndStream
                     // Previous N was NOT part of the name
                     nameBuilder.deleteCharAt(nameBuilder.length() - 1);
                     // Move the 'N' after the digits
-
                     trimmed =
                             trimmed.substring(0, pos - 1) + trimmed.substring(pos, pos + 2) + trimmed.substring(pos + 2) + "N";
                     pos--;
@@ -1767,13 +1764,7 @@ class NameAndStream
 }
 
 /**
- * Storage for a TrafCOD variable.
- * <p>
- * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
- * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, initial version Oct 5, 2016 <br>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * A TrafCOD variable.
  */
 class Variable implements EventListenerInterface
 {
@@ -1839,7 +1830,7 @@ class Variable implements EventListenerInterface
      */
     public void subscribeToDetector(TrafficLightSensor sensor) throws TrafficControlException
     {
-        if (! isDetector())
+        if (!isDetector())
         {
             throw new TrafficControlException("Cannot subscribe a non-detector to a TrafficLightSensor");
         }
@@ -1904,7 +1895,7 @@ class Variable implements EventListenerInterface
     {
         if (!this.flags.contains(Flags.IS_OUTPUT))
         {
-            throw new TrafficControlException("Stream is not an output");
+            throw new TrafficControlException("Stream " + this.toString() + "is not an output");
         }
         return this.color;
     }
@@ -1924,7 +1915,7 @@ class Variable implements EventListenerInterface
      */
     public boolean isDetector()
     {
-        return this.name.startsWith("D");
+        return this.flags.contains(Flags.IS_DETECTOR);
     }
 
     /**
@@ -2037,17 +2028,8 @@ class Variable implements EventListenerInterface
     }
 
     /**
-     * Set a flag of this Variable.
-     * @param flag Flags; the flag to set
-     */
-    public void addFlag(final Flags flag)
-    {
-        this.flags.add(flag);
-    }
-
-    /**
-     * Make this variable an output variable and set the output value.
-     * @param colorValue int; the output value
+     * Make this variable an output variable and set the color value.
+     * @param colorValue int; the output value (as used in the TrafCOD file)
      * @throws TrafficControlException when the colorValue is invalid, or this method is called more than once for this variable
      */
     public void setOutput(int colorValue) throws TrafficControlException
@@ -2060,6 +2042,7 @@ class Variable implements EventListenerInterface
         {
             this.trafficLights = new HashSet<>();
         }
+        // Convert the TrafCOD color value to the corresponding TrafficLightColor
         TrafficLightColor newColor;
         switch (colorValue)
         {
@@ -2075,7 +2058,6 @@ class Variable implements EventListenerInterface
             default:
                 throw new TrafficControlException("Bad color value: " + colorValue);
         }
-
         this.color = newColor;
         this.flags.add(Flags.IS_OUTPUT);
     }
@@ -2103,8 +2085,8 @@ class Variable implements EventListenerInterface
     {
         if (!this.flags.contains(Flags.IS_TIMER))
         {
-            throw new TrafficControlException("Cannot set maximum timer value of "
-                    + selectedFieldsToString(EnumSet.of(PrintFlags.ID)));
+            throw new TrafficControlException("Cannot set maximum timer value of " + this.toString()
+                    + " because this is not a timer");
         }
         this.timerMax10 = value10;
     }
@@ -2170,15 +2152,15 @@ class Variable implements EventListenerInterface
     @Override
     public String toString()
     {
-        return "Variable [" + selectedFieldsToString(EnumSet.of(PrintFlags.ID, PrintFlags.VALUE, PrintFlags.FLAGS)) + "]";
+        return "Variable [" + toString(EnumSet.of(PrintFlags.ID, PrintFlags.VALUE, PrintFlags.FLAGS)) + "]";
     }
 
     /**
-     * Print selected fields.
-     * @param printFlags EnumSet&lt;PrintFlags&gt;; the set of fields to print
+     * Convert selected fields to a String.
+     * @param printFlags EnumSet&lt;PrintFlags&gt;; the set of fields to convert
      * @return String
      */
-    public String selectedFieldsToString(EnumSet<PrintFlags> printFlags)
+    public String toString(EnumSet<PrintFlags> printFlags)
     {
         StringBuilder result = new StringBuilder();
         if (printFlags.contains(PrintFlags.ID))
@@ -2223,7 +2205,7 @@ class Variable implements EventListenerInterface
                 result.append("N");
             }
         }
-        int printValue = Integer.MIN_VALUE; // That should stand out if not changed by the code below this line.
+        int printValue = Integer.MIN_VALUE; // That value should stand out if not changed by the code below this line.
         if (printFlags.contains(PrintFlags.VALUE))
         {
             if (printFlags.contains(PrintFlags.NEGATED))
@@ -2303,9 +2285,6 @@ class Variable implements EventListenerInterface
 
 /**
  * Flags for toString method of a Variable.
- * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, initial version Oct 6, 2016 <br>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 enum PrintFlags
 {
@@ -2331,9 +2310,6 @@ enum PrintFlags
 
 /**
  * Flags of a TrafCOD variable.
- * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, initial version Oct 6, 2016 <br>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 enum Flags
 {
