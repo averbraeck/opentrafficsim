@@ -174,6 +174,9 @@ public class TrafCODDemo
                             new TrafCOD("Simple TrafCOD controller", "file:///d:/cppb/trafcod/otsim/simpleTest.tfc",
                                     trafficLights, sensors, (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator,
                                     mainPanel);
+                    // this.trafCOD.traceVariablesOfStream(TrafCOD.NO_STREAM, true);
+                    // this.trafCOD.traceVariablesOfStream(11, true);
+                    // this.trafCOD.traceVariable("MRV", 11, true);
                 }
                 catch (Exception exception)
                 {
@@ -220,8 +223,11 @@ public class TrafCODDemo
         simulatorThread.start();
         while (null == this.testSimulator)
         {
-            System.out.println("Waiting for simulator to start up");
             Thread.sleep(100);
+            if (null == this.testSimulator)
+            {
+                System.out.println("Waiting for simulator to start up");
+            }
         }
         frame.revalidate();
         frame.repaint();
