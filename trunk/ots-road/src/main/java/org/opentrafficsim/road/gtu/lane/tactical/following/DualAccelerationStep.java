@@ -94,6 +94,7 @@ public class DualAccelerationStep implements Serializable
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return "Follower: " + getFollowerAccelerationStep() + ", Leader: " + getLeaderAccelerationStep();

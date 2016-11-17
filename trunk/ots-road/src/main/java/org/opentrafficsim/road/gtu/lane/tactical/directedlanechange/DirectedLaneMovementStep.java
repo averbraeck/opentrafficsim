@@ -99,10 +99,11 @@ public class DirectedLaneMovementStep implements Serializable
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return this.accelerationStep.toString() + ", "
-            + (null == this.direction ? "no lane change" : this.direction.toString());
+                + (null == this.direction ? "no lane change" : this.direction.toString());
     }
 
 }

@@ -111,6 +111,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil imple
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return "FixedAccelerationModel " + this.duration + ", " + this.acceleration;

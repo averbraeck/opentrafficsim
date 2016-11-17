@@ -85,6 +85,7 @@ public class SimpleOperationalPlan implements Serializable
     }
     
     /** {@inheritDoc} */
+    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
