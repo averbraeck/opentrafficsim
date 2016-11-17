@@ -56,7 +56,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
 
     /** {@inheritDoc} */
     @Override
-    public OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
+    public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
             throws OperationalPlanException, NetworkException, GTUException, ParameterException
     {
         // ask Perception for the local situation

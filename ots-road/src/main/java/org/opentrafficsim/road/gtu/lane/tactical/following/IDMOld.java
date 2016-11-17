@@ -43,10 +43,10 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     private final Duration tSafe;
 
     /**
-     * Time slot size used by IDM (not defined in the paper, but 0.5s is a reasonable trade-off between computational speed and
-     * accuracy).
+     * Default step size used by IDM (not defined in the paper, but 0.5s is a reasonable trade-off between computational speed
+     * and accuracy).
      */
-    private final Duration stepSize = new Duration(0.5, TimeUnit.SECOND);
+    private static final Duration DEFAULT_STEP_SIZE = new Duration(0.5, TimeUnit.SECOND);
 
     /**
      * Mean speed limit adherence (1.0: mean free speed equals the speed limit; 1.1: mean speed limit equals 110% of the speed
@@ -63,15 +63,15 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
         this.b = new Acceleration(2.09, AccelerationUnit.METER_PER_SECOND_2);
         this.s0 = new Length(3, LengthUnit.METER);
         this.tSafe = new Duration(1.2, TimeUnit.SECOND);
-        this.delta = 1d;
+        this.delta = 1.0;
     }
 
     /**
      * Construct a new IDM car following model.
-     * @param a Acceleration; the maximum acceleration of a stationary vehicle (normal value is 1 m/s/s)
-     * @param b Acceleration; the maximum deemed-safe deceleration (this is a positive value). Normal value is 1.5 m/s/s.
-     * @param s0 Length; the minimum stationary headway (normal value is 2 m)
-     * @param tSafe Duration; the minimum time-headway (normal value is 1s)
+     * @param a Acceleration; the maximum acceleration of a stationary vehicle (normal value is 1.56 m/s/s)
+     * @param b Acceleration; the maximum deemed-safe deceleration (this is a positive value). Normal value is 2.09 m/s/s.
+     * @param s0 Length; the minimum stationary headway (normal value is 3 m)
+     * @param tSafe Duration; the minimum time-headway (normal value is 1.2 s)
      * @param delta double; the speed limit adherence (1.0; mean free speed equals the speed limit; 1.1: mean free speed equals
      *            110% of the speed limit; etc.)
      */
@@ -98,22 +98,21 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     /** {@inheritDoc} */
     @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
-        final Speed leaderSpeed, final Length headway, final Speed speedLimit)
+            final Speed leaderSpeed, final Length headway, final Speed speedLimit)
     {
-        return computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, headway, speedLimit, this.stepSize);
+        return computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, headway, speedLimit, DEFAULT_STEP_SIZE);
     }
 
     /** {@inheritDoc} */
     @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
-        final Speed leaderSpeed, final Length headway, final Speed speedLimit, final Duration stepSize)
+            final Speed leaderSpeed, final Length headway, final Speed speedLimit, final Duration stepSize)
     {
         // TODO maxDistance
         // dV is the approach speed
         Speed dV = followerSpeed.minus(leaderSpeed);
-        double sStar =
-            this.s0.si + followerSpeed.si * this.tSafe.si + dV.si * followerSpeed.si
-                / (2.0 * Math.sqrt(this.a.si * this.b.si));
+        double sStar = this.s0.si + followerSpeed.si * this.tSafe.si
+                + dV.si * followerSpeed.si / (2.0 * Math.sqrt(this.a.si * this.b.si));
         if (sStar < 0.0 && headway.si < 0.0)
         {
             return new Acceleration(Double.NEGATIVE_INFINITY, AccelerationUnit.SI);
@@ -122,8 +121,8 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
         double s = headway.si > 0.0 ? headway.si : 1E-99;
         Acceleration aInteraction = new Acceleration(this.a.si * (sStar / s) * (sStar / s), AccelerationUnit.SI);
         Acceleration aFree =
-            new Acceleration(this.a.si * (1.0 - Math.pow(followerSpeed.si / vDes(speedLimit, followerMaximumSpeed).si, 4)),
-                AccelerationUnit.SI);
+                new Acceleration(this.a.si * (1.0 - Math.pow(followerSpeed.si / vDes(speedLimit, followerMaximumSpeed).si, 4)),
+                        AccelerationUnit.SI);
         // limit deceleration for free term (= aFree)
         if (aFree.si < -0.5)
         {
@@ -141,7 +140,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     @Override
     public final Duration getStepSize()
     {
-        return this.stepSize;
+        return DEFAULT_STEP_SIZE;
     }
 
     /** {@inheritDoc} */
@@ -162,8 +161,8 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     @Override
     public final String getLongName()
     {
-        return String.format("%s (a=%.1fm/s\u00b2, b=%.1fm/s\u00b2, s0=%.1fm, tSafe=%.1fs, delta=%.2f)", getName(), this.a
-            .getSI(), this.b.getSI(), this.s0.getSI(), this.tSafe.getSI(), this.delta);
+        return String.format("%s (a=%.1fm/s\u00b2, b=%.1fm/s\u00b2, s0=%.1fm, tSafe=%.1fs, delta=%.2f)", getName(),
+                this.a.getSI(), this.b.getSI(), this.s0.getSI(), this.tSafe.getSI(), this.delta);
     }
 
     // The following is inherited from CarFollowingModel
@@ -171,7 +170,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     /** {@inheritDoc} */
     @Override
     public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedInfo)
-        throws ParameterException
+            throws ParameterException
     {
         return null;
     }
@@ -179,7 +178,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     /** {@inheritDoc} */
     @Override
     public final Length desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
-        throws ParameterException
+            throws ParameterException
     {
         return null;
     }
@@ -187,7 +186,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     /** {@inheritDoc} */
     @Override
     public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
-        final Speed speed, final SpeedLimitInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
+            final Speed speed, final SpeedLimitInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
         return null;
     }
@@ -197,7 +196,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     public final String toString()
     {
         return "IDMOld [s0=" + this.s0 + ", a=" + this.a + ", b=" + this.b + ", tSafe=" + this.tSafe + ", stepSize="
-            + this.stepSize + ", delta=" + this.delta + "]";
+                + DEFAULT_STEP_SIZE + ", delta=" + this.delta + "]";
     }
 
 }

@@ -21,6 +21,7 @@ public interface LanePerception extends Perception
 {
 
     /** {@inheritDoc} */
+    @Override
     LaneBasedGTU getGtu() throws GTUException;
     
     /**

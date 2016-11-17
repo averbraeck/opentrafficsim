@@ -336,7 +336,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                     if (cse instanceof Lane)
                     {
                         Lane l = (Lane) cse;
-                        //if (noLaneDrop(gtu, maxHeadway, l, position, referenceLaneDirectionality))
+                        // if (noLaneDrop(gtu, maxHeadway, l, position, referenceLaneDirectionality))
                         if (noLaneDrop(gtu, maxHeadway, l, l.getLength().multiplyBy(refFrac), referenceLaneDirectionality))
                         {
                             correctCurrentLanes.add(l);
@@ -358,8 +358,9 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                     if (cse instanceof Lane)
                     {
                         Lane l = (Lane) cse;
-                        //if (connectsToPath(gtu, maxHeadway, l, position, referenceLaneDirectionality, ld.getLink()))
-                        if (connectsToPath(gtu, maxHeadway, l, l.getLength().multiplyBy(refFrac), referenceLaneDirectionality, ld.getLink()))
+                        // if (connectsToPath(gtu, maxHeadway, l, position, referenceLaneDirectionality, ld.getLink()))
+                        if (connectsToPath(gtu, maxHeadway, l, l.getLength().multiplyBy(refFrac), referenceLaneDirectionality,
+                                ld.getLink()))
                         {
                             correctCurrentLanes.add(l);
                         }
@@ -451,7 +452,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
      * @param startLane Lane; the first lane in the list
      * @param startLanePosition Length; the position on the start lane
      * @param startDirectionality GTUDirectionality; the driving direction on the start lane
-     * @return boolean; true if the lane (XXXXX which lane?) is connected to our path
+     * @return boolean; true if the lane (XXX which lane?) is connected to our path
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */

@@ -24,13 +24,12 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner
      */
     CarFollowingModel getCarFollowingModel();
     
-    /** 
-     * Returns the perception. 
-     * @return perception
-     */
+    /** {@inheritDoc} */
+    @Override
     LanePerception getPerception();
     
     /** {@inheritDoc} */
+    @Override
     LaneBasedGTU getGtu();
     
 }

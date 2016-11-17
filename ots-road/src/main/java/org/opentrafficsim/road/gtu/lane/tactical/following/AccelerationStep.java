@@ -30,7 +30,7 @@ public class AccelerationStep implements Serializable
     private final Time validUntil;
     
     /** Duration of the time step. */
-    final Duration duration;
+    private final Duration duration;
 
     /**
      * Create a new GTUFollowingModelResult.
@@ -69,9 +69,8 @@ public class AccelerationStep implements Serializable
         return this.duration;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return String.format("a=%s, valid until %s", this.acceleration, this.validUntil);

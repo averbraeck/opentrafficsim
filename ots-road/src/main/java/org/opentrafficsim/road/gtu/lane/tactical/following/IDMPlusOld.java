@@ -52,10 +52,10 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     private final double delta;
 
     /**
-     * Time slot size used by IDMPlus by (not defined in the paper, but 0.5s is a reasonable trade-off between computational
+     * Default step size used by IDMPlus (not defined in the paper, but 0.5s is a reasonable trade-off between computational
      * speed and accuracy).
      */
-    private final Duration stepSize = new Duration(0.5, TimeUnit.SECOND);
+    private static final Duration DEFAULT_STEP_SIZE = new Duration(0.5, TimeUnit.SECOND);
 
     /**
      * Construct a new IDM+ car following model with reasonable values (reasonable for passenger cars). <br>
@@ -81,8 +81,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
      * @param delta double; the speed limit adherence (1.0; mean free speed equals the speed limit; 1.1: mean free speed equals
      *            110% of the speed limit; etc.)
      */
-    public IDMPlusOld(final Acceleration a, final Acceleration b, final Length s0, final Duration tSafe,
-        final double delta)
+    public IDMPlusOld(final Acceleration a, final Acceleration b, final Length s0, final Duration tSafe, final double delta)
     {
         this.a = a;
         this.b = b;
@@ -105,15 +104,15 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     /** {@inheritDoc} */
     @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
-        final Speed leaderSpeed, final Length headway, final Speed speedLimit)
+            final Speed leaderSpeed, final Length headway, final Speed speedLimit)
     {
-        return computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, headway, speedLimit, this.stepSize);
+        return computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, headway, speedLimit, DEFAULT_STEP_SIZE);
     }
 
     /** {@inheritDoc} */
     @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
-        final Speed leaderSpeed, final Length headway, final Speed speedLimit, final Duration stepSize)
+            final Speed leaderSpeed, final Length headway, final Speed speedLimit, final Duration stepSize)
     {
         // TODO maxDistance
         double leftComponent = 1 - Math.pow(followerSpeed.getSI() / vDes(speedLimit, followerMaximumSpeed).getSI(), 4);
@@ -127,13 +126,12 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
             leftComponent = -0.5 / this.a.si;
         }
         Acceleration logWeightedAccelerationTimes2 =
-            new Acceleration(Math.sqrt(this.a.getSI() * this.b.getSI()), AccelerationUnit.SI).multiplyBy(2);
+                new Acceleration(Math.sqrt(this.a.getSI() * this.b.getSI()), AccelerationUnit.SI).multiplyBy(2);
         // don't forget the times 2
 
         Speed dV = followerSpeed.minus(leaderSpeed);
-        Length sStar =
-            this.s0.plus(followerSpeed.multiplyBy(this.tSafe)).plus(
-                dV.multiplyBy(followerSpeed.divideBy(logWeightedAccelerationTimes2)));
+        Length sStar = this.s0.plus(followerSpeed.multiplyBy(this.tSafe))
+                .plus(dV.multiplyBy(followerSpeed.divideBy(logWeightedAccelerationTimes2)));
 
         /*-
         this.s0.plus(Calc.speedTimesTime(followerSpeed, this.tSafe)).plus(
@@ -159,7 +157,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     @Override
     public final Duration getStepSize()
     {
-        return this.stepSize;
+        return DEFAULT_STEP_SIZE;
     }
 
     /** {@inheritDoc} */
@@ -180,8 +178,8 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     @Override
     public final String getLongName()
     {
-        return String.format("%s (a=%.1fm/s\u00b2, b=%.1fm/s\u00b2, s0=%.1fm, tSafe=%.1fs, delta=%.2f)", getName(), this.a
-            .getSI(), this.b.getSI(), this.s0.getSI(), this.tSafe.getSI(), this.delta);
+        return String.format("%s (a=%.1fm/s\u00b2, b=%.1fm/s\u00b2, s0=%.1fm, tSafe=%.1fs, delta=%.2f)", getName(),
+                this.a.getSI(), this.b.getSI(), this.s0.getSI(), this.tSafe.getSI(), this.delta);
     }
 
     // The following is inherited from CarFollowingModel
@@ -189,7 +187,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     /** {@inheritDoc} */
     @Override
     public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedInfo)
-        throws ParameterException
+            throws ParameterException
     {
         return null;
     }
@@ -197,7 +195,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     /** {@inheritDoc} */
     @Override
     public final Length desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
-        throws ParameterException
+            throws ParameterException
     {
         return null;
     }
@@ -205,7 +203,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     /** {@inheritDoc} */
     @Override
     public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
-        final Speed speed, final SpeedLimitInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
+            final Speed speed, final SpeedLimitInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
         return null;
     }
@@ -215,7 +213,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     public final String toString()
     {
         return "IDMPlusOld [s0=" + this.s0 + ", a=" + this.a + ", b=" + this.b + ", tSafe=" + this.tSafe + ", delta="
-            + this.delta + ", stepSize=" + this.stepSize + "]";
+                + this.delta + ", stepSize=" + DEFAULT_STEP_SIZE + "]";
     }
 
 }

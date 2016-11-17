@@ -205,16 +205,4 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      */
     Duration getStepSize();
 
-    /**
-     * Return the name of this GTU following model.
-     * @return String; just the name of the GTU following model
-     */
-    String getName();
-
-    /**
-     * Return complete textual information about this instantiation of this GTU following model.
-     * @return String; the name and parameter values of the GTU following model
-     */
-    String getLongName();
-
 }
