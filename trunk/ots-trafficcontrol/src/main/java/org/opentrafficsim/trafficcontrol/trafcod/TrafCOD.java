@@ -74,6 +74,9 @@ public class TrafCOD extends EventProducer implements TrafficController
     /** Text leading up to the control program structure. */
     private final static String STRUCTURE_PREFIX = "Structure:";
 
+    /** Constant to select variables that have no associated traffic stream. */
+    public final static int NO_STREAM = -1;
+
     /** The original rules. */
     final List<String> trafcodRules = new ArrayList<>();
 
@@ -169,7 +172,7 @@ public class TrafCOD extends EventProducer implements TrafficController
         if (null != display)
         {
             String tfgFileURL = trafCodURL.replaceFirst("\\.[Tt][Ff][Cc]$", ".tfg");
-            System.out.println("mapFileURL is \"" + tfgFileURL + "\"");
+            // System.out.println("mapFileURL is \"" + tfgFileURL + "\"");
             TrafCODDisplay tcd = makeDisplay(tfgFileURL, sensors);
             if (null != tcd)
             {
@@ -373,8 +376,7 @@ public class TrafCOD extends EventProducer implements TrafficController
             if (null != tokenisedRule)
             {
                 this.tokenisedRules.add(tokenisedRule);
-                String untokenised = printRule(tokenisedRule, false);
-                System.out.println(untokenised);
+                // System.out.println(printRule(tokenisedRule, false));
             }
         }
         in.close();
@@ -400,15 +402,15 @@ public class TrafCOD extends EventProducer implements TrafficController
                 variable.subscribeToDetector(sensor);
             }
         }
-        System.out.println("Installed " + this.variables.size() + " variables");
-        for (String key : this.variables.keySet())
-        {
-            Variable v = this.variables.get(key);
-            System.out.println(key
-                    + ":\t"
-                    + v.toString(EnumSet.of(PrintFlags.ID, PrintFlags.VALUE, PrintFlags.INITTIMER,
-                            PrintFlags.REINITTIMER, PrintFlags.S, PrintFlags.E)));
-        }
+        // System.out.println("Installed " + this.variables.size() + " variables");
+        // for (String key : this.variables.keySet())
+        // {
+        // Variable v = this.variables.get(key);
+        // System.out.println(key
+        // + ":\t"
+        // + v.toString(EnumSet.of(PrintFlags.ID, PrintFlags.VALUE, PrintFlags.INITTIMER, PrintFlags.REINITTIMER,
+        // PrintFlags.S, PrintFlags.E)));
+        // }
     }
 
     /**
@@ -434,7 +436,7 @@ public class TrafCOD extends EventProducer implements TrafficController
                 inputLine = inputLine.trim();
                 if (inputLine.startsWith("mapfile="))
                 {
-                    System.out.println("map file description is " + inputLine);
+                    // System.out.println("map file description is " + inputLine);
                     String mapFileURL = tfgFileURL;
                     // Make a decent attempt at constructing the URL of the map file
                     int pos = mapFileURL.length();
@@ -584,7 +586,6 @@ public class TrafCOD extends EventProducer implements TrafficController
             if (v.isTimer() && v.getValue() > 0 && v.decrementTimer(this.currentTime10))
             {
                 changeCount++;
-                System.out.println("Timer expires: " + v);
             }
         }
         return changeCount;
@@ -598,7 +599,7 @@ public class TrafCOD extends EventProducer implements TrafficController
     @SuppressWarnings("unused")
     private void evalExprs() throws TrafficControlException, SimRuntimeException
     {
-        System.out.println("TrafCOD: time is " + EngineeringFormatter.format(this.simulator.getSimulatorTime().get().si));
+        System.out.println("evalExprs: time is " + EngineeringFormatter.format(this.simulator.getSimulatorTime().get().si));
         // insert some delay for testing; without this the simulation runs too fast
         try
         {
@@ -642,7 +643,6 @@ public class TrafCOD extends EventProducer implements TrafficController
             if (evalRule(rule))
             {
                 changeCount++;
-                System.out.println("Variable changed by rule " + printRule(rule, true));
             }
         }
         return changeCount;
@@ -734,7 +734,6 @@ public class TrafCOD extends EventProducer implements TrafficController
                 {
                     result = true;
                 }
-                // TODO Handle traced streams
                 int timerValue10 = destination.getTimerMax();
                 if (timerValue10 < 1)
                 {
@@ -745,27 +744,24 @@ public class TrafCOD extends EventProducer implements TrafficController
                 {
                     result = true;
                 }
-                destination.setValue(timerValue10, this.currentTime10);
+                destination.setValue(timerValue10, this.currentTime10, new CausePrinter(rule));
             }
             else if (0 == resultValue && Token.END_RULE == ruleType && destination.getValue() != 0)
             {
                 result = true;
-                destination.setValue(0, this.currentTime10);
+                destination.setValue(0, this.currentTime10, new CausePrinter(rule));
             }
-            // TODO handle tracing
         }
         else if (destination.getValue() != resultValue)
         {
             result = true;
-            destination.setValue(resultValue, this.currentTime10);
+            destination.setValue(resultValue, this.currentTime10, new CausePrinter(rule));
             if (destination.isOutput())
             {
                 fireEvent(TRAFFIC_LIGHT_CHANGED,
                         new Object[] { this.controllerName, destination.getStartSource(), destination.getColor() });
             }
-            // TODO handle tracing
         }
-        // TODO handle tracing
         return result;
     }
 
@@ -1035,7 +1031,7 @@ public class TrafCOD extends EventProducer implements TrafficController
      * @return String; a textual approximation of the original rule
      * @throws TrafficControlException when tokens does not match the expected grammar
      */
-    private String printRule(Object[] tokens, final boolean printValues) throws TrafficControlException
+    static String printRule(Object[] tokens, final boolean printValues) throws TrafficControlException
     {
         EnumSet<PrintFlags> variableFlags = EnumSet.of(PrintFlags.ID);
         if (printValues)
@@ -1073,14 +1069,12 @@ public class TrafCOD extends EventProducer implements TrafficController
                         break;
 
                     case INIT_TIMER:
-                        result.append(((Variable) tokens[++inPos]).toString(EnumSet.of(PrintFlags.ID,
-                                PrintFlags.INITTIMER)));
+                        result.append(((Variable) tokens[++inPos]).toString(EnumSet.of(PrintFlags.ID, PrintFlags.INITTIMER)));
                         result.append(".=");
                         break;
 
                     case REINIT_TIMER:
-                        result.append(((Variable) tokens[++inPos]).toString(EnumSet.of(PrintFlags.ID,
-                                PrintFlags.REINITTIMER)));
+                        result.append(((Variable) tokens[++inPos]).toString(EnumSet.of(PrintFlags.ID, PrintFlags.REINITTIMER)));
                         result.append(".=");
                         break;
 
@@ -1618,7 +1612,61 @@ public class TrafCOD extends EventProducer implements TrafficController
     public void updateDetector(String detectorId, boolean detectingGTU)
     {
         Variable detector = this.detectors.get(detectorId);
-        detector.setValue(detectingGTU ? 1 : 0, this.currentTime10);
+        detector.setValue(
+                detectingGTU ? 1 : 0,
+                this.currentTime10,
+                new CausePrinter(String.format("Detector %s becoming %s", detectorId,
+                        (detectingGTU ? "occupied" : "unoccupied"))));
+    }
+
+    /**
+     * Switch tracing of all variables of a particular traffic stream, or all variables that do not have an associated traffic
+     * stream on or off.
+     * @param stream int; the traffic stream number, or <code>TrafCOD.NO_STREAM</code> to affect all variables that do not have
+     *            an associated traffic stream
+     * @param trace boolean; if true; switch on tracing; if false; switch off tracing
+     */
+    public void traceVariablesOfStream(final int stream, final boolean trace)
+    {
+        for (Variable v : this.variablesInDefinitionOrder)
+        {
+            if (v.getStream() == stream)
+            {
+                if (trace)
+                {
+                    v.setFlag(Flags.TRACED);
+                }
+                else
+                {
+                    v.clearFlag(Flags.TRACED);
+                }
+            }
+        }
+    }
+
+    /**
+     * Switch tracing of one variable on or off.
+     * @param variableName String; name of the variable
+     * @param stream int; traffic stream of the variable, or <code>TrafCOD.NO_STREAM</code> to select a variable that does not
+     *            have an associated traffic stream
+     * @param trace boolean; if true; switch on tracing; if false; switch off tracing
+     */
+    public void traceVariable(final String variableName, final int stream, final boolean trace)
+    {
+        for (Variable v : this.variablesInDefinitionOrder)
+        {
+            if (v.getStream() == stream && variableName.equals(v.getName()))
+            {
+                if (trace)
+                {
+                    v.setFlag(Flags.TRACED);
+                }
+                else
+                {
+                    v.clearFlag(Flags.TRACED);
+                }
+            }
+        }
     }
 
 }
@@ -1632,7 +1680,7 @@ class NameAndStream
     private final String name;
 
     /** The stream number. */
-    private short stream = -1;
+    private short stream = TrafCOD.NO_STREAM;
 
     /** Number characters parsed. */
     private int numberOfChars = 0;
@@ -1686,7 +1734,7 @@ class NameAndStream
         {
             char nextChar = trimmed.charAt(pos);
             if (pos < trimmed.length() - 1 && Character.isDigit(nextChar) && Character.isDigit(trimmed.charAt(pos + 1))
-                    && -1 == this.stream)
+                    && TrafCOD.NO_STREAM == this.stream)
             {
                 if (0 == pos || (1 == pos && trimmed.startsWith("N")))
                 {
@@ -1824,6 +1872,15 @@ class Variable implements EventListenerInterface
     }
 
     /**
+     * Retrieve the name of this variable.
+     * @return String; the name (without the stream number) of this Variable
+     */
+    public String getName()
+    {
+        return this.name;
+    }
+
+    /**
      * Link a detector variable to a sensor.
      * @param sensor TrafficLightSensor; the sensor
      * @throws TrafficControlException when this variable is not a detector
@@ -1847,13 +1904,12 @@ class Variable implements EventListenerInterface
         {
             if (isTimer())
             {
-                setValue(this.timerMax10, 0);
+                setValue(this.timerMax10, 0, new CausePrinter("Timer initialization rule"));
             }
             else
             {
-                setValue(1, 0);
+                setValue(1, 0, new CausePrinter("Variable initialization rule"));
             }
-            System.out.println("Initialized variable " + this);
         }
     }
 
@@ -1880,8 +1936,11 @@ class Variable implements EventListenerInterface
             this.flags.add(Flags.END);
             this.value = 0;
             this.updateTime10 = timeStamp10;
+            if (this.flags.contains(Flags.TRACED))
+            {
+                System.out.println("Timer " + toString() + " expired");
+            }
             return true;
-            // TODO handle tracing
         }
         return false;
     }
@@ -1921,8 +1980,9 @@ class Variable implements EventListenerInterface
     /**
      * @param newValue int; the new value of this Variable
      * @param timeStamp10 int; the time stamp of this update
+     * @param cause CausePrinter; rule, timer, or detector that caused the change
      */
-    public void setValue(int newValue, int timeStamp10)
+    public void setValue(int newValue, int timeStamp10, CausePrinter cause)
     {
         if (this.value != newValue)
         {
@@ -1946,7 +2006,8 @@ class Variable implements EventListenerInterface
         }
         if (this.flags.contains(Flags.TRACED))
         {
-            System.out.println("Variable " + this.name + this.stream + " changes from " + this.value + " to " + newValue);
+            System.out.println("Variable " + this.name + this.stream + " changes from " + this.value + " to " + newValue
+                    + " due to " + cause.toString());
         }
         this.value = newValue;
     }
@@ -2273,14 +2334,54 @@ class Variable implements EventListenerInterface
     {
         if (event.getType().equals(NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT))
         {
-            setValue(1, this.updateTime10);
+            setValue(1, this.updateTime10, new CausePrinter("Detector became occupied"));
         }
         else if (event.getType().equals(NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT))
         {
-            setValue(0, this.updateTime10);
+            setValue(0, this.updateTime10, new CausePrinter("Detector became unoccupied"));
         }
     }
 
+}
+
+/**
+ * Class that can print a text version describing why a variable changed. Any work that has to be done (such as a call to
+ * <code>TrafCOD.printRule</code>) is deferred until the <code>toString</code> method is called.
+ */
+class CausePrinter
+{
+    /** Object that describes the cause of the variable change. */
+    final Object cause;
+
+    /**
+     * Construct a new CausePrinter object.
+     * @param cause Object; this should be either a String, or a Object[] that contains a tokenized TrafCOD rule.
+     */
+    public CausePrinter(final Object cause)
+    {
+        this.cause = cause;
+    }
+
+    public String toString()
+    {
+        if (this.cause instanceof String)
+        {
+            return (String) this.cause;
+        }
+        else if (this.cause instanceof Object[])
+        {
+            try
+            {
+                return TrafCOD.printRule((Object[]) this.cause, true);
+            }
+            catch (TrafficControlException exception)
+            {
+                exception.printStackTrace();
+                return ("printRule failed");
+            }
+        }
+        return this.cause.toString();
+    }
 }
 
 /**

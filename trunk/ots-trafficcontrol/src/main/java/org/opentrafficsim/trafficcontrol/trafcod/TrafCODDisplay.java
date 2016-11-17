@@ -397,7 +397,6 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
     {
         this.color = trafficLightColor;
         this.display.repaint();
-        System.out.println("Setting light color to " + trafficLightColor);
     }
 
     /** Diameter of a traffic light disk in pixels. */
