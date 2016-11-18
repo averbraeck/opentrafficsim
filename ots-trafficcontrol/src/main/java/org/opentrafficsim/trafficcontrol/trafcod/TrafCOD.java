@@ -601,15 +601,15 @@ public class TrafCOD extends EventProducer implements TrafficController
     {
         System.out.println("evalExprs: time is " + EngineeringFormatter.format(this.simulator.getSimulatorTime().get().si));
         // insert some delay for testing; without this the simulation runs too fast
-        try
-        {
-            Thread.sleep(10);
-        }
-        catch (InterruptedException exception)
-        {
-            System.out.println("Sleep in evalExprs was interrupted");
-            // exception.printStackTrace();
-        }
+        // try
+        // {
+        // Thread.sleep(10);
+        // }
+        // catch (InterruptedException exception)
+        // {
+        // System.out.println("Sleep in evalExprs was interrupted");
+        // // exception.printStackTrace();
+        // }
         // Contrary to the C++ builder version; this implementation decrements the times at the start of evalExprs
         // By doing it before updating this.currentTime10; the debugging output should be very similar
         decrementTimers();

@@ -1,15 +1,16 @@
 package org.opentrafficsim.trafficcontrol.trafcod;
 
 import java.awt.BorderLayout;
-import java.lang.reflect.InvocationTargetException;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import javax.naming.NamingException;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -25,63 +26,65 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.modelproperties.Property;
+import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
-import org.opentrafficsim.simulationengine.SimpleSimulator;
-import org.opentrafficsim.trafficcontrol.TrafficControlException;
+import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 
 /**
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, initial version Nov 16, 2016 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Nov 18, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafCODDemo
+public class TrafCODDemo extends AbstractWrappableAnimation
 {
-    /** The simulator. */
-    volatile SimpleSimulator testSimulator;
+
+    /** */
+    private static final long serialVersionUID = 20161118L;
 
     /**
-     * Entry point.
+     * Main program.
      * @param args String[]; the command line arguments (not used)
-     * @throws InvocationTargetException
-     * @throws InterruptedException
+     * @throws SimRuntimeException should never happen
      */
-    public static void main(final String[] args) throws InvocationTargetException, InterruptedException
+    public static void main(final String[] args) throws SimRuntimeException
     {
         SwingUtilities.invokeLater(new Runnable()
         {
-
             @Override
             public void run()
             {
                 try
                 {
-                    new TrafCODDemo();
+                    TrafCODDemo model = new TrafCODDemo();
+                    // 1 hour simulation run for testing
+                    model.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND), new Duration(60.0,
+                            TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
                 }
-                catch (TrafficControlException | SimRuntimeException | NamingException | InterruptedException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -89,137 +92,125 @@ public class TrafCODDemo
         });
     }
 
-    /**
-     * Test code.
-     * @throws TrafficControlException when network cannot be created
-     * @throws NamingException when a name clash is detected
-     * @throws SimRuntimeException when the simulator does not like what we want it to do
-     * @throws InterruptedException unlikely to happen
-     */
-    public TrafCODDemo() throws TrafficControlException, SimRuntimeException, NamingException, InterruptedException
+    /** TrafCOD controller display. */
+    JPanel controllerDisplayPanel = new JPanel(new BorderLayout());
+
+    /** {@inheritDoc} */
+    @Override
+    public String shortName()
     {
-        JFrame frame = new JFrame("TrafCOD demonstration");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 800);
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        JScrollPane scrollPane = new JScrollPane(mainPanel);
-        frame.add(scrollPane);
-        frame.setVisible(true);
+        return "TrafCOD demonstration";
+    }
 
-        OTSModelInterface model = new OTSModelInterface()
+    /** {@inheritDoc} */
+    @Override
+    public String description()
+    {
+        return "TrafCOD demonstration";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected JPanel makeCharts(SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
+    {
+        JScrollPane scrollPane = new JScrollPane(this.controllerDisplayPanel);
+        JPanel wrapper = new JPanel(new BorderLayout());
+        wrapper.add(scrollPane);
+        return wrapper;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected OTSModelInterface makeModel(GTUColorer colorer) throws OTSSimulationException
+    {
+        return new TrafCODModel();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected Double makeAnimationRectangle()
+    {
+        return new Rectangle2D.Double(-110, -110, 220, 220);
+    }
+
+    /**
+     * The simulation model.
+     */
+    class TrafCODModel implements OTSModelInterface
+    {
+        /** */
+        private static final long serialVersionUID = 20161020L;
+
+        /** The TrafCOD evaluator. */
+        private TrafCOD trafCOD;
+
+        @Override
+        public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
+                throws SimRuntimeException, RemoteException
         {
-            /** */
-            private static final long serialVersionUID = 20161020L;
-
-            /** The TrafCOD evaluator. */
-            private TrafCOD trafCOD;
-
-            @Override
-            public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
-                    throws SimRuntimeException, RemoteException
+            try
             {
-                try
-                {
-                    Network network = new OTSNetwork("TrafCOD test network");
-                    Map<GTUType, LongitudinalDirectionality> directionalityMap = new HashMap<>();
-                    directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
-                    OTSNode nodeX = new OTSNode(network, "Crossing", new OTSPoint3D(0, 0, 0));
-                    OTSNode nodeS = new OTSNode(network, "South", new OTSPoint3D(0, -100, 0));
-                    OTSNode nodeE = new OTSNode(network, "East", new OTSPoint3D(100, 0, 0));
-                    OTSNode nodeN = new OTSNode(network, "North", new OTSPoint3D(0, 100, 0));
-                    OTSNode nodeW = new OTSNode(network, "West", new OTSPoint3D(-100, 0, 0));
-                    CrossSectionLink linkNX =
-                            new CrossSectionLink(network, "LinkNX", nodeN, nodeX, LinkType.ALL, new OTSLine3D(nodeN.getPoint(),
-                                    nodeX.getPoint()), directionalityMap, LaneKeepingPolicy.KEEP_RIGHT);
-                    CrossSectionLink linkXS =
-                            new CrossSectionLink(network, "LinkXS", nodeX, nodeS, LinkType.ALL, new OTSLine3D(nodeX.getPoint(),
-                                    nodeS.getPoint()), directionalityMap, LaneKeepingPolicy.KEEP_RIGHT);
-                    CrossSectionLink linkWX =
-                            new CrossSectionLink(network, "LinkWX", nodeW, nodeX, LinkType.ALL, new OTSLine3D(nodeW.getPoint(),
-                                    nodeX.getPoint()), directionalityMap, LaneKeepingPolicy.KEEP_RIGHT);
-                    CrossSectionLink linkXE =
-                            new CrossSectionLink(network, "LinkXE", nodeX, nodeE, LinkType.ALL, new OTSLine3D(nodeX.getPoint(),
-                                    nodeE.getPoint()), directionalityMap, LaneKeepingPolicy.KEEP_RIGHT);
-                    Length laneWidth = new Length(3, LengthUnit.METER);
-                    Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
-                    Lane laneNX =
-                            new Lane(linkNX, "laneNX", Length.ZERO, laneWidth, LaneType.ALL,
-                                    LongitudinalDirectionality.DIR_PLUS, speedLimit, new OvertakingConditions.None());
-                    Lane laneWX =
-                            new Lane(linkWX, "laneWX", Length.ZERO, laneWidth, LaneType.ALL,
-                                    LongitudinalDirectionality.DIR_PLUS, speedLimit, new OvertakingConditions.None());
-                    new Lane(linkXS, "laneXS", Length.ZERO, laneWidth, LaneType.ALL, LongitudinalDirectionality.DIR_PLUS,
-                            speedLimit, new OvertakingConditions.None());
-                    new Lane(linkXE, "laneWX", Length.ZERO, laneWidth, LaneType.ALL, LongitudinalDirectionality.DIR_PLUS,
-                            speedLimit, new OvertakingConditions.None());
-                    Set<TrafficLight> trafficLights = new HashSet<>();
-                    trafficLights.add(new SimpleTrafficLight("TL08", laneNX, new Length(90, LengthUnit.METER),
-                            (OTSDEVSSimulatorInterface) theSimulator));
-                    trafficLights.add(new SimpleTrafficLight("TL11", laneWX, new Length(90, LengthUnit.METER),
-                            (OTSDEVSSimulatorInterface) theSimulator));
-                    Set<TrafficLightSensor> sensors = new HashSet<>();
-                    sensors.add(new TrafficLightSensor("D081", laneWX, new Length(86, LengthUnit.METER), laneWX, new Length(88,
-                            LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
-                            (OTSDEVSSimulatorInterface) theSimulator));
-                    sensors.add(new TrafficLightSensor("D082", laneWX, new Length(50, LengthUnit.METER), laneWX, new Length(70,
-                            LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
-                            (OTSDEVSSimulatorInterface) theSimulator));
-                    sensors.add(new TrafficLightSensor("D111", laneNX, new Length(86, LengthUnit.METER), laneNX, new Length(88,
-                            LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
-                            (OTSDEVSSimulatorInterface) theSimulator));
-                    sensors.add(new TrafficLightSensor("D112", laneNX, new Length(50, LengthUnit.METER), laneNX, new Length(70,
-                            LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
-                            (OTSDEVSSimulatorInterface) theSimulator));
-                    this.trafCOD =
-                            new TrafCOD("Simple TrafCOD controller", "file:///d:/cppb/trafcod/otsim/simpleTest.tfc",
-                                    trafficLights, sensors, (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator,
-                                    mainPanel);
-                    // this.trafCOD.traceVariablesOfStream(TrafCOD.NO_STREAM, true);
-                    // this.trafCOD.traceVariablesOfStream(11, true);
-                    // this.trafCOD.traceVariable("MRV", 11, true);
-                }
-                catch (Exception exception)
-                {
-                    exception.printStackTrace();
-                }
+                Network network = new OTSNetwork("TrafCOD test network");
+                Map<GTUType, LongitudinalDirectionality> directionalityMap = new HashMap<>();
+                directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
+                OTSNode nodeX = new OTSNode(network, "Crossing", new OTSPoint3D(0, 0, 0));
+                OTSNode nodeS = new OTSNode(network, "South", new OTSPoint3D(0, -100, 0));
+                OTSNode nodeE = new OTSNode(network, "East", new OTSPoint3D(100, 0, 0));
+                OTSNode nodeN = new OTSNode(network, "North", new OTSPoint3D(0, 100, 0));
+                OTSNode nodeW = new OTSNode(network, "West", new OTSPoint3D(-100, 0, 0));
+                Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
+                Set<GTUType> compatibility = new HashSet<GTUType>();
+                compatibility.add(GTUType.ALL);
+                LaneType laneType = new LaneType("CarLane", compatibility);
+                Lane laneNX =
+                        LaneFactory.makeMultiLane(network, "LinkNX", nodeN, nodeX, null, 1, laneType, speedLimit,
+                                (OTSDEVSSimulatorInterface) theSimulator, LongitudinalDirectionality.DIR_PLUS)[0];
+                Lane laneWX =
+                        LaneFactory.makeMultiLane(network, "LinkWX", nodeW, nodeX, null, 1, laneType, speedLimit,
+                                (OTSDEVSSimulatorInterface) theSimulator, LongitudinalDirectionality.DIR_PLUS)[0];
+                LaneFactory.makeMultiLane(network, "LinkXE", nodeX, nodeE, null, 1, laneType, speedLimit,
+                        (OTSDEVSSimulatorInterface) theSimulator, LongitudinalDirectionality.DIR_PLUS);
+                LaneFactory.makeMultiLane(network, "LinkXS", nodeX, nodeS, null, 1, laneType, speedLimit,
+                        (OTSDEVSSimulatorInterface) theSimulator, LongitudinalDirectionality.DIR_PLUS);
+                Set<TrafficLight> trafficLights = new HashSet<>();
+                trafficLights.add(new SimpleTrafficLight("TL08", laneNX, new Length(90, LengthUnit.METER),
+                        (OTSDEVSSimulatorInterface) theSimulator));
+                trafficLights.add(new SimpleTrafficLight("TL11", laneWX, new Length(90, LengthUnit.METER),
+                        (OTSDEVSSimulatorInterface) theSimulator));
+                Set<TrafficLightSensor> sensors = new HashSet<>();
+                sensors.add(new TrafficLightSensor("D081", laneWX, new Length(86, LengthUnit.METER), laneWX, new Length(88,
+                        LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
+                        (OTSDEVSSimulatorInterface) theSimulator));
+                sensors.add(new TrafficLightSensor("D082", laneWX, new Length(50, LengthUnit.METER), laneWX, new Length(70,
+                        LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
+                        (OTSDEVSSimulatorInterface) theSimulator));
+                sensors.add(new TrafficLightSensor("D111", laneNX, new Length(86, LengthUnit.METER), laneNX, new Length(88,
+                        LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
+                        (OTSDEVSSimulatorInterface) theSimulator));
+                sensors.add(new TrafficLightSensor("D112", laneNX, new Length(50, LengthUnit.METER), laneNX, new Length(70,
+                        LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
+                        (OTSDEVSSimulatorInterface) theSimulator));
+                this.trafCOD =
+                        new TrafCOD("Simple TrafCOD controller", "file:///d:/cppb/trafcod/otsim/simpleTest.tfc", trafficLights,
+                                sensors, (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator,
+                                TrafCODDemo.this.controllerDisplayPanel);
+
+                // this.trafCOD.traceVariablesOfStream(TrafCOD.NO_STREAM, true);
+                // this.trafCOD.traceVariablesOfStream(11, true);
+                // this.trafCOD.traceVariable("MRV", 11, true);
             }
-
-            @Override
-            public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+            catch (Exception exception)
             {
-                return this.trafCOD.getSimulator();
-            }
-
-        };
-        Thread simulatorThread = new Thread()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    TrafCODDemo.this.testSimulator =
-                            new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(1, TimeUnit.HOUR), model);
-                }
-                catch (SimRuntimeException | NamingException exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
-        };
-        simulatorThread.start();
-        while (null == this.testSimulator)
-        {
-            Thread.sleep(100);
-            if (null == this.testSimulator)
-            {
-                System.out.println("Waiting for simulator to start up");
+                exception.printStackTrace();
             }
         }
-        frame.revalidate();
-        frame.repaint();
-        TrafCODDemo.this.testSimulator.runUpToAndIncluding(new Time(20, TimeUnit.SECOND));
-        System.out.println("Simulation running...");
+
+        @Override
+        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+        {
+            return this.trafCOD.getSimulator();
+        }
+
     }
 
 }
