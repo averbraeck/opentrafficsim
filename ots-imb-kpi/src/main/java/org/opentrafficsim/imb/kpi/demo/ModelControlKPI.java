@@ -103,6 +103,7 @@ public class ModelControlKPI extends ModelStarter
     public void quitApplication()
     {
         System.out.println("Received quit application request");
+        System.exit(0);
     }
 
     /** {@inheritDoc} */
