@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.lane.object.trafficlight;
 
+import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
@@ -31,7 +32,31 @@ public abstract class AbstractTrafficLight extends AbstractLaneBasedObject imple
     /** The simulator to schedule events on. */
     private final OTSDEVSSimulatorInterface simulator;
 
+    /** Default elevation of a traffic light (above zero; don't use this for lanes at non-zero elevation). */
+    public static final Length DEFAULT_TRAFFICLIGHT_ELEVATION = new Length(1, LengthUnit.METER);
+
     /**
+     * Construct an AbstractTrafficLight with specified elevation.
+     * @param id traffic light id
+     * @param lane lane where the traffic light is located
+     * @param longitudinalPosition position of the traffic light on the lane, in the design direction
+     * @param simulator the simulator for animation and timed events
+     * @param height Length; the elevation of the traffic light
+     * @throws NetworkException on failure to place the object
+     */
+    public AbstractTrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
+            final OTSDEVSSimulatorInterface simulator, final Length height) throws NetworkException
+    {
+        super(id, lane, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition), height);
+
+        Throw.whenNull(simulator, "Simulator may not be null");
+        this.simulator = simulator;
+
+        this.trafficLightColor = TrafficLightColor.RED;
+    }
+
+    /**
+     * Construct an AbstractTrafficLight at default elevation (use only on roads at elevation 0).
      * @param id traffic light id
      * @param lane lane where the traffic light is located
      * @param longitudinalPosition position of the traffic light on the lane, in the design direction
@@ -41,12 +66,7 @@ public abstract class AbstractTrafficLight extends AbstractLaneBasedObject imple
     public AbstractTrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
             final OTSDEVSSimulatorInterface simulator) throws NetworkException
     {
-        super(id, lane, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition));
-
-        Throw.whenNull(simulator, "Simulator may not be null");
-        this.simulator = simulator;
-
-        this.trafficLightColor = TrafficLightColor.RED;
+        this(id, lane, longitudinalPosition, simulator, DEFAULT_TRAFFICLIGHT_ELEVATION);
     }
 
     /** {@inheritDoc} */
@@ -61,8 +81,8 @@ public abstract class AbstractTrafficLight extends AbstractLaneBasedObject imple
     public final void setTrafficLightColor(final TrafficLightColor trafficLightColor)
     {
         this.trafficLightColor = trafficLightColor;
-        fireTimedEvent(TRAFFICLIGHT_CHANGE_EVENT, new Object[] { getId(), this, trafficLightColor },
-                this.simulator.getSimulatorTime().get());
+        fireTimedEvent(TRAFFICLIGHT_CHANGE_EVENT, new Object[] { getId(), this, trafficLightColor }, this.simulator
+                .getSimulatorTime().get());
     }
 
 }
