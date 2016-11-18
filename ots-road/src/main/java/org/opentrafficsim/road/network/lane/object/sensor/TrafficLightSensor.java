@@ -1,10 +1,13 @@
 package org.opentrafficsim.road.network.lane.object.sensor;
 
+import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.naming.NamingException;
 
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
@@ -70,6 +73,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
     private final GTUDirectionality directionalityB;
 
     /**
+     * Construct a new traffic light sensor.
      * @param id String; id of this sensor
      * @param laneA Lane; the lane of the A detection point of this traffic light sensor
      * @param positionA Length; the position of the A detection point of this traffic light sensor
@@ -472,6 +476,14 @@ class FlankSensor extends AbstractSensor
     {
         super(id, lane, longitudinalPosition, positionType, simulator);
         this.parent = parent;
+        try
+        {
+            new SensorAnimation(this, longitudinalPosition, simulator, Color.BLUE);
+        }
+        catch (RemoteException | NamingException exception)
+        {
+            throw new NetworkException(exception);
+        }
     }
 
     /** {@inheritDoc} */
