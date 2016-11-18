@@ -200,19 +200,6 @@ public class TrafCODDemo
                 {
                     TrafCODDemo.this.testSimulator =
                             new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(1, TimeUnit.HOUR), model);
-                    TrafCODDemo.this.testSimulator.runUpToAndIncluding(new Time(20, TimeUnit.SECOND));
-                    while (TrafCODDemo.this.testSimulator.isRunning())
-                    {
-                        try
-                        {
-                            Thread.sleep(100);
-                        }
-                        catch (InterruptedException exception)
-                        {
-                            exception.printStackTrace();
-                        }
-                    }
-                    TrafCODDemo.this.testSimulator.cleanUp();
                 }
                 catch (SimRuntimeException | NamingException exception)
                 {
@@ -231,6 +218,7 @@ public class TrafCODDemo
         }
         frame.revalidate();
         frame.repaint();
+        TrafCODDemo.this.testSimulator.runUpToAndIncluding(new Time(20, TimeUnit.SECOND));
         System.out.println("Simulation running...");
     }
 
