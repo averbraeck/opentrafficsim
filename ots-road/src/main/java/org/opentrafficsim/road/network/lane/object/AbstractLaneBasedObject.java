@@ -36,9 +36,9 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
 
     /** The position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane. */
     private final Length longitudinalPosition;
-    
+
     /** The DirectedPoint that indicates the location on the lane. */
-    private final DirectedPoint location; 
+    private final DirectedPoint location;
 
     /**
      * Construct a new LanebasedObject with the required fields.
@@ -79,8 +79,8 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
      * @param geometry the geometry of the object, which provides its location and bounds as well
      * @throws NetworkException when the position on the lane is out of bounds
      */
-    public AbstractLaneBasedObject(final String id, final Lane lane, final Length longitudinalPosition,
-            final OTSLine3D geometry) throws NetworkException
+    public AbstractLaneBasedObject(final String id, final Lane lane, final Length longitudinalPosition, final OTSLine3D geometry)
+            throws NetworkException
     {
         this(id, lane, longitudinalPosition, geometry, Length.ZERO);
     }
@@ -98,7 +98,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
     {
         return this.longitudinalPosition;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
