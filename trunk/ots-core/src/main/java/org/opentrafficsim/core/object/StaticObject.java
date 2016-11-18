@@ -51,7 +51,7 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
 
         Throw.whenNull(id, "object id cannot be null");
         Throw.whenNull(geometry, "geometry cannot be null");
-        Throw.whenNull(height, "geometry cannot be null");
+        Throw.whenNull(height, "height cannot be null");
 
         this.id = id;
         this.geometry = geometry;
