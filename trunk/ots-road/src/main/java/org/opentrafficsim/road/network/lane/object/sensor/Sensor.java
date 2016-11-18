@@ -2,6 +2,8 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 
 import java.io.Serializable;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -49,5 +51,8 @@ public interface Sensor extends Serializable, Comparable<Sensor>, LaneBasedObjec
      * Payload: Object[] {String sensorId, Sensor sensor, LaneBasedGTU gtu, RelativePosition.TYPE relativePosition}
      */
     EventType SENSOR_TRIGGER_EVENT = new EventType("SENSOR.TRIGGER");
+
+    /** Default elevation of a sensor; if the lane is not at elevation 0; this value is probably far off. */
+    Length DEFAULT_SENSOR_ELEVATION = new Length(0.1, LengthUnit.METER);
 
 }

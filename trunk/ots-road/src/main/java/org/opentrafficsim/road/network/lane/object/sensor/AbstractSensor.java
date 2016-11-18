@@ -3,6 +3,9 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 import java.util.HashSet;
 import java.util.Set;
 
+import nl.tudelft.simulation.language.Throw;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.immutablecollections.ImmutableHashSet;
 import org.opentrafficsim.base.immutablecollections.ImmutableSet;
@@ -18,9 +21,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
-
-import nl.tudelft.simulation.language.Throw;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -66,15 +66,16 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the sensor.
      * @param simulator OTSDEVSSimulatorInterface; the simulator (needed to generate the animation).
-     * @param geometry the geometry of the object, which provides its location and bounds as well
-     * @param triggeringGTUTypes Tthe GTU types will trigger this particular sensor
+     * @param geometry OTSLine3D; the geometry of the object, which provides its location and bounds as well
+     * @param elevation Length; elevation of the sensor
+     * @param triggeringGTUTypes ImmutableSet&lt;GTUType&gt;; The GTU types will trigger this particular sensor
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
             final RelativePosition.TYPE positionType, final OTSDEVSSimulatorInterface simulator, final OTSLine3D geometry,
-            final ImmutableSet<GTUType> triggeringGTUTypes) throws NetworkException
+            final Length elevation, final ImmutableSet<GTUType> triggeringGTUTypes) throws NetworkException
     {
-        super(id, lane, longitudinalPosition, geometry);
+        super(id, lane, longitudinalPosition, geometry, elevation);
         Throw.when(simulator == null, NullPointerException.class, "simulator is null");
         Throw.when(positionType == null, NullPointerException.class, "positionType is null");
         Throw.when(id == null, NullPointerException.class, "id is null");
@@ -85,7 +86,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     }
 
     /**
-     * Create a sensor on a lane at a position on that lane.
+     * Create a sensor on a lane at a position on that lane at elevation <code>Sensor.DEFAULT_SENSOR_ELEVATION</code>.
      * @param id String; the id of the sensor.
      * @param lane Lane; the lane for which this is a sensor.
      * @param longitudinalPosition Length; the position (between 0.0 and the length of the Lane) of the sensor on the design
@@ -93,7 +94,54 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the sensor.
      * @param simulator OTSDEVSSimulatorInterface; the simulator (needed to generate the animation).
-     * @param geometry the geometry of the object, which provides its location and bounds as well
+     * @param geometry OTSLine3D; the geometry of the object, which provides its location and bounds as well
+     * @param triggeringGTUTypes ImmutableSet&lt;GTUType&gt;; The GTU types will trigger this particular sensor
+     * @throws NetworkException when the position on the lane is out of bounds
+     */
+    public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
+            final RelativePosition.TYPE positionType, final OTSDEVSSimulatorInterface simulator, final OTSLine3D geometry,
+            final ImmutableSet<GTUType> triggeringGTUTypes) throws NetworkException
+    {
+        super(id, lane, longitudinalPosition, geometry, DEFAULT_SENSOR_ELEVATION);
+        Throw.when(simulator == null, NullPointerException.class, "simulator is null");
+        Throw.when(positionType == null, NullPointerException.class, "positionType is null");
+        Throw.when(id == null, NullPointerException.class, "id is null");
+        this.positionType = positionType;
+        this.simulator = simulator;
+        this.triggeringGTUTypes = triggeringGTUTypes;
+        getLane().addSensor(this); // Implements OTS-218
+    }
+
+    /**
+     * Create a sensor on a lane at a position on that lane at specified elevation and triggering an all GTU types.
+     * @param id String; the id of the sensor.
+     * @param lane Lane; the lane for which this is a sensor.
+     * @param longitudinalPosition Length; the position (between 0.0 and the length of the Lane) of the sensor on the design
+     *            line of the lane.
+     * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
+     *            the sensor.
+     * @param simulator OTSDEVSSimulatorInterface; the simulator (needed to generate the animation).
+     * @param geometry OTSLine3D; the geometry of the object, which provides its location and bounds as well
+     * @param elevation Length; elevation of the sensor
+     * @throws NetworkException when the position on the lane is out of bounds
+     */
+    public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
+            final RelativePosition.TYPE positionType, final OTSDEVSSimulatorInterface simulator, final OTSLine3D geometry,
+            final Length elevation) throws NetworkException
+    {
+        this(id, lane, longitudinalPosition, positionType, simulator, geometry, elevation, GTUTYPE_SET_ALL);
+    }
+
+    /**
+     * Create a sensor on a lane at a position on that lane at specified elevation and triggering an all GTU types.
+     * @param id String; the id of the sensor.
+     * @param lane Lane; the lane for which this is a sensor.
+     * @param longitudinalPosition Length; the position (between 0.0 and the length of the Lane) of the sensor on the design
+     *            line of the lane.
+     * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
+     *            the sensor.
+     * @param simulator OTSDEVSSimulatorInterface; the simulator (needed to generate the animation).
+     * @param geometry OTSLine3D; the geometry of the object, which provides its location and bounds as well
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
@@ -147,8 +195,8 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     @Override
     public final void trigger(final LaneBasedGTU gtu)
     {
-        fireTimedEvent(Sensor.SENSOR_TRIGGER_EVENT, new Object[] { getId(), this, gtu, this.positionType },
-                getSimulator().getSimulatorTime());
+        fireTimedEvent(Sensor.SENSOR_TRIGGER_EVENT, new Object[] { getId(), this, gtu, this.positionType }, getSimulator()
+                .getSimulatorTime());
         triggerResponse(gtu);
     }
 
@@ -213,8 +261,8 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
         }
         else if (!this.getLane().equals(other.getLane()))
             return false;
-        if (Double.doubleToLongBits(this.getLongitudinalPosition().si) != Double
-                .doubleToLongBits(other.getLongitudinalPosition().si))
+        if (Double.doubleToLongBits(this.getLongitudinalPosition().si) != Double.doubleToLongBits(other
+                .getLongitudinalPosition().si))
             return false;
         if (this.positionType == null)
         {
