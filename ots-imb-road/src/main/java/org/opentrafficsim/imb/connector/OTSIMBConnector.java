@@ -1,5 +1,6 @@
 package org.opentrafficsim.imb.connector;
 
+import nl.tno.imb.TConnection;
 import nl.tudelft.simulation.language.Throw;
 
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
@@ -38,6 +39,15 @@ public class OTSIMBConnector extends IMBConnector
             final String federation) throws IMBException
     {
         super(host, port, modelName, modelId, federation);
+    }
+    
+    /**
+     * @param connection
+     * @throws IMBException
+     */
+    public OTSIMBConnector(TConnection connection) throws IMBException
+    {
+        super(connection);
     }
 
     /**

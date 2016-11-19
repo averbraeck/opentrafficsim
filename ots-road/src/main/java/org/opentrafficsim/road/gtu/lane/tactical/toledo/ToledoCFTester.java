@@ -57,7 +57,7 @@ public class ToledoCFTester
             Acceleration a = cf.followingAcceleration(bc, speed, desiredSpeed, desiredHeadway, leaders);
             System.out.println("t=" + t + ", v=" + speed + ", s=" + s + ", a=" + a);
 
-            a = Acceleration.max(a, speed.divideBy(dt).multiplyBy(-1.0));
+            a = Acceleration.max(a, speed.divideBy(dt).neg());
             t = t.plus(dt);
             x = new Length(x.si + speed.si * dt.si + .5 * a.si * dt.si * dt.si, LengthUnit.SI);
             speed = new Speed(speed.si + a.si * dt.si, SpeedUnit.SI);

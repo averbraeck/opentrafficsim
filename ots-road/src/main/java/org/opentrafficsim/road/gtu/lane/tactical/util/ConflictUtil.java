@@ -391,7 +391,7 @@ public final class ConflictUtil
 
         // Get data independent of conflicting vehicle
         // parameters
-        Acceleration b = behavioralCharacteristics.getParameter(ParameterTypes.B).multiplyBy(-1.0);
+        Acceleration b = behavioralCharacteristics.getParameter(ParameterTypes.B).neg();
         double f = behavioralCharacteristics.getParameter(TIME_FACTOR);
         Duration gap = behavioralCharacteristics.getParameter(MIN_GAP);
         // time till conflict is cleared

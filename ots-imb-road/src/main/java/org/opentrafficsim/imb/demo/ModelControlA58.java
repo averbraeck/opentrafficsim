@@ -7,19 +7,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.naming.NamingException;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.CompoundProperty;
-import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -47,117 +42,182 @@ import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
+import nl.tno.imb.TConnection;
+import nl.tno.imb.mc.ModelParameters;
+import nl.tno.imb.mc.ModelStarter;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.io.URLResource;
 
 /**
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
- * initial version Oct 17, 2014 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version 18 nov. 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class A58IMB extends AbstractWrappableAnimation
+public class ModelControlA58 extends ModelStarter
 {
-    /** */
-    private static final long serialVersionUID = 20161007L;
 
-    /** The model. */
-    private A58Model model;
-
+    /** Amount of ACC. */
+    private double penetrationRate;
+    
     /**
-     * Main program.
-     * @param args String[]; the command line arguments (not used)
-     * @throws SimRuntimeException should never happen
+     * @param args
+     * @param providedModelName
+     * @param providedModelId
+     * @throws IMBException
      */
-    public static void main(final String[] args) throws SimRuntimeException
+    public ModelControlA58(String[] args, String providedModelName, int providedModelId) throws IMBException
     {
-        SwingUtilities.invokeLater(new Runnable()
+        super(args, providedModelName, providedModelId);
+    }
+    
+    /**
+     * Tester.
+     * @param args empty
+     * @throws IMBException
+     */
+    public static void main(String[] args) throws IMBException
+    {
+        ModelControlA58 modelControlA58 = new ModelControlA58(new String[0], "A58 model", 1248);
+        modelControlA58.startModel(null, modelControlA58.connection); // null will use default penetration rate
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void startModel(ModelParameters parameters, TConnection imbConnection)
+    {
+        this.penetrationRate = 0.1;
+        if (parameters != null && parameters.parameterExists("penetration"))
         {
-            @Override
-            public void run()
+            try
             {
-                try
-                {
-                    A58IMB n201Model = new A58IMB();
-                    // 1 hour simulation run for testing
-                    n201Model.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
-                            new Duration(10.0, TimeUnit.HOUR), new ArrayList<Property<?>>(), null, true);
-                }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
-                {
-                    exception.printStackTrace();
-                }
+                this.penetrationRate = ((double) parameters.getParameterValue("penetration")) / 100;
             }
-        });
+            catch (IMBException exception)
+            {
+                // should not happen, we check for parameter existence
+                exception.printStackTrace();
+            }
+        }
+        else
+        {
+            System.out.println("No penetration parameter found, using default value of " + this.penetrationRate);
+        }
+        
+        A58Animation a58Animation = new A58Animation(imbConnection);
+        try
+        {
+            a58Animation.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(1, TimeUnit.HOUR), null, null, true);
+        }
+        catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+        {
+            exception.printStackTrace();
+        }
+        
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String shortName()
+    public void stopModel()
     {
-        return "Model A58";
+        //
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String description()
+    public void quitApplication()
     {
-        return "Model A58 - IMB";
+        System.exit(0);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void stopTimersThreads()
+    public void parameterRequest(ModelParameters parameters)
     {
-        super.stopTimersThreads();
+        //
     }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final JPanel makeCharts(final SimpleSimulatorInterface simulator)
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer)
-    {
-        System.out.println("A58IMB.makeModel called");
-        this.model = new A58Model(getSavedUserModifiedProperties(), colorer, new OTSNetwork("A58 network"));
-        return this.model;
-    }
-
+ 
     /**
-     * @return the saved user properties for a next run
+     * @return penetrationRate
      */
-    private List<Property<?>> getSavedUserModifiedProperties()
+    public double getPenetrationRate()
     {
-        return this.savedUserModifiedProperties;
+        return this.penetrationRate;
     }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final Double makeAnimationRectangle()
-    {
-        return new Rectangle2D.Double(150000, 385000, 5500, 5000);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String toString()
-    {
-        return "A58 network - IMB []";
-    }
-
+    
     /**
-     * Model to test the XML parser.
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 18 nov. 2016 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    private class A58Animation extends AbstractWrappableAnimation
+    {
+
+        /** */
+        private static final long serialVersionUID = 20161118L;
+        
+        /**
+         * 
+         */
+        TConnection imbConnection;
+        
+        /**
+         * @param imbConnection IMB connection
+         */
+        public A58Animation(TConnection imbConnection)
+        {
+            this.imbConnection = imbConnection;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String shortName()
+        {
+            return "Model A58";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String description()
+        {
+            return "Model A58 - IMB";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected JPanel makeCharts(SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
+        {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected OTSModelInterface makeModel(GTUColorer colorer) throws OTSSimulationException
+        {
+            return new A58Model(this.imbConnection, colorer, new OTSNetwork("A58 network"));
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected Double makeAnimationRectangle()
+        {
+            return new Rectangle2D.Double(150000, 385000, 5500, 5000);
+        }
+        
+    }
+    
+    /**
      * <p>
      * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
      * All rights reserved. BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim
@@ -176,8 +236,11 @@ public class A58IMB extends AbstractWrappableAnimation
         /** The simulator. */
         private OTSDEVSSimulatorInterface simulator;
 
-        /** User settable properties. */
-        private List<Property<?>> modelProperties = null;
+        /** IMB connection. */
+        private TConnection imbConnection;
+        
+        /** Colorer for GTU's. */
+        private GTUColorer gtuColorer;
 
         /** the network as created by the AbstractWrappableIMBAnimation. */
         private final OTSNetwork network;
@@ -186,13 +249,14 @@ public class A58IMB extends AbstractWrappableAnimation
         OTSIMBConnector imbConnector;
 
         /**
-         * @param modelProperties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
+         * @param imbConnection 
          * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
          * @param network Network; the network
          */
-        A58Model(final List<Property<?>> modelProperties, final GTUColorer gtuColorer, final OTSNetwork network)
+        A58Model(TConnection imbConnection, final GTUColorer gtuColorer, final OTSNetwork network)
         {
-            this.modelProperties = modelProperties;
+            this.imbConnection = imbConnection;
+            this.gtuColorer = gtuColorer;
             this.network = network;
         }
 
@@ -201,22 +265,11 @@ public class A58IMB extends AbstractWrappableAnimation
         public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
                 throws SimRuntimeException
         {
-            System.out.println("A58IMB: constructModel called; Connecting to IMB");
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
             SimpleAnimator imbAnimator = (SimpleAnimator) pSimulator;
             try
             {
-                CompoundProperty imbSettings = null;
-                for (Property<?> property : this.modelProperties)
-                {
-                    if (property.getKey().equals(OTSIMBConnector.PROPERTY_KEY))
-                    {
-                        imbSettings = (CompoundProperty) property;
-                    }
-                }
-                System.out.println("link count " + this.network.getLinkMap().size());
-                Throw.whenNull(imbSettings, "IMB Settings not found in properties");
-                this.imbConnector = OTSIMBConnector.create(imbSettings, "OTS");
+                this.imbConnector = new OTSIMBConnector(this.imbConnection);
                 new NetworkTransceiver(this.imbConnector, imbAnimator, this.network);
                 new NodeTransceiver(this.imbConnector, imbAnimator, this.network);
                 new LinkGTUTransceiver(this.imbConnector, imbAnimator, this.network);
@@ -236,34 +289,20 @@ public class A58IMB extends AbstractWrappableAnimation
             try
             {
                 nlp.build(stream, this.network);
-                // ODMatrixTrips matrix = A58ODfactory.get(network);
-                // A58ODfactory.makeGeneratorsFromOD(network, matrix, this.simulator);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
                     | OTSGeometryException exception)
             {
                 exception.printStackTrace();
             }
-            // TODO
-            // Query query = N201ODfactory.getQuery(this.network, new Sampler(this.simulator));
-            // try
-            // {
-            // new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network, query,
-            // new Duration(30, TimeUnit.SECOND));
-            // }
-            // catch (IMBException exception)
-            // {
-            // throw new SimRuntimeException(exception);
-            // }
 
-            // TODO
-            URL gisURL = URLResource.getResource("/A58/map.xml");
-            System.err.println("GIS-map file: " + gisURL.toString());
-            CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
-            new GisRenderable2D(this.simulator, gisURL, rdto0);
-            // URL nwbURL = URLResource.getResource("/A58/nwb.xml");
-            // System.err.println("NWB-map file: " + nwbURL.toString());
-            // new GisRenderable2D(this.simulator, nwbURL);
+//            URL gisURL = URLResource.getResource("/A58/map.xml");
+//            System.err.println("GIS-map file: " + gisURL.toString());
+//            CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
+//            new GisRenderable2D(this.simulator, gisURL, rdto0);
+            
+            A58OdUtil.createDemand(this.network, this.gtuColorer, this.simulator, ModelControlA58.this.getPenetrationRate());
+            
         }
 
         /** {@inheritDoc} */
@@ -337,5 +376,5 @@ public class A58IMB extends AbstractWrappableAnimation
             return "CoordinateTransformRD [dx=" + this.dx + ", dy=" + this.dy + "]";
         }
     }
-
+    
 }

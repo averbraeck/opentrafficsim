@@ -5,6 +5,8 @@ import java.io.Serializable;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactory;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactoryDefault;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -25,8 +27,8 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class LaneBasedStrategicalRoutePlannerFactory implements
-    LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner>, Serializable
+public class LaneBasedStrategicalRoutePlannerFactory
+        implements LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner>, Serializable
 {
 
     /** */
@@ -41,15 +43,33 @@ public class LaneBasedStrategicalRoutePlannerFactory implements
     /** Factory for tactical planners. */
     private final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory;
 
+    /** Characteristics factory. */
+    private final BehavioralCharacteristicsFactory behavioralCharacteristicsFactory;
+
     /**
      * Constructor with factory for tactical planners.
      * @param tacticalPlannerFactory factory for tactical planners
      */
     public LaneBasedStrategicalRoutePlannerFactory(
-        final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory)
+            final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory)
     {
         this.tacticalPlannerFactory = tacticalPlannerFactory;
         this.routeGenerator = null;
+        this.behavioralCharacteristicsFactory = new BehavioralCharacteristicsFactoryDefault();
+    }
+
+    /**
+     * Constructor with factory for tactical planners.
+     * @param tacticalPlannerFactory factory for tactical planners
+     * @param behavioralCharacteristicsFactory factory for behavioral characteristics
+     */
+    public LaneBasedStrategicalRoutePlannerFactory(
+            final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,
+            final BehavioralCharacteristicsFactory behavioralCharacteristicsFactory)
+    {
+        this.tacticalPlannerFactory = tacticalPlannerFactory;
+        this.routeGenerator = null;
+        this.behavioralCharacteristicsFactory = behavioralCharacteristicsFactory;
     }
 
     /**
@@ -58,11 +78,27 @@ public class LaneBasedStrategicalRoutePlannerFactory implements
      * @param routeGenerator route generator
      */
     public LaneBasedStrategicalRoutePlannerFactory(
-        final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,
-        final RouteGenerator routeGenerator)
+            final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,
+            final RouteGenerator routeGenerator)
     {
         this.tacticalPlannerFactory = tacticalPlannerFactory;
         this.routeGenerator = routeGenerator;
+        this.behavioralCharacteristicsFactory = new BehavioralCharacteristicsFactoryDefault();
+    }
+
+    /**
+     * Constructor with factory for tactical planners and route generator.
+     * @param tacticalPlannerFactory factory for tactical planners
+     * @param routeGenerator route generator
+     * @param behavioralCharacteristicsFactory factory for behavioral characteristics
+     */
+    public LaneBasedStrategicalRoutePlannerFactory(
+            final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,
+            final RouteGenerator routeGenerator, final BehavioralCharacteristicsFactory behavioralCharacteristicsFactory)
+    {
+        this.tacticalPlannerFactory = tacticalPlannerFactory;
+        this.routeGenerator = routeGenerator;
+        this.behavioralCharacteristicsFactory = behavioralCharacteristicsFactory;
     }
 
     /** {@inheritDoc} */
@@ -85,7 +121,8 @@ public class LaneBasedStrategicalRoutePlannerFactory implements
     {
         if (this.behavioralCharacteristics == null)
         {
-            this.behavioralCharacteristics = getDefaultBehavioralCharacteristics();
+            this.behavioralCharacteristics = this.getDefaultBehavioralCharacteristics();
+            this.behavioralCharacteristicsFactory.setValues(this.behavioralCharacteristics, gtu.getGTUType());
         }
         Route route = null;
         if (this.routeGenerator != null)
@@ -99,10 +136,9 @@ public class LaneBasedStrategicalRoutePlannerFactory implements
                 throw new GTUException(exception);
             }
         }
-        LaneBasedStrategicalRoutePlanner strategicalPlanner =
-            new LaneBasedStrategicalRoutePlanner(this.behavioralCharacteristics, this.tacticalPlannerFactory.create(gtu),
-                route, gtu);
-        
+        LaneBasedStrategicalRoutePlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
+                this.behavioralCharacteristics, this.tacticalPlannerFactory.create(gtu), route, gtu);
+
         this.behavioralCharacteristics = null;
         return strategicalPlanner;
     }

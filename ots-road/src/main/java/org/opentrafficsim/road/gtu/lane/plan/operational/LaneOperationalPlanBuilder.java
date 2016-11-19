@@ -298,7 +298,7 @@ public final class LaneOperationalPlanBuilder
         if (startSpeed.plus(acceleration.multiplyBy(timeStep)).lt(Speed.ZERO))
         {
             // will reach stand-still within time step
-            Duration brakingTime = startSpeed.divideBy(acceleration.multiplyBy(-1.0));
+            Duration brakingTime = startSpeed.divideBy(acceleration.neg());
             segmentList.add(new OperationalPlan.AccelerationSegment(brakingTime, acceleration));
             segmentList.add(new OperationalPlan.SpeedSegment(timeStep.minus(brakingTime)));
             distance = new Length(startSpeed.si * brakingTime.si + .5 * acceleration.si * brakingTime.si * brakingTime.si,
@@ -404,7 +404,7 @@ public final class LaneOperationalPlanBuilder
         ArrayList<OperationalPlan.Segment> segmentList = new ArrayList<>();
         if (endSpeed.lt(Speed.ZERO))
         {
-            Duration brakingTime = startSpeed.divideBy(acceleration.multiplyBy(-1.0));
+            Duration brakingTime = startSpeed.divideBy(acceleration.neg());
             if (brakingTime.si > 0.0)
             {
                 segmentList.add(new OperationalPlan.AccelerationSegment(brakingTime, acceleration));
@@ -741,7 +741,7 @@ public final class LaneOperationalPlanBuilder
     
         // acceleration segments
         List<Segment> segmentList = new ArrayList<>();
-        Acceleration b = startAcceleration.multiplyBy(-1.0);
+        Acceleration b = startAcceleration.neg();
         if (startSpeed.lt(b.multiplyBy(duration)))
         {
             // will reach zero speed within duration

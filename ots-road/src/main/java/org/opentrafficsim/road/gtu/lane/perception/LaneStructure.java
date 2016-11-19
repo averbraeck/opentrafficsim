@@ -274,7 +274,7 @@ public class LaneStructure implements Serializable
         if (record.getDirection().isPlus())
         {
             minimumPosition = Length.ZERO;
-            maximumPosition = record.getStartDistance().multiplyBy(-1.0).minus(ds);
+            maximumPosition = record.getStartDistance().neg().minus(ds);
         }
         else
         {
@@ -287,7 +287,7 @@ public class LaneStructure implements Serializable
         {
             if (clazz.isAssignableFrom(object.getClass()))
             {
-                distance = record.getDistanceToPosition(object.getLongitudinalPosition()).multiplyBy(-1.0).minus(ds);
+                distance = record.getDistanceToPosition(object.getLongitudinalPosition()).neg().minus(ds);
                 // unchecked, but the above isAssignableFrom assures correctness
                 set.add(new Entry<>(distance, (T) object));
             }
@@ -315,7 +315,7 @@ public class LaneStructure implements Serializable
             {
                 if (clazz.isAssignableFrom(object.getClass()))
                 {
-                    distance = prev.getDistanceToPosition(object.getLongitudinalPosition()).multiplyBy(-1.0).minus(ds);
+                    distance = prev.getDistanceToPosition(object.getLongitudinalPosition()).neg().minus(ds);
                     // unchecked, but the above isAssignableFrom assures correctness
                     set.add(new Entry<>(distance, (T) object));
                 }
