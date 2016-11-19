@@ -198,7 +198,7 @@ public class NeighborsPerception extends LaneBasedAbstractPerceptionCategory
         double fraction = getGtu().fractionalPosition(getPerception().getLaneStructure().getRootLSR().getLane(),
                 getGtu().getRelativePositions().get(egoRelativePosition));
         Length pos = record.getLane().getLength().multiplyBy(fraction);
-        currentSet.put(record, pos.multiplyBy(-1.0)); // by later adding lane length, we get distance to start of next lane
+        currentSet.put(record, pos.neg()); // by later adding lane length, we get distance to start of next lane
         // move downstream over branches as long as no vehicles are found
         while (!currentSet.isEmpty())
         {
@@ -215,7 +215,7 @@ public class NeighborsPerception extends LaneBasedAbstractPerceptionCategory
                  *                                             _ _ _ ___________|_______|__ _ _ _ 
                  *                                                     (--------) negative distance
                  */
-                LaneBasedGTU down = record.getLane().getGtuAhead(currentSet.get(record).multiplyBy(-1.0), record.getDirection(),
+                LaneBasedGTU down = record.getLane().getGtuAhead(currentSet.get(record).neg(), record.getDirection(),
                         otherRelativePosition, getTimestamp());
                 if (down != null)
                 {
@@ -325,7 +325,7 @@ public class NeighborsPerception extends LaneBasedAbstractPerceptionCategory
             for (LaneStructureRecord record : currentSet)
             {
                 int first;
-                Length loc = record.getStartDistance().multiplyBy(-1.0).plus(ds);
+                Length loc = record.getStartDistance().neg().plus(ds);
                 if (lane.getLateralDirectionality().isLeft())
                 {
                     loc = record.getDirection().isPlus() ? loc.minus(MARGIN) : loc.plus(MARGIN);
@@ -398,7 +398,7 @@ public class NeighborsPerception extends LaneBasedAbstractPerceptionCategory
             for (LaneStructureRecord record : currentSet)
             {
                 int first;
-                Length loc = record.getStartDistance().multiplyBy(-1.0).plus(dsFront);
+                Length loc = record.getStartDistance().neg().plus(dsFront);
                 if (lane.getLateralDirectionality().isLeft())
                 {
                     loc = record.getDirection().isPlus() ? loc.plus(MARGIN) : loc.minus(MARGIN);
@@ -421,7 +421,7 @@ public class NeighborsPerception extends LaneBasedAbstractPerceptionCategory
                 for (int i = first; i >= 0; i--)
                 {
                     LaneBasedGTU gtu = record.getLane().getGtuList().get(i);
-                    Length distance = record.getStartDistance().multiplyBy(-1.0)
+                    Length distance = record.getStartDistance().neg()
                             .minus(gtu.position(record.getLane(), gtu.getFront())).plus(dsRear);
                     // only within lookback
                     if (distance.le(lookback))
@@ -874,7 +874,7 @@ public class NeighborsPerception extends LaneBasedAbstractPerceptionCategory
         if (foundHeadway instanceof AbstractHeadwayGTU)
         {
             return new HeadwayGTUSimple(foundHeadway.getId(), ((AbstractHeadwayGTU) foundHeadway).getGtuType(),
-                    foundHeadway.getDistance().multiplyBy(-1.0), foundHeadway.getLength(), foundHeadway.getSpeed(), null);
+                    foundHeadway.getDistance().neg(), foundHeadway.getLength(), foundHeadway.getSpeed(), null);
         }
         return null;
     }

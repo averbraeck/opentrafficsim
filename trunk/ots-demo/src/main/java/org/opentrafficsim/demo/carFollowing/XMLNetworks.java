@@ -46,6 +46,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
@@ -679,7 +680,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             this.simulator.scheduleEventAbs(new Time(0.999, SECOND), this, this, "drawGraphs", null);
         }
         catch (NamingException | NetworkException | GTUException | OTSGeometryException | ProbabilityException
-                | PropertyException exception1)
+                | PropertyException | ParameterException exception1)
         {
             exception1.printStackTrace();
         }
@@ -692,8 +693,9 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
      * @throws SimRuntimeException on ???
      * @throws GTUException
      * @throws ProbabilityException
+     * @throws ParameterException 
      */
-    private Lane[] setupGenerator(final Lane[] lanes) throws SimRuntimeException, GTUException, ProbabilityException
+    private Lane[] setupGenerator(final Lane[] lanes) throws SimRuntimeException, GTUException, ProbabilityException, ParameterException
     {
         for (Lane lane : lanes)
         {
@@ -713,8 +715,9 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
      * @throws GTUException
      * @throws SimRuntimeException
      * @throws ProbabilityException
+     * @throws ParameterException 
      */
-    private LaneBasedGTUGenerator makeGenerator(final Lane lane) throws GTUException, SimRuntimeException, ProbabilityException
+    private LaneBasedGTUGenerator makeGenerator(final Lane lane) throws GTUException, SimRuntimeException, ProbabilityException, ParameterException
     {
         StreamInterface stream = new MersenneTwister(1234); // Use a fixed seed for the demos
         Distribution<LaneBasedTemplateGTUType> distribution = new Distribution<>(stream);

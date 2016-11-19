@@ -90,7 +90,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         this.relativePositions.put(RelativePosition.FRONT,
                 new RelativePosition(dx2, Length.ZERO, Length.ZERO, RelativePosition.FRONT));
         this.relativePositions.put(RelativePosition.REAR,
-                new RelativePosition(dx2.multiplyBy(-1.0), Length.ZERO, Length.ZERO, RelativePosition.REAR));
+                new RelativePosition(dx2.neg(), Length.ZERO, Length.ZERO, RelativePosition.REAR));
         this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
         this.relativePositions.put(RelativePosition.CENTER,
                 new RelativePosition(Length.ZERO, Length.ZERO, Length.ZERO, RelativePosition.CENTER));

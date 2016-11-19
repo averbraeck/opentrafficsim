@@ -124,7 +124,7 @@ public final class TrafficLightUtil
                 a = Acceleration.max(a, aConstant);
             }
             // return a if a > -b
-            if (a.gt(behavioralCharacteristics.getParameter(B_YELLOW).multiplyBy(-1.0)))
+            if (a.gt(behavioralCharacteristics.getParameter(B_YELLOW).neg()))
             {
                 return a;
             }

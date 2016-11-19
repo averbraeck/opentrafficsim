@@ -5,6 +5,8 @@ import java.io.Serializable;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -33,7 +35,8 @@ public abstract class AbstractLaneBasedStrategicalPlanner implements LaneBasedSt
     public AbstractLaneBasedStrategicalPlanner(final BehavioralCharacteristics behavioralCharacteristics,
         final LaneBasedGTU gtu)
     {
-        super();
+        Throw.whenNull(behavioralCharacteristics, "Behavioral characteristics may not be null.");
+        Throw.whenNull(gtu, "GTU may not be null.");
         this.behavioralCharacteristics = behavioralCharacteristics;
         this.gtu = gtu;
     }

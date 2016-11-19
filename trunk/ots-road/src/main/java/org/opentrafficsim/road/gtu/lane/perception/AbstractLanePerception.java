@@ -91,8 +91,8 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
             // structure length upstream of merge on link not on route
             Length upMerge = Length.max(up, downSplit);
             // negative values for upstream
-            up = up.multiplyBy(-1.0);
-            upMerge = upMerge.multiplyBy(-1.0);
+            up = up.neg();
+            upMerge = upMerge.neg();
             // Create Lane Structure
             DirectedLanePosition dlp;
             try

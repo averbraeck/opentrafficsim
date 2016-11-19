@@ -21,7 +21,7 @@ public interface LaneBasedTacticalPlannerFactory<T extends LaneBasedTacticalPlan
 {
 
     /**
-     * Returns a set of behavioral characteristics with default values for the next tactical planner that will be generated.
+     * Returns a new set of behavioral characteristics with default values for the next tactical planner that will be generated.
      * @return set of behavioral characteristics with default values for the next tactical planner that will be generated
      */
     BehavioralCharacteristics getDefaultBehavioralCharacteristics();

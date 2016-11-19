@@ -913,11 +913,11 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
         if (foundHeadway instanceof AbstractHeadwayGTU)
         {
             return new HeadwayGTUSimple(foundHeadway.getId(), ((AbstractHeadwayGTU) foundHeadway).getGtuType(),
-                    foundHeadway.getDistance().multiplyBy(-1.0), foundHeadway.getLength(), foundHeadway.getSpeed(), null);
+                    foundHeadway.getDistance().neg(), foundHeadway.getLength(), foundHeadway.getSpeed(), null);
         }
         if (foundHeadway instanceof HeadwayDistance)
         {
-            return new HeadwayDistance(foundHeadway.getDistance().multiplyBy(-1.0));
+            return new HeadwayDistance(foundHeadway.getDistance().neg());
         }
         // TODO allow observation of other objects as well.
         throw new GTUException("backwardHeadway not implemented yet for other object types than GTU");
@@ -1125,12 +1125,12 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
                 if (!found)
                 {
                     result.add(new HeadwayGTUSimple(follower.getId(), ((AbstractHeadwayGTU) follower).getGtuType(),
-                            follower.getDistance().multiplyBy(-1.0), follower.getLength(), follower.getSpeed(), null));
+                            follower.getDistance().neg(), follower.getLength(), follower.getSpeed(), null));
                 }
             }
             else if (follower instanceof HeadwayDistance) // always add for potential lane drop
             {
-                result.add(new HeadwayDistance(follower.getDistance().multiplyBy(-1.0)));
+                result.add(new HeadwayDistance(follower.getDistance().neg()));
             }
             else
             {
