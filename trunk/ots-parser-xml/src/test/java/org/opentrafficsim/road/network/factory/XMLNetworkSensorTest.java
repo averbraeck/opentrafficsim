@@ -179,7 +179,7 @@ public class XMLNetworkSensorTest implements UNITS
          * @param positionType the type of trigger (REAR, FRONT, etc.)
          * @param id the sensor id
          * @param simulator the simulator
-         * @throws NetworkException
+         * @throws NetworkException when the position on the lane is out of bounds
          */
         public ReportingSensor(final String id, final Lane lane, final Length longitudinalPosition, final TYPE positionType,
                 final OTSDEVSSimulatorInterface simulator) throws NetworkException

@@ -849,7 +849,8 @@ class RoadTag implements Serializable
     /**
      * @param roadTag the road tag
      * @param openDriveNetworkLaneParser the parser
-     * @throws NetworkException 
+     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
+     *             or the end node of the link are not registered in the network.
      */
     public static void buildLink(RoadTag roadTag, OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws NetworkException
     {

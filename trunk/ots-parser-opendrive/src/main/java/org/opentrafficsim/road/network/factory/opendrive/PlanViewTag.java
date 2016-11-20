@@ -43,7 +43,7 @@ class PlanViewTag implements Serializable
      * @param roadTag the RoadTag to which this element belongs
      * @throws SAXException when parsing of the tag fails
      * @throws OTSGeometryException when parsing of the tag fails
-     * @throws NetworkException
+     * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parsePlanView(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final RoadTag roadTag)
@@ -111,9 +111,9 @@ class PlanViewTag implements Serializable
     }
 
     /**
-     * @param geometryTag
-     * @param elevationTags
-     * @return elevation
+     * @param geometryTag the geometry tag
+     * @param elevationTags the elevations
+     * @return elevation the height
      */
     private static Length assignHeight(GeometryTag geometryTag, NavigableMap<Double, ElevationTag> elevationTags)
     {
@@ -138,11 +138,11 @@ class PlanViewTag implements Serializable
     }
 
     /**
-     * @param parser
-     * @param planViewTag
-     * @param geometryTag
-     * @param geometryCount
-     * @throws OTSGeometryException
+     * @param parser the parser
+     * @param planViewTag the plan view tag
+     * @param geometryTag the geometry tag
+     * @param geometryCount counter
+     * @throws OTSGeometryException if geometry is invalid
      */
     private static void interpolateSpiral(OpenDriveNetworkLaneParser parser, PlanViewTag planViewTag, GeometryTag geometryTag,
             int geometryCount) throws OTSGeometryException
@@ -179,11 +179,11 @@ class PlanViewTag implements Serializable
     }
 
     /**
-     * @param planViewTag
-     * @param geometryTag
-     * @param geometryCount
-     * @param roadTag
-     * @throws OTSGeometryException
+     * @param planViewTag the plan view tag
+     * @param geometryTag the geometry tag
+     * @param geometryCount counter
+     * @param roadTag the road tag
+     * @throws OTSGeometryException in case geometry is invalid
      */
     private static void interpolateArc(PlanViewTag planViewTag, GeometryTag geometryTag, int geometryCount, RoadTag roadTag)
             throws OTSGeometryException
@@ -217,13 +217,13 @@ class PlanViewTag implements Serializable
     }
 
     /**
-     * @param pFrom
-     * @param pTo
-     * @param pRadius
-     * @param pMinDistance
-     * @param shortest
-     * @param side
-     * @return list
+     * @param pFrom start point
+     * @param pTo end point
+     * @param pRadius radius
+     * @param pMinDistance minimal distance
+     * @param shortest shortest or longest curve
+     * @param side left or right
+     * @return list of points
      */
     private static List<OTSPoint3D> generateCurve(OTSPoint3D pFrom, OTSPoint3D pTo, double pRadius, double pMinDistance,
             boolean shortest, boolean side)

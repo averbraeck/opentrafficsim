@@ -124,7 +124,7 @@ class GeometryTag implements Serializable
      * @param network the network
      * @param geometryTag the tag with the info for the node.
      * @return a constructed node
-     * @throws NetworkException 
+     * @throws NetworkException if node already exists in the network, or if name of the node is not unique. 
      */
     static OTSNode makeOTSNode(final Network network, final GeometryTag geometryTag) throws NetworkException
     {

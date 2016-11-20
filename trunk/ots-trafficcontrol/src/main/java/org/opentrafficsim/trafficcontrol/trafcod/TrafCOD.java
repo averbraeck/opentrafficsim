@@ -2015,7 +2015,7 @@ class Variable implements EventListenerInterface
     /**
      * Retrieve the start value of this timer in units of 0.1 seconds (1 second is represented by the value 10).
      * @return int; the timerMax10 value
-     * @throws TrafficControlException
+     * @throws TrafficControlException when this class is not a Timer
      */
     public int getTimerMax() throws TrafficControlException
     {

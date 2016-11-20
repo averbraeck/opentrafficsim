@@ -292,7 +292,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);
 
         // No lane change. Continue on current lane.
-        AccelerationStep accelerationStep = mostLimitingHeadway(lanePathInfo, simplePerception.getForwardHeadwayGTU(),
+        AccelerationStep accelerationStep = mostLimitingAccelerationStep(lanePathInfo, simplePerception.getForwardHeadwayGTU(),
                 simplePerception.getForwardHeadwayObject());
 
         // see if we have to continue standing still. In that case, generate a stand still plan
@@ -453,9 +453,9 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     }
 
     /**
-     * Calculate which Headway in front of us is most limiting. There could, e.g. be a GTU in front of us, a speed sign in front
-     * of us, and a traffic light in front of the GTU and speed sign. This method will return the acceleration based on the
-     * headway that limits us most.<br>
+     * Calculate which Headway in front of us is leading to the most limiting acceleration step (i.e. to the lowest or most
+     * negative acceleration). There could, e.g. be a GTU in front of us, a speed sign in front of us, and a traffic light in
+     * front of the GTU and speed sign. This method will return the acceleration based on the headway that limits us most.<br>
      * The method can e.g., be called with:
      * <code>mostLimitingHeadway(simplePerception.getForwardHeadwayGTU(), simplePerception.getForwardHeadwayObject());</code>
      * @param lanePathInfo the lane path info that was calculated for this GTU.
@@ -466,7 +466,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
      * @throws GTUException in case the AccelerationStep cannot be calculated
      * @throws NetworkException in case the headways to GTUs or objects cannot be calculated
      */
-    private AccelerationStep mostLimitingHeadway(final LanePathInfo lanePathInfo, final Headway... headways)
+    private AccelerationStep mostLimitingAccelerationStep(final LanePathInfo lanePathInfo, final Headway... headways)
             throws OperationalPlanException, ParameterException, GTUException, NetworkException
     {
         DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);

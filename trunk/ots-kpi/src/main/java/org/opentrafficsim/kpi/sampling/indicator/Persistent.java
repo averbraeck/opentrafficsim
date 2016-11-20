@@ -78,8 +78,8 @@ public final class Persistent<U extends Unit<U>, T extends AbstractDoubleScalarR
     
     /**
      * Adds a value with given weight to the persistent.
-     * @param value
-     * @param weight
+     * @param value the value
+     * @param weight the weight
      */
     public void addValue(T value, W weight)
     {

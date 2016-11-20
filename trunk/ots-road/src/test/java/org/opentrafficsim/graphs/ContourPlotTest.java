@@ -132,11 +132,11 @@ public class ContourPlotTest implements UNITS
 
     /**
      * Debugging method.
-     * @param cp
-     * @param fromX
-     * @param toX
-     * @param fromY
-     * @param toY
+     * @param cp cp
+     * @param fromX fromX
+     * @param toX toX
+     * @param fromY fromY
+     * @param toY toY
      */
     static void printMatrix(ContourPlot cp, int fromX, int toX, int fromY, int toY)
     {

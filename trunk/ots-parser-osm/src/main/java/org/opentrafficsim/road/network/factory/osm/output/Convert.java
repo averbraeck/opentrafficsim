@@ -114,7 +114,8 @@ public final class Convert
      * @param link OSM Link to be converted
      * @return OTS Link
      * @throws OTSGeometryException on failure
-     * @throws NetworkException 
+     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
+     *             or the end node of the link are not registered in the network.
      */
     public CrossSectionLink convertLink(final Network network, final OSMLink link) throws OTSGeometryException, NetworkException
     {
@@ -142,18 +143,17 @@ public final class Convert
         OTSLine3D designLine = new OTSLine3D(coordinates);
         // XXX How to figure out whether to keep left, right or keep lane?
         // XXX How to figure out if this is a lane in one or two directions? For now, two is assumed...
-        result =
-                new CrossSectionLink(network, link.getId(), start, end, LinkType.ALL, designLine, LongitudinalDirectionality.DIR_BOTH,
-                        LaneKeepingPolicy.KEEP_RIGHT);
+        result = new CrossSectionLink(network, link.getId(), start, end, LinkType.ALL, designLine,
+                LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_RIGHT);
         return result;
     }
 
     /**
      * This method converts an OSM node to an OTS node.
-     * @param network 
+     * @param network the network
      * @param node OSM Node to be converted
      * @return OTS Node
-     * @throws NetworkException 
+     * @throws NetworkException if node already exists in the network, or if name of the node is not unique
      */
     public OTSNode convertNode(final Network network, final OSMNode node) throws NetworkException
     {
@@ -251,15 +251,14 @@ public final class Convert
         }
         for (OSMTag tag : osmLink.getTags())
         {
-            if (tag.getKey().equals("highway")
-                    && (tag.getValue().equals("primary") || tag.getValue().equals("secondary")
-                            || tag.getValue().equals("tertiary") || tag.getValue().equals("residential")
-                            || tag.getValue().equals("trunk") || tag.getValue().equals("motorway")
-                            || tag.getValue().equals("service") || tag.getValue().equals("unclassified")
-                            || tag.getValue().equals("motorway_link") || tag.getValue().equals("primary_link")
-                            || tag.getValue().equals("secondary_link") || tag.getValue().equals("tertiary_link")
-                            || tag.getValue().equals("trunk_link") || tag.getValue().equals("road")
-                            || tag.getValue().equals("track") || tag.getValue().equals("living_street")))
+            if (tag.getKey().equals("highway") && (tag.getValue().equals("primary") || tag.getValue().equals("secondary")
+                    || tag.getValue().equals("tertiary") || tag.getValue().equals("residential")
+                    || tag.getValue().equals("trunk") || tag.getValue().equals("motorway") || tag.getValue().equals("service")
+                    || tag.getValue().equals("unclassified") || tag.getValue().equals("motorway_link")
+                    || tag.getValue().equals("primary_link") || tag.getValue().equals("secondary_link")
+                    || tag.getValue().equals("tertiary_link") || tag.getValue().equals("trunk_link")
+                    || tag.getValue().equals("road") || tag.getValue().equals("track")
+                    || tag.getValue().equals("living_street")))
             {
                 laneType = makeLaneType(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.CAR);
                 if (osmLink.getLanes() == 1 && !osmLink.isOneway())
@@ -400,9 +399,8 @@ public final class Convert
         }
         for (OSMTag tag : osmLink.getTags())
         {
-            if (tag.getKey().equals("highway")
-                    && (tag.getValue().equals("cycleway") || tag.getValue().equals("footway")
-                            || tag.getValue().equals("pedestrian") || tag.getValue().equals("steps")))
+            if (tag.getKey().equals("highway") && (tag.getValue().equals("cycleway") || tag.getValue().equals("footway")
+                    || tag.getValue().equals("pedestrian") || tag.getValue().equals("steps")))
             {
                 if (tag.getValue().equals("footway") || tag.getValue().equals("pedestrian") || tag.getValue().equals("steps"))
                 {
@@ -638,29 +636,26 @@ public final class Convert
             {
                 color = Color.RED;
                 // FIXME overtaking conditions per country and/or type of road?
-                newLane =
-                        new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
-                                laneAttributes.getWidth(), laneType, directionality, speedLimit,
-                                new OvertakingConditions.LeftAndRight());
+                newLane = new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
+                        laneAttributes.getWidth(), laneType, directionality, speedLimit,
+                        new OvertakingConditions.LeftAndRight());
                 new SinkSensor(newLane, new Length(0.25, LengthUnit.METER), simulator);
             }
             else if (osmlink.hasTag("hasPreceding") && offset < 0 || osmlink.hasTag("hasFollowing") && offset >= 0)
             {
                 color = Color.BLUE;
                 // FIXME overtaking conditions per country and/or type of road?
-                newLane =
-                        new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
-                                laneAttributes.getWidth(), laneType, directionality, speedLimit,
-                                new OvertakingConditions.LeftAndRight());
+                newLane = new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
+                        laneAttributes.getWidth(), laneType, directionality, speedLimit,
+                        new OvertakingConditions.LeftAndRight());
             }
             else
             {
                 color = laneAttributes.getColor();
                 // FIXME overtaking conditions per country and/or type of road?
-                newLane =
-                        new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
-                                laneAttributes.getWidth(), laneType, directionality, speedLimit,
-                                new OvertakingConditions.LeftAndRight());
+                newLane = new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
+                        laneAttributes.getWidth(), laneType, directionality, speedLimit,
+                        new OvertakingConditions.LeftAndRight());
             }
             if (simulator instanceof OTSAnimatorInterface)
             {
@@ -738,8 +733,8 @@ public final class Convert
         ArrayList<OSMNode> foundEndNodes = new ArrayList<OSMNode>();
         for (OSMNode node : nodes)
         {
-            if (0 == node.linksOriginating && node.linksTerminating > 0 || 0 == node.linksTerminating
-                    && node.linksOriginating > 0)
+            if (0 == node.linksOriginating && node.linksTerminating > 0
+                    || 0 == node.linksTerminating && node.linksOriginating > 0)
             {
                 foundEndNodes.add(node);
             }
