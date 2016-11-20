@@ -35,10 +35,12 @@
         <module>../ots-trafficcontrol</module>
         <module>../ots-rail</module>
         <module>../ots-water</module>
+        <module>../ots-multimodal</module>
         <module>../ots-demo</module>
-        <module>../ots-imb</module>
-        <module>../ots-imb-kpi</module>
-        <module>../ots-imb-road</module>
+        <module>../ots-sim0mq</module>
+        <module>../ots-sim0mq-kpi</module>
+        <module>../ots-sim0mq-road</module>
+        <module>../ots-sim0mq-multimodal</module>
         <module>../ots-parser-xml</module>
         <module>../ots-parser-opendrive</module>
         <module>../ots-parser-osm</module>
@@ -57,6 +59,7 @@
     <ots.version>${project.version}</ots.version>
     <djunits.version>2.01.01</djunits.version>
     <dsol.version>3.01.00</dsol.version>
+    <sim0mq.version>0.01.00</sim0mq.version>
     <junit.version>4.11</junit.version>
     <java3d.version>1.5.1</java3d.version>
     <geotools.version>12.0</geotools.version>
@@ -106,8 +109,8 @@
     <testSourceDirectory>${basedir}/src/test/java</testSourceDirectory>
     <outputDirectory>${basedir}/target/classes</outputDirectory>
     <testOutputDirectory> ${basedir}/target/test-classes</testOutputDirectory>
-    
-   <resources>
+
+    <resources>
       <resource>
         <directory>${basedir}/src/main/resources</directory>
         <filtering>false</filtering>
@@ -119,7 +122,7 @@
         <filtering>false</filtering>
       </testResource>
     </testResources>
-    
+
     <extensions>
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
@@ -228,7 +231,8 @@
               <commands>
                 <command>rm -r -f /home/web/opentrafficsim.org/docs/current</command>
                 <command>mkdir -p /home/web/opentrafficsim.org/docs/current</command>
-                <command>cp -r -f /home/web/opentrafficsim.org/docs/${project.version}/. /home/web/opentrafficsim.org/docs/current</command>
+                <command>cp -r -f /home/web/opentrafficsim.org/docs/${project.version}/.
+                  /home/web/opentrafficsim.org/docs/current</command>
               </commands>
             </configuration>
           </execution>
@@ -742,6 +746,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.sim0mq</groupId>
+        <artifactId>sim0mq</artifactId>
+        <version>${sim0mq.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>opentrafficsim</groupId>
         <artifactId>ots-base</artifactId>
         <version>${ots.version}</version>
@@ -752,7 +762,7 @@
         <artifactId>ots-core</artifactId>
         <version>${ots.version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>opentrafficsim</groupId>
         <artifactId>ots-kpi</artifactId>
@@ -780,6 +790,36 @@
       <dependency>
         <groupId>opentrafficsim</groupId>
         <artifactId>ots-water</artifactId>
+        <version>${ots.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>opentrafficsim</groupId>
+        <artifactId>ots-multimodal</artifactId>
+        <version>${ots.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>opentrafficsim</groupId>
+        <artifactId>ots-sim0mq</artifactId>
+        <version>${ots.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>opentrafficsim</groupId>
+        <artifactId>ots-sim0mq-kpi</artifactId>
+        <version>${ots.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>opentrafficsim</groupId>
+        <artifactId>ots-sim0mq-road</artifactId>
+        <version>${ots.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>opentrafficsim</groupId>
+        <artifactId>ots-sim0mq-multimodal</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
