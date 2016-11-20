@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.6" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true">  
+  <class id="1" language="java" name="org.opentrafficsim.core.immutablecollections.ImmutableEnumSet" project="ots-core" 
+    file="/ots-core/src/main/java/org/opentrafficsim/core/immutablecollections/ImmutableEnumSet.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="809" y="547"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <interface id="2" language="java" name="org.opentrafficsim.core.immutablecollections.ImmutableSortedSet" 
+    project="ots-core" 
+    file="/ots-core/src/main/java/org/opentrafficsim/core/immutablecollections/ImmutableSortedSet.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="595" y="203"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </interface>  
+  <class id="3" language="java" name="org.opentrafficsim.core.immutablecollections.ImmutableArrayList" 
+    project="ots-core" 
+    file="/ots-core/src/main/java/org/opentrafficsim/core/immutablecollections/ImmutableArrayList.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="137" y="311"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="4" language="java" name="org.opentrafficsim.core.immutablecollections.ImmutableAbstractMap" 
+    project="ots-core" 
+    file="/ots-core/src/main/java/org/opentrafficsim/core/immutablecollections/ImmutableAbstractMap.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="134" y="650"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <interface id="5" language="java" name="org.opentrafficsim.core.immutablecollections.ImmutableSet" project="ots-core" 
+    file="/ots-core/src/main/java/org/opentrafficsim/core/immutablecollections/ImmutableSet.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="595" y="80"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </interface>  
+  <interface id="6" language="java" name="org.opentrafficsim.core.immutablecollections.ImmutableNavigableSet" 
+    project="ots-core" 
+    file="/ots-core/src/main/java/org/opentrafficsim/core/immutablecollections/ImmutableNavigableSet.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="595" y="311"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </interface>  
+  <class id="7" language="java" name="org.opentrafficsim.core.immutablecollections.ImmutableTreeSet" project="ots-core" 
+    file="/ots-core/src/main/java/org/opentrafficsim/core/immutablecollections/ImmutableTreeSet.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="676" y="443"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="8" language="java" name="org.opentrafficsim.core.immutablecollections.ImmutableVector" project="ots-core" 
+    file="/ots-core/src/main/java/org/opentrafficsim/core/immutablecollections/ImmutableVector.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="361" y="311"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="9" language="java" name="org.opentrafficsim.core.immutablecollections.ImmutableHashMap" project="ots-core" 
+    file="/ots-core/src/main/java/org/opentrafficsim/core/immutablecollections/ImmutableHashMap.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="134" y="765"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <interface id="10" language="java" name="org.opentrafficsim.core.immutablecollections.ImmutableMap" project="ots-core" 
+    file="/ots-core/src/main/java/org/opentrafficsim/core/immutablecollections/ImmutableMap.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="266" y="443"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </interface>  
+  <interface id="11" language="java" name="org.opentrafficsim.core.immutablecollections.ImmutableNavigableMap" 
+    project="ots-core" 
+    file="/ots-core/src/main/java/org/opentrafficsim/core/immutablecollections/ImmutableNavigableMap.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="415" y="663"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </interface>  
+  <class id="12" language="java" name="org.opentrafficsim.core.immutablecollections.ImmutableTreeMap" project="ots-core" 
+    file="/ots-core/src/main/java/org/opentrafficsim/core/immutablecollections/ImmutableTreeMap.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="415" y="765"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="13" language="java" name="org.opentrafficsim.core.immutablecollections.ImmutableHashSet" project="ots-core" 
+    file="/ots-core/src/main/java/org/opentrafficsim/core/immutablecollections/ImmutableHashSet.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="944" y="443"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <interface id="14" language="java" name="org.opentrafficsim.core.immutablecollections.ImmutableList" 
+    project="ots-core" file="/ots-core/src/main/java/org/opentrafficsim/core/immutablecollections/ImmutableList.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="290" y="80"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </interface>  
+  <class id="15" language="java" name="org.opentrafficsim.core.immutablecollections.ImmutableAbstractList" 
+    project="ots-core" 
+    file="/ots-core/src/main/java/org/opentrafficsim/core/immutablecollections/ImmutableAbstractList.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="290" y="203"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <interface id="16" language="java" name="org.opentrafficsim.core.immutablecollections.ImmutableCollection" 
+    project="ots-core" 
+    file="/ots-core/src/main/java/org/opentrafficsim/core/immutablecollections/ImmutableCollection.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="477" y="-32"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </interface>  
+  <interface id="17" language="java" name="org.opentrafficsim.core.immutablecollections.ImmutableSortedMap" 
+    project="ots-core" 
+    file="/ots-core/src/main/java/org/opentrafficsim/core/immutablecollections/ImmutableSortedMap.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="415" y="571"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </interface>  
+  <class id="18" language="java" name="org.opentrafficsim.core.immutablecollections.ImmutableAbstractSet" 
+    project="ots-core" 
+    file="/ots-core/src/main/java/org/opentrafficsim/core/immutablecollections/ImmutableAbstractSet.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="834" y="245"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <generalization id="19">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="17"/>  
+  </generalization>  
+  <realization id="20">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="10"/>  
+  </realization>  
+  <generalization id="21">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <generalization id="22">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="4"/>  
+  </generalization>  
+  <realization id="23">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="5"/>  
+  </realization>  
+  <generalization id="24">    
+    <end type="SOURCE" refId="17"/>    
+    <end type="TARGET" refId="10"/>  
+  </generalization>  
+  <realization id="25">    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="14"/>  
+  </realization>  
+  <realization id="26">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="6"/>  
+  </realization>  
+  <generalization id="27">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="18"/>  
+  </generalization>  
+  <generalization id="28">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="16"/>  
+  </generalization>  
+  <generalization id="29">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="18"/>  
+  </generalization>  
+  <generalization id="30">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <generalization id="31">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="5"/>  
+  </generalization>  
+  <generalization id="32">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="16"/>  
+  </generalization>  
+  <generalization id="33">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="18"/>  
+  </generalization>  
+  <realization id="34">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="11"/>  
+  </realization>  
+  <generalization id="35">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="4"/>  
+  </generalization>  
+  <generalization id="36">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    accessors="true" visibility="true">    
+    <attributes public="false" package="false" protected="false" private="false" static="false"/>    
+    <operations public="false" package="false" protected="false" private="false" static="false"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>
