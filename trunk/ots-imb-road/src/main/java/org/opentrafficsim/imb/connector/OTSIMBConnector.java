@@ -42,8 +42,8 @@ public class OTSIMBConnector extends IMBConnector
     }
     
     /**
-     * @param connection
-     * @throws IMBException
+     * @param connection the IMB connection
+     * @throws IMBException in case of connection problems
      */
     public OTSIMBConnector(TConnection connection) throws IMBException
     {

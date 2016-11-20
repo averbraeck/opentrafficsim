@@ -92,10 +92,10 @@ public class A58OdUtil
     }
 
     /**
-     * @param network
-     * @param gtuColorer
-     * @param simulator
-     * @param penetrationRate
+     * @param network the network
+     * @param gtuColorer the GTU colorer
+     * @param simulator the simulator
+     * @param penetrationRate the penetration rate parameter
      */
     public static void createDemand(final OTSNetwork network, final GTUColorer gtuColorer,
             final OTSDEVSSimulatorInterface simulator, double penetrationRate)
@@ -221,23 +221,23 @@ public class A58OdUtil
     }
 
     /**
-     * @param lane
-     * @param generationSpeed
-     * @param id
-     * @param routeGenerator
-     * @param idGenerator
-     * @param simulator
-     * @param network
-     * @param gtuTypeGenerator
-     * @param headwayGenerator
-     * @param gtuColorer
-     * @param roomChecker
-     * @param bcFactory
-     * @param tacticalFactory
-     * @throws SimRuntimeException
-     * @throws ProbabilityException
-     * @throws GTUException
-     * @throws ParameterException 
+     * @param lane the reference lane for this generator
+     * @param generationSpeed the speed of the GTU
+     * @param id the id of the generator itself
+     * @param routeGenerator the generator for the route
+     * @param idGenerator the generator for the ID
+     * @param simulator the simulator
+     * @param network the network
+     * @param gtuTypeGenerator the type generator for the GTU
+     * @param headwayGenerator the headway generator for the GTU
+     * @param gtuColorer the GTU colorer for animation
+     * @param roomChecker the checker to see if there is room for the GTU
+     * @param bcFactory the factory to generate behavioral characteristics for the GTU
+     * @param tacticalFactory the generator for the tactical planner
+     * @throws SimRuntimeException in case of scheduling problems
+     * @throws ProbabilityException in case of an illegal probability distribution
+     * @throws GTUException in case the GTU is inconsistent
+     * @throws ParameterException in case a parameter for the perception is missing
      */
     private static void makeGenerator(final Lane lane, final Speed generationSpeed, final String id,
             final RouteGenerator routeGenerator, final IdGenerator idGenerator, final OTSDEVSSimulatorInterface simulator,
@@ -262,8 +262,8 @@ public class A58OdUtil
     }
 
     /**
-     * @param in
-     * @param factor
+     * @param in the input vector
+     * @param factor the multiplication factor
      * @return array with values multiplied by factor
      */
     private static double[] factorCopy(final double[] in, final double factor)
@@ -277,8 +277,8 @@ public class A58OdUtil
     }
 
     /**
-     * @param in1
-     * @param in2
+     * @param in1 the first vector
+     * @param in2 the second vector
      * @return sum per element of arrays
      */
     private static double[] arraySum(final double[] in1, final double[] in2)

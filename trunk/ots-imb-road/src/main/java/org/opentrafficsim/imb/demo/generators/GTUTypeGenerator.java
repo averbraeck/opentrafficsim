@@ -39,11 +39,11 @@ public class GTUTypeGenerator
     private double probabilitySum = 0.0;
     
     /**
-     * @param length
-     * @param width
-     * @param gtuType
-     * @param maximumSpeed
-     * @param probability
+     * @param length length of the GTU
+     * @param width width of the GTU
+     * @param gtuType GTU type
+     * @param maximumSpeed maximum speed of the GTU
+     * @param probability the probability to generate with these characteristics
      */
     public void addType(Length length, Length width, GTUType gtuType, Speed maximumSpeed, double probability)
     {
@@ -97,10 +97,10 @@ public class GTUTypeGenerator
         private final Speed maximumSpeed;
 
         /**
-         * @param length
-         * @param width
-         * @param gtuType
-         * @param maximumSpeed
+     * @param length length of the GTU
+     * @param width width of the GTU
+     * @param gtuType GTU type
+     * @param maximumSpeed maximum speed of the GTU
          */
         public GTUTypeInfo(Length length, Length width, GTUType gtuType, Speed maximumSpeed)
         {

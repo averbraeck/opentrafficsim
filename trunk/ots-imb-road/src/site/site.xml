@@ -28,7 +28,7 @@
       <item name="PMD" href="pmd.html" />
       <item name="JDepend" href="jdepend-report.html" />
     </menu>
-      
+
     <menu name="PROJECT INFO">
       <item name="About" href="index.html" />
       <item name="Project Summary" href="project-summary.html" />
@@ -36,15 +36,6 @@
       <item name="Project Team" href="team-list.html" />
       <item name="Project License" href="license.html" />
       <item name="Versions + Changes" href="changes-report.html" />
-    </menu>
-
-    <menu name="RELATED">
-      <item name="OTS Manual" href="http://opentrafficsim.org" target="_blank" />
-      <item name="DSOL" href="http://simulation.tudelft.nl/dsol/3.0/dsol-core/index.html" target="_blank" />
-      <item name="DJUNITS manual" href="http://djunits.org" target="_blank" />
-      <item name="DITTLab" href="http://dittlab.tudelft.nl" target="_blank" />
-      <item name="Simulation@TU Delft" href="http://simulation.tudelft.nl" target="_blank" />
-      <item name="About OTS" href="index.html" />
     </menu>
 
   </body>

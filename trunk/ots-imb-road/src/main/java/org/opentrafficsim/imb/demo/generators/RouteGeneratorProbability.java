@@ -49,10 +49,10 @@ public class RouteGeneratorProbability implements RouteGenerator
     private final HashMap<OTSNode, Route> routeMap = new HashMap<>();
 
     /**
-     * @param network
-     * @param timeVector
-     * @param from
-     * @param simulator
+     * @param network the network
+     * @param timeVector a time vector
+     * @param from start node
+     * @param simulator the simulator
      */
     public RouteGeneratorProbability(final OTSNetwork network, final TimeVector timeVector, final OTSNode from,
             final OTSSimulatorInterface simulator)

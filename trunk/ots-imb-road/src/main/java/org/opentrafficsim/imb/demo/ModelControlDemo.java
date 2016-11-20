@@ -119,10 +119,10 @@ public class ModelControlDemo extends ModelStarter
     private CircularRoadIMB model = null;
 
     /**
-     * @param args
-     * @param providedModelName
-     * @param providedModelId
-     * @throws IMBException
+     * @param args the command line arguments
+     * @param providedModelName the model name
+     * @param providedModelId the model id
+     * @throws IMBException when connection with the IMB bus fails
      */
     public ModelControlDemo(String[] args, String providedModelName, int providedModelId) throws IMBException
     {
@@ -357,8 +357,8 @@ public class ModelControlDemo extends ModelStarter
             Property<?> caccCompliance = findByKeyInList(propertyList, "CACCCompliance");
             if (null != caccCompliance)
             {
-                parameters.addParameter(new Parameter("CACC compliance (range 0.0 - 1.0)",
-                        ((ContinuousProperty) caccCompliance).getValue()));
+                parameters.addParameter(
+                        new Parameter("CACC compliance (range 0.0 - 1.0)", ((ContinuousProperty) caccCompliance).getValue()));
             }
             System.out.println("(possibly) modified paramters: " + parameters);
         }
@@ -395,8 +395,9 @@ public class ModelControlDemo extends ModelStarter
     /**
      * Entry point.
      * @param args String[]; the command line arguments (not used)
-     * @throws InvocationTargetException
-     * @throws InterruptedException
+     * @throws InvocationTargetException if an exception is thrown while running doRun
+     * @throws InterruptedException if we're interrupted while waiting for the event dispatching thread to finish executing
+     *             doRun.run()
      */
     public static void main(final String[] args) throws InvocationTargetException, InterruptedException
     {
@@ -493,7 +494,7 @@ public class ModelControlDemo extends ModelStarter
          * @param network Network; the network
          * @param properties AbstractProperty; properties that configure this simulation
          * @param imbConnector IMBConnector; connection to the IMB hub
-         * @throws PropertyException
+         * @throws PropertyException XXX not thrown
          */
         CircularRoadIMB(final GTUColorer gtuColorer, final OTSNetwork network, final List<Property<?>> properties,
                 final IMBConnector imbConnector) throws PropertyException
