@@ -514,7 +514,7 @@ public class MultiThumbSlider<T> extends JComponent
      * certain changes.
      * <P>
      * This triggers a <code>PropertyChangeEvent</code> for <code>ADJUST_PROPERTY</code>.
-     * @param b
+     * @param b new value
      */
     public void setValueIsAdjusting(boolean b)
     {

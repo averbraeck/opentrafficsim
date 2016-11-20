@@ -98,7 +98,7 @@ public class DefaultMultiThumbSliderUI<T> extends MultiThumbSliderUI<T>
 
     /**
      * This optional method highlights the space on the track (by simply adding a shadow) between two thumbs.
-     * @param g
+     * @param g graphics
      */
     protected void paintTrackHighlight(Graphics2D g)
     {

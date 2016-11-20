@@ -1201,7 +1201,7 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
      * This retrieves a property. If the component has this property manually set (by calling
      * <code>component.putClientProperty()</code>), then that value will be returned. Otherwise this method refers to
      * <code>UIManager.get()</code>. If that value is missing, this returns <code>defaultValue</code>
-     * @param jc
+     * @param jc component
      * @param propertyName the property name
      * @param defaultValue if no other value is found, this is returned
      * @return the property value
@@ -1219,7 +1219,7 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
 
     /**
      * Makes sure the thumbs are in the right order.
-     * @param state
+     * @param state state
      * @return true if the thumbs are valid. False if there are two thumbs with the same value (this is not allowed)
      */
     protected boolean validatePositions(State state)
@@ -1318,8 +1318,8 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
      * This will try to add a thumb between index1 and index2.
      * <P>
      * This method will not add a thumb if there is already a very small distance between these two endpoints
-     * @param index1
-     * @param index2
+     * @param index1 low value
+     * @param index2 high value
      * @return true if a new thumb was added
      */
     protected boolean addThumb(int index1, int index2)
