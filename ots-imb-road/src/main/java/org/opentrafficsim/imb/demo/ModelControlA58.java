@@ -67,10 +67,10 @@ public class ModelControlA58 extends ModelStarter
     private double penetrationRate;
     
     /**
-     * @param args
-     * @param providedModelName
-     * @param providedModelId
-     * @throws IMBException
+     * @param args the command line args
+     * @param providedModelName the model name
+     * @param providedModelId the model id
+     * @throws IMBException when IMB connection fails
      */
     public ModelControlA58(String[] args, String providedModelName, int providedModelId) throws IMBException
     {
@@ -80,7 +80,7 @@ public class ModelControlA58 extends ModelStarter
     /**
      * Tester.
      * @param args empty
-     * @throws IMBException
+     * @throws IMBException shen IMB connection fails
      */
     public static void main(String[] args) throws IMBException
     {
@@ -249,7 +249,7 @@ public class ModelControlA58 extends ModelStarter
         OTSIMBConnector imbConnector;
 
         /**
-         * @param imbConnection 
+         * @param imbConnection the connection to the IMB bus
          * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
          * @param network Network; the network
          */

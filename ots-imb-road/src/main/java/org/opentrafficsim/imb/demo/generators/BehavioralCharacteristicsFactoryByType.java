@@ -32,7 +32,6 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
     /** Parameters. */
     private final Map<GTUType, Set<ParameterEntry>> map = new HashMap<>();
 
-
     /** {@inheritDoc} */
     @Override
     public void setValues(BehavioralCharacteristics defaultCharacteristics, GTUType gtuType)
@@ -47,9 +46,9 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
     }
 
     /**
-     * @param gtuType
-     * @param parameterType
-     * @param value
+     * @param gtuType the gtu type
+     * @param parameterType the parameter type
+     * @param value the value of the parameter
      */
     public <T extends DoubleScalarInterface> void addParameter(final GTUType gtuType, final ParameterType<T> parameterType,
             final T value)
@@ -59,10 +58,10 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
     }
 
     /**
-     * @param gtuType
-     * @param parameterType
-     * @param mu
-     * @param sig
+     * @param gtuType the gtu type
+     * @param parameterType the parameter type
+     * @param mu mean
+     * @param sig standard deviation
      */
     public <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>> void addGaussianParameter(final GTUType gtuType,
             final ParameterType<T> parameterType, final T mu, final T sig)
@@ -70,15 +69,15 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
         assureTypeInMap(gtuType);
         this.map.get(gtuType).add(new GaussianEntry<>(parameterType, mu, sig));
     }
-    
+
     /**
-     * @param gtuType
-     * @param parameterType
-     * @param mu
-     * @param sig
+     * @param gtuType the gtu type
+     * @param parameterType the parameter type
+     * @param mu mean
+     * @param sig standard deviation
      */
-    public void addGaussianParameter(final GTUType gtuType,
-            final ParameterTypeDouble parameterType, final double mu, final double sig)
+    public void addGaussianParameter(final GTUType gtuType, final ParameterTypeDouble parameterType, final double mu,
+            final double sig)
     {
         assureTypeInMap(gtuType);
         this.map.get(gtuType).add(new GaussianDoubleEntry(parameterType, mu, sig));
@@ -86,7 +85,7 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
 
     /**
      * Assures the gtu type is in the map.
-     * @param gtuType
+     * @param gtuType the gtu type
      */
     private void assureTypeInMap(final GTUType gtuType)
     {
@@ -95,10 +94,11 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
             this.map.put(gtuType, new HashSet<>());
         }
     }
-    
+
     /**
      * <p>
-     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 19 nov. 2016 <br>
@@ -110,11 +110,11 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
     {
         /**
          * Set value for parameter.
-         * @param behavioralCharacteristics
+         * @param behavioralCharacteristics the behavioral characteristics
          */
         void setValue(final BehavioralCharacteristics behavioralCharacteristics);
     }
-    
+
     /**
      * <p>
      * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
@@ -141,9 +141,9 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
         private final T sig;
 
         /**
-         * @param parameterType
-         * @param mu
-         * @param sig
+         * @param parameterType the parameter type
+         * @param mu mean
+         * @param sig standard deviation
          */
         public GaussianEntry(final ParameterType<T> parameterType, final T mu, final T sig)
         {
@@ -172,7 +172,7 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
         }
 
     }
-    
+
     /**
      * <p>
      * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
@@ -197,9 +197,9 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
         private final double sig;
 
         /**
-         * @param parameterType
-         * @param mu
-         * @param sig
+         * @param parameterType the parameter type
+         * @param mu mean
+         * @param sig standard deviation
          */
         public GaussianDoubleEntry(final ParameterTypeDouble parameterType, final double mu, final double sig)
         {
@@ -250,8 +250,8 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
         private final T value;
 
         /**
-         * @param parameterType
-         * @param value
+         * @param parameterType the parameter type
+         * @param value the fixed value
          */
         public FixedEntry(final ParameterType<T> parameterType, final T value)
         {

@@ -286,7 +286,7 @@ public class Convert
     /**
      * @param args args
      * @throws IOException on i/o error
-     * @throws URISyntaxException
+     * @throws URISyntaxException on illegal filename
      */
     public static void main(final String[] args) throws IOException, URISyntaxException
     {
@@ -315,8 +315,8 @@ public class Convert
         final double x, y;
 
         /**
-         * @param x
-         * @param y
+         * @param x x
+         * @param y y
          */
         public Coordinate(double x, double y)
         {

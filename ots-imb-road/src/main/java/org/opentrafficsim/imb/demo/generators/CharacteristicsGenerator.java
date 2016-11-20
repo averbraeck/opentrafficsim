@@ -51,13 +51,13 @@ public class CharacteristicsGenerator implements LaneBasedGTUCharacteristicsGene
     private final Set<DirectedLanePosition> positions;
 
     /**
-     * @param strategicalFactory
-     * @param idGenerator
-     * @param simulator
-     * @param network
-     * @param gtuTypeGenerator
-     * @param generationSpeed
-     * @param positions
+     * @param strategicalFactory strategical planner factory
+     * @param idGenerator generator for the GTU id
+     * @param simulator the simulator
+     * @param network the network
+     * @param gtuTypeGenerator the generator for the GTU type
+     * @param generationSpeed the initial speed
+     * @param positions the positions for generation
      */
     public CharacteristicsGenerator(LaneBasedStrategicalRoutePlannerFactory strategicalFactory, IdGenerator idGenerator,
             OTSDEVSSimulatorInterface simulator, OTSNetwork network, GTUTypeGenerator gtuTypeGenerator, Speed generationSpeed,

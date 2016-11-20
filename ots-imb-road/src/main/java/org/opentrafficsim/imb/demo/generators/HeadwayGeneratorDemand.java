@@ -40,9 +40,9 @@ public class HeadwayGeneratorDemand implements Generator<Duration>
     private final OTSSimulatorInterface simulator;
 
     /**
-     * @param timeVector
-     * @param demandVector
-     * @param simulator
+     * @param timeVector a time vector
+     * @param demandVector teh corresponding demand vector
+     * @param simulator the simulator
      */
     public HeadwayGeneratorDemand(final TimeVector timeVector, final FrequencyVector demandVector,
             final OTSSimulatorInterface simulator)
@@ -105,7 +105,7 @@ public class HeadwayGeneratorDemand implements Generator<Duration>
      * @param start reference time from start of period i, pertains to previous arrival, or zero during recursion
      * @param fractionRemaining remaining fraction of headway to apply due to time in earlier time periods 
      * @return time of next arrival
-     * @throws ValueException
+     * @throws ValueException in case of an illegal time vector
      */
     private Time nextArrival(final int i, final Duration start, final double fractionRemaining) throws ValueException
     {

@@ -261,9 +261,9 @@ public class A58IMB extends AbstractWrappableAnimation
             System.err.println("GIS-map file: " + gisURL.toString());
             CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
             new GisRenderable2D(this.simulator, gisURL, rdto0);
-            // URL nwbURL = URLResource.getResource("/A58/nwb.xml");
-            // System.err.println("NWB-map file: " + nwbURL.toString());
-            // new GisRenderable2D(this.simulator, nwbURL);
+//             URL nwbURL = URLResource.getResource("/A58/nwb.xml");
+//             System.err.println("NWB-map file: " + nwbURL.toString());
+//             new GisRenderable2D(this.simulator, nwbURL);
         }
 
         /** {@inheritDoc} */
