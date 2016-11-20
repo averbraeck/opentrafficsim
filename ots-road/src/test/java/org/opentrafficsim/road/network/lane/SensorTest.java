@@ -165,12 +165,12 @@ class TriggerSensor extends AbstractSensor
     private static final long serialVersionUID = 1L;
 
     /**
-     * @param lane
-     * @param longitudinalPosition
-     * @param positionType
-     * @param name
-     * @param simulator
-     * @throws NetworkException
+     * @param lane lane of the sensor 
+     * @param longitudinalPosition position of the sensor on the lane
+     * @param positionType trigger position of the GTU
+     * @param name name of the sensor
+     * @param simulator the simulator 
+     * @throws NetworkException in case position is out of bounds
      */
     public TriggerSensor(final Lane lane, final Length longitudinalPosition, final RelativePosition.TYPE positionType,
             final String name, OTSDEVSSimulatorInterface simulator) throws NetworkException

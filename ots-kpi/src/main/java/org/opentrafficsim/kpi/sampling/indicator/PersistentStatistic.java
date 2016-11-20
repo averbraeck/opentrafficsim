@@ -22,7 +22,7 @@ public class PersistentStatistic<T extends AbstractDoubleScalarRel<?, T>> implem
 
     /**
      * Constructor.
-     * @param persistent
+     * @param persistent the persistent statistic that gathers the data
      */
     public PersistentStatistic(final Persistent<?, T, ?> persistent)
     {

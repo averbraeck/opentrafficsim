@@ -103,7 +103,7 @@ public class LaneBasedGTUGenerator implements Serializable
      *            place a new GTU
      * @throws SimRuntimeException when <cite>startTime</cite> lies before the current simulation time
      * @throws ProbabilityException pe
-     * @throws ParameterException
+     * @throws ParameterException if drawing from the interarrival generator fails
      */
     public LaneBasedGTUGenerator(String id, final Generator<Duration> interarrivelTimeGenerator, final long maxGTUs,
             final Time startTime, final Time endTime, final GTUColorer gtuColorer,

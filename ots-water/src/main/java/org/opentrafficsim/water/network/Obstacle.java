@@ -18,7 +18,7 @@ public abstract class Obstacle
     private final WaterwayLocation waterwayLocation;
 
     /**
-     * @param waterwayLocation
+     * @param waterwayLocation location of the obstacle along the waterway
      */
     public Obstacle(final WaterwayLocation waterwayLocation)
     {

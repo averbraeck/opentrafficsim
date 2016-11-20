@@ -57,7 +57,8 @@ public class LaneBasedStrategicalRoutePlannerTest
         CarFollowingModel cfm = new IDMPlus();
         LaneBasedCFLCTacticalPlanner tacticalPlanner = new LaneBasedCFLCTacticalPlanner(null, null, null);
         BehavioralCharacteristics bc = DefaultTestParameters.create();
-        LaneBasedStrategicalRoutePlanner lbsrp = new LaneBasedStrategicalRoutePlanner(bc, tacticalPlanner, null);
+        // TODO Gtu cannot be null anymore...
+        // LaneBasedStrategicalRoutePlanner lbsrp = new LaneBasedStrategicalRoutePlanner(bc, tacticalPlanner, null);
 
     }
 }

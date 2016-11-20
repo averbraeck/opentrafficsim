@@ -59,7 +59,7 @@ public class KpiLaneDirection implements Serializable
     /**
      * Returns the position with increasing value in the direction of travel, i.e. the node to the back of the vehicle is at x =
      * 0 while the node in front of the vehicle is at x = {@code lane.getLength()}, irrespective of the design line direction.
-     * @param position
+     * @param position the position on the lane irrespective of the direction
      * @return position with increasing value in the direction of travel
      */
     public final Length getPositionInDirection(Length position)

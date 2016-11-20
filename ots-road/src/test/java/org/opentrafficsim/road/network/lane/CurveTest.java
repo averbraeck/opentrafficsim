@@ -52,11 +52,11 @@ public class CurveTest
 
     /**
      * Let GTUs drive through a curve and check (de-)registration times at each node.
-     * @throws OTSGeometryException
-     * @throws NamingException
-     * @throws SimRuntimeException
-     * @throws NetworkException
-     * @throws GTUException
+     * @throws OTSGeometryException on error
+     * @throws NamingException on error
+     * @throws SimRuntimeException on error
+     * @throws NetworkException on error
+     * @throws GTUException on error
      */
     @Test
     public void curveTest() throws OTSGeometryException, SimRuntimeException, NamingException, NetworkException, GTUException

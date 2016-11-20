@@ -577,7 +577,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
 
         /**
          * @param lane the lane for which to build the flowSensor
-         * @throws NetworkException 
+         * @throws NetworkException when the position on the lane is out of bounds
          */
         public FlowSensor(final Lane lane) throws NetworkException
         {

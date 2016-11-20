@@ -332,7 +332,6 @@ class GeneratorTag implements Serializable
         // TODO RouteMix
         // TODO ShortestRoute
         // TODO ShortestRouteMix
-        // TODO Different strategical planner factories
     }
 
     /**
