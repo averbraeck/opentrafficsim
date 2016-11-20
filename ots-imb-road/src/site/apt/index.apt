@@ -22,7 +22,7 @@ OTS - Open Traffic Simulation
 
 ======
 
-	OTS-IMB is the Open Traffic Simulation module for linking OTS road examples to TNO's Urban Strategy IMB message bus.
+	OTS-IMB-ROAD is the Open Traffic Simulation module for linking OTS road examples to TNO's Urban Strategy IMB message bus.
 	
 	* Several examples are provided, such as CircularRoad, N201, A58.
 	
