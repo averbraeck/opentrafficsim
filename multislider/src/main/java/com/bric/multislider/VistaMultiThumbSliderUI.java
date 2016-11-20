@@ -15,7 +15,7 @@ public class VistaMultiThumbSliderUI<T> extends DefaultMultiThumbSliderUI<T>
 {
 
     /**
-     * @param slider
+     * @param slider the slider
      */
     public VistaMultiThumbSliderUI(MultiThumbSlider<T> slider)
     {
