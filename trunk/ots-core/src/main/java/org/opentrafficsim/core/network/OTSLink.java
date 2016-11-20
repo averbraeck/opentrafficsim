@@ -272,7 +272,8 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     @Override
     public final DirectedPoint getLocation()
     {
-        return this.designLine.getLocation();
+        DirectedPoint p = this.designLine.getLocation();
+        return p;
     }
 
     /** {@inheritDoc} */

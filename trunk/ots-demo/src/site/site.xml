@@ -38,14 +38,5 @@
       <item name="Versions + Changes" href="changes-report.html" />
     </menu>
 
-    <menu name="RELATED">
-      <item name="OTS Manual" href="http://opentrafficsim.org" target="_blank" />
-      <item name="DSOL" href="http://simulation.tudelft.nl/dsol/3.0/dsol-core/index.html" target="_blank" />
-      <item name="DJUNITS manual" href="http://djunits.org" target="_blank" />
-      <item name="DITTLab" href="http://dittlab.tudelft.nl" target="_blank" />
-      <item name="Simulation@TU Delft" href="http://simulation.tudelft.nl" target="_blank" />
-      <item name="About OTS" href="index.html" />
-    </menu>
-
   </body>
 </project>

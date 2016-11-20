@@ -124,8 +124,8 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
      * @throws NetworkException on network inconsistency
      * @throws NamingException on ???
      * @throws SimRuntimeException on ???
-     * @throws OTSGeometryException
-     * @throws GTUException
+     * @throws OTSGeometryException x
+     * @throws GTUException x
      */
     protected final void drawPlots()
             throws NamingException, NetworkException, SimRuntimeException, OTSGeometryException, GTUException

@@ -690,12 +690,13 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
      * Add a generator to an array of Lane.
      * @param lanes Lane[]; the lanes that must get a generator at the start
      * @return Lane[]; the lanes
-     * @throws SimRuntimeException on ???
-     * @throws GTUException
-     * @throws ProbabilityException
-     * @throws ParameterException 
+     * @throws GTUException when lane position out of bounds
+     * @throws SimRuntimeException when generation scheduling fails
+     * @throws ProbabilityException when probability distribution is wrong
+     * @throws ParameterException when a parameter is missing for the perception of the GTU
      */
-    private Lane[] setupGenerator(final Lane[] lanes) throws SimRuntimeException, GTUException, ProbabilityException, ParameterException
+    private Lane[] setupGenerator(final Lane[] lanes)
+            throws SimRuntimeException, GTUException, ProbabilityException, ParameterException
     {
         for (Lane lane : lanes)
         {
@@ -712,12 +713,13 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
      * Build a generator.
      * @param lane Lane; the lane on which the generated GTUs are placed
      * @return LaneBasedGTUGenerator
-     * @throws GTUException
-     * @throws SimRuntimeException
-     * @throws ProbabilityException
-     * @throws ParameterException 
+     * @throws GTUException when lane position out of bounds
+     * @throws SimRuntimeException when generation scheduling fails
+     * @throws ProbabilityException when probability distribution is wrong
+     * @throws ParameterException when a parameter is missing for the perception of the GTU
      */
-    private LaneBasedGTUGenerator makeGenerator(final Lane lane) throws GTUException, SimRuntimeException, ProbabilityException, ParameterException
+    private LaneBasedGTUGenerator makeGenerator(final Lane lane)
+            throws GTUException, SimRuntimeException, ProbabilityException, ParameterException
     {
         StreamInterface stream = new MersenneTwister(1234); // Use a fixed seed for the demos
         Distribution<LaneBasedTemplateGTUType> distribution = new Distribution<>(stream);
@@ -779,23 +781,23 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     }
 
     /**
-     * @param stream
-     * @param lane
-     * @param lengthDistribution
-     * @param widthDistribution
-     * @param maximumSpeedDistribution
-     * @param initialSpeedDistribution
-     * @param initialPositions
-     * @param strategicalPlannerFactory x
-     * @return x
-     * @throws GTUException
+     * @param stream the random stream to use
+     * @param lane reference lane to generate GTUs on
+     * @param lengthDistribution distribution of the GTU length
+     * @param widthDistribution distribution of the GTU width
+     * @param maximumSpeedDistribution distribution of the GTU's maximum speed
+     * @param initialSpeedDistribution distribution of the GTU's initial speed
+     * @param initialPositions initial position(s) of the GTU on the Lane(s)
+     * @param strategicalPlannerFactory factory to generate the strategical planner for the GTU
+     * @return template for a GTU
+     * @throws GTUException when characteristics cannot be initialized
      */
     LaneBasedTemplateGTUType makeTemplate(final StreamInterface stream, final Lane lane,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDistribution,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDistribution,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDistribution,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDistribution,
-            Set<DirectedLanePosition> initialPositions,
+            final Set<DirectedLanePosition> initialPositions,
             final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory) throws GTUException
     {
         return new LaneBasedTemplateGTUType(this.gtuType, this.idGenerator, new Generator<Length>()
@@ -861,8 +863,8 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         double endX = to.getPoint().x + (endLinkLength / link.getLength().getSI()) * (to.getPoint().x - from.getPoint().x);
         double endY = to.getPoint().y + (endLinkLength / link.getLength().getSI()) * (to.getPoint().y - from.getPoint().y);
         Node end = new OTSNode(this.network, link.getId() + "END", new OTSPoint3D(endX, endY, to.getPoint().z));
-        CrossSectionLink endLink =
-                LaneFactory.makeLink(this.network, link.getId() + "endLink", to, end, null, LongitudinalDirectionality.DIR_PLUS);
+        CrossSectionLink endLink = LaneFactory.makeLink(this.network, link.getId() + "endLink", to, end, null,
+                LongitudinalDirectionality.DIR_PLUS);
         for (Lane lane : lanes)
         {
             // Overtaking left and right allowed on the sinkLane
