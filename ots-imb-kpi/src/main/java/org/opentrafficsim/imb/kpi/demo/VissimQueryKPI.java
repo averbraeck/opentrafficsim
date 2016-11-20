@@ -42,8 +42,8 @@ public class VissimQueryKPI
 
     /**
      * Runs the module from model control.
-     * @param parameters
-     * @param imbConnection
+     * @param parameters model parameters
+     * @param imbConnection the connection to IMB
      */
     public static void run(final ModelParameters parameters, final TConnection imbConnection)
     {
@@ -60,8 +60,8 @@ public class VissimQueryKPI
     }
 
     /**
-     * @param args
-     * @throws IMBException
+     * @param args command line args
+     * @throws IMBException in case of IMB problem
      */
     public static void main(String[] args) throws IMBException
     {

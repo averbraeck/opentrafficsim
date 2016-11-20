@@ -24,19 +24,19 @@ public abstract class AbstractPerceptionCategory extends Type<AbstractPerception
 
     /** */
     private static final long serialVersionUID = 20160811L;
-    
+
     /** Connected perception. */
     private final Perception perception;
-    
+
     /**
      * Constructor setting the perception.
      * @param perception perception
      */
-    public AbstractPerceptionCategory(final Perception perception) 
+    public AbstractPerceptionCategory(final Perception perception)
     {
         this.perception = perception;
     }
-    
+
     /**
      * Returns the connected perception.
      * @return connected perception
@@ -46,7 +46,7 @@ public abstract class AbstractPerceptionCategory extends Type<AbstractPerception
     {
         return this.perception;
     }
-    
+
     /**
      * Returns the connected GTU.
      * @return connected GTU
@@ -57,7 +57,7 @@ public abstract class AbstractPerceptionCategory extends Type<AbstractPerception
     {
         return this.perception.getGtu();
     }
-    
+
     /**
      * Returns the current time.
      * @return current time
@@ -71,12 +71,12 @@ public abstract class AbstractPerceptionCategory extends Type<AbstractPerception
         }
         return getGtu().getSimulator().getSimulatorTime().getTime();
     }
-    
+
     /**
      * Updates all information in the category.
      * @throws GTUException if the GTU was not initialized
-     * @throws NetworkException 
-     * @throws ParameterException 
+     * @throws NetworkException when lanes are not properly linked
+     * @throws ParameterException when a necessary parameter to carry our perception is not defined (e.g., LOOKAHEAD)
      */
     public abstract void updateAll() throws GTUException, NetworkException, ParameterException;
 

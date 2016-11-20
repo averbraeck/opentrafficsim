@@ -169,13 +169,13 @@ public class IMBSampler extends Sampler
 
     /**
      * Sample the data received from a GTU.
-     * @param timeStamp
-     * @param gtuId
-     * @param laneId
-     * @param forward
-     * @param longitudinalPosition
-     * @param speed
-     * @param acceleration
+     * @param timeStamp time of the sampling
+     * @param gtuId gtu
+     * @param laneId lane
+     * @param forward driving direction
+     * @param longitudinalPosition position
+     * @param speed speed
+     * @param acceleration acceleration
      */
     protected void sample(double timeStamp, String gtuId, String laneId, boolean forward, double longitudinalPosition,
             double speed, double acceleration)

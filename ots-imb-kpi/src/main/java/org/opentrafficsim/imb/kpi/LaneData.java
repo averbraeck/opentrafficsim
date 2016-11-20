@@ -26,9 +26,9 @@ public class LaneData implements LaneDataInterface
     final Length length;
 
     /**
-     * @param linkData
-     * @param laneName
-     * @param length 
+     * @param linkData data about the link
+     * @param laneName name of the lane
+     * @param length length of the lane
      */
     public LaneData(final LinkData linkData, final String laneName, final Length length)
     {

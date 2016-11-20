@@ -26,10 +26,10 @@ public class ModelControlKPI extends ModelStarter
     private Thread kpiThread;
 
     /**
-     * @param args
-     * @param providedModelName
-     * @param providedModelId
-     * @throws IMBException
+     * @param args model starter command line arguments
+     * @param providedModelName name of the model
+     * @param providedModelId id of the model
+     * @throws IMBException in case of IMB error
      */
     public ModelControlKPI(String[] args, String providedModelName, int providedModelId) throws IMBException
     {
@@ -38,9 +38,10 @@ public class ModelControlKPI extends ModelStarter
 
     /**
      * Entry point
-     * @param args
-     * @throws InvocationTargetException
-     * @throws InterruptedException
+     * @param args args
+     * @throws InvocationTargetException if an exception is thrown while running doRun
+     * @throws InterruptedException if we're interrupted while waiting for the event dispatching thread to finish executing
+     *             doRun.run()
      */
     public static void main(final String[] args) throws InvocationTargetException, InterruptedException
     {

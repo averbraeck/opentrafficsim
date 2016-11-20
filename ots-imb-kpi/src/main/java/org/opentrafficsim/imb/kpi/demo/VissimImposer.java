@@ -19,8 +19,8 @@ public class VissimImposer
 {
 
     /**
-     * @param args
-     * @throws IMBException
+     * @param args command line args
+     * @throws IMBException in case of IMB exception 
      */
     public static void main(String[] args) throws IMBException
     {

@@ -134,9 +134,9 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
      * @throws SimRuntimeException on ???
      * @throws NetworkException on network inconsistency
      * @throws NamingException on ???
-     * @throws OTSGeometryException
+     * @throws OTSGeometryException x
      * @throws ParameterException in case of a parameter problem.
-     * @throws OperationalPlanException
+     * @throws OperationalPlanException x
      */
     public static void main(final String[] args) throws NamingException, NetworkException, SimRuntimeException, GTUException,
             OTSGeometryException, ParameterException, OperationalPlanException
@@ -264,9 +264,9 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
      * @throws NetworkException on network inconsistency
      * @throws SimRuntimeException on ???
      * @throws GTUException on error during GTU construction
-     * @throws OTSGeometryException
+     * @throws OTSGeometryException x
      * @throws ParameterException in case of a parameter problem.
-     * @throws OperationalPlanException
+     * @throws OperationalPlanException x
      */
     private Length findDecisionPoint(Length low, Length high, final Speed referenceSpeed, final Speed speedDifference,
             final LaneChangeModel laneChangeModel, final boolean mergeRight) throws NamingException, NetworkException,
@@ -363,7 +363,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
      * @throws GTUException on error during GTU construction
      * @throws OTSGeometryException when the initial position is outside the lane's center line
      * @throws ParameterException in case of a parameter problem.
-     * @throws OperationalPlanException
+     * @throws OperationalPlanException x
      */
     private LaneMovementStep computeLaneChange(final LaneBasedIndividualGTU referenceCar,
             final Collection<Headway> sameLaneGTUs, final Speed speedLimit, final LaneChangeModel laneChangeModel,
