@@ -42,7 +42,7 @@ public interface Sensor extends Serializable, Comparable<Sensor>, LaneBasedObjec
     
     /**
      * Return which GTU types will trigger this particular sensor.
-     * @return Set<GTUType> the GTU types will trigger this particular sensor.
+     * @return Set&lt;GTUType&gt; the GTU types will trigger this particular sensor.
      */
     ImmutableSet<GTUType> getTriggeringGTUTypes();  
 
