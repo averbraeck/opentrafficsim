@@ -13,6 +13,11 @@
   <name>Open Traffic Sim Sim0MQ KPI module</name>
   <description>Open Traffic Sim Sim0MQ bus linkage to the KPI module</description>
 
+  <!-- Don't make javadoc crash on the HTML tags for the Sim0MQ tables such as STYLE  -->
+  <properties>
+    <additionalparam>-Xdoclint:accessibility,reference,syntax</additionalparam>
+  </properties>
+
   <dependencies>
 
     <dependency>
