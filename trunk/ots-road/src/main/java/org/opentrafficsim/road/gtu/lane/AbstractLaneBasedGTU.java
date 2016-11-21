@@ -197,6 +197,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      */
     public final void leaveLane(final Lane lane, final boolean beingDestroyed) throws GTUException
     {
+        Length position = position(lane, getReference());
         this.lanesCurrentOperationalPlan.remove(lane);
         List<SimEvent<OTSSimTimeDouble>> pending = this.pendingTriggers.get(lane);
         if (null != pending)
@@ -227,7 +228,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             this.fractionalLinkPositions.remove(lane.getParentLink());
         }
-        lane.removeGTU(this, !found);
+        lane.removeGTU(this, !found, position);
         if (this.lanesCurrentOperationalPlan.size() == 0 && !beingDestroyed)
         {
             System.err.println("leaveLane: lanes.size() = 0 for GTU " + getId());

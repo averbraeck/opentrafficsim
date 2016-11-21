@@ -116,6 +116,16 @@ public abstract class Sampler
         Throw.whenNull(extendedDataType, "ExtendedDataType may not be null.");
         this.extendedDataTypes.add(extendedDataType);
     }
+    
+    /**
+     * Whether this sampler has the given extended data type registered to it.
+     * @param extendedDataType extended data type
+     * @return whether this sampler has the given extended data type registered to it
+     */
+    public boolean contains(final ExtendedDataType<?> extendedDataType)
+    {
+        return this.extendedDataTypes.contains(extendedDataType);
+    }
 
     /**
      * Start recording at the given time (which should be the current time) on the given lane direction.
@@ -176,6 +186,11 @@ public abstract class Sampler
         Throw.whenNull(acceleration, "Acceleration may not be null.");
         Throw.whenNull(time, "Time may not be null.");
         Throw.whenNull(gtu, "GtuDataInterface may not be null.");
+        if (kpiLaneDirection.getLaneData().getLength().lt(position))
+        {
+            // ignore event if beyond lane length (may happen during lane change)
+            return;
+        }
         String gtuId = gtu.getId();
         Trajectory trajectory = new Trajectory(gtu, makeMetaData(gtu), this.extendedDataTypes, kpiLaneDirection);
         if (!this.trajectoryPerGtu.containsKey(gtuId))
@@ -210,6 +225,7 @@ public abstract class Sampler
         String gtuId = gtu.getId();
         if (this.trajectoryPerGtu.containsKey(gtuId) && this.trajectoryPerGtu.get(gtuId).containsKey(kpiLaneDirection))
         {
+            
             this.trajectoryPerGtu.get(gtuId).get(kpiLaneDirection).add(position, speed, acceleration, time, gtu);
         }
     }

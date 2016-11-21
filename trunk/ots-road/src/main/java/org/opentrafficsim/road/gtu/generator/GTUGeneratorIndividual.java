@@ -2,8 +2,6 @@ package org.opentrafficsim.road.gtu.generator;
 
 import java.io.Serializable;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -16,10 +14,13 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.lane.Lane;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * Generate GTUs.
@@ -67,6 +68,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
      * @param direction the direction on the lane in which the GTU has to be generated (DIR_PLUS, or DIR_MINUS)
      * @param gtuColorer the GTUColorer to use
      * @param strategicalPlannerFactory the lane-based strategical planner factory to use
+     * @param routeGenerator route generator
      * @param network the network to register the GTU into
      * @throws SimRuntimeException when simulation scheduling fails
      */
@@ -80,10 +82,11 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
         final Time startTime, final Time endTime, final Lane lane, final Length position,
         final GTUDirectionality direction, final GTUColorer gtuColorer,
         final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory,
+        final RouteGenerator routeGenerator,
         final OTSNetwork network) throws SimRuntimeException
     {
         super(name, simulator, gtuType, gtuClass, initialSpeedDist, interarrivelTimeDist, maxGTUs, startTime, endTime,
-            lane, position, direction, gtuColorer, strategicalPlannerFactory, network);
+            lane, position, direction, gtuColorer, strategicalPlannerFactory, routeGenerator, network);
         this.simulator = simulator;
         this.lengthDist = lengthDist;
         this.widthDist = widthDist;

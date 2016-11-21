@@ -6,8 +6,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -24,12 +22,12 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU.LaneBasedIndividualCarBuilder;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayDistance;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
@@ -39,6 +37,8 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * Common code for LaneBasedGTU generators that may have to postpone putting a GTU on the road due to congestion growing into
@@ -102,6 +102,9 @@ public abstract class AbstractGTUGenerator implements Serializable
     /** The lane-based strategical planner factory to use. */
     private final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory;
 
+    /** Route generator. */
+    private final RouteGenerator routeGenerator;
+    
     /** The network. */
     private final OTSNetwork network;
 
@@ -127,6 +130,7 @@ public abstract class AbstractGTUGenerator implements Serializable
      * @param direction the direction on the lane in which the GTU has to be generated (DIR_PLUS, or DIR_MINUS)
      * @param gtuColorer the GTUColorer to use
      * @param strategicalPlannerFactory the lane-based strategical planner factory to use
+     * @param routeGenerator route generator
      * @param network the network to register the generated GTUs into
      * @throws SimRuntimeException when simulation scheduling fails
      */
@@ -134,10 +138,10 @@ public abstract class AbstractGTUGenerator implements Serializable
     public AbstractGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
             final Class<?> gtuClass, final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
             final ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> interarrivelTimeDist, final long maxGTUs,
-            final Time startTime, final Time endTime, final Lane lane, final Length position,
-            final GTUDirectionality direction, final GTUColorer gtuColorer,
+            final Time startTime, final Time endTime, final Lane lane, final Length position, final GTUDirectionality direction,
+            final GTUColorer gtuColorer,
             final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory,
-            final OTSNetwork network) throws SimRuntimeException
+            final RouteGenerator routeGenerator, final OTSNetwork network) throws SimRuntimeException
     {
         super();
         this.name = name;
@@ -153,6 +157,7 @@ public abstract class AbstractGTUGenerator implements Serializable
         this.direction = direction;
         this.gtuColorer = gtuColorer;
         this.strategicalPlannerFactory = strategicalPlannerFactory;
+        this.routeGenerator = routeGenerator;
         this.network = network;
 
         simulator.scheduleEventAbs(startTime, this, this, "generate", null);
@@ -202,7 +207,7 @@ public abstract class AbstractGTUGenerator implements Serializable
 
             if (enoughSpace(carBuilder))
             {
-                carBuilder.build(this.strategicalPlannerFactory);
+                carBuilder.build(this.strategicalPlannerFactory, this.routeGenerator.draw());
             }
             else
             {
@@ -212,8 +217,8 @@ public abstract class AbstractGTUGenerator implements Serializable
                 if (this.carBuilderList.size() == 1)
                 {
                     // first entry in list - start the watch thread
-                    getSimulator()
-                            .scheduleEventRel(new Duration(0.1, TimeUnit.SECOND), this, this, "checkCarBuilderList", null);
+                    getSimulator().scheduleEventRel(new Duration(0.1, TimeUnit.SECOND), this, this, "checkCarBuilderList",
+                            null);
                 }
             }
         }
@@ -243,7 +248,7 @@ public abstract class AbstractGTUGenerator implements Serializable
         DirectedLanePosition directedLanePosition = carBuilder.getInitialLongitudinalPositions().iterator().next();
         Lane generatorLane = directedLanePosition.getLane();
         double genPosSI = directedLanePosition.getPosition().getSI();
-        //GTUDirectionality direction = directedLanePosition.getGtuDirection();
+        // GTUDirectionality direction = directedLanePosition.getGtuDirection();
         // XXX different from this.direction?
         double lengthSI = generatorLane.getLength().getSI();
         double frontNew = (genPosSI + carBuilder.getLength().getSI()) / lengthSI;
@@ -270,13 +275,11 @@ public abstract class AbstractGTUGenerator implements Serializable
         Length minimumHeadway = new Length(0.0, LengthUnit.METER);
         if (headway.getObjectType().isGtu())
         {
-            minimumHeadway =
-                    followingModel.minimumHeadway(carBuilder.getInitialSpeed(), headway.getSpeed(), new Length(1.0,
-                            LengthUnit.CENTIMETER), new Length(250.0, LengthUnit.METER), generatorLane
-                            .getSpeedLimit(carBuilder.getGtuType()), carBuilder.getMaximumSpeed());
-            double acc =
-                    followingModel.computeAcceleration(carBuilder.getInitialSpeed(), carBuilder.getMaximumSpeed(),
-                            headway.getSpeed(), minimumHeadway, carBuilder.getMaximumSpeed()).getSI();
+            minimumHeadway = followingModel.minimumHeadway(carBuilder.getInitialSpeed(), headway.getSpeed(),
+                    new Length(1.0, LengthUnit.CENTIMETER), new Length(250.0, LengthUnit.METER),
+                    generatorLane.getSpeedLimit(carBuilder.getGtuType()), carBuilder.getMaximumSpeed());
+            double acc = followingModel.computeAcceleration(carBuilder.getInitialSpeed(), carBuilder.getMaximumSpeed(),
+                    headway.getSpeed(), minimumHeadway, carBuilder.getMaximumSpeed()).getSI();
             if (acc < 0)
             {
                 System.err.println(getSimulator().getSimulatorTime() + ", generator headway for GTU " + headway.getId()
@@ -307,9 +310,8 @@ public abstract class AbstractGTUGenerator implements Serializable
             final double maxDistanceSI, final Time when) throws GTUException
     {
         // TODO: THIS METHOD IS ALSO IN PERCEPTION -- DON'T DUPLICATE; ALSO, THIS VERSION IS WRONG.
-        LaneBasedGTU otherGTU =
-                theLane.getGtuAhead(new Length(lanePositionSI, LengthUnit.METER), GTUDirectionality.DIR_PLUS,
-                        RelativePosition.REAR, when);
+        LaneBasedGTU otherGTU = theLane.getGtuAhead(new Length(lanePositionSI, LengthUnit.METER), GTUDirectionality.DIR_PLUS,
+                RelativePosition.REAR, when);
         if (otherGTU != null)
         {
             double distanceM = cumDistanceSI + otherGTU.position(theLane, otherGTU.getRear(), when).getSI() - lanePositionSI;
@@ -368,9 +370,8 @@ public abstract class AbstractGTUGenerator implements Serializable
             final double maxDistanceSI, final Time when) throws GTUException
     {
         // TODO: THIS METHOD IS ALSO IN PERCEPTION -- DON'T DUPLICATE; ALSO, THIS VERSION IS RONG.
-        LaneBasedGTU otherGTU =
-                theLane.getGtuBehind(new Length(lanePositionSI, LengthUnit.METER), GTUDirectionality.DIR_PLUS,
-                        RelativePosition.FRONT, when);
+        LaneBasedGTU otherGTU = theLane.getGtuBehind(new Length(lanePositionSI, LengthUnit.METER), GTUDirectionality.DIR_PLUS,
+                RelativePosition.FRONT, when);
         if (otherGTU != null)
         {
             double distanceM = cumDistanceSI + otherGTU.position(theLane, otherGTU.getFront(), when).getSI() - lanePositionSI;
@@ -466,7 +467,7 @@ public abstract class AbstractGTUGenerator implements Serializable
             if (enoughSpace(carBuilder))
             {
                 this.carBuilderList.remove(0);
-                carBuilder.build(this.strategicalPlannerFactory);
+                carBuilder.build(this.strategicalPlannerFactory, this.routeGenerator.draw());
             }
         }
 

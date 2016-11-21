@@ -12,16 +12,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import nl.javel.gisbeans.io.esri.CoordinateTransform;
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.jstats.distributions.DistConstant;
-import nl.tudelft.simulation.jstats.distributions.DistExponential;
-import nl.tudelft.simulation.jstats.streams.MersenneTwister;
-import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.io.URLResource;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
@@ -47,6 +37,7 @@ import org.opentrafficsim.core.gtu.animation.SpeedGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -63,6 +54,16 @@ import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.xml.sax.SAXException;
+
+import nl.javel.gisbeans.io.esri.CoordinateTransform;
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.jstats.distributions.DistConstant;
+import nl.tudelft.simulation.jstats.distributions.DistExponential;
+import nl.tudelft.simulation.jstats.streams.MersenneTwister;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import nl.tudelft.simulation.language.io.URLResource;
 
 /**
  * <p>
@@ -94,8 +95,8 @@ public class TestGMParser extends AbstractWrappableAnimation
                 {
                     TestGMParser xmlModel = new TestGMParser();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND), new Duration(
-                            60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -176,8 +177,7 @@ public class TestGMParser extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(
-                final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
+        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
@@ -188,8 +188,8 @@ public class TestGMParser extends AbstractWrappableAnimation
             {
                 network = nlp.build(url);
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
-                    | GTUException | OTSGeometryException exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
+                    | OTSGeometryException exception)
             {
                 exception.printStackTrace();
             }
@@ -215,39 +215,38 @@ public class TestGMParser extends AbstractWrappableAnimation
             int maxGTUs = Integer.MAX_VALUE;
             Time startTime = Time.ZERO;
             Time endTime = new Time(1E24, TimeUnit.HOUR);
-            GTUColorer gtuColorer =
-                    new SwitchableGTUColorer(0, new IDGTUColorer(),
-                            new SpeedGTUColorer(new Speed(100.0, SpeedUnit.KM_PER_HOUR)), new AccelerationGTUColorer(
-                                    new Acceleration(-1.0, AccelerationUnit.METER_PER_SECOND_2), new Acceleration(1.0,
-                                            AccelerationUnit.METER_PER_SECOND_2)));
-            
+            GTUColorer gtuColorer = new SwitchableGTUColorer(0, new IDGTUColorer(),
+                    new SpeedGTUColorer(new Speed(100.0, SpeedUnit.KM_PER_HOUR)),
+                    new AccelerationGTUColorer(new Acceleration(-1.0, AccelerationUnit.METER_PER_SECOND_2),
+                            new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2)));
+
             LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory =
                     new LaneBasedStrategicalRoutePlannerFactory(
-                        new LaneBasedGTUFollowingTacticalPlannerFactory(new IDMPlusOld()));
+                            new LaneBasedGTUFollowingTacticalPlannerFactory(new IDMPlusOld()));
 
             CrossSectionLink L2a = (CrossSectionLink) network.getLink("L2a");
             Lane L2a_A2 = (Lane) L2a.getCrossSectionElement("A2");
             Lane L2a_A3 = (Lane) L2a.getCrossSectionElement("A3");
-            new GTUGeneratorIndividual("L2a_A2", this.simulator, carType, LaneBasedIndividualGTU.class,
-                initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
-                endTime, L2a_A2, new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
-                strategicalPlannerFactory, network);
-            new GTUGeneratorIndividual("L2a_A3", this.simulator, carType, LaneBasedIndividualGTU.class,
-                initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
-                endTime, L2a_A3, new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
-                strategicalPlannerFactory, network);
+            new GTUGeneratorIndividual("L2a_A2", this.simulator, carType, LaneBasedIndividualGTU.class, initialSpeedDist,
+                    interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime, endTime, L2a_A2,
+                    new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer, strategicalPlannerFactory,
+                    new FixedRouteGenerator(null), network);
+            new GTUGeneratorIndividual("L2a_A3", this.simulator, carType, LaneBasedIndividualGTU.class, initialSpeedDist,
+                    interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime, endTime, L2a_A3,
+                    new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer, strategicalPlannerFactory,
+                    new FixedRouteGenerator(null), network);
 
             CrossSectionLink L49b = (CrossSectionLink) network.getLink("L49b");
             Lane L49b_A1 = (Lane) L49b.getCrossSectionElement("A1");
             Lane L49b_A2 = (Lane) L49b.getCrossSectionElement("A2");
-            new GTUGeneratorIndividual("L49b_A1", this.simulator, carType, LaneBasedIndividualGTU.class,
-                initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
-                endTime, L49b_A1, new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
-                strategicalPlannerFactory, network);
-            new GTUGeneratorIndividual("L49b_A2", this.simulator, carType, LaneBasedIndividualGTU.class,
-                initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
-                endTime, L49b_A2, new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
-                strategicalPlannerFactory, network);
+            new GTUGeneratorIndividual("L49b_A1", this.simulator, carType, LaneBasedIndividualGTU.class, initialSpeedDist,
+                    interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime, endTime, L49b_A1,
+                    new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer, strategicalPlannerFactory,
+                    new FixedRouteGenerator(null), network);
+            new GTUGeneratorIndividual("L49b_A2", this.simulator, carType, LaneBasedIndividualGTU.class, initialSpeedDist,
+                    interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime, endTime, L49b_A2,
+                    new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer, strategicalPlannerFactory,
+                    new FixedRouteGenerator(null), network);
         }
 
         /** {@inheritDoc} */
@@ -328,8 +327,8 @@ public class TestGMParser extends AbstractWrappableAnimation
      * Copyright (c) 2011 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. The
      * source code and binary code of this software is proprietary information of Delft University of Technology. Specific
      * MathTransform for WGS84 WGS84 (EPSG:4326) to RD_new (EPSG:28992) conversions. Code based on C code by Peter Knoppers as
-     * applied <a href="http://www.regiolab-delft.nl/?q=node/36">here</a>, which is based on <a
-     * href="http://www.dekoepel.nl/pdf/Transformatieformules.pdf">this</a> paper.
+     * applied <a href="http://www.regiolab-delft.nl/?q=node/36">here</a>, which is based on
+     * <a href="http://www.dekoepel.nl/pdf/Transformatieformules.pdf">this</a> paper.
      * @author Gert-Jan Stolk
      **/
     public static class WGS84ToRDNewTransform

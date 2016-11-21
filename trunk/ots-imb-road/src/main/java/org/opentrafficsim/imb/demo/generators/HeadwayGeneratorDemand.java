@@ -1,5 +1,7 @@
 package org.opentrafficsim.imb.demo.generators;
 
+import java.rmi.RemoteException;
+
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -38,6 +40,9 @@ public class HeadwayGeneratorDemand implements Generator<Duration>
 
     /** Simulator. */
     private final OTSSimulatorInterface simulator;
+    
+    /** Stream name of headway generation. */
+    private static final String HEADWAY_STREAM = "headwayGeneration";
 
     /**
      * @param timeVector a time vector
@@ -50,6 +55,15 @@ public class HeadwayGeneratorDemand implements Generator<Duration>
         Throw.whenNull(timeVector, "Time vector may not be null.");
         Throw.whenNull(demandVector, "Demand vector may not be null.");
         Throw.whenNull(simulator, "Simulator may not be null.");
+        try
+        {
+            Throw.whenNull(simulator.getReplication().getStream(HEADWAY_STREAM),
+                    "Could not obtain random stream '" + HEADWAY_STREAM + "'.");
+        }
+        catch (RemoteException exception)
+        {
+            throw new RuntimeException("Could not obtain replication.", exception);
+        }
         for (int i = 0; i < timeVector.size() - 1; i++)
         {
             try
@@ -88,7 +102,14 @@ public class HeadwayGeneratorDemand implements Generator<Duration>
             {
                 i++;
             }
-            return nextArrival(i, time.minus(this.timeVector.get(i)), 1.0).minus(time);
+            try
+            {
+                return nextArrival(i, time.minus(this.timeVector.get(i)), 1.0).minus(time);
+            }
+            catch (RemoteException exception)
+            {
+                throw new RuntimeException("Could not obtain replication.", exception);
+            }
         }
         catch (ValueException exception)
         {
@@ -103,11 +124,13 @@ public class HeadwayGeneratorDemand implements Generator<Duration>
      * determined arrival falls outside of a time period, or when demand in a time period is 0.
      * @param i index of time period
      * @param start reference time from start of period i, pertains to previous arrival, or zero during recursion
-     * @param fractionRemaining remaining fraction of headway to apply due to time in earlier time periods 
+     * @param fractionRemaining remaining fraction of headway to apply due to time in earlier time periods
      * @return time of next arrival
      * @throws ValueException in case of an illegal time vector
+     * @throws RemoteException
      */
-    private Time nextArrival(final int i, final Duration start, final double fractionRemaining) throws ValueException
+    private Time nextArrival(final int i, final Duration start, final double fractionRemaining)
+            throws ValueException, RemoteException
     {
 
         // escape if beyond specified time by infinite next arrival (= no traffic)
@@ -120,11 +143,13 @@ public class HeadwayGeneratorDemand implements Generator<Duration>
         if (this.demandVector.get(i).equals(Frequency.ZERO))
         {
             // after zero-demand, the next headway is a random fraction of a random headway as there is no previous arrival
-            return nextArrival(i + 1, Duration.ZERO, Math.random());
+            return nextArrival(i + 1, Duration.ZERO,
+                    this.simulator.getReplication().getStream(HEADWAY_STREAM).nextDouble());
         }
 
         // calculate headway from demand
-        double t = -Math.log(Math.random()) / this.demandVector.get(i).si;
+        double t = -Math.log(this.simulator.getReplication().getStream(HEADWAY_STREAM).nextDouble())
+                / this.demandVector.get(i).si;
 
         // calculate arrival
         Time arrival = new Time(this.timeVector.get(i).si + start.si + t * fractionRemaining, TimeUnit.SI);

@@ -10,7 +10,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.connector.Connector.IMBEventType;
@@ -23,6 +22,8 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalDelay;
 import org.opentrafficsim.kpi.sampling.indicator.TotalNumberOfStops;
 import org.opentrafficsim.kpi.sampling.indicator.TotalTravelDistance;
 import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
+import org.opentrafficsim.road.network.sampling.data.ReferenceSpeed;
+import org.opentrafficsim.road.network.sampling.indicator.TotalDelayReference;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -110,7 +111,8 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * </tr>
  * <td>numberSpaceTimeRegions</td>
  * <td>int</td>
- * <td>number of space-time regions for this statistic</td> </tr>
+ * <td>number of space-time regions for this statistic</td>
+ * </tr>
  * <tr>
  * <td>startTime_1</td>
  * <td>double</td>
@@ -263,6 +265,9 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
     /** */
     private static final long serialVersionUID = 20160923L;
 
+    /** Reference speed extended data type. */
+    private static final ReferenceSpeed REF_SPEED_TYPE = new ReferenceSpeed();
+
     /** The query for the statistic. */
     private final Query query;
 
@@ -283,6 +288,8 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
     private MeanTripLength meanTripLength = new MeanTripLength();
 
     private TotalDelay totalDelay = new TotalDelay(new Speed(80.0, SpeedUnit.KM_PER_HOUR));
+
+    private TotalDelayReference totalDelayReference = new TotalDelayReference();
 
     private TotalNumberOfStops totalNumberOfStops = new TotalNumberOfStops();
 
@@ -335,14 +342,23 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
     public void sendStatisticsUpdate() throws IMBException, SimRuntimeException
     {
         double time = getSimulator().getSimulatorTime().getTime().si;
-        Length tdist = this.totalTravelDistance.getValue(this.query, new Time(time, TimeUnit.SI));
-        Duration ttt = this.totalTravelTime.getValue(this.query, new Time(time, TimeUnit.SI));
-        Speed ms = this.meanSpeed.getValue(this.query, new Time(time, TimeUnit.SI));
-        Duration mttpkm = this.meanTravelTimePerKm.getValue(this.query, new Time(time, TimeUnit.SI));
-        Length mtl = this.meanTripLength.getValue(this.query, new Time(time, TimeUnit.SI));
-        Duration tdel = this.totalDelay.getValue(this.query, new Time(time, TimeUnit.SI));
-        Dimensionless nos = this.totalNumberOfStops.getValue(this.query, new Time(time, TimeUnit.SI));
-        System.out.println("===== @time " + time + " s =====");
+        Time timeObject = new Time(time, TimeUnit.SI);
+        Length tdist = this.totalTravelDistance.getValue(this.query, timeObject);
+        Duration ttt = this.totalTravelTime.getValue(this.query, timeObject);
+        Speed ms = this.meanSpeed.getValue(this.query, timeObject);
+        Duration mttpkm = this.meanTravelTimePerKm.getValue(this.query, timeObject);
+        Length mtl = this.meanTripLength.getValue(this.query, timeObject);
+        Duration tdel;
+        if (this.query.getSampler().contains(REF_SPEED_TYPE))
+        {
+            tdel = this.totalDelayReference.getValue(this.query, timeObject);
+        }
+        else
+        {
+            tdel = this.totalDelay.getValue(this.query, timeObject);
+        }
+        Dimensionless nos = this.totalNumberOfStops.getValue(this.query, timeObject);
+        System.out.println("===== @time " + time + " s on " + this.query.getId() + " =====");
         System.out.println("Total distance " + tdist);
         System.out.println("Total travel time " + ttt);
         System.out.println("Mean speed " + ms);
@@ -350,9 +366,7 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
         System.out.println("Mean trip length " + mtl);
         System.out.println("Total delay " + tdel);
         System.out.println("Number of stops " + nos);
-        getConnector().postIMBMessage(
-                "StatisticsGTULane",
-                IMBEventType.CHANGE,
+        getConnector().postIMBMessage("StatisticsGTULane", IMBEventType.CHANGE,
                 new Object[] { getSimulator().getSimulatorTime().getTime().si, this.query.getId(), tdist.si, ttt.si, ms.si,
                         mttpkm.si, tdel.si, mtl.si, nos.si });
         getSimulator().scheduleEventRel(this.transmissionInterval, this, this, "sendStatisticsUpdate", new Object[] {});

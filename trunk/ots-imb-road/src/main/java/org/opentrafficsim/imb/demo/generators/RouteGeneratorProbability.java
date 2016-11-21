@@ -1,5 +1,6 @@
 package org.opentrafficsim.imb.demo.generators;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +43,9 @@ public class RouteGeneratorProbability implements RouteGenerator
     /** Simulator. */
     private final OTSSimulatorInterface simulator;
 
+    /** Stream name of GTU class generation. */
+    private final static String GTU_ROUTE_STREAM = "gtuRoute";
+    
     /** Demand map. */
     private final HashMap<OTSNode, Object> demandMap = new HashMap<>();
 
@@ -57,6 +61,19 @@ public class RouteGeneratorProbability implements RouteGenerator
     public RouteGeneratorProbability(final OTSNetwork network, final TimeVector timeVector, final OTSNode from,
             final OTSSimulatorInterface simulator)
     {
+        Throw.whenNull(network, "Network may not be null.");
+        Throw.whenNull(timeVector, "Time vector may not be null.");
+        Throw.whenNull(from, "From node may not be null.");
+        Throw.whenNull(simulator, "Simulator may not be null.");
+        try
+        {
+            Throw.whenNull(simulator.getReplication().getStream(GTU_ROUTE_STREAM),
+                    "Could not obtain random stream '" + GTU_ROUTE_STREAM + "'.");
+        }
+        catch (RemoteException exception)
+        {
+            throw new RuntimeException("Could not obtain replication.", exception);
+        }
         this.network = network;
         this.timeVector = timeVector;
         this.from = from;
@@ -85,6 +102,8 @@ public class RouteGeneratorProbability implements RouteGenerator
     @Override
     public Route draw() throws ProbabilityException
     {
+        // TODO This method is invoked when the vehicle can be generated, which may be delayed relative to the arrival time by 
+        // the generator. The route should be drawn from at the arrival time. Thus it should be part of the GTU characteristics.
         Time time = this.simulator.getSimulatorTime().getTime();
         try
         {
@@ -115,7 +134,15 @@ public class RouteGeneratorProbability implements RouteGenerator
             }
             Throw.when(sum == 0.0, RuntimeException.class, "Trying to draw route while no route has demand.");
             double cumul = 0.0;
-            double r = Math.random() * sum;
+            double r;
+            try
+            {
+                r = this.simulator.getReplication().getStream(GTU_ROUTE_STREAM).nextDouble() * sum;
+            }
+            catch (RemoteException exception)
+            {
+                throw new RuntimeException("Could not obtain replication.", exception);
+            }
             for (OTSNode to : this.demandMap.keySet())
             {
                 double p = probMap.get(to);

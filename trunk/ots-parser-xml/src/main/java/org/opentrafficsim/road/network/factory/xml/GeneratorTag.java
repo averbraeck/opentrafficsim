@@ -322,11 +322,12 @@ class GeneratorTag implements Serializable
         Length position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, lane);
         LaneBasedTacticalPlannerFactory<?> tacticalPlannerFactory = makeTacticalPlannerFactory(generatorTag);
         LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory =
-                new LaneBasedStrategicalRoutePlannerFactory(tacticalPlannerFactory, routeGenerator);
+                new LaneBasedStrategicalRoutePlannerFactory(tacticalPlannerFactory);
         new GTUGeneratorIndividual(linkTag.name + "." + generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType, gtuClass,
                 generatorTag.initialSpeedDist, generatorTag.iatDist, generatorTag.gtuTag.lengthDist,
                 generatorTag.gtuTag.widthDist, generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime, lane,
-                position, generatorTag.gtuDirection, generatorTag.gtuColorer, strategicalPlannerFactory, parser.network);
+                position, generatorTag.gtuDirection, generatorTag.gtuColorer, strategicalPlannerFactory, routeGenerator,
+                parser.network);
 
         // TODO GTUMix
         // TODO RouteMix

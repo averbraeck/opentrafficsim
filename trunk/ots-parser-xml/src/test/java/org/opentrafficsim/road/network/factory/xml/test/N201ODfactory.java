@@ -187,7 +187,7 @@ public class N201ODfactory
             // strategical planner factory using route generator (i.e. a strategical planner factory required per origin)
             LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory =
                     new LaneBasedStrategicalRoutePlannerFactory(
-                            new LaneBasedGTUFollowingTacticalPlannerFactory(new IDMPlusOld()), routeGenerator);
+                            new LaneBasedGTUFollowingTacticalPlannerFactory(new IDMPlusOld()));
             // time
             CrossSectionLink link = (CrossSectionLink) origin.getLinks().iterator().next(); // should be only 1 for origins
             int lanes = link.getLanes().size();
@@ -203,7 +203,7 @@ public class N201ODfactory
                 {
                     new GTUGeneratorIndividual(origin + "." + link.getLanes().indexOf(lane), simulator, gtuType, gtuClass,
                             initSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE, startTime, endTime,
-                            lane, position, dir, colorer, strategicalPlannerFactory, network);
+                            lane, position, dir, colorer, strategicalPlannerFactory, routeGenerator, network);
                 }
                 catch (SimRuntimeException exception)
                 {

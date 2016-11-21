@@ -433,23 +433,26 @@ public final class Trajectory
     {
         int from = 0;
         double fFrom = 0;
-        while (startPosition.si > this.x[from + 1] && from < this.size - 1)
+        // to float needed as x is in floats and due to precision fTo > 1 may become true
+        float startPos = (float) startPosition.si;
+        float endPos = (float) endPosition.si;
+        while (startPos > this.x[from + 1] && from < this.size - 1)
         {
             from++;
         }
-        if (this.x[from] < startPosition.si)
+        if (this.x[from] < startPos)
         {
-            fFrom = (startPosition.si - this.x[from]) / (this.x[from + 1] - this.x[from]);
+            fFrom = (startPos - this.x[from]) / (this.x[from + 1] - this.x[from]);
         }
         int to = this.size - 1;
         double fTo = 0;
-        while (endPosition.si < this.x[to] && to > 0)
+        while (endPos < this.x[to] && to > 0)
         {
             to--;
         }
         if (to < this.size - 1)
         {
-            fTo = (endPosition.si - this.x[to]) / (this.x[to + 1] - this.x[to]);
+            fTo = (endPos - this.x[to]) / (this.x[to + 1] - this.x[to]);
         }
         return new Boundaries(from, fFrom, to, fTo);
     }
@@ -464,23 +467,26 @@ public final class Trajectory
     {
         int from = 0;
         double fFrom = 0;
-        while (startTime.si > this.t[from + 1] && from < this.size - 1)
+        // to float needed as x is in floats and due to precision fTo > 1 may become true
+        float startTim = (float) startTime.si;
+        float endTim = (float) endTime.si;
+        while (startTim > this.t[from + 1] && from < this.size - 1)
         {
             from++;
         }
-        if (this.t[from] < startTime.si)
+        if (this.t[from] < startTim)
         {
-            fFrom = (startTime.si - this.t[from]) / (this.t[from + 1] - this.t[from]);
+            fFrom = (startTim - this.t[from]) / (this.t[from + 1] - this.t[from]);
         }
         int to = this.size - 1;
         double fTo = 0;
-        while (endTime.si < this.t[to] && to > 0)
+        while (endTim < this.t[to] && to > 0)
         {
             to--;
         }
         if (to < this.size - 1)
         {
-            fTo = (endTime.si - this.t[to]) / (this.t[to + 1] - this.t[to]);
+            fTo = (endTim - this.t[to]) / (this.t[to + 1] - this.t[to]);
         }
         return new Boundaries(from, fFrom, to, fTo);
     }

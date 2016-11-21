@@ -187,7 +187,7 @@ public class N201ODfactory
             // strategical planner factory using route generator (i.e. a strategical planner factory required per origin)
             LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory =
                     new LaneBasedStrategicalRoutePlannerFactory(
-                            new LaneBasedGTUFollowingTacticalPlannerFactory(new IDMPlusOld()), routeGenerator);
+                            new LaneBasedGTUFollowingTacticalPlannerFactory(new IDMPlusOld()));
             // time
             CrossSectionLink link = (CrossSectionLink) origin.getLinks().iterator().next(); // should be only 1 for origins
             int lanes = link.getLanes().size();
@@ -203,7 +203,7 @@ public class N201ODfactory
                 {
                     new GTUGeneratorIndividual(origin + "." + link.getLanes().indexOf(lane), simulator, gtuType, gtuClass,
                             initSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE, startTime, endTime,
-                            lane, position, dir, colorer, strategicalPlannerFactory, network);
+                            lane, position, dir, colorer, strategicalPlannerFactory, routeGenerator, network);
                 }
                 catch (SimRuntimeException exception)
                 {
@@ -215,10 +215,10 @@ public class N201ODfactory
 
     /**
      * @param network network
-     * @param sampling sampling
+     * @param sampler sampling
      * @return query covering the entire N201
      */
-    public static Query getQuery(final OTSNetwork network, final Sampler sampling)
+    public static Query getQuery(final OTSNetwork network, final Sampler sampler)
     {
         // String[] southBound = new String[] { "L1a", "L2a", "L3a4a", "L5a", "L6a", "L7a", "L8a9a", "L10a11a", "L12a",
         // "L13a14a",
@@ -235,7 +235,7 @@ public class N201ODfactory
         gtuTypes.add(new GtuTypeData(new GTUType("CAR")));
         gtuTypes.add(new GtuTypeData(new GTUType("BUS")));
         metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
-        Query query = new Query(sampling, "N201 both directions", metaDataSet,
+        Query query = new Query(sampler, "N201 both directions", metaDataSet,
                 new Frequency(2.0, FrequencyUnit.PER_MINUTE));
         // addSpaceTimeRegions(query, network, northBound);
         addSpaceTimeRegions(query, network, southBound);

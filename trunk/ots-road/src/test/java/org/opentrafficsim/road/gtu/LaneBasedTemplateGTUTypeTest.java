@@ -9,17 +9,9 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.jstats.distributions.DistConstant;
-import nl.tudelft.simulation.jstats.streams.MersenneTwister;
-import nl.tudelft.simulation.jstats.streams.StreamInterface;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -37,16 +29,23 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacter
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.route.FixedRouteGenerator;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedTemplateGTUType;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.jstats.distributions.DistConstant;
+import nl.tudelft.simulation.jstats.streams.MersenneTwister;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * Test the TemplateGTUType class.
@@ -103,22 +102,22 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                     {
                         return pcMaximumSpeed.draw();
                     }
-                }, simulator, new DummyStrategicalPlannerFactory(), 
-                /*-new Generator<LaneBasedStrategicalPlanner>()
-                {
-                    public LaneBasedStrategicalPlanner draw()
-                    {
-                        return null;
-                    }
-                }, 
-                */
-                initialLongitudinalPositions, new Generator<Speed>()
-                {
-                    public Speed draw()
-                    {
-                        return pcInitialSpeed.draw();
-                    }
-                }, network);
+                }, simulator, new DummyStrategicalPlannerFactory(), new FixedRouteGenerator(null),
+                        /*-new Generator<LaneBasedStrategicalPlanner>()
+                        {
+                            public LaneBasedStrategicalPlanner draw()
+                            {
+                                return null;
+                            }
+                        }, 
+                        */
+                        initialLongitudinalPositions, new Generator<Speed>()
+                        {
+                            public Speed draw()
+                            {
+                                return pcInitialSpeed.draw();
+                            }
+                        }, network);
         verifyFields(passengerCar, pcType, pcLength, pcWidth, pcMaximumSpeed, pcInitialSpeed, simulator);
         GTUType truckType = new GTUType("truck");
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> truckLength =
@@ -150,29 +149,30 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                     {
                         return truckMaximumSpeed.draw();
                     }
-                }, truckSimulator, new DummyStrategicalPlannerFactory(), 
-                /*-new Generator<LaneBasedStrategicalPlanner>()
-                {
-                    public LaneBasedStrategicalPlanner draw()
-                    {
-                        return null;
-                    }
-                },
-                */
-                initialLongitudinalPositions, new Generator<Speed>()
-                {
-                    public Speed draw()
-                    {
-                        return truckInitialSpeed.draw();
-                    }
-                }, network);
+                }, truckSimulator, new DummyStrategicalPlannerFactory(), new FixedRouteGenerator(null),
+                        /*-new Generator<LaneBasedStrategicalPlanner>()
+                        {
+                            public LaneBasedStrategicalPlanner draw()
+                            {
+                                return null;
+                            }
+                        },
+                        */
+                        initialLongitudinalPositions, new Generator<Speed>()
+                        {
+                            public Speed draw()
+                            {
+                                return truckInitialSpeed.draw();
+                            }
+                        }, network);
         verifyFields(truck, truckType, truckLength, truckWidth, truckMaximumSpeed, truckInitialSpeed, truckSimulator);
     }
-    
+
     /**
      * Dummy strategical planner factory.
      * <p>
-     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version Aug 2, 2016 <br>
@@ -206,11 +206,11 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public LaneBasedStrategicalPlanner create(final LaneBasedGTU gtu) throws GTUException
+        public LaneBasedStrategicalPlanner create(LaneBasedGTU gtu, Route route) throws GTUException
         {
             return null;
         }
-        
+
     }
 
     /**
@@ -332,10 +332,10 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         LaneBasedGTUCharacteristics characteristics = templateGTUType.draw();
         assertEquals("Length should be " + length, length.draw().getSI(), characteristics.getLength().getSI(), 0.0001);
         assertEquals("Width should be " + width, width.draw().getSI(), characteristics.getWidth().getSI(), 0.0001);
-        assertEquals("Maximum speed should be " + maximumSpeed, maximumSpeed.draw().getSI(), characteristics.getMaximumSpeed()
-                .getSI(), 0.0001);
-        assertEquals("Initial speed should be " + initialSpeed, initialSpeed.draw().getSI(),
-                characteristics.getSpeed().getSI(), 0.0001);
+        assertEquals("Maximum speed should be " + maximumSpeed, maximumSpeed.draw().getSI(),
+                characteristics.getMaximumSpeed().getSI(), 0.0001);
+        assertEquals("Initial speed should be " + initialSpeed, initialSpeed.draw().getSI(), characteristics.getSpeed().getSI(),
+                0.0001);
         assertEquals("Simulator", simulator, templateGTUType.getSimulator());
     }
 }
@@ -362,16 +362,14 @@ class DummyModelForTemplateGTUTest implements OTSModelInterface
      * Register the simulator.
      * @param simulator SimulatorInterface&lt;Time, Duration, OTSSimTimeDouble&gt;; the simulator
      */
-    public void setSimulator(
-            SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
+    public void setSimulator(SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
     {
         this.simulator = simulator;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0)
-            throws SimRuntimeException
+    public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0) throws SimRuntimeException
     {
         // Nothing happens here
     }

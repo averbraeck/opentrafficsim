@@ -30,6 +30,7 @@ import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -483,12 +484,13 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         /**
          * Build one LaneBasedIndividualCar.
          * @param laneBasedStrategicalPlannerFactory factory for the strategical planner
+         * @param route route
          * @return the built Car with the set properties
          * @throws Exception when not all required values have been set
          */
         public final LaneBasedIndividualGTU build(
-                final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> laneBasedStrategicalPlannerFactory)
-                throws Exception
+                final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> laneBasedStrategicalPlannerFactory,
+                final Route route) throws Exception
         {
             if (null == this.id || null == this.gtuType || null == this.initialLongitudinalPositions
                     || null == this.initialSpeed || null == this.length || null == this.width || null == this.maximumSpeed
@@ -499,7 +501,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
             }
             LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU(this.id, this.gtuType, this.length, this.width,
                     this.maximumSpeed, this.simulator, this.network);
-            gtu.initWithAnimation(laneBasedStrategicalPlannerFactory.create(gtu), this.initialLongitudinalPositions,
+            gtu.initWithAnimation(laneBasedStrategicalPlannerFactory.create(gtu, route), this.initialLongitudinalPositions,
                     this.initialSpeed, this.animationClass, this.gtuColorer);
             return gtu;
 
