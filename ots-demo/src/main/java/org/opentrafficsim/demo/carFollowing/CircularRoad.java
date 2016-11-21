@@ -43,6 +43,7 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.graphs.AccelerationContourPlot;
 import org.opentrafficsim.graphs.ContourPlot;
 import org.opentrafficsim.graphs.DensityContourPlot;
@@ -53,7 +54,6 @@ import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -705,13 +705,14 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
 
         // strategical planner
         LaneBasedStrategicalPlanner strategicalPlanner;
+        Route route = null;
         if (!generateTruck)
         {
-            strategicalPlanner = this.strategicalPlannerGeneratorCars.create(gtu);
+            strategicalPlanner = this.strategicalPlannerGeneratorCars.create(gtu, route);
         }
         else
         {
-            strategicalPlanner = this.strategicalPlannerGeneratorTrucks.create(gtu);
+            strategicalPlanner = this.strategicalPlannerGeneratorTrucks.create(gtu, route);
         }
 
         // init

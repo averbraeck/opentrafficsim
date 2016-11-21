@@ -41,6 +41,7 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.demo.PropertiesParser;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
@@ -404,7 +405,8 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
             Length vehicleLength = new Length(4, METER);
             LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
                     new Length(1.8, METER), this.speedDistribution.draw(), this.simulator, this.network);
-            LaneBasedStrategicalPlanner strategicalPlanner = this.strategicalPlannerFactory.create(gtu);
+            Route route = null;
+            LaneBasedStrategicalPlanner strategicalPlanner = this.strategicalPlannerFactory.create(gtu, route);
             gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
                     this.gtuColorer);
             this.simulator.scheduleEventRel(this.headwayDistribution.draw(), this, this, "generateCar", new Object[] { lane });

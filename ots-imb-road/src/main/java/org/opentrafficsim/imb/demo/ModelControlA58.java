@@ -6,14 +6,18 @@ import java.awt.geom.Rectangle2D.Double;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -22,6 +26,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gis.TransformWGS84DutchRDNew;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -34,7 +39,19 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.NetworkTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.NodeTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SensorGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;
+import org.opentrafficsim.imb.transceiver.urbanstrategy.StatisticsGTULaneTransceiver;
+import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
+import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
+import org.opentrafficsim.kpi.sampling.Query;
+import org.opentrafficsim.kpi.sampling.Sampler;
+import org.opentrafficsim.kpi.sampling.meta.MetaDataGtuType;
+import org.opentrafficsim.kpi.sampling.meta.MetaDataSet;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.sampling.GtuTypeData;
+import org.opentrafficsim.road.network.sampling.LinkData;
+import org.opentrafficsim.road.network.sampling.RoadSampler;
+import org.opentrafficsim.road.network.sampling.data.ReferenceSpeed;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
@@ -46,7 +63,6 @@ import nl.tno.imb.TConnection;
 import nl.tno.imb.mc.ModelParameters;
 import nl.tno.imb.mc.ModelStarter;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.io.URLResource;
 
@@ -65,7 +81,7 @@ public class ModelControlA58 extends ModelStarter
 
     /** Amount of ACC. */
     private double penetrationRate;
-    
+
     /**
      * @param args the command line args
      * @param providedModelName the model name
@@ -76,7 +92,7 @@ public class ModelControlA58 extends ModelStarter
     {
         super(args, providedModelName, providedModelId);
     }
-    
+
     /**
      * Tester.
      * @param args empty
@@ -109,7 +125,7 @@ public class ModelControlA58 extends ModelStarter
         {
             System.out.println("No penetration parameter found, using default value of " + this.penetrationRate);
         }
-        
+
         A58Animation a58Animation = new A58Animation(imbConnection);
         try
         {
@@ -119,7 +135,7 @@ public class ModelControlA58 extends ModelStarter
         {
             exception.printStackTrace();
         }
-        
+
     }
 
     /** {@inheritDoc} */
@@ -142,7 +158,7 @@ public class ModelControlA58 extends ModelStarter
     {
         //
     }
- 
+
     /**
      * @return penetrationRate
      */
@@ -150,10 +166,11 @@ public class ModelControlA58 extends ModelStarter
     {
         return this.penetrationRate;
     }
-    
+
     /**
      * <p>
-     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 18 nov. 2016 <br>
@@ -166,12 +183,12 @@ public class ModelControlA58 extends ModelStarter
 
         /** */
         private static final long serialVersionUID = 20161118L;
-        
+
         /**
          * 
          */
         TConnection imbConnection;
-        
+
         /**
          * @param imbConnection IMB connection
          */
@@ -214,9 +231,9 @@ public class ModelControlA58 extends ModelStarter
         {
             return new Rectangle2D.Double(150000, 385000, 5500, 5000);
         }
-        
+
     }
-    
+
     /**
      * <p>
      * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
@@ -238,7 +255,7 @@ public class ModelControlA58 extends ModelStarter
 
         /** IMB connection. */
         private TConnection imbConnection;
-        
+
         /** Colorer for GTU's. */
         private GTUColorer gtuColorer;
 
@@ -296,13 +313,80 @@ public class ModelControlA58 extends ModelStarter
                 exception.printStackTrace();
             }
 
-//            URL gisURL = URLResource.getResource("/A58/map.xml");
-//            System.err.println("GIS-map file: " + gisURL.toString());
-//            CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
-//            new GisRenderable2D(this.simulator, gisURL, rdto0);
-            
+            Sampler sampler = new RoadSampler(this.simulator);
+            sampler.registerExtendedDataType(new ReferenceSpeed());
+            // Query query = N201ODfactory.getQuery(this.network, new RoadSampler(this.simulator));
+            try
+            {
+                MetaDataSet metaDataSet;
+                Query query;
+                Set<GtuTypeDataInterface> gtuTypes;
+
+                query = getQuery(this.network, sampler, new MetaDataSet(), "All");
+                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network.getId(), query,
+                        new Duration(30, TimeUnit.SECOND));
+
+                metaDataSet = new MetaDataSet();
+                gtuTypes = new HashSet<>();
+                gtuTypes.add(new GtuTypeData(new GTUType("car_equipped")));
+                gtuTypes.add(new GtuTypeData(new GTUType("truck_equipped")));
+                metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+                query = getQuery(this.network, sampler, metaDataSet, "Equipped");
+                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network.getId(), query,
+                        new Duration(30, TimeUnit.SECOND));
+
+                metaDataSet = new MetaDataSet();
+                gtuTypes = new HashSet<>();
+                gtuTypes.add(new GtuTypeData(new GTUType("car")));
+                gtuTypes.add(new GtuTypeData(new GTUType("truck")));
+                metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+                query = getQuery(this.network, sampler, metaDataSet, "Not equipped");
+                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network.getId(), query,
+                        new Duration(30, TimeUnit.SECOND));
+
+                metaDataSet = new MetaDataSet();
+                gtuTypes = new HashSet<>();
+                gtuTypes.add(new GtuTypeData(new GTUType("car")));
+                gtuTypes.add(new GtuTypeData(new GTUType("car_equipped")));
+                metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+                query = getQuery(this.network, sampler, metaDataSet, "Cars");
+                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network.getId(), query,
+                        new Duration(30, TimeUnit.SECOND));
+
+                metaDataSet = new MetaDataSet();
+                gtuTypes = new HashSet<>();
+                gtuTypes.add(new GtuTypeData(new GTUType("truck")));
+                gtuTypes.add(new GtuTypeData(new GTUType("truck_equipped")));
+                metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+                query = getQuery(this.network, sampler, metaDataSet, "Trucks");
+                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network.getId(), query,
+                        new Duration(30, TimeUnit.SECOND));
+
+            }
+            catch (IMBException exception)
+            {
+                throw new SimRuntimeException(exception);
+            }
+
+            // URL gisURL = URLResource.getResource("/A58/map.xml");
+            // System.err.println("GIS-map file: " + gisURL.toString());
+            // CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
+            // new GisRenderable2D(this.simulator, gisURL, rdto0);
+
             A58OdUtil.createDemand(this.network, this.gtuColorer, this.simulator, ModelControlA58.this.getPenetrationRate());
-            
+
+        }
+
+        private Query getQuery(final OTSNetwork network, final Sampler sampler, final MetaDataSet metaDataSet, final String id)
+        {
+            Query query = new Query(sampler, id, id, metaDataSet, new Frequency(2.0, FrequencyUnit.PER_MINUTE));
+            for (String link : network.getLinkMap().keySet())
+            {
+                query.addSpaceTimeRegionLink(new LinkData((CrossSectionLink) network.getLink(link)),
+                        KpiGtuDirectionality.DIR_PLUS, Length.ZERO, network.getLink(link).getLength(), new Time(0, TimeUnit.SI),
+                        new Time(1.0, TimeUnit.HOUR));
+            }
+            return query;
         }
 
         /** {@inheritDoc} */
@@ -376,5 +460,5 @@ public class ModelControlA58 extends ModelStarter
             return "CoordinateTransformRD [dx=" + this.dx + ", dy=" + this.dy + "]";
         }
     }
-    
+
 }

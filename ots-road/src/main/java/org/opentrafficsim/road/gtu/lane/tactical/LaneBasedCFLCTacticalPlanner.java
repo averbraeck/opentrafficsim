@@ -254,8 +254,6 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
         Length leftSuitability = suitability(gtu, LateralDirectionality.LEFT);
         Length currentSuitability = suitability(gtu, null);
         Length rightSuitability = suitability(gtu, LateralDirectionality.RIGHT);
-        System.out.println(
-                gtu.getId() + " suitability: " + leftSuitability + ", " + currentSuitability + ", " + rightSuitability);
         if (leftSuitability == NOLANECHANGENEEDED && currentSuitability == NOLANECHANGENEEDED
                 && rightSuitability == NOLANECHANGENEEDED)
         {

@@ -248,23 +248,13 @@ public class RoadSampler extends Sampler implements EventListenerInterface
         }
         else if (event.getType().equals(Lane.GTU_REMOVE_EVENT))
         {
-            // Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_removal}
+            // Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_removal, Length position}
             Lane lane = (Lane) event.getSource();
             // TODO GTUDirectionality from Lane.GTU_ADD_EVENT
             KpiLaneDirection kpiLaneDirection = new KpiLaneDirection(new LaneData(lane), KpiGtuDirectionality.DIR_PLUS);
             Object[] payload = (Object[]) event.getContent();
             LaneBasedGTU gtu = (LaneBasedGTU) payload[1];
-            Length position = lane.getLength();
-            // TODO Length from Lane.GTU_ADD_EVENT
-            // this doesn't work, as the GTU is no longer on the lane it was removed from
-            // try
-            // {
-            // position = gtu.position(lane, RelativePosition.REFERENCE_POSITION);
-            // }
-            // catch (GTUException exception)
-            // {
-            // throw new RuntimeException(exception);
-            // }
+            Length position = (Length) payload[3];
             Speed speed = gtu.getSpeed();
             Acceleration acceleration = gtu.getAcceleration();
             processGtuRemoveEvent(kpiLaneDirection, position, speed, acceleration, now(), new GtuData(gtu));

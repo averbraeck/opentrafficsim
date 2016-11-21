@@ -42,7 +42,7 @@ public final class Query
     private final String id;
 
     /** Sampling. */
-    private final Sampler sampling;
+    private final Sampler sampler;
 
     /** Description. */
     private final String description;
@@ -60,46 +60,46 @@ public final class Query
     private final List<SpaceTimeRegion> spaceTimeRegions = new ArrayList<>();
 
     /**
-     * @param sampling sampling
+     * @param sampler sampler
      * @param id id
      * @param description description
      * @param metaDataSet meta data
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampling, final String id, final String description, final MetaDataSet metaDataSet)
+    public Query(final Sampler sampler, final String id, final String description, final MetaDataSet metaDataSet)
     {
-        this(sampling, description, metaDataSet, null, null);
+        this(sampler, description, metaDataSet, null, null);
     }
 
     /**
-     * @param sampling sampling
+     * @param sampler sampler
      * @param id id
      * @param description description
      * @param metaDataSet meta data
      * @param interval interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampling, final String id, final String description, final MetaDataSet metaDataSet, final Duration interval)
+    public Query(final Sampler sampler, final String id, final String description, final MetaDataSet metaDataSet, final Duration interval)
     {
-        this(sampling, description, metaDataSet, null, interval);
+        this(sampler, id, description, metaDataSet, null, interval);
     }
 
     /**
-     * @param sampling sampling
+     * @param sampler sampler
      * @param id id
      * @param description description
      * @param metaDataSet meta data
      * @param updateFrequency update frequency
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampling, final String id, final String description, final MetaDataSet metaDataSet,
+    public Query(final Sampler sampler, final String id, final String description, final MetaDataSet metaDataSet,
             final Frequency updateFrequency)
     {
-        this(sampling, description, metaDataSet, updateFrequency, null);
+        this(sampler, id, description, metaDataSet, updateFrequency, null);
     }
 
     /**
-     * @param sampling sampling
+     * @param sampler sampler
      * @param id id
      * @param description description
      * @param metaDataSet meta data
@@ -107,69 +107,69 @@ public final class Query
      * @param interval interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampling, final String id, final String description, final MetaDataSet metaDataSet,
+    public Query(final Sampler sampler, final String id, final String description, final MetaDataSet metaDataSet,
             final Frequency updateFrequency, final Duration interval)
     {
-        Throw.whenNull(sampling, "Sampling may not be null.");
+        Throw.whenNull(sampler, "Sampling may not be null.");
         Throw.whenNull(description, "Description may not be null.");
         Throw.whenNull(metaDataSet, "Meta data may not be null.");
-        this.sampling = sampling;
+        this.sampler = sampler;
         this.metaDataSet = new MetaDataSet(metaDataSet);
         this.id = id == null ? UUID.randomUUID().toString() : id;
         this.description = description;
         this.updateFrequency = updateFrequency;
         this.interval = interval;
-        sampling.registerMetaDataTypes(metaDataSet.getMetaDataTypes());
+        sampler.registerMetaDataTypes(metaDataSet.getMetaDataTypes());
     }
     
     /**
-     * @param sampling sampling
+     * @param sampler sampler
      * @param description description
      * @param metaDataSet meta data
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampling, final String description, final MetaDataSet metaDataSet)
+    public Query(final Sampler sampler, final String description, final MetaDataSet metaDataSet)
     {
-        this(sampling, null, description, metaDataSet, null, null);
+        this(sampler, null, description, metaDataSet, null, null);
     }
 
     /**
-     * @param sampling sampling
+     * @param sampler sampler
      * @param description description
      * @param metaDataSet meta data
      * @param interval interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampling, final String description, final MetaDataSet metaDataSet, final Duration interval)
+    public Query(final Sampler sampler, final String description, final MetaDataSet metaDataSet, final Duration interval)
     {
-        this(sampling, null, description, metaDataSet, null, interval);
+        this(sampler, null, description, metaDataSet, null, interval);
     }
 
     /**
-     * @param sampling sampling
+     * @param sampler sampler
      * @param description description
      * @param metaDataSet meta data
      * @param updateFrequency update frequency
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampling, final String description, final MetaDataSet metaDataSet,
+    public Query(final Sampler sampler, final String description, final MetaDataSet metaDataSet,
             final Frequency updateFrequency)
     {
-        this(sampling, null, description, metaDataSet, updateFrequency, null);
+        this(sampler, null, description, metaDataSet, updateFrequency, null);
     }
 
     /**
-     * @param sampling sampling
+     * @param sampler sampler
      * @param description description
      * @param metaDataSet meta data
      * @param updateFrequency update frequency
      * @param interval interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampling, final String description, final MetaDataSet metaDataSet,
+    public Query(final Sampler sampler, final String description, final MetaDataSet metaDataSet,
             final Frequency updateFrequency, final Duration interval)
     {
-        this(sampling, null, description, metaDataSet, updateFrequency, interval);
+        this(sampler, null, description, metaDataSet, updateFrequency, interval);
     }
 
     /**
@@ -270,7 +270,7 @@ public final class Query
                 "End position should be greater than start position.");
         Throw.when(endTime.lt(startTime), IllegalArgumentException.class, "End time should be greater than start time.");
         SpaceTimeRegion spaceTimeRegion = new SpaceTimeRegion(laneDirection, startPosition, endPosition, startTime, endTime);
-        this.sampling.registerSpaceTimeRegion(spaceTimeRegion);
+        this.sampler.registerSpaceTimeRegion(spaceTimeRegion);
         this.spaceTimeRegions.add(spaceTimeRegion);
     }
 
@@ -312,13 +312,13 @@ public final class Query
             Time start = startTime.gt(spaceTimeRegion.getStartTime()) ? startTime : spaceTimeRegion.getStartTime();
             Time end = endTime.lt(spaceTimeRegion.getEndTime()) ? endTime : spaceTimeRegion.getEndTime();
             TrajectoryGroup trajectoryGroup;
-            if (this.sampling.getTrajectoryGroup(spaceTimeRegion.getLaneDirection()) == null)
+            if (this.sampler.getTrajectoryGroup(spaceTimeRegion.getLaneDirection()) == null)
             {
                 trajectoryGroup = new TrajectoryGroup(start, spaceTimeRegion.getLaneDirection());
             }
             else
             {
-                trajectoryGroup = this.sampling.getTrajectoryGroup(spaceTimeRegion.getLaneDirection())
+                trajectoryGroup = this.sampler.getTrajectoryGroup(spaceTimeRegion.getLaneDirection())
                         .getTrajectoryGroup(spaceTimeRegion.getStartPosition(), spaceTimeRegion.getEndPosition(), start, end);
             }
             for (Trajectory trajectory : trajectoryGroup.getTrajectories())
@@ -379,6 +379,14 @@ public final class Query
         return out;
     }
 
+    /**
+     * @return sampling.
+     */
+    public Sampler getSampler()
+    {
+        return this.sampler;
+    }
+
     /** {@inheritDoc} */
     @Override
     public int hashCode()
@@ -388,7 +396,7 @@ public final class Query
         result = prime * result + ((this.description == null) ? 0 : this.description.hashCode());
         result = prime * result + ((this.interval == null) ? 0 : this.interval.hashCode());
         result = prime * result + ((this.metaDataSet == null) ? 0 : this.metaDataSet.hashCode());
-        result = prime * result + ((this.sampling == null) ? 0 : this.sampling.hashCode());
+        result = prime * result + ((this.sampler == null) ? 0 : this.sampler.hashCode());
         result = prime * result + ((this.spaceTimeRegions == null) ? 0 : this.spaceTimeRegions.hashCode());
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
         result = prime * result + ((this.updateFrequency == null) ? 0 : this.updateFrequency.hashCode());
@@ -445,14 +453,14 @@ public final class Query
         {
             return false;
         }
-        if (this.sampling == null)
+        if (this.sampler == null)
         {
-            if (other.sampling != null)
+            if (other.sampler != null)
             {
                 return false;
             }
         }
-        else if (!this.sampling.equals(other.sampling))
+        else if (!this.sampler.equals(other.sampler))
         {
             return false;
         }

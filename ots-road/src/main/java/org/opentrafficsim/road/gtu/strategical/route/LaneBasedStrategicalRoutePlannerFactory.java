@@ -34,9 +34,6 @@ public class LaneBasedStrategicalRoutePlannerFactory
     /** */
     private static final long serialVersionUID = 20160811L;
 
-    /** Route generator for the next strategical planner. */
-    private final RouteGenerator routeGenerator;
-
     /** Behavioral characteristics for the next strategical planner. */
     private BehavioralCharacteristics behavioralCharacteristics;
 
@@ -54,7 +51,6 @@ public class LaneBasedStrategicalRoutePlannerFactory
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory)
     {
         this.tacticalPlannerFactory = tacticalPlannerFactory;
-        this.routeGenerator = null;
         this.behavioralCharacteristicsFactory = new BehavioralCharacteristicsFactoryDefault();
     }
 
@@ -68,36 +64,6 @@ public class LaneBasedStrategicalRoutePlannerFactory
             final BehavioralCharacteristicsFactory behavioralCharacteristicsFactory)
     {
         this.tacticalPlannerFactory = tacticalPlannerFactory;
-        this.routeGenerator = null;
-        this.behavioralCharacteristicsFactory = behavioralCharacteristicsFactory;
-    }
-
-    /**
-     * Constructor with factory for tactical planners and route generator.
-     * @param tacticalPlannerFactory factory for tactical planners
-     * @param routeGenerator route generator
-     */
-    public LaneBasedStrategicalRoutePlannerFactory(
-            final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,
-            final RouteGenerator routeGenerator)
-    {
-        this.tacticalPlannerFactory = tacticalPlannerFactory;
-        this.routeGenerator = routeGenerator;
-        this.behavioralCharacteristicsFactory = new BehavioralCharacteristicsFactoryDefault();
-    }
-
-    /**
-     * Constructor with factory for tactical planners and route generator.
-     * @param tacticalPlannerFactory factory for tactical planners
-     * @param routeGenerator route generator
-     * @param behavioralCharacteristicsFactory factory for behavioral characteristics
-     */
-    public LaneBasedStrategicalRoutePlannerFactory(
-            final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,
-            final RouteGenerator routeGenerator, final BehavioralCharacteristicsFactory behavioralCharacteristicsFactory)
-    {
-        this.tacticalPlannerFactory = tacticalPlannerFactory;
-        this.routeGenerator = routeGenerator;
         this.behavioralCharacteristicsFactory = behavioralCharacteristicsFactory;
     }
 
@@ -117,24 +83,12 @@ public class LaneBasedStrategicalRoutePlannerFactory
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedStrategicalPlanner create(final LaneBasedGTU gtu) throws GTUException
+    public final LaneBasedStrategicalPlanner create(final LaneBasedGTU gtu, final Route route) throws GTUException
     {
         if (this.behavioralCharacteristics == null)
         {
             this.behavioralCharacteristics = this.getDefaultBehavioralCharacteristics();
             this.behavioralCharacteristicsFactory.setValues(this.behavioralCharacteristics, gtu.getGTUType());
-        }
-        Route route = null;
-        if (this.routeGenerator != null)
-        {
-            try
-            {
-                route = this.routeGenerator.draw();
-            }
-            catch (ProbabilityException exception)
-            {
-                throw new GTUException(exception);
-            }
         }
         LaneBasedStrategicalRoutePlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 this.behavioralCharacteristics, this.tacticalPlannerFactory.create(gtu), route, gtu);

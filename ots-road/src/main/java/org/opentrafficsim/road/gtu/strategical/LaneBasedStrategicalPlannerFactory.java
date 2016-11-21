@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.strategical;
 
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
 /**
@@ -37,9 +38,10 @@ public interface LaneBasedStrategicalPlannerFactory<T extends LaneBasedStrategic
      * Creates a new strategical planner for the given GTU. If no default behavioral characteristics are set, the default values
      * will be used.
      * @param gtu GTU
+     * @param route route
      * @return strategical planner for the given GTU
      * @throws GTUException if the gtu is not suitable in any way for the creation of the strategical planner
      */
-    T create(LaneBasedGTU gtu) throws GTUException;
+    T create(LaneBasedGTU gtu, Route route) throws GTUException;
 
 }

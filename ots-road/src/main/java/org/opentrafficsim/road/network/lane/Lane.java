@@ -158,7 +158,7 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the lane. <br>
-     * Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_removal}
+     * Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_removal, double position}
      */
     public static final EventType GTU_REMOVE_EVENT = new EventType("GTU.REMOVE");
 
@@ -948,11 +948,12 @@ public class Lane extends CrossSectionElement implements Serializable
      * Remove a GTU from the GTU list of this lane.
      * @param gtu the GTU to remove.
      * @param removeFromParentLink when the GTU leaves the last lane of the parentLink of this Lane
+     * @param position Length; last position of the GTU
      */
-    public final void removeGTU(final LaneBasedGTU gtu, final boolean removeFromParentLink)
+    public final void removeGTU(final LaneBasedGTU gtu, final boolean removeFromParentLink, Length position)
     {
         this.gtuList.remove(gtu);
-        fireTimedEvent(Lane.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size() },
+        fireTimedEvent(Lane.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size(), position },
                 gtu.getSimulator().getSimulatorTime());
         if (removeFromParentLink)
         {

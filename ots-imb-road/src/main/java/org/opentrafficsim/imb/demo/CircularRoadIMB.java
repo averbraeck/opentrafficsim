@@ -785,11 +785,11 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
         LaneBasedStrategicalPlanner strategicalPlanner;
         if (!generateTruck)
         {
-            strategicalPlanner = this.strategicalPlannerGeneratorCars.create(gtu);
+            strategicalPlanner = this.strategicalPlannerGeneratorCars.create(gtu, null);
         }
         else
         {
-            strategicalPlanner = this.strategicalPlannerGeneratorTrucks.create(gtu);
+            strategicalPlanner = this.strategicalPlannerGeneratorTrucks.create(gtu, null);
         }
 
         // init

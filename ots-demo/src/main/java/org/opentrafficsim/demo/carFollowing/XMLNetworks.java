@@ -500,29 +500,25 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                         if ("IDM".equals(tacticalPlannerName))
                         {
                             this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LaneBasedGTUFollowingTacticalPlannerFactory(this.carFollowingModelCars),
-                                    this.routeGenerator);
+                                    new LaneBasedGTUFollowingTacticalPlannerFactory(this.carFollowingModelCars));
                             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LaneBasedGTUFollowingTacticalPlannerFactory(this.carFollowingModelTrucks),
-                                    this.routeGenerator);
+                                    new LaneBasedGTUFollowingTacticalPlannerFactory(this.carFollowingModelTrucks));
                         }
                         else if ("MOBIL/IDM".equals(tacticalPlannerName))
                         {
                             this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LaneBasedCFLCTacticalPlannerFactory(this.carFollowingModelCars, this.laneChangeModel),
-                                    this.routeGenerator);
-                            this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LaneBasedCFLCTacticalPlannerFactory(this.carFollowingModelTrucks, this.laneChangeModel),
-                                    this.routeGenerator);
+                                    new LaneBasedCFLCTacticalPlannerFactory(this.carFollowingModelCars, this.laneChangeModel));
+                            this.strategicalPlannerGeneratorTrucks =
+                                    new LaneBasedStrategicalRoutePlannerFactory(new LaneBasedCFLCTacticalPlannerFactory(
+                                            this.carFollowingModelTrucks, this.laneChangeModel));
                         }
                         else if ("DIRECTED/IDM".equals(tacticalPlannerName))
                         {
                             this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(this.carFollowingModelCars),
-                                    this.routeGenerator);
+                                    new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(this.carFollowingModelCars));
                             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(this.carFollowingModelTrucks),
-                                    this.routeGenerator);
+                                    new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(
+                                            this.carFollowingModelTrucks));
                         }
                         else if ("LMRS".equals(tacticalPlannerName))
                         {
@@ -530,18 +526,16 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                             BehavioralCharacteristics defaultBehavioralCFCharacteristics = new BehavioralCharacteristics();
                             defaultBehavioralCFCharacteristics.setDefaultParameters(AbstractIDM.class);
                             this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics),
-                                    this.routeGenerator);
+                                    new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics));
                             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics),
-                                    this.routeGenerator);
+                                    new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics));
                         }
                         else if ("Toledo".equals(tacticalPlannerName))
                         {
                             this.strategicalPlannerGeneratorCars =
-                                    new LaneBasedStrategicalRoutePlannerFactory(new ToledoFactory(), this.routeGenerator);
+                                    new LaneBasedStrategicalRoutePlannerFactory(new ToledoFactory());
                             this.strategicalPlannerGeneratorTrucks =
-                                    new LaneBasedStrategicalRoutePlannerFactory(new ToledoFactory(), this.routeGenerator);
+                                    new LaneBasedStrategicalRoutePlannerFactory(new ToledoFactory());
                         }
                         else
                         {
@@ -836,7 +830,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                         }
                     }
                 }*/
-                strategicalPlannerFactory, initialPositions, new Generator<Speed>()
+                strategicalPlannerFactory, this.routeGenerator, initialPositions, new Generator<Speed>()
                 {
                     public Speed draw()
                     {

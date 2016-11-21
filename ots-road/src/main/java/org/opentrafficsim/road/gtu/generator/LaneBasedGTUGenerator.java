@@ -256,7 +256,7 @@ public class LaneBasedGTUGenerator implements Serializable
                 LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU(gtuId, characteristics.getGTUType(),
                         characteristics.getLength(), characteristics.getWidth(), characteristics.getMaximumSpeed(), simulator,
                         characteristics.getNetwork());
-                gtu.initWithAnimation(characteristics.getStrategicalPlannerFactory().create(gtu),
+                gtu.initWithAnimation(characteristics.getStrategicalPlannerFactory().create(gtu, characteristics.getRoute()),
                         this.initialLongitudinalPositions, safeSpeed, DefaultCarAnimation.class, this.gtuColorer);
 
                 // System.out.println("tryToPlace: Constructed GTU on " + this.initialLongitudinalPositions);
@@ -265,8 +265,8 @@ public class LaneBasedGTUGenerator implements Serializable
         int queueLength = this.unplacedTemplates.size();
         if (queueLength != this.lastReportedQueueLength)
         {
-            System.out.println("Generator " + this.id + ": queue length is " + queueLength + " at time "
-                    + simulator.getSimulatorTime().get());
+            // System.out.println("Generator " + this.id + ": queue length is " + queueLength + " at time "
+            // + simulator.getSimulatorTime().get());
             this.lastReportedQueueLength = queueLength;
         }
         if (queueLength > 0)
