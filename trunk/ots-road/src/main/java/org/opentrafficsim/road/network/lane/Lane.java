@@ -158,7 +158,7 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the lane. <br>
-     * Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_removal, double position}
+     * Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_removal, Length position}
      */
     public static final EventType GTU_REMOVE_EVENT = new EventType("GTU.REMOVE");
 
