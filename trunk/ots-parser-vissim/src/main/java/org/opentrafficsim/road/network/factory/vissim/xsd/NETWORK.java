@@ -72,13 +72,16 @@ public class NETWORK {
      * definitionsOrIncludeOrNODE property.
      * <p>
      * For example, to add a new item, do as follows:
-     * 
+     *
      * <pre>
      * getDEFINITIONSOrIncludeOrNODE().add(newItem);
      * </pre>
      * <p>
      * Objects of the following type(s) are allowed in the list {@link DEFINITIONS } {@link IncludeType } {@link NODE }
      * {@link LINK } {@link ROUTE } {@link ROUTEMIX } {@link SHORTESTROUTE } {@link SHORTESTROUTEMIX }
+     */
+    /**
+     * @return definitions
      */
     public List<Object> getDEFINITIONSOrIncludeOrNODE() {
         if (definitionsOrIncludeOrNODE == null) {

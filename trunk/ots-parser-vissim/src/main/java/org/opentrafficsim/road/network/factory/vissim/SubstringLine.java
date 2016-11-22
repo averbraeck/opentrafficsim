@@ -12,8 +12,7 @@ import com.vividsolutions.jts.util.Assert;
 /**
  * @author P070518
  */
-public class SubstringLine
-{
+public class SubstringLine {
     /**
      * Computes a substring of a {@link LineString} between given distances along the line.
      * <ul>
@@ -27,42 +26,45 @@ public class SubstringLine
      */
 
     /**
-     * @param line
-     * @param startLength
-     * @param endLength
+     * @param line: geometry
+     * @param startLength: start position
+     * @param endLength: end position
      * @return the substring
      */
-    public static LineString getSubstring(LineString line, double startLength, double endLength)
-    {
+    public static LineString getSubstring(LineString line, double startLength, double endLength) {
         SubstringLine ls = new SubstringLine(line);
         return ls.getSubstring(startLength, endLength);
     }
 
+    /** line geometry description */
     private LineString line;
 
-    public SubstringLine(LineString line)
-    {
+    /**
+     * @param line: input a line geometry
+     */
+    public SubstringLine(LineString line) {
         this.line = line;
     }
 
-    public LineString getSubstring(double startDistance, double endDistance)
-    {
+    /**
+     * @param startLength: start position
+     * @param endLength: end position
+     * @return
+     */
+    public LineString getSubstring(double startDistance, double endDistance) {
         // future: if start > end, flip values and return an inverted line
         Assert.isTrue(startDistance <= endDistance, "inverted distances not currently supported");
 
         Coordinate[] coordinates = line.getCoordinates();
         // check for a zero-length segment and handle appropriately
-        if (endDistance <= 0.0)
-        {
-            return line.getFactory().createLineString(new Coordinate[] { coordinates[0], coordinates[0] });
+        if (endDistance <= 0.0) {
+            return line.getFactory().createLineString(new Coordinate[] {coordinates[0], coordinates[0]});
         }
-        if (startDistance >= line.getLength())
-        {
-            return line.getFactory().createLineString(
-                    new Coordinate[] { coordinates[coordinates.length - 1], coordinates[coordinates.length - 1] });
+        if (startDistance >= line.getLength()) {
+            return line.getFactory().createLineString(new Coordinate[] {coordinates[coordinates.length - 1],
+                coordinates[coordinates.length - 1]});
         }
-        if (startDistance < 0.0)
-        {
+        if (startDistance < 0.0) {
             startDistance = 0.0;
         }
         return computeSubstring(startDistance, endDistance);
@@ -70,12 +72,11 @@ public class SubstringLine
 
     /**
      * Assumes input is strictly valid (e.g. startDist < endDistance)
-     * @param startDistance
-     * @param endDistance
+     * @param startDistance: start position
+     * @param endDistance: end position
      * @return the substring
      */
-    private LineString computeSubstring(double startDistance, double endDistance)
-    {
+    private LineString computeSubstring(double startDistance, double endDistance) {
         Coordinate[] coordinates = line.getCoordinates();
         CoordinateList newCoordinates = new CoordinateList();
         double segmentStartDistance = 0.0;
@@ -83,35 +84,30 @@ public class SubstringLine
         boolean started = false;
         int i = 0;
         LineSegment segment = new LineSegment();
-        while (i < coordinates.length - 1 && endDistance > segmentEndDistance)
-        {
+        while (i < coordinates.length - 1 && endDistance > segmentEndDistance) {
             segment.p0 = coordinates[i];
             segment.p1 = coordinates[i + 1];
             i++;
             segmentStartDistance = segmentEndDistance;
             segmentEndDistance = segmentStartDistance + segment.getLength();
 
-            if (startDistance > segmentEndDistance)
-            {
+            if (startDistance > segmentEndDistance) {
                 continue;
             }
-            if (startDistance >= segmentStartDistance && startDistance < segmentEndDistance)
-            {
-                newCoordinates.add(LocatePoint.pointAlongSegment(segment.p0, segment.p1, startDistance - segmentStartDistance),
-                        false);
+            if (startDistance >= segmentStartDistance && startDistance < segmentEndDistance) {
+                newCoordinates.add(LocatePoint.pointAlongSegment(segment.p0, segment.p1, startDistance
+                    - segmentStartDistance), false);
             }
             /*
              * if (startDistance >= segmentStartDistance && startDistance == segmentEndDistance) { newCoordinates.add(new
              * Coordinate(segment.p1), false); }
              */
-            if (endDistance >= segmentEndDistance)
-            {
+            if (endDistance >= segmentEndDistance) {
                 newCoordinates.add(new Coordinate(segment.p1), false);
             }
-            if (endDistance >= segmentStartDistance && endDistance < segmentEndDistance)
-            {
+            if (endDistance >= segmentStartDistance && endDistance < segmentEndDistance) {
                 newCoordinates.add(LocatePoint.pointAlongSegment(segment.p0, segment.p1, endDistance - segmentStartDistance),
-                        false);
+                    false);
             }
         }
         Coordinate[] newCoordinateArray = newCoordinates.toCoordinateArray();
@@ -119,9 +115,8 @@ public class SubstringLine
          * Ensure there is enough coordinates to build a valid line. Make a 2-point line with duplicate coordinates, if
          * necessary There will always be at least one coordinate in the coordList.
          */
-        if (newCoordinateArray.length <= 1)
-        {
-            newCoordinateArray = new Coordinate[] { newCoordinateArray[0], newCoordinateArray[0] };
+        if (newCoordinateArray.length <= 1) {
+            newCoordinateArray = new Coordinate[] {newCoordinateArray[0], newCoordinateArray[0]};
         }
         return line.getFactory().createLineString(newCoordinateArray);
     }

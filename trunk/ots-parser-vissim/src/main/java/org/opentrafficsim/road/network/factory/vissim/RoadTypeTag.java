@@ -88,7 +88,7 @@ class RoadTypeTag implements Serializable {
         NetworkException {
         for (Node node : XMLParser.getNodes(nodeList, "ROADTYPE")) {
             RoadTypeTag roadTypeTag = parseRoadType(node, parser);
-            parser.roadTypeTags.put(roadTypeTag.name, roadTypeTag);
+            parser.getRoadTypeTags().put(roadTypeTag.name, roadTypeTag);
         }
     }
 
@@ -111,7 +111,7 @@ class RoadTypeTag implements Serializable {
             throw new SAXException("ROADTYPE: missing attribute NAME");
         }
         roadTypeTag.name = name.getNodeValue().trim();
-        if (parser.roadTypeTags.keySet().contains(roadTypeTag.name)) {
+        if (parser.getRoadTypeTags().keySet().contains(roadTypeTag.name)) {
             throw new SAXException("ROADTYPE: NAME " + roadTypeTag.name + " defined twice");
         }
 
@@ -142,11 +142,11 @@ class RoadTypeTag implements Serializable {
             if (gtuTypeName == null) {
                 throw new NetworkException("ROADTYPE: No GTUTYPE defined");
             }
-            if (!parser.gtuTypes.containsKey(gtuTypeName.getNodeValue().trim())) {
+            if (!parser.getGtuTypes().containsKey(gtuTypeName.getNodeValue().trim())) {
                 throw new NetworkException("ROADTYPE: " + roadTypeTag.name + " GTUTYPE " + gtuTypeName.getNodeValue().trim()
                     + " not defined");
             }
-            GTUType gtuType = parser.gtuTypes.get(gtuTypeName.getNodeValue().trim());
+            GTUType gtuType = parser.getGtuTypes().get(gtuTypeName.getNodeValue().trim());
 
             Node speedNode = speedLimitAttributes.getNamedItem("LEGALSPEEDLIMIT");
             if (speedNode == null) {

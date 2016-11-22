@@ -38,6 +38,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GLOBAL }
+     * @return GLOBAL
      */
     public GLOBAL createGLOBAL() {
         return new GLOBAL();
@@ -45,6 +46,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GTUMIX }
+     * @return GTUMix
      */
     public GTUMIX createGTUMIX() {
         return new GTUMIX();
@@ -52,6 +54,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ROADTYPE }
+     * @return Roadtype
      */
     public ROADTYPE createROADTYPE() {
         return new ROADTYPE();
@@ -59,6 +62,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LANETYPE }
+     * @return GLOBAL
      */
     public LANETYPE createLANETYPE() {
         return new LANETYPE();
@@ -66,6 +70,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ROADLAYOUT }
+     * @return GLOBAL
      */
     public ROADLAYOUT createROADLAYOUT() {
         return new ROADLAYOUT();
@@ -73,6 +78,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LINK }
+     * @return GLOBAL
      */
     public LINK createLINK() {
         return new LINK();
@@ -80,6 +86,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ROUTEMIX }
+     * @return GLOBAL
      */
     public ROUTEMIX createROUTEMIX() {
         return new ROUTEMIX();
@@ -87,6 +94,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SHORTESTROUTEMIX }
+     * @return GLOBAL
      */
     public SHORTESTROUTEMIX createSHORTESTROUTEMIX() {
         return new SHORTESTROUTEMIX();
@@ -94,6 +102,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ROADLAYOUT.LANE }
+     * @return GLOBAL
      */
     public ROADLAYOUT.LANE createROADLAYOUTLANE() {
         return new ROADLAYOUT.LANE();
@@ -101,6 +110,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link org.opentrafficsim.road.network.factory.vissim.ROUTE }
+     * @return GLOBAL
      */
     public org.opentrafficsim.road.network.factory.vissim.xsd.ROUTE createROUTE() {
         return new org.opentrafficsim.road.network.factory.vissim.xsd.ROUTE();
@@ -108,6 +118,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NETWORK }
+     * @return GLOBAL
      */
     public NETWORK createNETWORK() {
         return new NETWORK();
@@ -115,6 +126,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DEFINITIONS }
+     * @return GLOBAL
      */
     public DEFINITIONS createDEFINITIONS() {
         return new DEFINITIONS();
@@ -122,6 +134,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GLOBAL.SPEEDGTUCOLORER }
+     * @return GLOBAL
      */
     public GLOBAL.SPEEDGTUCOLORER createGLOBALSPEEDGTUCOLORER() {
         return new GLOBAL.SPEEDGTUCOLORER();
@@ -129,6 +142,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GLOBAL.ACCELERATIONGTUCOLORER }
+     * @return GLOBAL
      */
     public GLOBAL.ACCELERATIONGTUCOLORER createGLOBALACCELERATIONGTUCOLORER() {
         return new GLOBAL.ACCELERATIONGTUCOLORER();
@@ -136,6 +150,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GLOBAL.LANECHANGEURGEGTUCOLORER }
+     * @return GLOBAL
      */
     public GLOBAL.LANECHANGEURGEGTUCOLORER createGLOBALLANECHANGEURGEGTUCOLORER() {
         return new GLOBAL.LANECHANGEURGEGTUCOLORER();
@@ -143,6 +158,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link IncludeType }
+     * @return GLOBAL
      */
     public IncludeType createIncludeType() {
         return new IncludeType();
@@ -150,6 +166,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GTUTYPE }
+     * @return GLOBAL
      */
     public GTUTYPE createGTUTYPE() {
         return new GTUTYPE();
@@ -157,6 +174,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link org.opentrafficsim.road.network.factory.vissim.GTU }
+     * @return GLOBAL
      */
     public org.opentrafficsim.road.network.factory.vissim.xsd.GTU createGTU() {
         return new org.opentrafficsim.road.network.factory.vissim.xsd.GTU();
@@ -164,6 +182,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GTUMIX.GTU }
+     * @return GLOBAL
      */
     public GTUMIX.GTU createGTUMIXGTU() {
         return new GTUMIX.GTU();
@@ -171,6 +190,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ROADTYPE.SPEEDLIMIT }
+     * @return GLOBAL
      */
     public ROADTYPE.SPEEDLIMIT createROADTYPESPEEDLIMIT() {
         return new ROADTYPE.SPEEDLIMIT();
@@ -178,6 +198,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LANETYPE.SPEEDLIMIT }
+     * @return GLOBAL
      */
     public LANETYPE.SPEEDLIMIT createLANETYPESPEEDLIMIT() {
         return new LANETYPE.SPEEDLIMIT();
@@ -185,6 +206,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ROADLAYOUT.SPEEDLIMIT }
+     * @return GLOBAL
      */
     public ROADLAYOUT.SPEEDLIMIT createROADLAYOUTSPEEDLIMIT() {
         return new ROADLAYOUT.SPEEDLIMIT();
@@ -192,6 +214,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ROADLAYOUT.NOTRAFFICLANE }
+     * @return GLOBAL
      */
     public ROADLAYOUT.NOTRAFFICLANE createROADLAYOUTNOTRAFFICLANE() {
         return new ROADLAYOUT.NOTRAFFICLANE();
@@ -199,6 +222,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ROADLAYOUT.SHOULDER }
+     * @return GLOBAL
      */
     public ROADLAYOUT.SHOULDER createROADLAYOUTSHOULDER() {
         return new ROADLAYOUT.SHOULDER();
@@ -206,6 +230,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ROADLAYOUT.STRIPE }
+     * @return GLOBAL
      */
     public ROADLAYOUT.STRIPE createROADLAYOUTSTRIPE() {
         return new ROADLAYOUT.STRIPE();
@@ -213,6 +238,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NODE }
+     * @return GLOBAL
      */
     public NODE createNODE() {
         return new NODE();
@@ -220,6 +246,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LINK.CLOTHOID }
+     * @return GLOBAL
      */
     public LINK.CLOTHOID createLINKCLOTHOID() {
         return new LINK.CLOTHOID();
@@ -227,6 +254,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LINK.STRAIGHT }
+     * @return GLOBAL
      */
     public LINK.STRAIGHT createLINKSTRAIGHT() {
         return new LINK.STRAIGHT();
@@ -234,6 +262,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LINK.ARC }
+     * @return GLOBAL
      */
     public LINK.ARC createLINKARC() {
         return new LINK.ARC();
@@ -241,6 +270,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LINK.POLYLINE }
+     * @return GLOBAL
      */
     public LINK.POLYLINE createLINKPOLYLINE() {
         return new LINK.POLYLINE();
@@ -248,6 +278,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LINK.LANEOVERRIDE }
+     * @return GLOBAL
      */
     public LINK.LANEOVERRIDE createLINKLANEOVERRIDE() {
         return new LINK.LANEOVERRIDE();
@@ -255,6 +286,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LINK.GENERATOR }
+     * @return GLOBAL
      */
     public LINK.GENERATOR createLINKGENERATOR() {
         return new LINK.GENERATOR();
@@ -262,6 +294,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LINK.LISTGENERATOR }
+     * @return GLOBAL
      */
     public LINK.LISTGENERATOR createLINKLISTGENERATOR() {
         return new LINK.LISTGENERATOR();
@@ -269,6 +302,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LINK.FILL }
+     * @return GLOBAL
      */
     public LINK.FILL createLINKFILL() {
         return new LINK.FILL();
@@ -276,6 +310,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LINK.BLOCK }
+     * @return GLOBAL
      */
     public LINK.BLOCK createLINKBLOCK() {
         return new LINK.BLOCK();
@@ -283,6 +318,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LINK.SENSOR }
+     * @return GLOBAL
      */
     public LINK.SENSOR createLINKSENSOR() {
         return new LINK.SENSOR();
@@ -290,6 +326,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LINK.TRAFFICLIGHT }
+     * @return GLOBAL
      */
     public LINK.TRAFFICLIGHT createLINKTRAFFICLIGHT() {
         return new LINK.TRAFFICLIGHT();
@@ -297,6 +334,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LINK.SINK }
+     * @return GLOBAL
      */
     public LINK.SINK createLINKSINK() {
         return new LINK.SINK();
@@ -304,6 +342,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ROUTEMIX.ROUTE }
+     * @return GLOBAL
      */
     public ROUTEMIX.ROUTE createROUTEMIXROUTE() {
         return new ROUTEMIX.ROUTE();
@@ -311,6 +350,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link org.opentrafficsim.road.network.factory.vissim.SHORTESTROUTE }
+     * @return GLOBAL
      */
     public org.opentrafficsim.road.network.factory.vissim.xsd.SHORTESTROUTE createSHORTESTROUTE() {
         return new org.opentrafficsim.road.network.factory.vissim.xsd.SHORTESTROUTE();
@@ -318,6 +358,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SHORTESTROUTEMIX.SHORTESTROUTE }
+     * @return GLOBAL
      */
     public SHORTESTROUTEMIX.SHORTESTROUTE createSHORTESTROUTEMIXSHORTESTROUTE() {
         return new SHORTESTROUTEMIX.SHORTESTROUTE();
@@ -325,6 +366,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FallbackType }
+     * @return GLOBAL
      */
     public FallbackType createFallbackType() {
         return new FallbackType();
@@ -332,6 +374,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ROADLAYOUT.LANE.SPEEDLIMIT }
+     * @return GLOBAL
      */
     public ROADLAYOUT.LANE.SPEEDLIMIT createROADLAYOUTLANESPEEDLIMIT() {
         return new ROADLAYOUT.LANE.SPEEDLIMIT();
@@ -339,6 +382,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FallbackType }{@code >}}
+     * @return GLOBAL
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XInclude", name = "fallback")
     public JAXBElement<FallbackType> createFallback(FallbackType value) {
@@ -347,6 +391,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link IncludeType }{@code >}}
+     * @return GLOBAL
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XInclude", name = "include")
     public JAXBElement<IncludeType> createInclude(IncludeType value) {

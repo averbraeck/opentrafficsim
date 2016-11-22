@@ -53,7 +53,7 @@ class ShortestRouteMixTag implements Serializable {
                 throw new SAXException("SHORTESTROUTEMIX: missing attribute NAME");
             }
             shortestRouteMixTag.name = attributes.getNamedItem("NAME").getNodeValue().trim();
-            if (parser.routeTags.keySet().contains(shortestRouteMixTag.name)) {
+            if (parser.getRouteTags().keySet().contains(shortestRouteMixTag.name)) {
                 throw new SAXException("SHORTESTROUTEMIX: NAME " + shortestRouteMixTag.name + " defined twice");
             }
 
@@ -65,7 +65,7 @@ class ShortestRouteMixTag implements Serializable {
                 parseRouteMixRouteTag(shortestRouteNode, parser, shortestRouteMixTag);
             }
 
-            parser.shortestRouteMixTags.put(shortestRouteMixTag.name, shortestRouteMixTag);
+            parser.getShortestRouteMixTags().put(shortestRouteMixTag.name, shortestRouteMixTag);
         }
     }
 
@@ -86,11 +86,11 @@ class ShortestRouteMixTag implements Serializable {
         if (shortestRouteName == null) {
             throw new NetworkException("SHORTESTROUTEMIX: No SHORTESTROUTE NAME defined");
         }
-        if (!parser.routeTags.containsKey(shortestRouteName.getNodeValue().trim())) {
+        if (!parser.getRouteTags().containsKey(shortestRouteName.getNodeValue().trim())) {
             throw new NetworkException("SHORTESTROUTEMIX: " + shortestRouteMixTag.name + " SHORTESTROUTE "
                 + shortestRouteName.getNodeValue().trim() + " not defined");
         }
-        shortestRouteMixTag.routes.add(parser.shortestRouteTags.get(shortestRouteName.getNodeValue().trim()));
+        shortestRouteMixTag.routes.add(parser.getShortestRouteTags().get(shortestRouteName.getNodeValue().trim()));
 
         Node weight = attributes.getNamedItem("WEIGHT");
         if (weight == null) {

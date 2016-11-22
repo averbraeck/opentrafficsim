@@ -69,7 +69,7 @@ class ShortestRouteTag implements Serializable {
                 throw new SAXException("SHORTESTROUTE: missing attribute NAME");
             }
             shortestRouteTag.name = attributes.getNamedItem("NAME").getNodeValue().trim();
-            if (parser.routeTags.keySet().contains(shortestRouteTag.name)) {
+            if (parser.getRouteTags().keySet().contains(shortestRouteTag.name)) {
                 throw new SAXException("SHORTESTROUTE: NAME " + shortestRouteTag.name + " defined twice");
             }
 
@@ -77,10 +77,10 @@ class ShortestRouteTag implements Serializable {
                 throw new SAXException("SHORTESTROUTE: missing attribute FROM");
             }
             String fromNode = attributes.getNamedItem("FROM").getNodeValue().trim();
-            if (!parser.nodeTags.containsKey(fromNode)) {
+            if (!parser.getNodeTags().containsKey(fromNode)) {
                 throw new SAXException("SHORTESTROUTE " + shortestRouteTag.name + ": FROM node " + fromNode + " not found");
             }
-            shortestRouteTag.from = parser.nodeTags.get(fromNode);
+            shortestRouteTag.from = parser.getNodeTags().get(fromNode);
 
             if (attributes.getNamedItem("NODELIST") != null) {
                 String viaNodes = attributes.getNamedItem("NODELIST").getNodeValue().trim();
@@ -91,10 +91,10 @@ class ShortestRouteTag implements Serializable {
                 throw new SAXException("SHORTESTROUTE: missing attribute TO");
             }
             String toNode = attributes.getNamedItem("TO").getNodeValue().trim();
-            if (!parser.nodeTags.containsKey(toNode.trim())) {
+            if (!parser.getNodeTags().containsKey(toNode.trim())) {
                 throw new SAXException("SHORTESTROUTE " + shortestRouteTag.name + ": TO node " + toNode + " not found");
             }
-            shortestRouteTag.to = parser.nodeTags.get(toNode);
+            shortestRouteTag.to = parser.getNodeTags().get(toNode);
 
             Node distanceCost = attributes.getNamedItem("DISTANCECOST");
             if (distanceCost == null) {
@@ -108,7 +108,7 @@ class ShortestRouteTag implements Serializable {
             }
             shortestRouteTag.costPerTime = TimeUnits.parseFrequency(timeCost.getNodeValue().trim());
 
-            parser.shortestRouteTags.put(shortestRouteTag.name.trim(), shortestRouteTag);
+            parser.getShortestRouteTags().put(shortestRouteTag.name.trim(), shortestRouteTag);
         }
     }
 

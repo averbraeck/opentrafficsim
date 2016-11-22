@@ -104,20 +104,20 @@ class ListGeneratorTag implements Serializable {
 
         if (attributes.getNamedItem("GTU") != null) {
             String gtuName = attributes.getNamedItem("GTU").getNodeValue().trim();
-            if (!parser.gtuTags.containsKey(gtuName)) {
+            if (!parser.getGtuTags().containsKey(gtuName)) {
                 throw new NetworkException("LISTGENERATOR: LANE " + laneName + " GTU " + gtuName + " in link " + linkTag.name
                     + " not defined");
             }
-            listGeneratorTag.gtuTag = parser.gtuTags.get(gtuName);
+            listGeneratorTag.gtuTag = parser.getGtuTags().get(gtuName);
         }
 
         if (attributes.getNamedItem("GTUMIX") != null) {
             String gtuMixName = attributes.getNamedItem("GTUMIX").getNodeValue().trim();
-            if (!parser.gtuMixTags.containsKey(gtuMixName)) {
+            if (!parser.getGtuMixTags().containsKey(gtuMixName)) {
                 throw new NetworkException("LISTGENERATOR: LANE " + laneName + " GTUMIX " + gtuMixName + " in link "
                     + linkTag.name + " not defined");
             }
-            listGeneratorTag.gtuMixTag = parser.gtuMixTags.get(gtuMixName);
+            listGeneratorTag.gtuMixTag = parser.getGtuMixTags().get(gtuMixName);
         }
 
         if (listGeneratorTag.gtuTag == null && listGeneratorTag.gtuMixTag == null) {

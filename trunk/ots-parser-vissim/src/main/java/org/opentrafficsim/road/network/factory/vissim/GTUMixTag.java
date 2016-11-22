@@ -74,7 +74,7 @@ class GTUMixTag implements Serializable {
                 throw new SAXException("GTUMIX: missing attribute NAME");
             }
             gtuMixTag.name = name.getNodeValue().trim();
-            if (parser.gtuMixTags.keySet().contains(gtuMixTag.name)) {
+            if (parser.getGtuMixTags().keySet().contains(gtuMixTag.name)) {
                 throw new SAXException("GTUMIX: NAME " + gtuMixTag.name + " defined twice");
             }
 
@@ -86,7 +86,7 @@ class GTUMixTag implements Serializable {
                 parseGTUMixGTUTag(gtuNode, parser, gtuMixTag);
             }
 
-            parser.gtuMixTags.put(gtuMixTag.name, gtuMixTag);
+            parser.getGtuMixTags().put(gtuMixTag.name, gtuMixTag);
         }
     }
 
@@ -107,11 +107,11 @@ class GTUMixTag implements Serializable {
         if (gtuName == null) {
             throw new NetworkException("GTUMIX: No GTU NAME defined");
         }
-        if (!parser.gtuTags.containsKey(gtuName.getNodeValue().trim())) {
+        if (!parser.getGtuTags().containsKey(gtuName.getNodeValue().trim())) {
             throw new NetworkException("GTUMIX: " + gtuMixTag.name + " GTU " + gtuName.getNodeValue().trim()
                 + " not defined");
         }
-        gtuMixTag.gtus.add(parser.gtuTags.get(gtuName.getNodeValue().trim()));
+        gtuMixTag.gtus.add(parser.getGtuTags().get(gtuName.getNodeValue().trim()));
 
         Node weight = attributes.getNamedItem("WEIGHT");
         if (weight == null) {

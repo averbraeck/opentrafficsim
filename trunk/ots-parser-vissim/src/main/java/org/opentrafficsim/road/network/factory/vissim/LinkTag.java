@@ -148,7 +148,7 @@ final class LinkTag implements Serializable {
     public RoadLayoutTag roadLayoutTag;
 
     /**
-     * @param linkTag
+     * @param linkTag: link Info from XML
      */
     public LinkTag(LinkTag linkTag) {
         this.connectorTag = linkTag.connectorTag;
@@ -201,8 +201,8 @@ final class LinkTag implements Serializable {
                 }
                 linkTag.name = attributes.getNamedItem("no").getNodeValue().trim();
                 Integer linkNr = Integer.parseInt(linkTag.name);
-                if (linkNr > parser.upperLinkNr) {
-                    parser.upperLinkNr = linkNr;
+                if (linkNr > parser.getUpperLinkNr()) {
+                    parser.setUpperLinkNr(linkNr);
                 }
 
                 if (attributes.getNamedItem("assumSpeedOncom") == null) {
@@ -236,7 +236,7 @@ final class LinkTag implements Serializable {
                 }
 
                 // put this link in the map with LinkTags
-                parser.linkTags.put(linkTag.name, linkTag);
+                parser.getLinkTags().put(linkTag.name, linkTag);
             }
 
         }
@@ -306,16 +306,16 @@ final class LinkTag implements Serializable {
     private static void createNodesForLink(final VissimNetworkLaneParser parser, LinkTag linkTag, OTSPoint3D[] nodeCoords)
         throws SAXException, NetworkException {
         // generate nodes from every Vissim link/connector
-        String fromNodeStr = "" + parser.upperNodeNr;
-        parser.upperNodeNr++;
-        String toNodeStr = "" + parser.upperNodeNr;
-        parser.upperNodeNr++;
+        String fromNodeStr = "" + parser.getUpperNodeNr();
+        parser.setUpperNodeNr(parser.getUpperNodeNr() + 1);
+        String toNodeStr = "" + parser.getUpperNodeNr();
+        parser.setUpperNodeNr(parser.getUpperNodeNr() + 1);
 
         // parse the NODES, and add them to a nodelist directly
         NodeTag.parseNodes(parser, fromNodeStr, toNodeStr, nodeCoords);
 
-        linkTag.nodeStartTag = parser.nodeTags.get(fromNodeStr);
-        linkTag.nodeEndTag = parser.nodeTags.get(toNodeStr);
+        linkTag.nodeStartTag = parser.getNodeTags().get(fromNodeStr);
+        linkTag.nodeEndTag = parser.getNodeTags().get(toNodeStr);
     }
 
     private static OTSPoint3D[] parseLinkGeometry(final VissimNetworkLaneParser parser, Node node, LinkTag linkTag)
@@ -346,11 +346,14 @@ final class LinkTag implements Serializable {
     }
 
     /**
-     * Split the links at a certain point along the link
-     * @param parser
-     * @param isConnectorToLink
-     * @param connectorTag2
-     * @param linkToTag
+     * Split the links at a certain point along the link.
+     * @param splitNodeTag: Node located at the intersection point of the connector and the link
+     * @param linkTag: Tag of the link that meets the connector
+     * @param parser: the VissimParser with info to create a network
+     * @param splitPosition: position at the link where the split is expected
+     * @param margin: if the splitPosition is at the start or end of the LinkTag, the connector is supposed to be a chain and
+     *            not a split
+     * @param isConnectorToLink: boolean describing is this is a connector towards a link (true) or starting from a link (false)
      * @return
      * @throws OTSGeometryException
      */
@@ -373,8 +376,8 @@ final class LinkTag implements Serializable {
             // first create a copy of the current toLink
             LinkTag endLinkTag = new LinkTag(linkTag);
             // add a unique name
-            String linkName = "" + parser.upperLinkNr;
-            parser.upperLinkNr++;
+            String linkName = "" + parser.getUpperLinkNr();
+            parser.setUpperLinkNr(parser.getUpperLinkNr() + 1);
             endLinkTag.name = linkName;
 
             // the first link has the same characteristics as the old link, but implements a new endNode (the endNode of the
@@ -603,33 +606,32 @@ final class LinkTag implements Serializable {
     }
 
     /**
-     * @param parser
+     * @param parser: the VissimParser with info to create a network
      */
     public static void addSignalHeads(VissimNetworkLaneParser parser) {
-
-        for (SignalHeadTag signalHeadTag : parser.signalHeadTags.values()) {
-            parser.linkTags.get(signalHeadTag.linkName).signalHeads.add(signalHeadTag);
+        for (SignalHeadTag signalHeadTag : parser.getSignalHeadTags().values()) {
+            parser.getLinkTags().get(signalHeadTag.linkName).signalHeads.add(signalHeadTag);
         }
     }
 
     /**
-     * @param parser
+     * @param parser: the VissimParser with info to create a network
      */
     public static void addDetectors(VissimNetworkLaneParser parser) {
-        for (SensorTag sensorTag : parser.sensorTags.values()) {
-            parser.linkTags.get(sensorTag.linkName).sensors.add(sensorTag);
+        for (SensorTag sensorTag : parser.getSensorTags().values()) {
+            parser.getLinkTags().get(sensorTag.linkName).sensors.add(sensorTag);
         }
     }
 
     /**
-     * @param vissimNetworkLaneParser
-     * @throws OTSGeometryException
-     * @throws NamingException
-     * @throws NetworkException
+     * @param parser: the VissimParser with info to create a network
+     * @throws OTSGeometryException:
+     * @throws NamingException:
+     * @throws NetworkException:
      */
     public static void shortenConnectors(VissimNetworkLaneParser parser) throws OTSGeometryException, NetworkException,
         NamingException {
-        for (LinkTag connectorTag : parser.connectorTags.values()) {
+        for (LinkTag connectorTag : parser.getConnectorTags().values()) {
             OTSLine3D designLineOTS = LinkTag.createLineString(connectorTag);
             LineString designLine = designLineOTS.getLineString();
             Double length = designLine.getLength();

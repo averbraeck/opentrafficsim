@@ -36,6 +36,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.xml.sax.SAXException;
 
@@ -68,7 +69,7 @@ final class Links {
     @SuppressWarnings("methodlength")
     static void calculateNodeCoordinates(final VissimNetworkLaneParser parser) throws NetworkException, NamingException {
         // are there straight tags with nodes without an angle?
-        for (LinkTag linkTag : parser.linkTags.values()) {
+        for (LinkTag linkTag : parser.getLinkTags().values()) {
             if (linkTag.straightTag != null && linkTag.nodeStartTag.coordinate != null
                 && linkTag.nodeEndTag.coordinate != null) {
                 if (linkTag.nodeStartTag.angle == null) {
@@ -86,7 +87,7 @@ final class Links {
 
         // see if we can find the coordinates of the nodes that have not yet been fixed.
         Set<NodeTag> nodeTags = new HashSet<>();
-        for (LinkTag linkTag : parser.linkTags.values()) {
+        for (LinkTag linkTag : parser.getLinkTags().values()) {
 
             if (linkTag.nodeStartTag.coordinate == null) {
                 nodeTags.add(linkTag.nodeStartTag);
@@ -98,7 +99,7 @@ final class Links {
 
         while (nodeTags.size() > 0) {
             boolean found = false;
-            for (LinkTag linkTag : parser.linkTags.values()) {
+            for (LinkTag linkTag : parser.getLinkTags().values()) {
                 if (linkTag.straightTag != null || linkTag.polyLineTag != null || linkTag.arcTag != null) {
                     if (nodeTags.contains(linkTag.nodeStartTag) == nodeTags.contains(linkTag.nodeEndTag)) {
                         continue;
@@ -247,7 +248,7 @@ final class Links {
         }
 
         // are there straight tags with nodes without an angle?
-        for (LinkTag linkTag : parser.linkTags.values()) {
+        for (LinkTag linkTag : parser.getLinkTags().values()) {
             if (linkTag.straightTag != null && linkTag.nodeStartTag.coordinate != null
                 && linkTag.nodeEndTag.coordinate != null) {
                 double dx = linkTag.nodeEndTag.coordinate.x - linkTag.nodeStartTag.coordinate.x;
@@ -261,7 +262,7 @@ final class Links {
 
         // are there polyLine tags with nodes without an angle?
 
-        for (LinkTag linkTag : parser.linkTags.values()) {
+        for (LinkTag linkTag : parser.getLinkTags().values()) {
             if (linkTag.polyLineTag != null && linkTag.nodeStartTag.coordinate != null
                 && linkTag.nodeEndTag.coordinate != null) {
                 double dx = linkTag.polyLineTag.vertices[0].x - linkTag.nodeStartTag.coordinate.x;
@@ -275,7 +276,7 @@ final class Links {
         }
 
         // which nodes have not yet been created?
-        for (NodeTag nodeTag : parser.nodeTags.values()) {
+        for (NodeTag nodeTag : parser.getNodeTags().values()) {
             if (nodeTag.coordinate != null && nodeTag.node == null) {
                 if (nodeTag.angle == null) {
                     nodeTag.angle = Direction.ZERO;
@@ -395,7 +396,7 @@ final class Links {
         OTSLine3D designLine = OTSLine3D.createAndCleanOTSLine3D(coordinates);
 
         // Directionality has to be added later when the lanes and their direction are known.
-        CrossSectionLink link = new CrossSectionLink(parser.network, linkTag.name, linkTag.nodeStartTag.node,
+        CrossSectionLink link = new CrossSectionLink(parser.getNetwork(), linkTag.name, linkTag.nodeStartTag.node,
             linkTag.nodeEndTag.node, LinkType.ALL, designLine, new HashMap<GTUType, LongitudinalDirectionality>(),
             linkTag.laneKeepingPolicy);
         linkTag.link = link;
@@ -472,6 +473,7 @@ final class Links {
                         }
                     }
                 }
+
                 if (!linkTag.signalHeads.isEmpty()) {
                     for (SignalHeadTag signalHeadTag : linkTag.signalHeads) {
                         if (signalHeadTag.laneName.equals(laneTag.laneNo)) {
@@ -554,11 +556,11 @@ final class Links {
             Double totalFromLaneWidth = -1.75;
             Double totalToLaneWidth = -1.75;
             // find the link and lane downstream
-            LinkTag linkToTag = parser.realLinkTags.get(linkTag.connectorTag.toLinkNo);
+            LinkTag linkToTag = parser.getRealLinkTags().get(linkTag.connectorTag.toLinkNo);
             Lane laneTo = linkToTag.lanes.get(linkTag.connectorTag.toLaneNo);
 
             // find the link and lane upstream
-            LinkTag linkFromTag = parser.realLinkTags.get(linkTag.connectorTag.fromLinkNo);
+            LinkTag linkFromTag = parser.getRealLinkTags().get(linkTag.connectorTag.fromLinkNo);
             Lane laneFrom = linkFromTag.lanes.get(linkTag.connectorTag.fromLaneNo);
 
             // loop along all lanes (Tags)
@@ -601,6 +603,35 @@ final class Links {
                     }
                 }
 
+            }
+        }
+
+    }
+
+    /**
+     * @param realLinkTag
+     * @param vissimNetworkLaneParser
+     * @param simulator
+     * @throws NetworkException
+     */
+    public static void createSinkSensor(LinkTag realLinkTag, VissimNetworkLaneParser vissimNetworkLaneParser,
+        OTSDEVSSimulatorInterface simulator) throws NetworkException {
+        if (!realLinkTag.connector) {
+            boolean deadLink = true;
+            for (LinkTag linkTag : vissimNetworkLaneParser.getLinkTags().values()) {
+                if (realLinkTag.nodeEndTag.name.equals(linkTag.nodeStartTag.name) && !realLinkTag.equals(linkTag)) {
+                    deadLink = false;
+                }
+            }
+
+            if (deadLink) {
+                for (Lane lane : realLinkTag.lanes.values()) {
+                    Double smallest = Math.min(10, lane.getLength().getInUnit(LengthUnit.METER) - 1);
+                    Length beforeEnd = new Length(smallest, LengthUnit.METER);
+                    Length pos = lane.getLength().minus(beforeEnd);
+                    SinkSensor sensor = new SinkSensor(lane, pos, simulator);
+                    lane.getSensors().add(sensor);
+                }
             }
         }
 

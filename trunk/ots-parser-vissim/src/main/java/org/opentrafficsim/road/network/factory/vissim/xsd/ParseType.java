@@ -16,8 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  * Java class for parseType.
  * <p>
  * The following schema fragment specifies the expected content contained within this class.
- * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="parseType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
@@ -42,6 +41,10 @@ public enum ParseType {
         return value;
     }
 
+    /**
+     * @param v String to parse
+     * @return a ParseType
+     */
     public static ParseType fromValue(String v) {
         for (ParseType c : ParseType.values()) {
             if (c.value.equals(v)) {

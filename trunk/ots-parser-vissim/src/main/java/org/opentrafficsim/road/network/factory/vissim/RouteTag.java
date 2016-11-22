@@ -54,7 +54,7 @@ class RouteTag implements Serializable {
                 throw new SAXException("ROUTE: missing attribute NAME");
             }
             routeTag.name = attributes.getNamedItem("NAME").getNodeValue().trim();
-            if (parser.routeTags.keySet().contains(routeTag.name)) {
+            if (parser.getRouteTags().keySet().contains(routeTag.name)) {
                 throw new SAXException("ROUTE: NAME " + routeTag.name + " defined twice");
             }
 
@@ -64,7 +64,7 @@ class RouteTag implements Serializable {
             String routeNodes = attributes.getNamedItem("NODELIST").getNodeValue().trim();
             routeTag.routeNodeTags = NodeTag.parseNodeList(routeNodes, parser);
 
-            parser.routeTags.put(routeTag.name, routeTag);
+            parser.getRouteTags().put(routeTag.name, routeTag);
         }
     }
 
