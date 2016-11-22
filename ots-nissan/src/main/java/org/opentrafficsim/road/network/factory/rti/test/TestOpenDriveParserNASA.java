@@ -285,7 +285,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                                 new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualGTU.class,
                                     initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
                                     startTime, endTime, lane, position, GTUDirectionality.DIR_PLUS,
-                                    makeSwitchableGTUColorer(), strategicalPlannerFactory, network);
+                                    makeSwitchableGTUColorer(), strategicalPlannerFactory, null, network);
                                 try
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);
@@ -330,7 +330,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                                 new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualGTU.class,
                                     initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
                                     startTime, endTime, lane, position, GTUDirectionality.DIR_MINUS,
-                                    makeSwitchableGTUColorer(), strategicalPlannerFactory, network);
+                                    makeSwitchableGTUColorer(), strategicalPlannerFactory, null, network);
 
                                 try
                                 {
@@ -520,7 +520,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                         LaneBasedIndividualGTU car =
                             new LaneBasedIndividualGTU(String.valueOf(i), carType, carLength, widthDist.draw(), maxSpeedDist
                                 .draw(), this.simulator, network);
-                        car.init(strategicalPlannerFactory.create(car), lanepositionSet, new Speed(0.0,
+                        car.init(strategicalPlannerFactory.create(car, cr), lanepositionSet, new Speed(0.0,
                             SpeedUnit.METER_PER_SECOND));
                         this.rtiCars.add(car);
 
