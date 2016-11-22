@@ -11,7 +11,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
-import org.opentrafficsim.road.network.factory.vissim.units.LaneAttributes;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -88,7 +87,7 @@ class LaneTypeTag implements Serializable {
                 throw new SAXException("LANETYPE: missing attribute NAME");
             }
             laneTypeTag.name = name.getNodeValue().trim();
-            if (parser.laneTypeTags.keySet().contains(laneTypeTag.name)) {
+            if (parser.getLaneTypeTags().keySet().contains(laneTypeTag.name)) {
                 throw new SAXException("LANETYPE: NAME " + laneTypeTag.name + " defined twice");
             }
 
@@ -99,7 +98,8 @@ class LaneTypeTag implements Serializable {
 
             Node lkp = attributes.getNamedItem("DEFAULTLANEKEEPING");
             if (lkp != null) {
-                laneTypeTag.defaultLaneKeepingPolicy = LaneAttributes.parseLaneKeepingPolicy(lkp.getNodeValue().trim());
+                laneTypeTag.defaultLaneKeepingPolicy = org.opentrafficsim.road.network.factory.vissim.units.LaneAttributes
+                    .parseLaneKeepingPolicy(lkp.getNodeValue().trim());
             }
 
             List<Node> speedLimitList = XMLParser.getNodes(node.getChildNodes(), "SPEEDLIMIT");
@@ -113,11 +113,11 @@ class LaneTypeTag implements Serializable {
                 if (gtuTypeName == null) {
                     throw new NetworkException("LANETYPE: No GTUTYPE defined");
                 }
-                if (!parser.gtuTypes.containsKey(gtuTypeName.getNodeValue().trim())) {
+                if (!parser.getGtuTypes().containsKey(gtuTypeName.getNodeValue().trim())) {
                     throw new NetworkException("LANETYPE: " + laneTypeTag.name + " GTUTYPE " + gtuTypeName.getNodeValue()
                         .trim() + " not defined");
                 }
-                GTUType gtuType = parser.gtuTypes.get(gtuTypeName.getNodeValue().trim());
+                GTUType gtuType = parser.getGtuTypes().get(gtuTypeName.getNodeValue().trim());
 
                 Node speedNode = speedLimitAttributes.getNamedItem("LEGALSPEEDLIMIT");
                 if (speedNode == null) {
@@ -128,7 +128,7 @@ class LaneTypeTag implements Serializable {
 
                 laneTypeTag.legalSpeedLimits.put(gtuType, speed);
             }
-            parser.laneTypeTags.put(laneTypeTag.name, laneTypeTag);
+            parser.getLaneTypeTags().put(laneTypeTag.name, laneTypeTag);
         }
     }
 
