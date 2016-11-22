@@ -49,7 +49,7 @@ public class GTUTypeGenerator
     private final static String GTU_CLASS_STREAM = "gtuClass";
 
     /**
-     * @param simulator
+     * @param simulator the simulator to use
      */
     public GTUTypeGenerator(OTSSimulatorInterface simulator)
     {

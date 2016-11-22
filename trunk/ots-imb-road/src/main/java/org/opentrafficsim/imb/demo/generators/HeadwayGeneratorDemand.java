@@ -127,7 +127,7 @@ public class HeadwayGeneratorDemand implements Generator<Duration>
      * @param fractionRemaining remaining fraction of headway to apply due to time in earlier time periods
      * @return time of next arrival
      * @throws ValueException in case of an illegal time vector
-     * @throws RemoteException
+     * @throws RemoteException in case of not being able to retrieve the replication
      */
     private Time nextArrival(final int i, final Duration start, final double fractionRemaining)
             throws ValueException, RemoteException
