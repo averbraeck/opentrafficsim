@@ -53,7 +53,7 @@ class RouteMixTag implements Serializable {
                 throw new SAXException("ROUTEMIX: missing attribute NAME");
             }
             routeMixTag.name = attributes.getNamedItem("NAME").getNodeValue().trim();
-            if (parser.routeTags.keySet().contains(routeMixTag.name)) {
+            if (parser.getRouteTags().keySet().contains(routeMixTag.name)) {
                 throw new SAXException("ROUTEMIX: NAME " + routeMixTag.name + " defined twice");
             }
 
@@ -65,7 +65,7 @@ class RouteMixTag implements Serializable {
                 parseRouteMixRouteTag(routeNode, parser, routeMixTag);
             }
 
-            parser.routeMixTags.put(routeMixTag.name, routeMixTag);
+            parser.getRouteMixTags().put(routeMixTag.name, routeMixTag);
         }
     }
 
@@ -86,11 +86,11 @@ class RouteMixTag implements Serializable {
         if (routeName == null) {
             throw new NetworkException("ROUTEMIX: No ROUTE NAME defined");
         }
-        if (!parser.routeTags.containsKey(routeName.getNodeValue().trim())) {
+        if (!parser.getRouteTags().containsKey(routeName.getNodeValue().trim())) {
             throw new NetworkException("ROUTEMIX: " + routeMixTag.name + " ROUTE " + routeName.getNodeValue().trim()
                 + " not defined");
         }
-        routeMixTag.routes.add(parser.routeTags.get(routeName.getNodeValue().trim()));
+        routeMixTag.routes.add(parser.getRouteTags().get(routeName.getNodeValue().trim()));
 
         Node weight = attributes.getNamedItem("WEIGHT");
         if (weight == null) {

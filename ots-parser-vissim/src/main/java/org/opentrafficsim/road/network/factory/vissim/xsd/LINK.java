@@ -385,6 +385,9 @@ public class LINK {
      * {@link LINK.LISTGENERATOR } {@link LINK.FILL } {@link LINK.BLOCK } {@link LINK.SENSOR } {@link LINK.TRAFFICLIGHT }
      * {@link LINK.SINK }
      */
+    /**
+     * @return elements of a link
+     */
     public List<Object> getLANEOVERRIDEOrGENERATOROrLISTGENERATOR() {
         if (laneoverrideOrGENERATOROrLISTGENERATOR == null) {
             laneoverrideOrGENERATOROrLISTGENERATOR = new ArrayList<Object>();
@@ -1606,6 +1609,9 @@ public class LINK {
          * </pre>
          * <p>
          * Objects of the following type(s) are allowed in the list {@link String }
+         */
+        /**
+         * @return intermediate points
          */
         public List<String> getINTERMEDIATEPOINTS() {
             if (intermediatepoints == null) {

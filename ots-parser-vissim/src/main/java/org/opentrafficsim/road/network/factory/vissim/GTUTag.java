@@ -84,7 +84,7 @@ class GTUTag implements Serializable {
                 throw new SAXException("GTU: missing attribute NAME");
             }
             gtuTag.name = name.getNodeValue().trim();
-            if (parser.gtuTags.keySet().contains(gtuTag.name)) {
+            if (parser.getGtuTags().keySet().contains(gtuTag.name)) {
                 throw new SAXException("GTU: NAME " + gtuTag.name + " defined twice");
             }
 
@@ -92,10 +92,10 @@ class GTUTag implements Serializable {
             if (gtuType == null) {
                 throw new SAXException("GTU: missing attribute GTUTYPE");
             }
-            if (!parser.gtuTypes.containsKey(gtuType.getNodeValue().trim())) {
+            if (!parser.getGtuTypes().containsKey(gtuType.getNodeValue().trim())) {
                 throw new SAXException("GTU: GTUTYPE " + gtuType.getNodeValue().trim() + " not defined");
             }
-            gtuTag.gtuType = parser.gtuTypes.get(gtuType.getNodeValue().trim());
+            gtuTag.gtuType = parser.getGtuTypes().get(gtuType.getNodeValue().trim());
 
             Node length = attributes.getNamedItem("LENGTH");
             if (length == null) {
@@ -115,7 +115,7 @@ class GTUTag implements Serializable {
             }
             gtuTag.maxSpeedDist = Distributions.parseSpeedDist(maxSpeed.getNodeValue());
 
-            parser.gtuTags.put(gtuTag.name, gtuTag);
+            parser.getGtuTags().put(gtuTag.name, gtuTag);
         }
     }
 

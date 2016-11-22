@@ -29,6 +29,7 @@ class SignalHeadTag implements Serializable {
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String sg = "";
 
+    /** is the signalHead really located on this link? */
     Boolean activeOnThisLink = true;
 
     /**
@@ -76,9 +77,8 @@ class SignalHeadTag implements Serializable {
 
     /**
      * Parse the TRAFFICLIGHT tag.
-     * @param node the TRAFFICLIGHT node to parse
+     * @param nodeList the SignalHead nodes to parse
      * @param parser the parser with the lists of information
-     * @param signalHeadTag the parent LINK tag
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */
@@ -115,7 +115,7 @@ class SignalHeadTag implements Serializable {
                 }
                 signalHeadTag.signalGroup = attributes.getNamedItem("sg").getNodeValue().trim();
 
-                parser.signalHeadTags.put(signalHeadTag.no, signalHeadTag);
+                parser.getSignalHeadTags().put(signalHeadTag.no, signalHeadTag);
 
             }
         }

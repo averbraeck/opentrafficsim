@@ -180,11 +180,11 @@ class CrossSectionElementTag implements Serializable {
 
         if (attributes.getNamedItem("LANETYPE") != null) {
             String laneTypeString = attributes.getNamedItem("LANETYPE").getNodeValue().trim();
-            if (!parser.laneTypeTags.containsKey(laneTypeString)) {
+            if (!parser.getLaneTypeTags().containsKey(laneTypeString)) {
                 throw new SAXException("ROADLAYOUT.LANE: LANETYPE " + laneTypeString + " for lane " + roadLayoutTag.name
                     + "." + name + " not defined");
             }
-            cseTag.laneTypeTag = parser.laneTypeTags.get(laneTypeString);
+            cseTag.laneTypeTag = parser.getLaneTypeTags().get(laneTypeString);
         }
 
         if (attributes.getNamedItem("OFFSET") != null) {
@@ -214,11 +214,11 @@ class CrossSectionElementTag implements Serializable {
             if (gtuTypeName == null) {
                 throw new NetworkException("ROADLAYOUT.LANE.SPEEDLIMIT: No GTUTYPE defined");
             }
-            if (!parser.gtuTypes.containsKey(gtuTypeName.getNodeValue().trim())) {
+            if (!parser.getGtuTypes().containsKey(gtuTypeName.getNodeValue().trim())) {
                 throw new NetworkException("ROADLAYOUT.LANE.SPEEDLIMIT: " + roadLayoutTag.name + " GTUTYPE " + gtuTypeName
                     .getNodeValue().trim() + " not defined");
             }
-            GTUType gtuType = parser.gtuTypes.get(gtuTypeName.getNodeValue().trim());
+            GTUType gtuType = parser.getGtuTypes().get(gtuTypeName.getNodeValue().trim());
 
             Node speedNode = speedLimitAttributes.getNamedItem("LEGALSPEEDLIMIT");
             if (speedNode == null) {

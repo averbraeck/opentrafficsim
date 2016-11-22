@@ -66,6 +66,7 @@ class SensorTag implements Serializable {
     @SuppressWarnings("checkstyle:visibilitymodifier")
     RelativePosition.TYPE triggerPosition;
 
+    /** is the sensor really located on this link? */
     Boolean activeOnThisLink = true;
 
     /**
@@ -94,9 +95,8 @@ class SensorTag implements Serializable {
 
     /**
      * Parse the SENSOR tag.
-     * @param node the SENSOR node to parse
+     * @param nodeList the SENSOR node to parse
      * @param parser the parser with the lists of information
-     * @param linkTag the parent LINK tag
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */
@@ -154,7 +154,7 @@ class SensorTag implements Serializable {
                 }
                 sensorTag.positionStr = attributes.getNamedItem("pos").getNodeValue().trim();
 
-                parser.sensorTags.put(sensorTag.no, sensorTag);
+                parser.getSensorTags().put(sensorTag.no, sensorTag);
 
             }
         }

@@ -94,7 +94,7 @@ class GlobalTag implements Serializable {
         if (nodes.size() == 1) {
             Node node = nodes.get(0);
 
-            parser.globalTag = new GlobalTag();
+            parser.setGlobalTag(new GlobalTag());
 
             // SPEEDGTUCOLORER attributes
             List<Node> speedGTUColorerNodes = XMLParser.getNodes(node.getChildNodes(), "SPEEDGTUCOLORER");
@@ -107,7 +107,7 @@ class GlobalTag implements Serializable {
                 if (speedGTUColorerAttributes.getNamedItem("MAXSPEED") == null) {
                     throw new SAXException("GLOBAL: No attribute MAXSPEED for the tag SPEEDGTUCOLORER");
                 }
-                parser.globalTag.speedGTUColorerMaxSpeed = SpeedUnits.parseSpeed(speedGTUColorerAttributes.getNamedItem(
+                parser.getGlobalTag().speedGTUColorerMaxSpeed = SpeedUnits.parseSpeed(speedGTUColorerAttributes.getNamedItem(
                     "MAXSPEED").getNodeValue());
             }
 
@@ -122,12 +122,12 @@ class GlobalTag implements Serializable {
                 if (accelerationGTUColorerAttributes.getNamedItem("MAXDECELERATION") == null) {
                     throw new SAXException("GLOBAL: No attribute MAXDECELERATION for the tag ACCELERATIONGTUCOLORER");
                 }
-                parser.globalTag.accelerationGTUColorerMaxDeceleration = AccelerationUnits.parseAcceleration(
+                parser.getGlobalTag().accelerationGTUColorerMaxDeceleration = AccelerationUnits.parseAcceleration(
                     accelerationGTUColorerAttributes.getNamedItem("MAXDECELERATION").getNodeValue());
                 if (accelerationGTUColorerAttributes.getNamedItem("MAXACCELERATION") == null) {
                     throw new SAXException("GLOBAL: No attribute MAXACCELERATION for the tag ACCELERATIONGTUCOLORER");
                 }
-                parser.globalTag.accelerationGTUColorerMaxAcceleration = AccelerationUnits.parseAcceleration(
+                parser.getGlobalTag().accelerationGTUColorerMaxAcceleration = AccelerationUnits.parseAcceleration(
                     accelerationGTUColorerAttributes.getNamedItem("MAXACCELERATION").getNodeValue());
             }
 
@@ -143,12 +143,12 @@ class GlobalTag implements Serializable {
                     throw new SAXException(
                         "GLOBAL: No attribute MINLANECHANGEDISTANCE for the tag LANECHANGEURGEGTUCOLORER");
                 }
-                parser.globalTag.laneChangeUrgeGTUColorerMinLaneChangeDistance = LengthUnits.parseLength(
+                parser.getGlobalTag().laneChangeUrgeGTUColorerMinLaneChangeDistance = LengthUnits.parseLength(
                     lcuGTUColorerAttributes.getNamedItem("MINLANECHANGEDISTANCE").getNodeValue());
                 if (lcuGTUColorerAttributes.getNamedItem("HORIZON") == null) {
                     throw new SAXException("GLOBAL: No attribute HORIZON for the tag LANECHANGEURGEGTUCOLORER");
                 }
-                parser.globalTag.laneChangeUrgeGTUColorerHorizon = LengthUnits.parseLength(lcuGTUColorerAttributes
+                parser.getGlobalTag().laneChangeUrgeGTUColorerHorizon = LengthUnits.parseLength(lcuGTUColorerAttributes
                     .getNamedItem("HORIZON").getNodeValue());
             }
         }

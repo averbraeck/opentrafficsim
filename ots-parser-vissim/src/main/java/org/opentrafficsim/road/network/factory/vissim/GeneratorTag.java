@@ -162,20 +162,20 @@ class GeneratorTag implements Serializable {
 
         if (attributes.getNamedItem("GTU") != null) {
             String gtuName = attributes.getNamedItem("GTU").getNodeValue().trim();
-            if (!parser.gtuTags.containsKey(gtuName)) {
+            if (!parser.getGtuTags().containsKey(gtuName)) {
                 throw new NetworkException("GENERATOR: LANE " + laneName + " GTU " + gtuName + " in link " + linkTag.name
                     + " not defined");
             }
-            generatorTag.gtuTag = parser.gtuTags.get(gtuName);
+            generatorTag.gtuTag = parser.getGtuTags().get(gtuName);
         }
 
         if (attributes.getNamedItem("GTUMIX") != null) {
             String gtuMixName = attributes.getNamedItem("GTUMIX").getNodeValue().trim();
-            if (!parser.gtuMixTags.containsKey(gtuMixName)) {
+            if (!parser.getGtuMixTags().containsKey(gtuMixName)) {
                 throw new NetworkException("GENERATOR: LANE " + laneName + " GTUMIX " + gtuMixName + " in link "
                     + linkTag.name + " not defined");
             }
-            generatorTag.gtuMixTag = parser.gtuMixTags.get(gtuMixName);
+            generatorTag.gtuMixTag = parser.getGtuMixTags().get(gtuMixName);
         }
 
         if (generatorTag.gtuTag == null && generatorTag.gtuMixTag == null) {
@@ -215,41 +215,41 @@ class GeneratorTag implements Serializable {
 
         if (attributes.getNamedItem("ROUTE") != null) {
             String routeName = attributes.getNamedItem("ROUTE").getNodeValue().trim();
-            if (!parser.routeTags.containsKey(routeName)) {
+            if (!parser.getRouteTags().containsKey(routeName)) {
                 throw new NetworkException("GENERATOR: LANE " + laneName + " ROUTE " + routeName + " in link " + linkTag.name
                     + " not defined");
             }
-            generatorTag.routeTag = parser.routeTags.get(routeName);
+            generatorTag.routeTag = parser.getRouteTags().get(routeName);
             numberRouteTags++;
         }
 
         if (attributes.getNamedItem("ROUTEMIX") != null) {
             String routeMixName = attributes.getNamedItem("ROUTEMIX").getNodeValue().trim();
-            if (!parser.routeMixTags.containsKey(routeMixName)) {
+            if (!parser.getRouteMixTags().containsKey(routeMixName)) {
                 throw new NetworkException("GENERATOR: LANE " + laneName + " ROUTEMIX " + routeMixName + " in link "
                     + linkTag.name + " not defined");
             }
-            generatorTag.routeMixTag = parser.routeMixTags.get(routeMixName);
+            generatorTag.routeMixTag = parser.getRouteMixTags().get(routeMixName);
             numberRouteTags++;
         }
 
         if (attributes.getNamedItem("SHORTESTROUTE") != null) {
             String shortestRouteName = attributes.getNamedItem("SHORTESTROUTE").getNodeValue().trim();
-            if (!parser.shortestRouteTags.containsKey(shortestRouteName)) {
+            if (!parser.getShortestRouteTags().containsKey(shortestRouteName)) {
                 throw new NetworkException("GENERATOR: LANE " + laneName + " SHORTESTROUTE " + shortestRouteName
                     + " in link " + linkTag.name + " not defined");
             }
-            generatorTag.shortestRouteTag = parser.shortestRouteTags.get(shortestRouteName);
+            generatorTag.shortestRouteTag = parser.getShortestRouteTags().get(shortestRouteName);
             numberRouteTags++;
         }
 
         if (attributes.getNamedItem("SHORTESTROUTEMIX") != null) {
             String shortestRouteMixName = attributes.getNamedItem("SHORTESTROUTEMIX").getNodeValue().trim();
-            if (!parser.shortestRouteMixTags.containsKey(shortestRouteMixName)) {
+            if (!parser.getShortestRouteMixTags().containsKey(shortestRouteMixName)) {
                 throw new NetworkException("GENERATOR: LANE " + laneName + " SHORTESTROUTEMIX " + shortestRouteMixName
                     + " in link " + linkTag.name + " not defined");
             }
-            generatorTag.shortestRouteMixTag = parser.shortestRouteMixTags.get(shortestRouteMixName);
+            generatorTag.shortestRouteMixTag = parser.getShortestRouteMixTags().get(shortestRouteMixName);
             numberRouteTags++;
         }
 
@@ -267,7 +267,7 @@ class GeneratorTag implements Serializable {
         if (gtuColorerNode == null) {
             throw new SAXException("GENERATOR: missing attribute GTUCOLORER");
         }
-        generatorTag.gtuColorer = GTUColorerTag.parseGTUColorer(gtuColorerNode.getNodeValue().trim(), parser.globalTag);
+        generatorTag.gtuColorer = GTUColorerTag.parseGTUColorer(gtuColorerNode.getNodeValue().trim(), parser.getGlobalTag());
 
         linkTag.generatorTags.put(generatorTag.laneName, generatorTag);
     }
@@ -304,7 +304,7 @@ class GeneratorTag implements Serializable {
         Class<?> gtuClass = LaneBasedIndividualGTU.class;
         List<org.opentrafficsim.core.network.Node> nodeList = new ArrayList<>();
         for (NodeTag nodeTag : generatorTag.routeTag.routeNodeTags) {
-            nodeList.add(parser.nodeTags.get(nodeTag.name).node);
+            nodeList.add(parser.getNodeTags().get(nodeTag.name).node);
         }
         RouteGenerator routeGenerator = new FixedRouteGenerator(new Route(generatorTag.laneName, nodeList));
         Time startTime = generatorTag.startTime != null ? generatorTag.startTime : Time.ZERO;
@@ -316,7 +316,7 @@ class GeneratorTag implements Serializable {
         new GTUGeneratorIndividual(linkTag.name + "." + generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType,
             gtuClass, generatorTag.initialSpeedDist, generatorTag.iatDist, generatorTag.gtuTag.lengthDist,
             generatorTag.gtuTag.widthDist, generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime, lane,
-            position, generatorTag.gtuDirection, generatorTag.gtuColorer, strategicalPlannerFactory, parser.network);
+            position, generatorTag.gtuDirection, generatorTag.gtuColorer, strategicalPlannerFactory, parser.getNetwork());
 
         // TODO GTUMix
         // TODO RouteMix

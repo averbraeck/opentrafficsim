@@ -22,8 +22,6 @@ import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
-import org.w3c.dom.Element;
-
 /**
  * <p>
  * Java class for fallbackType complex type.
@@ -66,13 +64,16 @@ public class FallbackType {
      * property.
      * <p>
      * For example, to add a new item, do as follows:
-     * 
+     *
      * <pre>
      * getContent().add(newItem);
      * </pre>
      * <p>
      * Objects of the following type(s) are allowed in the list {@link String } {@link Element } {@link JAXBElement }{@code <}
      * {@link IncludeType }{@code >} {@link Object }
+     */
+    /**
+     * @return the content
      */
     public List<Object> getContent() {
         if (content == null) {

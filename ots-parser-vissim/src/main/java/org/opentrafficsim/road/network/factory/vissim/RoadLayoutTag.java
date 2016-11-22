@@ -151,7 +151,7 @@ class RoadLayoutTag implements Serializable {
         NetworkException {
         for (Node node : XMLParser.getNodes(nodeList, "ROADLAYOUT")) {
             RoadLayoutTag roadLayoutTag = parseRoadType(node, parser);
-            parser.roadLayoutTags.put(roadLayoutTag.name, roadLayoutTag);
+            parser.getRoadLayoutTags().put(roadLayoutTag.name, roadLayoutTag);
         }
     }
 
@@ -174,7 +174,7 @@ class RoadLayoutTag implements Serializable {
             throw new SAXException("ROADLAYOUT: missing attribute NAME");
         }
         roadLayoutTag.name = name.getNodeValue().trim();
-        if (parser.roadLayoutTags.keySet().contains(roadLayoutTag.name)) {
+        if (parser.getRoadLayoutTags().keySet().contains(roadLayoutTag.name)) {
             throw new SAXException("ROADLAYOUT: NAME " + roadLayoutTag.name + " defined twice");
         }
 
@@ -182,10 +182,10 @@ class RoadLayoutTag implements Serializable {
         if (roadType == null) {
             throw new SAXException("ROADLAYOUT: missing attribute ROADTYPE");
         }
-        if (!parser.roadTypeTags.containsKey(roadType.getNodeValue().trim())) {
+        if (!parser.getRoadTypeTags().containsKey(roadType.getNodeValue().trim())) {
             throw new SAXException("ROADLAYOUT: ROADTYPE " + roadType.getNodeValue().trim() + " not defined");
         }
-        roadLayoutTag.roadTypeTag = parser.roadTypeTags.get(roadType.getNodeValue().trim());
+        roadLayoutTag.roadTypeTag = parser.getRoadTypeTags().get(roadType.getNodeValue().trim());
 
         Node width = attributes.getNamedItem("WIDTH");
         if (width != null) {
@@ -213,11 +213,11 @@ class RoadLayoutTag implements Serializable {
             if (gtuTypeName == null) {
                 throw new NetworkException("ROADLAYOUT.SPEEDLIMIT: No GTUTYPE defined");
             }
-            if (!parser.gtuTypes.containsKey(gtuTypeName.getNodeValue().trim())) {
+            if (!parser.getGtuTypes().containsKey(gtuTypeName.getNodeValue().trim())) {
                 throw new NetworkException("ROADLAYOUT.SPEEDLIMIT: " + roadLayoutTag.name + " GTUTYPE " + gtuTypeName
                     .getNodeValue().trim() + " not defined");
             }
-            GTUType gtuType = parser.gtuTypes.get(gtuTypeName.getNodeValue().trim());
+            GTUType gtuType = parser.getGtuTypes().get(gtuTypeName.getNodeValue().trim());
 
             Node speedNode = speedLimitAttributes.getNamedItem("LEGALSPEEDLIMIT");
             if (speedNode == null) {

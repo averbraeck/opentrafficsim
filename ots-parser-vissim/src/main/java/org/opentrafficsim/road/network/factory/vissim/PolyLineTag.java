@@ -25,10 +25,11 @@ class PolyLineTag implements Serializable {
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length length = null;
 
+    /** Points of the line. */
     OTSPoint3D[] vertices = null;
 
     /**
-     * @param polyLineTag
+     * @param polyLineTag: the parser with the lists of information
      */
     public PolyLineTag(PolyLineTag polyLineTag) {
         if (polyLineTag != null) {
@@ -38,8 +39,8 @@ class PolyLineTag implements Serializable {
     }
 
     /**
-     * @param length
-     * @param vertices
+     * @param length: length of the line
+     * @param vertices: the points of the line
      */
     public PolyLineTag(Length length, OTSPoint3D[] vertices) {
         super();

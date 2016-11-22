@@ -4,48 +4,23 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.naming.NamingException;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.PropertyException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djunits.unit.AngleUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.network.factory.vissim.xsd.DEFINITIONS;
-import org.opentrafficsim.road.network.factory.vissim.xsd.GLOBAL;
-import org.opentrafficsim.road.network.factory.vissim.xsd.GTU;
-import org.opentrafficsim.road.network.factory.vissim.xsd.LINK;
-import org.opentrafficsim.road.network.factory.vissim.xsd.LINK.BEZIER;
-import org.opentrafficsim.road.network.factory.vissim.xsd.NETWORK;
-import org.opentrafficsim.road.network.factory.vissim.xsd.NODE;
-import org.opentrafficsim.road.network.factory.vissim.xsd.ObjectFactory;
-import org.opentrafficsim.road.network.factory.vissim.xsd.ROADLAYOUT;
-import org.opentrafficsim.road.network.factory.vissim.xsd.ROADTYPE;
-import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
-import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -68,73 +43,74 @@ public class VissimNetworkLaneParser implements Serializable {
     private static final long serialVersionUID = 20150723L;
 
     /** Global values from the GLOBAL tag. */
-    protected GlobalTag globalTag;
+    private GlobalTag globalTag;
 
     /** The UNprocessed links for further reference. */
-    protected Map<String, NodeTag> nodeTags = new HashMap<>();
+    private Map<String, NodeTag> nodeTags = new HashMap<>();
 
     /** The UNprocessed links for further reference. */
-    protected Map<String, LinkTag> linkTags = new HashMap<>();
+    private Map<String, LinkTag> linkTags = new HashMap<>();
 
     /** The UNprocessed links for further reference. */
-    protected Map<String, LinkTag> connectorTags = new HashMap<>();
+    private Map<String, LinkTag> connectorTags = new HashMap<>();
 
     /** The UNprocessed links for further reference. */
-    protected Map<String, LinkTag> realLinkTags = new HashMap<>();
+    private Map<String, LinkTag> realLinkTags = new HashMap<>();
 
     /** The UNprocessed links for further reference. */
-    protected Map<String, SignalHeadTag> signalHeadTags = new HashMap<>();
+    private Map<String, SignalHeadTag> signalHeadTags = new HashMap<>();
 
     /** The UNprocessed links for further reference. */
-    protected Map<String, SensorTag> sensorTags = new HashMap<>();
+    private Map<String, SensorTag> sensorTags = new HashMap<>();
 
     /** The gtu tags for further reference. */
-    protected Map<String, GTUTag> gtuTags = new HashMap<>();
+    private Map<String, GTUTag> gtuTags = new HashMap<>();
 
     /** The gtumix tags for further reference. */
-    protected Map<String, GTUMixTag> gtuMixTags = new HashMap<>();
+    private Map<String, GTUMixTag> gtuMixTags = new HashMap<>();
 
     /** The road type tags for further reference. */
-    protected Map<String, RoadTypeTag> roadTypeTags = new HashMap<>();
+    private Map<String, RoadTypeTag> roadTypeTags = new HashMap<>();
 
     /** The GTUTypes that have been created. public to make it accessible from LaneAttributes. */
-    public Map<String, GTUType> gtuTypes = new HashMap<>();
+    private Map<String, GTUType> gtuTypes = new HashMap<>();
 
     /** The LaneType tags that have been created. */
-    protected Map<String, LaneTypeTag> laneTypeTags = new HashMap<>();
+    private Map<String, LaneTypeTag> laneTypeTags = new HashMap<>();
 
     /** The LaneType tags that have been created. */
-    protected Map<String, RoadLayoutTag> roadLayoutTags = new HashMap<>();
+    private Map<String, RoadLayoutTag> roadLayoutTags = new HashMap<>();
 
     /** The RouteMix tags that have been created. */
-    protected Map<String, RouteMixTag> routeMixTags = new HashMap<>();
+    private Map<String, RouteMixTag> routeMixTags = new HashMap<>();
 
     /** The RouteMix tags that have been created. */
-    protected Map<String, ShortestRouteMixTag> shortestRouteMixTags = new HashMap<>();
+    private Map<String, ShortestRouteMixTag> shortestRouteMixTags = new HashMap<>();
 
     /** The RouteMix tags that have been created. */
-    protected Map<String, ShortestRouteTag> shortestRouteTags = new HashMap<>();
+    private Map<String, ShortestRouteTag> shortestRouteTags = new HashMap<>();
 
     /** The RouteMix tags that have been created. */
-    protected Map<String, RouteTag> routeTags = new HashMap<>();
+    private Map<String, RouteTag> routeTags = new HashMap<>();
 
     /** The LaneTypes that have been created. */
-    protected Map<String, LaneType> laneTypes = new HashMap<>();
+    private Map<String, LaneType> laneTypes = new HashMap<>();
 
     /** The simulator for creating the animation. Null if no animation needed. */
-    protected OTSDEVSSimulatorInterface simulator;
+    private OTSDEVSSimulatorInterface simulator;
 
     /** The network to register the GTUs in. */
-    protected OTSNetwork network;
+    private OTSNetwork network;
 
     /*****
-     * Variables typically for Vissim network import
+     * Variables, typically for Vissim network import
      */
-    // the node number is automatically generated and increases with every additional node
-    public int upperNodeNr = 1;
 
-    // the node number is automatically generated and increases with every additional node
-    public int upperLinkNr = 1;
+    /** the node number is automatically generated and increases with every additional node. */
+    private int upperNodeNr = 1;
+
+    /** the node number is automatically generated and increases with every additional node. */
+    private int upperLinkNr = 1;
 
     /**
      * @param simulator the simulator for creating the animation. Null if no animation needed.
@@ -144,7 +120,12 @@ public class VissimNetworkLaneParser implements Serializable {
     }
 
     /**
-     * @param inputUrl the file with the network in the agreed xml-grammar.
+     * @param inputUrl: input
+     * @param outputFile: outputfile
+     * @param network: network
+     * @param sinkKillClassName: name of the sink-sensor class
+     * @param sensorClassName: name of the sensor class
+     * @param trafficLightName: name of the trafficLight class
      * @return the network with Nodes, Links, and Lanes.
      * @throws NetworkException in case of parsing problems.
      * @throws SAXException in case of parsing problems.
@@ -156,9 +137,9 @@ public class VissimNetworkLaneParser implements Serializable {
      * @throws SimRuntimeException when simulator cannot be used to schedule GTU generation
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public OTSNetwork build(final URL inputUrl, File outputFile, final OTSNetwork network) throws NetworkException,
-        ParserConfigurationException, SAXException, IOException, NamingException, GTUException, OTSGeometryException,
-        SimRuntimeException {
+    public OTSNetwork build(final URL inputUrl, File outputFile, final OTSNetwork network, String sinkKillClassName,
+        String sensorClassName, String trafficLightName) throws NetworkException, ParserConfigurationException, SAXException,
+            IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException {
         if (inputUrl.getFile().length() > 0 && !(new File(inputUrl.getFile()).exists())) {
             throw new SAXException("XmlNetworkLaneParser.build: File url.getFile() does not exist");
         }
@@ -240,231 +221,55 @@ public class VissimNetworkLaneParser implements Serializable {
         // again process nodes and links to calculate coordinates and positions for the new link/nodes
         Links.calculateNodeCoordinates(this);
 
+        // remove double links with the same start and end node
+        HashMap<String, LinkTag> removeConnectorTags = new HashMap<>();
+        removeDoubleConnectors(removeConnectorTags);
+
         // build links
         for (LinkTag linkTag : this.linkTags.values()) {
             Links.buildLink(linkTag, this, this.simulator);
         }
 
         // Generate the real links
-        for (LinkTag linkTag : this.linkTags.values()) {
-            Links.applyRoadTypeToLink(linkTag, this, this.simulator);
+        for (LinkTag realLinkTag : this.linkTags.values()) {
+            Links.applyRoadTypeToLink(realLinkTag, this, this.simulator);
+        }
+
+        // Generate sink/kill sensors at the links that have no further connections (dead-walking)
+        for (LinkTag realLinkTag : this.linkTags.values()) {
+            Links.createSinkSensor(realLinkTag, this, this.simulator);
         }
 
         // generate the connector links
-        for (LinkTag linkTag : this.linkTags.values()) {
-            Links.applyRoadTypeToConnector(linkTag, this, this.simulator);
+        for (LinkTag connectorTag : this.linkTags.values()) {
+            Links.applyRoadTypeToConnector(connectorTag, this, this.simulator);
         }
 
         NodeTag.removeRedundantNodeTags(this);
+
         // process the routes
         // for (RouteTag routeTag : this.routeTags.values())
         // routeTag.makeRoute();
         // TODO shortestRoute, routeMix, ShortestRouteMix
 
         // store the structure information in the network
-        writeToXML(outputFile);
+        XMLNetworkWriter.writeToXML(outputFile, linkTags, nodeTags, sinkKillClassName, sensorClassName, trafficLightName);
 
         return makeNetwork();
     }
 
-    private void writeToXML(File file) throws NetworkException {
-        try {
-
-            DEFINITIONS definitions = generateDefinitions();
-
-            generateGtusAndRoadtypes(definitions);
-
-            List<NODE> nodes = new ArrayList<>();
-            generateNodes(nodes);
-
-            List<LINK> links = new ArrayList<>();
-            List<ROADLAYOUT> roadLayouts = new ArrayList<>();
-            generateLinks(links, roadLayouts);
-            definitions.getContent().addAll(roadLayouts);
-
-            marshall(file, definitions, nodes, links);
-
-        } catch (JAXBException e) {
-            e.printStackTrace();
+    private void removeDoubleConnectors(HashMap<String, LinkTag> removeConnectorTags) {
+        for (LinkTag linkTag : this.connectorTags.values()) {
+            for (LinkTag linkTag2 : this.connectorTags.values()) {
+                if (linkTag.nodeStartTag.name.equals(linkTag2.nodeStartTag.name) && linkTag.nodeEndTag.name.equals(
+                    linkTag2.nodeEndTag.name) && !linkTag.equals(linkTag2)) {
+                    removeConnectorTags.put(linkTag.nodeStartTag.name + linkTag.nodeEndTag.name, linkTag);
+                }
+            }
         }
-    }
-
-    private DEFINITIONS generateDefinitions() {
-        DEFINITIONS definitions = new DEFINITIONS();
-        generateGTUTypes(definitions);
-        GLOBAL global = new GLOBAL();
-        definitions.getContent().add(global);
-        return definitions;
-    }
-
-    private void generateGTUTypes(DEFINITIONS definitions) {
-        List<GTUTYPE> gtuTypes = new ArrayList<>();
-        GTUTYPE gtuType = new GTUTYPE();
-        gtuType.setNAME("CAR");
-        gtuTypes.add(gtuType);
-        definitions.getContent().addAll(gtuTypes);
-    }
-
-    private void generateGtusAndRoadtypes(DEFINITIONS definitions) {
-        // definitions.getContent().add(gtuType);
-        List<GTU> gtus = new ArrayList<>();
-        GTU gtu = new GTU();
-        gtu.setNAME("CAR");
-        gtu.setGTUTYPE("CAR");
-        gtu.setMAXSPEED("CONST(" + new Speed(140, SpeedUnit.KM_PER_HOUR).getInUnit(SpeedUnit.KM_PER_HOUR) + ") km/h");
-        gtu.setLENGTH("CONST(" + new Length(4.5, LengthUnit.METER).getInUnit(LengthUnit.METER) + ") m");
-        gtu.setWIDTH("CONST(" + new Length(2.0, LengthUnit.METER).getInUnit(LengthUnit.METER) + ") m");
-        gtus.add(gtu);
-        definitions.getContent().addAll(gtus);
-
-        // road types
-        List<ROADTYPE> roadTypes = new ArrayList<>();
-        ROADTYPE roadType = new ROADTYPE();
-        roadType.setDEFAULTLANEKEEPING("KEEPLANE");
-        roadType.setDEFAULTOVERTAKING("NONE");
-        roadType.setDEFAULTLANEWIDTH("3.5m");
-        roadType.setNAME("RINGROAD");
-        ROADTYPE.SPEEDLIMIT speedLimit = new ROADTYPE.SPEEDLIMIT();
-        speedLimit.setGTUTYPE(gtu.getGTUTYPE());
-        speedLimit.setLEGALSPEEDLIMIT(new Speed(140, SpeedUnit.KM_PER_HOUR).getInUnit(SpeedUnit.KM_PER_HOUR) + " km/h");
-        roadType.getSPEEDLIMIT().add(speedLimit);
-        roadTypes.add(roadType);
-        definitions.getContent().addAll(roadTypes);
-
-    }
-
-    private void marshall(File file, DEFINITIONS definitions, List<NODE> nodes, List<LINK> links) throws JAXBException,
-        PropertyException {
-        JAXBContext jaxbContext = JAXBContext.newInstance("org.opentrafficsim.road.network.factory.vissim.xsd");
-        Marshaller marshaller = jaxbContext.createMarshaller();
-        ObjectFactory outputFactory = new ObjectFactory();
-        NETWORK networkElement = outputFactory.createNETWORK();
-        networkElement.getDEFINITIONSOrIncludeOrNODE().add(definitions);
-        networkElement.getDEFINITIONSOrIncludeOrNODE().addAll(nodes);
-        networkElement.getDEFINITIONSOrIncludeOrNODE().addAll(links);
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        marshaller.marshal(networkElement, System.out);
-        marshaller.marshal(networkElement, file);
-    }
-
-    private void generateLinks(List<LINK> links, List<ROADLAYOUT> roadLayouts) throws NetworkException {
-
-        Iterator<LinkTag> iter = this.linkTags.values().iterator();
-        while (iter.hasNext()) {
-            LinkTag inputLink = iter.next();
-            LINK link = new LINK();
-            // set link the attributes and items
-            link.setNAME(inputLink.name);
-            String layoutName = "rl" + link.getNAME();
-            link.setROADLAYOUTAttribute(layoutName);
-
-            if (inputLink.arcTag != null) {
-                LINK.ARC arc = new LINK.ARC();
-                arc.setANGLE(inputLink.arcTag.angle.getInUnit(AngleUnit.DEGREE) + " deg");
-                arc.setRADIUS("" + inputLink.arcTag.radius.getInUnit(LengthUnit.METER));
-                arc.setDIRECTION("" + inputLink.arcTag.direction);
-                link.setARC(arc);
-            }
-
-            if (inputLink.bezierTag != null) {
-                LINK.BEZIER bezier = new BEZIER();
-                link.setBEZIER(bezier);
-            }
-
-            ROADLAYOUT rla = new ROADLAYOUT();
-            rla.setROADTYPE("RINGROAD");
-            rla.setNAME(layoutName);
-
-            Iterator<Lane> lanes = inputLink.lanes.values().iterator();
-            while (lanes.hasNext()) {
-                ROADLAYOUT.LANE lane = new ROADLAYOUT.LANE();
-                Lane inputLane = lanes.next();
-                lane.setNAME(inputLane.getId());
-                lane.setWIDTH(inputLane.getBeginWidth().getInUnit(LengthUnit.METER) + "m");
-                lane.setOFFSET(inputLane.getDesignLineOffsetAtBegin().getInUnit(LengthUnit.METER) + "m");
-                if (inputLane.getDesignLineOffsetAtBegin().ne(inputLane.getDesignLineOffsetAtEnd())) {
-                    double differenceOffset = inputLane.getDesignLineOffsetAtEnd().minus(inputLane
-                        .getDesignLineOffsetAtBegin()).getInUnit(LengthUnit.METER);
-                    link.setOFFSETEND("" + differenceOffset + "m");
-                }
-                if (inputLink.connector) {
-                    lane.setCOLOR("BLACK");
-                } else {
-                    lane.setCOLOR("GRAY");
-                }
-                lane.setDIRECTION("FORWARD");
-                ROADLAYOUT.LANE.SPEEDLIMIT speedLimit = new ROADLAYOUT.LANE.SPEEDLIMIT();
-                speedLimit.setLEGALSPEEDLIMIT(inputLane.getSpeedLimit(GTUType.ALL).getInUnit(SpeedUnit.KM_PER_HOUR)
-                    + " km/h");
-                speedLimit.setGTUTYPE("CAR");
-                lane.getSPEEDLIMIT().add(speedLimit);
-                rla.getLANEOrNOTRAFFICLANEOrSHOULDER().add(lane);
-                for (Sensor inputSensor : inputLane.getSensors()) {
-                    LINK.SENSOR sensor = new LINK.SENSOR();
-                    sensor.setNAME(inputSensor.getId());
-                    sensor.setLANE(lane.getNAME());
-                    sensor.setPOSITION(Double.toString(inputSensor.getLongitudinalPosition().getInUnit(LengthUnit.METER))
-                        + " m");
-                    sensor.setTRIGGER(" " + inputSensor.getPositionType());
-                    sensor.setCLASS("org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor");
-                    // sensor.setCLASS("nl.grontmij.smarttraffic.model.CheckSensor");
-                    link.getLANEOVERRIDEOrGENERATOROrLISTGENERATOR().add(sensor);
-                }
-                for (LaneBasedObject inputSimpleTrafficLight : inputLane.getLaneBasedObjects()) {
-                    LINK.TRAFFICLIGHT simpleTrafficLight = new LINK.TRAFFICLIGHT();
-                    simpleTrafficLight.setNAME(inputSimpleTrafficLight.getId());
-                    simpleTrafficLight.setLANE(lane.getNAME());
-                    simpleTrafficLight.setPOSITION(Double.toString(inputSimpleTrafficLight.getLongitudinalPosition()
-                        .getInUnit(LengthUnit.METER)) + " m");
-                    simpleTrafficLight.setCLASS(
-                        "org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight");
-                    link.getLANEOVERRIDEOrGENERATOROrLISTGENERATOR().add(simpleTrafficLight);
-                }
-                ROADLAYOUT.STRIPE stripe = new ROADLAYOUT.STRIPE();
-                stripe.setTYPE("DASHED");
-                stripe.setOFFSET(inputLane.getDesignLineOffsetAtBegin().minus(inputLane.getBeginWidth().divideBy(2.0))
-                    .getInUnit(LengthUnit.METER) + "m");
-                rla.getLANEOrNOTRAFFICLANEOrSHOULDER().add(stripe);
-
-            }
-            // link.setROADLAYOUT(rla);
-            roadLayouts.add(rla);
-
-            if (inputLink.straightTag != null) {
-                LINK.STRAIGHT straight = new LINK.STRAIGHT();
-                if (inputLink.straightTag.length != null) {
-                    straight.setLENGTH(inputLink.straightTag.length.getInUnit(LengthUnit.METER) + " m");
-                }
-                link.setSTRAIGHT(straight);
-            }
-
-            if (inputLink.polyLineTag != null) {
-                LINK.POLYLINE polyLine = new LINK.POLYLINE();
-                String coordString = null;
-                int length = inputLink.polyLineTag.vertices.length;
-                for (int i = 0; i < length; i++) {
-                    OTSPoint3D coord = inputLink.polyLineTag.vertices[i];
-                    coordString = "(" + coord.x + "," + coord.y + "," + coord.z + ")";
-                    polyLine.getINTERMEDIATEPOINTS().add(coordString);
-                }
-                link.setPOLYLINE(polyLine);
-            }
-
-            link.setNODESTART(inputLink.nodeStartTag.name);
-            link.setNODEEND(inputLink.nodeEndTag.name);
-            links.add(link);
-        }
-    }
-
-    private void generateNodes(List<NODE> nodes) {
-        Iterator<NodeTag> iterNode = this.nodeTags.values().iterator();
-        while (iterNode.hasNext()) {
-            NodeTag inputNode = iterNode.next();
-            NODE node = new NODE();
-            node.setNAME(inputNode.name);
-            node.setCOORDINATE(inputNode.coordinate.toString());
-            node.setANGLE(inputNode.angle.getInUnit(AngleUnit.DEGREE) + " deg");
-            nodes.add(node);
+        for (Entry<String, LinkTag> entry : removeConnectorTags.entrySet()) {
+            connectorTags.remove(entry.getValue().name);
+            linkTags.remove(entry.getValue().name);
         }
     }
 
@@ -496,6 +301,7 @@ public class VissimNetworkLaneParser implements Serializable {
                 }
             }
             // if the link is quite long....we could split it but we don't do this now
+            // so the next block is inactive!!!
             else {
                 // get the from link
                 LinkTag pasteLinkFromTag = new LinkTag(connectorLinkTag);
@@ -716,4 +522,179 @@ public class VissimNetworkLaneParser implements Serializable {
         return "VissimANMNetworkLaneParser [gtuTypes=" + this.gtuTypes + ", laneTypes=" + this.laneTypes + "]";
     }
 
+    public GlobalTag getGlobalTag() {
+        return globalTag;
+    }
+
+    public void setGlobalTag(GlobalTag globalTag) {
+        this.globalTag = globalTag;
+    }
+
+    public Map<String, NodeTag> getNodeTags() {
+        return nodeTags;
+    }
+
+    public void setNodeTags(Map<String, NodeTag> nodeTags) {
+        this.nodeTags = nodeTags;
+    }
+
+    public Map<String, LinkTag> getLinkTags() {
+        return linkTags;
+    }
+
+    public void setLinkTags(Map<String, LinkTag> linkTags) {
+        this.linkTags = linkTags;
+    }
+
+    public Map<String, LinkTag> getConnectorTags() {
+        return connectorTags;
+    }
+
+    public void setConnectorTags(Map<String, LinkTag> connectorTags) {
+        this.connectorTags = connectorTags;
+    }
+
+    public Map<String, LinkTag> getRealLinkTags() {
+        return realLinkTags;
+    }
+
+    public void setRealLinkTags(Map<String, LinkTag> realLinkTags) {
+        this.realLinkTags = realLinkTags;
+    }
+
+    public Map<String, SignalHeadTag> getSignalHeadTags() {
+        return signalHeadTags;
+    }
+
+    public void setSignalHeadTags(Map<String, SignalHeadTag> signalHeadTags) {
+        this.signalHeadTags = signalHeadTags;
+    }
+
+    public Map<String, SensorTag> getSensorTags() {
+        return sensorTags;
+    }
+
+    public void setSensorTags(Map<String, SensorTag> sensorTags) {
+        this.sensorTags = sensorTags;
+    }
+
+    public Map<String, GTUTag> getGtuTags() {
+        return gtuTags;
+    }
+
+    public void setGtuTags(Map<String, GTUTag> gtuTags) {
+        this.gtuTags = gtuTags;
+    }
+
+    public Map<String, GTUMixTag> getGtuMixTags() {
+        return gtuMixTags;
+    }
+
+    public void setGtuMixTags(Map<String, GTUMixTag> gtuMixTags) {
+        this.gtuMixTags = gtuMixTags;
+    }
+
+    public Map<String, RoadTypeTag> getRoadTypeTags() {
+        return roadTypeTags;
+    }
+
+    public void setRoadTypeTags(Map<String, RoadTypeTag> roadTypeTags) {
+        this.roadTypeTags = roadTypeTags;
+    }
+
+    public Map<String, GTUType> getGtuTypes() {
+        return gtuTypes;
+    }
+
+    public void setGtuTypes(Map<String, GTUType> gtuTypes) {
+        this.gtuTypes = gtuTypes;
+    }
+
+    public Map<String, LaneTypeTag> getLaneTypeTags() {
+        return laneTypeTags;
+    }
+
+    public void setLaneTypeTags(Map<String, LaneTypeTag> laneTypeTags) {
+        this.laneTypeTags = laneTypeTags;
+    }
+
+    public Map<String, RoadLayoutTag> getRoadLayoutTags() {
+        return roadLayoutTags;
+    }
+
+    public void setRoadLayoutTags(Map<String, RoadLayoutTag> roadLayoutTags) {
+        this.roadLayoutTags = roadLayoutTags;
+    }
+
+    public Map<String, RouteMixTag> getRouteMixTags() {
+        return routeMixTags;
+    }
+
+    public void setRouteMixTags(Map<String, RouteMixTag> routeMixTags) {
+        this.routeMixTags = routeMixTags;
+    }
+
+    public Map<String, ShortestRouteMixTag> getShortestRouteMixTags() {
+        return shortestRouteMixTags;
+    }
+
+    public void setShortestRouteMixTags(Map<String, ShortestRouteMixTag> shortestRouteMixTags) {
+        this.shortestRouteMixTags = shortestRouteMixTags;
+    }
+
+    public Map<String, ShortestRouteTag> getShortestRouteTags() {
+        return shortestRouteTags;
+    }
+
+    public void setShortestRouteTags(Map<String, ShortestRouteTag> shortestRouteTags) {
+        this.shortestRouteTags = shortestRouteTags;
+    }
+
+    public Map<String, RouteTag> getRouteTags() {
+        return routeTags;
+    }
+
+    public void setRouteTags(Map<String, RouteTag> routeTags) {
+        this.routeTags = routeTags;
+    }
+
+    public Map<String, LaneType> getLaneTypes() {
+        return laneTypes;
+    }
+
+    public void setLaneTypes(Map<String, LaneType> laneTypes) {
+        this.laneTypes = laneTypes;
+    }
+
+    public OTSDEVSSimulatorInterface getSimulator() {
+        return simulator;
+    }
+
+    public void setSimulator(OTSDEVSSimulatorInterface simulator) {
+        this.simulator = simulator;
+    }
+
+    public OTSNetwork getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(OTSNetwork network) {
+        this.network = network;
+    }
+
+    public int getUpperNodeNr() {
+        return upperNodeNr;
+    }
+
+    public void setUpperNodeNr(int upperNodeNr) {
+        this.upperNodeNr = upperNodeNr;
+    }
+
+    public int getUpperLinkNr() {
+        return upperLinkNr;
+    }
+
+    public void setUpperLinkNr(int upperLinkNr) {
+        this.upperLinkNr = upperLinkNr;
+    }
 }

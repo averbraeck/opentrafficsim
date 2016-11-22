@@ -130,11 +130,22 @@ public class TestVissimParser extends AbstractWrappableAnimation {
         public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
             throws SimRuntimeException {
 
+            // OTS network or SmartTraffic??
+            boolean OpenTrafficSim = false;
+            String sinkKillClassName;
+            String sensorClassName;
+            String trafficLightName;
+            if (OpenTrafficSim) {
+                sinkKillClassName = "org.opentrafficsim.road.network.lane.object.sensor.SinkSensor";
+                sensorClassName = "org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor";
+                trafficLightName = "org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight";
+            } else {
+                sinkKillClassName = "nl.grontmij.smarttraffic.model.KillSensor";
+                sensorClassName = "nl.grontmij.smarttraffic.model.CheckSensor";
+                trafficLightName = "org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight";
+            }
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
-
             ClassLoader classLoader = getClass().getClassLoader();
-
-            File inputFile = new File(classLoader.getResource("ehv_eisen1_VA.inpx").getFile());
             URL inputUrl = null;
             try {
                 inputUrl = new URL(classLoader.getResource("ehv_eisen1_VA.inpx").toString());
@@ -142,18 +153,18 @@ public class TestVissimParser extends AbstractWrappableAnimation {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
-            File outputFile = new File(classLoader.getResource("testEindhoven1.xml").getFile());
-
-            // URL inputUrl = URLResource.getResource(
-            // "C:/Projecten/OTS/ots-parser-vissim/src/main/resources/ehv_eisen1_VA.inpx");
-
-            // URL url = URLResource.getResource("C:/Projecten/OTS/ots-parser-vissim/src/main/resources/Test-netwerk-12.inpx");
-            // URL url =
-            // URLResource.getResource("C:/Projecten/OTS/ots-parser-vissim/src/main/resources/OTS-Tester-Vissimnetwerk.inpx");
+            String path = classLoader.getResource("").getPath().toString();
+            File outputFile = new File(path, "/testEindhoven.xml");
+            try {
+                outputFile.createNewFile();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
             VissimNetworkLaneParser nlp = new VissimNetworkLaneParser(this.simulator);
 
             try {
-                this.network = nlp.build(inputUrl, outputFile, network);
+                this.network = nlp.build(inputUrl, outputFile, network, sinkKillClassName, sensorClassName,
+                    trafficLightName);
             } catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
                 | GTUException | OTSGeometryException exception) {
                 exception.printStackTrace();

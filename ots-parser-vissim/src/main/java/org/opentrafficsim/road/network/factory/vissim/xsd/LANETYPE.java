@@ -78,12 +78,15 @@ public class LANETYPE {
      * speedlimit property.
      * <p>
      * For example, to add a new item, do as follows:
-     * 
+     *
      * <pre>
      * getSPEEDLIMIT().add(newItem);
      * </pre>
      * <p>
      * Objects of the following type(s) are allowed in the list {@link LANETYPE.SPEEDLIMIT }
+     */
+    /**
+     * @return the speedlimit
      */
     public List<LANETYPE.SPEEDLIMIT> getSPEEDLIMIT() {
         if (speedlimit == null) {

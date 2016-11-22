@@ -25,7 +25,7 @@ class StraightTag implements Serializable {
 
     /**
      * Parse the LINK.STRAIGHT tag.
-     * @param straightNode the XML-node to parse
+     * @param coords of the vertices to parse
      * @param parser the parser with the lists of information
      * @param linkTag the parent link tag
      * @throws SAXException when parsing of the tag fails
@@ -46,7 +46,7 @@ class StraightTag implements Serializable {
     }
 
     /**
-     * @param length
+     * @param straightTag: the parser with the lists of information
      */
     public StraightTag(StraightTag straightTag) {
         if (straightTag != null) {

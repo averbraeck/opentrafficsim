@@ -115,20 +115,20 @@ class FillTag implements Serializable {
 
         if (attributes.getNamedItem("GTU") != null) {
             String gtuName = attributes.getNamedItem("GTU").getNodeValue().trim();
-            if (!parser.gtuTags.containsKey(gtuName)) {
+            if (!parser.getGtuTags().containsKey(gtuName)) {
                 throw new NetworkException("FILL: LANE " + laneName + " GTU " + gtuName + " in link " + linkTag.name
                     + " not defined");
             }
-            fillTag.gtuTag = parser.gtuTags.get(gtuName);
+            fillTag.gtuTag = parser.getGtuTags().get(gtuName);
         }
 
         if (attributes.getNamedItem("GTUMIX") != null) {
             String gtuMixName = attributes.getNamedItem("GTUMIX").getNodeValue().trim();
-            if (!parser.gtuMixTags.containsKey(gtuMixName)) {
+            if (!parser.getGtuMixTags().containsKey(gtuMixName)) {
                 throw new NetworkException("FILL: LANE " + laneName + " GTUMIX " + gtuMixName + " in link " + linkTag.name
                     + " not defined");
             }
-            fillTag.gtuMixTag = parser.gtuMixTags.get(gtuMixName);
+            fillTag.gtuMixTag = parser.getGtuMixTags().get(gtuMixName);
         }
 
         if (fillTag.gtuTag == null && fillTag.gtuMixTag == null) {
@@ -160,41 +160,41 @@ class FillTag implements Serializable {
 
         if (attributes.getNamedItem("ROUTE") != null) {
             String routeName = attributes.getNamedItem("ROUTE").getNodeValue().trim();
-            if (!parser.routeTags.containsKey(routeName)) {
+            if (!parser.getRouteTags().containsKey(routeName)) {
                 throw new NetworkException("FILL: LANE " + laneName + " ROUTE " + routeName + " in link " + linkTag.name
                     + " not defined");
             }
-            fillTag.routeTag = parser.routeTags.get(routeName);
+            fillTag.routeTag = parser.getRouteTags().get(routeName);
             numberRouteTags++;
         }
 
         if (attributes.getNamedItem("ROUTEMIX") != null) {
             String routeMixName = attributes.getNamedItem("ROUTEMIX").getNodeValue().trim();
-            if (!parser.routeMixTags.containsKey(routeMixName)) {
+            if (!parser.getRouteMixTags().containsKey(routeMixName)) {
                 throw new NetworkException("FILL: LANE " + laneName + " ROUTEMIX " + routeMixName + " in link "
                     + linkTag.name + " not defined");
             }
-            fillTag.routeMixTag = parser.routeMixTags.get(routeMixName);
+            fillTag.routeMixTag = parser.getRouteMixTags().get(routeMixName);
             numberRouteTags++;
         }
 
         if (attributes.getNamedItem("SHORTESTROUTE") != null) {
             String shortestRouteName = attributes.getNamedItem("SHORTESTROUTE").getNodeValue().trim();
-            if (!parser.shortestRouteTags.containsKey(shortestRouteName)) {
+            if (!parser.getShortestRouteTags().containsKey(shortestRouteName)) {
                 throw new NetworkException("FILL: LANE " + laneName + " SHORTESTROUTE " + shortestRouteName + " in link "
                     + linkTag.name + " not defined");
             }
-            fillTag.shortestRouteTag = parser.shortestRouteTags.get(shortestRouteName);
+            fillTag.shortestRouteTag = parser.getShortestRouteTags().get(shortestRouteName);
             numberRouteTags++;
         }
 
         if (attributes.getNamedItem("SHORTESTROUTEMIX") != null) {
             String shortestRouteMixName = attributes.getNamedItem("SHORTESTROUTEMIX").getNodeValue().trim();
-            if (!parser.shortestRouteMixTags.containsKey(shortestRouteMixName)) {
+            if (!parser.getShortestRouteMixTags().containsKey(shortestRouteMixName)) {
                 throw new NetworkException("FILL: LANE " + laneName + " SHORTESTROUTEMIX " + shortestRouteMixName
                     + " in link " + linkTag.name + " not defined");
             }
-            fillTag.shortestRouteMixTag = parser.shortestRouteMixTags.get(shortestRouteMixName);
+            fillTag.shortestRouteMixTag = parser.getShortestRouteMixTags().get(shortestRouteMixName);
             numberRouteTags++;
         }
 
@@ -223,7 +223,7 @@ class FillTag implements Serializable {
         Class<?> gtuClass = LaneBasedIndividualGTU.class;
         List<org.opentrafficsim.core.network.Node> nodeList = new ArrayList<>();
         for (NodeTag nodeTag : fillTag.routeTag.routeNodeTags) {
-            nodeList.add(parser.nodeTags.get(nodeTag.name).node);
+            nodeList.add(parser.getNodeTags().get(nodeTag.name).node);
         }
         RouteGenerator rg = new FixedRouteGenerator(new CompleteRoute("fixed route", GTUType.ALL, nodeList));
 
