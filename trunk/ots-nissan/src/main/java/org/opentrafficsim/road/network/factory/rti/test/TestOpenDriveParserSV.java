@@ -285,7 +285,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                                 new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualGTU.class,
                                         initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
                                         startTime, endTime, lane, position, GTUDirectionality.DIR_PLUS,
-                                        makeSwitchableGTUColorer(), strategicalPlannerFactory, network);
+                                        makeSwitchableGTUColorer(), strategicalPlannerFactory, null, network);
                                 try
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);
@@ -329,7 +329,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                                 new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualGTU.class,
                                         initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
                                         startTime, endTime, lane, position, GTUDirectionality.DIR_MINUS,
-                                        makeSwitchableGTUColorer(), strategicalPlannerFactory, network);
+                                        makeSwitchableGTUColorer(), strategicalPlannerFactory, null, network);
                                 try
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);
