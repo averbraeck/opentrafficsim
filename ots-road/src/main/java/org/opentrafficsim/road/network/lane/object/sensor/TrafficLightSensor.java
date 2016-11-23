@@ -120,7 +120,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
             this.directionalityB =
                     GTUDirectionality.DIR_PLUS == findDirectionality(laneB) ? GTUDirectionality.DIR_MINUS
                             : GTUDirectionality.DIR_PLUS;
-            System.out.println("Directionality on B is " + this.directionalityB);
+            // System.out.println("Directionality on B is " + this.directionalityB);
         }
     }
 
@@ -197,8 +197,8 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
                 {
                     removeGTU(gtu);
                 }
-                // else: GTU is still in one of our lanes and we should get another GTU_REMOVE_EVENT or the GTU will trigger one
-                // of our exit flank sensors
+                // else: GTU is still in one of our lanes and we will get another GTU_REMOVE_EVENT or the GTU will trigger one
+                // of our exit flank sensors or when the GTU leaves this detector laterally
                 return;
             }
             catch (GTUException exception)
