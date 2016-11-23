@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.naming.NamingException;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -98,9 +97,9 @@ public class TestShapeParser extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts(final SimpleSimulatorInterface simulator)
+    protected final void addTabs(final SimpleSimulatorInterface simulator)
     {
-        return null;
+        return;
     }
 
     /** {@inheritDoc} */

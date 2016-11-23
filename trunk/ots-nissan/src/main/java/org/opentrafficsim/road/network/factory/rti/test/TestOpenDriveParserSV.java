@@ -13,7 +13,6 @@ import java.util.Random;
 import java.util.Set;
 
 import javax.naming.NamingException;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -144,13 +143,6 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
     public final void stopTimersThreads()
     {
         super.stopTimersThreads();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final JPanel makeCharts(final SimpleSimulatorInterface simulator)
-    {
-        return null;
     }
 
     /** {@inheritDoc} */

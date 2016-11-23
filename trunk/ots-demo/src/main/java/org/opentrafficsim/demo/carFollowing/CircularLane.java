@@ -12,7 +12,6 @@ import java.util.Random;
 import java.util.Set;
 
 import javax.naming.NamingException;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -187,7 +186,7 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts(final SimpleSimulatorInterface simulator) throws OTSSimulationException,
+    protected final void addTabs(final SimpleSimulatorInterface simulator) throws OTSSimulationException,
             PropertyException
     {
         // Make the tab with the plots
@@ -269,7 +268,7 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
             charts.setCell(container, i % columns, i / columns);
             this.model.getPlots().add(graph);
         }
-        return charts;
+        addTab(getTabCount(), "statistics", charts);
     }
 
     /** {@inheritDoc} */

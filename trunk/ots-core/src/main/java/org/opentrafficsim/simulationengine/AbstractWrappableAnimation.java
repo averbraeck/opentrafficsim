@@ -1,5 +1,6 @@
 package org.opentrafficsim.simulationengine;
 
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Rectangle;
@@ -10,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.NamingException;
-import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -115,11 +115,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         {
             throw new SimRuntimeException(exception);
         }
-        JPanel charts = makeCharts(simulator);
-        if (null != charts)
-        {
-            this.panel.getTabbedPane().addTab("statistics", charts);
-        }
+        addTabs(simulator);
 
         SimulatorFrame frame = new SimulatorFrame(shortName(), this.panel);
         if (rect != null)
@@ -136,14 +132,15 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     }
 
     /**
-     * Make the chart panel.
+     * Make additional tabs in the main simulation window.
      * @param simulator SimpleSimulatorInterface; the simulator
-     * @return the JPanel with the charts; the result will be put in the statistics tab. May return null; this causes no
-     *         statistics tab to be created.
      * @throws OTSSimulationException in case the chart, axes or legend cannot be generated
      * @throws PropertyException when one of the user modified properties has the empty string as key
      */
-    protected abstract JPanel makeCharts(SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException;
+    protected void addTabs(final SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
+    {
+        // Override this method to add custom tabs
+    }
 
     /**
      * @param colorer the GTU colorer to use.
@@ -199,4 +196,27 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     {
         return this.panel;
     }
+
+    /**
+     * Add a tab to the simulation window. This method can not be called from constructModel because the TabbedPane has not yet
+     * been constructed at that time; recommended: override addTabs and call this method from there.
+     * @param index int; index of the new tab; use <code>getTabCount()</code> to obtain the valid range
+     * @param caption String; caption of the new tab
+     * @param container Container; content of the new tab
+     */
+    public final void addTab(final int index, final String caption, final Container container)
+    {
+        this.panel.getTabbedPane().addTab(index, caption, container);
+    }
+
+    /**
+     * Report the current number of tabs in the simulation window. This method can not be called from constructModel because the
+     * TabbedPane has not yet been constructed at that time; recommended: override addTabs and call this method from there.
+     * @return int; the number of tabs in the simulation window
+     */
+    public final int getTabCount()
+    {
+        return this.panel.getTabbedPane().getTabCount();
+    }
+
 }

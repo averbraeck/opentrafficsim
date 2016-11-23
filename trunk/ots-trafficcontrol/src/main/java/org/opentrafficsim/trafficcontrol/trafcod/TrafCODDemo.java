@@ -111,12 +111,12 @@ public class TrafCODDemo extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected JPanel makeCharts(SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
+    protected void addTabs(SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
     {
-        JScrollPane scrollPane = new JScrollPane(this.controllerDisplayPanel);
+        JScrollPane scrollPane = new JScrollPane(TrafCODDemo.this.controllerDisplayPanel);
         JPanel wrapper = new JPanel(new BorderLayout());
         wrapper.add(scrollPane);
-        return wrapper;
+        addTab(getTabCount() - 1, "TrafCOD display", wrapper);
     }
 
     /** {@inheritDoc} */

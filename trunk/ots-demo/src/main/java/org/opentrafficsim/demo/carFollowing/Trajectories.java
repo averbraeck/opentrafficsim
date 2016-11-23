@@ -11,7 +11,6 @@ import java.util.Random;
 import java.util.Set;
 
 import javax.naming.NamingException;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.djunits.unit.UNITS;
@@ -153,7 +152,7 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts(SimpleSimulatorInterface simulator) throws OTSSimulationException
+    protected final void addTabs(final SimpleSimulatorInterface simulator) throws OTSSimulationException
     {
         TablePanel charts = new TablePanel(1, 1);
         Duration sampleInterval = new Duration(0.5, SECOND);
@@ -164,7 +163,7 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
         tp.setExtendedState(Frame.MAXIMIZED_BOTH);
         this.model.setTrajectoryPlot(tp);
         charts.setCell(tp.getContentPane(), 0, 0);
-        return charts;
+        addTab(getTabCount(), "statistics", charts);
     }
 
     /** {@inheritDoc} */

@@ -212,7 +212,7 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts(final SimpleSimulatorInterface simulator) throws OTSSimulationException,
+    protected final void addTabs(final SimpleSimulatorInterface simulator) throws OTSSimulationException,
             PropertyException
     {
 
@@ -296,7 +296,7 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
             charts.setCell(container, i % columns, i / columns);
             this.model.getPlots().add(graph);
         }
-        return charts;
+        addTab(getTabCount(), "statistics", charts);
     }
 
     /** {@inheritDoc} */

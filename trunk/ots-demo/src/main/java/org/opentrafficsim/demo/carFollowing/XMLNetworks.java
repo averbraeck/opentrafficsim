@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.naming.NamingException;
-import javax.swing.JPanel;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
@@ -167,7 +166,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts(SimpleSimulatorInterface simulator)
+    protected final void addTabs(final SimpleSimulatorInterface simulator)
     {
         int graphCount = this.model.pathCount();
         int columns = 1;
@@ -184,7 +183,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
             charts.setCell(container, graphIndex % columns, graphIndex / columns);
             this.model.getPlots().add(graph);
         }
-        return charts;
+        addTab(getTabCount(), "statistics", charts);
     }
 
     /** {@inheritDoc} */

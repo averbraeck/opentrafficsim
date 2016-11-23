@@ -229,7 +229,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts(SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
+    protected final void addTabs(final SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
     {
 
         // Make the tab with the plots
@@ -312,7 +312,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
             charts.setCell(container, i % columns, i / columns);
             this.model.getPlots().add(graph);
         }
-        return charts;
+        addTab(getTabCount(), "statistics", charts);
     }
 
     /** {@inheritDoc} */
