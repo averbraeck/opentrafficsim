@@ -85,5 +85,6 @@ public interface CheckInterface
     Check NEGATIVEZERO = Check.NEGATIVEZERO;
     Check NONZERO      = Check.NONZERO;
     Check UNITINTERVAL = Check.UNITINTERVAL;
+    Check ATLEASTONE   = Check.ATLEASTONE;
     
 }

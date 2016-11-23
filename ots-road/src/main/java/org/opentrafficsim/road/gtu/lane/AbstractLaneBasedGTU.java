@@ -27,6 +27,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanBuilder;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
@@ -155,6 +156,16 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                 getSimulator().getSimulatorTime());
     }
 
+    /**
+     * Hack method. TODO remove and solve better
+     * @return safe to change
+     * @throws GTUException on error
+     */
+    public final boolean isSafeToChange() throws GTUException
+    {
+        return this.fractionalLinkPositions.get(getReferencePosition().getLane().getParentLink()) > 0.0;
+    }
+
     /** {@inheritDoc} */
     @Override
     public final void enterLane(final Lane lane, final Length position, final GTUDirectionality gtuDirection)
@@ -239,9 +250,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @Override
     public final void changeLaneInstantaneously(final LateralDirectionality laneChangeDirection) throws GTUException
     {
+
         // keep a copy of the lanes and directions (!)
         Map<Lane, GTUDirectionality> lanesCopy = new HashMap<>(this.lanesCurrentOperationalPlan);
-        Set<Lane> lanesToBeRemoved = new HashSet<>(lanesCopy.keySet());
+        Set<Lane> lanesToBeRemoved = new HashSet<>();
         Map<Lane, Double> fractionalLanePositions = new HashMap<>();
 
         for (Lane lane : lanesCopy.keySet())
@@ -250,22 +262,41 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             lanesToBeRemoved.add(lane);
         }
 
+        // store the new positions, and sample statistics
+        Map<Link, Double> newLinkPositions = new HashMap<>();
+
         for (Lane lane : lanesCopy.keySet())
         {
             Set<Lane> laneSet = lane.accessibleAdjacentLanes(laneChangeDirection, getGTUType());
             if (laneSet.size() > 0)
             {
                 Lane adjacentLane = laneSet.iterator().next();
+                try
+                {
+                    Length pos = adjacentLane.position(lane.fraction(position(lane, getReference())));
+                    Length adjustedStart =
+                            pos.minus(getOperationalPlan().getTraveledDistance(getSimulator().getSimulatorTime().getTime()));
+                    newLinkPositions.put(lane.getParentLink(), adjustedStart.si / adjacentLane.getLength().si);
+                }
+                catch (OperationalPlanException exception)
+                {
+                    exception.printStackTrace();
+                }
                 enterLane(adjacentLane, adjacentLane.getLength().multiplyBy(fractionalLanePositions.get(lane)),
                         lanesCopy.get(lane));
                 lanesToBeRemoved.remove(adjacentLane); // don't remove lanes we might end up
             }
 
         }
+
+        // update the positions on the lanes we are registered on
+        this.fractionalLinkPositions = newLinkPositions;
+
         for (Lane lane : lanesToBeRemoved)
         {
             leaveLane(lane);
         }
+
     }
 
     /**

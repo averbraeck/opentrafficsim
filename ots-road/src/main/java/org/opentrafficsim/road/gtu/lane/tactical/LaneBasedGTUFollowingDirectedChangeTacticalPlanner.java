@@ -23,6 +23,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
@@ -375,6 +376,12 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             final LateralDirectionality direction)
             throws GTUException, NetworkException, ParameterException, OperationalPlanException
     {
+        
+        if (!((AbstractLaneBasedGTU) gtu).isSafeToChange())
+        {
+            return false;
+        }
+        
         Collection<Headway> otherLaneTraffic;
         DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);
         simplePerception.updateForwardHeadwayGTU();

@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.naming.NamingException;
+import javax.swing.JFrame;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.FrequencyUnit;
@@ -54,7 +55,6 @@ import org.opentrafficsim.road.network.sampling.data.ReferenceSpeed;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -62,6 +62,7 @@ import nl.tno.imb.TConnection;
 import nl.tno.imb.mc.ModelParameters;
 import nl.tno.imb.mc.ModelStarter;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.Simulator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.io.URLResource;
 
@@ -80,6 +81,10 @@ public class ModelControlA58 extends ModelStarter
 
     /** Amount of ACC. */
     private double penetrationRate;
+
+    A58Model model;
+
+    A58Animation a58Animation;
 
     /**
      * @param args the command line args
@@ -101,6 +106,16 @@ public class ModelControlA58 extends ModelStarter
     {
         ModelControlA58 modelControlA58 = new ModelControlA58(new String[0], "A58 model", 1248);
         modelControlA58.startModel(null, modelControlA58.connection); // null will use default penetration rate
+
+//        try
+//        {
+//            Thread.sleep(2000);
+//        }
+//        catch (InterruptedException exception)
+//        {
+//            exception.printStackTrace();
+//        }
+//        modelControlA58.doStopModel();
     }
 
     /** {@inheritDoc} */
@@ -125,10 +140,10 @@ public class ModelControlA58 extends ModelStarter
             System.out.println("No penetration parameter found, using default value of " + this.penetrationRate);
         }
 
-        A58Animation a58Animation = new A58Animation(imbConnection);
+        this.a58Animation = new A58Animation(imbConnection);
         try
         {
-            a58Animation.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(1, TimeUnit.HOUR), null, null, true);
+            this.a58Animation.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(1, TimeUnit.HOUR), null, null, true);
         }
         catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
         {
@@ -141,14 +156,37 @@ public class ModelControlA58 extends ModelStarter
     @Override
     public void stopModel()
     {
-        //
+        System.out.println("stopModel called");
+        if (null != this.model)
+        {
+            ((Simulator<Time, Duration, OTSSimTimeDouble>) this.model.getSimulator()).cleanUp();
+            this.model.closeWindow();
+            this.model = null;
+        }
+        else
+        {
+            System.err.println("stopModel called, but no model is running");
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public void quitApplication()
     {
-        System.exit(0);
+        if (null != this.model)
+        {
+            try
+            {
+                // clean up; even if stopModel was not called before quitApplication
+                ((Simulator<Time, Duration, OTSSimTimeDouble>) this.model.getSimulator()).cleanUp();
+            }
+            catch (Exception exception)
+            {
+                System.out.println("caught Exception in quitApplication:");
+                exception.printStackTrace();
+            }
+        }
+        System.out.println("quitApplication called");
     }
 
     /** {@inheritDoc} */
@@ -214,7 +252,8 @@ public class ModelControlA58 extends ModelStarter
         @Override
         protected OTSModelInterface makeModel(GTUColorer colorer) throws OTSSimulationException
         {
-            return new A58Model(this.imbConnection, colorer, new OTSNetwork("A58 network"));
+            ModelControlA58.this.model = new A58Model(this.imbConnection, colorer, new OTSNetwork("A58 network"));
+            return ModelControlA58.this.model;
         }
 
         /** {@inheritDoc} */
@@ -379,6 +418,23 @@ public class ModelControlA58 extends ModelStarter
                         new Time(1.0, TimeUnit.HOUR));
             }
             return query;
+        }
+
+        /**
+         * Close and destroy the window. Please shut down and cleanup the simulator first.
+         */
+        @SuppressWarnings("unchecked")
+        public void closeWindow()
+        {
+            try
+            {
+                ((Simulator<Time, Duration, OTSSimTimeDouble>) this.simulator).cleanUp();
+            }
+            catch (Exception exception)
+            {
+                exception.printStackTrace();
+            }
+            ((JFrame) ModelControlA58.this.a58Animation.getPanel().getParent().getParent().getParent()).dispose();
         }
 
         /** {@inheritDoc} */
