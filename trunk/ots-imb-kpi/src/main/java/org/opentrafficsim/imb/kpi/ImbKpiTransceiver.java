@@ -282,7 +282,7 @@ public class ImbKpiTransceiver implements Serializable
 
     private MeanTripLength meanTripLength = new MeanTripLength();
 
-    private TotalDelay totalDelay = new TotalDelay(new Speed(130.0, SpeedUnit.KM_PER_HOUR));
+    private TotalDelay totalDelay = new TotalDelay(new Speed(50.0, SpeedUnit.KM_PER_HOUR));
 
     private TotalNumberOfStops totalNumberOfStops = new TotalNumberOfStops();
 

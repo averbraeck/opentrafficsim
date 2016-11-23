@@ -10,10 +10,6 @@ import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.language.io.URLResource;
-
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
@@ -26,11 +22,16 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.xml.sax.SAXException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.io.URLResource;
 
 /**
  * Four stop demo
@@ -149,11 +150,12 @@ public class LMRSTests extends AbstractWrappableAnimation
             //URL url = URLResource.getResource("/LMRSOnRampTest.xml");
             //URL url = URLResource.getResource("/LMRSOnRampTaperTest.xml");
             //URL url = URLResource.getResource("/networkv2_90km_V5.xml");
-            URL url = URLResource.getResource("D:/TU Delft/Post-doc/Projects/SimSmartMobility/SWECO/testEindhovenGenerator3.xml");
+            URL url = URLResource.getResource("/testEindhovenGenerator4.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
             {
-                nlp.build(url);
+                OTSNetwork network = nlp.build(url);
+                
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
                 | GTUException | OTSGeometryException exception)

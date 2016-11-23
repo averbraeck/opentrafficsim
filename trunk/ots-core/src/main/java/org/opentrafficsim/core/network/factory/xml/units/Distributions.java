@@ -45,7 +45,7 @@ public final class Distributions
     }
 
     /** TODO include in GLOBAL tag. */
-    private static final StreamInterface STREAM = new MersenneTwister();
+    private static final StreamInterface STREAM = new MersenneTwister(2L);
 
     /**
      * parse a set of comma-separated values, e.g., <code>10.0, 4, 5.23</code>.
