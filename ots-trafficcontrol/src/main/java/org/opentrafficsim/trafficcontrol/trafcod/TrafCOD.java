@@ -163,7 +163,7 @@ public class TrafCOD extends EventProducer implements TrafficController
         this.controllerName = controllerName;
         try
         {
-            parseTrafCOD(trafCodURL, trafficLights, sensors);
+            parseTrafCODRules(trafCodURL, trafficLights, sensors);
         }
         catch (IOException exception)
         {
@@ -197,7 +197,7 @@ public class TrafCOD extends EventProducer implements TrafficController
      * @throws IOException when the TrafCOD file could not be read
      * @throws TrafficControlException when the TrafCOD file contains errors
      */
-    private void parseTrafCOD(final String trafCodURL, final Set<TrafficLight> trafficLights,
+    private void parseTrafCODRules(final String trafCodURL, final Set<TrafficLight> trafficLights,
             final Set<TrafficLightSensor> sensors) throws MalformedURLException, IOException, TrafficControlException
     {
         BufferedReader in = new BufferedReader(new InputStreamReader(new URL(trafCodURL).openStream()));
@@ -411,6 +411,24 @@ public class TrafCOD extends EventProducer implements TrafficController
         // + v.toString(EnumSet.of(PrintFlags.ID, PrintFlags.VALUE, PrintFlags.INITTIMER, PrintFlags.REINITTIMER,
         // PrintFlags.S, PrintFlags.E)));
         // }
+        for (Variable v : this.variablesInDefinitionOrder)
+        {
+            if (0 == v.refCount && (!v.isOutput()) && (!v.getName().matches("^RA.")))
+            {
+                System.out.println("Warning: " + v.getName() + v.getStream() + " is never referenced");
+            }
+            if (!v.isDetector())
+            {
+                if (!v.getFlags().contains(Flags.HAS_START_RULE))
+                {
+                    System.out.println("Warning: " + v.getName() + v.getStream() + " has no start rule");
+                }
+                if ((!v.getFlags().contains(Flags.HAS_END_RULE)) && (!v.isTimer()))
+                {
+                    System.out.println("Warning: " + v.getName() + v.getStream() + " has no end rule");
+                }
+            }
+        }
     }
 
     /**
@@ -1812,7 +1830,7 @@ class NameAndStream
 }
 
 /**
- * A TrafCOD variable.
+ * A TrafCOD variable, timer, or detector.
  */
 class Variable implements EventListenerInterface
 {
@@ -2391,15 +2409,15 @@ enum PrintFlags
 {
     /** The name and stream of the Variable. */
     ID,
-    /** The current Variable. */
+    /** The value of the Variable. */
     VALUE,
-    /** Print "I" before the name (to indicate that a timer is initialized). */
+    /** Print "I" before the name (indicates that a timer is initialized). */
     INITTIMER,
-    /** Print "RI" before the name (to indicate that a timer is re-initialized). */
+    /** Print "RI" before the name (indicates that a timer is re-initialized). */
     REINITTIMER,
-    /** Print "1" if just set, else print "0". */
+    /** Print value as "1" if just set, else print "0". */
     S,
-    /** Print "1" if just reset, else print "0". */
+    /** Print value as "1" if just reset, else print "0". */
     E,
     /** Print the negated Variable. */
     NEGATED,

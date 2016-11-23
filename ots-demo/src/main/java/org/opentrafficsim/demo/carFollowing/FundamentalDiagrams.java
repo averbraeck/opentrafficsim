@@ -11,7 +11,6 @@ import java.util.Random;
 import java.util.Set;
 
 import javax.naming.NamingException;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.djunits.unit.UNITS;
@@ -153,7 +152,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts(SimpleSimulatorInterface simulator) throws OTSSimulationException
+    protected final void addTabs(final SimpleSimulatorInterface simulator) throws OTSSimulationException
     {
         final int panelsPerRow = 3;
         TablePanel charts = new TablePanel(4, panelsPerRow);
@@ -176,7 +175,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                 exception.printStackTrace();
             }
         }
-        return charts;
+        addTab(getTabCount(), "statistics", charts);
     }
 
     /** {@inheritDoc} */

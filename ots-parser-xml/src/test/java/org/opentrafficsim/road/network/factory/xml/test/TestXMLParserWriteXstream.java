@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import javax.naming.NamingException;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -97,13 +96,6 @@ public class TestXMLParserWriteXstream extends AbstractWrappableAnimation
     public final void stopTimersThreads()
     {
         super.stopTimersThreads();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final JPanel makeCharts(final SimpleSimulatorInterface simulator)
-    {
-        return null;
     }
 
     /** {@inheritDoc} */

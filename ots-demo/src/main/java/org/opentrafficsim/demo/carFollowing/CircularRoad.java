@@ -12,7 +12,6 @@ import java.util.Random;
 import java.util.Set;
 
 import javax.naming.NamingException;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.djunits.unit.UNITS;
@@ -225,7 +224,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts(final SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
+    protected final void addTabs(final SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
     {
         // Make the tab with the plots
         Property<?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
@@ -311,8 +310,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
             charts.setCell(container, i % columns, i / columns);
             this.model.getPlots().add(graph);
         }
-
-        return charts;
+        addTab(getTabCount(), "statistics", charts);
     }
 
     /** {@inheritDoc} */

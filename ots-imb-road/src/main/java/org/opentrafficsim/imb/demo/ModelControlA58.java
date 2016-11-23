@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.naming.NamingException;
-import javax.swing.JPanel;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.FrequencyUnit;
@@ -209,13 +208,6 @@ public class ModelControlA58 extends ModelStarter
         public String description()
         {
             return "Model A58 - IMB";
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        protected JPanel makeCharts(SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
-        {
-            return null;
         }
 
         /** {@inheritDoc} */

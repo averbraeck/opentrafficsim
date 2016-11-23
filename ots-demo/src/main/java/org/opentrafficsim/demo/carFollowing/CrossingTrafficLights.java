@@ -192,13 +192,6 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts(final SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final String shortName()
     {
         return "Crossing with Traffic Lights";

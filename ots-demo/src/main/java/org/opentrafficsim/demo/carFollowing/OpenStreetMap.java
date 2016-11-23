@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -259,13 +258,6 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
     public final String description()
     {
         return "Load an OpenStreetMap file and show it";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final JPanel makeCharts(final SimpleSimulatorInterface simulator)
-    {
-        return null;
     }
 
     /** {@inheritDoc} */
