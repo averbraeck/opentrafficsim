@@ -267,9 +267,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                                 Time startTime = Time.ZERO;
                                 Time endTime = new Time(Double.MAX_VALUE, TimeUnit.SI);
                                 Length position = lane.getLength().lt(m25) ? m0 : m25;
-                                String id = lane.getParen
-                                        
-                                        tLink().getId() + "." + lane.getId();
+                                String id = lane.getParentLink().getId() + "." + lane.getId();
 
                                 new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualGTU.class,
                                     initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
