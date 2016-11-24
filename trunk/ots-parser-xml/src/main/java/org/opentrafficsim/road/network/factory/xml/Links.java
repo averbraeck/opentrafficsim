@@ -101,6 +101,28 @@ final class Links
             }
         }
 
+        // are there polyline tags with nodes without an angle?
+        for (LinkTag linkTag : parser.linkTags.values())
+        {
+            if (linkTag.polyLineTag != null && linkTag.nodeStartTag.coordinate != null && linkTag.nodeEndTag.coordinate != null)
+            {
+                if (linkTag.nodeStartTag.angle == null)
+                {
+                    double dx = linkTag.polyLineTag.coordinates[0].x - linkTag.nodeStartTag.coordinate.x;
+                    double dy = linkTag.polyLineTag.coordinates[0].y - linkTag.nodeStartTag.coordinate.y;
+                    linkTag.nodeStartTag.angle = new Direction(Math.atan2(dy, dx), AngleUnit.RADIAN);
+                }
+                if (linkTag.nodeEndTag.angle == null)
+                {
+                    double dx = linkTag.nodeEndTag.coordinate.x
+                            - linkTag.polyLineTag.coordinates[linkTag.polyLineTag.coordinates.length - 1].x;
+                    double dy = linkTag.nodeEndTag.coordinate.y
+                            - linkTag.polyLineTag.coordinates[linkTag.polyLineTag.coordinates.length - 1].y;
+                    linkTag.nodeEndTag.angle = new Direction(Math.atan2(dy, dx), AngleUnit.RADIAN);
+                }
+            }
+        }
+
         // see if we can find the coordinates of the nodes that have not yet been fixed.
         Set<NodeTag> nodeTags = new HashSet<>();
         for (LinkTag linkTag : parser.linkTags.values())
