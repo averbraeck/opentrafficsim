@@ -74,9 +74,6 @@ public class TrafCOD extends EventProducer implements TrafficController
     /** Text leading up to the control program structure. */
     private final static String STRUCTURE_PREFIX = "Structure:";
 
-    /** Constant to select variables that have no associated traffic stream. */
-    public final static int NO_STREAM = -1;
-
     /** The original rules. */
     final List<String> trafcodRules = new ArrayList<>();
 
@@ -179,10 +176,21 @@ public class TrafCOD extends EventProducer implements TrafficController
                 display.add(tcd);
             }
         }
+        System.out.println("TrafCOD subscribing to SET_TRACING");
+        addListener(this, TrafficController.TRAFFICCONTROL_SET_TRACING);
+        fireTimedEvent(TrafficController.TRAFFICCONTROL_CONTROLLER_CREATED, new Object[] { this.controllerName,
+                TrafficController.STARTING_UP }, simulator.getSimulatorTime());
         // Initialize the variables that have a non-zero initial value
         for (Variable v : this.variablesInDefinitionOrder)
         {
             v.initialize();
+            double value = v.getValue();
+            if (v.isTimer())
+            {
+                value /= 10.0;
+            }
+            fireTimedEvent(TrafficController.TRAFFICCONTROL_VARIABLE_CREATED, new Object[] { this.controllerName, v.getName(),
+                    v.getStream(), value }, simulator.getSimulatorTime());
         }
         // The first rule evaluation should occur at t=0.1s
         this.simulator.scheduleEventRel(EVALUATION_INTERVAL, this, this, "evalExprs", null);
@@ -1611,7 +1619,7 @@ public class TrafCOD extends EventProducer implements TrafficController
      * Retrieve the simulator.
      * @return SimulatorInterface&lt;Time, Duration, OTSSimTimeDouble&gt;
      */
-    protected SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
+    public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
     {
         return this.simulator;
     }
@@ -1687,6 +1695,72 @@ public class TrafCOD extends EventProducer implements TrafficController
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void notify(EventInterface event) throws RemoteException
+    {
+        System.out.println("TrafCOD: received an event");
+        if (event.getType().equals(TrafficController.TRAFFICCONTROL_SET_TRACING))
+        {
+            Object content = event.getContent();
+            if (!(content instanceof Object[]))
+            {
+                System.err.println("TrafCOD controller " + this.controllerName + " received event with bad payload (" + content
+                        + ")");
+                return;
+            }
+            Object[] fields = (Object[]) event.getContent();
+            if (this.controllerName.equals(fields[0]))
+            {
+                if (fields.length < 4 || !(fields[1] instanceof String) || !(fields[2] instanceof Integer)
+                        || !(fields[3] instanceof Boolean))
+                {
+                    System.err.println("TrafCOD controller " + this.controllerName + " received event with bad payload ("
+                            + content + ")");
+                    return;
+                }
+                String name = (String) fields[1];
+                int stream = (Integer) fields[2];
+                boolean trace = (Boolean) fields[3];
+                if (name.length() > 1)
+                {
+                    Variable v = this.variables.get(variableKey(name, (short) stream));
+                    if (null == v)
+                    {
+                        System.err.println("Received trace notification for nonexistent variable (name=\"" + name
+                                + "\", stream=" + stream + ")");
+                    }
+                    if (trace)
+                    {
+                        v.setFlag(Flags.TRACED);
+                    }
+                    else
+                    {
+                        v.clearFlag(Flags.TRACED);
+                    }
+                }
+                else
+                {
+                    for (Variable v : this.variablesInDefinitionOrder)
+                    {
+                        if (v.getStream() == stream)
+                        {
+                            if (trace)
+                            {
+                                v.setFlag(Flags.TRACED);
+                            }
+                            else
+                            {
+                                v.clearFlag(Flags.TRACED);
+                            }
+                        }
+                    }
+                }
+            }
+            // else: event not destined for this controller
+        }
+
+    }
 }
 
 /**
@@ -1698,7 +1772,7 @@ class NameAndStream
     private final String name;
 
     /** The stream number. */
-    private short stream = TrafCOD.NO_STREAM;
+    private short stream = TrafficController.NO_STREAM;
 
     /** Number characters parsed. */
     private int numberOfChars = 0;
@@ -1752,7 +1826,7 @@ class NameAndStream
         {
             char nextChar = trimmed.charAt(pos);
             if (pos < trimmed.length() - 1 && Character.isDigit(nextChar) && Character.isDigit(trimmed.charAt(pos + 1))
-                    && TrafCOD.NO_STREAM == this.stream)
+                    && TrafficController.NO_STREAM == this.stream)
             {
                 if (0 == pos || (1 == pos && trimmed.startsWith("N")))
                 {
