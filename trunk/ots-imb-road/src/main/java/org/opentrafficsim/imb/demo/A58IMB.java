@@ -223,7 +223,7 @@ public class A58IMB extends AbstractWrappableAnimation
             }
 
             // Stream to allow the xml-file to be retrievable from a JAR file
-            InputStream stream = URLResource.getResourceAsStream("/A58v1.xml");
+            InputStream stream = URLResource.getResourceAsStream("/A58v2.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
             {
