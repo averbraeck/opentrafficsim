@@ -26,7 +26,6 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.language.Throw;
 
 import org.djunits.unit.TimeUnit;
@@ -51,7 +50,7 @@ import org.opentrafficsim.trafficcontrol.TrafficController;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Oct 5, 2016 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafCOD extends EventProducer implements TrafficController
+public class TrafCOD extends EventProducer implements TrafficController, EventListenerInterface
 {
     /** */
     private static final long serialVersionUID = 20161014L;
@@ -101,8 +100,8 @@ public class TrafCOD extends EventProducer implements TrafficController
     /** Prefix for export rules. */
     private final static String EXPORT_PREFIX = "%export ";
 
-    /** Sequence information; number of conflict groups. */
-    private int conflictGroups = -1;
+    /** Number of conflict groups in the control program. */
+    int numberOfConflictGroups = -1;
 
     /** Sequence information; size of conflict group. */
     private int conflictGroupSize = -1;
@@ -111,8 +110,7 @@ public class TrafCOD extends EventProducer implements TrafficController
     private int structureNumber = -1;
 
     /** The conflict groups in order that they will be served. */
-    @SuppressWarnings("unused")
-    private List<List<Short>> conflictgroups = new ArrayList<>();
+    private List<List<Short>> conflictGroups = new ArrayList<List<Short>>();
 
     /** Maximum number of evaluation loops. */
     private int maxLoopCount = 10;
@@ -129,11 +127,11 @@ public class TrafCOD extends EventProducer implements TrafficController
     /** The current time in units of 0.1 s */
     private int currentTime10 = 0;
 
-    /** Event that is fired whenever a traffic light changes state. */
-    public static final EventType TRAFFIC_LIGHT_CHANGED = new EventType("TrafficLightChanged");
-
     /** The simulation engine. */
     private final DEVSSimulator<Time, Duration, OTSSimTimeDouble> simulator;
+
+    /** Space-separated list of the traffic streams in the currently active conflict group. */
+    private String currentConflictGroup = "";
 
     /**
      * Construct a new TrafCOD traffic light controller.
@@ -262,7 +260,7 @@ public class TrafCOD extends EventProducer implements TrafficController
                     }
                     try
                     {
-                        this.conflictGroups = Integer.parseInt(fields[0]);
+                        this.numberOfConflictGroups = Integer.parseInt(fields[0]);
                         this.conflictGroupSize = Integer.parseInt(fields[1]);
                     }
                     catch (NumberFormatException nfe)
@@ -284,7 +282,11 @@ public class TrafCOD extends EventProducer implements TrafficController
                         throw new TrafficControlException("Bad structure number (got \"" + structureNumberString + "\" at "
                                 + locationDescription + ")");
                     }
-                    for (int conflictMemberLine = 0; conflictMemberLine < this.conflictGroups; conflictMemberLine++)
+                    for (int i = 0; i < this.conflictGroupSize; i++)
+                    {
+                        this.conflictGroups.add(new ArrayList<Short>());
+                    }
+                    for (int conflictMemberLine = 0; conflictMemberLine < this.numberOfConflictGroups; conflictMemberLine++)
                     {
                         while (trimmedLine.startsWith(COMMENT_PREFIX))
                         {
@@ -302,13 +304,12 @@ public class TrafCOD extends EventProducer implements TrafficController
                         {
                             throw new TrafficControlException("Wrong number of conflict groups in Structure information");
                         }
-                        List<Short> row = new ArrayList<>(this.conflictGroupSize);
                         for (int col = 0; col < this.conflictGroupSize; col++)
                         {
                             try
                             {
                                 Short stream = Short.parseShort(fields[col]);
-                                row.add(stream);
+                                this.conflictGroups.get(col).add(stream);
                             }
                             catch (NumberFormatException nfe)
                             {
@@ -784,8 +785,26 @@ public class TrafCOD extends EventProducer implements TrafficController
             destination.setValue(resultValue, this.currentTime10, new CausePrinter(rule));
             if (destination.isOutput())
             {
-                fireEvent(TRAFFIC_LIGHT_CHANGED,
-                        new Object[] { this.controllerName, destination.getStartSource(), destination.getColor() });
+                fireEvent(TRAFFIC_LIGHT_CHANGED, new Object[] { this.controllerName, new Integer(destination.getStream()),
+                        destination.getColor() });
+            }
+            if (destination.isConflictGroup() && resultValue != 0)
+            {
+                int conflictGroupRank = destination.conflictGroupRank();
+                StringBuilder conflictGroupList = new StringBuilder();
+                for (Short stream : this.conflictGroups.get(conflictGroupRank))
+                {
+                    if (conflictGroupList.length() > 0)
+                    {
+                        conflictGroupList.append(" ");
+                    }
+                    conflictGroupList.append(String.format("%02d", stream));
+                }
+                fireEvent(TRAFFICCONTROL_CONFLICT_GROUP_CHANGED, new Object[] { this.controllerName, this.currentConflictGroup,
+                        conflictGroupList.toString() });
+                System.out.println("Conflict group changed from " + this.currentConflictGroup + " to "
+                        + conflictGroupList.toString());
+                this.currentConflictGroup = conflictGroupList.toString();
             }
         }
         return result;
@@ -1944,6 +1963,9 @@ class Variable implements EventListenerInterface
     /** The traffic light (only set if this Variable is an output(. */
     private Set<TrafficLight> trafficLights;
 
+    /** Letters that are used to distinguish conflict groups in the MRx variables. */
+    private static String ROWLETTERS = "ABCDXYZUVW";
+
     /**
      * Construct a new Variable.
      * @param name String; name of the new variable (without the stream number)
@@ -1960,6 +1982,11 @@ class Variable implements EventListenerInterface
         if (this.name.length() == 2 && this.name.startsWith("D") && Character.isDigit(this.name.charAt(1)))
         {
             this.flags.add(Flags.IS_DETECTOR);
+        }
+        if (TrafficController.NO_STREAM == stream && this.name.startsWith("MR") && this.name.length() == 3
+                && ROWLETTERS.indexOf(this.name.charAt(2)) >= 0)
+        {
+            this.flags.add(Flags.CONFLICT_GROUP);
         }
     }
 
@@ -2058,6 +2085,29 @@ class Variable implements EventListenerInterface
     public boolean isOutput()
     {
         return this.flags.contains(Flags.IS_OUTPUT);
+    }
+
+    /**
+     * Report of this Variable identifies the current conflict group.
+     * @return boolean; true if this Variable identifies the current conflict group; false if it does not.
+     */
+    public boolean isConflictGroup()
+    {
+        return this.flags.contains(Flags.CONFLICT_GROUP);
+    }
+
+    /**
+     * Retrieve the rank of the conflict group that this Variable represents.
+     * @return int; the rank of the conflict group that this Variable represents
+     * @throws TrafficControlException if this Variable is not a conflict group identifier
+     */
+    public int conflictGroupRank() throws TrafficControlException
+    {
+        if (!isConflictGroup())
+        {
+            throw new TrafficControlException("Variable " + this + " is not a conflict group identifier");
+        }
+        return ROWLETTERS.indexOf(this.name.charAt(2));
     }
 
     /**
@@ -2528,4 +2578,6 @@ enum Flags
     INITED,
     /** Variable is traced; all changes must be printed. */
     TRACED,
+    /** Variable identifies the currently active conflict group. */
+    CONFLICT_GROUP,
 }
