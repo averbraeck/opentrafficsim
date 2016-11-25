@@ -53,6 +53,12 @@ public interface TrafficController extends EventProducerInterface, EventListener
     EventType TRAFFICCONTROL_STATE_CHANGED = new EventType("TRAFFIC_CONTROL.STATE_CHANGED");
 
     /**
+     * The <b>timed</b>event that is fired by a traffic control program when a traffic light must change state. <br>
+     * Payload: Object[] { String trafficControllerId, Integer stream, TrafficLightColor newColor }
+     */
+    public static final EventType TRAFFIC_LIGHT_CHANGED = new EventType("TrafficLightChanged");
+
+    /**
      * The <b>timed</b> event type for pub/sub indicating the creation of a traffic control program variable. <br>
      * Listeners to this event can send <code>TRAFFICCONTROL_SET_TRACE</code> messages to set the tracing level of a variable.<br>
      * Payload: Object[] {String trafficControllerId, String variableId, Integer trafficStream, Double initialValue}
@@ -82,12 +88,16 @@ public interface TrafficController extends EventProducerInterface, EventListener
     EventType TRAFFICCONTROL_TRACED_VARIABLE_UPDATED = new EventType("TRAFFICCONTROL.VARIABLE_UPDATED");
 
     /**
-     * The <b>timed</b> event for pub/sub emitted by a traffic control machine when it changes state to another conflict group. <br>
+     * The <b>timed</b> event for pub/sub emitted by a traffic control machine when it changes to another conflict group. <br>
      * Payload: Object[] { String trafficControllerId, String oldConflictGroupStreams, String newConflictGroupStreams } <br>
      * Remark 1: a conflict group is described as a space-separated list of traffic stream numbers. The traffic streams within a
      * conflict group should be compatible; i.e. not conflicting. <br>
-     * Remark 2: Not all traffic control systems will emit these events.
+     * Remark 2: The value <code>00</code> can be used as a place holder for a stream in a conflict groups that have fewer than
+     * the maximum number of traffic streams that occur in any conflict group.<br>
+     * Remark 3: The very first event of this type may use an empty string for <code>oldConflictGroupStreams</code>.<br>
+     * Remark 4: Some traffic control systems may not operate in a conflict group by conflict group fashion and therefore not
+     * emit these events.
      */
-    EventType TRAFFICCONTROL_STAGE_CHANGED = new EventType("TRAFFIC_CONTROL.STAGE_CHANGED");
+    EventType TRAFFICCONTROL_CONFLICT_GROUP_CHANGED = new EventType("TRAFFIC_CONTROL.CONFLICT_GROUP_CHANGED");
 
 }
