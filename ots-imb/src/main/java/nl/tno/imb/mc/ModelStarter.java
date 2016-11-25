@@ -519,6 +519,7 @@ public abstract class ModelStarter
                 ObjectArrayToIMB.objectArrayToIMBPayload(
                         new Object[] { ModelCommand.MODEL.getValue(), TEventEntry.ACTION_CHANGE, modelChangeEvent })
                         .getBuffer());
+		this.state = newState;
         System.out.println("New model state " + newState + " on " + federation);
     }
 
