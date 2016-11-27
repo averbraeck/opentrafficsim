@@ -63,7 +63,8 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
 
         this.lane = lane;
         this.longitudinalPosition = longitudinalPosition;
-        this.location = lane.getCenterLine().getLocationExtended(this.longitudinalPosition);
+        DirectedPoint p = lane.getCenterLine().getLocationExtended(this.longitudinalPosition);
+        this.location = new DirectedPoint(p.x, p.y, p.z + 0.01, p.getRotX(), p.getRotY(), p.getRotZ());
 
         if (!(this instanceof Sensor))
         {
