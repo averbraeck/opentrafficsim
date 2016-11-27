@@ -2,6 +2,8 @@ package org.opentrafficsim.core.geometry;
 
 import java.awt.geom.Point2D;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
@@ -217,21 +219,6 @@ public class OTSPoint3D implements Locatable, Serializable
     }
 
     /**
-     * Compute the distance to a line segment (2D; Z-component is ignored). If the projection of this point onto the line lies
-     * outside the line segment; the distance to nearest end point of the line segment is returned. Otherwise the distance to
-     * the line segment is returned. <br>
-     * Adapted from <a href="http://paulbourke.net/geometry/pointlineplane/DistancePoint.java"> example code provided by Paul
-     * Bourke</a>.
-     * @param segmentPoint1 OTSPoint3D; start of line segment
-     * @param segmentPoint2 OTSPoint3D; end of line segment
-     * @return double; the distance of this point to (one of the end points of the line segment)
-     */
-    // public final double horizontalDistanceToLineSegment(final OTSPoint3D segmentPoint1, final OTSPoint3D segmentPoint2)
-    // {
-    // return closestPointOnSegment(segmentPoint1, segmentPoint2).horizontalDistanceSI(this);
-    // }
-
-    /**
      * Project a point on a line segment (2D - Z-component is ignored). If the the projected points lies outside the line
      * segment, the nearest end point of the line segment is returned. Otherwise the returned point lies between the end points
      * of the line segment. <br>
@@ -262,7 +249,6 @@ public class OTSPoint3D implements Locatable, Serializable
         else
         {
             return interpolate(u, segmentPoint1, segmentPoint2);
-            // WAS new OTSPoint3D(segmentPoint1.x + u * dX, segmentPoint1.y + u * dY); // could use interpolate in stead
         }
     }
 
@@ -316,6 +302,54 @@ public class OTSPoint3D implements Locatable, Serializable
         return internalClosestPointOnLine(line, true);
     }
 
+    /**
+     * Return the point with a length of 1 to the origin.
+     * @return OTSPoint3D; the normalized point
+     */
+    public final OTSPoint3D normalize()
+    {
+        double length = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+        return this.translate(length);
+    }
+    
+    /**
+     * Return this point translated by a factor from the origin.
+     * @param factor the translation factor
+     * @return OTSPoint3D; the translated point
+     */
+    public final OTSPoint3D translate(final double factor)
+    {
+        return new OTSPoint3D(this.x / factor, this.y / factor, this.z / factor);
+    }
+    
+    /**
+     * Return the possible center points of a circle when two points and a radius are given.
+     * @param point1 OTSPoint3D; the first point
+     * @param point2 OTSPoint3D; the second point
+     * @param radius double; the radius
+     * @return List&lt;OTSPoint3D&gt; a list of zero, one or two points
+     */
+    public static final List<OTSPoint3D> circleCenter(final OTSPoint3D point1, final OTSPoint3D point2, final double radius)
+    {
+        List<OTSPoint3D> center = new ArrayList<>();
+        OTSPoint3D m = interpolate(0.5, point1, point2);
+        OTSPoint3D p = new OTSPoint3D(point2.y - point1.y, point1.x - point2.x).normalize();
+        double h = point1.distanceSI(m);
+        if (radius < h) // no intersection
+        {
+            return center;
+        }
+        if (radius == h) // intersection at m
+        {
+            center.add(m);
+            return center;
+        }
+        double d = Math.sqrt(radius * radius - h * h); // distance of center from m
+        center.add(new OTSPoint3D(m.x + d * p.x, m.y + d * p.y, m.z));
+        center.add(new OTSPoint3D(m.x - d * p.x, m.y - d * p.y, m.z));
+        return center;
+    }
+    
     /**
      * @param point the point to which the distance has to be calculated.
      * @return the distance in 3D according to Pythagoras, expressed in the SI unit for length (meter)
