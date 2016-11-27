@@ -46,7 +46,6 @@
           <xsd:element name="ARC">
             <xsd:complexType>
               <xsd:attribute name="RADIUS" type="LENGTHTYPE" use="required" />
-              <xsd:attribute name="ANGLE" type="ANGLETYPE" use="required" />
               <xsd:attribute name="DIRECTION" type="LEFTRIGHTTYPE" use="required" />
             </xsd:complexType>
           </xsd:element>

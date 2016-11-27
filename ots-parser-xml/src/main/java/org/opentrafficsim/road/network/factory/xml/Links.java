@@ -51,6 +51,7 @@ import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
+import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.language.d3.CartesianPoint;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
@@ -377,13 +378,33 @@ final class Links
         else if (linkTag.arcTag != null)
         {
             // TODO move the radius if there is an start and end offset? How?
-            int points = (Math.abs(linkTag.arcTag.angle.getSI()) <= Math.PI / 2.0) ? 64 : 128;
+            // calculate the center position
+            double radiusSI = linkTag.arcTag.radius.getSI();
+            List<OTSPoint3D> center = OTSPoint3D.circleCenter(from.coordinate, to.coordinate, radiusSI);
+            OTSPoint3D c = linkTag.arcTag.center =
+                    (linkTag.arcTag.direction.equals(ArcTag.ArcDirection.RIGHT)) ? center.get(0) : center.get(1);
+
+            // calculate start angle and end angle
+            double sa = linkTag.arcTag.startAngle = Math.atan2(from.coordinate.y - c.y, from.coordinate.x - c.x);
+            double ea = Math.atan2(to.coordinate.y - c.y, to.coordinate.x - c.x);
+            if (linkTag.arcTag.direction.equals(ArcDirection.RIGHT))
+            {
+                // right -> negative direction, ea should be less than sa
+                ea = (sa < ea) ? ea + Math.PI * 2.0 : ea;
+            }
+            else
+            {
+                // left -> positive direction, sa should be less than ea
+                ea = (ea < sa) ? ea + Math.PI * 2.0 : ea;
+            }
+
+            int points = (Angle.normalize2Pi(ea - sa) <= Math.PI / 2.0) ? 64 : 128;
             coordinates = new OTSPoint3D[points];
             coordinates[0] = new OTSPoint3D(from.coordinate.x, from.coordinate.y, from.coordinate.z);
             coordinates[coordinates.length - 1] = new OTSPoint3D(to.coordinate.x, to.coordinate.y, to.coordinate.z);
             double angleStep = linkTag.arcTag.angle.getSI() / points;
             double slopeStep = (to.coordinate.z - from.coordinate.z) / points;
-            double radiusSI = linkTag.arcTag.radius.getSI();
+
             if (linkTag.arcTag.direction.equals(ArcDirection.RIGHT))
             {
                 for (int p = 1; p < points - 1; p++)
@@ -398,20 +419,10 @@ final class Links
             {
                 for (int p = 1; p < points - 1; p++)
                 {
-                    try
-                    {
-                        System.err.println("linkTag.arcTag.center = " + linkTag.arcTag.center);
-                        System.err.println("linkTag.arcTag.startAngle = " + linkTag.arcTag.startAngle);
-                        coordinates[p] = new OTSPoint3D(
-                                linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle + angleStep * p),
-                                linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle + angleStep * p),
-                                from.coordinate.z + slopeStep * p);
-                    }
-                    catch (NullPointerException npe)
-                    {
-                        npe.printStackTrace();
-                        System.err.println(npe.getMessage());
-                    }
+                    coordinates[p] = new OTSPoint3D(
+                            linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle + angleStep * p),
+                            linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle + angleStep * p),
+                            from.coordinate.z + slopeStep * p);
                 }
             }
         }
