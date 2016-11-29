@@ -80,6 +80,14 @@ public final class Conflict extends AbstractLaneBasedObject
     }
 
     /**
+     * @return otherConflict.
+     */
+    public Conflict getOtherConflict()
+    {
+        return this.otherConflict;
+    }
+
+    /**
      * Creates a pair of conflicts.
      * @param conflictType conflict type, i.e. crossing, merge or split
      * @param lane1 lane of conflict 1

@@ -26,6 +26,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
@@ -181,6 +182,27 @@ public final class LmrsUtil
             initHeadwayRelaxation(bc, leaders.first());
         }
         Acceleration a = CarFollowingUtil.followLeaders(carFollowingModel, bc, speed, sli, leaders);
+
+        // stop for end
+        Length remainingDist = null;
+        for (InfrastructureLaneChangeInfo ili : perception.getPerceptionCategory(InfrastructurePerception.class)
+                .getInfrastructureLaneChangeInfo(RelativeLane.CURRENT))
+        {
+            if (remainingDist == null || remainingDist.gt(ili.getRemainingDistance()))
+            {
+                remainingDist = ili.getRemainingDistance();
+            }
+        }
+        if (remainingDist != null)
+        {
+            remainingDist.minus(bc.getParameter(ParameterTypes.S0));
+            Acceleration bMin = new Acceleration(.5 * speed.si * speed.si / remainingDist.si, AccelerationUnit.SI);
+            Acceleration bCrit = bc.getParameter(ParameterTypes.BCRIT);
+            if (bMin.ge(bCrit))
+            {
+                a = Acceleration.min(a, bMin.neg());
+            }
+        }
 
         // during a lane change, both leaders are followed
         LateralDirectionality initiatedLaneChange;

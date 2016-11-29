@@ -24,6 +24,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU.GTUStatus;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayDistance;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
@@ -838,7 +839,7 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
             double gtuDistanceSI = Math.abs(laneBasedGTU.position(lane, laneBasedGTU.getRear()).si - startPosSI);
             return new HeadwayGTUSimple(laneBasedGTU.getId(), laneBasedGTU.getGTUType(),
                     new Length(cumDistSI + gtuDistanceSI, LengthUnit.SI), laneBasedGTU.getLength(), laneBasedGTU.getSpeed(),
-                    laneBasedGTU.getAcceleration());
+                    laneBasedGTU.getAcceleration(), getGtuStatus(laneBasedGTU));
         }
 
         else
@@ -879,6 +880,28 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
             // other objects are always blocking, we assume
             return new HeadwayObject(laneBasedObjects.get(0).getId(), new Length(cumDistSI + objectDistanceSI, LengthUnit.SI));
         }
+    }
+    
+    /**
+     * Returns a set of statuses for the GTU.
+     * @param gtu gtu
+     * @return set of statuses for the GTU
+     */
+    private GTUStatus[] getGtuStatus(final LaneBasedGTU gtu)
+    {
+        if (gtu.getTurnIndicatorStatus().isLeft())
+        {
+            return new GTUStatus[] { GTUStatus.LEFT_TURNINDICATOR };
+        }
+        if (gtu.getTurnIndicatorStatus().isRight())
+        {
+            return new GTUStatus[] { GTUStatus.RIGHT_TURNINDICATOR };
+        }
+        if (gtu.getTurnIndicatorStatus().isHazard())
+        {
+            return new GTUStatus[] { GTUStatus.EMERGENCY_LIGHTS };
+        }
+        return new GTUStatus[0];
     }
 
     /**
@@ -1037,7 +1060,7 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
                         {
                             headwayCollection.add(new HeadwayGTUSimple(otherGTU.getId(), otherGTU.getGTUType(), overlapFront,
                                     overlap, overlapRear, otherGTU.getLength(), otherGTU.getSpeed(),
-                                    otherGTU.getAcceleration()));
+                                    otherGTU.getAcceleration(), getGtuStatus(otherGTU)));
                         }
                     }
                 }
@@ -1090,8 +1113,9 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
         for (Headway p : parallel(directionality, when))
         {
             // TODO expand for other types of Headways
-            result.add(new HeadwayGTUSimple(p.getId(), ((AbstractHeadwayGTU) p).getGtuType(),
-                    new Length(Double.NaN, LengthUnit.SI), p.getLength(), p.getSpeed(), p.getAcceleration()));
+            //result.add(new HeadwayGTUSimple(p.getId(), ((AbstractHeadwayGTU) p).getGtuType(),
+            //        new Length(Double.NaN, LengthUnit.SI), p.getLength(), p.getSpeed(), p.getAcceleration()));
+            result.add(p);
         }
 
         // forward

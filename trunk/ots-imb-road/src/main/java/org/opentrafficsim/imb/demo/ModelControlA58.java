@@ -82,9 +82,14 @@ public class ModelControlA58 extends ModelStarter
     /** Amount of ACC. */
     private double penetrationRate;
 
+    /** Model. */
     A58Model model;
 
+    /** Animation. */
     A58Animation a58Animation;
+
+    /** Thread for statistics. */
+    Thread statisticsThread;
 
     /**
      * @param args the command line args
@@ -107,15 +112,15 @@ public class ModelControlA58 extends ModelStarter
         ModelControlA58 modelControlA58 = new ModelControlA58(new String[0], "A58 model", 1248);
         modelControlA58.startModel(null, modelControlA58.connection); // null will use default penetration rate
 
-//        try
-//        {
-//            Thread.sleep(2000);
-//        }
-//        catch (InterruptedException exception)
-//        {
-//            exception.printStackTrace();
-//        }
-//        modelControlA58.doStopModel();
+        // try
+        // {
+        // Thread.sleep(2000);
+        // }
+        // catch (InterruptedException exception)
+        // {
+        // exception.printStackTrace();
+        // }
+        // modelControlA58.doStopModel();
     }
 
     /** {@inheritDoc} */
@@ -156,7 +161,20 @@ public class ModelControlA58 extends ModelStarter
     @Override
     public void stopModel()
     {
-        System.out.println("stopModel called");
+        System.out.println("stopModel called on ModelControlA58");
+        if (this.statisticsThread != null)
+        {
+            this.statisticsThread.interrupt();
+            try
+            {
+                System.out.println("ModelControlA58 joining with statisticsThread");
+                this.statisticsThread.join();
+            }
+            catch (InterruptedException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
         if (null != this.model)
         {
             ((Simulator<Time, Duration, OTSSimTimeDouble>) this.model.getSimulator()).cleanUp();
@@ -282,16 +300,16 @@ public class ModelControlA58 extends ModelStarter
         private static final long serialVersionUID = 20141121L;
 
         /** The simulator. */
-        private OTSDEVSSimulatorInterface simulator;
+        OTSDEVSSimulatorInterface simulator;
 
         /** IMB connection. */
-        private TConnection imbConnection;
+        TConnection imbConnection;
 
         /** Colorer for GTU's. */
         private GTUColorer gtuColorer;
 
         /** the network as created by the AbstractWrappableIMBAnimation. */
-        private final OTSNetwork network;
+        final OTSNetwork network;
 
         /** Connector to the IMB hub. */
         OTSIMBConnector imbConnector;
@@ -332,7 +350,7 @@ public class ModelControlA58 extends ModelStarter
             }
 
             // Stream to allow the xml-file to be retrievable from a JAR file
-            InputStream stream = URLResource.getResourceAsStream("/A58v1.xml");
+            InputStream stream = URLResource.getResourceAsStream("/A58v2.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
             {
@@ -344,60 +362,67 @@ public class ModelControlA58 extends ModelStarter
                 exception.printStackTrace();
             }
 
-            Sampler sampler = new RoadSampler(this.simulator);
-            sampler.registerExtendedDataType(new ReferenceSpeed());
-            // Query query = N201ODfactory.getQuery(this.network, new RoadSampler(this.simulator));
-            try
+            ModelControlA58.this.statisticsThread = new Thread(new Runnable()
             {
-                MetaDataSet metaDataSet;
-                Query query;
-                Set<GtuTypeDataInterface> gtuTypes;
+                public void run()
+                {
+                    Sampler sampler = new RoadSampler(A58Model.this.simulator);
+                    sampler.registerExtendedDataType(new ReferenceSpeed());
+                    // Query query = N201ODfactory.getQuery(this.network, new RoadSampler(this.simulator));
+                    try
+                    {
+                        MetaDataSet metaDataSet;
+                        Query query;
+                        Set<GtuTypeDataInterface> gtuTypes;
 
-                query = getQuery(this.network, sampler, new MetaDataSet(), "All");
-                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network.getId(), query,
-                        new Duration(30, TimeUnit.SECOND));
+                        query = getQuery(A58Model.this.network, sampler, new MetaDataSet(), "All");
+                        new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(),
+                                query, new Duration(30, TimeUnit.SECOND));
 
-                metaDataSet = new MetaDataSet();
-                gtuTypes = new HashSet<>();
-                gtuTypes.add(new GtuTypeData(new GTUType("car_equipped")));
-                gtuTypes.add(new GtuTypeData(new GTUType("truck_equipped")));
-                metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
-                query = getQuery(this.network, sampler, metaDataSet, "Equipped");
-                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network.getId(), query,
-                        new Duration(30, TimeUnit.SECOND));
+                        metaDataSet = new MetaDataSet();
+                        gtuTypes = new HashSet<>();
+                        gtuTypes.add(new GtuTypeData(new GTUType("car_equipped")));
+                        gtuTypes.add(new GtuTypeData(new GTUType("truck_equipped")));
+                        metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+                        query = getQuery(A58Model.this.network, sampler, metaDataSet, "Equipped");
+                        new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(),
+                                query, new Duration(30, TimeUnit.SECOND));
 
-                metaDataSet = new MetaDataSet();
-                gtuTypes = new HashSet<>();
-                gtuTypes.add(new GtuTypeData(new GTUType("car")));
-                gtuTypes.add(new GtuTypeData(new GTUType("truck")));
-                metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
-                query = getQuery(this.network, sampler, metaDataSet, "Not equipped");
-                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network.getId(), query,
-                        new Duration(30, TimeUnit.SECOND));
+                        metaDataSet = new MetaDataSet();
+                        gtuTypes = new HashSet<>();
+                        gtuTypes.add(new GtuTypeData(new GTUType("car")));
+                        gtuTypes.add(new GtuTypeData(new GTUType("truck")));
+                        metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+                        query = getQuery(A58Model.this.network, sampler, metaDataSet, "Not equipped");
+                        new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(),
+                                query, new Duration(30, TimeUnit.SECOND));
 
-                metaDataSet = new MetaDataSet();
-                gtuTypes = new HashSet<>();
-                gtuTypes.add(new GtuTypeData(new GTUType("car")));
-                gtuTypes.add(new GtuTypeData(new GTUType("car_equipped")));
-                metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
-                query = getQuery(this.network, sampler, metaDataSet, "Cars");
-                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network.getId(), query,
-                        new Duration(30, TimeUnit.SECOND));
+                        metaDataSet = new MetaDataSet();
+                        gtuTypes = new HashSet<>();
+                        gtuTypes.add(new GtuTypeData(new GTUType("car")));
+                        gtuTypes.add(new GtuTypeData(new GTUType("car_equipped")));
+                        metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+                        query = getQuery(A58Model.this.network, sampler, metaDataSet, "Cars");
+                        new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(),
+                                query, new Duration(30, TimeUnit.SECOND));
 
-                metaDataSet = new MetaDataSet();
-                gtuTypes = new HashSet<>();
-                gtuTypes.add(new GtuTypeData(new GTUType("truck")));
-                gtuTypes.add(new GtuTypeData(new GTUType("truck_equipped")));
-                metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
-                query = getQuery(this.network, sampler, metaDataSet, "Trucks");
-                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network.getId(), query,
-                        new Duration(30, TimeUnit.SECOND));
+                        metaDataSet = new MetaDataSet();
+                        gtuTypes = new HashSet<>();
+                        gtuTypes.add(new GtuTypeData(new GTUType("truck")));
+                        gtuTypes.add(new GtuTypeData(new GTUType("truck_equipped")));
+                        metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+                        query = getQuery(A58Model.this.network, sampler, metaDataSet, "Trucks");
+                        new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(),
+                                query, new Duration(30, TimeUnit.SECOND));
 
-            }
-            catch (IMBException exception)
-            {
-                throw new SimRuntimeException(exception);
-            }
+                    }
+                    catch (IMBException exception)
+                    {
+                        throw new RuntimeException(exception);
+                    }
+                }
+            }, "Statistics thread.");
+            ModelControlA58.this.statisticsThread.start();
 
             // URL gisURL = URLResource.getResource("/A58/map.xml");
             // System.err.println("GIS-map file: " + gisURL.toString());
@@ -408,14 +433,21 @@ public class ModelControlA58 extends ModelStarter
 
         }
 
-        private Query getQuery(final OTSNetwork network, final Sampler sampler, final MetaDataSet metaDataSet, final String id)
+        /**
+         * Get query.
+         * @param net network
+         * @param sampler sampler
+         * @param metaDataSet meta data
+         * @param id id
+         * @return query
+         */
+        Query getQuery(final OTSNetwork net, final Sampler sampler, final MetaDataSet metaDataSet, final String id)
         {
             Query query = new Query(sampler, id, id, metaDataSet, new Frequency(2.0, FrequencyUnit.PER_MINUTE));
-            for (String link : network.getLinkMap().keySet())
+            for (String link : net.getLinkMap().keySet())
             {
-                query.addSpaceTimeRegionLink(new LinkData((CrossSectionLink) network.getLink(link)),
-                        KpiGtuDirectionality.DIR_PLUS, Length.ZERO, network.getLink(link).getLength(), new Time(0, TimeUnit.SI),
-                        new Time(1.0, TimeUnit.HOUR));
+                query.addSpaceTimeRegionLink(new LinkData((CrossSectionLink) net.getLink(link)), KpiGtuDirectionality.DIR_PLUS,
+                        Length.ZERO, net.getLink(link).getLength(), new Time(0, TimeUnit.SI), new Time(1.0, TimeUnit.HOUR));
             }
             return query;
         }

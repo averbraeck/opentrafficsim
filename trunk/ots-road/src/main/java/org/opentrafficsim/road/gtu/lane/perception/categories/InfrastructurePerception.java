@@ -11,6 +11,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -205,13 +206,17 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
         {
             throw new RuntimeException("Could not determine destination node.", exception);
         }
-        for (Sensor s : record.getLane().getSensors())
+        Node nextNode = record.getDirection().isPlus() ? record.getLane().getParentLink().getEndNode()
+                : record.getLane().getParentLink().getStartNode();
+        // TODO only towards end node
+        if (route == null || route.contains(nextNode))
         {
-            if (s instanceof SinkSensor)
+            for (Sensor s : record.getLane().getSensors())
             {
-                // TODO should be sink on routes, the above destination node method does not work if the route contains an extra
-                // node
-                return true; // ok towards sink
+                if (s instanceof SinkSensor)
+                {
+                    return true; // ok towards sink
+                }
             }
         }
         if (record.getNext().isEmpty())

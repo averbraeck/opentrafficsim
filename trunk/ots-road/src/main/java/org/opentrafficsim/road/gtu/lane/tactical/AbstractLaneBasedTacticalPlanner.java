@@ -609,6 +609,25 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
     {
         Length forwardHeadway = bc.getParameter(ParameterTypes.LOOKAHEAD);
         List<Lane> lanes = null;
+        // START TEMP INSTANT CHANGE
+        if (simplePlan.isLaneChange())
+        {
+            gtu.changeLaneInstantaneously(simplePlan.getLaneChangeDirection());
+        }
+        if (true)
+        {
+            lanes = buildLanePathInfo(gtu, forwardHeadway).getLanes();
+            try
+            {
+                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, lanes, gtu.getReferencePosition().getPosition(),
+                        startTime, gtu.getSpeed(), simplePlan.getAcceleration(), bc.getParameter(ParameterTypes.DT));
+            }
+            catch (OTSGeometryException exception)
+            {
+                throw new OperationalPlanException(exception);
+            }
+        }
+        // END TEMP INSTANT CHANGE
         if (!laneChange.isChangingLane())
         {
             lanes = buildLanePathInfo(gtu, forwardHeadway).getLanes();

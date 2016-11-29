@@ -147,7 +147,8 @@ public final class LaneOperationalPlanBuilder
         OTSLine3D path = lanes.get(0).getCenterLine().extract(firstLanePosition, lanes.get(0).getLength());
         for (int i = 1; i < lanes.size(); i++)
         {
-            path = OTSLine3D.concatenate(0.15, path, lanes.get(i).getCenterLine());
+            // TODO tolerance may depend on network, increased by 4 for A58 demo
+            path = OTSLine3D.concatenate(0.15 * 4, path, lanes.get(i).getCenterLine());
         }
         return path.extract(0.0, distance.si);
     }
