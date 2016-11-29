@@ -31,6 +31,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacter
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.RouteGenerator;
@@ -39,6 +40,7 @@ import org.opentrafficsim.imb.demo.generators.CharacteristicsGenerator;
 import org.opentrafficsim.imb.demo.generators.GTUTypeGenerator;
 import org.opentrafficsim.imb.demo.generators.HeadwayGeneratorDemand;
 import org.opentrafficsim.imb.demo.generators.RouteGeneratorProbability;
+import org.opentrafficsim.imb.demo.generators.SpeedGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlanner;
@@ -49,6 +51,7 @@ import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePl
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -122,21 +125,42 @@ public class A58OdUtil
         IdGenerator idGenerator = new IdGenerator("");
         LaneBasedTacticalPlannerFactory<LaneBasedGTUFollowingDirectedChangeTacticalPlanner> tacticalFactory =
                 new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(new IDMPlusOld());
+        // LaneBasedTacticalPlannerFactory<LMRS> tacticalFactory;
+        // try
+        // {
+        // BehavioralCharacteristics bc = new BehavioralCharacteristics();
+        // bc.setDefaultParameter(AbstractIDM.DELTA);
+        // tacticalFactory = new LMRSFactory(new IDMPlusFactory(), bc);
+        // }
+        // catch (GTUException | ParameterException exception1)
+        // {
+        // throw new RuntimeException(exception1);
+        // }
 
         BehavioralCharacteristicsFactoryByType bcFactory = new BehavioralCharacteristicsFactoryByType();
+        Length lookAhead = new Length(750.0, LengthUnit.SI);
+        Length perception = new Length(1.0, LengthUnit.KILOMETER);
         GTUType gtuType = new GTUType("car");
         bcFactory.addGaussianParameter(gtuType, ParameterTypes.FSPEED, 123.7 / 120, 12 / 120);
+        bcFactory.addParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead);
+        bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
         gtuType = new GTUType("car_equipped");
         bcFactory.addGaussianParameter(gtuType, ParameterTypes.FSPEED, 123.7 / 120, 12 / 120);
         bcFactory.addParameter(gtuType, ParameterTypes.T, new Duration(0.6, TimeUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.TMAX, new Duration(0.6, TimeUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.A, new Acceleration(2.0, AccelerationUnit.SI));
+        bcFactory.addParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead);
+        bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
         gtuType = new GTUType("truck");
         bcFactory.addParameter(gtuType, ParameterTypes.A, new Acceleration(0.6, AccelerationUnit.SI));
+        bcFactory.addParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead);
+        bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
         gtuType = new GTUType("truck_equipped");
         bcFactory.addParameter(gtuType, ParameterTypes.A, new Acceleration(0.6, AccelerationUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.T, new Duration(0.6, TimeUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.TMAX, new Duration(0.6, TimeUnit.SI));
+        bcFactory.addParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead);
+        bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
 
         for (String source : demandMap.keySet())
         {
@@ -157,7 +181,7 @@ public class A58OdUtil
                         "Node %s of destination %s connects to multiple or no links.", nodeMap.get(dest + " dest"), to);
 
                 // TODO create sinks in separate method, remember which links have been coupled to a sink to skip
-
+                addSink(to, simulator);
                 if (demandArray == null)
                 {
                     demandArray = (double[]) demandMap.get(source).get(dest);
@@ -167,6 +191,7 @@ public class A58OdUtil
                     demandArray = arraySum(demandArray, (double[]) demandMap.get(source).get(dest));
                 }
             }
+            sinks.clear(); // for next run, since this is all static
             demandArray = factorCopy(demandArray, 1.0 / nLanes);
             FrequencyVector demandVector;
             try
@@ -194,10 +219,14 @@ public class A58OdUtil
             HeadwayGeneratorDemand headwayGenerator = new HeadwayGeneratorDemand(timeVector, demandVector, simulator);
 
             GTUTypeGenerator gtuTypeGenerator = new GTUTypeGenerator(simulator);
+            SpeedGenerator speedCar = new SpeedGenerator(new Speed(100.0, SpeedUnit.KM_PER_HOUR),
+                    new Speed(180.0, SpeedUnit.KM_PER_HOUR), streams.get("gtuClass"));
+            SpeedGenerator speedTruck = new SpeedGenerator(new Speed(80.0, SpeedUnit.KM_PER_HOUR),
+                    new Speed(95.0, SpeedUnit.KM_PER_HOUR), streams.get("gtuClass"));
             gtuTypeGenerator.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI), new GTUType("car"),
-                    new Speed(200.0, SpeedUnit.KM_PER_HOUR), (1.0 - penetrationRate));
+                    speedCar, (1.0 - penetrationRate));
             gtuTypeGenerator.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI),
-                    new GTUType("car_equipped"), new Speed(200.0, SpeedUnit.KM_PER_HOUR), penetrationRate);
+                    new GTUType("car_equipped"), speedCar, penetrationRate);
 
             Map<String, Lane> lanesById = new HashMap<>();
             for (Lane lane : link.getLanes())
@@ -217,14 +246,13 @@ public class A58OdUtil
                 // add trucks
                 gtuTypeGenerator = new GTUTypeGenerator(simulator);
                 gtuTypeGenerator.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI), new GTUType("car"),
-                        new Speed(200.0, SpeedUnit.KM_PER_HOUR), (1.0 - penetrationRate) * (1 - truckFrac));
+                        speedCar, (1.0 - penetrationRate) * (1 - truckFrac));
                 gtuTypeGenerator.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI),
-                        new GTUType("car_equipped"), new Speed(200.0, SpeedUnit.KM_PER_HOUR),
-                        penetrationRate * (1 - truckFrac));
+                        new GTUType("car_equipped"), speedCar, penetrationRate * (1 - truckFrac));
                 gtuTypeGenerator.addType(new Length(15.0, LengthUnit.SI), new Length(2.5, LengthUnit.SI), new GTUType("truck"),
-                        new Speed(85.0, SpeedUnit.KM_PER_HOUR), (1.0 - penetrationRate) * truckFrac);
+                        speedTruck, (1.0 - penetrationRate) * truckFrac);
                 gtuTypeGenerator.addType(new Length(15.0, LengthUnit.SI), new Length(2.5, LengthUnit.SI),
-                        new GTUType("truck_equipped"), new Speed(85.0, SpeedUnit.KM_PER_HOUR), penetrationRate * truckFrac);
+                        new GTUType("truck_equipped"), speedTruck, penetrationRate * truckFrac);
                 Lane lane = lanesById.get("A" + nLanes);
                 Speed generationSpeed = new Speed(nLanes == 1 ? 60.0 : 120, SpeedUnit.KM_PER_HOUR);
                 String id = link.getId() + ":A" + nLanes;
@@ -236,6 +264,36 @@ public class A58OdUtil
                 exception.printStackTrace();
             }
 
+        }
+    }
+
+    /**
+     * Nodes that have received sinks on the incoming link.
+     */
+    private static Set<OTSNode> sinks = new HashSet<>();
+
+    /**
+     * Add sinks to network.
+     * @param endNode
+     * @param simulator
+     */
+    private static void addSink(final OTSNode endNode, final OTSDEVSSimulatorInterface simulator)
+    {
+        if (sinks.contains(endNode))
+        {
+            return;
+        }
+        sinks.add(endNode);
+        for (Lane lane : ((CrossSectionLink) endNode.getLinks().iterator().next()).getLanes())
+        {
+            try
+            {
+                new SinkSensor(lane, lane.getLength().minus(new Length(30, LengthUnit.SI)), simulator);
+            }
+            catch (NetworkException exception)
+            {
+                throw new RuntimeException("Length of lane " + lane + " incompatible with sink location.", exception);
+            }
         }
     }
 
@@ -525,13 +583,13 @@ public class A58OdUtil
                         15.0, 14.0, 11.0, 13.0, 13.0, 12.0, 11.0, 10.0, 13.0, 12.0, 14.0, 15.0, 13.0, 10.0, 12.0, 11.0, 11.0,
                         11.0, 10.0, 8.0, 10.0, 13.0, 11.0, 12.0, 13.0, 12.0, 11.0, 15.0, 11.0, 13.0, 11.0, 11.0, 13.0, 12.0,
                         9.0, 11.0, 12.0, 13.0, 13.0, 10.0, 13.0, 9.0, 8.0, 13.0, 0.0 });
-        demandMap.get("Junction Batadorp South W").put("Junction De Baars North W",
+        demandMap.get("Junction Batadorp South W").put("Junction De Baars South W",
                 new double[] { 594.0, 540.0, 533.0, 525.0, 417.0, 540.0, 463.0, 579.0, 587.0, 479.0, 548.0, 455.0, 432.0, 409.0,
                         471.0, 448.0, 548.0, 509.0, 401.0, 486.0, 486.0, 455.0, 417.0, 386.0, 502.0, 448.0, 533.0, 548.0, 471.0,
                         386.0, 463.0, 394.0, 425.0, 401.0, 386.0, 293.0, 386.0, 502.0, 394.0, 432.0, 494.0, 448.0, 417.0, 556.0,
                         401.0, 494.0, 425.0, 409.0, 502.0, 448.0, 340.0, 401.0, 448.0, 494.0, 502.0, 386.0, 471.0, 332.0, 301.0,
                         471.0, 0.0 });
-        demandMap.get("Junction Batadorp South W").put("Junction De Baars South W",
+        demandMap.get("Junction Batadorp South W").put("Junction De Baars North W",
                 new double[] { 184.0, 167.0, 165.0, 162.0, 129.0, 167.0, 143.0, 179.0, 181.0, 148.0, 169.0, 141.0, 134.0, 126.0,
                         145.0, 138.0, 169.0, 157.0, 124.0, 150.0, 150.0, 141.0, 129.0, 119.0, 155.0, 138.0, 165.0, 169.0, 145.0,
                         119.0, 143.0, 122.0, 131.0, 124.0, 119.0, 91.0, 119.0, 155.0, 122.0, 134.0, 153.0, 138.0, 129.0, 172.0,
@@ -564,13 +622,13 @@ public class A58OdUtil
                         15.0, 14.0, 11.0, 13.0, 13.0, 12.0, 11.0, 10.0, 13.0, 12.0, 14.0, 15.0, 13.0, 10.0, 12.0, 11.0, 11.0,
                         11.0, 10.0, 8.0, 10.0, 13.0, 11.0, 12.0, 13.0, 12.0, 11.0, 15.0, 11.0, 13.0, 11.0, 11.0, 13.0, 12.0,
                         9.0, 11.0, 12.0, 13.0, 13.0, 10.0, 13.0, 9.0, 8.0, 13.0, 0.0 });
-        demandMap.get("Junction Batadorp North W").put("Junction De Baars North W",
+        demandMap.get("Junction Batadorp North W").put("Junction De Baars South W",
                 new double[] { 594.0, 540.0, 533.0, 525.0, 417.0, 540.0, 463.0, 579.0, 587.0, 479.0, 548.0, 455.0, 432.0, 409.0,
                         471.0, 448.0, 548.0, 509.0, 401.0, 486.0, 486.0, 455.0, 417.0, 386.0, 502.0, 448.0, 533.0, 548.0, 471.0,
                         386.0, 463.0, 394.0, 425.0, 401.0, 386.0, 293.0, 386.0, 502.0, 394.0, 432.0, 494.0, 448.0, 417.0, 556.0,
                         401.0, 494.0, 425.0, 409.0, 502.0, 448.0, 340.0, 401.0, 448.0, 494.0, 502.0, 386.0, 471.0, 332.0, 301.0,
                         471.0, 0.0 });
-        demandMap.get("Junction Batadorp North W").put("Junction De Baars South W",
+        demandMap.get("Junction Batadorp North W").put("Junction De Baars North W",
                 new double[] { 184.0, 167.0, 165.0, 162.0, 129.0, 167.0, 143.0, 179.0, 181.0, 148.0, 169.0, 141.0, 134.0, 126.0,
                         145.0, 138.0, 169.0, 157.0, 124.0, 150.0, 150.0, 141.0, 129.0, 119.0, 155.0, 138.0, 165.0, 169.0, 145.0,
                         119.0, 143.0, 122.0, 131.0, 124.0, 119.0, 91.0, 119.0, 155.0, 122.0, 134.0, 153.0, 138.0, 129.0, 172.0,
@@ -597,13 +655,13 @@ public class A58OdUtil
                         15.0, 14.0, 12.0, 13.0, 13.0, 14.0, 16.0, 11.0, 14.0, 16.0, 15.0, 12.0, 16.0, 13.0, 15.0, 11.0, 15.0,
                         13.0, 17.0, 9.0, 12.0, 14.0, 13.0, 13.0, 14.0, 17.0, 12.0, 19.0, 15.0, 12.0, 18.0, 13.0, 13.0, 16.0,
                         18.0, 8.0, 17.0, 15.0, 13.0, 17.0, 18.0, 12.0, 15.0, 11.0, 0.0 });
-        demandMap.get("Connection Best W").put("Junction De Baars North W",
+        demandMap.get("Connection Best W").put("Junction De Baars South W",
                 new double[] { 558.0, 579.0, 677.0, 612.0, 319.0, 561.0, 365.0, 754.0, 540.0, 391.0, 612.0, 522.0, 497.0, 527.0,
                         363.0, 504.0, 543.0, 509.0, 437.0, 491.0, 476.0, 527.0, 592.0, 419.0, 520.0, 584.0, 569.0, 440.0, 594.0,
                         491.0, 548.0, 417.0, 566.0, 486.0, 625.0, 355.0, 435.0, 527.0, 486.0, 499.0, 535.0, 625.0, 453.0, 695.0,
                         556.0, 455.0, 664.0, 476.0, 484.0, 599.0, 659.0, 314.0, 630.0, 548.0, 504.0, 633.0, 682.0, 450.0, 545.0,
                         419.0, 0.0 });
-        demandMap.get("Connection Best W").put("Junction De Baars South W",
+        demandMap.get("Connection Best W").put("Junction De Baars North W",
                 new double[] { 172.0, 179.0, 209.0, 189.0, 99.0, 173.0, 113.0, 233.0, 167.0, 121.0, 189.0, 161.0, 153.0, 163.0,
                         112.0, 156.0, 168.0, 157.0, 135.0, 152.0, 147.0, 163.0, 183.0, 130.0, 161.0, 180.0, 176.0, 136.0, 184.0,
                         152.0, 169.0, 129.0, 175.0, 150.0, 193.0, 110.0, 134.0, 163.0, 150.0, 154.0, 165.0, 193.0, 140.0, 215.0,
@@ -625,12 +683,12 @@ public class A58OdUtil
                         0.0, 2.0, 1.0, 3.0, 1.0, 1.0, 3.0, 0.0, 3.0, 1.0, 0.0, 2.0, 1.0, 0.0, 2.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0,
                         1.0, 3.0, 1.0, 0.0, 2.0, 1.0, 2.0, 2.0, 1.0, 3.0, 1.0, 4.0, 0.0, 2.0, 3.0, 0.0, 0.0, 1.0, 0.0, 1.0,
                         0.0 });
-        demandMap.get("Restplace Brehees").put("Junction De Baars North W",
+        demandMap.get("Restplace Brehees").put("Junction De Baars South W",
                 new double[] { 39.0, 64.0, 0.0, 42.0, 80.0, 0.0, 60.0, 0.0, 170.0, 42.0, 0.0, 48.0, 131.0, 0.0, 22.0, 0.0, 85.0,
                         0.0, 0.0, 10.0, 62.0, 24.0, 102.0, 52.0, 53.0, 103.0, 0.0, 102.0, 26.0, 0.0, 62.0, 50.0, 0.0, 88.0,
                         51.0, 49.0, 0.0, 0.0, 45.0, 0.0, 47.0, 130.0, 27.0, 0.0, 62.0, 31.0, 76.0, 64.0, 26.0, 101.0, 39.0,
                         144.0, 0.0, 75.0, 105.0, 0.0, 0.0, 29.0, 0.0, 37.0, 0.0 });
-        demandMap.get("Restplace Brehees").put("Junction De Baars South W",
+        demandMap.get("Restplace Brehees").put("Junction De Baars North W",
                 new double[] { 12.0, 20.0, 0.0, 13.0, 25.0, 0.0, 19.0, 0.0, 53.0, 13.0, 0.0, 15.0, 40.0, 0.0, 7.0, 0.0, 26.0,
                         0.0, 0.0, 3.0, 19.0, 7.0, 32.0, 16.0, 16.0, 32.0, 0.0, 32.0, 8.0, 0.0, 19.0, 15.0, 0.0, 27.0, 16.0,
                         15.0, 0.0, 0.0, 14.0, 0.0, 15.0, 40.0, 8.0, 0.0, 19.0, 10.0, 24.0, 20.0, 8.0, 31.0, 12.0, 45.0, 0.0,
@@ -646,13 +704,13 @@ public class A58OdUtil
                         8.0, 11.0, 7.0, 13.0, 9.0, 16.0, 5.0, 10.0, 15.0, 8.0, 14.0, 12.0, 15.0, 13.0, 11.0, 10.0, 10.0, 10.0,
                         11.0, 14.0, 12.0, 13.0, 5.0, 16.0, 8.0, 7.0, 13.0, 18.0, 11.0, 8.0, 13.0, 13.0, 11.0, 14.0, 8.0, 13.0,
                         14.0, 18.0, 4.0, 13.0, 14.0, 10.0, 18.0, 0.0 });
-        demandMap.get("Connection Oirschot W").put("Junction De Baars North W",
+        demandMap.get("Connection Oirschot W").put("Junction De Baars South W",
                 new double[] { 193.0, 889.0, 376.0, 330.0, 580.0, 485.0, 566.0, 432.0, 144.0, 630.0, 485.0, 689.0, 376.0, 302.0,
                         474.0, 499.0, 393.0, 314.0, 424.0, 263.0, 474.0, 337.0, 601.0, 203.0, 386.0, 562.0, 315.0, 536.0, 431.0,
                         545.0, 468.0, 426.0, 384.0, 359.0, 381.0, 426.0, 535.0, 451.0, 477.0, 173.0, 610.0, 292.0, 250.0, 471.0,
                         677.0, 416.0, 299.0, 505.0, 470.0, 430.0, 517.0, 311.0, 476.0, 541.0, 672.0, 165.0, 502.0, 536.0, 378.0,
                         668.0, 0.0 });
-        demandMap.get("Connection Oirschot W").put("Junction De Baars South W",
+        demandMap.get("Connection Oirschot W").put("Junction De Baars North W",
                 new double[] { 60.0, 275.0, 116.0, 102.0, 179.0, 150.0, 175.0, 134.0, 44.0, 195.0, 150.0, 213.0, 116.0, 93.0,
                         147.0, 154.0, 121.0, 97.0, 131.0, 81.0, 146.0, 104.0, 186.0, 63.0, 119.0, 174.0, 97.0, 166.0, 133.0,
                         168.0, 145.0, 131.0, 119.0, 111.0, 118.0, 131.0, 165.0, 139.0, 147.0, 53.0, 188.0, 90.0, 77.0, 145.0,
@@ -664,23 +722,23 @@ public class A58OdUtil
                         0.0, 0.0, 0.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 2.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 3.0, 0.0, 0.0,
                         1.0, 0.0, 4.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
                         0.0 });
-        demandMap.get("Connection Moergestel W").put("Junction De Baars North W",
+        demandMap.get("Connection Moergestel W").put("Junction De Baars South W",
                 new double[] { 264.0, 0.0, 0.0, 0.0, 19.0, 0.0, 38.0, 106.0, 0.0, 38.0, 0.0, 0.0, 0.0, 25.0, 0.0, 0.0, 0.0,
                         160.0, 0.0, 0.0, 0.0, 0.0, 97.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 150.0, 79.0, 0.0, 32.0, 0.0, 0.0, 0.0,
                         0.0, 109.0, 0.0, 0.0, 40.0, 0.0, 153.0, 0.0, 30.0, 0.0, 0.0, 19.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                         26.0, 0.0, 13.0, 37.0, 0.0, 0.0 });
-        demandMap.get("Connection Moergestel W").put("Junction De Baars South W",
+        demandMap.get("Connection Moergestel W").put("Junction De Baars North W",
                 new double[] { 81.0, 0.0, 0.0, 0.0, 6.0, 0.0, 12.0, 33.0, 0.0, 12.0, 0.0, 0.0, 0.0, 8.0, 0.0, 0.0, 0.0, 49.0,
                         0.0, 0.0, 0.0, 0.0, 30.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 46.0, 24.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 34.0,
                         0.0, 0.0, 12.0, 0.0, 47.0, 0.0, 9.0, 0.0, 0.0, 6.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 8.0, 0.0, 4.0,
                         11.0, 0.0, 0.0 });
         demandMap.put("Restplace Kriekampen", new HashMap<>());
-        demandMap.get("Restplace Kriekampen").put("Junction De Baars North W",
+        demandMap.get("Restplace Kriekampen").put("Junction De Baars South W",
                 new double[] { 31.0, 231.0, 332.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 47.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                         50.0, 0.0, 0.0, 0.0, 0.0, 74.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 155.0, 0.0, 0.0, 0.0, 0.0, 192.0,
                         0.0, 0.0, 0.0, 0.0, 99.0, 0.0, 0.0, 118.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                         0.0, 45.0, 0.0, 0.0 });
-        demandMap.get("Restplace Kriekampen").put("Junction De Baars South W",
+        demandMap.get("Restplace Kriekampen").put("Junction De Baars North W",
                 new double[] { 9.0, 71.0, 102.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 15.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                         16.0, 0.0, 0.0, 0.0, 0.0, 23.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 48.0, 0.0, 0.0, 0.0, 0.0, 59.0, 0.0,
                         0.0, 0.0, 0.0, 31.0, 0.0, 0.0, 36.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,

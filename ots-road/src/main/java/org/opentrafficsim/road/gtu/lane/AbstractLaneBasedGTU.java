@@ -262,8 +262,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             lanesToBeRemoved.add(lane);
         }
 
-        // store the new positions, and sample statistics
-        Map<Link, Double> newLinkPositions = new HashMap<>();
+        // store the new positions, and sample statistics 
+        // start with current link position, these will be overwritten, except if from a lane no adjacent lane is found, i.e.
+        // changing over a continuous line when probably the reference point is past the line
+        Map<Link, Double> newLinkPositions = new HashMap<>(this.fractionalLinkPositions);
 
         for (Lane lane : lanesCopy.keySet())
         {

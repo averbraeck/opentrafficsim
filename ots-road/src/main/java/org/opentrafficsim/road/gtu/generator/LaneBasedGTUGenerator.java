@@ -7,8 +7,10 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -256,6 +258,8 @@ public class LaneBasedGTUGenerator implements Serializable
                 LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU(gtuId, characteristics.getGTUType(),
                         characteristics.getLength(), characteristics.getWidth(), characteristics.getMaximumSpeed(), simulator,
                         characteristics.getNetwork());
+                gtu.setMaximumAcceleration(new Acceleration(3.0, AccelerationUnit.METER_PER_SECOND_2));
+                gtu.setMaximumDeceleration(new Acceleration(-8.0, AccelerationUnit.METER_PER_SECOND_2));
                 gtu.initWithAnimation(characteristics.getStrategicalPlannerFactory().create(gtu, characteristics.getRoute()),
                         this.initialLongitudinalPositions, safeSpeed, DefaultCarAnimation.class, this.gtuColorer);
 

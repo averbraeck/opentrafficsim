@@ -157,7 +157,9 @@ public class LaneStructure implements Serializable
     }
 
     /**
-     * Adds a lane structure record in a mapping from relative lanes.
+     * Adds a lane structure record in a mapping from relative lanes. The record is also added to the current cross section if
+     * the start distance is negative, and the start distance plus length is positive. If the relative lane is already in the
+     * current cross section, it is <b>not</b> overwritten.
      * @param lsr lane structure record
      * @param relativeLane relative lane
      */
@@ -168,7 +170,8 @@ public class LaneStructure implements Serializable
             this.relativeLaneMap.put(relativeLane, new HashSet<>());
         }
         this.relativeLaneMap.get(relativeLane).add(lsr);
-        if (lsr.getStartDistance().le(Length.ZERO) && lsr.getStartDistance().plus(lsr.getLane().getLength()).ge(Length.ZERO))
+        if (lsr.getStartDistance().le(Length.ZERO) && lsr.getStartDistance().plus(lsr.getLane().getLength()).ge(Length.ZERO)
+                && !this.crossSectionRecords.containsKey(relativeLane))
         {
             this.crossSectionRecords.put(relativeLane, lsr);
         }

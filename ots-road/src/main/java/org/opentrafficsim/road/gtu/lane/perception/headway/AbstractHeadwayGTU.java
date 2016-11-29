@@ -101,14 +101,19 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadway
      * @param distance Length; the distance to the other GTU; if this constructor is used, distance cannot be null.
      * @param facingSameDirection whether the GTU is facing the same direction.
      * @param length the (perceived) length of the other object; can not be null.
+     * @param gtuStatus the observable characteristics of the GTU.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public AbstractHeadwayGTU(final String id, final GTUType gtuType, final Length distance, final boolean facingSameDirection,
-            final Length length) throws GTUException
+            final Length length, final GTUStatus... gtuStatus) throws GTUException
     {
         super(ObjectType.GTU, id, distance, length);
         this.facingSameDirection = facingSameDirection;
         this.gtuType = gtuType;
+        for (GTUStatus status : gtuStatus)
+        {
+            this.gtuStatus.add(status);
+        }
     }
 
     /**
@@ -122,16 +127,21 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadway
      * @param length the (perceived) length of the other object; can not be null.
      * @param speed the (perceived) speed of the other GTU; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other GTU; can be null if unknown.
+     * @param gtuStatus the observable characteristics of the GTU.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractHeadwayGTU(final String id, final GTUType gtuType, final Length overlapFront, final Length overlap,
             final Length overlapRear, final boolean facingSameDirection, final Length length, final Speed speed,
-            final Acceleration acceleration) throws GTUException
+            final Acceleration acceleration, final GTUStatus... gtuStatus) throws GTUException
     {
         super(ObjectType.GTU, id, overlapFront, overlap, overlapRear, length, speed, acceleration);
         this.facingSameDirection = facingSameDirection;
         this.gtuType = gtuType;
+        for (GTUStatus status : gtuStatus)
+        {
+            this.gtuStatus.add(status);
+        }
     }
 
     /**
@@ -143,14 +153,21 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadway
      * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
      * @param facingSameDirection whether the GTU is facing the same direction.
      * @param length the (perceived) length of the other object; can not be null.
+     * @param gtuStatus the observable characteristics of the GTU.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
+    @SuppressWarnings("checkstyle:parameternumber")
     public AbstractHeadwayGTU(final String id, final GTUType gtuType, final Length overlapFront, final Length overlap,
-            final Length overlapRear, final boolean facingSameDirection, final Length length) throws GTUException
+            final Length overlapRear, final boolean facingSameDirection, final Length length, final GTUStatus... gtuStatus)
+            throws GTUException
     {
         super(ObjectType.GTU, id, overlapFront, overlap, overlapRear, length);
         this.facingSameDirection = facingSameDirection;
         this.gtuType = gtuType;
+        for (GTUStatus status : gtuStatus)
+        {
+            this.gtuStatus.add(status);
+        }
     }
 
     /**

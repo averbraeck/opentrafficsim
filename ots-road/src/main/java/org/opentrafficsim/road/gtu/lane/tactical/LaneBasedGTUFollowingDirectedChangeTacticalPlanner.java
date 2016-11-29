@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -27,6 +29,7 @@ import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
+import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedAltruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedEgoistic;
@@ -35,7 +38,10 @@ import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedLane
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -107,6 +113,31 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         return (GTUFollowingModelOld) super.getCarFollowingModel();
     }
 
+    /**
+     * Headway for synchronization.
+     */
+    private Headway syncHeadway;
+
+    /**
+     * Headway for cooperation.
+     */
+    private Headway coopHeadway;
+
+    /**
+     * Time when (potential) dead-lock was first recognized.
+     */
+    private Time deadLock = null;
+
+    /**
+     * Time after which situation is labeled a dead-lock.
+     */
+    private final Duration deadLockThreshold = new Duration(5.0, TimeUnit.SI);
+
+    /**
+     * Headways that are causing the dead-lock.
+     */
+    private Collection<Headway> blockingHeadways = new HashSet<>();
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:methodlength")
@@ -144,6 +175,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             correctLanes.retainAll(nextSplitInfo.getCorrectCurrentLanes());
 
             // Step 1: Do we want to change lanes because of the current lane not leading to our destination?
+            this.syncHeadway = null;
             if (lanePathInfo.getPath().getLength().lt(forwardHeadway) && correctLanes.isEmpty())
             {
                 LateralDirectionality direction = determineLeftRight(laneBasedGTU, nextSplitInfo);
@@ -156,6 +188,44 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                         lanePathInfo = buildLanePathInfo(laneBasedGTU, forwardHeadway, this.laneAfterLaneChange,
                                 this.posAfterLaneChange, laneBasedGTU.getDirection(this.laneAfterLaneChange));
                         return currentLanePlan(laneBasedGTU, startTime, newLocation, lanePathInfo);
+                    }
+                    else
+                    {
+                        simplePerception.updateNeighboringHeadways(direction);
+                        Length minDistance = new Length(Double.MAX_VALUE, LengthUnit.SI);
+                        for (Headway headway : simplePerception.getNeighboringHeadways(direction))
+                        {
+                            if ((headway.isAhead() || headway.isParallel()) && (headway instanceof AbstractHeadwayGTU))
+                            {
+                                if (headway.isParallel() || headway.getDistance().lt(minDistance))
+                                {
+                                    this.syncHeadway = headway;
+                                    if (!headway.isParallel())
+                                    {
+                                        minDistance = headway.getDistance();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Cooperation
+            this.coopHeadway = null;
+            for (LateralDirectionality direction : new LateralDirectionality[] { LateralDirectionality.LEFT,
+                    LateralDirectionality.RIGHT })
+            {
+                simplePerception.updateNeighboringHeadways(direction);
+                for (Headway headway : simplePerception.getNeighboringHeadways(direction))
+                {
+                    // other vehicle ahead, its a vehicle, its the nearest, and its indicator is on
+                    if (headway.isAhead() && (headway instanceof AbstractHeadwayGTU)
+                            && (this.coopHeadway == null || headway.getDistance().lt(this.coopHeadway.getDistance()))
+                            && (direction.isLeft() ? ((AbstractHeadwayGTU) headway).isRightTurnIndicatorOn()
+                                    : ((AbstractHeadwayGTU) headway).isLeftTurnIndicatorOn()))
+                    {
+                        this.coopHeadway = headway;
                     }
                 }
             }
@@ -256,6 +326,21 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                             return currentLanePlan(laneBasedGTU, startTime, newLocation, lanePathInfo);
                         }
                     }
+                }
+            }
+
+            if (this.deadLock != null
+                    && getGtu().getSimulator().getSimulatorTime().getTime().minus(this.deadLock).ge(this.deadLockThreshold))
+            {
+                System.err.println("Deleting gtu " + getGtu().getId() + " to prevent dead-lock.");
+                try
+                {
+                    getGtu().getSimulator().scheduleEventRel(new Duration(0.001, TimeUnit.SI), this, getGtu(), "destroy",
+                            new Object[0]);
+                }
+                catch (SimRuntimeException exception)
+                {
+                    throw new RuntimeException(exception);
                 }
             }
 
@@ -376,12 +461,12 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             final LateralDirectionality direction)
             throws GTUException, NetworkException, ParameterException, OperationalPlanException
     {
-        
+
         if (!((AbstractLaneBasedGTU) gtu).isSafeToChange())
         {
             return false;
         }
-        
+
         Collection<Headway> otherLaneTraffic;
         DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);
         simplePerception.updateForwardHeadwayGTU();
@@ -390,12 +475,14 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         if (direction.isLeft())
         {
             simplePerception.updateParallelHeadwaysLeft();
+            this.blockingHeadways = simplePerception.getParallelHeadwaysLeft();
             simplePerception.updateNeighboringHeadwaysLeft();
             otherLaneTraffic = simplePerception.getNeighboringHeadwaysLeft();
         }
         else if (direction.isRight())
         {
             simplePerception.updateParallelHeadwaysRight();
+            this.blockingHeadways = simplePerception.getParallelHeadwaysRight();
             simplePerception.updateNeighboringHeadwaysRight();
             otherLaneTraffic = simplePerception.getNeighboringHeadwaysRight();
         }
@@ -479,10 +566,77 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);
         simplePerception.updateForwardHeadwayGTU();
         simplePerception.updateForwardHeadwayObject();
-        Length maxDistance = Length.min(getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD),
-                lanePathInfo.getPath().getLength().minus(getGtu().getLength().multiplyBy(2.0)));
+        boolean sinkAtEnd = false;
+        for (Sensor sensor : (lanePathInfo.getLanes().get(lanePathInfo.getLanes().size() - 1).getSensors()))
+        {
+            if (sensor instanceof SinkSensor)
+            {
+                sinkAtEnd = true;
+            }
+        }
+        boolean stopForEndOrSplit = !sinkAtEnd;
+        BehavioralCharacteristics bc = getGtu().getBehavioralCharacteristics();
+        Length maxDistance = sinkAtEnd ? new Length(Double.MAX_VALUE, LengthUnit.SI)
+                : Length.min(getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD),
+                        lanePathInfo.getPath().getLength().minus(getGtu().getLength().multiplyBy(2.0)));
+        //bc.setParameter(ParameterTypes.B, bc.getParameter(ParameterTypes.B0));
         AccelerationStep mostLimitingAccelerationStep = getCarFollowingModelOld().computeAccelerationStepWithNoLeader(getGtu(),
                 maxDistance, simplePerception.getSpeedLimit());
+        //bc.resetParameter(ParameterTypes.B);
+        Acceleration minB = bc.getParameter(ParameterTypes.B).neg();
+        Acceleration numericallySafeB =
+                Acceleration.max(minB, getGtu().getSpeed().divideBy(mostLimitingAccelerationStep.getDuration()).neg());
+        if ((this.syncHeadway != null || this.coopHeadway != null) && mostLimitingAccelerationStep.getAcceleration().gt(minB))
+        {
+            AccelerationStep sync;
+            if (this.syncHeadway == null)
+            {
+                sync = null;
+            }
+            else if (this.syncHeadway.isParallel())
+            {
+                sync = new AccelerationStep(numericallySafeB, mostLimitingAccelerationStep.getValidUntil(),
+                        mostLimitingAccelerationStep.getDuration());
+            }
+            else
+            {
+                sync = getCarFollowingModelOld().computeAccelerationStep(getGtu(), this.syncHeadway.getSpeed(),
+                        this.syncHeadway.getDistance(), maxDistance, simplePerception.getSpeedLimit());
+            }
+            AccelerationStep coop;
+            if (this.coopHeadway == null)
+            {
+                coop = null;
+            }
+            else
+            {
+                coop = getCarFollowingModelOld().computeAccelerationStep(getGtu(), this.coopHeadway.getSpeed(),
+                        this.coopHeadway.getDistance(), maxDistance, simplePerception.getSpeedLimit());
+            }
+            AccelerationStep adjust;
+            if (sync == null)
+            {
+                adjust = coop;
+            }
+            else if (coop == null)
+            {
+                adjust = sync;
+            }
+            else
+            {
+                adjust = sync.getAcceleration().lt(coop.getAcceleration()) ? sync : coop;
+            }
+            if (adjust.getAcceleration().lt(minB))
+            {
+                mostLimitingAccelerationStep = new AccelerationStep(numericallySafeB, mostLimitingAccelerationStep.getValidUntil(),
+                        mostLimitingAccelerationStep.getDuration());
+            }
+            else
+            {
+                mostLimitingAccelerationStep = adjust;
+            }
+        }
+
         for (Headway headway : headways)
         {
             if (headway != null && headway.getDistance().lt(maxDistance))
@@ -491,11 +645,39 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                         headway.getSpeed(), headway.getDistance(), maxDistance, simplePerception.getSpeedLimit());
                 if (accelerationStep.getAcceleration().lt(mostLimitingAccelerationStep.getAcceleration()))
                 {
+                    stopForEndOrSplit = false;
                     mostLimitingAccelerationStep = accelerationStep;
                 }
             }
         }
+
+        // recognize dead-lock
+        if (!this.blockingHeadways.isEmpty() && stopForEndOrSplit)
+        {
+            Speed maxSpeed = getGtu().getSpeed();
+            for (Headway headway : this.blockingHeadways)
+            {
+                maxSpeed = Speed.max(maxSpeed, headway.getSpeed());
+            }
+            if (maxSpeed.si < OperationalPlan.DRIFTING_SPEED_SI)
+            {
+                if (this.deadLock == null)
+                {
+                    this.deadLock = getGtu().getSimulator().getSimulatorTime().getTime();
+                }
+            }
+            else
+            {
+                this.deadLock = null;
+            }
+        }
+        else
+        {
+            this.deadLock = null;
+        }
+
         return mostLimitingAccelerationStep;
+
     }
 
     /**

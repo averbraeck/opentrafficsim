@@ -137,7 +137,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
         // LMRS
         SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(getGtu(), startTime, getCarFollowingModel(), this.laneChange,
                 this.lmrsData, getPerception(), this.mandatoryIncentives, this.voluntaryIncentives);
-
+        
         // speed limits
         Speed speed = getGtu().getSpeed();
         simplePlan.minimumAcceleration(SpeedLimitUtil.considerSpeedLimitTransitions(bc, speed, slp, getCarFollowingModel()));

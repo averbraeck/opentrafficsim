@@ -6,8 +6,11 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.distributions.Generator;
+import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -34,7 +37,7 @@ public class GTUTypeGenerator
     private final List<GTUType> gtuTypes = new ArrayList<>();
 
     /** Maximum GTU speeds. */
-    private final List<Speed> maximumSpeeds = new ArrayList<>();
+    private final List<Generator<Speed>> maximumSpeeds = new ArrayList<>();
 
     /** GTU type probabilities. */
     private final List<Double> probabilities = new ArrayList<>();
@@ -73,7 +76,7 @@ public class GTUTypeGenerator
      * @param maximumSpeed maximum speed of the GTU
      * @param probability the probability to generate with these characteristics
      */
-    public void addType(Length length, Length width, GTUType gtuType, Speed maximumSpeed, double probability)
+    public void addType(Length length, Length width, GTUType gtuType, Generator<Speed> maximumSpeed, double probability)
     {
         this.lengths.add(length);
         this.widths.add(width);
@@ -104,7 +107,14 @@ public class GTUTypeGenerator
             i++;
             probCumSum += this.probabilities.get(i);
         }
-        return new GTUTypeInfo(this.lengths.get(i), this.widths.get(i), this.gtuTypes.get(i), this.maximumSpeeds.get(i));
+        try
+        {
+            return new GTUTypeInfo(this.lengths.get(i), this.widths.get(i), this.gtuTypes.get(i), this.maximumSpeeds.get(i).draw());
+        }
+        catch (ProbabilityException | ParameterException exception)
+        {
+            throw new RuntimeException("Could not draw speed.", exception);
+        }
     }
 
     /**
