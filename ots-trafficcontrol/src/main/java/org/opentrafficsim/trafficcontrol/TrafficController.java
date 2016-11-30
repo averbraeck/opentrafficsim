@@ -18,6 +18,12 @@ import nl.tudelft.simulation.event.EventType;
 public interface TrafficController extends EventProducerInterface, EventListenerInterface
 {
     /**
+     * Retrieve the Id of the traffic light controller.
+     * @return String; the id of the traffic light controller
+     */
+    public String getId();
+
+    /**
      * Tell the traffic controller that the state of a detector has changed.
      * @param detectorId String; id of the detector
      * @param detectingGTU boolean;
@@ -44,6 +50,19 @@ public interface TrafficController extends EventProducerInterface, EventListener
      * Payload: Object[] { String trafficControllerId, String initialState }
      */
     EventType TRAFFICCONTROL_CONTROLLER_CREATED = new EventType("TRAFFICCONTROL.CONTROLLER_CREATED");
+
+    /**
+     * The <b>timed</b> event type for pub/sub that a traffic controller emits when it begins the computations to determine its
+     * response to the current input (detector states).<br>
+     * Payload: Object[] { String trafficControllerId }
+     */
+    EventType TRAFFICCONTROL_CONTROLLER_EVALUATING = new EventType("TRAFFICCONTROL.CONTROLLER_EVALUATING");
+
+    /**
+     * The <b>timed</b> event type for pub/sub that a traffic controller uses to convey warnings.<br>
+     * Payload: Object[] { String trafficControllerId, String message }
+     */
+    EventType TRAFFICCONTROL_CONTROLLER_WARNING = new EventType("TRAFFICCONTROL.CONTROLLER_WARNING");
 
     /**
      * The <b>timed</b> event for pub/sub emitted by a traffic control machine when it changes state (STARTING_UP, RUNNING,
@@ -79,8 +98,8 @@ public interface TrafficController extends EventProducerInterface, EventListener
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the update of a traced control program variable. <br>
-     * Payload: Object[] {String trafficControllerId, String variableId, Integer trafficStream, Double newValue, String
-     * expressionOrDescription} <br>
+     * Payload: Object[] {String trafficControllerId, String variableId, Integer trafficStream, Double oldValue, Double
+     * newValue, String expressionOrDescription} <br>
      * Remark 1: for variable that are not associated with a particular traffic stream, the trafficStream value shall be
      * <code>NO_STREAM</code> <br>
      * Remark 2: if the variable is a timer that has just been initialized; newValue will reflect the duration in seconds

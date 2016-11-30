@@ -21,6 +21,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.event.EventType;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
@@ -201,15 +202,17 @@ public class TrafCODDemo extends AbstractWrappableAnimation
                         new TrafCOD(controllerName, "file:///d:/cppb/trafcod/otsim/simpleTest.tfc", trafficLights, sensors,
                                 (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator,
                                 TrafCODDemo.this.controllerDisplayPanel);
+                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
+                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_STATE_CHANGED);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_VARIABLE_CREATED);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED);
-                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED);
-                addListener(this, TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED);
-                System.out.println("demo: emitting SET TRACING event");
-                fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] {controllerName, "", 11, true});
-                System.out.println("demo simulator is " + theSimulator);
+                // Subscribe the TrafCOD machine to trace command events that we emit
+                addListener(this.trafCOD, TrafficController.TRAFFICCONTROL_SET_TRACING);
+                // System.out.println("demo: emitting a SET TRACING event for all variables related to stream 11");
+                // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] { controllerName, "", 11, true });
+
                 // this.trafCOD.traceVariablesOfStream(TrafficController.NO_STREAM, true);
                 // this.trafCOD.traceVariablesOfStream(11, true);
                 // this.trafCOD.traceVariable("MRV", 11, true);
@@ -230,15 +233,36 @@ public class TrafCODDemo extends AbstractWrappableAnimation
         @Override
         public void notify(final EventInterface event) throws RemoteException
         {
-            System.out.print("TrafCODDemo received event of type " + event.getType() + ", payload [");
+            EventType type = event.getType();
             Object[] payload = (Object[]) event.getContent();
-            String separator = "";
-            for (Object o : payload)
+            if (TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING.equals(type))
             {
-                System.out.print(separator + o);
-                separator = ",";
+                // System.out.println("Evalution starts at " + getSimulator().getSimulatorTime().getTime());
+                return;
             }
-            System.out.println("]");
+            else if (TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED.equals(type))
+            {
+                System.out.println("Conflict group changed from " + ((String) payload[1]) + " to " + ((String) payload[2]));
+            }
+            else if (TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED.equals(type))
+            {
+                System.out.println(String.format("Variable changed %s <- %d   %s", payload[1], payload[4], payload[5]));
+            }
+            else if (TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING.equals(type))
+            {
+                System.out.println("Warning " + payload[1]);
+            }
+            else
+            {
+                System.out.print("TrafCODDemo received event of type " + event.getType() + ", payload [");
+                String separator = "";
+                for (Object o : payload)
+                {
+                    System.out.print(separator + o);
+                    separator = ",";
+                }
+                System.out.println("]");
+            }
         }
 
     }

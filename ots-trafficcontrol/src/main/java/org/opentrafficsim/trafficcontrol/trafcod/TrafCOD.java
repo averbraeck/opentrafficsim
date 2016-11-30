@@ -26,10 +26,10 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.language.Throw;
 
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.formatter.EngineeringFormatter;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -174,8 +174,6 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
                 display.add(tcd);
             }
         }
-        System.out.println("TrafCOD subscribing to SET_TRACING");
-        addListener(this, TrafficController.TRAFFICCONTROL_SET_TRACING);
         fireTimedEvent(TrafficController.TRAFFICCONTROL_CONTROLLER_CREATED, new Object[] { this.controllerName,
                 TrafficController.STARTING_UP }, simulator.getSimulatorTime());
         // Initialize the variables that have a non-zero initial value
@@ -190,6 +188,9 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
             fireTimedEvent(TrafficController.TRAFFICCONTROL_VARIABLE_CREATED, new Object[] { this.controllerName, v.getName(),
                     v.getStream(), value }, simulator.getSimulatorTime());
         }
+        // Schedule the consistency check (don't call it directly) to allow interested parties to subscribe before the
+        // consistency check is performed
+        this.simulator.scheduleEventRel(Duration.ZERO, this, this, "checkConsistency", null);
         // The first rule evaluation should occur at t=0.1s
         this.simulator.scheduleEventRel(EVALUATION_INTERVAL, this, this, "evalExprs", null);
     }
@@ -420,21 +421,37 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
         // + v.toString(EnumSet.of(PrintFlags.ID, PrintFlags.VALUE, PrintFlags.INITTIMER, PrintFlags.REINITTIMER,
         // PrintFlags.S, PrintFlags.E)));
         // }
+    }
+
+    /**
+     * Check the consistency of the traffic control program.
+     */
+    public void checkConsistency()
+    {
         for (Variable v : this.variablesInDefinitionOrder)
         {
             if (0 == v.refCount && (!v.isOutput()) && (!v.getName().matches("^RA.")))
             {
-                System.out.println("Warning: " + v.getName() + v.getStream() + " is never referenced");
+                // System.out.println("Warning: " + v.getName() + v.getStream() + " is never referenced");
+                fireTimedEvent(TRAFFICCONTROL_CONTROLLER_WARNING,
+                        new Object[] { this.controllerName, v.toString(EnumSet.of(PrintFlags.ID)) + " is never referenced" },
+                        this.simulator.getSimulatorTime());
             }
             if (!v.isDetector())
             {
                 if (!v.getFlags().contains(Flags.HAS_START_RULE))
                 {
-                    System.out.println("Warning: " + v.getName() + v.getStream() + " has no start rule");
+                    // System.out.println("Warning: " + v.getName() + v.getStream() + " has no start rule");
+                    fireTimedEvent(TRAFFICCONTROL_CONTROLLER_WARNING,
+                            new Object[] { this.controllerName, v.toString(EnumSet.of(PrintFlags.ID)) + " has no start rule" },
+                            this.simulator.getSimulatorTime());
                 }
                 if ((!v.getFlags().contains(Flags.HAS_END_RULE)) && (!v.isTimer()))
                 {
-                    System.out.println("Warning: " + v.getName() + v.getStream() + " has no end rule");
+                    // System.out.println("Warning: " + v.getName() + v.getStream() + " has no end rule");
+                    fireTimedEvent(TRAFFICCONTROL_CONTROLLER_WARNING,
+                            new Object[] { this.controllerName, v.toString(EnumSet.of(PrintFlags.ID)) + " has no end rule" },
+                            this.simulator.getSimulatorTime());
                 }
             }
         }
@@ -626,7 +643,9 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
     @SuppressWarnings("unused")
     private void evalExprs() throws TrafficControlException, SimRuntimeException
     {
-        System.out.println("evalExprs: time is " + EngineeringFormatter.format(this.simulator.getSimulatorTime().get().si));
+        fireTimedEvent(TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING, new Object[] { this.controllerName },
+                this.simulator.getSimulatorTime());
+        // System.out.println("evalExprs: time is " + EngineeringFormatter.format(this.simulator.getSimulatorTime().get().si));
         // insert some delay for testing; without this the simulation runs too fast
         // try
         // {
@@ -649,7 +668,22 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
                 break;
             }
         }
-        System.out.println("Executed " + (loop + 1) + " iteration(s)");
+        // System.out.println("Executed " + (loop + 1) + " iteration(s)");
+        if (loop >= this.maxLoopCount)
+        {
+            StringBuffer warningMessage = new StringBuffer();
+            warningMessage.append(String.format(
+                    "Control program did not settle to a final state in %d iterations; oscillating variables:", loop));
+            for (Variable v : this.variablesInDefinitionOrder)
+            {
+                if (v.getFlags().contains(Flags.CHANGED))
+                {
+                    warningMessage.append(String.format(" %s%02d", v.getName(), v.getStream()));
+                }
+            }
+            fireTimedEvent(TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING, new Object[] { this.controllerName,
+                    warningMessage.toString() }, this.simulator.getSimulatorTime());
+        }
         this.simulator.scheduleEventRel(EVALUATION_INTERVAL, this, this, "evalExprs", null);
     }
 
@@ -771,18 +805,18 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
                 {
                     result = true;
                 }
-                destination.setValue(timerValue10, this.currentTime10, new CausePrinter(rule));
+                destination.setValue(timerValue10, this.currentTime10, new CausePrinter(rule), this);
             }
             else if (0 == resultValue && Token.END_RULE == ruleType && destination.getValue() != 0)
             {
                 result = true;
-                destination.setValue(0, this.currentTime10, new CausePrinter(rule));
+                destination.setValue(0, this.currentTime10, new CausePrinter(rule), this);
             }
         }
         else if (destination.getValue() != resultValue)
         {
             result = true;
-            destination.setValue(resultValue, this.currentTime10, new CausePrinter(rule));
+            destination.setValue(resultValue, this.currentTime10, new CausePrinter(rule), this);
             if (destination.isOutput())
             {
                 fireEvent(TRAFFIC_LIGHT_CHANGED, new Object[] { this.controllerName, new Integer(destination.getStream()),
@@ -802,8 +836,8 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
                 }
                 fireEvent(TRAFFICCONTROL_CONFLICT_GROUP_CHANGED, new Object[] { this.controllerName, this.currentConflictGroup,
                         conflictGroupList.toString() });
-                System.out.println("Conflict group changed from " + this.currentConflictGroup + " to "
-                        + conflictGroupList.toString());
+                // System.out.println("Conflict group changed from " + this.currentConflictGroup + " to "
+                // + conflictGroupList.toString());
                 this.currentConflictGroup = conflictGroupList.toString();
             }
         }
@@ -1615,7 +1649,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
         if (null == variable)
         {
             // Create and install a new variable
-            variable = new Variable(name, stream);
+            variable = new Variable(name, stream, this);
             this.variables.put(key, variable);
             this.variablesInDefinitionOrder.add(variable);
             if (variable.isDetector())
@@ -1661,7 +1695,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
                 detectingGTU ? 1 : 0,
                 this.currentTime10,
                 new CausePrinter(String.format("Detector %s becoming %s", detectorId,
-                        (detectingGTU ? "occupied" : "unoccupied"))));
+                        (detectingGTU ? "occupied" : "unoccupied"))), this);
     }
 
     /**
@@ -1779,6 +1813,30 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
             // else: event not destined for this controller
         }
 
+    }
+
+    /**
+     * Fire an event on behalf of this TrafCOD engine (used for tracing variable changes).
+     * @param eventType EventType; the type of the event
+     * @param payload Object[]; the payload of the event
+     */
+    void fireTrafCODEvent(final EventType eventType, final Object[] payload)
+    {
+        try
+        {
+            fireTimedEvent(eventType, payload, getSimulator().getSimulatorTime());
+        }
+        catch (RemoteException exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getId()
+    {
+        return this.controllerName;
     }
 }
 
@@ -1927,6 +1985,9 @@ class NameAndStream
  */
 class Variable implements EventListenerInterface
 {
+    /** The TrafCOD engine. */
+    private final TrafCOD trafCOD;
+
     /** Flags. */
     EnumSet<Flags> flags = EnumSet.noneOf(Flags.class);
 
@@ -1970,11 +2031,13 @@ class Variable implements EventListenerInterface
      * Construct a new Variable.
      * @param name String; name of the new variable (without the stream number)
      * @param stream short; stream number to which the new Variable is associated
+     * @param trafCOD TrafCOD; the TrafCOD engine
      */
-    public Variable(final String name, final short stream)
+    public Variable(final String name, final short stream, TrafCOD trafCOD)
     {
         this.name = name.toUpperCase(Locale.US);
         this.stream = stream;
+        this.trafCOD = trafCOD;
         if (this.name.startsWith("T"))
         {
             this.flags.add(Flags.IS_TIMER);
@@ -2023,11 +2086,11 @@ class Variable implements EventListenerInterface
         {
             if (isTimer())
             {
-                setValue(this.timerMax10, 0, new CausePrinter("Timer initialization rule"));
+                setValue(this.timerMax10, 0, new CausePrinter("Timer initialization rule"), this.trafCOD);
             }
             else
             {
-                setValue(1, 0, new CausePrinter("Variable initialization rule"));
+                setValue(1, 0, new CausePrinter("Variable initialization rule"), this.trafCOD);
             }
         }
     }
@@ -2123,8 +2186,9 @@ class Variable implements EventListenerInterface
      * @param newValue int; the new value of this Variable
      * @param timeStamp10 int; the time stamp of this update
      * @param cause CausePrinter; rule, timer, or detector that caused the change
+     * @param trafCOD TrafCOD; the TrafCOD controller
      */
-    public void setValue(int newValue, int timeStamp10, CausePrinter cause)
+    public void setValue(int newValue, int timeStamp10, CausePrinter cause, TrafCOD trafCOD)
     {
         if (this.value != newValue)
         {
@@ -2148,8 +2212,10 @@ class Variable implements EventListenerInterface
         }
         if (this.flags.contains(Flags.TRACED))
         {
-            System.out.println("Variable " + this.name + this.stream + " changes from " + this.value + " to " + newValue
-                    + " due to " + cause.toString());
+            // System.out.println("Variable " + this.name + this.stream + " changes from " + this.value + " to " + newValue
+            // + " due to " + cause.toString());
+            trafCOD.fireTrafCODEvent(TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED, new Object[] { trafCOD.getId(),
+                    toString(EnumSet.of(PrintFlags.ID)), this.stream, this.value, newValue, cause.toString() });
         }
         this.value = newValue;
     }
@@ -2476,11 +2542,11 @@ class Variable implements EventListenerInterface
     {
         if (event.getType().equals(NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT))
         {
-            setValue(1, this.updateTime10, new CausePrinter("Detector became occupied"));
+            setValue(1, this.updateTime10, new CausePrinter("Detector became occupied"), this.trafCOD);
         }
         else if (event.getType().equals(NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT))
         {
-            setValue(0, this.updateTime10, new CausePrinter("Detector became unoccupied"));
+            setValue(0, this.updateTime10, new CausePrinter("Detector became unoccupied"), this.trafCOD);
         }
     }
 
