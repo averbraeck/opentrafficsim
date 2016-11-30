@@ -45,6 +45,10 @@ public class ModelParameters implements SelfWrapper
         {
             Parameter parameter = new Parameter(payload);
             String parameterName = parameter.getName();
+            if ("Federation".equals(parameterName) || "DataSource".equals(parameterName))
+            {
+                continue;
+            }
             if (this.nameMap.containsKey(parameterName))
             {
                 throw new IMBException("Duplicate parameter name \"" + parameterName + "\")");

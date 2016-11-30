@@ -128,4 +128,30 @@ public class OTSIMBConnector extends IMBConnector
         }
         return null;
     }
+    
+    /**
+     * Create a CompoundProperty with the settings for an IMB connection.
+     * @param displayPriority int; the displayPriority of the created CompoundProperty
+     * @param imbHost String; host that runs the IMB hub
+     * @return CompoundProperty the default settings
+     */
+    public static CompoundProperty standardIMBProperties(final int displayPriority, final String imbHost)
+    {
+        try
+        {
+            CompoundProperty result =
+                    new CompoundProperty("IMBProperties", "IMB properties", "IMB properties", null, false, displayPriority);
+            result.add(new StringProperty("IMBHost", "IMB hub host", "Name of the IMB hub", imbHost, false, 0));
+            result.add(new IntegerProperty("IMBPort", "IMB hub port", "Port on the IMB hub", 4000, 0, 65535, "%d", false, 1));
+            result.add(new IntegerProperty("IMBModelId", "IMB model id", "Model id", 1, 0, 9999, "%d", false, 2));
+            result.add(new StringProperty("IMBFederation", "IMB federation", "Federation on the IMB hub", "OTS_RT", false, 3));
+            return result;
+        }
+        catch (PropertyException exception)
+        {
+            exception.printStackTrace();
+        }
+        return null;
+    }
+    
 }
