@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.naming.NamingException;
@@ -15,12 +16,25 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
+import nl.javel.gisbeans.io.esri.CoordinateTransform;
+import nl.tno.imb.TConnection;
+import nl.tno.imb.mc.ModelParameters;
+import nl.tno.imb.mc.ModelStarter;
+import nl.tno.imb.mc.Parameter;
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.Simulator;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.io.URLResource;
+
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.modelproperties.ContinuousProperty;
+import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -58,15 +72,6 @@ import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.xml.sax.SAXException;
-
-import nl.javel.gisbeans.io.esri.CoordinateTransform;
-import nl.tno.imb.TConnection;
-import nl.tno.imb.mc.ModelParameters;
-import nl.tno.imb.mc.ModelStarter;
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.Simulator;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.language.io.URLResource;
 
 /**
  * <p>
@@ -232,11 +237,54 @@ public class ModelControlA58 extends ModelStarter
         System.out.println("quitApplication called");
     }
 
+    /**
+     * Find a property with the specified key in a List of properties.
+     * @param propertyList List&lt;Property&lt;?&gt;&gt;; the list
+     * @param key String; the key
+     * @return Property&lt;?&gt; or null if none of the entries in the list contained a property with the specified key
+     */
+    private Property<?> findByKeyInList(final List<Property<?>> propertyList, final String key)
+    {
+        Property<?> result = null;
+        for (Property<?> property : propertyList)
+        {
+            Property<?> p = property.findByKey(key);
+            if (null != p)
+            {
+                if (null != result)
+                {
+                    System.err.println("Duplicate property with key " + key + " in provided list");
+                }
+                result = p;
+            }
+        }
+        return result;
+    }
+
     /** {@inheritDoc} */
     @Override
     public void parameterRequest(ModelParameters parameters)
     {
-        //
+        List<Property<?>> propertyList = new A58IMB().getSupportedProperties();
+        Property<?> truckFraction = findByKeyInList(propertyList, "TrafficComposition");
+        if (null != truckFraction)
+        {
+            parameters.addParameter(new Parameter("Truck fraction (range 0.0 - 1.0)",
+                    ((ProbabilityDistributionProperty) truckFraction).getValue()[1]));
+        }
+        Property<?> caccPenetration = findByKeyInList(propertyList, "CACCpenetration");
+        if (null != caccPenetration)
+        {
+            parameters.addParameter(
+                    new Parameter("CACC penetration (range 0.0 - 1.0)", ((ContinuousProperty) caccPenetration).getValue()));
+        }
+        Property<?> caccCompliance = findByKeyInList(propertyList, "CACCCompliance");
+        if (null != caccCompliance)
+        {
+            parameters.addParameter(
+                    new Parameter("CACC compliance (range 0.0 - 1.0)", ((ContinuousProperty) caccCompliance).getValue()));
+        }
+        System.out.println("(possibly) modified paramters: " + parameters);
     }
 
     /**

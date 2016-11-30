@@ -18,6 +18,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
+import org.opentrafficsim.base.modelproperties.ContinuousProperty;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -83,10 +84,12 @@ public class A58IMB extends AbstractWrappableAnimation
             {
                 try
                 {
-                    A58IMB n201Model = new A58IMB();
+                    A58IMB a58Model = new A58IMB();
+                    List<Property<?>> propertyList = new ArrayList<>();
+                    propertyList.add(OTSIMBConnector.standardIMBProperties(0, "vps17642.public.cloudvps.com"));
                     // 1 hour simulation run for testing
-                    n201Model.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
-                            new Duration(10.0, TimeUnit.HOUR), new ArrayList<Property<?>>(), null, true);
+                    a58Model.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                            new Duration(10.0, TimeUnit.HOUR), propertyList, null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -328,6 +331,20 @@ public class A58IMB extends AbstractWrappableAnimation
         {
             return "CoordinateTransformRD [dx=" + this.dx + ", dy=" + this.dy + "]";
         }
+    }
+
+    /**
+     * Retrieve a list of properties that the user can modify.
+     * @return List&lt;Property&lt;?&gt;&gt;;
+     */
+    public List<Property<?>> getSupportedProperties()
+    {
+        List<Property<?>> result = new ArrayList<>();
+        result.add(new ContinuousProperty("CACCpenetration", "CACC penetration",
+                "<html>Fraction of vehicles equipped with CACC</html>", 0.0, 0.0, 1.0, "%.2f", false, 13));
+        result.add(new ContinuousProperty("CACCCompliance", "CACC compliance",
+                "<html>Compliance within CADD equipped vehicle population</html>", 0.5, 0.0, 1.0, "%.2f", false, 14));
+        return result;
     }
 
 }
