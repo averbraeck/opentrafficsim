@@ -231,7 +231,7 @@ public final class Trajectory
     {
         try
         {
-            return new FloatLengthVector(this.x, LengthUnit.SI, StorageType.DENSE);
+            return new FloatLengthVector(getX(), LengthUnit.SI, StorageType.DENSE);
         }
         catch (ValueException exception)
         {
@@ -247,7 +247,7 @@ public final class Trajectory
     {
         try
         {
-            return new FloatSpeedVector(this.v, SpeedUnit.SI, StorageType.DENSE);
+            return new FloatSpeedVector(getV(), SpeedUnit.SI, StorageType.DENSE);
         }
         catch (ValueException exception)
         {
@@ -263,7 +263,7 @@ public final class Trajectory
     {
         try
         {
-            return new FloatAccelerationVector(this.a, AccelerationUnit.SI, StorageType.DENSE);
+            return new FloatAccelerationVector(getA(), AccelerationUnit.SI, StorageType.DENSE);
         }
         catch (ValueException exception)
         {
@@ -279,7 +279,7 @@ public final class Trajectory
     {
         try
         {
-            return new FloatTimeVector(this.t, TimeUnit.SI, StorageType.DENSE);
+            return new FloatTimeVector(getT(), TimeUnit.SI, StorageType.DENSE);
         }
         catch (ValueException exception)
         {
@@ -431,6 +431,10 @@ public final class Trajectory
      */
     private Boundaries spaceBoundaries(final Length startPosition, final Length endPosition)
     {
+        if (startPosition.si > this.x[this.size - 1] || endPosition.si < this.x[0])
+        {
+            return new Boundaries(0, 0.0, 0, 0.0);
+        }
         int from = 0;
         double fFrom = 0;
         // to float needed as x is in floats and due to precision fTo > 1 may become true
@@ -465,6 +469,10 @@ public final class Trajectory
      */
     private Boundaries timeBoundaries(final Time startTime, final Time endTime)
     {
+        if (startTime.si > this.t[this.size - 1] || endTime.si < this.t[0])
+        {
+            return new Boundaries(0, 0.0, 0, 0.0);
+        }
         int from = 0;
         double fFrom = 0;
         // to float needed as x is in floats and due to precision fTo > 1 may become true
@@ -559,14 +567,24 @@ public final class Trajectory
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Arrays.hashCode(this.a);
         result = prime * result + ((this.extendedData == null) ? 0 : this.extendedData.hashCode());
         result = prime * result + ((this.gtuId == null) ? 0 : this.gtuId.hashCode());
         result = prime * result + ((this.metaData == null) ? 0 : this.metaData.hashCode());
         result = prime * result + this.size;
-        result = prime * result + Arrays.hashCode(this.t);
-        result = prime * result + Arrays.hashCode(this.v);
-        result = prime * result + Arrays.hashCode(this.x);
+        if (this.size > 0)
+        {
+            result = prime * result + Float.floatToIntBits(this.a[0]);
+            result = prime * result + Float.floatToIntBits(this.t[0]);
+            result = prime * result + Float.floatToIntBits(this.v[0]);
+            result = prime * result + Float.floatToIntBits(this.x[0]);
+        }
+        if (this.size > 1)
+        {
+            result = prime * result + Float.floatToIntBits(this.a[this.size - 1]);
+            result = prime * result + Float.floatToIntBits(this.t[this.size - 1]);
+            result = prime * result + Float.floatToIntBits(this.v[this.size - 1]);
+            result = prime * result + Float.floatToIntBits(this.x[this.size - 1]);
+        }
         return result;
     }
 
@@ -587,7 +605,7 @@ public final class Trajectory
             return false;
         }
         Trajectory other = (Trajectory) obj;
-        if (!Arrays.equals(this.a, other.a))
+        if (this.size != other.size)
         {
             return false;
         }
@@ -624,21 +642,42 @@ public final class Trajectory
         {
             return false;
         }
-        if (this.size != other.size)
+        if (this.size > 0) 
         {
-            return false;
+            if (this.a[0] != other.a[0])
+            {
+                return false;
+            }
+            if (this.t[0] != other.t[0])
+            {
+                return false;
+            }
+            if (this.v[0] != other.v[0])
+            {
+                return false;
+            }
+            if (this.x[0] != other.x[0])
+            {
+                return false;
+            }
         }
-        if (!Arrays.equals(this.t, other.t))
-        {
-            return false;
-        }
-        if (!Arrays.equals(this.v, other.v))
-        {
-            return false;
-        }
-        if (!Arrays.equals(this.x, other.x))
-        {
-            return false;
+        if (this.size > 1) {
+            if (this.a[this.size - 1] != other.a[other.size - 1])
+            {
+                return false;
+            }
+            if (this.t[this.size - 1] != other.t[other.size - 1])
+            {
+                return false;
+            }
+            if (this.v[this.size - 1] != other.v[other.size - 1])
+            {
+                return false;
+            }
+            if (this.x[this.size - 1] != other.x[other.size - 1])
+            {
+                return false;
+            }
         }
         return true;
     }

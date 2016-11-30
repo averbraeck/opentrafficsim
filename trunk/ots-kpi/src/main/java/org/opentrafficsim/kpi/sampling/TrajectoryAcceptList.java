@@ -48,8 +48,9 @@ public class TrajectoryAcceptList
     {
         Throw.whenNull(trajectory, "Trajectory may not be null.");
         Throw.whenNull(trajectoryGroup, "Trajectory group may not be null.");
-        Throw.when(!trajectoryGroup.contains(trajectory), IllegalArgumentException.class,
-                "The trajectory should be contained within the trajectory group.");
+        // This is quite a costly check
+        // Throw.when(!trajectoryGroup.contains(trajectory), IllegalArgumentException.class,
+        // "The trajectory should be contained within the trajectory group.");
         Throw.when(this.gtuId != null && !this.gtuId.equals(trajectory.getGtuId()), IllegalArgumentException.class,
                 "Trajectories of different GTU's may not be in a single trajectory accept list.");
         this.gtuId = trajectory.getGtuId();

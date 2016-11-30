@@ -116,7 +116,7 @@ public abstract class Sampler
         Throw.whenNull(extendedDataType, "ExtendedDataType may not be null.");
         this.extendedDataTypes.add(extendedDataType);
     }
-    
+
     /**
      * Whether this sampler has the given extended data type registered to it.
      * @param extendedDataType extended data type
@@ -177,8 +177,8 @@ public abstract class Sampler
      * @param time current time
      * @param gtu gtu
      */
-    public final void processGtuAddEvent(final KpiLaneDirection kpiLaneDirection, final Length position, final Speed speed,
-            final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
+    public final void processGtuAddEvent(final KpiLaneDirection kpiLaneDirection, final Length position,
+            final Speed speed, final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
     {
         Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
         Throw.whenNull(position, "Position may not be null.");
@@ -213,8 +213,8 @@ public abstract class Sampler
      * @param time current time
      * @param gtu gtu
      */
-    public final void processGtuMoveEvent(final KpiLaneDirection kpiLaneDirection, final Length position, final Speed speed,
-            final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
+    public final void processGtuMoveEvent(final KpiLaneDirection kpiLaneDirection, final Length position,
+            final Speed speed, final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
     {
         Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
         Throw.whenNull(position, "Position may not be null.");
@@ -225,7 +225,6 @@ public abstract class Sampler
         String gtuId = gtu.getId();
         if (this.trajectoryPerGtu.containsKey(gtuId) && this.trajectoryPerGtu.get(gtuId).containsKey(kpiLaneDirection))
         {
-            
             this.trajectoryPerGtu.get(gtuId).get(kpiLaneDirection).add(position, speed, acceleration, time, gtu);
         }
     }
@@ -239,13 +238,13 @@ public abstract class Sampler
      * @param time current time
      * @param gtu gtu
      */
-    public final void processGtuRemoveEvent(final KpiLaneDirection kpiLaneDirection, final Length position, final Speed speed,
-            final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
+    public final void processGtuRemoveEvent(final KpiLaneDirection kpiLaneDirection, final Length position,
+            final Speed speed, final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
     {
         processGtuMoveEvent(kpiLaneDirection, position, speed, acceleration, time, gtu);
         processGtuRemoveEvent(kpiLaneDirection, gtu);
     }
-    
+
     /**
      * Finalizes a trajectory.
      * @param kpiLaneDirection lane direction the gtu is at

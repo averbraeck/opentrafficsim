@@ -92,7 +92,7 @@ public class TotalDelayReference extends AbstractIndicator<Duration>
         for (String id : gtuTimes.keySet())
         {
             Duration gtuTime = gtuTimes.get(id);
-            Duration gtuRefTime = gtuTimes.get(id);
+            Duration gtuRefTime = gtuRefTimes.get(id);
             if (gtuTime.gt(gtuRefTime))
             {
                 delaySum = delaySum.plus(gtuTime.minus(gtuRefTime));
