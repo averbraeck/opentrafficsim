@@ -47,7 +47,6 @@ public class ModelControlKPI extends ModelStarter
     {
         SwingUtilities.invokeAndWait(new Runnable()
         {
-
             @Override
             public void run()
             {

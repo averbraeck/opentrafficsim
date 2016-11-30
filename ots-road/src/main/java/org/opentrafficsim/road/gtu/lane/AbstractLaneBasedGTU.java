@@ -146,6 +146,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             enterLane(lane, directedLanePosition.getPosition(), directedLanePosition.getGtuDirection());
         }
 
+        // TODO The above enterLane creates an event with speed = 0.0, while the below init creates a move event with speed at 
+        // the same time.
+        
         // initiate the actual move
         super.init(strategicalPlanner, initialLocation, initialSpeed);
 

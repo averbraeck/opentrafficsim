@@ -6,11 +6,13 @@ import java.awt.geom.Rectangle2D.Double;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.FrequencyUnit;
@@ -106,11 +108,34 @@ public class ModelControlA58 extends ModelStarter
      * Tester.
      * @param args empty
      * @throws IMBException shen IMB connection fails
+     * @throws InterruptedException 
+     * @throws InvocationTargetException 
      */
-    public static void main(String[] args) throws IMBException
+    public static void main(String[] args) throws IMBException, InvocationTargetException, InterruptedException
     {
-        ModelControlA58 modelControlA58 = new ModelControlA58(new String[0], "A58 model", 1248);
-        modelControlA58.startModel(null, modelControlA58.connection); // null will use default penetration rate
+        if (args.length == 0)
+        {
+            ModelControlA58 modelControlA58 = new ModelControlA58(new String[0], "A58 model", 1248);
+            modelControlA58.startModel(null, modelControlA58.connection); // null will use default penetration rate
+        }
+        else
+        {
+            SwingUtilities.invokeAndWait(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        new ModelControlA58(args, "A58 model", 1248);
+                    }
+                    catch (IMBException exception)
+                    {
+                        exception.printStackTrace();
+                    }
+                }
+            });
+        }
 
         // try
         // {
@@ -127,7 +152,7 @@ public class ModelControlA58 extends ModelStarter
     @Override
     public void startModel(ModelParameters parameters, TConnection imbConnection)
     {
-        this.penetrationRate = 0.1;
+        this.penetrationRate = 1.0;
         if (parameters != null && parameters.parameterExists("penetration"))
         {
             try
@@ -362,67 +387,61 @@ public class ModelControlA58 extends ModelStarter
                 exception.printStackTrace();
             }
 
-            ModelControlA58.this.statisticsThread = new Thread(new Runnable()
+            Sampler sampler = new RoadSampler(A58Model.this.simulator);
+            sampler.registerExtendedDataType(new ReferenceSpeed());
+            try
             {
-                public void run()
-                {
-                    Sampler sampler = new RoadSampler(A58Model.this.simulator);
-                    sampler.registerExtendedDataType(new ReferenceSpeed());
-                    // Query query = N201ODfactory.getQuery(this.network, new RoadSampler(this.simulator));
-                    try
-                    {
-                        MetaDataSet metaDataSet;
-                        Query query;
-                        Set<GtuTypeDataInterface> gtuTypes;
+                MetaDataSet metaDataSet;
+                Query query;
+                Set<GtuTypeDataInterface> gtuTypes;
 
-                        query = getQuery(A58Model.this.network, sampler, new MetaDataSet(), "All");
-                        new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(),
-                                query, new Duration(30, TimeUnit.SECOND));
+                query = getQuery(A58Model.this.network, sampler, new MetaDataSet(), "All");
+                new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(), query,
+                        new Duration(30, TimeUnit.SECOND));
 
-                        metaDataSet = new MetaDataSet();
-                        gtuTypes = new HashSet<>();
-                        gtuTypes.add(new GtuTypeData(new GTUType("car_equipped")));
-                        gtuTypes.add(new GtuTypeData(new GTUType("truck_equipped")));
-                        metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
-                        query = getQuery(A58Model.this.network, sampler, metaDataSet, "Equipped");
-                        new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(),
-                                query, new Duration(30, TimeUnit.SECOND));
+                metaDataSet = new MetaDataSet();
+                gtuTypes = new HashSet<>();
+                gtuTypes.add(new GtuTypeData(new GTUType("car_equipped")));
+                gtuTypes.add(new GtuTypeData(new GTUType("truck_equipped")));
+                metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+                query = getQuery(A58Model.this.network, sampler, metaDataSet, "Equipped");
+                new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(), query,
+                        new Duration(30, TimeUnit.SECOND));
 
-                        metaDataSet = new MetaDataSet();
-                        gtuTypes = new HashSet<>();
-                        gtuTypes.add(new GtuTypeData(new GTUType("car")));
-                        gtuTypes.add(new GtuTypeData(new GTUType("truck")));
-                        metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
-                        query = getQuery(A58Model.this.network, sampler, metaDataSet, "Not equipped");
-                        new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(),
-                                query, new Duration(30, TimeUnit.SECOND));
+                metaDataSet = new MetaDataSet();
+                gtuTypes = new HashSet<>();
+                gtuTypes.add(new GtuTypeData(new GTUType("car")));
+                gtuTypes.add(new GtuTypeData(new GTUType("truck")));
+                metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+                query = getQuery(A58Model.this.network, sampler, metaDataSet, "Not equipped");
+                new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(), query,
+                        new Duration(30, TimeUnit.SECOND));
 
-                        metaDataSet = new MetaDataSet();
-                        gtuTypes = new HashSet<>();
-                        gtuTypes.add(new GtuTypeData(new GTUType("car")));
-                        gtuTypes.add(new GtuTypeData(new GTUType("car_equipped")));
-                        metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
-                        query = getQuery(A58Model.this.network, sampler, metaDataSet, "Cars");
-                        new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(),
-                                query, new Duration(30, TimeUnit.SECOND));
+                // metaDataSet = new MetaDataSet();
+                // gtuTypes = new HashSet<>();
+                // gtuTypes.add(new GtuTypeData(new GTUType("car")));
+                // gtuTypes.add(new GtuTypeData(new GTUType("car_equipped")));
+                // metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+                // query = getQuery(A58Model.this.network, sampler, metaDataSet, "Cars");
+                // new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(),
+                // query,
+                // new Duration(30, TimeUnit.SECOND));
+                //
+                // metaDataSet = new MetaDataSet();
+                // gtuTypes = new HashSet<>();
+                // gtuTypes.add(new GtuTypeData(new GTUType("truck")));
+                // gtuTypes.add(new GtuTypeData(new GTUType("truck_equipped")));
+                // metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+                // query = getQuery(A58Model.this.network, sampler, metaDataSet, "Trucks");
+                // new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(),
+                // query,
+                // new Duration(30, TimeUnit.SECOND));
 
-                        metaDataSet = new MetaDataSet();
-                        gtuTypes = new HashSet<>();
-                        gtuTypes.add(new GtuTypeData(new GTUType("truck")));
-                        gtuTypes.add(new GtuTypeData(new GTUType("truck_equipped")));
-                        metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
-                        query = getQuery(A58Model.this.network, sampler, metaDataSet, "Trucks");
-                        new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(),
-                                query, new Duration(30, TimeUnit.SECOND));
-
-                    }
-                    catch (IMBException exception)
-                    {
-                        throw new RuntimeException(exception);
-                    }
-                }
-            }, "Statistics thread.");
-            ModelControlA58.this.statisticsThread.start();
+            }
+            catch (IMBException exception)
+            {
+                throw new RuntimeException(exception);
+            }
 
             // URL gisURL = URLResource.getResource("/A58/map.xml");
             // System.err.println("GIS-map file: " + gisURL.toString());

@@ -16,6 +16,9 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
 
+import nl.tudelft.simulation.jstats.distributions.DistNormal;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
+
 /**
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -62,12 +65,13 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
      * @param parameterType the parameter type
      * @param mu mean
      * @param sig standard deviation
+     * @param stream random number stream
      */
     public <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>> void addGaussianParameter(final GTUType gtuType,
-            final ParameterType<T> parameterType, final T mu, final T sig)
+            final ParameterType<T> parameterType, final T mu, final T sig, final StreamInterface stream)
     {
         assureTypeInMap(gtuType);
-        this.map.get(gtuType).add(new GaussianEntry<>(parameterType, mu, sig));
+        this.map.get(gtuType).add(new GaussianEntry<>(parameterType, mu, sig, stream));
     }
 
     /**
@@ -75,12 +79,13 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
      * @param parameterType the parameter type
      * @param mu mean
      * @param sig standard deviation
+     * @param stream random number stream
      */
     public void addGaussianParameter(final GTUType gtuType, final ParameterTypeDouble parameterType, final double mu,
-            final double sig)
+            final double sig, final StreamInterface stream)
     {
         assureTypeInMap(gtuType);
-        this.map.get(gtuType).add(new GaussianDoubleEntry(parameterType, mu, sig));
+        this.map.get(gtuType).add(new GaussianDoubleEntry(parameterType, mu, sig, stream));
     }
 
     /**
@@ -134,31 +139,30 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
         /** Parameter type. */
         private final ParameterType<T> parameterType;
 
-        /** Mean. */
+        /** Mean value. */
         private final T mu;
 
-        /** Standard deviation. */
-        private final T sig;
+        /** Random number generator. */
+        private final DistNormal dist;
 
         /**
          * @param parameterType the parameter type
          * @param mu mean
          * @param sig standard deviation
+         * @param stream random number stream
          */
-        public GaussianEntry(final ParameterType<T> parameterType, final T mu, final T sig)
+        public GaussianEntry(final ParameterType<T> parameterType, final T mu, final T sig, final StreamInterface stream)
         {
             this.parameterType = parameterType;
             this.mu = mu;
-            this.sig = sig;
+            this.dist = new DistNormal(stream, mu.si, sig.si);
         }
 
         /** {@inheritDoc} */
         @Override
         public void setValue(final BehavioralCharacteristics behavioralCharacteristics)
         {
-            Random r = new Random();
-            T val = this.mu.instantiateRel(this.mu.getSI() + r.nextGaussian() * this.sig.getSI(),
-                    this.mu.getUnit().getStandardUnit());
+            T val = this.mu.instantiateRel(this.dist.draw(), this.mu.getUnit().getStandardUnit());
             try
             {
                 behavioralCharacteristics.setParameter(this.parameterType, val);
@@ -190,30 +194,27 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
         /** Parameter type. */
         private final ParameterTypeDouble parameterType;
 
-        /** Mean. */
-        private final double mu;
-
-        /** Standard deviation. */
-        private final double sig;
+        /** Random number generator. */
+        private final DistNormal dist;
 
         /**
          * @param parameterType the parameter type
          * @param mu mean
          * @param sig standard deviation
+         * @param stream random number stream
          */
-        public GaussianDoubleEntry(final ParameterTypeDouble parameterType, final double mu, final double sig)
+        public GaussianDoubleEntry(final ParameterTypeDouble parameterType, final double mu, final double sig,
+                final StreamInterface stream)
         {
             this.parameterType = parameterType;
-            this.mu = mu;
-            this.sig = sig;
+            this.dist = new DistNormal(stream, mu, sig);
         }
 
         /** {@inheritDoc} */
         @Override
         public void setValue(final BehavioralCharacteristics behavioralCharacteristics)
         {
-            Random r = new Random();
-            double val = this.mu + r.nextGaussian() * this.sig;
+            double val = this.dist.draw();
             try
             {
                 behavioralCharacteristics.setParameter(this.parameterType, val);

@@ -141,11 +141,11 @@ public class A58OdUtil
         Length lookAhead = new Length(750.0, LengthUnit.SI);
         Length perception = new Length(1.0, LengthUnit.KILOMETER);
         GTUType gtuType = new GTUType("car");
-        bcFactory.addGaussianParameter(gtuType, ParameterTypes.FSPEED, 123.7 / 120, 12 / 120);
+        bcFactory.addGaussianParameter(gtuType, ParameterTypes.FSPEED, 123.7 / 120, 12 / 120, streams.get("gtuClass"));
         bcFactory.addParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead);
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
         gtuType = new GTUType("car_equipped");
-        bcFactory.addGaussianParameter(gtuType, ParameterTypes.FSPEED, 123.7 / 120, 12 / 120);
+        bcFactory.addGaussianParameter(gtuType, ParameterTypes.FSPEED, 123.7 / 120, 12 / 120, streams.get("gtuClass"));
         bcFactory.addParameter(gtuType, ParameterTypes.T, new Duration(0.6, TimeUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.TMAX, new Duration(0.6, TimeUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.A, new Acceleration(2.0, AccelerationUnit.SI));

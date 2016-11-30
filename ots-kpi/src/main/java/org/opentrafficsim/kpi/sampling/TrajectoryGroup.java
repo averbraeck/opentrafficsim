@@ -76,7 +76,7 @@ public class TrajectoryGroup
      * Add trajectory.
      * @param trajectory trajectory to add
      */
-    public final void addTrajectory(final Trajectory trajectory)
+    public final synchronized void addTrajectory(final Trajectory trajectory)
     {
         this.trajectories.add(trajectory);
     }
@@ -132,7 +132,7 @@ public class TrajectoryGroup
      * @param x1 end length
      * @return list of trajectories
      */
-    public final TrajectoryGroup getTrajectoryGroup(final Length x0, final Length x1)
+    public final synchronized TrajectoryGroup getTrajectoryGroup(final Length x0, final Length x1)
     {
         Length minLenght = Length.max(x0, this.startPosition);
         Length maxLenght = Length.min(x1, this.endPosition);
@@ -150,7 +150,7 @@ public class TrajectoryGroup
      * @param t1 end time
      * @return list of trajectories
      */
-    public final TrajectoryGroup getTrajectoryGroup(final Time t0, final Time t1)
+    public final synchronized TrajectoryGroup getTrajectoryGroup(final Time t0, final Time t1)
     {
         TrajectoryGroup out = new TrajectoryGroup(this.startTime.lt(t0) ? t0 : this.startTime, this.laneDirection);
         for (Trajectory trajectory : this.trajectories)
@@ -168,7 +168,7 @@ public class TrajectoryGroup
      * @param t1 end time
      * @return list of trajectories
      */
-    public final TrajectoryGroup getTrajectoryGroup(final Length x0, final Length x1, final Time t0, final Time t1)
+    public final synchronized TrajectoryGroup getTrajectoryGroup(final Length x0, final Length x1, final Time t0, final Time t1)
     {
         TrajectoryGroup out = new TrajectoryGroup(this.startTime.lt(t0) ? t0 : this.startTime, this.laneDirection);
         for (Trajectory trajectory : this.trajectories)

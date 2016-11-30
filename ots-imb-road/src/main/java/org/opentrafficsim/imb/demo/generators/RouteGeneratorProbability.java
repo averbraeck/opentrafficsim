@@ -102,8 +102,6 @@ public class RouteGeneratorProbability implements RouteGenerator
     @Override
     public Route draw() throws ProbabilityException
     {
-        // TODO This method is invoked when the vehicle can be generated, which may be delayed relative to the arrival time by 
-        // the generator. The route should be drawn from at the arrival time. Thus it should be part of the GTU characteristics.
         Time time = this.simulator.getSimulatorTime().getTime();
         try
         {
