@@ -2,22 +2,29 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 
 import java.awt.Color;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
+import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.event.EventProducerInterface;
 import nl.tudelft.simulation.language.Throw;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -40,7 +47,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 public class TrafficLightSensor extends EventProducer implements EventListenerInterface, NonDirectionalOccupancySensor,
-        EventProducerInterface
+        EventProducerInterface, Locatable
 {
     /** */
     private static final long serialVersionUID = 20161103L;
@@ -72,6 +79,9 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
     /** Which side of the position of flank sensor B is the TrafficLightSensor. */
     private final GTUDirectionality directionalityB;
 
+    /** Design line of the sensor. */
+    private final OTSLine3D path;
+
     /**
      * Construct a new traffic light sensor.
      * @param id String; id of this sensor
@@ -83,8 +93,8 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
      * @param entryPosition RelativePosition; the position on the GTUs that trigger the entry events
      * @param exitPosition RelativePosition; the position on the GTUs that trigger the exit events
      * @param simulator OTSDEVSSimulatorInterface; the simulator
-     * @throws NetworkException when the network is inconsistent.
-     * TODO Possibly provide the GTUTypes that trigger the sensor as an argument for the constructor
+     * @throws NetworkException when the network is inconsistent. TODO Possibly provide the GTUTypes that trigger the sensor as
+     *             an argument for the constructor
      */
     public TrafficLightSensor(final String id, final Lane laneA, final Length positionA, final Lane laneB,
             final Length positionB, final List<Lane> intermediateLanes, final TYPE entryPosition, final TYPE exitPosition,
@@ -99,11 +109,11 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
         // Set up detection of GTUs that enter or leave the sensor laterally or appear due to a generator or disappear due to a
         // sink
         this.lanes.add(laneA);
-        this.lanes.add(laneB);
         if (null != intermediateLanes)
         {
             this.lanes.addAll(intermediateLanes);
         }
+        this.lanes.add(laneB);
         for (Lane lane : this.lanes)
         {
             lane.addListener(this, Lane.GTU_ADD_EVENT);
@@ -121,6 +131,57 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
                     GTUDirectionality.DIR_PLUS == findDirectionality(laneB) ? GTUDirectionality.DIR_MINUS
                             : GTUDirectionality.DIR_PLUS;
             // System.out.println("Directionality on B is " + this.directionalityB);
+        }
+        List<OTSPoint3D> outLine = new ArrayList<>();
+        outLine.add(this.entryA.getGeometry().getCentroid());
+        if (null != intermediateLanes && intermediateLanes.size() > 0)
+        {
+            Lane prevLane = laneA;
+            List<Lane> remainingLanes = new ArrayList<>();
+            remainingLanes.addAll(intermediateLanes);
+            remainingLanes.add(laneB);
+            while (remainingLanes.size() > 0)
+            {
+                Lane continuingLane = null;
+                for (Lane nextLane : intermediateLanes)
+                {
+                    if (prevLane.nextLanes(GTUType.ALL).containsKey(nextLane))
+                    {
+                        continuingLane = nextLane;
+                        outLine.add(prevLane.getCenterLine().getLast());
+                        break;
+                    }
+                    else if (prevLane.prevLanes(GTUType.ALL).containsKey(nextLane))
+                    {
+                        continuingLane = nextLane;
+                        outLine.add(prevLane.getCenterLine().getFirst());
+                        break;
+                    }
+                }
+                if (null == continuingLane)
+                {
+                    throw new NetworkException("Cannot find route from laneA to laneB using the provided intermediateLanes");
+                }
+                remainingLanes.remove(continuingLane);
+            }
+        }
+        outLine.add(this.exitB.getGeometry().getCentroid());
+        try
+        {
+            this.path = OTSLine3D.createAndCleanOTSLine3D(outLine);
+        }
+        catch (OTSGeometryException exception)
+        {
+            // This happens if A and B are the same
+            throw new NetworkException(exception);
+        }
+        try
+        {
+            new TrafficLightSensorAnimation(this, simulator);
+        }
+        catch (RemoteException | NamingException | OTSGeometryException exception)
+        {
+            throw new NetworkException(exception);
         }
     }
 
@@ -446,6 +507,38 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
     public final OTSDEVSSimulatorInterface getSimulator()
     {
         return this.entryA.getSimulator();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final DirectedPoint getLocation() throws RemoteException
+    {
+        return this.path.getLocation();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Bounds getBounds() throws RemoteException
+    {
+        return this.path.getBounds();
+    }
+
+    /**
+     * Return the path of this traffic light sensor.
+     * @return OTSLine3D; the path of this traffic light sensor
+     */
+    public final OTSLine3D getPath()
+    {
+        return this.path;
+    }
+    
+    /**
+     * Return the state of this traffic light sensor.
+     * @return boolean; true if one or more GTUs are currently detected; false of no GTUs are currently detected
+     */
+    protected final boolean getOccupancy()
+    {
+        return this.currentGTUs.size() > 0;
     }
 
 }
