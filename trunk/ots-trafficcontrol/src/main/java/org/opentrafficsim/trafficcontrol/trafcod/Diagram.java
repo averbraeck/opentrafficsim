@@ -646,7 +646,7 @@ public class Diagram
      * @param pointNo int; the rank of the requested step
      * @param steps RouteStep... the steps
      * @return RouteStep; the Nth step in the route or null if the route does not have <code>pointNo</code> steps
-     * @throws TrafficLightException
+     * @throws TrafficLightException when the command in a routestep is not recognized
      */
     private RouteStep routePoint(final int pointNo, final RouteStep... steps) throws TrafficLightException
     {

@@ -112,8 +112,8 @@ public class ModelControlA58 extends ModelStarter
      * Tester.
      * @param args empty
      * @throws IMBException shen IMB connection fails
-     * @throws InterruptedException 
-     * @throws InvocationTargetException 
+     * @throws InterruptedException not used right now
+     * @throws InvocationTargetException when running the model control fails
      */
     public static void main(String[] args) throws IMBException, InvocationTargetException, InterruptedException
     {
