@@ -100,7 +100,8 @@ public class VissimNetworkLaneParser implements Serializable {
     private OTSDEVSSimulatorInterface simulator;
 
     /** The network to register the GTUs in. */
-    private OTSNetwork network;
+    @SuppressWarnings("visibilitymodifier")
+    protected OTSNetwork network;
 
     /*****
      * Variables, typically for Vissim network import
