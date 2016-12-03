@@ -77,7 +77,7 @@ public class TestVissimParser extends AbstractWrappableAnimation {
     /** {@inheritDoc} */
     @Override
     protected final void addTabs(final SimpleSimulatorInterface simulator) {
-        return null;
+        return;
     }
 
     /** {@inheritDoc} */
