@@ -293,6 +293,19 @@ public final class Query
     /**
      * Returns a list of TrajectoryGroups in accordance with the query. Each {@code TrajectoryGroup} contains {@code Trajectory}
      * objects pertaining to a {@code SpaceTimeRegion} from the query. A {@code Trajectory} is only included if all the meta
+     * data of this query accepts the trajectory. This method uses {@code Time.ZERO} as start.
+     * @param endTime start time of interval to get trajectory groups for
+     * @param <T> underlying class of meta data type and its value
+     * @return list of trajectory groups in accordance with the query
+     */
+    public <T> List<TrajectoryGroup> getTrajectoryGroups(final Time endTime)
+    {
+        return getTrajectoryGroups(Time.ZERO, endTime);
+    }
+    
+    /**
+     * Returns a list of TrajectoryGroups in accordance with the query. Each {@code TrajectoryGroup} contains {@code Trajectory}
+     * objects pertaining to a {@code SpaceTimeRegion} from the query. A {@code Trajectory} is only included if all the meta
      * data of this query accepts the trajectory.
      * @param startTime start time of interval to get trajectory groups for
      * @param endTime start time of interval to get trajectory groups for

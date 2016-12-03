@@ -567,23 +567,11 @@ public final class Trajectory
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.extendedData == null) ? 0 : this.extendedData.hashCode());
         result = prime * result + ((this.gtuId == null) ? 0 : this.gtuId.hashCode());
-        result = prime * result + ((this.metaData == null) ? 0 : this.metaData.hashCode());
         result = prime * result + this.size;
         if (this.size > 0)
         {
-            result = prime * result + Float.floatToIntBits(this.a[0]);
             result = prime * result + Float.floatToIntBits(this.t[0]);
-            result = prime * result + Float.floatToIntBits(this.v[0]);
-            result = prime * result + Float.floatToIntBits(this.x[0]);
-        }
-        if (this.size > 1)
-        {
-            result = prime * result + Float.floatToIntBits(this.a[this.size - 1]);
-            result = prime * result + Float.floatToIntBits(this.t[this.size - 1]);
-            result = prime * result + Float.floatToIntBits(this.v[this.size - 1]);
-            result = prime * result + Float.floatToIntBits(this.x[this.size - 1]);
         }
         return result;
     }
@@ -609,17 +597,6 @@ public final class Trajectory
         {
             return false;
         }
-        if (this.extendedData == null)
-        {
-            if (other.extendedData != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.extendedData.equals(other.extendedData))
-        {
-            return false;
-        }
         if (this.gtuId == null)
         {
             if (other.gtuId != null)
@@ -631,50 +608,9 @@ public final class Trajectory
         {
             return false;
         }
-        if (this.metaData == null)
-        {
-            if (other.metaData != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.metaData.equals(other.metaData))
-        {
-            return false;
-        }
         if (this.size > 0) 
         {
-            if (this.a[0] != other.a[0])
-            {
-                return false;
-            }
             if (this.t[0] != other.t[0])
-            {
-                return false;
-            }
-            if (this.v[0] != other.v[0])
-            {
-                return false;
-            }
-            if (this.x[0] != other.x[0])
-            {
-                return false;
-            }
-        }
-        if (this.size > 1) {
-            if (this.a[this.size - 1] != other.a[other.size - 1])
-            {
-                return false;
-            }
-            if (this.t[this.size - 1] != other.t[other.size - 1])
-            {
-                return false;
-            }
-            if (this.v[this.size - 1] != other.v[other.size - 1])
-            {
-                return false;
-            }
-            if (this.x[this.size - 1] != other.x[other.size - 1])
             {
                 return false;
             }

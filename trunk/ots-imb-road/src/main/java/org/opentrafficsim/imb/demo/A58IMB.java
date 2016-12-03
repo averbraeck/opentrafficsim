@@ -340,10 +340,8 @@ public class A58IMB extends AbstractWrappableAnimation
     public List<Property<?>> getSupportedProperties()
     {
         List<Property<?>> result = new ArrayList<>();
-        result.add(new ContinuousProperty("CACCpenetration", "CACC penetration",
+        result.add(new ContinuousProperty("penetration", "penetration",
                 "<html>Fraction of vehicles equipped with CACC</html>", 0.0, 0.0, 1.0, "%.2f", false, 13));
-        result.add(new ContinuousProperty("CACCCompliance", "CACC compliance",
-                "<html>Compliance within CADD equipped vehicle population</html>", 0.5, 0.0, 1.0, "%.2f", false, 14));
         return result;
     }
 

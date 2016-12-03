@@ -9,7 +9,9 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -351,7 +353,7 @@ public class GTUTransceiver extends AbstractTransceiver
                 DirectedLanePosition dlp = laneBasedGTU.getReferencePosition();
                 this.notify(new TimedEvent<OTSSimTimeDouble>(LaneBasedGTU.LANEBASED_INIT_EVENT, gtu,
                         new Object[] { gtu.getId(), gtu.getLocation(), gtu.getLength(), gtu.getWidth(), gtu.getBaseColor(),
-                                dlp.getLane(), dlp.getGtuDirection() },
+                                dlp.getLane(), dlp.getGtuDirection(), gtu.getGTUType() },
                         gtu.getSimulator().getSimulatorTime()));
             }
             catch (RemoteException | GTUException exception)
@@ -424,8 +426,7 @@ public class GTUTransceiver extends AbstractTransceiver
         if (LaneBasedGTU.LANEBASED_INIT_EVENT.equals(event.getType()))
         {
             // content contains: [String gtuId, DirectedPoint initialPosition, Length length, Length width, Color
-            // gtuBaseColor,
-            // Lane referenceLane, Length positionOnReferenceLane]
+            // gtuBaseColor, Lane referenceLane, Length positionOnReferenceLane, GTUDirectionality direction, GTUType gtuType]
             Object[] content = (Object[]) event.getContent();
             double timestamp = getSimulator().getSimulatorTime().getTime().si;
             String gtuId = content[0].toString();
@@ -435,9 +436,11 @@ public class GTUTransceiver extends AbstractTransceiver
             double length = ((Length) content[2]).si;
             double width = ((Length) content[3]).si;
             Color color = (Color) content[4];
+            GTUDirectionality direction = (GTUDirectionality) content[7];
+            String gtuType = ((GTUType) content[8]).getId();
             return new Object[] { timestamp, gtuId, location.x, location.y, location.z, location.getRotZ(),
                     lane.getParentLink().getNetwork().getId(), lane.getParentLink().getId(), lane.getId(), longitudinalPosition,
-                    length, width, (byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue() };
+                    length, width, (byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue(), gtuType };
         }
         System.err.println("LaneGTUTransceiver.transformNew: Don't know how to transform event " + event);
         return new Object[] {};

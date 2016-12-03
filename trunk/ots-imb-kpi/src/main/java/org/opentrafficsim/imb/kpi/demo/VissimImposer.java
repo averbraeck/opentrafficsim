@@ -25,7 +25,7 @@ public class VissimImposer
     public static void main(String[] args) throws IMBException
     {
 
-        String host = "vps17642.public.cloudvps.com";
+        String host = "localhost"; //"vps17642.public.cloudvps.com";
         int port = 4000;
         String modelName = "VISSIM";
         int modelId = 1;

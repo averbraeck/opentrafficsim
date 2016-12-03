@@ -1,5 +1,7 @@
 package org.opentrafficsim.kpi.sampling.indicator;
 
+import java.util.List;
+
 import org.djunits.unit.DimensionlessUnit;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.Time;
@@ -23,10 +25,11 @@ public class TotalNumberOfStops extends AbstractIndicator<Dimensionless>
 
     /** {@inheritDoc} */
     @Override
-    public final Dimensionless calculate(final Query query, final Time startTime, final Time endTime)
+    public final Dimensionless calculate(final Query query, final Time startTime, final Time endTime,
+            final List<TrajectoryGroup> trajectoryGroups)
     {
         int sum = 0;
-        for (TrajectoryGroup trajectoryGroup : query.getTrajectoryGroups(startTime, endTime))
+        for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
         {
             for (Trajectory trajectory : trajectoryGroup.getTrajectories())
             {

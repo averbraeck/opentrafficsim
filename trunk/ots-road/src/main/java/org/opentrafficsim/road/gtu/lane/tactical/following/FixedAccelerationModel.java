@@ -116,6 +116,27 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil imple
     {
         return "FixedAccelerationModel " + this.duration + ", " + this.acceleration;
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public final void setA(final Acceleration a)
+    {
+        //
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void setT(final Duration t)
+    {
+        //
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public final void setFspeed(final double fSpeed)
+    {
+        //
+    }
 
     // The following is inherited from CarFollowingModel
 

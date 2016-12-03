@@ -223,10 +223,11 @@ public class LaneBasedGTUGenerator implements Serializable
                 Length leaderPos = leaderDir.isPlus() ? leader.position(lane, leader.getRear())
                         : lane.getLength().minus(leader.position(lane, leader.getRear()));
                 headway = headway.plus(leaderPos.minus(egoPos));
-                if (headway.si < 0)
-                {
-                    headway = new Length(Math.abs(headway.si), headway.getUnit());
-                }
+                // What? Allow accident?
+//                if (headway.si < 0)
+//                {
+//                    headway = new Length(Math.abs(headway.si), headway.getUnit());
+//                }
                 // TODO this is a hack, what if the reference position is not the middle?
                 headway = new Length(headway.si - characteristics.getLength().si / 2, LengthUnit.SI);
                 if (shortestHeadway.gt(headway))

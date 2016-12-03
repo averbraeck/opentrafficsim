@@ -183,6 +183,27 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
     {
         return "Fixed sequential acceleration model";
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public final void setA(final Acceleration a)
+    {
+        //
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void setT(final Duration t)
+    {
+        //
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public final void setFspeed(final double fSpeed)
+    {
+        //
+    }
 
     // The following is inherited from CarFollowingModel
 

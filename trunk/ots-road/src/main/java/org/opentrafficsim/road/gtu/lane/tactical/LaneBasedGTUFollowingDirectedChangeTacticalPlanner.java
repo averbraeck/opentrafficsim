@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.djunits.unit.AccelerationUnit;
@@ -146,10 +147,15 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     {
         try
         {
+            
             // ask Perception for the local situation
             LaneBasedGTU laneBasedGTU = getGtu();
             DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);
             BehavioralCharacteristics behavioralCharacteristics = laneBasedGTU.getBehavioralCharacteristics();
+            // This is the only interaction between the car-following model and the behavioral characteristics
+            getCarFollowingModelOld().setA(behavioralCharacteristics.getParameter(ParameterTypes.A));
+            getCarFollowingModelOld().setT(behavioralCharacteristics.getParameter(ParameterTypes.T));
+            getCarFollowingModelOld().setFspeed(behavioralCharacteristics.getParameter(ParameterTypes.FSPEED));
 
             // start with the turn indicator off -- this can change during the method
             laneBasedGTU.setTurnIndicatorStatus(TurnIndicatorStatus.NONE);
@@ -210,6 +216,11 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                     }
                 }
             }
+            if (this.syncHeadway != null && this.syncHeadway.isParallel() && getGtu().getSpeed().si < 10)
+            {
+                // do not sync at low speeds when being parallel
+                this.syncHeadway = null;
+            }
 
             // Cooperation
             this.coopHeadway = null;
@@ -267,7 +278,8 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                     DirectedLaneMovementStep dlms = dlcm.computeLaneChangeAndAcceleration(laneBasedGTU,
                             LateralDirectionality.LEFT, sameLaneTraffic, simplePerception.getNeighboringHeadwaysLeft(),
                             behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD), simplePerception.getSpeedLimit(),
-                            new Acceleration(1.0, AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI),
+                            // changes 1.0 to 0.0, no bias to the right
+                            new Acceleration(0.0, AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI),
                             new Duration(0.5, TimeUnit.SECOND));
                     if (dlms.getLaneChange() != null)
                     {
@@ -313,6 +325,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                     DirectedLaneMovementStep dlms = dlcm.computeLaneChangeAndAcceleration(laneBasedGTU,
                             LateralDirectionality.RIGHT, sameLaneTraffic, simplePerception.getNeighboringHeadwaysRight(),
                             behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD), simplePerception.getSpeedLimit(),
+                            // 1.0 = bias?
                             new Acceleration(1.0, AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI),
                             new Duration(0.5, TimeUnit.SECOND));
                     if (dlms.getLaneChange() != null)
@@ -380,7 +393,12 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         // No lane change. Continue on current lane.
         AccelerationStep accelerationStep = mostLimitingAccelerationStep(lanePathInfo, simplePerception.getForwardHeadwayGTU(),
                 simplePerception.getForwardHeadwayObject());
-
+        
+        if (getGtu().getId().equals("40"))
+        {
+            System.out.println("GTU 40 has " + accelerationStep.getAcceleration() + " at " + startTime);
+        }
+        
         // see if we have to continue standing still. In that case, generate a stand still plan
         if (accelerationStep.getAcceleration().si < 1E-6 && laneBasedGTU.getSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
         {
@@ -462,9 +480,22 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             throws GTUException, NetworkException, ParameterException, OperationalPlanException
     {
 
+        // TODO remove this hack
         if (!((AbstractLaneBasedGTU) gtu).isSafeToChange())
         {
             return false;
+        }
+
+        // rear should be able to change
+        Map<Lane, Length> positions = getGtu().positions(getGtu().getRear());
+        for (Lane lane : positions.keySet())
+        {
+            Length pos = positions.get(lane);
+            if (pos.si > 0.0 && pos.si < lane.getLength().si
+                    && lane.accessibleAdjacentLanes(direction, getGtu().getGTUType()).isEmpty())
+            {
+                return false;
+            }
         }
 
         Collection<Headway> otherLaneTraffic;
@@ -579,10 +610,10 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         Length maxDistance = sinkAtEnd ? new Length(Double.MAX_VALUE, LengthUnit.SI)
                 : Length.min(getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD),
                         lanePathInfo.getPath().getLength().minus(getGtu().getLength().multiplyBy(2.0)));
-        //bc.setParameter(ParameterTypes.B, bc.getParameter(ParameterTypes.B0));
+        // bc.setParameter(ParameterTypes.B, bc.getParameter(ParameterTypes.B0));
         AccelerationStep mostLimitingAccelerationStep = getCarFollowingModelOld().computeAccelerationStepWithNoLeader(getGtu(),
                 maxDistance, simplePerception.getSpeedLimit());
-        //bc.resetParameter(ParameterTypes.B);
+        // bc.resetParameter(ParameterTypes.B);
         Acceleration minB = bc.getParameter(ParameterTypes.B).neg();
         Acceleration numericallySafeB =
                 Acceleration.max(minB, getGtu().getSpeed().divideBy(mostLimitingAccelerationStep.getDuration()).neg());
@@ -628,8 +659,8 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             }
             if (adjust.getAcceleration().lt(minB))
             {
-                mostLimitingAccelerationStep = new AccelerationStep(numericallySafeB, mostLimitingAccelerationStep.getValidUntil(),
-                        mostLimitingAccelerationStep.getDuration());
+                mostLimitingAccelerationStep = new AccelerationStep(numericallySafeB,
+                        mostLimitingAccelerationStep.getValidUntil(), mostLimitingAccelerationStep.getDuration());
             }
             else
             {

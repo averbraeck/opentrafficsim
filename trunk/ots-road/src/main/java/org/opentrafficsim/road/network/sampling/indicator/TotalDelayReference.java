@@ -38,11 +38,12 @@ public class TotalDelayReference extends AbstractIndicator<Duration>
 
     /** {@inheritDoc} */
     @Override
-    protected final Duration calculate(final Query query, final Time startTime, final Time endTime)
+    protected final Duration calculate(final Query query, final Time startTime, final Time endTime,
+            final List<TrajectoryGroup> trajectoryGroups)
     {
         Map<String, Duration> gtuTimes = new HashMap<>();
         Map<String, Duration> gtuRefTimes = new HashMap<>();
-        for (TrajectoryGroup trajectoryGroup : query.getTrajectoryGroups(startTime, endTime))
+        for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
         {
             try
             {
@@ -64,7 +65,7 @@ public class TotalDelayReference extends AbstractIndicator<Duration>
                             "TotalDelayReference can only work with trajectories that have %s extended data.",
                             REF_SPEED_TYPE.getId());
                     List<FloatSpeed> refSpeed = trajectory.getExtendedData(REF_SPEED_TYPE);
-                    FloatLengthVector x = trajectory.getPosition();
+                    float[] x = trajectory.getX();
                     for (int i = 1; i < refSpeed.size(); i++)
                     {
                         double refV;
@@ -76,14 +77,14 @@ public class TotalDelayReference extends AbstractIndicator<Duration>
                         {
                             refV = (refSpeed.get(i - 1).si + refSpeed.get(i).si) / 2.0;
                         }
-                        double dx = x.get(i).si - x.get(i - 1).si;
+                        double dx = x[i] - x[i - 1];
                         sumRefTime = sumRefTime.plus(new Duration(dx / refV, TimeUnit.SI));
                     }
                     gtuTimes.put(trajectory.getGtuId(), sumTime.plus(trajectory.getTotalDuration()));
                     gtuRefTimes.put(trajectory.getGtuId(), sumRefTime);
                 }
             }
-            catch (SamplingException | ValueException exception)
+            catch (SamplingException exception)
             {
                 throw new RuntimeException("Exception while trying to determine delay in trajectory.", exception);
             }

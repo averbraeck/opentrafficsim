@@ -72,7 +72,7 @@ public class ModelControlKPI extends ModelStarter
         {
             public void run()
             {
-                VissimQueryKPI.run(parameters, imbConnection);
+                VissimQueryKPI.run(imbConnection);
             }
         });
         this.kpiThread.start();

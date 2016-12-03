@@ -384,13 +384,13 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                 {
                     // -----> O ----->, GTU moves ---->
                     lastGtuDir = GTUDirectionality.DIR_PLUS;
-                    lastNode = lastLink.getEndNode();
+                    lastNode = link.getEndNode();
                 }
                 else
                 {
                     // -----> O <-----, GTU moves ---->
                     lastGtuDir = GTUDirectionality.DIR_MINUS;
-                    lastNode = lastLink.getEndNode();
+                    lastNode = link.getEndNode();
                 }
             }
             else
@@ -398,13 +398,13 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                 if (lastLink.getStartNode().equals(link.getStartNode()))
                 {
                     // <----- O ----->, GTU moves ---->
-                    lastNode = lastLink.getStartNode();
+                    lastNode = link.getStartNode();
                     lastGtuDir = GTUDirectionality.DIR_PLUS;
                 }
                 else
                 {
                     // <----- O <-----, GTU moves ---->
-                    lastNode = lastLink.getStartNode();
+                    lastNode = link.getStartNode();
                     lastGtuDir = GTUDirectionality.DIR_MINUS;
                 }
             }

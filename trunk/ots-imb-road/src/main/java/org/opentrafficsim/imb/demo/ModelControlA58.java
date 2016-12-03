@@ -16,16 +16,6 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import nl.javel.gisbeans.io.esri.CoordinateTransform;
-import nl.tno.imb.TConnection;
-import nl.tno.imb.mc.ModelParameters;
-import nl.tno.imb.mc.ModelStarter;
-import nl.tno.imb.mc.Parameter;
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.Simulator;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.language.io.URLResource;
-
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -33,7 +23,6 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.ContinuousProperty;
-import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -72,6 +61,16 @@ import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.xml.sax.SAXException;
+
+import nl.javel.gisbeans.io.esri.CoordinateTransform;
+import nl.tno.imb.TConnection;
+import nl.tno.imb.mc.ModelParameters;
+import nl.tno.imb.mc.ModelStarter;
+import nl.tno.imb.mc.Parameter;
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.Simulator;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.io.URLResource;
 
 /**
  * <p>
@@ -157,7 +156,7 @@ public class ModelControlA58 extends ModelStarter
     @Override
     public void startModel(ModelParameters parameters, TConnection imbConnection)
     {
-        this.penetrationRate = 1.0;
+        this.penetrationRate = 0.0;
         if (parameters != null && parameters.parameterExists("penetration"))
         {
             try
@@ -266,23 +265,11 @@ public class ModelControlA58 extends ModelStarter
     public void parameterRequest(ModelParameters parameters)
     {
         List<Property<?>> propertyList = new A58IMB().getSupportedProperties();
-        Property<?> truckFraction = findByKeyInList(propertyList, "TrafficComposition");
-        if (null != truckFraction)
-        {
-            parameters.addParameter(new Parameter("Truck fraction (range 0.0 - 1.0)",
-                    ((ProbabilityDistributionProperty) truckFraction).getValue()[1]));
-        }
-        Property<?> caccPenetration = findByKeyInList(propertyList, "CACCpenetration");
+        Property<?> caccPenetration = findByKeyInList(propertyList, "penetration");
         if (null != caccPenetration)
         {
             parameters.addParameter(
-                    new Parameter("CACC penetration (range 0.0 - 1.0)", ((ContinuousProperty) caccPenetration).getValue()));
-        }
-        Property<?> caccCompliance = findByKeyInList(propertyList, "CACCCompliance");
-        if (null != caccCompliance)
-        {
-            parameters.addParameter(
-                    new Parameter("CACC compliance (range 0.0 - 1.0)", ((ContinuousProperty) caccCompliance).getValue()));
+                    new Parameter("penetration", ((ContinuousProperty) caccPenetration).getValue()));
         }
         System.out.println("(possibly) modified paramters: " + parameters);
     }
@@ -351,7 +338,7 @@ public class ModelControlA58 extends ModelStarter
         @Override
         protected Double makeAnimationRectangle()
         {
-            return new Rectangle2D.Double(150000, 385000, 5500, 5000);
+            return new Rectangle2D.Double(136000, 388000, 21000, 9000);
         }
 
     }
@@ -423,7 +410,7 @@ public class ModelControlA58 extends ModelStarter
             }
 
             // Stream to allow the xml-file to be retrievable from a JAR file
-            InputStream stream = URLResource.getResourceAsStream("/A58v2.xml");
+            InputStream stream = URLResource.getResourceAsStream("/A58v3.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
             {
