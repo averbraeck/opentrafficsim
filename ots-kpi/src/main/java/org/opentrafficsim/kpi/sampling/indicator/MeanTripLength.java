@@ -1,6 +1,7 @@
 package org.opentrafficsim.kpi.sampling.indicator;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -25,11 +26,12 @@ public class MeanTripLength extends AbstractIndicator<Length>
 
     /** {@inheritDoc} */
     @Override
-    public final Length calculate(final Query query, final Time startTime, final Time endTime)
+    public final Length calculate(final Query query, final Time startTime, final Time endTime,
+            final List<TrajectoryGroup> trajectoryGroups)
     {
         Length sum = Length.ZERO;
         Set<String> gtuIds = new HashSet<>();
-        for (TrajectoryGroup trajectoryGroup : query.getTrajectoryGroups(startTime, endTime))
+        for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
         {
             for (Trajectory trajectory : trajectoryGroup.getTrajectories())
             {

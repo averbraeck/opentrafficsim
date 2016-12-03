@@ -59,6 +59,18 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
         assureTypeInMap(gtuType);
         this.map.get(gtuType).add(new FixedEntry<>(parameterType, value));
     }
+    
+    /**
+     * @param gtuType the gtu type
+     * @param parameterType the parameter type
+     * @param value the value of the parameter
+     */
+    public void addParameter(final GTUType gtuType, final ParameterTypeDouble parameterType,
+            final double value)
+    {
+        assureTypeInMap(gtuType);
+        this.map.get(gtuType).add(new FixedEntryDouble(parameterType, value));
+    }
 
     /**
      * @param gtuType the gtu type
@@ -255,6 +267,52 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
          * @param value the fixed value
          */
         public FixedEntry(final ParameterType<T> parameterType, final T value)
+        {
+            this.parameterType = parameterType;
+            this.value = value;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void setValue(final BehavioralCharacteristics behavioralCharacteristics)
+        {
+            try
+            {
+                behavioralCharacteristics.setParameter(this.parameterType, this.value);
+            }
+            catch (ParameterException exception)
+            {
+                throw new RuntimeException("Trying to set value " + this.value + " for parameter " + this.parameterType
+                        + ", which is out of range.", exception);
+            }
+        }
+
+    }
+    
+    /**
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 30 nov. 2016 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    private final class FixedEntryDouble implements ParameterEntry
+    {
+
+        /** Parameter type. */
+        private final ParameterTypeDouble parameterType;
+
+        /** Value. */
+        private final double value;
+
+        /**
+         * @param parameterType the parameter type
+         * @param value the fixed value
+         */
+        public FixedEntryDouble(final ParameterTypeDouble parameterType, final double value)
         {
             this.parameterType = parameterType;
             this.value = value;

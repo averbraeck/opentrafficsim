@@ -1,5 +1,7 @@
 package org.opentrafficsim.kpi.sampling.indicator;
 
+import java.util.List;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.kpi.sampling.Query;
@@ -22,10 +24,11 @@ public class TotalTravelTime extends AbstractIndicator<Duration>
 
     /** {@inheritDoc} */
     @Override
-    public final Duration calculate(final Query query, final Time startTime, final Time endTime)
+    public final Duration calculate(final Query query, final Time startTime, final Time endTime,
+            final List<TrajectoryGroup> trajectoryGroups)
     {
         Duration sum = Duration.ZERO;
-        for (TrajectoryGroup trajectoryGroup : query.getTrajectoryGroups(startTime, endTime))
+        for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
         {
             for (Trajectory trajectory : trajectoryGroup.getTrajectories())
             {

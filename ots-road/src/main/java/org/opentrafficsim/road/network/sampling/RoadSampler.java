@@ -1,9 +1,7 @@
 package org.opentrafficsim.road.network.sampling;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.djunits.unit.TimeUnit;
@@ -18,6 +16,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.Sampler;
@@ -154,32 +153,32 @@ public class RoadSampler extends Sampler implements EventListenerInterface
     {
         ((LaneData) kpiLaneDirection.getLaneData()).getLane().removeListener(this, Lane.GTU_ADD_EVENT);
         ((LaneData) kpiLaneDirection.getLaneData()).getLane().removeListener(this, Lane.GTU_REMOVE_EVENT);
-        Lane lane = ((LaneData) kpiLaneDirection.getLaneData()).getLane();
-        int count = 0;
-        List<LaneBasedGTU> currentGtus = new ArrayList<>();
-        try
-        {
-            for (LaneBasedGTU gtu : lane.getGtuList())
-            {
-                DirectedLanePosition dlp = gtu.getReferencePosition();
-                if (dlp.getLane().equals(lane) && sameDirection(kpiLaneDirection.getKpiDirection(), dlp.getGtuDirection()))
-                {
-                    currentGtus.add(gtu);
-                    count++;
-                }
-            }
-            for (LaneBasedGTU gtu : currentGtus)
-            {
-                // Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_removal}
-                notify(new TimedEvent<>(Lane.GTU_REMOVE_EVENT, lane, new Object[] { gtu.getId(), gtu, count },
-                        gtu.getSimulator().getSimulatorTime()));
-                count--;
-            }
-        }
-        catch (RemoteException | GTUException exception)
-        {
-            throw new RuntimeException("Position cannot be obtained for GTU that is registered on a lane", exception);
-        }
+        // Lane lane = ((LaneData) kpiLaneDirection.getLaneData()).getLane();
+        // int count = 0;
+        // List<LaneBasedGTU> currentGtus = new ArrayList<>();
+        // try
+        // {
+        // for (LaneBasedGTU gtu : lane.getGtuList())
+        // {
+        // DirectedLanePosition dlp = gtu.getReferencePosition();
+        // if (dlp.getLane().equals(lane) && sameDirection(kpiLaneDirection.getKpiDirection(), dlp.getGtuDirection()))
+        // {
+        // currentGtus.add(gtu);
+        // count++;
+        // }
+        // }
+        // for (LaneBasedGTU gtu : currentGtus)
+        // {
+        // // Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_removal, Length position}
+        // notify(new TimedEvent<>(Lane.GTU_REMOVE_EVENT, lane, new Object[] { gtu.getId(), gtu, count },
+        // gtu.getSimulator().getSimulatorTime()));
+        // count--;
+        // }
+        // }
+        // catch (RemoteException | GTUException exception)
+        // {
+        // throw new RuntimeException("Position cannot be obtained for GTU that is registered on a lane", exception);
+        // }
     }
 
     /**
@@ -409,7 +408,7 @@ public class RoadSampler extends Sampler implements EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "RoadSampler [samplingInterval=" + this.samplingInterval + ", eventPerGtu=" + this.eventPerGtu + "]";
     }

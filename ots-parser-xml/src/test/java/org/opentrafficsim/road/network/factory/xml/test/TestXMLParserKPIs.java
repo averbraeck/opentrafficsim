@@ -5,6 +5,7 @@ import java.awt.geom.Rectangle2D.Double;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
@@ -31,6 +32,7 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.kpi.sampling.Query;
+import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 import org.opentrafficsim.kpi.sampling.indicator.MeanSpeed;
 import org.opentrafficsim.kpi.sampling.indicator.MeanTravelTimePerKm;
 import org.opentrafficsim.kpi.sampling.indicator.MeanTripLength;
@@ -43,7 +45,6 @@ import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.SpeedLimit;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -227,13 +228,15 @@ public class TestXMLParserKPIs extends AbstractWrappableAnimation
 
     public void publishKpis(double time, final OTSDEVSSimulatorInterface simulator, final Query query)
     {
-        Length tdist = this.totalTravelDistance.getValue(query, new Time(time, TimeUnit.SI));
-        Duration ttt = this.totalTravelTime.getValue(query, new Time(time, TimeUnit.SI));
-        Speed ms = this.meanSpeed.getValue(query, new Time(time, TimeUnit.SI));
-        Duration mttpkm = this.meanTravelTimePerKm.getValue(query, new Time(time, TimeUnit.SI));
-        Length mtl = this.meanTripLength.getValue(query, new Time(time, TimeUnit.SI));
-        Duration tdel = this.totalDelay.getValue(query, new Time(time, TimeUnit.SI));
-        Dimensionless nos = this.totalNumberOfStops.getValue(query, new Time(time, TimeUnit.SI));
+        Time t = new Time(time, TimeUnit.SI);
+        List<TrajectoryGroup> groups = query.getTrajectoryGroups(t);
+        Length tdist = this.totalTravelDistance.getValue(query, t, groups);
+        Duration ttt = this.totalTravelTime.getValue(query, t, groups);
+        Speed ms = this.meanSpeed.getValue(query, t, groups);
+        Duration mttpkm = this.meanTravelTimePerKm.getValue(query, t, groups);
+        Length mtl = this.meanTripLength.getValue(query, t, groups);
+        Duration tdel = this.totalDelay.getValue(query, t, groups);
+        Dimensionless nos = this.totalNumberOfStops.getValue(query, t, groups);
         System.out.println("===== @time " + time + " s =====");
         System.out.println("Total distance " + tdist);
         System.out.println("Total travel time " + ttt);

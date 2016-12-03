@@ -254,4 +254,5 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
         Length result = new Length(Math.min((minimumSI + maximumSI) / 2, maxDistance.si), LengthUnit.SI);
         return result;
     }
+    
 }

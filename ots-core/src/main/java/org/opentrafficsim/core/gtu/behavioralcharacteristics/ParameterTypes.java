@@ -143,10 +143,10 @@ public class ParameterTypes
 
         LOOKAHEAD = new ParameterTypeLength("Look-ahead", "Look-ahead distance.", new Length(295.0, LengthUnit.SI), POSITIVE);
 
-        LOOKBACK = new ParameterTypeLength("Look-back", "Look-back distance.", new Length(100, LengthUnit.SI), POSITIVE);
+        LOOKBACK = new ParameterTypeLength("Look-back", "Look-back distance.", new Length(200, LengthUnit.SI), POSITIVE);
 
         LOOKBACKOLD = new ParameterTypeLength("Look-back old", "Look-back distance (old version for MOBIL code).", 
-            new Length(-100, LengthUnit.SI), NEGATIVE);
+            new Length(-200, LengthUnit.SI), NEGATIVE);
         
         FSPEED = new ParameterTypeDouble("fSpeed", "Speed limit adherence factor.", 1.0, POSITIVE);
 

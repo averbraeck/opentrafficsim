@@ -15,6 +15,7 @@ import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.connector.Connector.IMBEventType;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
 import org.opentrafficsim.kpi.sampling.Query;
+import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 import org.opentrafficsim.kpi.sampling.indicator.MeanSpeed;
 import org.opentrafficsim.kpi.sampling.indicator.MeanTravelTimePerKm;
 import org.opentrafficsim.kpi.sampling.indicator.MeanTripLength;
@@ -350,35 +351,39 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
     public void sendStatisticsUpdate() throws IMBException, SimRuntimeException
     {
         double time = getSimulator().getSimulatorTime().getTime().si;
-        // Query q = StatisticsGTULaneTransceiver.this.query;
-        // Time timeObject = new Time(time, TimeUnit.SI);
-        // Length tdist = StatisticsGTULaneTransceiver.this.totalTravelDistance.getValue(q, timeObject);
-        // Duration ttt = StatisticsGTULaneTransceiver.this.totalTravelTime.getValue(q, timeObject);
-        // Speed ms = StatisticsGTULaneTransceiver.this.meanSpeed.getValue(q, timeObject);
-        // Duration mttpkm = StatisticsGTULaneTransceiver.this.meanTravelTimePerKm.getValue(q, timeObject);
-        // Length mtl = StatisticsGTULaneTransceiver.this.meanTripLength.getValue(q, timeObject);
-        // Duration tdel;
-        // if (q.getSampler().contains(REF_SPEED_TYPE))
-        // {
-        // tdel = StatisticsGTULaneTransceiver.this.totalDelayReference.getValue(q, timeObject);
-        // }
-        // else
-        // {
-        // tdel = StatisticsGTULaneTransceiver.this.totalDelay.getValue(q, timeObject);
-        // }
-        // Dimensionless nos = StatisticsGTULaneTransceiver.this.totalNumberOfStops.getValue(q, timeObject);
-        // System.out.println("===== @time " + time + " s on " + q.getId() + " =====");
-        // System.out.println("Total distance " + tdist);
-        // System.out.println("Total travel time " + ttt);
-        // System.out.println("Mean speed " + ms);
-        // System.out.println("Mean travel time " + mttpkm + " (per km)");
-        // System.out.println("Mean trip length " + mtl);
-        // System.out.println("Total delay " + tdel);
-        // System.out.println("Number of stops " + nos);
-        // getConnector().postIMBMessage("StatisticsGTULane", IMBEventType.CHANGE,
-        // new Object[] { time, q.getId(), tdist.si, ttt.si, ms.si, mttpkm.si, tdel.si, mtl.si, nos.si });
-        Thread thread = new Thread(new StatisticsRunnable(time), "Statistics calculation thread");
-        thread.start();
+        Query q = StatisticsGTULaneTransceiver.this.query;
+        Time timeObject = new Time(time, TimeUnit.SI);
+        List<TrajectoryGroup> groups = q.getTrajectoryGroups(timeObject);
+
+        Length tdist = StatisticsGTULaneTransceiver.this.totalTravelDistance.getValue(q, timeObject, groups);
+        Duration ttt = StatisticsGTULaneTransceiver.this.totalTravelTime.getValue(q, timeObject, groups);
+        Speed ms = StatisticsGTULaneTransceiver.this.meanSpeed.getValue(q, timeObject, groups);
+        Duration mttpkm = StatisticsGTULaneTransceiver.this.meanTravelTimePerKm.getValue(q, timeObject, groups);
+        Length mtl = StatisticsGTULaneTransceiver.this.meanTripLength.getValue(q, timeObject, groups);
+        Duration tdel;
+        if (q.getSampler().contains(REF_SPEED_TYPE))
+        {
+            tdel = StatisticsGTULaneTransceiver.this.totalDelayReference.getValue(q, timeObject, groups);
+        }
+        else
+        {
+            tdel = StatisticsGTULaneTransceiver.this.totalDelay.getValue(q, timeObject, groups);
+        }
+        Dimensionless nos = StatisticsGTULaneTransceiver.this.totalNumberOfStops.getValue(q, timeObject, groups);
+        System.out.println("===== @time " + time + " s on " + q.getId() + " =====");
+        System.out.println("Total distance " + tdist);
+        System.out.println("Total travel time " + ttt);
+        System.out.println("Mean speed " + ms);
+        System.out.println("Mean travel time " + mttpkm + " (per km)");
+        System.out.println("Mean trip length " + mtl);
+        System.out.println("Total delay " + tdel);
+        System.out.println("Number of stops " + nos);
+        getConnector().postIMBMessage("StatisticsGTULane", IMBEventType.CHANGE,
+                new Object[] { time, q.getId(), tdist.si, ttt.si, ms.si, mttpkm.si, tdel.si, mtl.si, nos.si });
+
+        // Thread thread = new Thread(new StatisticsRunnable(time, groups), "Statistics calculation thread");
+        // thread.start();
+
         getSimulator().scheduleEventRel(StatisticsGTULaneTransceiver.this.transmissionInterval,
                 StatisticsGTULaneTransceiver.this, StatisticsGTULaneTransceiver.this, "sendStatisticsUpdate", new Object[] {});
     }
@@ -400,6 +405,9 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
         /** Time of statistics. */
         private final double time;
 
+        /** Trajectory groups. */
+        private List<TrajectoryGroup> sourceGroups;
+
         /**
          * @param time time of statistics
          */
@@ -408,26 +416,37 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
             this.time = time;
         }
 
+        /**
+         * @param time time of statistics
+         * @param sourceGroups groups
+         */
+        public StatisticsRunnable(final double time, final List<TrajectoryGroup> sourceGroups)
+        {
+            this.time = time;
+            this.sourceGroups = sourceGroups;
+        }
+
         @Override
         public void run()
         {
             Query q = StatisticsGTULaneTransceiver.this.query;
             Time timeObject = new Time(this.time, TimeUnit.SI);
-            Length tdist = StatisticsGTULaneTransceiver.this.totalTravelDistance.getValue(q, timeObject);
-            Duration ttt = StatisticsGTULaneTransceiver.this.totalTravelTime.getValue(q, timeObject);
-            Speed ms = StatisticsGTULaneTransceiver.this.meanSpeed.getValue(q, timeObject);
-            Duration mttpkm = StatisticsGTULaneTransceiver.this.meanTravelTimePerKm.getValue(q, timeObject);
-            Length mtl = StatisticsGTULaneTransceiver.this.meanTripLength.getValue(q, timeObject);
+            List<TrajectoryGroup> groups = this.sourceGroups == null ? q.getTrajectoryGroups(timeObject) : this.sourceGroups;
+            Length tdist = StatisticsGTULaneTransceiver.this.totalTravelDistance.getValue(q, timeObject, groups);
+            Duration ttt = StatisticsGTULaneTransceiver.this.totalTravelTime.getValue(q, timeObject, groups);
+            Speed ms = StatisticsGTULaneTransceiver.this.meanSpeed.getValue(q, timeObject, groups);
+            Duration mttpkm = StatisticsGTULaneTransceiver.this.meanTravelTimePerKm.getValue(q, timeObject, groups);
+            Length mtl = StatisticsGTULaneTransceiver.this.meanTripLength.getValue(q, timeObject, groups);
             Duration tdel;
             if (q.getSampler().contains(REF_SPEED_TYPE))
             {
-                tdel = StatisticsGTULaneTransceiver.this.totalDelayReference.getValue(q, timeObject);
+                tdel = StatisticsGTULaneTransceiver.this.totalDelayReference.getValue(q, timeObject, groups);
             }
             else
             {
-                tdel = StatisticsGTULaneTransceiver.this.totalDelay.getValue(q, timeObject);
+                tdel = StatisticsGTULaneTransceiver.this.totalDelay.getValue(q, timeObject, groups);
             }
-            Dimensionless nos = StatisticsGTULaneTransceiver.this.totalNumberOfStops.getValue(q, timeObject);
+            Dimensionless nos = StatisticsGTULaneTransceiver.this.totalNumberOfStops.getValue(q, timeObject, groups);
             System.out.println("===== @time " + this.time + " s on " + q.getId() + " =====");
             System.out.println("Total distance " + tdist);
             System.out.println("Total travel time " + ttt);

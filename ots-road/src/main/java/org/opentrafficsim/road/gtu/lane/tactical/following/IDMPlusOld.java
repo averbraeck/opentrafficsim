@@ -37,19 +37,19 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     private final Length s0;
 
     /** Longitudinal acceleration [m/s^2]. */
-    private final Acceleration a;
+    private Acceleration a;
 
     /** Longitudinal deceleration [m/s^2]. (Should be a positive value even though it is a <b>de</b>celeration.) */
     private final Acceleration b;
 
     /** Safe time headway. */
-    private final Duration tSafe;
+    private Duration tSafe;
 
     /**
      * Mean speed limit adherence (1.0: mean free speed equals the speed limit; 1.1: mean free speed equals 110% of the speed
      * limit, etc.).
      */
-    private final double delta;
+    private double delta;
 
     /**
      * Default step size used by IDMPlus (not defined in the paper, but 0.5s is a reasonable trade-off between computational
@@ -180,6 +180,27 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     {
         return String.format("%s (a=%.1fm/s\u00b2, b=%.1fm/s\u00b2, s0=%.1fm, tSafe=%.1fs, delta=%.2f)", getName(),
                 this.a.getSI(), this.b.getSI(), this.s0.getSI(), this.tSafe.getSI(), this.delta);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public final void setA(final Acceleration a)
+    {
+        this.a = a;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void setT(final Duration t)
+    {
+        this.tSafe = t;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public final void setFspeed(final double fSpeed)
+    {
+        this.delta = fSpeed;
     }
 
     // The following is inherited from CarFollowingModel

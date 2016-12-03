@@ -166,9 +166,9 @@ public class TrajectoryAcceptList
      */
     public final boolean isAccepted(final Trajectory trajectory)
     {
-        Throw.when(!this.trajectoryList.contains(trajectory), IllegalArgumentException.class,
-                "The trajectory is not part of the trajectory accept list.");
-        return this.trajectoryMap.get(trajectory);
+        Boolean out = this.trajectoryMap.get(trajectory);
+        Throw.when(out == null, IllegalArgumentException.class, "The trajectory is not part of the trajectory accept list.");
+        return out;
     }
 
     /** {@inheritDoc} */

@@ -146,16 +146,17 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             enterLane(lane, directedLanePosition.getPosition(), directedLanePosition.getGtuDirection());
         }
 
-        // TODO The above enterLane creates an event with speed = 0.0, while the below init creates a move event with speed at 
+        // TODO The above enterLane creates an event with speed = 0.0, while the below init creates a move event with speed at
         // the same time.
-        
+
         // initiate the actual move
         super.init(strategicalPlanner, initialLocation, initialSpeed);
 
         Lane referenceLane = getReferencePosition().getLane();
         fireTimedEvent(LaneBasedGTU.LANEBASED_INIT_EVENT,
                 new Object[] { getId(), initialLocation, getLength(), getWidth(), getBaseColor(), referenceLane,
-                        position(referenceLane, getReference()), this.lanesCurrentOperationalPlan.get(referenceLane) },
+                        position(referenceLane, getReference()), this.lanesCurrentOperationalPlan.get(referenceLane),
+                        getGTUType() },
                 getSimulator().getSimulatorTime());
     }
 
@@ -265,7 +266,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             lanesToBeRemoved.add(lane);
         }
 
-        // store the new positions, and sample statistics 
+        // store the new positions, and sample statistics
         // start with current link position, these will be overwritten, except if from a lane no adjacent lane is found, i.e.
         // changing over a continuous line when probably the reference point is past the line
         Map<Link, Double> newLinkPositions = new HashMap<>(this.fractionalLinkPositions);

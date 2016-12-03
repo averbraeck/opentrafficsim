@@ -1,5 +1,7 @@
 package org.opentrafficsim.kpi.sampling.indicator;
 
+import java.util.List;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -36,11 +38,12 @@ public class TotalDelay extends AbstractIndicator<Duration>
 
     /** {@inheritDoc} */
     @Override
-    public final Duration calculate(final Query query, final Time startTime, final Time endTime)
+    public final Duration calculate(final Query query, final Time startTime, final Time endTime,
+            final List<TrajectoryGroup> trajectoryGroups)
     {
         Duration sumTime = Duration.ZERO;
         Length sumDist = Length.ZERO;
-        for (TrajectoryGroup trajectoryGroup : query.getTrajectoryGroups(startTime, endTime))
+        for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
         {
             // TODO: use data points and limit speed per interval
             for (Trajectory trajectory : trajectoryGroup.getTrajectories())

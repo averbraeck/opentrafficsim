@@ -1,8 +1,10 @@
 package org.opentrafficsim.imb.kpi;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
@@ -42,7 +44,7 @@ public class IMBSampler extends Sampler
     private final IMBConnector imbConnector;
 
     /** Transceiver of statistics. */
-    private ImbKpiTransceiver imbKpiTransceiver;
+    private Set<ImbKpiTransceiver> imbKpiTransceivers = new HashSet<>();
 
     /** The last received timestamp. */
     private Time lastTimestamp = Time.ZERO;
@@ -228,11 +230,11 @@ public class IMBSampler extends Sampler
     }
 
     /**
-     * @param imbKpiTransceiver set imbKpiTransceiver.
+     * @param imbKpiTransceiver add imbKpiTransceiver.
      */
-    public void setImbKpiTransceiver(ImbKpiTransceiver imbKpiTransceiver)
+    public void addImbKpiTransceiver(final ImbKpiTransceiver imbKpiTransceiver)
     {
-        this.imbKpiTransceiver = imbKpiTransceiver;
+        this.imbKpiTransceivers.add(imbKpiTransceiver);
     }
 
     /**
@@ -245,9 +247,9 @@ public class IMBSampler extends Sampler
         {
             return;
         }
-        if (this.imbKpiTransceiver != null)
+        for (ImbKpiTransceiver imbKpiTransceiver : this.imbKpiTransceivers)
         {
-            this.imbKpiTransceiver.notifyTime(now());
+            imbKpiTransceiver.notifyTime(now());
         }
         this.lastTimestamp = new Time(timeStamp, TimeUnit.SI);
         Iterator<KpiLaneDirection> iterator = this.startRecordingMap.keySet().iterator();

@@ -204,5 +204,23 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @return Duration; the standard step size of the GTU following model
      */
     Duration getStepSize();
+    
+    /**
+     * Set value of acceleration parameter.
+     * @param a value to set
+     */
+    void setA(final Acceleration a);
+    
+    /**
+     * Set value of desired headway.
+     * @param t desired headway
+     */
+    void setT(final Duration t);
+    
+    /**
+     * Set value of desired speed factor. 
+     * @param fSpeed desired speed factor
+     */
+    void setFspeed(final double fSpeed);
 
 }

@@ -9,6 +9,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacter
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 
 /**
@@ -23,15 +24,29 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory implements
-    LaneBasedTacticalPlannerFactory<LaneBasedGTUFollowingDirectedChangeTacticalPlanner>, Serializable
+public class LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory
+        implements LaneBasedTacticalPlannerFactory<LaneBasedGTUFollowingDirectedChangeTacticalPlanner>, Serializable
 {
 
     /** */
     private static final long serialVersionUID = 20160811L;
-    
+
     /** The car following model. */
     private GTUFollowingModelOld carFollowingModel;
+
+    /** Factory for car-following model. */
+    private CarFollowingModelFactory<? extends GTUFollowingModelOld> carFollowingModelFactory;
+
+    /**
+     * Constructor with car-following model factory.
+     * @param carFollowingModelFactory car following model factory
+     */
+    public LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(
+            final CarFollowingModelFactory<? extends GTUFollowingModelOld> carFollowingModelFactory)
+    {
+        this.carFollowingModel = null;
+        this.carFollowingModelFactory = carFollowingModelFactory;
+    }
 
     /**
      * Constructor with fixed stateless car-following and lane change model.
@@ -46,14 +61,19 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory implement
     @Override
     public final LaneBasedGTUFollowingDirectedChangeTacticalPlanner create(final LaneBasedGTU gtu) throws GTUException
     {
-        return new LaneBasedGTUFollowingDirectedChangeTacticalPlanner(this.carFollowingModel, gtu);
+        if (this.carFollowingModel != null)
+        {
+            return new LaneBasedGTUFollowingDirectedChangeTacticalPlanner(this.carFollowingModel, gtu);
+        }
+        return new LaneBasedGTUFollowingDirectedChangeTacticalPlanner(this.carFollowingModelFactory.generateCarFollowingModel(),
+                gtu);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final BehavioralCharacteristics getDefaultBehavioralCharacteristics()
     {
-        BehavioralCharacteristics bc =  new BehavioralCharacteristics().setDefaultParameters(ParameterTypes.class);
+        BehavioralCharacteristics bc = new BehavioralCharacteristics().setDefaultParameters(ParameterTypes.class);
         try
         {
             bc.setParameter(ParameterTypes.LOOKAHEAD, new Length(250, LengthUnit.SI));
@@ -64,7 +84,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory implement
         }
         return bc;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

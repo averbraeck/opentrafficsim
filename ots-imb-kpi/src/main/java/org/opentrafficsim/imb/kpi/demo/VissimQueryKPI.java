@@ -1,7 +1,9 @@
 package org.opentrafficsim.imb.kpi.demo;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
@@ -12,18 +14,20 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.IMBConnector;
+import org.opentrafficsim.imb.kpi.GtuTypeData;
 import org.opentrafficsim.imb.kpi.IMBSampler;
 import org.opentrafficsim.imb.kpi.ImbKpiTransceiver;
 import org.opentrafficsim.imb.kpi.LaneData;
 import org.opentrafficsim.imb.kpi.LinkData;
 import org.opentrafficsim.imb.kpi.NodeData;
+import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.Query;
+import org.opentrafficsim.kpi.sampling.meta.MetaDataGtuType;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataSet;
 
 import nl.tno.imb.TConnection;
-import nl.tno.imb.mc.ModelParameters;
 import nl.tudelft.simulation.language.d3.CartesianPoint;
 
 /**
@@ -42,16 +46,13 @@ public class VissimQueryKPI
 
     /**
      * Runs the module from model control.
-     * @param parameters model parameters
      * @param imbConnection the connection to IMB
      */
-    public static void run(final ModelParameters parameters, final TConnection imbConnection)
+    public static void run(final TConnection imbConnection)
     {
         try
         {
-            boolean equipment =
-                    parameters.parameterExists("equipment") ? (boolean) parameters.getParameterValue("equipment") : false;
-            start(new IMBConnector(imbConnection), equipment);
+            start(new IMBConnector(imbConnection));
         }
         catch (IMBException exception)
         {
@@ -67,7 +68,7 @@ public class VissimQueryKPI
     {
 
         // connection
-        String host = "vps17642.public.cloudvps.com";
+        String host = "localhost"; //"vps17642.public.cloudvps.com";
         int port = 4000;
         String modelName = "KPI Model";
         int modelId = 3456;
@@ -92,11 +93,16 @@ public class VissimQueryKPI
         {
             throw new RuntimeException(exception);
         }
-        start(imbConnector, false);
+        start(imbConnector);
 
     }
 
-    private static void start(final IMBConnector imbConnector, final boolean equipment)
+    /**
+     * Starts the KPI module
+     * @param imbConnector
+     * @throws IMBException 
+     */
+    private static void start(final IMBConnector imbConnector) throws IMBException
     {
 
         // nodes
@@ -144,37 +150,56 @@ public class VissimQueryKPI
         }
 
         // query
-        String queryDescription = "Default query for VISSIM model.";
-        MetaDataSet metaDataSet = new MetaDataSet();
-        Query query = new Query(sampler, "all", queryDescription, metaDataSet, new Frequency(2.0, FrequencyUnit.PER_MINUTE));
+        Set<GtuTypeDataInterface> gtuTypes;
+        String id;
+        String queryDescription;
+        MetaDataSet metaDataSet;
+        
+        id = "All";
+        queryDescription = "All query for VISSIM model.";
+        metaDataSet = new MetaDataSet();
+        makeQuery(sampler, id, queryDescription, metaDataSet, lanes, imbConnector);
+        
+        id = "Equipped";
+        queryDescription = "Equipped query for VISSIM model.";
+        metaDataSet = new MetaDataSet();
+        gtuTypes = new HashSet<>();
+        gtuTypes.add(new GtuTypeData("car_equipped"));
+        gtuTypes.add(new GtuTypeData("truck_equipped"));
+        metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+        makeQuery(sampler, id, queryDescription, metaDataSet, lanes, imbConnector);
+        
+        id = "Not equipped";
+        queryDescription = "Not equipped query for VISSIM model.";
+        metaDataSet = new MetaDataSet();
+        gtuTypes = new HashSet<>();
+        gtuTypes.add(new GtuTypeData("car"));
+        gtuTypes.add(new GtuTypeData("truck"));
+        metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+        makeQuery(sampler, id, queryDescription, metaDataSet, lanes, imbConnector);
+        
+    }
+
+    /**
+     * @param sampler sampler
+     * @param id id 
+     * @param queryDescription query description
+     * @param metaDataSet meta data set
+     * @param lanes lanes
+     * @param imbConnector imb connector
+     * @throws IMBException on connection error
+     */
+    private static void makeQuery(IMBSampler sampler, String id, String queryDescription, MetaDataSet metaDataSet,
+            Map<String, LaneData> lanes, IMBConnector imbConnector) throws IMBException
+    {
+        Query query = new Query(sampler, id, queryDescription, metaDataSet, new Frequency(2.0, FrequencyUnit.PER_MINUTE));
         for (String laneId : lanes.keySet())
         {
             query.addSpaceTimeRegion(new KpiLaneDirection(lanes.get(laneId), KpiGtuDirectionality.DIR_PLUS), Length.ZERO,
                     lanes.get(laneId).getLength(), Time.ZERO, new Time(1.0, TimeUnit.HOUR));
         }
-        if (equipment)
-        {
-            // TODO, add queries and transceivers for "equipped" and "none_equipped"
-        }
-
-        // transceiver of KPI data
-        try
-        {
-            sampler.setImbKpiTransceiver(new ImbKpiTransceiver(imbConnector, Time.ZERO, imbConnector.getModelName(), query,
-                    new Duration(30.0, TimeUnit.SI)));
-        }
-        catch (IMBException exception)
-        {
-            exception.printStackTrace();
-        }
-    }
-
-    private static Object[] append(Object[] a, Object[] b)
-    {
-        Object[] out = new Object[a.length + b.length];
-        System.arraycopy(a, 0, out, 0, a.length);
-        System.arraycopy(b, 0, out, a.length, b.length);
-        return out;
+        sampler.addImbKpiTransceiver(new ImbKpiTransceiver(imbConnector, Time.ZERO, imbConnector.getModelName(), query,
+                new Duration(30.0, TimeUnit.SI)));
     }
 
     /**

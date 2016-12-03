@@ -2,6 +2,8 @@ package org.opentrafficsim.kpi.sampling;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,19 +33,19 @@ public abstract class Sampler
 {
 
     /** Map with all sampling data. */
-    private final Map<KpiLaneDirection, TrajectoryGroup> trajectories = new HashMap<>();
+    private final Map<KpiLaneDirection, TrajectoryGroup> trajectories = new LinkedHashMap<>();
 
     /** End times of active samplings. */
-    private final Map<KpiLaneDirection, Time> endTimes = new HashMap<>();
+    private final Map<KpiLaneDirection, Time> endTimes = new LinkedHashMap<>();
 
     /** Registration of current trajectories of each GTU per lane. */
-    private final Map<String, Map<KpiLaneDirection, Trajectory>> trajectoryPerGtu = new HashMap<>();
+    private final Map<String, Map<KpiLaneDirection, Trajectory>> trajectoryPerGtu = new LinkedHashMap<>();
 
     /** Registration of included extended data types. */
-    private final Set<ExtendedDataType<?>> extendedDataTypes = new HashSet<>();
+    private final Set<ExtendedDataType<?>> extendedDataTypes = new LinkedHashSet<>();
 
     /** Set of registered meta data types. */
-    private Set<MetaDataType<?>> registeredMetaDataTypes = new HashSet<>();
+    private Set<MetaDataType<?>> registeredMetaDataTypes = new LinkedHashSet<>();
 
     /**
      * @param spaceTimeRegion space-time region
@@ -195,7 +197,7 @@ public abstract class Sampler
         Trajectory trajectory = new Trajectory(gtu, makeMetaData(gtu), this.extendedDataTypes, kpiLaneDirection);
         if (!this.trajectoryPerGtu.containsKey(gtuId))
         {
-            Map<KpiLaneDirection, Trajectory> map = new HashMap<>();
+            Map<KpiLaneDirection, Trajectory> map = new LinkedHashMap<>();
             this.trajectoryPerGtu.put(gtuId, map);
         }
         this.trajectoryPerGtu.get(gtuId).put(kpiLaneDirection, trajectory);

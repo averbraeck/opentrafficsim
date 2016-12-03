@@ -1,5 +1,7 @@
 package org.opentrafficsim.kpi.sampling.indicator;
 
+import java.util.List;
+
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Time;
@@ -30,14 +32,14 @@ public class MeanIntensity extends AbstractIndicator<Frequency>
     {
         this.travelDistance = travelDistance;
     }
-    
+
     /** {@inheritDoc} */
     @Override
-    protected Frequency calculate(Query query, Time startTime, Time endTime)
+    protected Frequency calculate(Query query, Time startTime, Time endTime, final List<TrajectoryGroup> trajectoryGroups)
     {
-        double ttd = this.travelDistance.getValue(query, startTime, endTime).si;
+        double ttd = this.travelDistance.getValue(query, startTime, endTime, trajectoryGroups).si;
         double area = 0;
-        for (TrajectoryGroup trajectoryGroup : query.getTrajectoryGroups(startTime, endTime))
+        for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
         {
             area += trajectoryGroup.getLength().si * (endTime.si - startTime.si);
         }

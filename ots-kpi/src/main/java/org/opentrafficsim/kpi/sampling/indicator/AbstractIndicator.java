@@ -1,8 +1,11 @@
 package org.opentrafficsim.kpi.sampling.indicator;
 
+import java.util.List;
+
 import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.kpi.sampling.Query;
+import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -35,15 +38,16 @@ public abstract class AbstractIndicator<T extends DoubleScalarInterface>
     private T lastValue;
 
     /**
-     * Get value for given query until given time, returning earlier calculated value if possible.
+     * Get value for given query over time interval, returning earlier calculated value if possible. This method uses
+     * {@code Time.ZERO} as start time.
      * @param query query
      * @param endTime start time of interval to calculate indicator over
+     * @param trajectoryGroups group of trajectories to calculate the indicator for
      * @return value for given query
      */
-    @SuppressWarnings("checkstyle:designforextension")
-    public T getValue(final Query query, final Time endTime)
+    public final T getValue(final Query query, final Time endTime, final List<TrajectoryGroup> trajectoryGroups)
     {
-        return getValue(query, Time.ZERO, endTime);
+        return getValue(query, Time.ZERO, endTime, trajectoryGroups);
     }
 
     /**
@@ -51,9 +55,11 @@ public abstract class AbstractIndicator<T extends DoubleScalarInterface>
      * @param query query
      * @param startTime start time of interval to calculate indicator over
      * @param endTime start time of interval to calculate indicator over
+     * @param trajectoryGroups group of trajectories to calculate the indicator for
      * @return value for given query
      */
-    public final T getValue(final Query query, final Time startTime, final Time endTime)
+    public final T getValue(final Query query, final Time startTime, final Time endTime,
+            final List<TrajectoryGroup> trajectoryGroups)
     {
         Throw.whenNull(query, "Query may not be null.");
         Throw.whenNull(startTime, "Start time may not be null.");
@@ -64,30 +70,20 @@ public abstract class AbstractIndicator<T extends DoubleScalarInterface>
             this.lastQuery = query;
             this.lastStartTime = startTime;
             this.lastEndTime = endTime;
-            this.lastValue = calculate(query, startTime, endTime);
+            this.lastValue = calculate(query, startTime, endTime, trajectoryGroups);
         }
         return this.lastValue;
     }
 
     /**
-     * Calculate value for given query until given time.
-     * @param query query
-     * @param endTime start time of interval to calculate indicator over
-     * @return value for given query
-     */
-    @SuppressWarnings("checkstyle:designforextension")
-    protected T calculate(final Query query, final Time endTime)
-    {
-        return calculate(query, Time.ZERO, endTime);
-    }
-
-    /**
-     * Calculate value for given query over time interval.
+     * Calculate value for given trajectory group.
      * @param query query
      * @param startTime start time of interval to calculate indicator over
      * @param endTime start time of interval to calculate indicator over
-     * @return value for given query
+     * @param trajectoryGroups group of trajectories to calculate the indicator for
+     * @return value for given trajectory group
      */
-    protected abstract T calculate(Query query, Time startTime, Time endTime);
+    protected abstract T calculate(final Query query, final Time startTime, final Time endTime,
+            final List<TrajectoryGroup> trajectoryGroups);
 
 }

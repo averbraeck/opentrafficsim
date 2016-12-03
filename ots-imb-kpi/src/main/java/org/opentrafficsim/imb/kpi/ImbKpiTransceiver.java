@@ -14,6 +14,7 @@ import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.connector.Connector.IMBEventType;
 import org.opentrafficsim.kpi.sampling.Query;
+import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 import org.opentrafficsim.kpi.sampling.indicator.MeanSpeed;
 import org.opentrafficsim.kpi.sampling.indicator.MeanTravelTimePerKm;
 import org.opentrafficsim.kpi.sampling.indicator.MeanTripLength;
@@ -272,20 +273,28 @@ public class ImbKpiTransceiver implements Serializable
     /** The interval between generation of graphs. */
     private final Duration transmissionInterval;
 
+    /** Total travel distance. */
     private TotalTravelDistance totalTravelDistance = new TotalTravelDistance();
 
+    /** Total travel time. */
     private TotalTravelTime totalTravelTime = new TotalTravelTime();
 
+    /** Mean speed. */
     private MeanSpeed meanSpeed = new MeanSpeed(this.totalTravelDistance, this.totalTravelTime);
 
+    /** Mean travel time per km. */
     private MeanTravelTimePerKm meanTravelTimePerKm = new MeanTravelTimePerKm(this.meanSpeed);
 
+    /** Mean trip length. */
     private MeanTripLength meanTripLength = new MeanTripLength();
 
+    /** Total delay. */
     private TotalDelay totalDelay = new TotalDelay(new Speed(50.0, SpeedUnit.KM_PER_HOUR));
 
+    /** Total number of stops. */
     private TotalNumberOfStops totalNumberOfStops = new TotalNumberOfStops();
 
+    /** Update time. */
     private Time updateTime = Time.ZERO;
 
     // TODO implement DELETE message
@@ -312,8 +321,8 @@ public class ImbKpiTransceiver implements Serializable
         newMessage.add(query.getId());
         newMessage.add(query.toString());
         newMessage.add(this.networkId);
-        newMessage.add((int) 0); // TODO numberMetadataEntries
-        newMessage.add((int) 0); // TODO numberSpaceTimeRegions
+        newMessage.add(0); // TODO numberMetadataEntries
+        newMessage.add(0); // TODO numberSpaceTimeRegions
         newMessage.add(false); // TODO "connected" not part of query anymore
         newMessage.add(true); // TODO totalTrajectory
         newMessage.add(transmissionInterval.si);
@@ -346,15 +355,16 @@ public class ImbKpiTransceiver implements Serializable
      */
     public void sendStatisticsUpdate() throws IMBException
     {
-        Length tdist = this.totalTravelDistance.getValue(this.query, this.updateTime);
-        Duration ttt = this.totalTravelTime.getValue(this.query, this.updateTime);
-        Speed ms = this.meanSpeed.getValue(this.query, this.updateTime);
-        Duration mttpkm = this.meanTravelTimePerKm.getValue(this.query, this.updateTime);
-        Length mtl = this.meanTripLength.getValue(this.query, this.updateTime);
-        Duration tdel = this.totalDelay.getValue(this.query, this.updateTime);
-        Dimensionless nos = this.totalNumberOfStops.getValue(this.query, this.updateTime);
+        List<TrajectoryGroup> groups = this.query.getTrajectoryGroups(this.updateTime);
+        Length tdist = this.totalTravelDistance.getValue(this.query, this.updateTime, groups);
+        Duration ttt = this.totalTravelTime.getValue(this.query, this.updateTime, groups);
+        Speed ms = this.meanSpeed.getValue(this.query, this.updateTime, groups);
+        Duration mttpkm = this.meanTravelTimePerKm.getValue(this.query, this.updateTime, groups);
+        Length mtl = this.meanTripLength.getValue(this.query, this.updateTime, groups);
+        Duration tdel = this.totalDelay.getValue(this.query, this.updateTime, groups);
+        Dimensionless nos = this.totalNumberOfStops.getValue(this.query, this.updateTime, groups);
         double time = this.updateTime.si;
-        System.out.println("===== @time " + time + " s =====");
+        System.out.println("===== @time " + time + " s on " + this.query.getId() + " =====");
         System.out.println("Total distance " + tdist);
         System.out.println("Total travel time " + ttt);
         System.out.println("Mean speed " + ms);

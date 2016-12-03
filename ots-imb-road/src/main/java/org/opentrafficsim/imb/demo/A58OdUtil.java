@@ -39,6 +39,7 @@ import org.opentrafficsim.imb.demo.generators.BehavioralCharacteristicsFactoryBy
 import org.opentrafficsim.imb.demo.generators.CharacteristicsGenerator;
 import org.opentrafficsim.imb.demo.generators.GTUTypeGenerator;
 import org.opentrafficsim.imb.demo.generators.HeadwayGeneratorDemand;
+import org.opentrafficsim.imb.demo.generators.IDMPlusOldFactory;
 import org.opentrafficsim.imb.demo.generators.RouteGeneratorProbability;
 import org.opentrafficsim.imb.demo.generators.SpeedGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
@@ -46,7 +47,6 @@ import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -124,7 +124,7 @@ public class A58OdUtil
         A58RoomChecker roomChecker = new A58RoomChecker();
         IdGenerator idGenerator = new IdGenerator("");
         LaneBasedTacticalPlannerFactory<LaneBasedGTUFollowingDirectedChangeTacticalPlanner> tacticalFactory =
-                new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(new IDMPlusOld());
+                new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(new IDMPlusOldFactory());
         // LaneBasedTacticalPlannerFactory<LMRS> tacticalFactory;
         // try
         // {
@@ -141,11 +141,11 @@ public class A58OdUtil
         Length lookAhead = new Length(750.0, LengthUnit.SI);
         Length perception = new Length(1.0, LengthUnit.KILOMETER);
         GTUType gtuType = new GTUType("car");
-        bcFactory.addGaussianParameter(gtuType, ParameterTypes.FSPEED, 123.7 / 120, 12 / 120, streams.get("gtuClass"));
+        bcFactory.addGaussianParameter(gtuType, ParameterTypes.FSPEED, 123.7 / 120, 12.0 / 120, streams.get("gtuClass"));
         bcFactory.addParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead);
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
         gtuType = new GTUType("car_equipped");
-        bcFactory.addGaussianParameter(gtuType, ParameterTypes.FSPEED, 123.7 / 120, 12 / 120, streams.get("gtuClass"));
+        bcFactory.addGaussianParameter(gtuType, ParameterTypes.FSPEED, 123.7 / 120, 12.0 / 120, streams.get("gtuClass"));
         bcFactory.addParameter(gtuType, ParameterTypes.T, new Duration(0.6, TimeUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.TMAX, new Duration(0.6, TimeUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.A, new Acceleration(2.0, AccelerationUnit.SI));
@@ -155,12 +155,14 @@ public class A58OdUtil
         bcFactory.addParameter(gtuType, ParameterTypes.A, new Acceleration(0.6, AccelerationUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead);
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
+        bcFactory.addParameter(gtuType, ParameterTypes.FSPEED, 2.0);
         gtuType = new GTUType("truck_equipped");
         bcFactory.addParameter(gtuType, ParameterTypes.A, new Acceleration(0.6, AccelerationUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.T, new Duration(0.6, TimeUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.TMAX, new Duration(0.6, TimeUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead);
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
+        bcFactory.addParameter(gtuType, ParameterTypes.FSPEED, 2.0);
 
         for (String source : demandMap.keySet())
         {

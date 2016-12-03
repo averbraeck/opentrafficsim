@@ -1,6 +1,7 @@
 package org.opentrafficsim.kpi.sampling.indicator;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.djunits.unit.LengthUnit;
@@ -12,7 +13,7 @@ import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 
 /**
- * Sum of (approximate) link lengths divided by mean speed, divided by link length in km. 
+ * Sum of (approximate) link lengths divided by mean speed, divided by link length in km.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -38,11 +39,12 @@ public class MeanTravelTimePerKm extends AbstractIndicator<Duration>
 
     /** {@inheritDoc} */
     @Override
-    public final Duration calculate(final Query query, final Time startTime, final Time endTime)
+    public final Duration calculate(final Query query, final Time startTime, final Time endTime,
+            final List<TrajectoryGroup> trajectoryGroups)
     {
         Length cumulLength = Length.ZERO;
         Set<LinkDataInterface> links = new HashSet<>();
-        for (TrajectoryGroup trajectoryGroup : query.getTrajectoryGroups(startTime, endTime))
+        for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
         {
             if (!links.contains(trajectoryGroup.getLaneDirection().getLaneData().getLinkData()))
             {
@@ -50,7 +52,8 @@ public class MeanTravelTimePerKm extends AbstractIndicator<Duration>
                 links.add(trajectoryGroup.getLaneDirection().getLaneData().getLinkData());
             }
         }
-        return cumulLength.divideBy(this.meanSpeed.getValue(query, startTime, endTime)).divideBy(cumulLength.getInUnit(LengthUnit.KILOMETER));
+        return cumulLength.divideBy(this.meanSpeed.getValue(query, startTime, endTime, trajectoryGroups))
+                .divideBy(cumulLength.getInUnit(LengthUnit.KILOMETER));
     }
 
     /** {@inheritDoc} */
