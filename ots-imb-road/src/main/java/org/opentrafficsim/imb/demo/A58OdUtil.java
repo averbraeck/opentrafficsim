@@ -276,8 +276,8 @@ public class A58OdUtil
 
     /**
      * Add sinks to network.
-     * @param endNode
-     * @param simulator
+     * @param endNode node to add the sink to
+     * @param simulator the simulator
      */
     private static void addSink(final OTSNode endNode, final OTSDEVSSimulatorInterface simulator)
     {
