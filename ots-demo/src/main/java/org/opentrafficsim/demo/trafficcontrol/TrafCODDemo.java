@@ -3,11 +3,10 @@ package org.opentrafficsim.demo.trafficcontrol;
 import java.awt.BorderLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.naming.NamingException;
@@ -22,30 +21,25 @@ import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.language.io.URLResource;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.road.network.factory.LaneFactory;
+import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -157,6 +151,11 @@ public class TrafCODDemo extends AbstractWrappableAnimation
         {
             try
             {
+                URL url = URLResource.getResource("/TrafCODDemo1.xml");
+                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
+                OTSNetwork network = nlp.build(url);
+
+                /*-
                 Network network = new OTSNetwork("TrafCOD test network");
                 Map<GTUType, LongitudinalDirectionality> directionalityMap = new HashMap<>();
                 directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
@@ -179,22 +178,29 @@ public class TrafCODDemo extends AbstractWrappableAnimation
                         (OTSDEVSSimulatorInterface) theSimulator, LongitudinalDirectionality.DIR_PLUS);
                 LaneFactory.makeMultiLane(network, "LinkXS", nodeX, nodeS, null, 1, laneType, speedLimit,
                         (OTSDEVSSimulatorInterface) theSimulator, LongitudinalDirectionality.DIR_PLUS);
+                 */
+                Lane laneNX = (Lane) ((CrossSectionLink) network.getLink("N", "X")).getCrossSectionElement("FORWARD");
+                Lane laneWX = (Lane) ((CrossSectionLink) network.getLink("W", "X")).getCrossSectionElement("FORWARD");
+                Lane laneXS = (Lane) ((CrossSectionLink) network.getLink("X", "S")).getCrossSectionElement("FORWARD");
+                Lane laneXE = (Lane) ((CrossSectionLink) network.getLink("X", "E")).getCrossSectionElement("FORWARD");
+                new SinkSensor(laneXS, new Length(90, LengthUnit.METER), (OTSDEVSSimulatorInterface) theSimulator);
+                new SinkSensor(laneXE, new Length(90, LengthUnit.METER), (OTSDEVSSimulatorInterface) theSimulator);
                 Set<TrafficLight> trafficLights = new HashSet<>();
-                trafficLights.add(new SimpleTrafficLight("TL08", laneNX, new Length(90, LengthUnit.METER),
+                trafficLights.add(new SimpleTrafficLight("TL08", laneWX, new Length(296, LengthUnit.METER),
                         (OTSDEVSSimulatorInterface) theSimulator));
-                trafficLights.add(new SimpleTrafficLight("TL11", laneWX, new Length(90, LengthUnit.METER),
+                trafficLights.add(new SimpleTrafficLight("TL11", laneNX, new Length(296, LengthUnit.METER),
                         (OTSDEVSSimulatorInterface) theSimulator));
                 Set<TrafficLightSensor> sensors = new HashSet<>();
-                sensors.add(new TrafficLightSensor("D081", laneWX, new Length(86, LengthUnit.METER), laneWX, new Length(88,
+                sensors.add(new TrafficLightSensor("D081", laneWX, new Length(292, LengthUnit.METER), laneWX, new Length(294,
                         LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
                         (OTSDEVSSimulatorInterface) theSimulator));
-                sensors.add(new TrafficLightSensor("D082", laneWX, new Length(50, LengthUnit.METER), laneWX, new Length(70,
+                sensors.add(new TrafficLightSensor("D082", laneWX, new Length(260, LengthUnit.METER), laneWX, new Length(285,
                         LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
                         (OTSDEVSSimulatorInterface) theSimulator));
-                sensors.add(new TrafficLightSensor("D111", laneNX, new Length(86, LengthUnit.METER), laneNX, new Length(88,
+                sensors.add(new TrafficLightSensor("D111", laneNX, new Length(292, LengthUnit.METER), laneNX, new Length(294,
                         LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
                         (OTSDEVSSimulatorInterface) theSimulator));
-                sensors.add(new TrafficLightSensor("D112", laneNX, new Length(50, LengthUnit.METER), laneNX, new Length(70,
+                sensors.add(new TrafficLightSensor("D112", laneNX, new Length(260, LengthUnit.METER), laneNX, new Length(285,
                         LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
                         (OTSDEVSSimulatorInterface) theSimulator));
                 String controllerName = "Simple TrafCOD controller";
@@ -210,6 +216,11 @@ public class TrafCODDemo extends AbstractWrappableAnimation
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED);
                 // Subscribe the TrafCOD machine to trace command events that we emit
                 addListener(this.trafCOD, TrafficController.TRAFFICCONTROL_SET_TRACING);
+                // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] {controllerName, "TGX", 8, true});
+                // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] {controllerName, "XR1", 11, true});
+                // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] {controllerName, "TD1", 11, true});
+                // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] {controllerName, "TGX", 11, true});
+                // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] {controllerName, "TL", 11, true});
                 // System.out.println("demo: emitting a SET TRACING event for all variables related to stream 11");
                 // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] { controllerName, "", 11, true });
 
