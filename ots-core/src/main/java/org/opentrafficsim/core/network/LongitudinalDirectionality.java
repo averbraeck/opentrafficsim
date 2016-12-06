@@ -98,8 +98,8 @@ public enum LongitudinalDirectionality
     }
 
     /**
-     * Easy access method to test if the directionality is BACKWARD or BOTH.
-     * @return whether the directionality is BACKWARD or BOTH
+     * Easy access method to test if the directionality is BACKWARD.
+     * @return whether the directionality is BACKWARD
      */
     public final boolean isBackward()
     {
