@@ -93,8 +93,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * If the speed limit is the same for all GTU types, GTUType.ALL will be used. This means that the settings can be used
      * additive, or subtractive. <br>
      * In <b>additive use</b>, do not set the speed limit for GTUType.ALL. Now, one by one, the allowed maximum speeds for each
-     * of the GTU Types have be added. Do this when there are few GTU types or the speed limits per TU type are very different.
-     * <br>
+     * of the GTU Types have be added. Do this when there are few GTU types or the speed limits per TU type are very different. <br>
      * In <b>subtractive use</b>, set the speed limit for GTUType.ALL to the most common one. Override the speed limit for
      * certain GTUTypes to a different value. An example is a lane on a highway where all vehicles, except truck (CAR, BUS,
      * MOTORCYCLE, etc.), can drive 120 km/h, but trucks are allowed only 90 km/h. In that case, set the speed limit for
@@ -457,8 +456,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param gtuType GTUType; the GTU type to check the accessibility for
      * @return boolean; true if the other lane is adjacent to this lane and accessible for the given GTU type; false otherwise
      */
-    private boolean laterallyAdjacentAndAccessible(final Lane lane, final LateralDirectionality direction,
-            final GTUType gtuType)
+    private boolean laterallyAdjacentAndAccessible(final Lane lane, final LateralDirectionality direction, final GTUType gtuType)
     {
         if (!lane.getLaneType().isCompatible(gtuType) || gtuType.equals(GTUType.ALL) || gtuType.equals(GTUType.NONE))
         {
@@ -471,10 +469,10 @@ public class Lane extends CrossSectionElement implements Serializable
             // TODO take the cross section slices into account...
             if (Math.abs((getDesignLineOffsetAtBegin().getSI() + getBeginWidth().getSI() / 2.0)
                     - (lane.getDesignLineOffsetAtBegin().getSI() - lane.getBeginWidth().getSI() / 2.0)) < ADJACENT_MARGIN
-                            .getSI()
+                        .getSI()
                     && Math.abs((getDesignLineOffsetAtEnd().getSI() + getEndWidth().getSI() / 2.0)
                             - (lane.getDesignLineOffsetAtEnd().getSI() - lane.getEndWidth().getSI() / 2.0)) < ADJACENT_MARGIN
-                                    .getSI())
+                                .getSI())
             {
                 // look at stripes between the two lanes
                 for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
@@ -508,10 +506,10 @@ public class Lane extends CrossSectionElement implements Serializable
             // TODO take the cross section slices into account...
             if (Math.abs((getDesignLineOffsetAtBegin().getSI() - getBeginWidth().getSI() / 2.0)
                     - (lane.getDesignLineOffsetAtBegin().getSI() + lane.getBeginWidth().getSI() / 2.0)) < ADJACENT_MARGIN
-                            .getSI()
+                        .getSI()
                     && Math.abs((getDesignLineOffsetAtEnd().getSI() - getEndWidth().getSI() / 2.0)
                             - (lane.getDesignLineOffsetAtEnd().getSI() + lane.getEndWidth().getSI() / 2.0)) < ADJACENT_MARGIN
-                                    .getSI())
+                                .getSI())
             {
                 // look at stripes between the two lanes
                 for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
@@ -562,8 +560,7 @@ public class Lane extends CrossSectionElement implements Serializable
             this.sensors.put(position, sensorList);
         }
         sensorList.add(sensor);
-        fireTimedEvent(Lane.SENSOR_ADD_EVENT, new Object[] { sensor.getId(), sensor },
-                sensor.getSimulator().getSimulatorTime());
+        fireTimedEvent(Lane.SENSOR_ADD_EVENT, new Object[] { sensor.getId(), sensor }, sensor.getSimulator().getSimulatorTime());
     }
 
     /**
@@ -573,8 +570,8 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final void removeSensor(final Sensor sensor) throws NetworkException
     {
-        fireTimedEvent(Lane.SENSOR_REMOVE_EVENT, new Object[] { sensor.getId(), sensor },
-                sensor.getSimulator().getSimulatorTime());
+        fireTimedEvent(Lane.SENSOR_REMOVE_EVENT, new Object[] { sensor.getId(), sensor }, sensor.getSimulator()
+                .getSimulatorTime());
         List<Sensor> sensorList = this.sensors.get(sensor.getLongitudinalPosition().si);
         if (null == sensorList)
         {
@@ -672,8 +669,9 @@ public class Lane extends CrossSectionElement implements Serializable
             {
                 for (Sensor sensor : sl)
                 {
-                    if ((sensor.getTriggeringGTUTypes().contains(gtuType)
-                            || sensor.getTriggeringGTUTypes().contains(GTUType.ALL)))
+                    if (sensor.getLongitudinalPosition().si == d
+                            && (sensor.getTriggeringGTUTypes().contains(gtuType) || sensor.getTriggeringGTUTypes().contains(
+                                    GTUType.ALL)))
                     {
                         sensorList.add(sensor);
                     }
@@ -684,6 +682,15 @@ public class Lane extends CrossSectionElement implements Serializable
                 sensorMap.put(d, sensorList);
             }
         }
+        // System.out.println("getSensorMap returns");
+        // for (Double key : sensorMap.keySet())
+        // {
+        // System.out.println("\t" + key + " -> " + (sensorMap.get(key).size()) + " sensors");
+        // for (Sensor s : sensorMap.get(key))
+        // {
+        // System.out.println("\t\t" + s);
+        // }
+        // }
         return sensorMap;
     }
 
@@ -695,21 +702,28 @@ public class Lane extends CrossSectionElement implements Serializable
      * @throws NetworkException when GTU not on this lane.
      * @throws SimRuntimeException when method cannot be scheduled.
      */
-    public final void scheduleSensorTriggers(final LaneBasedGTU gtu, final double referenceStartSI,
-            final double referenceMoveSI) throws NetworkException, SimRuntimeException
+    public final void scheduleSensorTriggers(final LaneBasedGTU gtu, final double referenceStartSI, final double referenceMoveSI)
+            throws NetworkException, SimRuntimeException
     {
+        // System.out.println("Getting sensor map for " + gtu.getGTUType() + ":");
         for (List<Sensor> sensorList : getSensorMap(gtu.getGTUType()).values())
         {
+            // System.out.println("Time=" + gtu.getSimulator().getSimulatorTime().toString() + " SensorList contains "
+            // + (sensorList.size()) + " sensors:");
+            // for (Sensor sensor : sensorList)
+            // {
+            // System.out.println("\t" + sensor);
+            // }
             for (Sensor sensor : sensorList)
             {
                 for (RelativePosition relativePosition : gtu.getRelativePositions().values())
                 {
-                    // System.out.println("GTU relative position " + relativePosition + " sensor relative position " +
-                    // sensor.getPositionType());
+                    // System.out.println("GTU relative position " + relativePosition + " sensor relative position "
+                    // + sensor.getPositionType());
                     if (sensor.getPositionType().equals(relativePosition.getType())
                             && referenceStartSI + relativePosition.getDx().getSI() <= sensor.getLongitudinalPosition().si
-                            && referenceStartSI + referenceMoveSI
-                                    + relativePosition.getDx().getSI() > sensor.getLongitudinalPosition().si)
+                            && referenceStartSI + referenceMoveSI + relativePosition.getDx().getSI() > sensor
+                                    .getLongitudinalPosition().si)
                     {
                         // the exact time of triggering is based on the distance between the current position of the
                         // relative position on the GTU and the location of the sensor.
@@ -727,8 +741,8 @@ public class Lane extends CrossSectionElement implements Serializable
                             System.err.println("Time=" + gtu.getSimulator().getSimulatorTime().getTime().getSI()
                                     + " - Scheduling trigger at " + triggerTime.getSI() + "s. > " + oPlan.getEndTime().getSI()
                                     + "s. (nextEvalTime) for sensor " + sensor + " , gtu " + gtu);
-                            System.err.println("  v=" + gtu.getSpeed() + ", a=" + gtu.getAcceleration() + ", lane=" + toString()
-                                    + ", refStartSI=" + referenceStartSI + ", moveSI=" + referenceMoveSI);
+                            System.err.println("  v=" + gtu.getSpeed() + ", a=" + gtu.getAcceleration() + ", lane="
+                                    + toString() + ", refStartSI=" + referenceStartSI + ", moveSI=" + referenceMoveSI);
                             triggerTime =
                                     new Time(oPlan.getEndTime().getSI() - Math.ulp(oPlan.getEndTime().getSI()), TimeUnit.SI);
                             // gtu.timeAtDistance(new Length(-d, METER));
@@ -737,8 +751,9 @@ public class Lane extends CrossSectionElement implements Serializable
                         // System.out.println("Scheduling a trigger for relativePosition " + relativePosition);
                         // System.out.println("Time=" + gtu.getSimulator().getSimulatorTime().toString()
                         // + " - Scheduling trigger at " + triggerTime + " for sensor " + sensor + " , gtu " + gtu);
-                        SimEvent<OTSSimTimeDouble> event = new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(triggerTime),
-                                this, sensor, "trigger", new Object[] { gtu });
+                        SimEvent<OTSSimTimeDouble> event =
+                                new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(triggerTime), this, sensor, "trigger",
+                                        new Object[] { gtu });
                         gtu.getSimulator().scheduleEvent(event);
                         gtu.addTrigger(this, event);
                     }
@@ -757,8 +772,8 @@ public class Lane extends CrossSectionElement implements Serializable
         double position = laneBasedObject.getLongitudinalPosition().si;
         if (position < 0 || position > getLength().getSI())
         {
-            throw new NetworkException(
-                    "Illegal position for laneBasedObject " + position + " valid range is 0.." + getLength().getSI());
+            throw new NetworkException("Illegal position for laneBasedObject " + position + " valid range is 0.."
+                    + getLength().getSI());
         }
         List<LaneBasedObject> laneBasedObjectList = this.laneBasedObjects.get(position);
         if (null == laneBasedObjectList)
@@ -925,8 +940,8 @@ public class Lane extends CrossSectionElement implements Serializable
             }
         }
         this.gtuList.add(index, gtu);
-        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size() },
-                gtu.getSimulator().getSimulatorTime());
+        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size() }, gtu.getSimulator()
+                .getSimulatorTime());
         getParentLink().addGTU(gtu);
         return index;
     }
@@ -953,8 +968,8 @@ public class Lane extends CrossSectionElement implements Serializable
     public final void removeGTU(final LaneBasedGTU gtu, final boolean removeFromParentLink, Length position)
     {
         this.gtuList.remove(gtu);
-        fireTimedEvent(Lane.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size(), position },
-                gtu.getSimulator().getSimulatorTime());
+        fireTimedEvent(Lane.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size(), position }, gtu
+                .getSimulator().getSimulatorTime());
         if (removeFromParentLink)
         {
             this.parentLink.removeGTU(gtu);
@@ -1226,8 +1241,9 @@ public class Lane extends CrossSectionElement implements Serializable
     public final Set<Lane> accessibleAdjacentLanes(final LateralDirectionality lateralDirection, final GTUType gtuType)
     {
         Set<Lane> candidates = new LinkedHashSet<>(1);
-        LateralDirectionality dir = this.getDirectionality(gtuType).isForwardOrBoth() ? lateralDirection
-                : lateralDirection.isLeft() ? LateralDirectionality.RIGHT : LateralDirectionality.LEFT;
+        LateralDirectionality dir =
+                this.getDirectionality(gtuType).isForwardOrBoth() ? lateralDirection : lateralDirection.isLeft()
+                        ? LateralDirectionality.RIGHT : LateralDirectionality.LEFT;
         for (Lane lane : neighbors(dir, gtuType))
         {
             if (lane.getDirectionality(gtuType).equals(LongitudinalDirectionality.DIR_BOTH)
@@ -1264,8 +1280,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * km/h. If the speed limit is the same for all GTU types, GTUType.ALL will be used. This means that the settings can be
      * used additive, or subtractive. <br>
      * In <b>additive use</b>, do not set the speed limit for GTUType.ALL. Now, one by one, the allowed maximum speeds for each
-     * of the GTU Types have be added. Do this when there are few GTU types or the speed limits per TU type are very different.
-     * <br>
+     * of the GTU Types have be added. Do this when there are few GTU types or the speed limits per TU type are very different. <br>
      * In <b>subtractive use</b>, set the speed limit for GTUType.ALL to the most common one. Override the speed limit for
      * certain GTUTypes to a different value. An example is a lane on a highway where all vehicles, except truck (CAR, BUS,
      * MOTORCYCLE, etc.), can drive 120 km/h, but trucks are allowed only 90 km/h. In that case, set the speed limit for
