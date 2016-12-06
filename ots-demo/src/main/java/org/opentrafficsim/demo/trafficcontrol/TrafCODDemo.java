@@ -99,7 +99,7 @@ public class TrafCODDemo extends AbstractWrappableAnimation
     @Override
     public final String shortName()
     {
-        return "TrafCOD demonstration";
+        return "TrafCOD demonstration 1";
     }
 
     /** {@inheritDoc} */
