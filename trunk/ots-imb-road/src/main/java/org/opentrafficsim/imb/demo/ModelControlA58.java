@@ -177,7 +177,7 @@ public class ModelControlA58 extends ModelStarter
         this.a58Animation = new A58Animation(imbConnection);
         try
         {
-            this.a58Animation.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(1, TimeUnit.HOUR), null, null, true);
+            this.a58Animation.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.000001, TimeUnit.SI), null, null, true);
         }
         catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
         {
