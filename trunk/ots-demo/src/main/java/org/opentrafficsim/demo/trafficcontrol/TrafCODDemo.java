@@ -151,7 +151,7 @@ public class TrafCODDemo extends AbstractWrappableAnimation
         {
             try
             {
-                URL url = URLResource.getResource("/TrafCODDemo1.xml");
+                URL url = URLResource.getResource("/TrafCODDemo1/TrafCODDemo1.xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
                 OTSNetwork network = nlp.build(url);
 
@@ -204,8 +204,13 @@ public class TrafCODDemo extends AbstractWrappableAnimation
                         LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
                         (OTSDEVSSimulatorInterface) theSimulator));
                 String controllerName = "Simple TrafCOD controller";
+                // this.trafCOD =
+                // new TrafCOD(controllerName, "file:///d:/cppb/trafcod/otsim/simpleTest.tfc", trafficLights, sensors,
+                // (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator,
+                // TrafCODDemo.this.controllerDisplayPanel);
                 this.trafCOD =
-                        new TrafCOD(controllerName, "file:///d:/cppb/trafcod/otsim/simpleTest.tfc", trafficLights, sensors,
+                        new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo1/simpleTest.tfc"),
+                                trafficLights, sensors,
                                 (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator,
                                 TrafCODDemo.this.controllerDisplayPanel);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
