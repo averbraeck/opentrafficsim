@@ -634,6 +634,22 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
         }
         return changeCount;
     }
+    
+    /**
+     * Reset the START, END and CHANGED flags of all timers. (These do not get reset during the normal rule evaluation phase.)
+     */
+    private void resetTimerFlags()
+    {
+        for (Variable v : this.variablesInDefinitionOrder)
+        {
+            if (v.isTimer())
+            {
+                v.clearChangedFlag();
+                v.clearFlag(Flags.START);
+                v.clearFlag(Flags.END);
+            }
+        }
+    }
 
     /**
      * Evaluate all expressions until no more changes occur.
@@ -663,7 +679,9 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
         int loop;
         for (loop = 0; loop < this.maxLoopCount; loop++)
         {
-            if (evalExpressionsOnce() == 0)
+            int changeCount = evalExpressionsOnce();
+            resetTimerFlags();
+            if (changeCount == 0)
             {
                 break;
             }
@@ -791,7 +809,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
         {
             if (resultValue != 0 && Token.END_RULE != ruleType)
             {
-                if (destination.getValue() == 0)
+                if (0 == destination.getValue())
                 {
                     result = true;
                 }
@@ -801,22 +819,16 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
                     // Cheat; ensure it will property expire on the next timer tick
                     timerValue10 = 1;
                 }
-                if (destination.getValue() != timerValue10)
-                {
-                    result = true;
-                }
-                destination.setValue(timerValue10, this.currentTime10, new CausePrinter(rule), this);
+                result = destination.setValue(timerValue10, this.currentTime10, new CausePrinter(rule), this);
             }
             else if (0 == resultValue && Token.END_RULE == ruleType && destination.getValue() != 0)
             {
-                result = true;
-                destination.setValue(0, this.currentTime10, new CausePrinter(rule), this);
+                result = destination.setValue(0, this.currentTime10, new CausePrinter(rule), this);
             }
         }
         else if (destination.getValue() != resultValue)
         {
-            result = true;
-            destination.setValue(resultValue, this.currentTime10, new CausePrinter(rule), this);
+            result = destination.setValue(resultValue, this.currentTime10, new CausePrinter(rule), this);
             if (destination.isOutput())
             {
                 fireEvent(TRAFFIC_LIGHT_CHANGED, new Object[] { this.controllerName, new Integer(destination.getStream()),
@@ -2187,9 +2199,11 @@ class Variable implements EventListenerInterface
      * @param timeStamp10 int; the time stamp of this update
      * @param cause CausePrinter; rule, timer, or detector that caused the change
      * @param trafCOD TrafCOD; the TrafCOD controller
+     * @return boolean; true if the value of this variable changed
      */
-    public void setValue(int newValue, int timeStamp10, CausePrinter cause, TrafCOD trafCOD)
+    public boolean setValue(int newValue, int timeStamp10, CausePrinter cause, TrafCOD trafCOD)
     {
+        boolean result = false;
         if (this.value != newValue)
         {
             this.updateTime10 = timeStamp10;
@@ -2197,10 +2211,12 @@ class Variable implements EventListenerInterface
             if (0 == newValue)
             {
                 setFlag(Flags.END);
+                result = true;
             }
-            else
+            else if (!isTimer() || 0 == this.value)
             {
                 setFlag(Flags.START);
+                result = true;
             }
             if (isOutput() && newValue != 0)
             {
@@ -2218,6 +2234,7 @@ class Variable implements EventListenerInterface
                     toString(EnumSet.of(PrintFlags.ID)), this.stream, this.value, newValue, cause.toString() });
         }
         this.value = newValue;
+        return result;
     }
 
     /**
