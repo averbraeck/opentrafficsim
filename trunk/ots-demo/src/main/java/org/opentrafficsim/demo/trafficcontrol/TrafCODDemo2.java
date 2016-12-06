@@ -154,15 +154,21 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
                 URL url = URLResource.getResource("/TrafCODDemo2/Network.xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
                 OTSNetwork network = nlp.build(url);
-                if (null != network)
+                Length sinkPosition = new Length(10, LengthUnit.METER); // These lanes have reverse direction
+                for (int laneNumber = 1; laneNumber <= 3; laneNumber++)
                 {
-                    return;
+                    for (String direction : new String[] { "N", "E", "S", "W" })
+                    {
+                        Lane l =
+                                (Lane) ((CrossSectionLink) network.getLink(direction, direction + "C"))
+                                        .getCrossSectionElement("REVERSE" + laneNumber);
+                        new SinkSensor(l, sinkPosition, (OTSDEVSSimulatorInterface) theSimulator);
+                    }
                 }
+                /*-
                 Lane laneNX = (Lane) ((CrossSectionLink) network.getLink("N", "X")).getCrossSectionElement("FORWARD");
                 Lane laneWX = (Lane) ((CrossSectionLink) network.getLink("W", "X")).getCrossSectionElement("FORWARD");
-                Lane laneXS = (Lane) ((CrossSectionLink) network.getLink("X", "S")).getCrossSectionElement("FORWARD");
                 Lane laneXE = (Lane) ((CrossSectionLink) network.getLink("X", "E")).getCrossSectionElement("FORWARD");
-                new SinkSensor(laneXS, new Length(90, LengthUnit.METER), (OTSDEVSSimulatorInterface) theSimulator);
                 new SinkSensor(laneXE, new Length(90, LengthUnit.METER), (OTSDEVSSimulatorInterface) theSimulator);
                 Set<TrafficLight> trafficLights = new HashSet<>();
                 trafficLights.add(new SimpleTrafficLight("TL08", laneWX, new Length(296, LengthUnit.METER),
@@ -211,6 +217,7 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
                 // this.trafCOD.traceVariablesOfStream(TrafficController.NO_STREAM, true);
                 // this.trafCOD.traceVariablesOfStream(11, true);
                 // this.trafCOD.traceVariable("MRV", 11, true);
+                 */
             }
             catch (Exception exception)
             {
