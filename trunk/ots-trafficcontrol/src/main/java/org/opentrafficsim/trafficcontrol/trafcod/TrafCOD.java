@@ -136,7 +136,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
     /**
      * Construct a new TrafCOD traffic light controller.
      * @param controllerName String; name of this TrafCOD traffic light controller
-     * @param trafCodURL String; the URL of the TrafCOD rules
+     * @param trafCodURL URL; the URL of the TrafCOD rules
      * @param trafficLights Set&lt;TrafficLight&gt;; the traffic lights. The ids of the traffic lights must end with two digits
      *            that match the stream numbers as used in the traffic control program
      * @param sensors Set&lt;TrafficLightSensor&gt;; the traffic sensors. The ids of the traffic sensors must end with three
@@ -146,7 +146,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
      * @throws TrafficControlException when a rule cannot be parsed
      * @throws SimRuntimeException when scheduling the first evaluation event fails
      */
-    public TrafCOD(String controllerName, final String trafCodURL, final Set<TrafficLight> trafficLights,
+    public TrafCOD(String controllerName, final URL trafCodURL, final Set<TrafficLight> trafficLights,
             final Set<TrafficLightSensor> sensors, final DEVSSimulator<Time, Duration, OTSSimTimeDouble> simulator,
             Container display) throws TrafficControlException, SimRuntimeException
     {
@@ -166,13 +166,35 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
         }
         if (null != display)
         {
-            String tfgFileURL = trafCodURL.replaceFirst("\\.[Tt][Ff][Cc]$", ".tfg");
-            // System.out.println("mapFileURL is \"" + tfgFileURL + "\"");
-            TrafCODDisplay tcd = makeDisplay(tfgFileURL, sensors);
-            if (null != tcd)
+            String path = trafCodURL.getPath();
+            // System.out.println("path of URL is \"" + path + "\"");
+            if (null == path)
             {
-                display.add(tcd);
+                return; // give up
             }
+            path = path.replaceFirst("\\.[Tt][Ff][Cc]$", ".tfg");
+            int pos = path.lastIndexOf("/");
+            if (pos > 0)
+            {
+                path = path.substring(pos + 1);
+            }
+            // System.out.println("fixed last component is \"" + path + "\"");
+            try
+            {
+                URL mapFileURL = new URL(trafCodURL, path);
+                // System.out.println("path of mapFileURL is \"" + mapFileURL.getPath() + "\"");
+                TrafCODDisplay tcd = makeDisplay(mapFileURL, sensors);
+                if (null != tcd)
+                {
+                    display.add(tcd);
+                }
+            }
+            catch (MalformedURLException exception)
+            {
+                exception.printStackTrace();
+            }
+            // trafCodURL.replaceFirst("\\.[Tt][Ff][Cc]$", ".tfg");
+            // // System.out.println("mapFileURL is \"" + tfgFileURL + "\"");
         }
         fireTimedEvent(TrafficController.TRAFFICCONTROL_CONTROLLER_CREATED, new Object[] { this.controllerName,
                 TrafficController.STARTING_UP }, simulator.getSimulatorTime());
@@ -197,17 +219,17 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
 
     /**
      * Read and parse the TrafCOD traffic control program.
-     * @param trafCodURL String; the URL where the TrafCOD file is to be read from
+     * @param trafCodURL URL; the URL where the TrafCOD file is to be read from
      * @param trafficLights Set&lt;TrafficLight&gt;; the traffic lights that may be referenced from the TrafCOD file
      * @param sensors Set&lt;TrafficLightSensor&gt;; the detectors that may be referenced from the TrafCOD file
      * @throws MalformedURLException when the URL is invalid
      * @throws IOException when the TrafCOD file could not be read
      * @throws TrafficControlException when the TrafCOD file contains errors
      */
-    private void parseTrafCODRules(final String trafCodURL, final Set<TrafficLight> trafficLights,
+    private void parseTrafCODRules(final URL trafCodURL, final Set<TrafficLight> trafficLights,
             final Set<TrafficLightSensor> sensors) throws MalformedURLException, IOException, TrafficControlException
     {
-        BufferedReader in = new BufferedReader(new InputStreamReader(new URL(trafCodURL).openStream()));
+        BufferedReader in = new BufferedReader(new InputStreamReader(trafCodURL.openStream()));
         String inputLine;
         int lineno = 0;
         while ((inputLine = in.readLine()) != null)
@@ -465,13 +487,13 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
      * @return TrafCODDisplay, or null when the display information could not be read, was incomplete, or invalid
      * @throws TrafficControlException when the tfg file could not be read or is invalid
      */
-    private TrafCODDisplay makeDisplay(final String tfgFileURL, Set<TrafficLightSensor> sensors) throws TrafficControlException
+    private TrafCODDisplay makeDisplay(final URL tfgFileURL, Set<TrafficLightSensor> sensors) throws TrafficControlException
     {
         TrafCODDisplay result = null;
         boolean useFirstCoordinates = true;
         try
         {
-            BufferedReader mapReader = new BufferedReader(new InputStreamReader(new URL(tfgFileURL).openStream()));
+            BufferedReader mapReader = new BufferedReader(new InputStreamReader(tfgFileURL.openStream()));
             int lineno = 0;
             String inputLine;
             while ((inputLine = mapReader.readLine()) != null)
@@ -480,26 +502,23 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
                 inputLine = inputLine.trim();
                 if (inputLine.startsWith("mapfile="))
                 {
-                    // System.out.println("map file description is " + inputLine);
-                    String mapFileURL = tfgFileURL;
-                    // Make a decent attempt at constructing the URL of the map file
-                    int pos = mapFileURL.length();
-                    while (--pos > 0)
+                    try
                     {
-                        char c = mapFileURL.charAt(pos);
-                        if ('/' == c || '\\' == c || ':' == c)
+                        URL imageFileURL = new URL(tfgFileURL, inputLine.substring(8));
+                        // System.out.println("path of imageFileURL is \"" + imageFileURL.getPath() + "\"");
+                        BufferedImage image = ImageIO.read(imageFileURL);
+                        result = new TrafCODDisplay(image);
+                        if (inputLine.matches("[Bb][Mm][Pp]|[Pp][Nn][Gg]$"))
                         {
-                            pos++;
-                            break;
+                            useFirstCoordinates = false;
                         }
                     }
-                    mapFileURL = mapFileURL.substring(0, pos) + inputLine.substring(8);
-                    BufferedImage image = ImageIO.read(new URL(mapFileURL));
-                    result = new TrafCODDisplay(image);
-                    if (mapFileURL.matches("[Bb][Mm][Pp]|[Pp][Nn][Gg]$"))
+                    catch (MalformedURLException exception)
                     {
-                        useFirstCoordinates = false;
+                        exception.printStackTrace();
                     }
+                    // System.out.println("map file description is " + inputLine);
+                    // Make a decent attempt at constructing the URL of the map file
                 }
                 else if (inputLine.startsWith("light="))
                 {
@@ -634,7 +653,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
         }
         return changeCount;
     }
-    
+
     /**
      * Reset the START, END and CHANGED flags of all timers. (These do not get reset during the normal rule evaluation phase.)
      */
