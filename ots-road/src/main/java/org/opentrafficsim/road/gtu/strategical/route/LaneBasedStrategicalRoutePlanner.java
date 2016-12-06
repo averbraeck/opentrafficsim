@@ -38,7 +38,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategicalPlanner implements
-    LaneBasedStrategicalPlanner, Serializable
+        LaneBasedStrategicalPlanner, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150724L;
@@ -56,7 +56,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * @throws GTUException if fixed tactical planner == null
      */
     public LaneBasedStrategicalRoutePlanner(final BehavioralCharacteristics behavioralCharacteristics,
-        final TacticalPlanner fixedTacticalPlanner, final LaneBasedGTU gtu) throws GTUException
+            final TacticalPlanner fixedTacticalPlanner, final LaneBasedGTU gtu) throws GTUException
     {
         this(behavioralCharacteristics, fixedTacticalPlanner, null, gtu);
     }
@@ -69,13 +69,12 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * @throws GTUException if fixed tactical planner == null
      */
     public LaneBasedStrategicalRoutePlanner(final BehavioralCharacteristics behavioralCharacteristics,
-        final TacticalPlanner fixedTacticalPlanner, final Route route, final LaneBasedGTU gtu) throws GTUException
+            final TacticalPlanner fixedTacticalPlanner, final Route route, final LaneBasedGTU gtu) throws GTUException
     {
         super(behavioralCharacteristics, gtu);
         this.route = route;
         this.fixedTacticalPlanner = fixedTacticalPlanner;
-        Throw.when(fixedTacticalPlanner == null, GTUException.class,
-            "Fixed Tactical Planner for a Strategical planner is null");
+        Throw.when(fixedTacticalPlanner == null, GTUException.class, "Fixed Tactical Planner for a Strategical planner is null");
     }
 
     /** {@inheritDoc} */
@@ -96,7 +95,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     /** {@inheritDoc} */
     @Override
     public LinkDirection nextLinkDirection(final Link link, final GTUDirectionality direction, final GTUType gtuType)
-        throws NetworkException
+            throws NetworkException
     {
         Node nextNode = direction.equals(GTUDirectionality.DIR_PLUS) ? link.getEndNode() : link.getStartNode();
         return nextLinkDirection(nextNode, link, gtuType);
@@ -113,7 +112,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     /** {@inheritDoc} */
     @Override
     public LinkDirection nextLinkDirection(final Node node, final Link previousLink, final GTUType gtuType)
-        throws NetworkException
+            throws NetworkException
     {
         // if (node.getId().contains("68.158"))
         // {
@@ -125,14 +124,14 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         {
             // end node
             throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link, but node " + node
-                + " has no successors");
+                    + " has no successors");
         }
         if (node.getLinks().size() == 1 && previousLink == null)
         {
             // start node
             Link link = node.getLinks().iterator().next();
-            return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS)
-                : new LinkDirection(link, GTUDirectionality.DIR_MINUS);
+            return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS) : new LinkDirection(
+                    link, GTUDirectionality.DIR_MINUS);
         }
         if (node.getLinks().size() == 2)
         {
@@ -145,7 +144,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                 if (!link.equals(previousLink))
                 {
                     return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS)
-                        : new LinkDirection(link, GTUDirectionality.DIR_MINUS);
+                            : new LinkDirection(link, GTUDirectionality.DIR_MINUS);
                 }
             }
         }
@@ -163,8 +162,8 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
             else
             {
                 // does the directionality of the link forbid us to go in?
-                if ((link.getStartNode().equals(node) && link.getDirectionality(gtuType).isBackward())
-                    || (link.getEndNode().equals(node) && link.getDirectionality(gtuType).isForward()))
+                if ((link.getStartNode().equals(node) && !link.getDirectionality(gtuType).isForwardOrBoth())
+                        || (link.getEndNode().equals(node) && !link.getDirectionality(gtuType).isBackwardOrBoth()))
                 {
                     linkIterator.remove();
                 }
@@ -179,7 +178,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                         {
                             Lane lane = (Lane) cse;
                             if ((link.getStartNode().equals(node) && lane.getDirectionality(gtuType).isForwardOrBoth())
-                                || (link.getEndNode().equals(node) && lane.getDirectionality(gtuType).isBackwardOrBoth()))
+                                    || (link.getEndNode().equals(node) && lane.getDirectionality(gtuType).isBackwardOrBoth()))
                             {
                                 out = true;
                             }
@@ -196,8 +195,8 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         if (links.size() == 1)
         {
             Link link = links.iterator().next();
-            return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS)
-                : new LinkDirection(link, GTUDirectionality.DIR_MINUS);
+            return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS) : new LinkDirection(
+                    link, GTUDirectionality.DIR_MINUS);
         }
 
         // more than 2 links... We have to check the route!
@@ -208,13 +207,13 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         int i = this.route.getNodes().indexOf(node);
         if (i == -1)
         {
-            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from "
-                + previousLink + ", but node " + node + " not in route " + this.route);
+            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from " + previousLink
+                    + ", but node " + node + " not in route " + this.route);
         }
         if (i == this.route.getNodes().size() - 1)
         {
-            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from "
-                + previousLink + ", but the GTU reached the last node for route " + this.route);
+            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from " + previousLink
+                    + ", but the GTU reached the last node for route " + this.route);
         }
         Node nextNode = this.route.getNode(i + 1);
 
@@ -242,8 +241,8 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                 return new LinkDirection(link, GTUDirectionality.DIR_PLUS);
             }
         }
-        throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next linkcoming from " + previousLink
-            + ", but no link could be found connecting node " + node + " and node " + nextNode + " for route " + this.route);
+        throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from " + previousLink
+                + ", but no link could be found connecting node " + node + " and node " + nextNode + " for route " + this.route);
     }
 
     /** {@inheritDoc} */
@@ -257,8 +256,8 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     @Override
     public final String toString()
     {
-        return "LaneBasedStrategicalRoutePlanner [route=" + this.route + ", fixedTacticalPlanner="
-            + this.fixedTacticalPlanner + "]";
+        return "LaneBasedStrategicalRoutePlanner [route=" + this.route + ", fixedTacticalPlanner=" + this.fixedTacticalPlanner
+                + "]";
     }
 
 }
