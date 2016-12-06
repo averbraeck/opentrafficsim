@@ -83,7 +83,8 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
     private final OTSLine3D path;
 
     /**
-     * Construct a new traffic light sensor.
+     * Construct a new traffic light sensor.<br>
+     * TODO Possibly provide the GTUTypes that trigger the sensor as an argument for the constructor
      * @param id String; id of this sensor
      * @param laneA Lane; the lane of the A detection point of this traffic light sensor
      * @param positionA Length; the position of the A detection point of this traffic light sensor
@@ -93,9 +94,9 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
      * @param entryPosition RelativePosition; the position on the GTUs that trigger the entry events
      * @param exitPosition RelativePosition; the position on the GTUs that trigger the exit events
      * @param simulator OTSDEVSSimulatorInterface; the simulator
-     * @throws NetworkException when the network is inconsistent. TODO Possibly provide the GTUTypes that trigger the sensor as
-     *             an argument for the constructor
+     * @throws NetworkException when the network is inconsistent.
      */
+    @SuppressWarnings("checkstyle:parameternumber")
     public TrafficLightSensor(final String id, final Lane laneA, final Length positionA, final Lane laneB,
             final Length positionB, final List<Lane> intermediateLanes, final TYPE entryPosition, final TYPE exitPosition,
             final OTSDEVSSimulatorInterface simulator) throws NetworkException
@@ -133,7 +134,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
             // System.out.println("Directionality on B is " + this.directionalityB);
         }
         List<OTSPoint3D> outLine = new ArrayList<>();
-        outLine.add(this.entryA.getGeometry().getCentroid());
+        outLine.add(fixElevation(this.entryA.getGeometry().getCentroid()));
         if (null != intermediateLanes && intermediateLanes.size() > 0)
         {
             Lane prevLane = laneA;
@@ -148,13 +149,13 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
                     if (prevLane.nextLanes(GTUType.ALL).containsKey(nextLane))
                     {
                         continuingLane = nextLane;
-                        outLine.add(prevLane.getCenterLine().getLast());
+                        outLine.add(fixElevation(prevLane.getCenterLine().getLast()));
                         break;
                     }
                     else if (prevLane.prevLanes(GTUType.ALL).containsKey(nextLane))
                     {
                         continuingLane = nextLane;
-                        outLine.add(prevLane.getCenterLine().getFirst());
+                        outLine.add(fixElevation(prevLane.getCenterLine().getFirst()));
                         break;
                     }
                 }
@@ -165,7 +166,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
                 remainingLanes.remove(continuingLane);
             }
         }
-        outLine.add(this.exitB.getGeometry().getCentroid());
+        outLine.add(fixElevation(this.exitB.getGeometry().getCentroid()));
         try
         {
             this.path = OTSLine3D.createAndCleanOTSLine3D(outLine);
@@ -183,6 +184,16 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
         {
             throw new NetworkException(exception);
         }
+    }
+
+    /**
+     * Increase the elevation of an OTSPoint3D.
+     * @param point OTSPoint3D; the point
+     * @return OTSPoint3D
+     */
+    private OTSPoint3D fixElevation(final OTSPoint3D point)
+    {
+        return new OTSPoint3D(point.x, point.y, point.z + Sensor.DEFAULT_SENSOR_ELEVATION.si);
     }
 
     /**
@@ -241,7 +252,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
     @Override
     public final void notify(final EventInterface event) throws RemoteException
     {
-        System.out.println("Received notification: " + event);
+        // System.out.println("Received notification: " + event);
         LaneBasedGTU gtu = (LaneBasedGTU) ((Object[]) event.getContent())[1];
         if (Lane.GTU_REMOVE_EVENT.equals(event.getType()))
         {
@@ -290,8 +301,8 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
                     Length frontPosition = frontPositions.get(remainingLane);
                     Length rearPosition = rearPositions.get(remainingLane);
                     Length laneLength = remainingLane.getLength();
-                    System.out.println("frontPosition " + frontPosition + ", rearPosition " + rearPosition + ", laneLength "
-                            + laneLength + ", directionalityB " + this.directionalityB);
+                    // System.out.println("frontPosition " + frontPosition + ", rearPosition " + rearPosition + ", laneLength "
+                    // + laneLength + ", directionalityB " + this.directionalityB);
                     if (laneLength.si >= 900)
                     {
                         System.out.println("Let op");
@@ -464,9 +475,6 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
      */
     final void signalDetection(final FlankSensor sensor, final LaneBasedGTU gtu)
     {
-        String source =
-                this.entryA == sensor ? "entryA" : this.entryB == sensor ? "entryB" : this.exitA == sensor ? "exitA"
-                        : this.exitB == sensor ? "exitB" : "???";
         GTUDirectionality gtuDirection = null;
         try
         {
@@ -476,8 +484,11 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
         {
             exception.printStackTrace();
         }
-        System.out.println("Time " + sensor.getSimulator().getSimulatorTime().get() + ": " + this.id + " " + source
-                + " triggered on " + gtu + " driving direction is " + gtuDirection);
+        // String source =
+        // this.entryA == sensor ? "entryA" : this.entryB == sensor ? "entryB" : this.exitA == sensor ? "exitA"
+        // : this.exitB == sensor ? "exitB" : "???";
+        // System.out.println("Time " + sensor.getSimulator().getSimulatorTime().get() + ": " + this.id + " " + source
+        // + " triggered on " + gtu + " driving direction is " + gtuDirection);
         if (this.entryA == sensor && gtuDirection == this.directionalityA || this.entryB == sensor
                 && gtuDirection != this.directionalityB)
         {
@@ -489,10 +500,10 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
         {
             removeGTU(gtu);
         }
-        else
-        {
-            // System.out.println("Ignoring event (GTU is driving in wrong direction)");
-        }
+        // else
+        // {
+        // // System.out.println("Ignoring event (GTU is driving in wrong direction)");
+        // }
     }
 
     /** {@inheritDoc} */
@@ -531,7 +542,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
     {
         return this.path;
     }
-    
+
     /**
      * Return the state of this traffic light sensor.
      * @return boolean; true if one or more GTUs are currently detected; false of no GTUs are currently detected
