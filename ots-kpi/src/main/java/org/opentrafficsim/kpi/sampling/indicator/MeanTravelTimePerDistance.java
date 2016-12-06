@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
@@ -13,7 +14,7 @@ import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 
 /**
- * Sum of (approximate) link lengths divided by mean speed, divided by link length in km.
+ * Inverse of mean speed.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -23,7 +24,7 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class MeanTravelTimePerKm extends AbstractIndicator<Duration>
+public class MeanTravelTimePerDistance extends AbstractIndicator<Duration>
 {
 
     /** Mean speed indicator. */
@@ -32,7 +33,7 @@ public class MeanTravelTimePerKm extends AbstractIndicator<Duration>
     /**
      * @param meanSpeed mean speed indicator
      */
-    public MeanTravelTimePerKm(final MeanSpeed meanSpeed)
+    public MeanTravelTimePerDistance(final MeanSpeed meanSpeed)
     {
         this.meanSpeed = meanSpeed;
     }
@@ -42,18 +43,7 @@ public class MeanTravelTimePerKm extends AbstractIndicator<Duration>
     public final Duration calculate(final Query query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup> trajectoryGroups)
     {
-        Length cumulLength = Length.ZERO;
-        Set<LinkDataInterface> links = new HashSet<>();
-        for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
-        {
-            if (!links.contains(trajectoryGroup.getLaneDirection().getLaneData().getLinkData()))
-            {
-                cumulLength = cumulLength.plus(trajectoryGroup.getLength()); // TODO should be average lane length of link
-                links.add(trajectoryGroup.getLaneDirection().getLaneData().getLinkData());
-            }
-        }
-        return cumulLength.divideBy(this.meanSpeed.getValue(query, startTime, endTime, trajectoryGroups))
-                .divideBy(cumulLength.getInUnit(LengthUnit.KILOMETER));
+        return new Duration(1.0 / this.meanSpeed.getValue(query, startTime, endTime, trajectoryGroups).si, TimeUnit.SI);
     }
 
     /** {@inheritDoc} */

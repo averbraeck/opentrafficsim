@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical;
 import java.io.Serializable;
 import java.util.Set;
 
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -25,7 +26,10 @@ public class NextSplitInfo implements Serializable
 
     /** If the route splits, at what node does it split? */
     private final Node nextSplitNode;
-    
+
+    /** Required direction. */
+    private final LateralDirectionality requiredDirection;
+
     /**
      * If the route splits, what are the lane(s) and/or adjacent lane(s) on which the reference point of the GTU is registered
      * that lead us in the direction of the route provided by the strategical planner.
@@ -39,9 +43,21 @@ public class NextSplitInfo implements Serializable
      */
     public NextSplitInfo(final Node nextSplitNode, final Set<Lane> correctCurrentLanes)
     {
-        super();
+        this(nextSplitNode, correctCurrentLanes, null);
+    }
+
+    /**
+     * @param nextSplitNode the first subsequent node at which the route splits.
+     * @param correctCurrentLanes the lane(s) and/or adjacent lane(s) on which the reference point of the GTU is registered that
+     *            lead us in the direction of the route provided by the strategical planner.
+     * @param requiredDirection required direction for lane changes for this split, beyond lane on current link
+     */
+    public NextSplitInfo(final Node nextSplitNode, final Set<Lane> correctCurrentLanes,
+            final LateralDirectionality requiredDirection)
+    {
         this.nextSplitNode = nextSplitNode;
         this.correctCurrentLanes = correctCurrentLanes;
+        this.requiredDirection = requiredDirection;
     }
 
     /**
@@ -69,10 +85,19 @@ public class NextSplitInfo implements Serializable
         return this.correctCurrentLanes;
     }
 
+    /**
+     * @return requiredDirection.
+     */
+    public final LateralDirectionality getRequiredDirection()
+    {
+        return this.requiredDirection;
+    }
+
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "NextSplitInfo [nextSplitNode=" + this.nextSplitNode + ", correctCurrentLanes=" + this.correctCurrentLanes + "]";
+        return "NextSplitInfo [nextSplitNode=" + this.nextSplitNode + ", correctCurrentLanes=" + this.correctCurrentLanes
+                + ", requiredDirection=" + this.requiredDirection + "]";
     }
 }

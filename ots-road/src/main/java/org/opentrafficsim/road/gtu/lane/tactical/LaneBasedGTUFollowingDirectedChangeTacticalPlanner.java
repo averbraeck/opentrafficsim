@@ -147,7 +147,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     {
         try
         {
-            
+
             // ask Perception for the local situation
             LaneBasedGTU laneBasedGTU = getGtu();
             DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);
@@ -254,7 +254,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             {
                 leftLanes.retainAll(nextSplitInfo.getCorrectCurrentLanes());
             }
-            if (!leftLanes.isEmpty() && laneBasedGTU.getSpeed().si > 4.0) // only if we are driving...
+            if (!leftLanes.isEmpty()) // && laneBasedGTU.getSpeed().si > 4.0) // only if we are driving...
             {
                 simplePerception.updateBackwardHeadway();
                 simplePerception.updateParallelHeadwaysLeft();
@@ -278,7 +278,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                     DirectedLaneMovementStep dlms = dlcm.computeLaneChangeAndAcceleration(laneBasedGTU,
                             LateralDirectionality.LEFT, sameLaneTraffic, simplePerception.getNeighboringHeadwaysLeft(),
                             behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD), simplePerception.getSpeedLimit(),
-                            // changes 1.0 to 0.0, no bias to the right
+                            // changes 1.0 to 0.0, no bias to the left: changed 0.5 to 0.1 (threshold from MOBIL model)
                             new Acceleration(0.0, AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI),
                             new Duration(0.5, TimeUnit.SECOND));
                     if (dlms.getLaneChange() != null)
@@ -301,7 +301,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             {
                 rightLanes.retainAll(nextSplitInfo.getCorrectCurrentLanes());
             }
-            if (!rightLanes.isEmpty() && laneBasedGTU.getSpeed().si > 4.0) // only if we are driving...
+            if (!rightLanes.isEmpty()) // && laneBasedGTU.getSpeed().si > 4.0) // only if we are driving...
             {
                 simplePerception.updateBackwardHeadway();
                 simplePerception.updateParallelHeadwaysRight();
@@ -326,7 +326,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                             LateralDirectionality.RIGHT, sameLaneTraffic, simplePerception.getNeighboringHeadwaysRight(),
                             behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD), simplePerception.getSpeedLimit(),
                             // 1.0 = bias?
-                            new Acceleration(1.0, AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI),
+                            new Acceleration(0.0, AccelerationUnit.SI), new Acceleration(0.1, AccelerationUnit.SI),
                             new Duration(0.5, TimeUnit.SECOND));
                     if (dlms.getLaneChange() != null)
                     {
@@ -393,12 +393,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         // No lane change. Continue on current lane.
         AccelerationStep accelerationStep = mostLimitingAccelerationStep(lanePathInfo, simplePerception.getForwardHeadwayGTU(),
                 simplePerception.getForwardHeadwayObject());
-        
-        if (getGtu().getId().equals("40"))
-        {
-            System.out.println("GTU 40 has " + accelerationStep.getAcceleration() + " at " + startTime);
-        }
-        
+
         // see if we have to continue standing still. In that case, generate a stand still plan
         if (accelerationStep.getAcceleration().si < 1E-6 && laneBasedGTU.getSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
         {
@@ -460,7 +455,8 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             System.err.println(
                     "Exception in LaneBasedGTUFollowingChange0TacticalPlanner.determineLeftRight: " + exception.getMessage());
         }
-        return null;
+        // perhaps known from split info (if need to change away from all lanes on current link)
+        return nextSplitInfo.getRequiredDirection();
     }
 
     /**

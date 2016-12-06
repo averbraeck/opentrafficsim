@@ -148,7 +148,7 @@ public class RouteGeneratorProbability implements RouteGenerator
                 {
                     return this.routeMap.get(to);
                 }
-                cumul += r;
+                cumul += p;
             }
 
             throw new RuntimeException("Probability error, no route was drawn.");

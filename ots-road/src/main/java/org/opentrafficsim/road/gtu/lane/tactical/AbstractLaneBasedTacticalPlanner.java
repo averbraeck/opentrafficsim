@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -294,7 +295,9 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             while (linkIterator.hasNext())
             {
                 Link link = linkIterator.next();
-                if (link.equals(lastLink) || !link.getLinkType().isCompatible(gtu.getGTUType()))
+                if (link.equals(lastLink) || !link.getLinkType().isCompatible(gtu.getGTUType())
+                        || (link.getDirectionality(gtu.getGTUType()).isForward() && link.getEndNode().equals(lastNode))
+                        || (link.getDirectionality(gtu.getGTUType()).isBackward() && link.getStartNode().equals(lastNode)))
                 {
                     linkIterator.remove();
                 }
@@ -366,7 +369,46 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                         }
                     }
                 }
-                return new NextSplitInfo(nextSplitNode, correctCurrentLanes);
+                if (correctCurrentLanes.size() > 0)
+                {
+                    return new NextSplitInfo(nextSplitNode, correctCurrentLanes);
+                }
+                // split, but no lane on current link to right direction
+                Set<Lane> correctLanes = new HashSet<>();
+                Set<Lane> wrongLanes = new HashSet<>();
+                for (CrossSectionElement cse : ((CrossSectionLink) lastLink).getCrossSectionElementList())
+                {
+                    if (cse instanceof Lane)
+                    {
+                        Lane l = (Lane) cse;
+                        if (connectsToPath(gtu, maxHeadway.plus(l.getLength()), l, Length.ZERO, lastGtuDir, ld.getLink()))
+                        {
+                            correctLanes.add(l);
+                        }
+                        else
+                        {
+                            wrongLanes.add(l);
+                        }
+                    }
+                }
+                for (Lane wrongLane : wrongLanes)
+                {
+                    for (Lane adjLane : wrongLane.accessibleAdjacentLanes(LateralDirectionality.LEFT, gtu.getGTUType()))
+                    {
+                        if (correctLanes.contains(adjLane))
+                        {
+                            return new NextSplitInfo(nextSplitNode, correctCurrentLanes, LateralDirectionality.LEFT);
+                        }
+                    }
+                    for (Lane adjLane : wrongLane.accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtu.getGTUType()))
+                    {
+                        if (correctLanes.contains(adjLane))
+                        {
+                            return new NextSplitInfo(nextSplitNode, correctCurrentLanes, LateralDirectionality.RIGHT);
+                        }
+                    }
+                }
+                return new NextSplitInfo(nextSplitNode, correctCurrentLanes, null);
             }
 
             if (links.size() == 0)
