@@ -6,7 +6,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.kpi.sampling.indicator.MeanSpeed;
-import org.opentrafficsim.kpi.sampling.indicator.MeanTravelTimePerKm;
+import org.opentrafficsim.kpi.sampling.indicator.MeanTravelTimePerDistance;
 import org.opentrafficsim.kpi.sampling.indicator.MeanTripLength;
 import org.opentrafficsim.kpi.sampling.indicator.TotalDelay;
 import org.opentrafficsim.kpi.sampling.indicator.TotalNumberOfStops;
@@ -269,7 +269,7 @@ public class Sim0MQKpiTransceiver implements Serializable
 
     private MeanSpeed meanSpeed = new MeanSpeed(this.totalTravelDistance, this.totalTravelTime);
 
-    private MeanTravelTimePerKm meanTravelTimePerKm = new MeanTravelTimePerKm(this.meanSpeed);
+    private MeanTravelTimePerDistance meanTravelTimePerKm = new MeanTravelTimePerDistance(this.meanSpeed);
 
     private MeanTripLength meanTripLength = new MeanTripLength();
 
