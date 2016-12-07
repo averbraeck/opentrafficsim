@@ -130,7 +130,7 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
     @Override
     protected final Double makeAnimationRectangle()
     {
-        return new Rectangle2D.Double(-110, -110, 220, 220);
+        return new Rectangle2D.Double(-200, -200, 400, 400);
     }
 
     /**
@@ -155,9 +155,10 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
                 OTSNetwork network = nlp.build(url);
                 Length sinkPosition = new Length(10, LengthUnit.METER); // These lanes have reverse direction
+                String[] directions = { "E", "S", "W", "N" };
                 for (int laneNumber = 1; laneNumber <= 3; laneNumber++)
                 {
-                    for (String direction : new String[] { "N", "E", "S", "W" })
+                    for (String direction : directions)
                     {
                         Lane l =
                                 (Lane) ((CrossSectionLink) network.getLink(direction, direction + "C"))
@@ -165,36 +166,40 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
                         new SinkSensor(l, sinkPosition, (OTSDEVSSimulatorInterface) theSimulator);
                     }
                 }
-                /*-
-                Lane laneNX = (Lane) ((CrossSectionLink) network.getLink("N", "X")).getCrossSectionElement("FORWARD");
-                Lane laneWX = (Lane) ((CrossSectionLink) network.getLink("W", "X")).getCrossSectionElement("FORWARD");
-                Lane laneXE = (Lane) ((CrossSectionLink) network.getLink("X", "E")).getCrossSectionElement("FORWARD");
-                new SinkSensor(laneXE, new Length(90, LengthUnit.METER), (OTSDEVSSimulatorInterface) theSimulator);
+                // Add the traffic lights and the detectors
                 Set<TrafficLight> trafficLights = new HashSet<>();
-                trafficLights.add(new SimpleTrafficLight("TL08", laneWX, new Length(296, LengthUnit.METER),
-                        (OTSDEVSSimulatorInterface) theSimulator));
-                trafficLights.add(new SimpleTrafficLight("TL11", laneNX, new Length(296, LengthUnit.METER),
-                        (OTSDEVSSimulatorInterface) theSimulator));
                 Set<TrafficLightSensor> sensors = new HashSet<>();
-                sensors.add(new TrafficLightSensor("D081", laneWX, new Length(292, LengthUnit.METER), laneWX, new Length(294,
-                        LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
-                        (OTSDEVSSimulatorInterface) theSimulator));
-                sensors.add(new TrafficLightSensor("D082", laneWX, new Length(260, LengthUnit.METER), laneWX, new Length(285,
-                        LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
-                        (OTSDEVSSimulatorInterface) theSimulator));
-                sensors.add(new TrafficLightSensor("D111", laneNX, new Length(292, LengthUnit.METER), laneNX, new Length(294,
-                        LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
-                        (OTSDEVSSimulatorInterface) theSimulator));
-                sensors.add(new TrafficLightSensor("D112", laneNX, new Length(260, LengthUnit.METER), laneNX, new Length(285,
-                        LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
-                        (OTSDEVSSimulatorInterface) theSimulator));
-                String controllerName = "Simple TrafCOD controller";
+                Length stopLineMargin = new Length(2, LengthUnit.METER);
+                Length headDetectorLength = new Length(1, LengthUnit.METER);
+                Length headDetectorMargin = stopLineMargin.plus(headDetectorLength).plus(new Length(3, LengthUnit.METER));
+                Length longDetectorLength = new Length(30, LengthUnit.METER);
+                Length longDetectorMargin = stopLineMargin.plus(longDetectorLength).plus(new Length(10, LengthUnit.METER));
+                int stream = 1;
+                for (String direction : directions)
+                {
+                    for (int laneNumber = 3; laneNumber >= 1; laneNumber--)
+                    {
+                        Lane lane =
+                                (Lane) ((CrossSectionLink) network.getLink(direction, direction + "C"))
+                                        .getCrossSectionElement("FORWARD" + laneNumber);
+                        trafficLights.add(new SimpleTrafficLight(String.format("TL%02d", stream), lane, lane.getLength().minus(
+                                stopLineMargin), (OTSDEVSSimulatorInterface) theSimulator));
+                        sensors.add(new TrafficLightSensor(String.format("D%02d1", stream), lane, lane.getLength().minus(
+                                headDetectorMargin), lane, lane.getLength().minus(headDetectorMargin).plus(headDetectorLength),
+                                null, RelativePosition.FRONT, RelativePosition.REAR, (OTSDEVSSimulatorInterface) theSimulator));
+                        sensors.add(new TrafficLightSensor(String.format("D%02d2", stream), lane, lane.getLength().minus(
+                                longDetectorMargin), lane, lane.getLength().minus(longDetectorMargin).plus(longDetectorLength),
+                                null, RelativePosition.FRONT, RelativePosition.REAR, (OTSDEVSSimulatorInterface) theSimulator));
+                        stream++;
+                    }
+                }
+                String controllerName = "Not so simple TrafCOD controller";
                 // this.trafCOD =
                 // new TrafCOD(controllerName, "file:///d:/cppb/trafcod/otsim/simpleTest.tfc", trafficLights, sensors,
                 // (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator,
                 // TrafCODDemo.this.controllerDisplayPanel);
                 this.trafCOD =
-                        new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo1/simpleTest.tfc"),
+                        new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo2/Intersection12Dir.tfc"),
                                 trafficLights, sensors,
                                 (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator,
                                 TrafCODDemo2.this.controllerDisplayPanel);
@@ -217,7 +222,6 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
                 // this.trafCOD.traceVariablesOfStream(TrafficController.NO_STREAM, true);
                 // this.trafCOD.traceVariablesOfStream(11, true);
                 // this.trafCOD.traceVariable("MRV", 11, true);
-                 */
             }
             catch (Exception exception)
             {
