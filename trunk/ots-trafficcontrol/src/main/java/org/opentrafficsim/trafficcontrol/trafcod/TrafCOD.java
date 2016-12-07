@@ -311,6 +311,9 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
                     }
                     for (int conflictMemberLine = 0; conflictMemberLine < this.numberOfConflictGroups; conflictMemberLine++)
                     {
+                        inputLine = in.readLine();
+                        ++lineno;
+                        trimmedLine = inputLine.trim();
                         while (trimmedLine.startsWith(COMMENT_PREFIX))
                         {
                             inputLine = in.readLine();
