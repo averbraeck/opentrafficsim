@@ -256,7 +256,7 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadway
     @Override
     public final String toString()
     {
-        return "HeadwayGTU [gtuType=" + this.gtuType + ", gtuStatus=" + this.gtuStatus + "]";
+        return "HeadwayGTU [gtuType=" + this.gtuType + ", gtuStatus=" + this.gtuStatus + ", distance=" + getDistance() + "]";
     }
 
 }
