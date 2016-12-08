@@ -39,6 +39,7 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
@@ -432,7 +433,12 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         if (getOperationalPlan().getAcceleration(Duration.ZERO).si < -10
                 && getOperationalPlan().getSpeed(Duration.ZERO).si > 2.5)
         {
-            System.err.println("(getOperationalPlan().getAcceleration(Duration.ZERO).si < -10)");
+            System.err.println("GTU: " + getId() + " - getOperationalPlan().getAcceleration(Duration.ZERO).si < -10)");
+            System.err.println("Lanes in current plan: " + this.lanesCurrentOperationalPlan.keySet());
+            DefaultSimplePerception p =
+                    getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class);
+            System.err.println("HeadwayGTU: " + p.getForwardHeadwayGTU());
+            System.err.println("HeadwayObject: " + p.getForwardHeadwayObject());
         }
 
         // schedule triggers and determine when to enter lanes with front and leave lanes with rear
