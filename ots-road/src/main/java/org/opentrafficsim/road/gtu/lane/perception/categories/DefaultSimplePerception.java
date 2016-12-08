@@ -756,30 +756,18 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
             ldIndex++;
             if (ld.getDirection().isPlus()) // e.g. 1005 on length of lane = 1000
             {
-                gtuPosFrontSI -= ld.getLane().getLength().si; // First subtract the length of the lane that the GTU is leaving
-                if (lpi.getLaneDirectionList().get(ldIndex).getDirection().isPlus())
-                {
-                    gtuPosFrontSI -= ld.getLane().getLength().si;
-                }
-                else
-                {
-                    gtuPosFrontSI = lpi.getLaneDirectionList().get(ldIndex).getLane().getLength().si - gtuPosFrontSI;
-                }
-                ld = lpi.getLaneDirectionList().get(ldIndex);
+                gtuPosFrontSI -= ld.getLane().getLength().si; // First subtract the length of the lane that the GTU is leaving <<< zoveel meter voorbij huidige lane            
             }
             else
             // e.g. -5 on lane of whatever length
             {
-                if (lpi.getLaneDirectionList().get(ldIndex).getDirection().isPlus())
-                {
-                    gtuPosFrontSI += ld.getLane().getLength().si;
-                }
-                else
-                {
-                    gtuPosFrontSI += lpi.getLaneDirectionList().get(ldIndex).getLane().getLength().si;
-                }
-                ld = lpi.getLaneDirectionList().get(ldIndex);
+                gtuPosFrontSI *= -1.0;            
             }
+            if (lpi.getLaneDirectionList().get(ldIndex).getDirection().isMinus())
+            {
+                gtuPosFrontSI = lpi.getLaneDirectionList().get(ldIndex).getLane().getLength().si - gtuPosFrontSI;
+            }
+            ld = lpi.getLaneDirectionList().get(ldIndex);
         }
 
         double maxDistanceSI = maxDistance.si;
