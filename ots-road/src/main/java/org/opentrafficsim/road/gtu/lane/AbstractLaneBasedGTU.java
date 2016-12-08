@@ -12,6 +12,12 @@ import java.util.Set;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+import nl.tudelft.simulation.language.Throw;
+import nl.tudelft.simulation.language.d3.BoundingBox;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -27,7 +33,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanBuilder;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
@@ -41,12 +46,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
-import nl.tudelft.simulation.language.Throw;
-import nl.tudelft.simulation.language.d3.BoundingBox;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * This class contains most of the code that is needed to run a lane based GTU. <br>
