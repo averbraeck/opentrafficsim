@@ -756,6 +756,7 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
             ldIndex++;
             if (ld.getDirection().isPlus()) // e.g. 1005 on length of lane = 1000
             {
+                gtuPosFrontSI -= ld.getLane().getLength().si; // First subtract the length of the lane that the GTU is leaving
                 if (lpi.getLaneDirectionList().get(ldIndex).getDirection().isPlus())
                 {
                     gtuPosFrontSI -= ld.getLane().getLength().si;
