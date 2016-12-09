@@ -156,20 +156,17 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
                 OTSNetwork network = nlp.build(url);
                 Length sinkPosition = new Length(10, LengthUnit.METER); // These lanes have reverse direction
                 String[] directions = { "E", "S", "W", "N" };
-                for (int laneNumber = 1; laneNumber <= 3; laneNumber++)
+                for (String direction : directions)
                 {
-                    for (String direction : directions)
-                    {
-                        Lane l =
-                                (Lane) ((CrossSectionLink) network.getLink(direction, direction + "C"))
-                                        .getCrossSectionElement("REVERSE" + laneNumber);
-                        new SinkSensor(l, sinkPosition, (OTSDEVSSimulatorInterface) theSimulator);
-                    }
+                    Lane l =
+                            (Lane) ((CrossSectionLink) network.getLink(direction, direction + "C"))
+                                    .getCrossSectionElement("REVERSE");
+                    new SinkSensor(l, sinkPosition, (OTSDEVSSimulatorInterface) theSimulator);
                 }
                 // Add the traffic lights and the detectors
                 Set<TrafficLight> trafficLights = new HashSet<>();
                 Set<TrafficLightSensor> sensors = new HashSet<>();
-                Length stopLineMargin = new Length(2, LengthUnit.METER);
+                Length stopLineMargin = new Length(0.1, LengthUnit.METER);
                 Length headDetectorLength = new Length(1, LengthUnit.METER);
                 Length headDetectorMargin = stopLineMargin.plus(headDetectorLength).plus(new Length(3, LengthUnit.METER));
                 Length longDetectorLength = new Length(30, LengthUnit.METER);
@@ -194,14 +191,9 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
                     }
                 }
                 String controllerName = "Not so simple TrafCOD controller";
-                // this.trafCOD =
-                // new TrafCOD(controllerName, "file:///d:/cppb/trafcod/otsim/simpleTest.tfc", trafficLights, sensors,
-                // (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator,
-                // TrafCODDemo.this.controllerDisplayPanel);
                 this.trafCOD =
                         new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo2/Intersection12Dir.tfc"),
-                                trafficLights, sensors,
-                                (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator,
+                                trafficLights, sensors, (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator,
                                 TrafCODDemo2.this.controllerDisplayPanel);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
@@ -243,7 +235,7 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
             Object[] payload = (Object[]) event.getContent();
             if (TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING.equals(type))
             {
-                // System.out.println("Evalution starts at " + getSimulator().getSimulatorTime().getTime());
+                // System.out.println("Evaluation starts at " + getSimulator().getSimulatorTime().getTime());
                 return;
             }
             else if (TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED.equals(type))
