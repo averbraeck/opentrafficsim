@@ -143,7 +143,7 @@ public class FourStop extends AbstractWrappableAnimation
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
-            URL url = URLResource.getResource("/4-stop.xml");
+            URL url = URLResource.getResource("/4-stop-3-1.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
             {
