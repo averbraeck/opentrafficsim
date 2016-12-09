@@ -66,6 +66,7 @@ import nl.javel.gisbeans.io.esri.CoordinateTransform;
 import nl.tno.imb.TConnection;
 import nl.tno.imb.mc.ModelParameters;
 import nl.tno.imb.mc.ModelStarter;
+import nl.tno.imb.mc.ModelState;
 import nl.tno.imb.mc.Parameter;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.Simulator;
@@ -86,7 +87,7 @@ public class ModelControlA58 extends ModelStarter
 {
 
     /** Amount of ACC. */
-    private double penetrationRate;
+    double penetrationRate;
 
     /** Model. */
     A58Model model;
@@ -96,6 +97,9 @@ public class ModelControlA58 extends ModelStarter
 
     /** Thread for statistics. */
     Thread statisticsThread;
+
+    /** Thread that start model. */
+    Thread startThread;
 
     /**
      * @param args the command line args
@@ -117,13 +121,13 @@ public class ModelControlA58 extends ModelStarter
      */
     public static void main(String[] args) throws IMBException, InvocationTargetException, InterruptedException
     {
-        if (args.length == 0)
-        {
-            ModelControlA58 modelControlA58 = new ModelControlA58(new String[0], "A58 model", 1248);
-            modelControlA58.startModel(null, modelControlA58.connection); // null will use default penetration rate
-        }
-        else
-        {
+//        if (args.length == 0)
+//        {
+//            ModelControlA58 modelControlA58 = new ModelControlA58(new String[0], "A58 model", 1248);
+//            modelControlA58.startModel(null, modelControlA58.connection); // null will use default penetration rate
+//        }
+//        else
+//        {
             SwingUtilities.invokeAndWait(new Runnable()
             {
                 @Override
@@ -139,7 +143,7 @@ public class ModelControlA58 extends ModelStarter
                     }
                 }
             });
-        }
+//        }
 
         // try
         // {
@@ -156,34 +160,50 @@ public class ModelControlA58 extends ModelStarter
     @Override
     public void startModel(ModelParameters parameters, TConnection imbConnection)
     {
-        this.penetrationRate = 0.0;
-        if (parameters != null && parameters.parameterExists("penetration"))
+        this.startThread = new Thread(new Runnable()
         {
-            try
+            public void run()
             {
-                this.penetrationRate = ((double) parameters.getParameterValue("penetration")) / 100;
-            }
-            catch (IMBException exception)
-            {
-                // should not happen, we check for parameter existence
-                exception.printStackTrace();
-            }
-        }
-        else
-        {
-            System.out.println("No penetration parameter found, using default value of " + this.penetrationRate);
-        }
+                ModelControlA58.this.penetrationRate = 0.0;
+                if (parameters != null && parameters.parameterExists("penetration"))
+                {
+                    try
+                    {
+                        ModelControlA58.this.penetrationRate = ((double) parameters.getParameterValue("penetration")) / 100;
+                    }
+                    catch (IMBException exception)
+                    {
+                        // should not happen, we check for parameter existence
+                        exception.printStackTrace();
+                    }
+                }
+                else
+                {
+                    System.out.println(
+                            "No penetration parameter found, using default value of " + ModelControlA58.this.penetrationRate);
+                }
 
-        this.a58Animation = new A58Animation(imbConnection);
-        try
-        {
-            this.a58Animation.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.000001, TimeUnit.SI), null, null, true);
-        }
-        catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
-        {
-            exception.printStackTrace();
-        }
-
+                ModelControlA58.this.a58Animation = new A58Animation(imbConnection);
+                try
+                {
+                    ModelControlA58.this.a58Animation.buildAnimator(Time.ZERO, Duration.ZERO,
+                            new Duration(3600.000001, TimeUnit.SI), null, null, true);
+                }
+                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+                {
+                    exception.printStackTrace();
+                }
+                try
+                {
+                    signalModelState(ModelState.READY);
+                }
+                catch (IMBException exception)
+                {
+                    throw new RuntimeException("Exception while setting READY state on A58 model.", exception);
+                }
+            }
+        });
+        this.startThread.start();
     }
 
     /** {@inheritDoc} */
@@ -194,10 +214,12 @@ public class ModelControlA58 extends ModelStarter
         if (this.statisticsThread != null)
         {
             this.statisticsThread.interrupt();
+            this.startThread.interrupt();
             try
             {
                 System.out.println("ModelControlA58 joining with statisticsThread");
                 this.statisticsThread.join();
+                this.startThread.join();
             }
             catch (InterruptedException exception)
             {
@@ -268,8 +290,7 @@ public class ModelControlA58 extends ModelStarter
         Property<?> caccPenetration = findByKeyInList(propertyList, "penetration");
         if (null != caccPenetration)
         {
-            parameters.addParameter(
-                    new Parameter("penetration", ((ContinuousProperty) caccPenetration).getValue()));
+            parameters.addParameter(new Parameter("penetration", ((ContinuousProperty) caccPenetration).getValue()));
         }
         System.out.println("(possibly) modified paramters: " + parameters);
     }

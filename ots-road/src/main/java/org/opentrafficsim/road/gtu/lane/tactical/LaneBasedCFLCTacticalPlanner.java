@@ -174,11 +174,6 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             Duration duration = lcmr.getGfmr().getValidUntil().minus(getGtu().getSimulator().getSimulatorTime().getTime());
             if (lcmr.getLaneChangeDirection() != null)
             {
-                if (getGtu().getSpeed().si == 0.0 && getGtu().getOdometer().si > 100)
-                {
-                    System.out.println("why you change? ");
-                }
-
                 laneBasedGTU.changeLaneInstantaneously(lcmr.getLaneChangeDirection());
 
                 // create the path to drive in this timestep.

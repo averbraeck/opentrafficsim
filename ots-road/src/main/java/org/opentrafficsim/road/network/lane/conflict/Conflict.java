@@ -1,6 +1,9 @@
 package org.opentrafficsim.road.network.lane.conflict;
 
+import java.rmi.RemoteException;
 import java.util.UUID;
+
+import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -41,9 +44,12 @@ public final class Conflict extends AbstractLaneBasedObject
 
     /** Accompanying other conflict. */
     private Conflict otherConflict;
-    
-    /** the length of the conflict along the lane centerline. */
+
+    /** The length of the conflict along the lane centerline. */
     private final Length length;
+    
+    /** Simulator for animation and timed events. */
+    private final OTSDEVSSimulatorInterface simulator;
 
     /**
      * @param lane lane where this conflict starts
@@ -52,15 +58,27 @@ public final class Conflict extends AbstractLaneBasedObject
      * @param geometry geometry of conflict
      * @param conflictRule conflict rule, i.e. priority, give way, stop or all-stop
      * @param conflictType conflict type, i.e. crossing, merge or split
+     * @param simulator the simulator for animation and timed events
      * @throws NetworkException when the position on the lane is out of bounds
      */
     private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final OTSLine3D geometry,
-            final ConflictType conflictType, final ConflictRule conflictRule) throws NetworkException
+            final ConflictType conflictType, final ConflictRule conflictRule, final OTSDEVSSimulatorInterface simulator)
+            throws NetworkException
     {
         super(UUID.randomUUID().toString(), lane, longitudinalPosition, geometry);
         this.length = length;
         this.conflictType = conflictType;
         this.conflictRule = conflictRule;
+        this.simulator = simulator;
+
+        try
+        {
+            new ConflictAnimation(this, simulator);
+        }
+        catch (RemoteException | NamingException exception)
+        {
+            throw new NetworkException(exception);
+        }
     }
 
     /**
@@ -77,6 +95,14 @@ public final class Conflict extends AbstractLaneBasedObject
     public ConflictRule getConflictRule()
     {
         return this.conflictRule;
+    }
+
+    /**
+     * @return length.
+     */
+    public Length getLength()
+    {
+        return this.length;
     }
 
     /**
@@ -100,13 +126,15 @@ public final class Conflict extends AbstractLaneBasedObject
      * @param length2 {@code Length} of conflict 2
      * @param geometry2 geometry of conflict 1
      * @param conflictRule2 conflict rule of conflict 2
+     * @param simulator the simulator for animation and timed events
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static void generateConflictPair(final ConflictType conflictType, final Lane lane1,
             final Length longitudinalPosition1, final Length length1, final OTSLine3D geometry1,
             final ConflictRule conflictRule1, final Lane lane2, final Length longitudinalPosition2, final Length length2,
-            final OTSLine3D geometry2, final ConflictRule conflictRule2) throws NetworkException
+            final OTSLine3D geometry2, final ConflictRule conflictRule2, final OTSDEVSSimulatorInterface simulator)
+            throws NetworkException
     {
         // lane, longitudinalPosition, length and geometry are checked in AbstractLaneBasedObject
         Throw.whenNull(conflictType, "Conflict type may not be null.");
@@ -141,8 +169,8 @@ public final class Conflict extends AbstractLaneBasedObject
             Throw.when(conflictRule1.equals(ConflictRule.SPLIT) || conflictRule2.equals(ConflictRule.SPLIT),
                     NetworkException.class, "Conflict rule 'SPLIT' may only be used on conflicts of type SPLIT.");
         }
-        Conflict conf1 = new Conflict(lane1, longitudinalPosition1, length1, geometry1, conflictType, conflictRule1);
-        Conflict conf2 = new Conflict(lane2, longitudinalPosition2, length2, geometry2, conflictType, conflictRule2);
+        Conflict conf1 = new Conflict(lane1, longitudinalPosition1, length1, geometry1, conflictType, conflictRule1, simulator);
+        Conflict conf2 = new Conflict(lane2, longitudinalPosition2, length2, geometry2, conflictType, conflictRule2, simulator);
         conf1.otherConflict = conf2;
         conf2.otherConflict = conf1;
     }
@@ -165,7 +193,7 @@ public final class Conflict extends AbstractLaneBasedObject
                 "simulator should be a DEVSSimulator");
         // TODO conflict needs to be connected to the other cloned conflict
         return new Conflict((Lane) newCSE, getLongitudinalPosition(), this.length, getGeometry(), this.conflictType,
-                this.conflictRule);
+                this.conflictRule, this.simulator);
     }
 
 }

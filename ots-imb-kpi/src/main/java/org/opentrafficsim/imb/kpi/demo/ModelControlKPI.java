@@ -9,6 +9,7 @@ import org.opentrafficsim.imb.IMBException;
 import nl.tno.imb.TConnection;
 import nl.tno.imb.mc.ModelParameters;
 import nl.tno.imb.mc.ModelStarter;
+import nl.tno.imb.mc.ModelState;
 
 /**
  * <p>
@@ -73,6 +74,14 @@ public class ModelControlKPI extends ModelStarter
             public void run()
             {
                 VissimQueryKPI.run(imbConnection);
+                try
+                {
+                    signalModelState(ModelState.READY);
+                }
+                catch (IMBException exception)
+                {
+                    throw new RuntimeException("Exception while setting READY state on KPI module.", exception);
+                }
             }
         });
         this.kpiThread.start();
