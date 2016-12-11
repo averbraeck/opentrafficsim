@@ -11,6 +11,8 @@ import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -18,13 +20,14 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JToggleButton;
 
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
 
-import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
+import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
 import nl.tudelft.simulation.language.io.URLResource;
@@ -46,10 +49,16 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     private static final long serialVersionUID = 20150617L;
 
     /** The animation panel on tab position 0. */
-    private final AnimationPanel animationPanel;
+    private final ShowHideAnimationPanel animationPanel;
 
     /** Border panel in which the animation is shown. */
     private final JPanel borderPanel;
+
+    /** Toggle panel with which animation features can be shown/hidden. */
+    private final JPanel togglePanel;
+
+    /** Map of toggle names to toggle animation classes. */
+    private Map<String, Class<? extends Locatable>> toggleLocatableMap = new HashMap<>();
 
     /** The switchableGTUColorer used to color the GTUs. */
     private GTUColorer gtuColorer = null;
@@ -91,12 +100,12 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * @throws PropertyException when one of the user modified properties has the empty string as key
      */
     public OTSAnimationPanel(final Rectangle2D extent, final Dimension size, final SimpleAnimator simulator,
-        final WrappableAnimation wrappableAnimation, final GTUColorer gtuColorer) throws RemoteException, PropertyException
+            final WrappableAnimation wrappableAnimation, final GTUColorer gtuColorer) throws RemoteException, PropertyException
     {
         super(simulator, wrappableAnimation);
 
         // Add the animation panel as a tab.
-        this.animationPanel = new AnimationPanel(extent, size, simulator);
+        this.animationPanel = new ShowHideAnimationPanel(extent, size, simulator);
         this.borderPanel = new JPanel(new BorderLayout());
         this.borderPanel.add(this.animationPanel, BorderLayout.CENTER);
         getTabbedPane().addTab(0, "animation", this.borderPanel);
@@ -109,6 +118,11 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         this.borderPanel.add(buttonPanel, BorderLayout.NORTH);
         buttonPanel.add(this.colorControlPanel);
+
+        // Include the TogglePanel WEST of the animation.
+        this.togglePanel = new JPanel();
+        this.togglePanel.setLayout(new BoxLayout(this.togglePanel, BoxLayout.Y_AXIS));
+        this.borderPanel.add(this.togglePanel, BorderLayout.WEST);
 
         // add the buttons for home, zoom all, grid, and mouse coordinates
         buttonPanel.add(new JLabel("   "));
@@ -143,11 +157,12 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * @param enabled boolean; true if the new button must initially be enable; false if it must initially be disabled
      * @return JButton
      */
-    private JButton makeButton(final String name, final String iconPath, final String actionCommand,
-        final String toolTipText, final boolean enabled)
+    private JButton makeButton(final String name, final String iconPath, final String actionCommand, final String toolTipText,
+            final boolean enabled)
     {
         // JButton result = new JButton(new ImageIcon(this.getClass().getResource(iconPath)));
         JButton result = new JButton(new ImageIcon(URLResource.getResource(iconPath)));
+        result.setPreferredSize(new Dimension(34, 32));
         result.setName(name);
         result.setEnabled(enabled);
         result.setActionCommand(actionCommand);
@@ -155,6 +170,59 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         result.addActionListener(this);
         this.buttons.add(result);
         return result;
+    }
+
+    /**
+     * Add a button for toggling an animatable class on or off.
+     * @param name the name of the button
+     * @param locatableClass the class for which the button holds (e.g., GTU.class)
+     * @param iconPath the path to the 24x24 icon to display
+     * @param toolTipText the tool tip text to show when hovering over the button
+     * @param initiallyVisible whether the class is initially shown or not
+     */
+    public final void addToggleAnimationButton(final String name, final Class<? extends Locatable> locatableClass,
+            final String iconPath, final String toolTipText, final boolean initiallyVisible)
+    {
+        JToggleButton button;
+        if (iconPath != null)
+        {
+            button = new JToggleButton(new ImageIcon(URLResource.getResource(iconPath)));
+            button.setPreferredSize(new Dimension(34, 32));
+        }
+        else
+        {
+            button = new JToggleButton(name);
+        }
+        button.setName(name);
+        button.setEnabled(true);
+        button.setSelected(initiallyVisible);
+        button.setActionCommand(name);
+        button.setToolTipText(toolTipText);
+        button.addActionListener(this);
+        this.togglePanel.add(button);
+
+        if (initiallyVisible)
+        {
+            this.animationPanel.showClass(locatableClass);
+        }
+        else
+        {
+            this.animationPanel.hideClass(locatableClass);
+        }
+        this.toggleLocatableMap.put(name, locatableClass);
+    }
+
+    /**
+     * Add a button for toggling an animatable class on or off.
+     * @param name the name of the button
+     * @param locatableClass the class for which the button holds (e.g., GTU.class)
+     * @param toolTipText the tool tip text to show when hovering over the button
+     * @param initiallyVisible whether the class is initially shown or not
+     */
+    public final void addToggleAnimationButton(final String name, final Class<? extends Locatable> locatableClass,
+            final String toolTipText, final boolean initiallyVisible)
+    {
+        addToggleAnimationButton(name, locatableClass, null, toolTipText, initiallyVisible);
     }
 
     /** {@inheritDoc} */
@@ -176,6 +244,13 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
             {
                 this.animationPanel.showGrid(!this.animationPanel.isShowGrid());
             }
+
+            if (this.toggleLocatableMap.containsKey(actionCommand))
+            {
+                Class<? extends Locatable> locatableClass = this.toggleLocatableMap.get(actionCommand);
+                this.animationPanel.toggleClass(locatableClass);
+                this.togglePanel.repaint();
+            }
         }
         catch (Exception exception)
         {
@@ -187,7 +262,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * Easy access to the AnimationPanel.
      * @return AnimationPanel
      */
-    public final AnimationPanel getAnimationPanel()
+    public final ShowHideAnimationPanel getAnimationPanel()
     {
         return this.animationPanel;
     }
@@ -197,8 +272,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      */
     protected final void updateWorldCoordinate()
     {
-        String worldPoint =
-            "(x=" + FORMATTER.format(this.animationPanel.getWorldCoordinate().getX()) + " ; y="
+        String worldPoint = "(x=" + FORMATTER.format(this.animationPanel.getWorldCoordinate().getX()) + " ; y="
                 + FORMATTER.format(this.animationPanel.getWorldCoordinate().getY()) + ")";
         this.coordinateField.setText("Mouse: " + worldPoint);
         this.coordinateField.repaint();

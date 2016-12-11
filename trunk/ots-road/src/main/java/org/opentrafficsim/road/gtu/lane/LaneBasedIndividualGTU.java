@@ -15,11 +15,6 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.immutablecollections.Immutable;
-import org.opentrafficsim.base.immutablecollections.ImmutableHashSet;
-import org.opentrafficsim.base.immutablecollections.ImmutableLinkedHashMap;
-import org.opentrafficsim.base.immutablecollections.ImmutableMap;
-import org.opentrafficsim.base.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -37,6 +32,11 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.immutablecollections.Immutable;
+import nl.tudelft.simulation.immutablecollections.ImmutableHashSet;
+import nl.tudelft.simulation.immutablecollections.ImmutableLinkedHashMap;
+import nl.tudelft.simulation.immutablecollections.ImmutableMap;
+import nl.tudelft.simulation.immutablecollections.ImmutableSet;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 /**

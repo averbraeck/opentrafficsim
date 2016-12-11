@@ -27,7 +27,6 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -183,6 +182,13 @@ public class TestXMLParserClone extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
+        public OTSNetwork getNetwork()
+        {
+            return TestXMLParserClone.this.network;
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public final String toString()
         {
             return "TestXMLModel [simulator=" + this.simulator + "]";
@@ -238,6 +244,13 @@ public class TestXMLParserClone extends AbstractWrappableAnimation
         public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
         {
             return this.simulator;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public OTSNetwork getNetwork()
+        {
+            return TestXMLParserClone.this.network;
         }
 
         /** {@inheritDoc} */

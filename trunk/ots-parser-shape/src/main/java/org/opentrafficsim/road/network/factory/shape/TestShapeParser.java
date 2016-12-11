@@ -12,9 +12,6 @@ import java.util.Map;
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
@@ -31,7 +28,6 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -43,6 +39,9 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 public class TestShapeParser extends AbstractWrappableAnimation
 {
@@ -147,7 +146,7 @@ public class TestShapeParser extends AbstractWrappableAnimation
         private OTSDEVSSimulatorInterface simulator;
 
         /** The network. */
-        private final Network network = new OTSNetwork("test network");
+        private final OTSNetwork network = new OTSNetwork("test network");
 
         /** {@inheritDoc} */
         @Override
@@ -468,9 +467,15 @@ public class TestShapeParser extends AbstractWrappableAnimation
         /** {@inheritDoc} */
         @Override
         public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
-
         {
             return this.simulator;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public OTSNetwork getNetwork()
+        {
+            return this.network;
         }
 
         /** {@inheritDoc} */

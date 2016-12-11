@@ -6,8 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.opentrafficsim.base.immutablecollections.ImmutableIterator;
-
+import nl.tudelft.simulation.immutablecollections.ImmutableIterator;
 import nl.tudelft.simulation.language.Throw;
 
 /**

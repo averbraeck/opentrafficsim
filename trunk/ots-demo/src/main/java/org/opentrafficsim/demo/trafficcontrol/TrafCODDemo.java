@@ -1,8 +1,6 @@
 package org.opentrafficsim.demo.trafficcontrol;
 
 import java.awt.BorderLayout;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -13,15 +11,6 @@ import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.language.io.URLResource;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
@@ -36,6 +25,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -48,6 +38,15 @@ import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.language.io.URLResource;
 
 /**
  * <p>
@@ -125,12 +124,12 @@ public class TrafCODDemo extends AbstractWrappableAnimation
     {
         return new TrafCODModel();
     }
-
+    
     /** {@inheritDoc} */
     @Override
-    protected final Double makeAnimationRectangle()
+    protected final void addAnimationToggles()
     {
-        return new Rectangle2D.Double(-110, -110, 220, 220);
+        AnimationToggles.setTextAnimationTogglesStandard(this);
     }
 
     /**
@@ -143,6 +142,9 @@ public class TrafCODDemo extends AbstractWrappableAnimation
 
         /** The TrafCOD evaluator. */
         private TrafCOD trafCOD;
+        
+        /** the model. */
+        private OTSNetwork network;
 
         @SuppressWarnings("synthetic-access")
         @Override
@@ -153,7 +155,7 @@ public class TrafCODDemo extends AbstractWrappableAnimation
             {
                 URL url = URLResource.getResource("/TrafCODDemo1/TrafCODDemo1.xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
-                OTSNetwork network = nlp.build(url);
+                this.network = nlp.build(url);
 
                 /*-
                 Network network = new OTSNetwork("TrafCOD test network");
@@ -179,10 +181,10 @@ public class TrafCODDemo extends AbstractWrappableAnimation
                 LaneFactory.makeMultiLane(network, "LinkXS", nodeX, nodeS, null, 1, laneType, speedLimit,
                         (OTSDEVSSimulatorInterface) theSimulator, LongitudinalDirectionality.DIR_PLUS);
                  */
-                Lane laneNX = (Lane) ((CrossSectionLink) network.getLink("N", "X")).getCrossSectionElement("FORWARD");
-                Lane laneWX = (Lane) ((CrossSectionLink) network.getLink("W", "X")).getCrossSectionElement("FORWARD");
-                Lane laneXS = (Lane) ((CrossSectionLink) network.getLink("X", "S")).getCrossSectionElement("FORWARD");
-                Lane laneXE = (Lane) ((CrossSectionLink) network.getLink("X", "E")).getCrossSectionElement("FORWARD");
+                Lane laneNX = (Lane) ((CrossSectionLink) this.network.getLink("N", "X")).getCrossSectionElement("FORWARD");
+                Lane laneWX = (Lane) ((CrossSectionLink) this.network.getLink("W", "X")).getCrossSectionElement("FORWARD");
+                Lane laneXS = (Lane) ((CrossSectionLink) this.network.getLink("X", "S")).getCrossSectionElement("FORWARD");
+                Lane laneXE = (Lane) ((CrossSectionLink) this.network.getLink("X", "E")).getCrossSectionElement("FORWARD");
                 new SinkSensor(laneXS, new Length(90, LengthUnit.METER), (OTSDEVSSimulatorInterface) theSimulator);
                 new SinkSensor(laneXE, new Length(90, LengthUnit.METER), (OTSDEVSSimulatorInterface) theSimulator);
                 Set<TrafficLight> trafficLights = new HashSet<>();
@@ -245,6 +247,13 @@ public class TrafCODDemo extends AbstractWrappableAnimation
             return this.trafCOD.getSimulator();
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final OTSNetwork getNetwork()
+        {
+            return this.network;
+        }
+        
         /** {@inheritDoc} */
         @Override
         public void notify(final EventInterface event) throws RemoteException

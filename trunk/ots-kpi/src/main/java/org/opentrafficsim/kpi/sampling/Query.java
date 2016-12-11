@@ -15,12 +15,12 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.immutablecollections.ImmutableIterator;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.interfaces.LinkDataInterface;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataSet;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataType;
 
+import nl.tudelft.simulation.immutablecollections.ImmutableIterator;
 import nl.tudelft.simulation.language.Throw;
 
 /**

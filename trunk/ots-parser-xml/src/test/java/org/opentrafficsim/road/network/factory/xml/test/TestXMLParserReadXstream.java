@@ -24,7 +24,6 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -139,10 +138,12 @@ public class TestXMLParserReadXstream extends AbstractWrappableAnimation
         /** The simulator. */
         private OTSDEVSSimulatorInterface simulator;
 
+        /** the network. */
+        private OTSNetwork network;
+
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(
-                final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
+        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
@@ -160,11 +161,11 @@ public class TestXMLParserReadXstream extends AbstractWrappableAnimation
 
             millis = System.currentTimeMillis();
             XStream xstream = new XStream();
-            OTSNetwork network = (OTSNetwork) xstream.fromXML(xml);
-            System.out.println(network.getNodeMap());
-            System.out.println(network.getLinkMap());
+            this.network = (OTSNetwork) xstream.fromXML(xml);
+            System.out.println(this.network.getNodeMap());
+            System.out.println(this.network.getLinkMap());
             System.out.println("building took : " + (System.currentTimeMillis() - millis) + " ms");
-            
+
             URL gisURL = URLResource.getResource("/N201/map.xml");
             System.err.println("GIS-map file: " + gisURL.toString());
             CoordinateTransform rdto0 = new CoordinateTransformWGS84toRDNew(0, 0);
@@ -176,6 +177,13 @@ public class TestXMLParserReadXstream extends AbstractWrappableAnimation
         public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
         {
             return this.simulator;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public OTSNetwork getNetwork()
+        {
+            return this.network;
         }
 
         /** {@inheritDoc} */

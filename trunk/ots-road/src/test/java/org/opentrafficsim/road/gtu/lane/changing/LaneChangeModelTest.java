@@ -11,14 +11,9 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -62,6 +57,9 @@ import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+
 /**
  * Test some very basic properties of lane change models.
  * <p>
@@ -78,7 +76,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
     private static final long serialVersionUID = 20150313;
 
     /** The network. */
-    private Network network = new OTSNetwork("lane change model test network");
+    private OTSNetwork network = new OTSNetwork("lane change model test network");
 
     /**
      * Create a Link.
@@ -317,6 +315,13 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
 
     {
         return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OTSNetwork getNetwork()
+    {
+        return this.network;
     }
 
 }

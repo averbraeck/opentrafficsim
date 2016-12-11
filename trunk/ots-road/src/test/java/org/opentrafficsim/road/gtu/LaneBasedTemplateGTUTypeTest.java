@@ -386,4 +386,11 @@ class DummyModelForTemplateGTUTest implements OTSModelInterface
         return this.simulator;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public OTSNetwork getNetwork()
+    {
+        return null;
+    }
+
 }

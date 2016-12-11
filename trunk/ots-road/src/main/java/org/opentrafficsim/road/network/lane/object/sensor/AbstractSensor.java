@@ -3,12 +3,12 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 import java.util.HashSet;
 import java.util.Set;
 
+import nl.tudelft.simulation.immutablecollections.ImmutableHashSet;
+import nl.tudelft.simulation.immutablecollections.ImmutableSet;
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.base.immutablecollections.ImmutableHashSet;
-import org.opentrafficsim.base.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;

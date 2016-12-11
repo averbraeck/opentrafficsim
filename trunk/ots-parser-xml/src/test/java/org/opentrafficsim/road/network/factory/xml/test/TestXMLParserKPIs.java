@@ -158,10 +158,12 @@ public class TestXMLParserKPIs extends AbstractWrappableAnimation
         /** The simulator. */
         private OTSDEVSSimulatorInterface simulator;
 
+        /** the network. */
+        private OTSNetwork network;
+
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(
-                final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
+        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
@@ -172,16 +174,14 @@ public class TestXMLParserKPIs extends AbstractWrappableAnimation
             // URL url = URLResource.getResource("/Circuit.xml");
             URL url = URLResource.getResource("/N201v8.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
-            OTSNetwork network;
             try
             {
-                network = nlp.build(url);
+                this.network = nlp.build(url);
                 // ODMatrixTrips matrix = N201ODfactory.get(network);
                 // N201ODfactory.makeGeneratorsFromOD(network, matrix, this.simulator);
                 RoadSampler sampler = new RoadSampler(this.simulator, new Frequency(10.0, FrequencyUnit.SI));
                 sampler.registerExtendedDataType(new SpeedLimit());
-                Query query =
-                        N201ODfactory.getQuery(network, sampler);
+                Query query = N201ODfactory.getQuery(this.network, sampler);
                 scheduleKpiEvent(30.0, this.simulator, query);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
@@ -201,6 +201,13 @@ public class TestXMLParserKPIs extends AbstractWrappableAnimation
         public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
         {
             return this.simulator;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public OTSNetwork getNetwork()
+        {
+            return this.network;
         }
 
         /** {@inheritDoc} */

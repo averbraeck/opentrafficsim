@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.base.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -12,6 +11,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.immutablecollections.ImmutableSet;
 
 /**
  * A sensor is a lane-based object that can be triggered by a relative position of the GTU (e.g., front, back) when that

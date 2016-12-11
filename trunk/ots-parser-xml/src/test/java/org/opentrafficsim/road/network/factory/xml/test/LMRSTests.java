@@ -26,7 +26,6 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -60,10 +59,10 @@ public class LMRSTests extends AbstractWrappableAnimation
             {
                 try
                 {
-                	LMRSTests xmlModel = new LMRSTests();
+                    LMRSTests xmlModel = new LMRSTests();
                     // 1 hour simulation run for testing
                     xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
-                        new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -106,7 +105,7 @@ public class LMRSTests extends AbstractWrappableAnimation
     protected final Double makeAnimationRectangle()
     {
         return new Rectangle2D.Double(162000, 384500, 2000, 2000);
-        //return new Rectangle2D.Double(-100, -100, 3200, 200);
+        // return new Rectangle2D.Double(-100, -100, 3200, 200);
     }
 
     /** {@inheritDoc} */
@@ -136,29 +135,29 @@ public class LMRSTests extends AbstractWrappableAnimation
         /** The simulator. */
         private OTSDEVSSimulatorInterface simulator;
 
+        /** the network. */
+        private OTSNetwork network;
+
         /** {@inheritDoc} */
         @Override
-        public final
-            void
-            constructModel(
-                final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
+        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
-            //URL url = URLResource.getResource("/LMRSStraightTest.xml");
-            //URL url = URLResource.getResource("/LMRSLaneDropTest.xml");
-            //URL url = URLResource.getResource("/LMRSOnRampTest.xml");
-            //URL url = URLResource.getResource("/LMRSOnRampTaperTest.xml");
-            //URL url = URLResource.getResource("/networkv2_90km_V5.xml");
+            // URL url = URLResource.getResource("/LMRSStraightTest.xml");
+            // URL url = URLResource.getResource("/LMRSLaneDropTest.xml");
+            // URL url = URLResource.getResource("/LMRSOnRampTest.xml");
+            // URL url = URLResource.getResource("/LMRSOnRampTaperTest.xml");
+            // URL url = URLResource.getResource("/networkv2_90km_V5.xml");
             URL url = URLResource.getResource("/testEindhovenGenerator4.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
             {
-                OTSNetwork network = nlp.build(url);
-                
+                this.network = nlp.build(url);
+
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
-                | GTUException | OTSGeometryException exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
+                    | OTSGeometryException exception)
             {
                 exception.printStackTrace();
             }
@@ -166,11 +165,16 @@ public class LMRSTests extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<Time, Duration, OTSSimTimeDouble>
-            getSimulator()
-
+        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
         {
             return this.simulator;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public OTSNetwork getNetwork()
+        {
+            return this.network;
         }
 
         /** {@inheritDoc} */

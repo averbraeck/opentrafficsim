@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.network.lane.object.sensor;
+package org.opentrafficsim.road.network.animation;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -16,6 +16,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 
 /**
  * sink sensor animation.

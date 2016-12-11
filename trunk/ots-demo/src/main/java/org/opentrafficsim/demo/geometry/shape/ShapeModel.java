@@ -11,7 +11,6 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 
@@ -41,6 +40,9 @@ public class ShapeModel implements OTSModelInterface
 
     /** Links from shape file. */
     private Map<String, Link> shpLinks;
+    
+    /** the network. */
+    private OTSNetwork network = new OTSNetwork("shape model network");
 
     /** {@inheritDoc} */
     @Override
@@ -48,7 +50,6 @@ public class ShapeModel implements OTSModelInterface
             throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
-        Network network = new OTSNetwork("shape model network");
         try
         {
             // Read the shape files with the function:
@@ -71,4 +72,11 @@ public class ShapeModel implements OTSModelInterface
         return this.simulator;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final OTSNetwork getNetwork()
+    {
+        return this.network;
+    }
+    
 }

@@ -12,8 +12,7 @@ import java.util.List;
 
 import javax.naming.NamingException;
 import javax.swing.WindowConstants;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
+import javax.vecmath.Point3d;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
@@ -22,9 +21,15 @@ import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.gui.OTSAnimationPanel;
 import org.opentrafficsim.gui.SimulatorFrame;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.language.d3.BoundingBox;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -65,13 +70,16 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /** Save the runLength for restarting the simulation. */
     private Duration savedRunLength;
+    
+    /** the model. */
+    private OTSModelInterface model;
 
     /**
      * Build the animator.
      * @param startTime Time; the start time
      * @param warmupPeriod Duration; the warm up period
      * @param runLength Duration; the duration of the simulation / animation
-     * @param model OTSModelInterface; the simulation model
+     * @param otsModel OTSModelInterface; the simulation model
      * @return SimpleAnimator; a newly constructed animator
      * @throws SimRuntimeException on ???
      * @throws NamingException when context for the animation cannot be created
@@ -79,9 +87,9 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
      */
     @SuppressWarnings("checkstyle:designforextension")
     protected SimpleAnimator buildSimpleAnimator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OTSModelInterface model) throws SimRuntimeException, NamingException, PropertyException
+            final OTSModelInterface otsModel) throws SimRuntimeException, NamingException, PropertyException
     {
-        return new SimpleAnimator(startTime, warmupPeriod, runLength, model);
+        return new SimpleAnimator(startTime, warmupPeriod, runLength, otsModel);
     }
 
     /** {@inheritDoc} */
@@ -99,14 +107,14 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         this.savedRunLength = runLength;
 
         GTUColorer colorer = new DefaultSwitchableGTUColorer();
-        OTSModelInterface model = makeModel(colorer);
+        this.model = makeModel(colorer);
 
-        if (null == model)
+        if (null == this.model)
         {
             return null; // Happens when the user cancels the file open dialog in the OpenStreetMap demo.
         }
 
-        final SimpleAnimator simulator = buildSimpleAnimator(startTime, warmupPeriod, runLength, model);
+        final SimpleAnimator simulator = buildSimpleAnimator(startTime, warmupPeriod, runLength, this.model);
         try
         {
             this.panel = new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), simulator, this, colorer);
@@ -115,6 +123,8 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         {
             throw new SimRuntimeException(exception);
         }
+
+        addAnimationToggles();
         addTabs(simulator);
 
         SimulatorFrame frame = new SimulatorFrame(shortName(), this.panel);
@@ -128,6 +138,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         }
 
         frame.setDefaultCloseOperation(this.exitOnClose ? WindowConstants.EXIT_ON_CLOSE : WindowConstants.DISPOSE_ON_CLOSE);
+
         return simulator;
     }
 
@@ -143,6 +154,69 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     }
 
     /**
+     * Placeholder method to place animation buttons or to show/hide classes on the animation.
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    protected void addAnimationToggles()
+    {
+        // overridable placeholder to place animation buttons or to show/hide classes on the animation.
+    }
+
+    /**
+     * Add a button for toggling an animatable class on or off.
+     * @param name the name of the button
+     * @param locatableClass the class for which the button holds (e.g., GTU.class)
+     * @param iconPath the path to the 24x24 icon to display
+     * @param toolTipText the tool tip text to show when hovering over the button
+     * @param initiallyVisible whether the class is initially shown or not
+     */
+    public final void addToggleAnimationButton(final String name, final Class<? extends Locatable> locatableClass,
+            final String iconPath, final String toolTipText, final boolean initiallyVisible)
+    {
+        this.panel.addToggleAnimationButton(name, locatableClass, iconPath, toolTipText, initiallyVisible);
+    }
+
+    /**
+     * Add a button for toggling an animatable class on or off.
+     * @param name the name of the button
+     * @param locatableClass the class for which the button holds (e.g., GTU.class)
+     * @param toolTipText the tool tip text to show when hovering over the button
+     * @param initiallyVisible whether the class is initially shown or not
+     */
+    public final void addToggleAnimationButton(final String name, final Class<? extends Locatable> locatableClass,
+            final String toolTipText, final boolean initiallyVisible)
+    {
+        this.panel.addToggleAnimationButton(name, locatableClass, toolTipText, initiallyVisible);
+    }
+
+    /**
+     * Set a class to be shown in the animation to true.
+     * @param locatableClass the class for which the animation has to be shown.
+     */
+    public final void showAnimationClass(final Class<? extends Locatable> locatableClass)
+    {
+        this.panel.getAnimationPanel().showClass(locatableClass);
+    }
+
+    /**
+     * Set a class to be hidden in the animation to true.
+     * @param locatableClass the class for which the animation has to be hidden.
+     */
+    public final void hideAnimationClass(final Class<? extends Locatable> locatableClass)
+    {
+        this.panel.getAnimationPanel().hideClass(locatableClass);
+    }
+
+    /**
+     * Toggle a class to be displayed in the animation to its reverse value.
+     * @param locatableClass the class for which a visible animation has to be turned off or vice versa.
+     */
+    public final void toggleAnimationClass(final Class<? extends Locatable> locatableClass)
+    {
+        this.panel.getAnimationPanel().toggleClass(locatableClass);
+    }
+
+    /**
      * @param colorer the GTU colorer to use.
      * @return the demo model. Don't forget to keep a local copy.
      * @throws OTSSimulationException in case the construction of the model fails
@@ -150,9 +224,45 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     protected abstract OTSModelInterface makeModel(GTUColorer colorer) throws OTSSimulationException;
 
     /**
-     * @return the initial rectangle for the animation.
+     * Return the initial 'home' extent for the animation. The 'Home' button returns to this extent. Override this method when a
+     * smaller or larger part of the infra should be shown. In the default setting, all currently visible objects are shown.
+     * @return the initial and 'home' rectangle for the animation.
      */
-    protected abstract Rectangle2D.Double makeAnimationRectangle();
+    @SuppressWarnings("checkstyle:designforextension")
+    protected Rectangle2D makeAnimationRectangle()
+    {
+        double minX = Double.MAX_VALUE;
+        double maxX = -Double.MAX_VALUE;
+        double minY = Double.MAX_VALUE;
+        double maxY = -Double.MAX_VALUE;
+        Point3d p3dL = new Point3d();
+        Point3d p3dU = new Point3d();
+        try
+        {
+            for (Link link : this.model.getNetwork().getLinkMap().values())
+            {
+                DirectedPoint l = link.getLocation();
+                BoundingBox b = new BoundingBox(link.getBounds());
+                b.getLower(p3dL);
+                b.getUpper(p3dU);
+                minX = Math.min(minX, l.x + Math.min(p3dL.x, p3dU.x));
+                minY = Math.min(minY, l.y + Math.min(p3dL.y, p3dU.y));
+                maxX = Math.max(maxX, l.x + Math.max(p3dL.x, p3dU.x));
+                maxY = Math.max(maxY, l.y + Math.max(p3dL.y, p3dU.y));
+            }
+        }
+        catch (Exception e)
+        {
+            // ignore
+        }
+        
+        minX = minX - 0.05 * Math.abs(minX);
+        minY = minY - 0.05 * Math.abs(minY);
+        maxX = maxX + 0.05 * Math.abs(maxX);
+        maxY = maxY + 0.05 * Math.abs(maxY);
+        
+        return new Rectangle2D.Double(minX, minY, maxX - minX, maxY - minY);
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -163,11 +273,11 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /** {@inheritDoc} */
     @Override
-    public final SimpleSimulatorInterface rebuildSimulator(final Rectangle rect) throws SimRuntimeException, NetworkException,
-            NamingException, OTSSimulationException, PropertyException
+    public final SimpleSimulatorInterface rebuildSimulator(final Rectangle rect)
+            throws SimRuntimeException, NetworkException, NamingException, OTSSimulationException, PropertyException
     {
-        return buildAnimator(this.savedStartTime, this.savedWarmupPeriod, this.savedRunLength,
-                this.savedUserModifiedProperties, rect, this.exitOnClose);
+        return buildAnimator(this.savedStartTime, this.savedWarmupPeriod, this.savedRunLength, this.savedUserModifiedProperties,
+                rect, this.exitOnClose);
     }
 
     /** {@inheritDoc} */

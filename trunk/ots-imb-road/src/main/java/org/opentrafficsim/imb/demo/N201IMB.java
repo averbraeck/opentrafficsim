@@ -14,13 +14,6 @@ import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import nl.javel.gisbeans.io.esri.CoordinateTransform;
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.language.Throw;
-import nl.tudelft.simulation.language.io.URLResource;
-
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
@@ -52,8 +45,14 @@ import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.xml.sax.SAXException;
+
+import nl.javel.gisbeans.io.esri.CoordinateTransform;
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.Throw;
+import nl.tudelft.simulation.language.io.URLResource;
 
 /**
  * <p>
@@ -259,9 +258,15 @@ public class N201IMB extends AbstractWrappableAnimation
         /** {@inheritDoc} */
         @Override
         public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
-
         {
             return this.simulator;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final OTSNetwork getNetwork()
+        {
+            return this.network;
         }
 
         /** {@inheritDoc} */

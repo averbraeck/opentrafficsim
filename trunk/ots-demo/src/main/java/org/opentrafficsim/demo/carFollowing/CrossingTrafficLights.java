@@ -44,6 +44,7 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.demo.PropertiesParser;
+import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -61,7 +62,6 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
@@ -151,12 +151,19 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
             }
         });
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected final void addAnimationToggles()
+    {
+        AnimationToggles.setTextAnimationTogglesStandard(this);
+    }
 
     /** {@inheritDoc} */
     @Override
-    protected final Rectangle2D.Double makeAnimationRectangle()
+    protected final Rectangle2D makeAnimationRectangle()
     {
-        return new Rectangle2D.Double(-600, -600, 1200, 1200);
+        return new Rectangle2D.Double(-50, -50, 100, 100);
     }
 
     /** {@inheritDoc} */
@@ -416,4 +423,12 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
     {
         return this.simulator;
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public OTSNetwork getNetwork()
+    {
+        return this.network;
+    }
+
 }

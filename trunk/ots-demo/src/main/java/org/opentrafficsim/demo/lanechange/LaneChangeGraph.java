@@ -450,6 +450,13 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         return null;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final OTSNetwork getNetwork()
+    {
+        return this.network;
+    }
+    
 }
 
 /** */

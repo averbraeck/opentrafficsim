@@ -70,7 +70,6 @@ import org.opentrafficsim.road.network.lane.NoTrafficLane;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -117,8 +116,8 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                 {
                     TestOpenDriveParserNoRTINew xmlModel = new TestOpenDriveParserNoRTINew();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND), new Duration(
-                        60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -190,6 +189,9 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
         /** The simulator. */
         private OTSDEVSSimulatorInterface simulator;
 
+        /** the network. */
+        private OTSNetwork network;
+
         private List<LaneBasedIndividualGTU> rtiCars;
 
         /** */
@@ -220,8 +222,8 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
         private StreamInterface stream;
 
         /**
-             * 
-             */
+         * 
+         */
         public TestOpenDriveModel()
         {
             super();
@@ -230,19 +232,17 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
             this.iatDist = new ContinuousDistDoubleScalar.Rel<>(new DistExponential(this.stream, 30.0), TimeUnit.SECOND);
             this.lengthDist = new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 4.0, 5.0), LengthUnit.METER);
             this.widthDist = new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 2.0), LengthUnit.METER);
-            this.maxSpeedDist =
-                new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(this.stream, 30.0, 35.0, 40.0),
+            this.maxSpeedDist = new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(this.stream, 30.0, 35.0, 40.0),
                     SpeedUnit.MILE_PER_HOUR);
             this.initialPosDist =
-                new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 0.0, 1.0), LengthUnit.METER);
+                    new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 0.0, 1.0), LengthUnit.METER);
             this.carType = new GTUType("Car");
         }
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(
-            final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
-            throws SimRuntimeException
+        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
+                throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
 
@@ -252,13 +252,13 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
             URL url = URLResource.getResource("/testod.xodr");
             this.simulator.setPauseOnError(false);
             OpenDriveNetworkLaneParser nlp = new OpenDriveNetworkLaneParser(this.simulator);
-            OTSNetwork network = null;
+            this.network = null;
             try
             {
-                network = nlp.build(url);
+                this.network = nlp.build(url);
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
-                | GTUException | OTSGeometryException exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
+                    | OTSGeometryException exception)
             {
                 exception.printStackTrace();
             }
@@ -276,53 +276,46 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
             /** Repair the network... */
             try
             {
-                destroyLink(nlp, network, "3766109");
-                destroyLink(nlp, network, "3766110");
-                destroyLink(nlp, network, "3766111");
+                destroyLink(nlp, this.network, "3766109");
+                destroyLink(nlp, this.network, "3766110");
+                destroyLink(nlp, this.network, "3766111");
 
-                Lane lane109 =
-                    makeLane(network, "3766068.1", "3766068.0", "3", "3766059.7", "3766059.150", "2", "3766109", "-1",
-                        LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
+                Lane lane109 = makeLane(this.network, "3766068.1", "3766068.0", "3", "3766059.7", "3766059.150", "2", "3766109",
+                        "-1", LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
                 Renderable2D animation109 = new LaneAnimationOD(lane109, this.simulator, Color.gray);
                 nlp.animationMap.put(lane109, animation109);
 
-                Lane lane110 =
-                    makeLane(network, "3766068.1", "3766068.0", "4", "3766059.7", "3766059.150", "3", "3766110", "-1",
-                        LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
+                Lane lane110 = makeLane(this.network, "3766068.1", "3766068.0", "4", "3766059.7", "3766059.150", "3", "3766110",
+                        "-1", LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
                 Renderable2D animation110 = new LaneAnimationOD(lane110, this.simulator, Color.gray);
                 nlp.animationMap.put(lane110, animation110);
 
-                Lane lane111 =
-                    makeLane(network, "3766068.1", "3766068.0", "5", "3766059.7", "3766059.150", "4", "3766111", "-1",
-                        LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
+                Lane lane111 = makeLane(this.network, "3766068.1", "3766068.0", "5", "3766059.7", "3766059.150", "4", "3766111",
+                        "-1", LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
                 Renderable2D animation111 = new LaneAnimationOD(lane111, this.simulator, Color.gray);
                 nlp.animationMap.put(lane111, animation111);
 
-                destroyLink(nlp, network, "3766175");
-                destroyLink(nlp, network, "3766176");
-                destroyLink(nlp, network, "3766177");
+                destroyLink(nlp, this.network, "3766175");
+                destroyLink(nlp, this.network, "3766176");
+                destroyLink(nlp, this.network, "3766177");
 
-                Lane lane175 =
-                    makeLane(network, "3766059.1", "3766059.0", "3", "3766054.5", "3766054.191", "2", "3766175", "-1",
-                        LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
+                Lane lane175 = makeLane(this.network, "3766059.1", "3766059.0", "3", "3766054.5", "3766054.191", "2", "3766175",
+                        "-1", LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
                 Renderable2D animation175 = new LaneAnimationOD(lane175, this.simulator, Color.gray);
                 nlp.animationMap.put(lane175, animation175);
 
-                Lane lane176 =
-                    makeLane(network, "3766059.1", "3766059.0", "4", "3766054.5", "3766054.191", "3", "3766176", "-1",
-                        LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
+                Lane lane176 = makeLane(this.network, "3766059.1", "3766059.0", "4", "3766054.5", "3766054.191", "3", "3766176",
+                        "-1", LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
                 Renderable2D animation176 = new LaneAnimationOD(lane176, this.simulator, Color.gray);
                 nlp.animationMap.put(lane176, animation176);
 
-                Lane lane177 =
-                    makeLane(network, "3766059.1", "3766059.0", "5", "3766054.5", "3766054.191", "4", "3766177", "-1",
-                        LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
+                Lane lane177 = makeLane(this.network, "3766059.1", "3766059.0", "5", "3766054.5", "3766054.191", "4", "3766177",
+                        "-1", LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
                 Renderable2D animation177 = new LaneAnimationOD(lane177, this.simulator, Color.gray);
                 nlp.animationMap.put(lane177, animation177);
 
-                Lane lane191x =
-                    makeLane(network, "3766054.5", "3766054.191", "-6", "3766059.1", "3766059.0", "-4", "3766191x", "-1",
-                        LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
+                Lane lane191x = makeLane(this.network, "3766054.5", "3766054.191", "-6", "3766059.1", "3766059.0", "-4",
+                        "3766191x", "-1", LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
                 Renderable2D animation191x = new LaneAnimationOD(lane191x, this.simulator, Color.gray);
                 nlp.animationMap.put(lane191x, animation191x);
 
@@ -334,7 +327,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
 
             /*-
             CompleteRoute cr1 = null, cr2 = null, cr3 = null, cr4 = null, cr5 = null, cr6 = null;
-
+            
             List<Node> nodesVia1 = new ArrayList<Node>();
             nodesVia1.add(link2.getStartNode());
             nodesVia1.add(link3.getEndNode());
@@ -354,7 +347,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
             {
                 exception.printStackTrace();
             }
-
+            
             List<Node> nodesVia2 = new ArrayList<Node>();
             nodesVia2.add(link3.getEndNode());
             nodesVia2.add(link5.getEndNode());
@@ -370,7 +363,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
             {
                 exception.printStackTrace();
             }
-
+            
             List<Node> nodesVia3 = new ArrayList<Node>();
             nodesVia3.add(link7.getEndNode());
             nodesVia3.add(link8.getEndNode());
@@ -389,34 +382,35 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
              */
 
             // build the graph
-            network.buildGraph(this.carType);
-            
+            this.network.buildGraph(this.carType);
+
             LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory =
                     new LaneBasedStrategicalRoutePlannerFactory(
-                        new LaneBasedGTUFollowingTacticalPlannerFactory(new IDMPlusOld()));
+                            new LaneBasedGTUFollowingTacticalPlannerFactory(new IDMPlusOld()));
 
             // generate 2 GTUs on 70.1 (parking lot NRC SV)
             try
             {
-                CrossSectionLink link70_1 = (CrossSectionLink) network.getLink("3766070.1");
+                CrossSectionLink link70_1 = (CrossSectionLink) this.network.getLink("3766070.1");
                 Lane lane70_1m1 = getLane(link70_1, "-1"); // get the rightmost lane (-1) to drive north
                 Lane lane70_1p1 = getLane(link70_1, "1"); // get the rightmost lane (1) to drive south
 
                 // create a route around NRC SV
-                Node n70_0 = network.getNode("3766070.0");
-                Node n70_23 = network.getNode("3766070.23");
-                Node n45_0 = network.getNode("3766045.0");
-                Node n45_22 = network.getNode("3766045.22");
-                Node n65_0 = network.getNode("3766065.0");
-                Node n65_8 = network.getNode("3766065.8");
-                Route route7070r =
-                    new CompleteRoute("Right around NRC-SV", this.carType, network.getShortestRouteBetween(this.carType,
-                        n70_0, n70_0, Arrays.asList(new Node[] {n45_0, n65_0})).getNodes());
-                putCar(lane70_1m1, route7070r, network, GTUDirectionality.DIR_PLUS, strategicalPlannerFactory);
+                Node n70_0 = this.network.getNode("3766070.0");
+                Node n70_23 = this.network.getNode("3766070.23");
+                Node n45_0 = this.network.getNode("3766045.0");
+                Node n45_22 = this.network.getNode("3766045.22");
+                Node n65_0 = this.network.getNode("3766065.0");
+                Node n65_8 = this.network.getNode("3766065.8");
+                Route route7070r = new CompleteRoute("Right around NRC-SV", this.carType,
+                        this.network
+                                .getShortestRouteBetween(this.carType, n70_0, n70_0, Arrays.asList(new Node[] { n45_0, n65_0 }))
+                                .getNodes());
+                putCar(lane70_1m1, route7070r, this.network, GTUDirectionality.DIR_PLUS, strategicalPlannerFactory);
                 Route route7070l =
-                    new CompleteRoute("Left around NRC-SV", this.carType, network.getShortestRouteBetween(this.carType,
-                        n70_0, n70_0, Arrays.asList(new Node[] {n65_8, n45_22, n70_23})).getNodes());
-                putCar(lane70_1p1, route7070l, network, GTUDirectionality.DIR_MINUS, strategicalPlannerFactory);
+                        new CompleteRoute("Left around NRC-SV", this.carType, this.network.getShortestRouteBetween(this.carType,
+                                n70_0, n70_0, Arrays.asList(new Node[] { n65_8, n45_22, n70_23 })).getNodes());
+                putCar(lane70_1p1, route7070l, this.network, GTUDirectionality.DIR_MINUS, strategicalPlannerFactory);
             }
             catch (NetworkException | GTUException | NamingException | OTSGeometryException exception)
             {
@@ -427,44 +421,44 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
             try
             {
                 List<CrossSectionLink> links68 = new ArrayList<>();
-                links68.add((CrossSectionLink) network.getLink("3766068.1"));
-                links68.add((CrossSectionLink) network.getLink("3766068.2"));
-                links68.add((CrossSectionLink) network.getLink("3766068.3"));
-                links68.add((CrossSectionLink) network.getLink("3766068.4"));
-                links68.add((CrossSectionLink) network.getLink("3766068.5"));
+                links68.add((CrossSectionLink) this.network.getLink("3766068.1"));
+                links68.add((CrossSectionLink) this.network.getLink("3766068.2"));
+                links68.add((CrossSectionLink) this.network.getLink("3766068.3"));
+                links68.add((CrossSectionLink) this.network.getLink("3766068.4"));
+                links68.add((CrossSectionLink) this.network.getLink("3766068.5"));
 
                 // create a right route for top circle
-                Node n68_0 = network.getNode("3766068.0");
-                Node n38_88 = network.getNode("3766038.88");
-                Node n43_0 = network.getNode("3766043.0");
-                Node n45_0 = network.getNode("3766045.0");
-                Node n65_0 = network.getNode("3766065.0");
-                Node n64_17 = network.getNode("3766064.17");
+                Node n68_0 = this.network.getNode("3766068.0");
+                Node n38_88 = this.network.getNode("3766038.88");
+                Node n43_0 = this.network.getNode("3766043.0");
+                Node n45_0 = this.network.getNode("3766045.0");
+                Node n65_0 = this.network.getNode("3766065.0");
+                Node n64_17 = this.network.getNode("3766064.17");
                 Route route6868r =
-                    new CompleteRoute("Right top", this.carType, network.getShortestRouteBetween(this.carType, n68_0, n68_0,
-                        Arrays.asList(new Node[] {n38_88, n43_0, n45_0, n65_0, n64_17})).getNodes());
+                        new CompleteRoute("Right top", this.carType, this.network.getShortestRouteBetween(this.carType, n68_0,
+                                n68_0, Arrays.asList(new Node[] { n38_88, n43_0, n45_0, n65_0, n64_17 })).getNodes());
                 System.out.println(route6868r);
                 for (int i = 0; i < 5; i++)
                 {
-                    putCar(randLane(links68, LongitudinalDirectionality.DIR_PLUS), route6868r, network,
-                        GTUDirectionality.DIR_PLUS, strategicalPlannerFactory);
+                    putCar(randLane(links68, LongitudinalDirectionality.DIR_PLUS), route6868r, this.network,
+                            GTUDirectionality.DIR_PLUS, strategicalPlannerFactory);
                 }
 
                 // create a left route for top circle
-                Node n38_0 = network.getNode("3766038.0");
-                Node n43_53 = network.getNode("3766043.53");
-                Node n45_22 = network.getNode("3766045.22");
-                Node n65_8 = network.getNode("3766065.8");
-                Node n64_0 = network.getNode("3766064.0");
-                Node n68_158 = network.getNode("3766068.158");
+                Node n38_0 = this.network.getNode("3766038.0");
+                Node n43_53 = this.network.getNode("3766043.53");
+                Node n45_22 = this.network.getNode("3766045.22");
+                Node n65_8 = this.network.getNode("3766065.8");
+                Node n64_0 = this.network.getNode("3766064.0");
+                Node n68_158 = this.network.getNode("3766068.158");
                 Route route6868l =
-                    new CompleteRoute("Right top", this.carType, network.getShortestRouteBetween(this.carType, n68_158,
-                        n68_158, Arrays.asList(new Node[] {n64_0, n65_8, n45_22, n43_53, n38_0})).getNodes());
+                        new CompleteRoute("Right top", this.carType, this.network.getShortestRouteBetween(this.carType, n68_158,
+                                n68_158, Arrays.asList(new Node[] { n64_0, n65_8, n45_22, n43_53, n38_0 })).getNodes());
                 System.out.println(route6868l);
                 for (int i = 0; i < 5; i++)
                 {
-                    putCar(randLane(links68, LongitudinalDirectionality.DIR_MINUS), route6868l, network,
-                        GTUDirectionality.DIR_MINUS, strategicalPlannerFactory);
+                    putCar(randLane(links68, LongitudinalDirectionality.DIR_MINUS), route6868l, this.network,
+                            GTUDirectionality.DIR_MINUS, strategicalPlannerFactory);
                 }
 
             }
@@ -501,11 +495,11 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                 LaneBasedStrategicalPlanner sPlanner =
                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
                         new LaneBasedGTUFollowingLaneChangeTacticalPlanner(), cr2);
-
+            
                 System.out.println("Car " + i + " - generated on lane " + lane + " with sn="
                     + lane.getParentLink().getStartNode() + " and en=" + lane.getParentLink().getEndNode()
                     + ", route = " + cr2);
-
+            
                 LanePerceptionFull perception = new LanePerceptionFull();
                 DirectedLanePosition directedLanePosition =
                     new DirectedLanePosition(lane,
@@ -513,7 +507,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                 Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition>();
                 lanepositionSet.add(directedLanePosition);
                 Length carLength = lengthDist.draw();
-
+            
                 try
                 {
                     LaneBasedIndividualCar car =
@@ -521,7 +515,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                             SpeedUnit.METER_PER_SECOND), carLength, widthDist.draw(), maxSpeedDist.draw(),
                             this.simulator, sPlanner, perception, network);
                     this.rtiCars.add(car);
-
+            
                 }
                 catch (NamingException | NetworkException | GTUException | OTSGeometryException exception)
                 {
@@ -539,7 +533,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
             cRoutes.add(cr5);
             cRoutes.add(cr6);
             Random routeRandom = new Random();
-
+            
             List<CrossSectionLink> links = new ArrayList<>();
             links.add(link1);
             links.add(link2);
@@ -549,11 +543,11 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
             links.add(link6);
             links.add(link7);
             links.add(link8);
-
+            
             for (int i = 0; i < 52; i++)
             {
                 CompleteRoute cr = cRoutes.get(routeRandom.nextInt(6));
-
+            
                 CrossSectionLink link;
                 while (true)
                 {
@@ -561,10 +555,10 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                     if (cr.getNodes().contains(link.getStartNode()))
                         break;
                 }
-
+            
                 GTUDirectionality dir = GTUDirectionality.DIR_PLUS;
                 Lane lane = null;
-
+            
                 while (true)
                 {
                     CrossSectionElement cse =
@@ -574,22 +568,22 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                     {
                         lane = (Lane) cse;
                         break;
-
+            
                     }
                 }
-
+            
                 if (lane.getDirectionality(carType).equals(LongitudinalDirectionality.DIR_MINUS))
                 {
                     dir = GTUDirectionality.DIR_MINUS;
                 }
-
+            
                 LaneBasedBehavioralCharacteristics drivingCharacteristics =
                     new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
                 LaneBasedStrategicalPlanner sPlanner =
                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
                         new LaneBasedGTUFollowingLaneChangeTacticalPlanner(), cRoutes.get(routeRandom.nextInt(6)));
                 LanePerceptionFull perception = new LanePerceptionFull();
-
+            
                 DirectedLanePosition directedLanePosition = null;
                 try
                 {
@@ -603,15 +597,15 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                 }
                 Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition>();
                 lanepositionSet.add(directedLanePosition);
-
+            
                 Length carLength = lengthDist.draw();
                 double genPosSI = directedLanePosition.getPosition().getSI();
                 double lengthSI = lane.getLength().getSI();
                 double frontNew = (genPosSI + carLength.getSI()) / lengthSI;
                 double rearNew = genPosSI / lengthSI;
-
+            
                 boolean isEnoughSpace = true;
-
+            
                 for (LaneBasedGTU gtu : lane.getGtuList())
                 {
                     double frontGTU = 0;
@@ -636,7 +630,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                         || (frontGTU >= rearNew && frontGTU <= frontNew) || (rearGTU >= rearNew && rearGTU <= frontNew))
                         isEnoughSpace = false;
                 }
-
+            
                 if (isEnoughSpace)
                 {
                     try
@@ -646,7 +640,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                                 SpeedUnit.METER_PER_SECOND), carLength, widthDist.draw(), maxSpeedDist.draw(),
                                 this.simulator, sPlanner, perception, network);
                         this.rtiCars.add(car);
-
+            
                     }
                     catch (NamingException | NetworkException | GTUException | OTSGeometryException exception)
                     {
@@ -657,13 +651,13 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                 {
                     i = i - 1;
                 }
-
+            
             }
              */
 
             try
             {
-                new Thread(new ReceiverThread(this.simulator, this.carType, this.rtiCars, network)).start();
+                new Thread(new ReceiverThread(this.simulator, this.carType, this.rtiCars, this.network)).start();
             }
             catch (SocketException exception1)
             {
@@ -700,20 +694,18 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
         }
 
         private final void putCar(final Lane lane, final Route route, final OTSNetwork network, final GTUDirectionality dir,
-            final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> laneBasedStrategicalPlannerFactory)
-            throws GTUException, NamingException, NetworkException, SimRuntimeException, OTSGeometryException
+                final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> laneBasedStrategicalPlannerFactory)
+                throws GTUException, NamingException, NetworkException, SimRuntimeException, OTSGeometryException
         {
-            DirectedLanePosition directedLanePosition =
-                new DirectedLanePosition(lane, this.initialPosDist.draw().multiplyBy(lane.getCenterLine().getLengthSI()),
-                    dir);
+            DirectedLanePosition directedLanePosition = new DirectedLanePosition(lane,
+                    this.initialPosDist.draw().multiplyBy(lane.getCenterLine().getLengthSI()), dir);
             Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition>();
             lanepositionSet.add(directedLanePosition);
             Length carLength = this.lengthDist.draw();
-            LaneBasedIndividualGTU car =
-                new LaneBasedIndividualGTU("" + (++this.lastId), this.carType, carLength, this.widthDist.draw(),
-                    this.maxSpeedDist.draw(), this.simulator, network);
-            car.init(laneBasedStrategicalPlannerFactory.create(car, route), lanepositionSet, new Speed(0.0,
-                SpeedUnit.METER_PER_SECOND));
+            LaneBasedIndividualGTU car = new LaneBasedIndividualGTU("" + (++this.lastId), this.carType, carLength,
+                    this.widthDist.draw(), this.maxSpeedDist.draw(), this.simulator, network);
+            car.init(laneBasedStrategicalPlannerFactory.create(car, route), lanepositionSet,
+                    new Speed(0.0, SpeedUnit.METER_PER_SECOND));
             this.rtiCars.add(car);
         }
 
@@ -738,7 +730,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
          * @throws NetworkException in case link cannot be found in the network
          */
         private void destroyLink(final OpenDriveNetworkLaneParser nlp, final OTSNetwork network, final String linkId)
-            throws NamingException, NetworkException
+                throws NamingException, NetworkException
         {
             Link link = network.getLink(linkId);
             link.getStartNode().removeLink(link);
@@ -778,9 +770,9 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
          * @throws NetworkException when lane cannot be constructed
          */
         private Lane makeLane(final OTSNetwork network, final String sLinkStr, final String sNodeStr, final String sLaneStr,
-            final String eLinkStr, final String eNodeStr, final String eLaneStr, final String linkId, final String laneId,
-            final LinkType linkType, final LaneKeepingPolicy laneKeepingPolicy) throws OTSGeometryException,
-            NetworkException
+                final String eLinkStr, final String eNodeStr, final String eLaneStr, final String linkId, final String laneId,
+                final LinkType linkType, final LaneKeepingPolicy laneKeepingPolicy)
+                throws OTSGeometryException, NetworkException
         {
             CrossSectionLink sLink = (CrossSectionLink) network.getLink(sLinkStr);
             OTSNode sNode = (OTSNode) network.getNode(sNodeStr);
@@ -819,10 +811,10 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                 endWidth = eLane.getEndWidth();
             }
             OTSLine3D designLine = Bezier.cubic(64, sp, ep);
-            CrossSectionLink newLink = new CrossSectionLink(network, linkId, sNode, eNode, linkType, designLine, laneKeepingPolicy);
+            CrossSectionLink newLink =
+                    new CrossSectionLink(network, linkId, sNode, eNode, linkType, designLine, laneKeepingPolicy);
             newLink.addDirectionality(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
-            Lane newLane =
-                new Lane(newLink, laneId, Length.ZERO, Length.ZERO, beginWidth, endWidth, sLane.getLaneType(),
+            Lane newLane = new Lane(newLink, laneId, Length.ZERO, Length.ZERO, beginWidth, endWidth, sLane.getLaneType(),
                     LongitudinalDirectionality.DIR_PLUS, sLane.getSpeedLimit(GTUType.ALL), sLane.getOvertakingConditions());
             return newLane;
         }
@@ -830,9 +822,15 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
         /** {@inheritDoc} */
         @Override
         public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
-
         {
             return this.simulator;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final OTSNetwork getNetwork()
+        {
+            return this.network;
         }
 
         /**
@@ -841,11 +839,9 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
         private final GTUColorer makeSwitchableGTUColorer()
         {
             GTUColorer[] gtuColorers =
-                new GTUColorer[] {
-                    new IDGTUColorer(),
-                    new SpeedGTUColorer(new Speed(100.0, SpeedUnit.KM_PER_HOUR)),
-                    new AccelerationGTUColorer(new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2), new Acceleration(
-                        1.0, AccelerationUnit.METER_PER_SECOND_2))};
+                    new GTUColorer[] { new IDGTUColorer(), new SpeedGTUColorer(new Speed(100.0, SpeedUnit.KM_PER_HOUR)),
+                            new AccelerationGTUColorer(new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2),
+                                    new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2)) };
             return new SwitchableGTUColorer(0, gtuColorers);
         }
 
@@ -854,7 +850,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
         public String toString()
         {
             return "TestOpenDriveModel [rtiCar.sizes=" + this.rtiCars.size() + ", carType=" + this.carType + ", lastId="
-                + this.lastId + "]";
+                    + this.lastId + "]";
         }
     }
 

@@ -30,7 +30,6 @@ import org.opentrafficsim.road.network.factory.OTSNetworkUtils;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -141,6 +140,9 @@ public class TestXMLParserWriteXstream extends AbstractWrappableAnimation
         /** The simulator. */
         private OTSDEVSSimulatorInterface simulator;
 
+        /** the network. */
+        private OTSNetwork network;
+        
         /** {@inheritDoc} */
         @Override
         public final void constructModel(
@@ -151,14 +153,14 @@ public class TestXMLParserWriteXstream extends AbstractWrappableAnimation
             long millis = System.currentTimeMillis();
             URL url = URLResource.getResource("/N201v8.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
-            OTSNetwork network;
+            
             try
             {
-                network = nlp.build(url);
+                this.network = nlp.build(url);
                 System.out.println("parsing took : " + (System.currentTimeMillis() - millis) + " ms");
 
                 millis = System.currentTimeMillis();
-                String xml = OTSNetworkUtils.toXml(network);
+                String xml = OTSNetworkUtils.toXml(this.network);
                 System.out.println("making XML took : " + (System.currentTimeMillis() - millis) + " ms");
                 millis = System.currentTimeMillis();
                 Files.write(Paths.get("e://temp/network.txt"), xml.getBytes());
@@ -181,6 +183,13 @@ public class TestXMLParserWriteXstream extends AbstractWrappableAnimation
         public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
         {
             return this.simulator;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public OTSNetwork getNetwork()
+        {
+            return this.network;
         }
 
         /** {@inheritDoc} */

@@ -2,7 +2,6 @@ package org.opentrafficsim.demo.carFollowing;
 
 import java.awt.Container;
 import java.awt.Frame;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -52,6 +51,7 @@ import org.opentrafficsim.graphs.FlowContourPlot;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
+import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
@@ -171,12 +171,12 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
             }
         });
     }
-
+    
     /** {@inheritDoc} */
     @Override
-    protected final Rectangle2D.Double makeAnimationRectangle()
+    protected final void addAnimationToggles()
     {
-        return new Rectangle2D.Double(1500, -100, 2000, 200);
+        AnimationToggles.setTextAnimationTogglesStandard(this);
     }
 
     /** {@inheritDoc} */
@@ -631,6 +631,13 @@ class StraightModel implements OTSModelInterface, UNITS
     public final SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
     {
         return this.simulator;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OTSNetwork getNetwork()
+    {
+        return this.network;
     }
 
     /**

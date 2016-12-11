@@ -282,9 +282,9 @@ public abstract class AbstractGTUGenerator implements Serializable
                     headway.getSpeed(), minimumHeadway, carBuilder.getMaximumSpeed()).getSI();
             if (acc < 0)
             {
-                System.err.println(getSimulator().getSimulatorTime() + ", generator headway for GTU " + headway.getId()
-                        + ", distance " + headway.getDistance().si + " m, max " + minimumHeadway + ", has to brake with a="
-                        + acc + " m/s^2");
+                // System.err.println(getSimulator().getSimulatorTime() + ", generator headway for GTU " + headway.getId()
+                // + ", distance " + headway.getDistance().si + " m, max " + minimumHeadway + ", has to brake with a="
+                // + acc + " m/s^2");
                 return false;
             }
         }
