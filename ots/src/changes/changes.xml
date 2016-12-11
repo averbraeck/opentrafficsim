@@ -2,14 +2,75 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
-    <release version="0.13.00" date="2016-XX-XX" description="Sprint 8">
-      <action issue="OTS-216" type="update">
-        OTS-216 Added neg() function to djunits and updated djunits in ots to version 2.01.01.
+    <release version="0.13.00" date="2016-12-11" description="Sprint 8">
+      <action issue="OTS-64" type="add">
+        OTS-64: LMRS - Relaxation.
+      </action>
+      <action issue="OTS-65" type="add">
+        OTS-65: Level of lane change desire by other drivers.
+      </action>
+      <action issue="OTS-66" type="add">
+        OTS-66: Relaxation response to lane change in front.
+      </action>
+      <action issue="OTS-200" type="add">
+        OTS-200: Implement TrafCOD traffic controller.
+      </action>
+      <action issue="OTS-214" type="add">
+        OTS-214: TrafficLight implementation for car following + instantaneous lane change model.
+      </action>
+      <action issue="OTS-215" type="add">
+        OTS-215: TrafficLight implementation for LMRS.
+      </action>
+      <action issue="OTS-218" type="update">
+        OTS-218: Automatically register LaneBasedObject on their Lane.
+      </action>
+      <action issue="OTS-219" type="update">
+        OTS-219: Store the GTUs that trigger a Sensor in the Sensor and not in the Lane.
+      </action>
+      <action issue="OTS-221" type="add">
+        OTS-221: Bring back LaneBasedGTUFollowingDirectedChangeTacticalPlanner.
+      </action>
+      <action issue="OTS-222" type="fix">
+        OTS-222: Z-order drawing.
+      </action>
+      <action issue="OTS-223" type="fix">
+        OTS-223: Repair parsing for ARC.
+      </action>
+      <action issue="OTS-224" type="add">
+        OTS-224: Allow for selection of layers in animation.
+      </action>
+      <action issue="OTS-225" type="add">
+        OTS-225: Provide default zoom for animation, and fix zoomAll method.
+      </action>
+      <action issue="OTS-226" type="add">
+        OTS-226: Allow animation of ids for Node, Link, Lane, Sensor, TrafficLight, and GTU.
+      </action>
+      <action type="update">
+        Moved ImmutableCollections to DSOL version 3.01.01.
+      </action>
+      <action type="update">
+        Updated to use DSOL version 3.01.01.
       </action>
     </release>
 
 
-    <release version="0.12.01" date="2016-11-07" description="Intermediate release">
+    <release version="0.12.02" date="2016-11-20" description="SIntermediate Release 12.02">
+      <action issue="OTS-87" type="update">
+        OTS-87 Implement mandatory incentives for LMRS.
+      </action>
+      <action issue="OTS-88" type="update">
+        OTS-88 Implement voluntary incentives for LMRS.
+      </action>
+      <action issue="OTS-160" type="update">
+        OTS-160 Categorize perception.
+      </action>
+      <action issue="OTS-216" type="update">
+        OTS-216 Added neg() function to djunits and updated djunits in ots to version 2.01.01.
+      </action>
+    </release>
+    
+    
+    <release version="0.12.01" date="2016-11-07" description="Intermediate release 12.01">
       <action issue="OTS-213" type="fix">
         OTS-213 Change SimpleWeightedGraph in OTSNetwork into SimpleDirectedWeightedGraph
       </action>

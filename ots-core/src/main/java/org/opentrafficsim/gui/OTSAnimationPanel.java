@@ -28,6 +28,7 @@ import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
 import nl.tudelft.simulation.language.io.URLResource;
@@ -49,7 +50,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     private static final long serialVersionUID = 20150617L;
 
     /** The animation panel on tab position 0. */
-    private final ShowHideAnimationPanel animationPanel;
+    private final AnimationPanel animationPanel;
 
     /** Border panel in which the animation is shown. */
     private final JPanel borderPanel;
@@ -105,7 +106,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         super(simulator, wrappableAnimation);
 
         // Add the animation panel as a tab.
-        this.animationPanel = new ShowHideAnimationPanel(extent, size, simulator);
+        this.animationPanel = new AnimationPanel(extent, size, simulator);
         this.borderPanel = new JPanel(new BorderLayout());
         this.borderPanel.add(this.animationPanel, BorderLayout.CENTER);
         getTabbedPane().addTab(0, "animation", this.borderPanel);
@@ -262,7 +263,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * Easy access to the AnimationPanel.
      * @return AnimationPanel
      */
-    public final ShowHideAnimationPanel getAnimationPanel()
+    public final AnimationPanel getAnimationPanel()
     {
         return this.animationPanel;
     }
