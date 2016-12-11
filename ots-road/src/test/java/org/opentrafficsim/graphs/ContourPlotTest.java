@@ -17,9 +17,6 @@ import java.util.Set;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
@@ -32,7 +29,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.jfree.chart.ChartPanel;
 import org.jfree.data.DomainOrder;
-import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -52,6 +48,9 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Test the non-GUI part of the ContourPlot class.
@@ -717,6 +716,13 @@ class ContourPlotModel implements OTSModelInterface
     @Override
     public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
 
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OTSNetwork getNetwork()
     {
         return null;
     }

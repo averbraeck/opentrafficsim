@@ -441,4 +441,11 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         return this.simulator;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public OTSNetwork getNetwork()
+    {
+        return this.network;
+    }
+
 }

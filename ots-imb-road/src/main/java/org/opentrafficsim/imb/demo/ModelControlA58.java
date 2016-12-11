@@ -553,6 +553,13 @@ public class ModelControlA58 extends ModelStarter
 
         /** {@inheritDoc} */
         @Override
+        public final OTSNetwork getNetwork()
+        {
+            return this.network;
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public final String toString()
         {
             return "A58Model [simulator=" + this.simulator + "]";

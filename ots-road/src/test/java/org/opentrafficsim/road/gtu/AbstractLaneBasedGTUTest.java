@@ -425,6 +425,13 @@ class DummyModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
+    public OTSNetwork getNetwork()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0)
             throws SimRuntimeException
     {

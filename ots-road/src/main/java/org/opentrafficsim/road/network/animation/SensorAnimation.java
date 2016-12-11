@@ -1,78 +1,90 @@
-package org.opentrafficsim.core.network.animation;
+package org.opentrafficsim.road.network.animation;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.animation.TextAnimation;
 import org.opentrafficsim.core.animation.TextAlignment;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.language.d2.Angle;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
- * Draws a Link.
+ * Sensor animation.
  * <p>
- * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
+ * All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$,
- * initial version Sep 13, 2014 <br>
+ * $LastChangedDate: 2015-08-12 16:37:45 +0200 (Wed, 12 Aug 2015) $, @version $Revision: 1240 $, by $Author: averbraeck $,
+ * initial version Jan 30, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LinkAnimation extends Renderable2D implements Serializable
+public class SensorAnimation extends Renderable2D implements Serializable
 {
     /** */
-    private static final long serialVersionUID = 20140000L;
+    private static final long serialVersionUID = 20150130L;
 
-    /** */
-    private float width;
+    /** The half width left and right of the center line that is used to draw the block. */
+    private final double halfWidth;
+
+    /** The color of the sensor. */
+    private final Color color;
 
     /**
-     * @param link Link
-     * @param simulator simulator
-     * @param width width
-     * @throws NamingException for problems with registering in context
-     * @throws RemoteException on communication failure
+     * Construct a SensorAnimation.
+     * @param sensor Sensor; the Sensor to draw
+     * @param sensorPosition Length; the position of the sensor on the lane to determine the width of the lane at that point
+     * @param simulator OTSSimulatorInterface; the simulator to schedule on
+     * @param color Color; the display color of the sensor
+     * @throws NamingException in case of registration failure of the animation
+     * @throws RemoteException in case of remote registration failure of the animation
      */
-    public LinkAnimation(final Link link, final OTSSimulatorInterface simulator, final float width)
-            throws NamingException, RemoteException
+    public SensorAnimation(final Sensor sensor, final Length sensorPosition, final OTSSimulatorInterface simulator,
+            final Color color) throws NamingException, RemoteException
     {
-        super(link, simulator);
-        this.width = width;
-        new Text(link, link.getId(), 0.0f, 1.5f, TextAlignment.CENTER, Color.BLACK, simulator);
+        super(sensor, simulator);
+        this.halfWidth = 0.45 * sensor.getLane().getWidth(sensorPosition).getSI();
+        this.color = color;
+
+        new Text(sensor, sensor.getLane().getParentLink().getId() + "." + sensor.getLane().getId() + sensor.getId(), 0.0f,
+                (float) this.halfWidth + 0.2f, TextAlignment.CENTER, Color.BLACK, simulator);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+    public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        PaintLine.paintLine(graphics, Color.RED, this.width, getSource().getLocation(), ((Link) getSource()).getDesignLine());
+        graphics.setColor(this.color);
+        Rectangle2D rectangle = new Rectangle2D.Double(-0.25, -this.halfWidth, 0.5, 2 * this.halfWidth);
+        graphics.fill(rectangle);
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "LinkAnimation [width=" + this.width + ", link=" + super.getSource() + "]";
+        return "SensorAnimation [getSource()=" + this.getSource() + "]";
     }
 
     /**
-     * Text animation for the Link. Separate class to be able to turn it on and off...
+     * Text animation for the Sensor. Separate class to be able to turn it on and off...
      * <p>
      * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
      * </p>
-     * $LastChangedDate$, @version $Revision$, by $Author$,
+     * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
      * initial version Dec 11, 2016 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -99,21 +111,6 @@ public class LinkAnimation extends Renderable2D implements Serializable
                 throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, simulator);
-        }
-        
-        /** {@inheritDoc} */
-        @Override
-        @SuppressWarnings("checkstyle:designforextension")
-        public DirectedPoint getLocation() throws RemoteException
-        {
-            // draw always on top, and not upside down.
-            DirectedPoint p = ((Link) this.source).getDesignLine().getLocationFractionExtended(0.5);
-            double a = Angle.normalizePi(p.getRotZ());
-            if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
-            {
-                a += Math.PI;
-            }
-            return new DirectedPoint(p.x, p.y, Double.MAX_VALUE, 0.0, 0.0, a);
         }
     }
 

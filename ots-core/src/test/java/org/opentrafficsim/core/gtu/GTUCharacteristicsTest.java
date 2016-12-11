@@ -101,4 +101,10 @@ public class GTUCharacteristicsTest implements OTSModelInterface
         return this.simulator;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final OTSNetwork getNetwork()
+    {
+        return null;
+    }
 }

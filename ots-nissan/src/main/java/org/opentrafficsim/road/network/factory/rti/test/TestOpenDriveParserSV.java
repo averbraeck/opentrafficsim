@@ -68,7 +68,6 @@ import org.opentrafficsim.road.network.lane.NoTrafficLane;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -186,6 +185,9 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
         /** The simulator. */
         private OTSDEVSSimulatorInterface simulator;
 
+        /** the network. */
+        private OTSNetwork network;
+
         private List<LaneBasedIndividualGTU> rtiCars;
 
         /** {@inheritDoc} */
@@ -201,10 +203,10 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
             URL url = URLResource.getResource("/testod.xodr");
             this.simulator.setPauseOnError(false);
             OpenDriveNetworkLaneParser nlp = new OpenDriveNetworkLaneParser(this.simulator);
-            OTSNetwork network = null;
+            this.network = null;
             try
             {
-                network = nlp.build(url);
+                this.network = nlp.build(url);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
                     | OTSGeometryException exception)
@@ -255,7 +257,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                             new LaneBasedGTUFollowingTacticalPlannerFactory(new IDMPlusOld()));
 
             // put some generators and sinks on the outer edges of the network
-            for (Link link : network.getLinkMap().values())
+            for (Link link : this.network.getLinkMap().values())
             {
                 CrossSectionLink csLink = (CrossSectionLink) link;
                 // look if start node is isolated
@@ -277,7 +279,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                                 new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualGTU.class,
                                         initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
                                         startTime, endTime, lane, position, GTUDirectionality.DIR_PLUS,
-                                        makeSwitchableGTUColorer(), strategicalPlannerFactory, null, network);
+                                        makeSwitchableGTUColorer(), strategicalPlannerFactory, null, this.network);
                                 try
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);
@@ -321,7 +323,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                                 new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualGTU.class,
                                         initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
                                         startTime, endTime, lane, position, GTUDirectionality.DIR_MINUS,
-                                        makeSwitchableGTUColorer(), strategicalPlannerFactory, null, network);
+                                        makeSwitchableGTUColorer(), strategicalPlannerFactory, null, this.network);
                                 try
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);
@@ -349,14 +351,14 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                 }
             }
 
-            CrossSectionLink link1 = (CrossSectionLink) network.getLink("3766054.5");
-            CrossSectionLink link2 = (CrossSectionLink) network.getLink("3766059.7");
-            CrossSectionLink link3 = (CrossSectionLink) network.getLink("3766068.3");
-            CrossSectionLink link4 = (CrossSectionLink) network.getLink("3766038.5");
-            CrossSectionLink link5 = (CrossSectionLink) network.getLink("3766043.3");
-            CrossSectionLink link6 = (CrossSectionLink) network.getLink("3766064.2");
-            CrossSectionLink link7 = (CrossSectionLink) network.getLink("3766046.3");
-            CrossSectionLink link8 = (CrossSectionLink) network.getLink("3766050.3");
+            CrossSectionLink link1 = (CrossSectionLink) this.network.getLink("3766054.5");
+            CrossSectionLink link2 = (CrossSectionLink) this.network.getLink("3766059.7");
+            CrossSectionLink link3 = (CrossSectionLink) this.network.getLink("3766068.3");
+            CrossSectionLink link4 = (CrossSectionLink) this.network.getLink("3766038.5");
+            CrossSectionLink link5 = (CrossSectionLink) this.network.getLink("3766043.3");
+            CrossSectionLink link6 = (CrossSectionLink) this.network.getLink("3766064.2");
+            CrossSectionLink link7 = (CrossSectionLink) this.network.getLink("3766046.3");
+            CrossSectionLink link8 = (CrossSectionLink) this.network.getLink("3766050.3");
 
             CompleteRoute cr1 = null, cr2 = null, cr3 = null, cr4 = null, cr5 = null, cr6 = null;
 
@@ -369,9 +371,9 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
             nodesVia1.add(link8.getStartNode());
             try
             {
-                cr1 = network.getShortestRouteBetween(GTUType.ALL, link1.getStartNode(), link1.getStartNode(), nodesVia1);
+                cr1 = this.network.getShortestRouteBetween(GTUType.ALL, link1.getStartNode(), link1.getStartNode(), nodesVia1);
                 Collections.reverse(nodesVia1);
-                cr2 = network.getShortestRouteBetween(GTUType.ALL, link1.getStartNode(), link1.getStartNode(), nodesVia1);
+                cr2 = this.network.getShortestRouteBetween(GTUType.ALL, link1.getStartNode(), link1.getStartNode(), nodesVia1);
             }
             catch (NetworkException exception)
             {
@@ -383,9 +385,9 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
             nodesVia2.add(link5.getEndNode());
             try
             {
-                cr3 = network.getShortestRouteBetween(GTUType.ALL, link3.getStartNode(), link3.getStartNode(), nodesVia2);
+                cr3 = this.network.getShortestRouteBetween(GTUType.ALL, link3.getStartNode(), link3.getStartNode(), nodesVia2);
                 Collections.reverse(nodesVia2);
-                cr4 = network.getShortestRouteBetween(GTUType.ALL, link3.getStartNode(), link3.getStartNode(), nodesVia2);
+                cr4 = this.network.getShortestRouteBetween(GTUType.ALL, link3.getStartNode(), link3.getStartNode(), nodesVia2);
             }
             catch (NetworkException exception)
             {
@@ -397,9 +399,9 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
             nodesVia3.add(link8.getEndNode());
             try
             {
-                cr5 = network.getShortestRouteBetween(GTUType.ALL, link6.getStartNode(), link6.getStartNode(), nodesVia3);
+                cr5 = this.network.getShortestRouteBetween(GTUType.ALL, link6.getStartNode(), link6.getStartNode(), nodesVia3);
                 Collections.reverse(nodesVia3);
-                cr6 = network.getShortestRouteBetween(GTUType.ALL, link6.getStartNode(), link6.getStartNode(), nodesVia3);
+                cr6 = this.network.getShortestRouteBetween(GTUType.ALL, link6.getStartNode(), link6.getStartNode(), nodesVia3);
             }
             catch (NetworkException exception)
             {
@@ -510,7 +512,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                     try
                     {
                         RTICars car = new RTICars(String.valueOf(i), carType, carLength, widthDist.draw(), maxSpeedDist.draw(),
-                                this.simulator, network);
+                                this.simulator, this.network);
                         this.rtiCars.add(car);
 
                     }
@@ -528,7 +530,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
 
             try
             {
-                new Thread(new ReceiverThread(this.simulator, carType, this.rtiCars, network)).start();
+                new Thread(new ReceiverThread(this.simulator, carType, this.rtiCars, this.network)).start();
             }
             catch (SocketException exception1)
             {
@@ -554,9 +556,15 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
         /** {@inheritDoc} */
         @Override
         public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
-
         {
             return this.simulator;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final OTSNetwork getNetwork()
+        {
+            return this.network;
         }
 
         /**

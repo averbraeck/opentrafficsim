@@ -5,10 +5,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.opentrafficsim.base.immutablecollections.ImmutableIterator;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.interfaces.LinkDataInterface;
 
+import nl.tudelft.simulation.immutablecollections.ImmutableIterator;
 import nl.tudelft.simulation.language.Throw;
 
 /**

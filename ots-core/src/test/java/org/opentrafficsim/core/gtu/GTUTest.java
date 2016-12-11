@@ -15,8 +15,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
-import org.opentrafficsim.base.immutablecollections.ImmutableMap;
-import org.opentrafficsim.base.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -36,6 +34,8 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.immutablecollections.ImmutableMap;
+import nl.tudelft.simulation.immutablecollections.ImmutableSet;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -166,6 +166,14 @@ public class GTUTest implements OTSModelInterface
     {
         return null;
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public final OTSNetwork getNetwork()
+    {
+        return null;
+    }
+    
 }
 
 /** ... */

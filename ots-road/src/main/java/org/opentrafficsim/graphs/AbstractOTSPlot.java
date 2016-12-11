@@ -14,12 +14,12 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
-import org.opentrafficsim.base.immutablecollections.Immutable;
-import org.opentrafficsim.base.immutablecollections.ImmutableArrayList;
-import org.opentrafficsim.base.immutablecollections.ImmutableList;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.immutablecollections.Immutable;
+import nl.tudelft.simulation.immutablecollections.ImmutableArrayList;
+import nl.tudelft.simulation.immutablecollections.ImmutableList;
 
 /**
  * Basics of all plots in the Open Traffic Simulator.

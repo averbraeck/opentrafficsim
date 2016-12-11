@@ -3,7 +3,6 @@ package org.opentrafficsim.demo.carFollowing;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Frame;
-import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -48,7 +47,6 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacter
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -60,6 +58,7 @@ import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.TrajectoryPlot;
+import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
@@ -148,12 +147,12 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
         super.stopTimersThreads();
         this.model = null;
     }
-
+    
     /** {@inheritDoc} */
     @Override
-    protected final Rectangle2D.Double makeAnimationRectangle()
+    protected final void addAnimationToggles()
     {
-        return new Rectangle2D.Double(-50, -300, 1300, 600);
+        AnimationToggles.setTextAnimationTogglesStandard(this);
     }
 
     /** {@inheritDoc} */
@@ -223,7 +222,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     private OTSDEVSSimulatorInterface simulator;
 
     /** The network. */
-    private final Network network = new OTSNetwork("network");
+    private final OTSNetwork network = new OTSNetwork("network");
 
     /** The plots. */
     private List<LaneBasedGTUSampler> plots = new ArrayList<>();
@@ -1003,6 +1002,13 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
     {
         return this.simulator;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OTSNetwork getNetwork()
+    {
+        return this.network;
     }
 
     /**

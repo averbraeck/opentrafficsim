@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.network.lane.conflict;
+package org.opentrafficsim.road.network.animation;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -10,6 +10,7 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.road.network.lane.conflict.Conflict;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 

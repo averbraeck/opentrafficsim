@@ -10,9 +10,6 @@ import java.util.Set;
 
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.opentrafficsim.base.immutablecollections.Immutable;
-import org.opentrafficsim.base.immutablecollections.ImmutableHashMap;
-import org.opentrafficsim.base.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -21,6 +18,9 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
 import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.immutablecollections.Immutable;
+import nl.tudelft.simulation.immutablecollections.ImmutableHashMap;
+import nl.tudelft.simulation.immutablecollections.ImmutableMap;
 
 /**
  * A Network consists of a set of links. Each link has, in its turn, a start node and an end node.

@@ -31,6 +31,8 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.network.animation.SensorAnimation;
+import org.opentrafficsim.road.network.animation.TrafficLightSensorAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -547,7 +549,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
      * Return the state of this traffic light sensor.
      * @return boolean; true if one or more GTUs are currently detected; false of no GTUs are currently detected
      */
-    protected final boolean getOccupancy()
+    public final boolean getOccupancy()
     {
         return this.currentGTUs.size() > 0;
     }

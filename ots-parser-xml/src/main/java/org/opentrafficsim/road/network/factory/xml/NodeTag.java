@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,8 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.core.network.animation.LinkAnimation;
+import org.opentrafficsim.core.network.animation.NodeAnimation;
 import org.opentrafficsim.core.network.factory.xml.units.AngleUnits;
 import org.opentrafficsim.core.network.factory.xml.units.Coordinates;
 import org.w3c.dom.NamedNodeMap;
@@ -142,6 +145,16 @@ class NodeTag implements Serializable
         Direction slope = nodeTag.slope == null ? new Direction(0.0, AngleUnit.SI) : nodeTag.slope;
         OTSNode node = new OTSNode(parser.network, id, nodeTag.coordinate, angle, slope);
         nodeTag.node = node;
+        
+        try
+        {
+            new NodeAnimation(nodeTag.node, parser.simulator);
+        }
+        catch (RemoteException exception)
+        {
+            exception.printStackTrace();
+        }
+        
         return node;
     }
 

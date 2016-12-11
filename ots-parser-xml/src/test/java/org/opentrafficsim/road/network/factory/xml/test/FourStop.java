@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.network.factory.xml.test;
 
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -9,10 +7,6 @@ import java.util.ArrayList;
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.language.io.URLResource;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -26,11 +20,17 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.xml.sax.SAXException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.io.URLResource;
 
 /**
  * Four stop demo
@@ -62,7 +62,7 @@ public class FourStop extends AbstractWrappableAnimation
                     FourStop xmlModel = new FourStop();
                     // 1 hour simulation run for testing
                     xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
-                        new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -70,6 +70,27 @@ public class FourStop extends AbstractWrappableAnimation
                 }
             }
         });
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void addTabs(SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
+    {
+        super.addTabs(simulator);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void addAnimationToggles()
+    {
+        // hideAnimationClass(OTSLink.class);
+        // hideAnimationClass(Shoulder.class);
+
+        // addToggleAnimationButton("Link", OTSLink.class, "Show/hide Links", false);
+        // addToggleAnimationButton("Shoulder", Shoulder.class, "Show/hide Shoulders", true);
+        // addToggleAnimationButton("Lane", Lane.class, "Show/hide Lanes", true);
+
+        AnimationToggles.setTextAnimationTogglesStandard(this);
     }
 
     /** {@inheritDoc} */
@@ -102,13 +123,6 @@ public class FourStop extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected final Double makeAnimationRectangle()
-    {
-        return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public String toString()
     {
         return "FourStop []";
@@ -133,13 +147,13 @@ public class FourStop extends AbstractWrappableAnimation
 
         /** The simulator. */
         private OTSDEVSSimulatorInterface simulator;
+        
+        /** the network. */
+        private OTSNetwork network = null;
 
         /** {@inheritDoc} */
         @Override
-        public final
-            void
-            constructModel(
-                final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
+        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
@@ -147,10 +161,10 @@ public class FourStop extends AbstractWrappableAnimation
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
             {
-                nlp.build(url);
+                this.network = nlp.build(url);
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
-                | GTUException | OTSGeometryException exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
+                    | OTSGeometryException exception)
             {
                 exception.printStackTrace();
             }
@@ -158,11 +172,17 @@ public class FourStop extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<Time, Duration, OTSSimTimeDouble>
-            getSimulator()
+        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
 
         {
             return this.simulator;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public OTSNetwork getNetwork()
+        {
+            return this.network;
         }
 
         /** {@inheritDoc} */
