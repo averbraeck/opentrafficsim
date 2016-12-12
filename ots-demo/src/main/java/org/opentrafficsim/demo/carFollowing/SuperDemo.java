@@ -57,6 +57,7 @@ import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.base.modelproperties.StringProperty;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo2;
 import org.opentrafficsim.gui.LabeledPanel;
 import org.opentrafficsim.gui.ProbabilityDistributionEditor;
 import org.opentrafficsim.gui.SimulatorFrame;
@@ -140,6 +141,7 @@ public class SuperDemo implements UNITS
         demonstrations.add(new XMLNetworks());
         demonstrations.add(new OpenStreetMap());
         demonstrations.add(new CrossingTrafficLights());
+        demonstrations.add(new TrafCODDemo2());
         // final JPanel left = new LabeledPanel("Simulation Settings");
         this.simulationSelection = new LabeledPanel("Network");
         this.simulationSelection.setLayout(new GridBagLayout());
