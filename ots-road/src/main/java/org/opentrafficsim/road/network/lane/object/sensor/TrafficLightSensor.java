@@ -49,7 +49,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 public class TrafficLightSensor extends EventProducer implements EventListenerInterface, NonDirectionalOccupancySensor,
-        EventProducerInterface, Locatable
+        EventProducerInterface, Locatable, Sensor
 {
     /** */
     private static final long serialVersionUID = 20161103L;
@@ -195,7 +195,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
      */
     private OTSPoint3D fixElevation(final OTSPoint3D point)
     {
-        return new OTSPoint3D(point.x, point.y, point.z + Sensor.DEFAULT_SENSOR_ELEVATION.si);
+        return new OTSPoint3D(point.x, point.y, point.z + SingleSensor.DEFAULT_SENSOR_ELEVATION.si);
     }
 
     /**

@@ -10,17 +10,17 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.opentrafficsim.core.animation.TextAnimation;
-import org.opentrafficsim.core.animation.TextAlignment;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.network.animation.PaintLine;
-import org.opentrafficsim.core.network.animation.PaintPolygons;
-import org.opentrafficsim.road.network.lane.Lane;
-
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
+
+import org.opentrafficsim.core.animation.TextAlignment;
+import org.opentrafficsim.core.animation.TextAnimation;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.network.animation.PaintLine;
+import org.opentrafficsim.core.network.animation.PaintPolygons;
+import org.opentrafficsim.road.network.lane.Lane;
 
 /**
  * <p>
@@ -43,11 +43,12 @@ public class LaneAnimation extends Renderable2D implements Serializable
     private final boolean drawCenterLine;
 
     /**
-     * @param lane s
-     * @param simulator s
-     * @param color color of the lane.
-     * @param drawCenterLine whether to draw the center line or not
-     * @throws NamingException ne
+     * Animate a Lane.
+     * @param lane Lane; the lane
+     * @param simulator OTSSimulatorInterface; the simulator
+     * @param color Color of the lane.
+     * @param drawCenterLine boolean; whether to draw the center line or not
+     * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
     public LaneAnimation(final Lane lane, final OTSSimulatorInterface simulator, final Color color,

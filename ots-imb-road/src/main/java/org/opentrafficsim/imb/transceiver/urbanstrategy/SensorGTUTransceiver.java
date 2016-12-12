@@ -15,7 +15,7 @@ import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 
 import nl.tudelft.simulation.event.Event;
 import nl.tudelft.simulation.event.EventInterface;
@@ -293,7 +293,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             lane.addListener(this, Lane.SENSOR_REMOVE_EVENT);
 
             // Post ourselves a SENSOR_ADD_EVENT for every Sensor currently on the lane
-            for (Sensor sensor : lane.getSensors())
+            for (SingleSensor sensor : lane.getSensors())
             {
                 try
                 {
@@ -311,8 +311,8 @@ public class SensorGTUTransceiver extends AbstractTransceiver
         else if (type.equals(Lane.SENSOR_ADD_EVENT))
         {
             Object[] content = (Object[]) event.getContent();
-            Sensor sensor = (Sensor) content[1];
-            sensor.addListener(this, Sensor.SENSOR_TRIGGER_EVENT);
+            SingleSensor sensor = (SingleSensor) content[1];
+            sensor.addListener(this, SingleSensor.SENSOR_TRIGGER_EVENT);
             
             try
             {
@@ -325,7 +325,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             }
         }
 
-        else if (type.equals(Sensor.SENSOR_TRIGGER_EVENT))
+        else if (type.equals(SingleSensor.SENSOR_TRIGGER_EVENT))
         {
             try
             {
@@ -379,7 +379,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             lane.removeListener(this, Lane.SENSOR_REMOVE_EVENT);
 
             // Post ourselves a SENSOR_REMOVE_EVENT for every Sensor currently on the lane
-            for (Sensor sensor : lane.getSensors())
+            for (SingleSensor sensor : lane.getSensors())
             {
                 try
                 {
@@ -408,8 +408,8 @@ public class SensorGTUTransceiver extends AbstractTransceiver
         else if (type.equals(Lane.SENSOR_REMOVE_EVENT))
         {
             Object[] content = (Object[]) event.getContent();
-            Sensor sensor = (Sensor) content[1];
-            sensor.removeListener(this, Sensor.SENSOR_TRIGGER_EVENT);
+            SingleSensor sensor = (SingleSensor) content[1];
+            sensor.removeListener(this, SingleSensor.SENSOR_TRIGGER_EVENT);
 
             try
             {
@@ -440,7 +440,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             // Object[] {String sensorId, Sensor sensor}
             Object[] content = (Object[]) event.getContent();
             String sensorId = (String) content[0];
-            Sensor sensor = (Sensor) content[1];
+            SingleSensor sensor = (SingleSensor) content[1];
             Lane lane = sensor.getLane();
             double longitudinalPosition = sensor.getLongitudinalPosition().si;
             double length = 0.0; // sensor has zero length right now
@@ -461,12 +461,12 @@ public class SensorGTUTransceiver extends AbstractTransceiver
      */
     private Object[] transformChange(final EventInterface event)
     {
-        if (Sensor.SENSOR_TRIGGER_EVENT.equals(event.getType()))
+        if (SingleSensor.SENSOR_TRIGGER_EVENT.equals(event.getType()))
         {
             // Object[] {String sensorId, Sensor sensor, LaneBasedGTU gtu, RelativePosition.TYPE relativePosition}
             Object[] content = (Object[]) event.getContent();
             String sensorId = (String) content[0];
-            Sensor sensor = (Sensor) content[1];
+            SingleSensor sensor = (SingleSensor) content[1];
             Lane lane = sensor.getLane();
             LaneBasedGTU gtu = (LaneBasedGTU) content[2];
             String gtuId = gtu.getId();
@@ -492,7 +492,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             // Object[] {String sensorId, Sensor sensor}
             Object[] content = (Object[]) event.getContent();
             String sensorId = (String) content[0];
-            Sensor sensor = (Sensor) content[1];
+            SingleSensor sensor = (SingleSensor) content[1];
             Lane lane = sensor.getLane();
             double timestamp = getSimulator().getSimulatorTime().getTime().si;
             return new Object[] { timestamp, this.network.getId(), lane.getParentLink().getId(), lane.getId(), sensorId };

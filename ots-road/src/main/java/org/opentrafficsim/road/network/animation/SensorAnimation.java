@@ -13,7 +13,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.animation.TextAnimation;
 import org.opentrafficsim.core.animation.TextAlignment;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
@@ -50,7 +50,7 @@ public class SensorAnimation extends Renderable2D implements Serializable
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public SensorAnimation(final Sensor sensor, final Length sensorPosition, final OTSSimulatorInterface simulator,
+    public SensorAnimation(final SingleSensor sensor, final Length sensorPosition, final OTSSimulatorInterface simulator,
             final Color color) throws NamingException, RemoteException
     {
         super(sensor, simulator);

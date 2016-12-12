@@ -14,6 +14,7 @@ import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 
@@ -56,7 +57,7 @@ public final class AnimationToggles
         aws.addToggleAnimationButton("Shoulder", Shoulder.class, "Show/hide shoulders", true);
         aws.addToggleAnimationButton("GTU", GTU.class, "Show/hide GTUs", true);
         aws.addToggleAnimationButton("GTUId", DefaultCarAnimation.Text.class, "Show/hide GTU Ids", false);
-        aws.addToggleAnimationButton("Sensor", Sensor.class, "Show/hide sensors", true);
+        aws.addToggleAnimationButton("Sensor", SingleSensor.class, "Show/hide sensors", true);
         aws.addToggleAnimationButton("SensorId", SensorAnimation.Text.class, "Show/hide sensors Ids", false);
         aws.addToggleAnimationButton("Light", TrafficLight.class, "Show/hide traffic lights", true);
         aws.addToggleAnimationButton("LightId", TrafficLightAnimation.Text.class, "Show/hide sensors Ids", false);
@@ -104,7 +105,7 @@ public final class AnimationToggles
         aws.showAnimationClass(Shoulder.class);
         aws.showAnimationClass(GTU.class);
         aws.hideAnimationClass(DefaultCarAnimation.Text.class);
-        aws.showAnimationClass(Sensor.class);
+        aws.showAnimationClass(SingleSensor.class);
         aws.hideAnimationClass(SensorAnimation.Text.class);
         aws.showAnimationClass(TrafficLight.class);
         aws.hideAnimationClass(TrafficLightAnimation.Text.class);
@@ -128,7 +129,7 @@ public final class AnimationToggles
         aws.showAnimationClass(Shoulder.class);
         aws.showAnimationClass(GTU.class);
         aws.hideAnimationClass(DefaultCarAnimation.Text.class);
-        aws.hideAnimationClass(Sensor.class);
+        aws.hideAnimationClass(SingleSensor.class);
         aws.hideAnimationClass(SensorAnimation.Text.class);
         aws.showAnimationClass(TrafficLight.class);
         aws.hideAnimationClass(TrafficLightAnimation.Text.class);

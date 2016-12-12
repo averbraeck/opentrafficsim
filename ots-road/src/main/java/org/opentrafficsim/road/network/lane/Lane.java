@@ -39,7 +39,7 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
-import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
@@ -107,7 +107,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * per GTU type, so different GTUs can trigger different sensors.
      */
     // TODO allow for direction-dependent sensors
-    private final SortedMap<Double, List<Sensor>> sensors = new TreeMap<>();
+    private final SortedMap<Double, List<SingleSensor>> sensors = new TreeMap<>();
 
     /**
      * Objects on the lane can be observed by the GTU. Examples are signs, speed signs, blocks, and traffic lights. They are
@@ -546,17 +546,17 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param sensor Sensor; the sensor to add
      * @throws NetworkException when the position of the sensor is beyond (or before) the range of this Lane
      */
-    public final void addSensor(final Sensor sensor) throws NetworkException
+    public final void addSensor(final SingleSensor sensor) throws NetworkException
     {
         double position = sensor.getLongitudinalPosition().si;
         if (position < 0 || position > getLength().getSI())
         {
             throw new NetworkException("Illegal position for sensor " + position + " valid range is 0.." + getLength().getSI());
         }
-        List<Sensor> sensorList = this.sensors.get(position);
+        List<SingleSensor> sensorList = this.sensors.get(position);
         if (null == sensorList)
         {
-            sensorList = new ArrayList<Sensor>(1);
+            sensorList = new ArrayList<SingleSensor>(1);
             this.sensors.put(position, sensorList);
         }
         sensorList.add(sensor);
@@ -568,11 +568,11 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param sensor Sensoe; the sensor to remove.
      * @throws NetworkException when the sensor was not found on this Lane
      */
-    public final void removeSensor(final Sensor sensor) throws NetworkException
+    public final void removeSensor(final SingleSensor sensor) throws NetworkException
     {
         fireTimedEvent(Lane.SENSOR_REMOVE_EVENT, new Object[] { sensor.getId(), sensor }, sensor.getSimulator()
                 .getSimulatorTime());
-        List<Sensor> sensorList = this.sensors.get(sensor.getLongitudinalPosition().si);
+        List<SingleSensor> sensorList = this.sensors.get(sensor.getLongitudinalPosition().si);
         if (null == sensorList)
         {
             throw new NetworkException("No sensor at " + sensor.getLongitudinalPosition().si);
@@ -592,12 +592,12 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param gtuType the GTU type to provide the sensors for
      * @return List&lt;Sensor&gt;; list of the sensor in the specified range. This is a defensive copy.
      */
-    public final List<Sensor> getSensors(final Length minimumPosition, final Length maximumPosition, final GTUType gtuType)
+    public final List<SingleSensor> getSensors(final Length minimumPosition, final Length maximumPosition, final GTUType gtuType)
     {
-        List<Sensor> sensorList = new ArrayList<>(1);
-        for (List<Sensor> sl : this.sensors.values())
+        List<SingleSensor> sensorList = new ArrayList<>(1);
+        for (List<SingleSensor> sl : this.sensors.values())
         {
-            for (Sensor sensor : sl)
+            for (SingleSensor sensor : sl)
             {
                 if ((sensor.getTriggeringGTUTypes().contains(gtuType) || sensor.getTriggeringGTUTypes().contains(GTUType.ALL))
                         && sensor.getLongitudinalPosition().ge(minimumPosition)
@@ -616,12 +616,12 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param gtuType GTUType; the GTU type to provide the sensors for
      * @return List&lt;Sensor&gt;; list of the sensors, in ascending order for the location on the Lane
      */
-    public final List<Sensor> getSensors(final GTUType gtuType)
+    public final List<SingleSensor> getSensors(final GTUType gtuType)
     {
-        List<Sensor> sensorList = new ArrayList<>(1);
-        for (List<Sensor> sl : this.sensors.values())
+        List<SingleSensor> sensorList = new ArrayList<>(1);
+        for (List<SingleSensor> sl : this.sensors.values())
         {
-            for (Sensor sensor : sl)
+            for (SingleSensor sensor : sl)
             {
                 if ((sensor.getTriggeringGTUTypes().contains(gtuType) || sensor.getTriggeringGTUTypes().contains(GTUType.ALL)))
                 {
@@ -636,16 +636,16 @@ public class Lane extends CrossSectionElement implements Serializable
      * Retrieve the list of all Sensors of this Lane. The resulting list is a defensive copy.
      * @return List&lt;Sensor&gt;; list of the sensors, in ascending order for the location on the Lane
      */
-    public final List<Sensor> getSensors()
+    public final List<SingleSensor> getSensors()
     {
         if (this.sensors == null)
         {
             return new ArrayList<>();
         }
-        List<Sensor> sensorList = new ArrayList<>(1);
-        for (List<Sensor> sl : this.sensors.values())
+        List<SingleSensor> sensorList = new ArrayList<>(1);
+        for (List<SingleSensor> sl : this.sensors.values())
         {
-            for (Sensor sensor : sl)
+            for (SingleSensor sensor : sl)
             {
                 sensorList.add(sensor);
             }
@@ -659,15 +659,15 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param gtuType GTUType; the GTU type to provide the sensors for
      * @return SortedMap&lt;Double, List&lt;Sensor&gt;&gt;; all sensors on this lane for the given GTUType as a map per distance
      */
-    public final SortedMap<Double, List<Sensor>> getSensorMap(final GTUType gtuType)
+    public final SortedMap<Double, List<SingleSensor>> getSensorMap(final GTUType gtuType)
     {
-        SortedMap<Double, List<Sensor>> sensorMap = new TreeMap<>();
+        SortedMap<Double, List<SingleSensor>> sensorMap = new TreeMap<>();
         for (double d : this.sensors.keySet())
         {
-            List<Sensor> sensorList = new ArrayList<>(1);
-            for (List<Sensor> sl : this.sensors.values())
+            List<SingleSensor> sensorList = new ArrayList<>(1);
+            for (List<SingleSensor> sl : this.sensors.values())
             {
-                for (Sensor sensor : sl)
+                for (SingleSensor sensor : sl)
                 {
                     if (sensor.getLongitudinalPosition().si == d
                             && (sensor.getTriggeringGTUTypes().contains(gtuType) || sensor.getTriggeringGTUTypes().contains(
@@ -706,7 +706,7 @@ public class Lane extends CrossSectionElement implements Serializable
             throws NetworkException, SimRuntimeException
     {
         // System.out.println("Getting sensor map for " + gtu.getGTUType() + ":");
-        for (List<Sensor> sensorList : getSensorMap(gtu.getGTUType()).values())
+        for (List<SingleSensor> sensorList : getSensorMap(gtu.getGTUType()).values())
         {
             // System.out.println("Time=" + gtu.getSimulator().getSimulatorTime().toString() + " SensorList contains "
             // + (sensorList.size()) + " sensors:");
@@ -714,7 +714,7 @@ public class Lane extends CrossSectionElement implements Serializable
             // {
             // System.out.println("\t" + sensor);
             // }
-            for (Sensor sensor : sensorList)
+            for (SingleSensor sensor : sensorList)
             {
                 for (RelativePosition relativePosition : gtu.getRelativePositions().values())
                 {
@@ -1482,13 +1482,13 @@ public class Lane extends CrossSectionElement implements Serializable
             Lane newLane = new Lane(newParentLink, newSimulator, animation, this);
             // nextLanes, prevLanes, nextNeighbors, rightNeighbors are filled at first request
 
-            SortedMap<Double, List<Sensor>> newSensorMap = new TreeMap<>();
+            SortedMap<Double, List<SingleSensor>> newSensorMap = new TreeMap<>();
             for (double distance : this.sensors.keySet())
             {
-                List<Sensor> newSensorList = new ArrayList<>();
-                for (Sensor sensor : this.sensors.get(distance))
+                List<SingleSensor> newSensorList = new ArrayList<>();
+                for (SingleSensor sensor : this.sensors.get(distance))
                 {
-                    Sensor newSensor = ((AbstractSensor) sensor).clone(newLane, newSimulator, animation);
+                    SingleSensor newSensor = ((AbstractSensor) sensor).clone(newLane, newSimulator, animation);
                     newSensorList.add(newSensor);
                 }
                 newSensorMap.put(distance, newSensorList);

@@ -32,7 +32,7 @@ import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractSensor extends AbstractLaneBasedObject implements Sensor
+public abstract class AbstractSensor extends AbstractLaneBasedObject implements SingleSensor
 {
     /** */
     private static final long serialVersionUID = 20141231L;
@@ -195,7 +195,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     @Override
     public final void trigger(final LaneBasedGTU gtu)
     {
-        fireTimedEvent(Sensor.SENSOR_TRIGGER_EVENT, new Object[] { getId(), this, gtu, this.positionType }, getSimulator()
+        fireTimedEvent(SingleSensor.SENSOR_TRIGGER_EVENT, new Object[] { getId(), this, gtu, this.positionType }, getSimulator()
                 .getSimulatorTime());
         triggerResponse(gtu);
     }
@@ -277,7 +277,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
-    public int compareTo(final Sensor o)
+    public int compareTo(final SingleSensor o)
     {
         if (this.getLane() != o.getLane())
         {

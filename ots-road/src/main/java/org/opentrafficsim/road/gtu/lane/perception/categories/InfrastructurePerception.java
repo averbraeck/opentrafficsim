@@ -17,7 +17,7 @@ import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
@@ -211,7 +211,7 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
         // TODO only towards end node
         if (route == null || route.contains(nextNode))
         {
-            for (Sensor s : record.getLane().getSensors())
+            for (SingleSensor s : record.getLane().getSensors())
             {
                 if (s instanceof SinkSensor)
                 {
