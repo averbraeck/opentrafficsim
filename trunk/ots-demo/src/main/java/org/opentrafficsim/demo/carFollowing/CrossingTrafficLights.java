@@ -17,14 +17,23 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.jstats.distributions.DistTriangular;
+import nl.tudelft.simulation.jstats.streams.MersenneTwister;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
@@ -51,24 +60,17 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
+import org.opentrafficsim.road.modelproperties.IDMPropertySet;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.jstats.distributions.DistTriangular;
-import nl.tudelft.simulation.jstats.streams.MersenneTwister;
-import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * Demonstration of a crossing with traffic lights.
@@ -139,6 +141,29 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
                 {
                     CrossingTrafficLights crossingTrafficLights = new CrossingTrafficLights();
                     List<Property<?>> localProperties = crossingTrafficLights.getProperties();
+                    try
+                    {
+                        localProperties.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
+                                "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
+                                new Double[] { 0.8, 0.2 }, false, 10));
+                    }
+                    catch (PropertyException exception)
+                    {
+                        exception.printStackTrace();
+                    }
+                    localProperties.add(new SelectionProperty("CarFollowingModel", "Car following model",
+                            "<html>The car following model determines "
+                                    + "the acceleration that a vehicle will make taking into account "
+                                    + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
+                                    + "curvature of the road) capabilities of the vehicle and personality "
+                                    + "of the driver.</html>", new String[] { "IDM", "IDM+" }, 1, false, 1));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car", new Acceleration(1.0,
+                            METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length(2.0, METER),
+                            new Duration(1.0, SECOND), 2));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck", new Acceleration(0.5,
+                            METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER),
+                            new Duration(1.0, SECOND), 3));
+
                     crossingTrafficLights.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND),
                             new Duration(3600.0, SECOND), localProperties, null, true);
 
@@ -348,7 +373,7 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
                     {
                         for (Lane lane : lanes)
                         {
-                            SingleSensor sensor = new SinkSensor(lane, new Length(500.0, METER), this.simulator);
+                            new SinkSensor(lane, new Length(500.0, METER), this.simulator);
                         }
                     }
                 }
