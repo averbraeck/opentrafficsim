@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -22,6 +24,18 @@ public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPercep
 
     /** */
     private static final long serialVersionUID = 20160811L;
+    
+    /** 
+     * Maximum deceleration that is used to determine if a vehicle will attempt to stop for a yellow light.  <br> 
+     * Derived from the report <cite>Onderzoek geeltijden</cite> by Goudappel Coffeng.
+     */
+    public static final Acceleration MAX_YELLOW_DECELERATION = new Acceleration(-2.8, AccelerationUnit.METER_PER_SECOND_2);
+
+    /**
+     * Maximum deceleration that is used to determine if a vehicle will attempt to stop for a red light. <br>
+     * Not based on any scientific source; sorry.
+     */
+    public static final Acceleration MAX_RED_DECELERATION = new Acceleration(-5, AccelerationUnit.METER_PER_SECOND_2);
 
     /**
      * @param perception perception
