@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -187,12 +188,12 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         JToggleButton button;
         if (iconPath != null)
         {
-            button = new JToggleButton(new ImageIcon(URLResource.getResource(iconPath)));
+            button = new JCheckBox(new ImageIcon(URLResource.getResource(iconPath)));
             button.setPreferredSize(new Dimension(34, 32));
         }
         else
         {
-            button = new JToggleButton(name);
+            button = new JCheckBox(name);
         }
         button.setName(name);
         button.setEnabled(true);
