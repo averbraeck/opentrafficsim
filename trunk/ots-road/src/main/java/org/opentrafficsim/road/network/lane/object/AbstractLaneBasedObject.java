@@ -8,7 +8,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.StaticObject;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -66,7 +66,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
         DirectedPoint p = lane.getCenterLine().getLocationExtended(this.longitudinalPosition);
         this.location = new DirectedPoint(p.x, p.y, p.z + 0.01, p.getRotX(), p.getRotY(), p.getRotZ());
 
-        if (!(this instanceof Sensor))
+        if (!(this instanceof SingleSensor))
         {
             this.lane.addLaneBasedObject(this); // implements OTS-218
         }

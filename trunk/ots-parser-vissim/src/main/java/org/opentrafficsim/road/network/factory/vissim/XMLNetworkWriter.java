@@ -34,7 +34,7 @@ import org.opentrafficsim.road.network.factory.vissim.xsd.ROADLAYOUT;
 import org.opentrafficsim.road.network.factory.vissim.xsd.ROADTYPE;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
-import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 
 /**
  * @author NLGUTU
@@ -175,7 +175,7 @@ public class XMLNetworkWriter {
                 speedLimit.setGTUTYPE("CAR");
                 lane.getSPEEDLIMIT().add(speedLimit);
                 rla.getLANEOrNOTRAFFICLANEOrSHOULDER().add(lane);
-                for (Sensor inputSensor : inputLane.getSensors()) {
+                for (SingleSensor inputSensor : inputLane.getSensors()) {
                     LINK.SENSOR sensor = new LINK.SENSOR();
                     sensor.setNAME(inputSensor.getId());
                     sensor.setLANE(lane.getNAME());

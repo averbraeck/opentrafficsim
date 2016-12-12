@@ -55,7 +55,7 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -348,7 +348,7 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
                     {
                         for (Lane lane : lanes)
                         {
-                            Sensor sensor = new SinkSensor(lane, new Length(500.0, METER), this.simulator);
+                            SingleSensor sensor = new SinkSensor(lane, new Length(500.0, METER), this.simulator);
                         }
                     }
                 }

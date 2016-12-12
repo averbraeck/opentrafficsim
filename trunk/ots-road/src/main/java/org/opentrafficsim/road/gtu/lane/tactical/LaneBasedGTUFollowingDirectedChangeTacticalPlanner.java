@@ -39,7 +39,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedLane
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -594,7 +594,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         simplePerception.updateForwardHeadwayGTU();
         simplePerception.updateForwardHeadwayObject();
         boolean sinkAtEnd = false;
-        for (Sensor sensor : (lanePathInfo.getLanes().get(lanePathInfo.getLanes().size() - 1).getSensors()))
+        for (SingleSensor sensor : (lanePathInfo.getLanes().get(lanePathInfo.getLanes().size() - 1).getSensors()))
         {
             if (sensor instanceof SinkSensor)
             {

@@ -3,19 +3,21 @@ package org.opentrafficsim.road.network.animation;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.ImageObserver;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 
 /**
@@ -30,7 +32,7 @@ import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrafficLightSensorAnimation extends Renderable2D implements Serializable
+public class TrafficLightSensorAnimation extends Renderable2D implements Sensor
 {
     /** */
     private static final long serialVersionUID = 20150130L;
@@ -88,6 +90,20 @@ public class TrafficLightSensorAnimation extends Renderable2D implements Seriali
     public final String toString()
     {
         return "SensorAnimation [getSource()=" + this.getSource() + "]";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final DirectedPoint getLocation() throws RemoteException
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Bounds getBounds() throws RemoteException
+    {
+        return this.path.getBounds();
     }
     
 }
