@@ -46,7 +46,7 @@ class StraightTag implements Serializable {
     }
 
     /**
-     * @param straightTag: the parser with the lists of information
+     * @param straightTag StraightTag; the parser with the lists of information
      */
     public StraightTag(StraightTag straightTag) {
         if (straightTag != null) {

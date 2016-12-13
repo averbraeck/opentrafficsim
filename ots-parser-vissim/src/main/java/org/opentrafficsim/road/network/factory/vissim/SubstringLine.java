@@ -26,32 +26,35 @@ public class SubstringLine {
      */
 
     /**
-     * @param line: geometry
-     * @param startLength: start position
-     * @param endLength: end position
+     * @param line LineString; geometry
+     * @param startLength double; start position
+     * @param endLength double; end position
      * @return the substring
      */
-    public static LineString getSubstring(LineString line, double startLength, double endLength) {
+    public static LineString getSubstring(final LineString line, final double startLength, final double endLength) 
+    {
         SubstringLine ls = new SubstringLine(line);
         return ls.getSubstring(startLength, endLength);
     }
 
-    /** line geometry description */
+    /** Line geometry description. */
     private LineString line;
 
     /**
-     * @param line: input a line geometry
+     * @param line LineString; input a line geometry
      */
-    public SubstringLine(LineString line) {
+    public SubstringLine(final LineString line) 
+    {
         this.line = line;
     }
 
     /**
-     * @param startLength: start position
-     * @param endLength: end position
-     * @return
+     * @param startDistance double; start position
+     * @param endDistance double; end position
+     * @return LineString
      */
-    public LineString getSubstring(double startDistance, double endDistance) {
+    public LineString getSubstring(double startDistance, final double endDistance) 
+    {
         // future: if start > end, flip values and return an inverted line
         Assert.isTrue(startDistance <= endDistance, "inverted distances not currently supported");
 
@@ -72,11 +75,12 @@ public class SubstringLine {
 
     /**
      * Assumes input is strictly valid (e.g. startDist < endDistance)
-     * @param startDistance: start position
-     * @param endDistance: end position
+     * @param startDistance double; start position
+     * @param endDistance double; end position
      * @return the substring
      */
-    private LineString computeSubstring(double startDistance, double endDistance) {
+    private LineString computeSubstring(final double startDistance, final double endDistance) 
+    {
         Coordinate[] coordinates = line.getCoordinates();
         CoordinateList newCoordinates = new CoordinateList();
         double segmentStartDistance = 0.0;

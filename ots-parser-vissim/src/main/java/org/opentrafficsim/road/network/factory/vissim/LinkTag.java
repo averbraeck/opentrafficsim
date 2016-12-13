@@ -148,7 +148,7 @@ final class LinkTag implements Serializable {
     public RoadLayoutTag roadLayoutTag;
 
     /**
-     * @param linkTag: link Info from XML
+     * @param linkTag LinkTag; link Info from XML
      */
     public LinkTag(LinkTag linkTag) {
         this.connectorTag = linkTag.connectorTag;
@@ -347,18 +347,20 @@ final class LinkTag implements Serializable {
 
     /**
      * Split the links at a certain point along the link.
-     * @param splitNodeTag: Node located at the intersection point of the connector and the link
-     * @param linkTag: Tag of the link that meets the connector
-     * @param parser: the VissimParser with info to create a network
-     * @param splitPosition: position at the link where the split is expected
-     * @param margin: if the splitPosition is at the start or end of the LinkTag, the connector is supposed to be a chain and
-     *            not a split
-     * @param isConnectorToLink: boolean describing is this is a connector towards a link (true) or starting from a link (false)
-     * @return
-     * @throws OTSGeometryException
+     * @param splitNodeTag NodeTag; Node located at the intersection point of the connector and the link
+     * @param linkTag LinkTag; Tag of the link that meets the connector
+     * @param parser VissimNetworkLaneParser; the VissimParser with info to create a network
+     * @param splitPosition Double; position at the link where the split is expected
+     * @param margin Double; if the splitPosition is at the start or end of the LinkTag, the connector is supposed to be 
+     *            a chain and not a split
+     * @param isConnectorToLink boolean; is this is a connector towards a link (true) or starting from a link (false)
+     * @return Mat&lt;String, LinkTab&gt;
+     * @throws OTSGeometryException ...
      */
-    public static Map<String, LinkTag> splitLink(NodeTag splitNodeTag, LinkTag linkTag, VissimNetworkLaneParser parser,
-        Double splitPosition, Double margin, boolean isConnectorToLink) throws OTSGeometryException {
+    public static Map<String, LinkTag> splitLink(final NodeTag splitNodeTag, final LinkTag linkTag, 
+            final VissimNetworkLaneParser parser, final Double splitPosition, final Double margin, 
+            final boolean isConnectorToLink) throws OTSGeometryException 
+    {
 
         // generate a LineString of the "real" Link
         OTSLine3D designLineOTS = createLineString(linkTag);
@@ -606,7 +608,7 @@ final class LinkTag implements Serializable {
     }
 
     /**
-     * @param parser: the VissimParser with info to create a network
+     * @param parser VissimNetworkLaneParser; the VissimParser with info to create a network
      */
     public static void addSignalHeads(VissimNetworkLaneParser parser) {
         for (SignalHeadTag signalHeadTag : parser.getSignalHeadTags().values()) {
@@ -615,7 +617,7 @@ final class LinkTag implements Serializable {
     }
 
     /**
-     * @param parser: the VissimParser with info to create a network
+     * @param parser VissimNetworkLaneParser; the VissimParser with info to create a network
      */
     public static void addDetectors(VissimNetworkLaneParser parser) {
         for (SensorTag sensorTag : parser.getSensorTags().values()) {
@@ -624,7 +626,7 @@ final class LinkTag implements Serializable {
     }
 
     /**
-     * @param parser: the VissimParser with info to create a network
+     * @param parser VissimNetworkLaneParser; the VissimParser with info to create a network
      * @throws OTSGeometryException:
      * @throws NamingException:
      * @throws NetworkException:

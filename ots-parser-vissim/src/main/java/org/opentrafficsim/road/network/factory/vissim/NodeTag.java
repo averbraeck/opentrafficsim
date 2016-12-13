@@ -57,10 +57,10 @@ class NodeTag implements Serializable {
     OTSNode node = null;
 
     /**
-     * @param parser: VissimParser
-     * @param fromNode: coming from Node
-     * @param toNode: going to Node
-     * @param points: geometry
+     * @param parser VissimNetworkLaneParser; VissimParser
+     * @param fromNode String; coming from Node
+     * @param toNode String; going to Node
+     * @param points OTSPoint3D[]; geometry
      * @throws SAXException
      * @throws NetworkException
      */
@@ -83,11 +83,11 @@ class NodeTag implements Serializable {
     }
 
     /**
-     * @param parser: the parser with the lists of information
-     * @param nodeTag: node Info
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
+     * @param nodeTag NodeTag; node Info
      * @throws NetworkException
      */
-    private static void generateOTSNode(final VissimNetworkLaneParser parser, NodeTag nodeTag) throws NetworkException {
+    private static void generateOTSNode(final VissimNetworkLaneParser parser, final NodeTag nodeTag) throws NetworkException {
         if (nodeTag.coordinate != null && nodeTag.angle != null) {
             // only make a node if we know the coordinate and angle. Otherwise, wait till we can calculate it.
             try {
@@ -142,7 +142,7 @@ class NodeTag implements Serializable {
     }
 
     /**
-     * @param parser: the parser with the lists of information
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
      */
     public static void removeDuplicateNodes(final VissimNetworkLaneParser parser) {
         // the map with NodeTag (key) that should be deleted and replaced by another nodeTag (value)
@@ -191,7 +191,7 @@ class NodeTag implements Serializable {
     }
 
     /**
-     * @param parser: the parser with the lists of information
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
      */
     public static void removeRedundantNodeTags(final VissimNetworkLaneParser parser) {
         Iterator<NodeTag> nodeTagValues;
@@ -233,15 +233,15 @@ class NodeTag implements Serializable {
     }
 
     /**
-     * @param linkTag: link with info
-     * @param parser: the parser with the lists of information
-     * @param position: position at the link where a node is created
-     * @return
+     * @param linkTag LinkTag; link with info
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
+     * @param position Double; position at the link where a node is created
+     * @return NodeTag
      * @throws OTSGeometryException
      * @throws NetworkException
      */
-    public static NodeTag createNewNodeAtLinkPosition(LinkTag linkTag, VissimNetworkLaneParser parser, Double position)
-        throws OTSGeometryException, NetworkException {
+    public static NodeTag createNewNodeAtLinkPosition(final LinkTag linkTag, final VissimNetworkLaneParser parser, 
+            final Double position) throws OTSGeometryException, NetworkException {
         // make a new Node
         NodeTag nodeTag = new NodeTag();
         // generate a LineString
