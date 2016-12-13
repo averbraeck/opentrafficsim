@@ -1,5 +1,10 @@
 package org.opentrafficsim.road.network.factory.osm.output;
 
+import static org.opentrafficsim.core.gtu.GTUType.BIKE;
+import static org.opentrafficsim.core.gtu.GTUType.BOAT;
+import static org.opentrafficsim.core.gtu.GTUType.PEDESTRIAN;
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+
 import java.awt.Color;
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -236,10 +241,10 @@ public final class Convert
                 switch (tag.getValue())
                 {
                     case "river":
-                        laneType = makeLaneType(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.BOAT);
+                        laneType = makeLaneType(BOAT);
                         break;
                     case "canal":
-                        laneType = makeLaneType(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.BOAT);
+                        laneType = makeLaneType(BOAT);
                         break;
                     default:
                         laneType = makeLaneType(GTUType.NONE);
@@ -260,7 +265,7 @@ public final class Convert
                     || tag.getValue().equals("road") || tag.getValue().equals("track")
                     || tag.getValue().equals("living_street")))
             {
-                laneType = makeLaneType(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.CAR);
+                laneType = makeLaneType(CAR);
                 if (osmLink.getLanes() == 1 && !osmLink.isOneway())
                 {
                     laneAttributes = new LaneAttributes(laneType, Color.LIGHT_GRAY, LongitudinalDirectionality.DIR_BOTH);
@@ -292,7 +297,7 @@ public final class Convert
                 {
                     if (t2.getKey().equals("bicycle"))
                     {
-                        types.add(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.BIKE);
+                        types.add(BIKE);
                     }
                     /*
                      * if (t2.getKey().equals("foot")) {
@@ -300,7 +305,7 @@ public final class Convert
                      */
                 }
                 laneType = makeLaneType(types);
-                types.add(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.PEDESTRIAN);
+                types.add(PEDESTRIAN);
                 if (!types.isEmpty())
                 {
                     if (osmLink.getLanes() == 1 && !osmLink.isOneway())
@@ -333,7 +338,7 @@ public final class Convert
         {
             if (tag.getKey().equals("cycleway"))
             {
-                laneType = makeLaneType(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.BIKE);
+                laneType = makeLaneType(BIKE);
                 switch (tag.getValue())
                 {
                     case "lane": // cycleway:lane is directly adjacent to the highway.
@@ -354,8 +359,8 @@ public final class Convert
                         break;
                     case "shared_lane": // cycleway:shared_lane is embedded into the highway.
                         List<GTUType> types = new ArrayList<GTUType>();
-                        types.add(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.BIKE);
-                        types.add(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.CAR);
+                        types.add(BIKE);
+                        types.add(CAR);
                         laneType = makeLaneType(types);
                         laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_MINUS);
                         structure.put(0 - backwards, laneAttributes);
@@ -371,7 +376,7 @@ public final class Convert
         {
             if (tag.getKey().equals("sidewalk"))
             {
-                laneType = makeLaneType(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.PEDESTRIAN);
+                laneType = makeLaneType(PEDESTRIAN);
                 switch (tag.getValue())
                 {
                     case "both":
@@ -404,7 +409,7 @@ public final class Convert
             {
                 if (tag.getValue().equals("footway") || tag.getValue().equals("pedestrian") || tag.getValue().equals("steps"))
                 {
-                    laneType = makeLaneType(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.PEDESTRIAN);
+                    laneType = makeLaneType(PEDESTRIAN);
                     if (osmLink.getLanes() == 1 && !osmLink.isOneway())
                     {
                         laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_BOTH);
@@ -430,7 +435,7 @@ public final class Convert
                 }
                 if (tag.getValue().equals("cycleway"))
                 {
-                    laneType = makeLaneType(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.BIKE);
+                    laneType = makeLaneType(BIKE);
                     if (osmLink.getLanes() == 1 && !osmLink.isOneway())
                     {
                         laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_BOTH);
@@ -554,19 +559,19 @@ public final class Convert
             }
         }
         LaneType laneType = laneAttributes.getLaneType();
-        if (laneType.isCompatible(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.CAR))
+        if (laneType.isCompatible(CAR))
         {
             return defaultLaneWidth;
         }
-        else if (laneType.isCompatible(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.BIKE))
+        else if (laneType.isCompatible(BIKE))
         {
             return 0.8d; // TODO German default bikepath width
         }
-        else if (laneType.isCompatible(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.PEDESTRIAN))
+        else if (laneType.isCompatible(PEDESTRIAN))
         {
             return 0.95d; // TODO German default footpath width
         }
-        else if (laneType.isCompatible(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.BOAT))
+        else if (laneType.isCompatible(BOAT))
         {
             for (OSMTag tag : link.getTags())
             {

@@ -34,6 +34,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayStopLine;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.network.lane.conflict.ConflictType;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 import nl.tudelft.simulation.language.Throw;
@@ -54,11 +55,11 @@ public final class ConflictUtil
 
     /** Minimum time gap between events. */
     public static final ParameterTypeDuration MIN_GAP = new ParameterTypeDuration("minGap", "Minimum gap for conflicts.",
-        new Duration(1.0, TimeUnit.SECOND), POSITIVE);
+        new Duration(0.5, TimeUnit.SECOND), POSITIVE);
 
     /** Multiplication factor on time for conservative assessment. */
     public static final ParameterTypeDouble TIME_FACTOR = new ParameterTypeDouble("timeFactor",
-        "Safety factor on estimated time.", 1.25, ATLEASTONE);
+        "Safety factor on estimated time.", 1.1, ATLEASTONE);
 
     /** Area before stop line where one is considered arrived at the intersection. */
     public static final ParameterTypeLength STOP_AREA = new ParameterTypeLength("stopArea",
@@ -152,6 +153,13 @@ public final class ConflictUtil
                     stop = stopForAllStopConflict(conflict, conflictPlans);
                     break;
                 }
+                case SPLIT:
+                {
+                    // TODO
+                    // a = Acceleration.min(a, ...);
+                    stop = false; // skipped anyway
+                    break;
+                }
                 default:
                 {
                     throw new GTUException("Unsupported conflict rule encountered while approaching conflicts.");
@@ -159,25 +167,28 @@ public final class ConflictUtil
             }
 
             // stop if required, account for upstream conflicts to keep clear
-            prevStarts.add(conflict.getDistance());
-            if (stop)
+            if (!conflict.getConflictType().equals(ConflictType.SPLIT))
             {
-                // stop for first conflict looking upstream of this blocked conflict that allows sufficient space
-                int j = 0; // most upstream conflict if not in between conflicts
-                for (int i = prevEnds.size() - 1; i >= 0; i--) // downstream to upstream
+                prevStarts.add(conflict.getDistance());
+                if (stop)
                 {
-                    // note, at this point prevStarts contains one more conflict than prevEnds
-                    if (prevStarts.get(i + 1).minus(prevEnds.get(i)).gt(stopLength))
+                    // stop for first conflict looking upstream of this blocked conflict that allows sufficient space
+                    int j = 0; // most upstream conflict if not in between conflicts
+                    for (int i = prevEnds.size() - 1; i >= 0; i--) // downstream to upstream
                     {
-                        j = i + 1;
-                        break;
+                        // note, at this point prevStarts contains one more conflict than prevEnds
+                        if (prevStarts.get(i + 1).minus(prevEnds.get(i)).gt(stopLength))
+                        {
+                            j = i + 1;
+                            break;
+                        }
                     }
+                    // stop for j'th conflict, further conflicts may be ignored
+                    return Acceleration.min(a, CarFollowingUtil.stop(carFollowingModel, behavioralCharacteristics, speed,
+                        speedLimitInfo, prevStarts.get(j)));
                 }
-                // stop for j'th conflict, further conflicts may be ignored
-                return Acceleration.min(a, CarFollowingUtil.stop(carFollowingModel, behavioralCharacteristics, speed,
-                    speedLimitInfo, prevStarts.get(j)));
+                prevEnds.add(conflict.getDistance().plus(conflict.getLength()));
             }
-            prevEnds.add(conflict.getDistance().plus(conflict.getLength()));
 
         }
 
@@ -432,6 +443,10 @@ public final class ConflictUtil
         {
             for (AbstractHeadwayGTU conflictingVehicle : conflict.getUpstreamConflictingGTUs())
             {
+                if (conflictingVehicle.getDistance() == null)
+                {
+                    System.out.println("null problem");
+                }
                 confDistance.add(conflictingVehicle.getDistance());
                 confSpeed.add(conflictingVehicle.getSpeed());
                 confAcceleration.add(conflictingVehicle.getAcceleration());

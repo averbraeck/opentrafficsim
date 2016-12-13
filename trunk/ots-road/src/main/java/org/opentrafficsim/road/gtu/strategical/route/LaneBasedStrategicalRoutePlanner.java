@@ -114,10 +114,6 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     public LinkDirection nextLinkDirection(final Node node, final Link previousLink, final GTUType gtuType)
             throws NetworkException
     {
-        // if (node.getId().contains("68.158"))
-        // {
-        // System.err.println(node + ", links=" + node.getLinks());
-        // }
 
         // if there is no split, don't ask the route
         if (node.getLinks().size() == 1 && previousLink != null)

@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.car;
 
 import static org.junit.Assert.assertEquals;
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -75,11 +76,11 @@ public class CarTest implements UNITS
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void carTest() throws NetworkException, SimRuntimeException, NamingException, GTUException,
-            OTSGeometryException
+    public final void carTest()
+            throws NetworkException, SimRuntimeException, NamingException, GTUException, OTSGeometryException
     {
         Time initialTime = new Time(0, SECOND);
-        GTUType gtuType = new GTUType("Car");
+        GTUType gtuType = CAR;
         Set<GTUType> compatibility = new HashSet<GTUType>();
         compatibility.add(gtuType);
         LaneType laneType = new LaneType("CarLane", compatibility);
@@ -91,12 +92,11 @@ public class CarTest implements UNITS
         GTUFollowingModelOld gtuFollowingModel =
                 new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(10, SECOND));
         LaneChangeModel laneChangeModel = new Egoistic();
-        LaneBasedIndividualGTU referenceCar =
-                makeReferenceCar("12345", gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
-                        laneChangeModel, network);
+        LaneBasedIndividualGTU referenceCar = makeReferenceCar("12345", gtuType, lane, initialPosition, initialSpeed, simulator,
+                gtuFollowingModel, laneChangeModel, network);
         assertEquals("The car should store it's ID", "12345", referenceCar.getId());
-        assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(), referenceCar
-                .position(lane, referenceCar.getReference(), initialTime).getSI(), 0.0001);
+        assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(),
+                referenceCar.position(lane, referenceCar.getReference(), initialTime).getSI(), 0.0001);
         assertEquals("The car should store it's initial speed", initialSpeed.getSI(), referenceCar.getSpeed().getSI(), 0.00001);
         assertEquals("The car should have an initial acceleration equal to 0", 0, referenceCar.getAcceleration().getSI(),
                 0.0001);
@@ -116,11 +116,9 @@ public class CarTest implements UNITS
     {
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
         Model model = new Model();
-        Experiment<Time, Duration, OTSSimTimeDouble> exp =
-                new Experiment<Time, Duration, OTSSimTimeDouble>();
-        Treatment<Time, Duration, OTSSimTimeDouble> tr =
-                new Treatment<>(exp, "tr1", new OTSSimTimeDouble(new Time(0, SECOND)), new Duration(0, SECOND), new Duration(
-                        3600.0, SECOND));
+        Experiment<Time, Duration, OTSSimTimeDouble> exp = new Experiment<Time, Duration, OTSSimTimeDouble>();
+        Treatment<Time, Duration, OTSSimTimeDouble> tr = new Treatment<>(exp, "tr1", new OTSSimTimeDouble(new Time(0, SECOND)),
+                new Duration(0, SECOND), new Duration(3600.0, SECOND));
         exp.setTreatment(tr);
         exp.setModel(model);
         Replication<Time, Duration, OTSSimTimeDouble> rep = new Replication<>(exp);
@@ -159,9 +157,8 @@ public class CarTest implements UNITS
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create();
         LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU(id, gtuType, length, width, maxSpeed, simulator, network);
-        LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
-                        gtuFollowingModel, laneChangeModel, gtu), gtu);
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
         gtu.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
 
         return gtu;
@@ -179,9 +176,8 @@ public class CarTest implements UNITS
         OTSNode n1 = new OTSNode(network, "n1", new OTSPoint3D(0, 0));
         OTSNode n2 = new OTSNode(network, "n2", new OTSPoint3D(100000.0, 0.0));
         OTSPoint3D[] coordinates = new OTSPoint3D[] { new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100000.0, 0.0) };
-        CrossSectionLink link12 =
-                new CrossSectionLink(network, "link12", n1, n2, LinkType.ALL, new OTSLine3D(coordinates),
-                        LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
+        CrossSectionLink link12 = new CrossSectionLink(network, "link12", n1, n2, LinkType.ALL, new OTSLine3D(coordinates),
+                LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
         Length latPos = new Length(0.0, METER);
         Length width = new Length(4.0, METER);
         return new Lane(link12, "lane.1", latPos, latPos, width, width, laneType, LongitudinalDirectionality.DIR_PLUS,
@@ -199,8 +195,7 @@ public class CarTest implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(
-                final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
+        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulator) theSimulator;

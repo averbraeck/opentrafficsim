@@ -3,6 +3,7 @@ package org.opentrafficsim.core.gtu;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 
 import java.rmi.RemoteException;
 
@@ -123,8 +124,8 @@ public class GTUTest implements OTSModelInterface
         };
         DirectedPoint initialLocation =
                 new DirectedPoint(10, 20, 30, Math.toRadians(10), Math.toRadians(20), Math.toRadians(30));
-        GTUType gtuType1 = new GTUType("gtu type 1");
-        GTUType gtuType2 = new GTUType("gtu type 2");
+        GTUType gtuType1 = new GTUType("gtu type 1", VEHICLE);
+        GTUType gtuType2 = new GTUType("gtu type 2", VEHICLE);
         for (String id : new String[] { "id1", "id2" })
         {
             for (GTUType gtuType : new GTUType[] { gtuType1, gtuType2 })

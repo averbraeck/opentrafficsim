@@ -1,5 +1,6 @@
 package org.opentrafficsim.demo.carFollowing;
 
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.URL;
@@ -275,7 +276,7 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
     private int carsCreated = 0;
 
     /** Type of all GTUs. */
-    private GTUType gtuType = new GTUType("Car");
+    private GTUType gtuType = CAR;
 
     /** The car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModelOld carFollowingModel;

@@ -116,6 +116,11 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
             for (Entry<Conflict> entry : conflictEntries)
             {
                 Conflict conflict = entry.getLaneBasedObject();
+                if (getGtu().getGTUType().isOfType(conflict.getGtuType()))
+                {
+                    // conflict not for us
+                    continue;
+                }
                 Conflict otherConflict = conflict.getOtherConflict();
                 ConflictType conflictType = conflict.getConflictType();
                 ConflictRule conflictRule = conflict.getConflictRule();
@@ -150,7 +155,7 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
                         "Conflicts on lanes with direction BOTH are not supported.");
                 GTUDirectionality conflictingDirection =
                         longDir.isForward() ? GTUDirectionality.DIR_PLUS : GTUDirectionality.DIR_MINUS;
-                Length position = conflict.getLongitudinalPosition();
+                Length position = otherConflict.getLongitudinalPosition();
                 Length initDistance =
                         conflictingDirection.isPlus() ? conflictingLane.getLength().minus(position).neg() : position.neg();
                 SortedSet<AbstractHeadwayGTU> upstreamConflictingGTUs = new TreeSet<>();
@@ -174,7 +179,11 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
                             {
                                 // TODO also other HeadwayGTU type (i.e. not real)
                                 // TODO GTU status (blinkers)
-                                upstreamConflictingGTUs.add(new HeadwayGTUReal(next, nextDistance));
+                                if (!next.getId().equals(getGtu().getId()))
+                                {
+                                    // do not add self
+                                    upstreamConflictingGTUs.add(new HeadwayGTUReal(next, nextDistance));
+                                }
                                 next = laneInfo.getLane().getGtuBehind(next.position(laneInfo.getLane(), next.getRear()),
                                         laneInfo.getDirection(), RelativePosition.FRONT, getTimestamp());
                             }
@@ -213,7 +222,7 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
                                 // TODO also other HeadwayGTU type (i.e. not real)
                                 // TODO GTU status (blinkers)
                                 AbstractHeadwayGTU gtu;
-                                if (nextDistance.ge(conflict.getLength()))
+                                if (nextDistance.ge(otherConflict.getLength()))
                                 {
                                     gtu = new HeadwayGTUReal(next, nextDistance);
                                 }
@@ -233,8 +242,12 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
                                     }
                                     gtu = new HeadwayGTUReal(next, overlapFront, overlap, overlapRear);
                                 }
-                                upstreamConflictingGTUs.add(gtu);
-                                next = laneInfo.getLane().getGtuBehind(next.position(laneInfo.getLane(), next.getRear()),
+                                if (!next.getId().equals(getGtu().getId()))
+                                {
+                                    // do not add self
+                                    downstreamConflictingGTUs.add(gtu);
+                                }
+                                next = laneInfo.getLane().getGtuAhead(next.position(laneInfo.getLane(), next.getFront()),
                                         laneInfo.getDirection(), RelativePosition.FRONT, getTimestamp());
                             }
                             else
@@ -246,7 +259,7 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
                     }
                     currentLanes = downLanes;
                 }
-                
+
                 // add conflict to set
                 set.add(new HeadwayConflict(conflictType, conflictRule, id, distance, length, conflictingLength,
                         upstreamConflictingGTUs, downstreamConflictingGTUs, conflictingVisibility, conflictingSpeedLimit,
@@ -341,8 +354,7 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
         {
             Set<LaneInfo> out = new HashSet<>();
             // TODO use set of gtu types that may be conflicting
-            Map<Lane, GTUDirectionality> map =
-                    this.direction.isPlus() ? this.lane.prevLanes(this.gtuType) : this.lane.nextLanes(this.gtuType);
+            Map<Lane, GTUDirectionality> map = this.lane.upstreamLanes(this.direction, this.gtuType);
             if (!map.isEmpty())
             {
                 Length nextDistance = this.distance.plus(this.lane.getLength());
@@ -367,8 +379,7 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
         {
             Set<LaneInfo> out = new HashSet<>();
             // TODO use set of gtu types that may be conflicting
-            Map<Lane, GTUDirectionality> map =
-                    this.direction.isPlus() ? this.lane.nextLanes(this.gtuType) : this.lane.prevLanes(this.gtuType);
+            Map<Lane, GTUDirectionality> map = this.lane.downstreamLanes(this.direction, this.gtuType);
             if (!map.isEmpty())
             {
                 Length nextDistance = this.distance.plus(this.lane.getLength());

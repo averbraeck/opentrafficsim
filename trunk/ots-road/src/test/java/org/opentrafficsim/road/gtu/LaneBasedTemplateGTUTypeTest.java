@@ -2,6 +2,8 @@ package org.opentrafficsim.road.gtu;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.TRUCK;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -70,7 +72,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
     public void constructorTest() throws Exception
     {
         OTSNetwork network = new OTSNetwork("network");
-        GTUType pcType = new GTUType("passenger car");
+        GTUType pcType = CAR;
         final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcLength =
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistConstant(this.stream, 4), METER);
         final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcWidth =
@@ -119,7 +121,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                             }
                         }, network);
         verifyFields(passengerCar, pcType, pcLength, pcWidth, pcMaximumSpeed, pcInitialSpeed, simulator);
-        GTUType truckType = new GTUType("truck");
+        GTUType truckType = TRUCK;
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> truckLength =
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistConstant(this.stream, 18), METER);
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> truckWidth =
@@ -222,7 +224,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
     {
         // Create some TemplateGTUTypes
         OTSNetwork network = new OTSNetwork("network");
-        GTUType pc = new GTUType("passenger car");
+        GTUType pc = CAR;
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcLength =
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistConstant(this.stream, 4), METER);
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcWidth =
@@ -251,7 +253,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                 return pcMaximumSpeed.draw();
             }
         }, simulator, network);
-        GTUType truckType = new GTUType("truck");
+        GTUType truckType = TRUCK;
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> truckLength =
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistConstant(this.stream, 18), METER);
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> truckWidth =

@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.NavigableMap;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import javax.naming.NamingException;
 
@@ -33,6 +35,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
@@ -93,7 +96,8 @@ public class Lane extends CrossSectionElement implements Serializable
      * If the speed limit is the same for all GTU types, GTUType.ALL will be used. This means that the settings can be used
      * additive, or subtractive. <br>
      * In <b>additive use</b>, do not set the speed limit for GTUType.ALL. Now, one by one, the allowed maximum speeds for each
-     * of the GTU Types have be added. Do this when there are few GTU types or the speed limits per TU type are very different. <br>
+     * of the GTU Types have be added. Do this when there are few GTU types or the speed limits per TU type are very different.
+     * <br>
      * In <b>subtractive use</b>, set the speed limit for GTUType.ALL to the most common one. Override the speed limit for
      * certain GTUTypes to a different value. An example is a lane on a highway where all vehicles, except truck (CAR, BUS,
      * MOTORCYCLE, etc.), can drive 120 km/h, but trucks are allowed only 90 km/h. In that case, set the speed limit for
@@ -144,6 +148,18 @@ public class Lane extends CrossSectionElement implements Serializable
      * direction of the design line. Initially null so we can calculate and cache the first time the method is called.
      */
     private Map<GTUType, Map<Lane, GTUDirectionality>> prevLanes = null;
+
+    /**
+     * Downstream lane(s) following this lane that some GTU types can drive onto given the direction. Initially null so we can
+     * calculate and cache the first time the method is called.
+     */
+    private Map<GTUType, Map<GTUDirectionality, Map<Lane, GTUDirectionality>>> downLanes = null;
+
+    /**
+     * Previous lane(s) preceding this lane that some GTU types can drive from given the direction. Initially null so we can
+     * calculate and cache the first time the method is called.
+     */
+    private Map<GTUType, Map<GTUDirectionality, Map<Lane, GTUDirectionality>>> upLanes = null;
 
     /** The conditions for overtaking another GTU, viewed from this lane. */
     // TODO allow for direction-dependent overtaking conditions
@@ -456,7 +472,8 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param gtuType GTUType; the GTU type to check the accessibility for
      * @return boolean; true if the other lane is adjacent to this lane and accessible for the given GTU type; false otherwise
      */
-    private boolean laterallyAdjacentAndAccessible(final Lane lane, final LateralDirectionality direction, final GTUType gtuType)
+    private boolean laterallyAdjacentAndAccessible(final Lane lane, final LateralDirectionality direction,
+            final GTUType gtuType)
     {
         if (!lane.getLaneType().isCompatible(gtuType) || gtuType.equals(GTUType.ALL) || gtuType.equals(GTUType.NONE))
         {
@@ -469,10 +486,10 @@ public class Lane extends CrossSectionElement implements Serializable
             // TODO take the cross section slices into account...
             if (Math.abs((getDesignLineOffsetAtBegin().getSI() + getBeginWidth().getSI() / 2.0)
                     - (lane.getDesignLineOffsetAtBegin().getSI() - lane.getBeginWidth().getSI() / 2.0)) < ADJACENT_MARGIN
-                        .getSI()
+                            .getSI()
                     && Math.abs((getDesignLineOffsetAtEnd().getSI() + getEndWidth().getSI() / 2.0)
                             - (lane.getDesignLineOffsetAtEnd().getSI() - lane.getEndWidth().getSI() / 2.0)) < ADJACENT_MARGIN
-                                .getSI())
+                                    .getSI())
             {
                 // look at stripes between the two lanes
                 for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
@@ -506,10 +523,10 @@ public class Lane extends CrossSectionElement implements Serializable
             // TODO take the cross section slices into account...
             if (Math.abs((getDesignLineOffsetAtBegin().getSI() - getBeginWidth().getSI() / 2.0)
                     - (lane.getDesignLineOffsetAtBegin().getSI() + lane.getBeginWidth().getSI() / 2.0)) < ADJACENT_MARGIN
-                        .getSI()
+                            .getSI()
                     && Math.abs((getDesignLineOffsetAtEnd().getSI() - getEndWidth().getSI() / 2.0)
                             - (lane.getDesignLineOffsetAtEnd().getSI() + lane.getEndWidth().getSI() / 2.0)) < ADJACENT_MARGIN
-                                .getSI())
+                                    .getSI())
             {
                 // look at stripes between the two lanes
                 for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
@@ -560,7 +577,8 @@ public class Lane extends CrossSectionElement implements Serializable
             this.sensors.put(position, sensorList);
         }
         sensorList.add(sensor);
-        fireTimedEvent(Lane.SENSOR_ADD_EVENT, new Object[] { sensor.getId(), sensor }, sensor.getSimulator().getSimulatorTime());
+        fireTimedEvent(Lane.SENSOR_ADD_EVENT, new Object[] { sensor.getId(), sensor },
+                sensor.getSimulator().getSimulatorTime());
     }
 
     /**
@@ -570,8 +588,8 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final void removeSensor(final SingleSensor sensor) throws NetworkException
     {
-        fireTimedEvent(Lane.SENSOR_REMOVE_EVENT, new Object[] { sensor.getId(), sensor }, sensor.getSimulator()
-                .getSimulatorTime());
+        fireTimedEvent(Lane.SENSOR_REMOVE_EVENT, new Object[] { sensor.getId(), sensor },
+                sensor.getSimulator().getSimulatorTime());
         List<SingleSensor> sensorList = this.sensors.get(sensor.getLongitudinalPosition().si);
         if (null == sensorList)
         {
@@ -669,9 +687,8 @@ public class Lane extends CrossSectionElement implements Serializable
             {
                 for (SingleSensor sensor : sl)
                 {
-                    if (sensor.getLongitudinalPosition().si == d
-                            && (sensor.getTriggeringGTUTypes().contains(gtuType) || sensor.getTriggeringGTUTypes().contains(
-                                    GTUType.ALL)))
+                    if (sensor.getLongitudinalPosition().si == d && (sensor.getTriggeringGTUTypes().contains(gtuType)
+                            || sensor.getTriggeringGTUTypes().contains(GTUType.ALL)))
                     {
                         sensorList.add(sensor);
                     }
@@ -702,8 +719,8 @@ public class Lane extends CrossSectionElement implements Serializable
      * @throws NetworkException when GTU not on this lane.
      * @throws SimRuntimeException when method cannot be scheduled.
      */
-    public final void scheduleSensorTriggers(final LaneBasedGTU gtu, final double referenceStartSI, final double referenceMoveSI)
-            throws NetworkException, SimRuntimeException
+    public final void scheduleSensorTriggers(final LaneBasedGTU gtu, final double referenceStartSI,
+            final double referenceMoveSI) throws NetworkException, SimRuntimeException
     {
         // System.out.println("Getting sensor map for " + gtu.getGTUType() + ":");
         for (List<SingleSensor> sensorList : getSensorMap(gtu.getGTUType()).values())
@@ -722,8 +739,8 @@ public class Lane extends CrossSectionElement implements Serializable
                     // + sensor.getPositionType());
                     if (sensor.getPositionType().equals(relativePosition.getType())
                             && referenceStartSI + relativePosition.getDx().getSI() <= sensor.getLongitudinalPosition().si
-                            && referenceStartSI + referenceMoveSI + relativePosition.getDx().getSI() > sensor
-                                    .getLongitudinalPosition().si)
+                            && referenceStartSI + referenceMoveSI
+                                    + relativePosition.getDx().getSI() > sensor.getLongitudinalPosition().si)
                     {
                         // the exact time of triggering is based on the distance between the current position of the
                         // relative position on the GTU and the location of the sensor.
@@ -741,8 +758,8 @@ public class Lane extends CrossSectionElement implements Serializable
                             System.err.println("Time=" + gtu.getSimulator().getSimulatorTime().getTime().getSI()
                                     + " - Scheduling trigger at " + triggerTime.getSI() + "s. > " + oPlan.getEndTime().getSI()
                                     + "s. (nextEvalTime) for sensor " + sensor + " , gtu " + gtu);
-                            System.err.println("  v=" + gtu.getSpeed() + ", a=" + gtu.getAcceleration() + ", lane="
-                                    + toString() + ", refStartSI=" + referenceStartSI + ", moveSI=" + referenceMoveSI);
+                            System.err.println("  v=" + gtu.getSpeed() + ", a=" + gtu.getAcceleration() + ", lane=" + toString()
+                                    + ", refStartSI=" + referenceStartSI + ", moveSI=" + referenceMoveSI);
                             triggerTime =
                                     new Time(oPlan.getEndTime().getSI() - Math.ulp(oPlan.getEndTime().getSI()), TimeUnit.SI);
                             // gtu.timeAtDistance(new Length(-d, METER));
@@ -751,9 +768,8 @@ public class Lane extends CrossSectionElement implements Serializable
                         // System.out.println("Scheduling a trigger for relativePosition " + relativePosition);
                         // System.out.println("Time=" + gtu.getSimulator().getSimulatorTime().toString()
                         // + " - Scheduling trigger at " + triggerTime + " for sensor " + sensor + " , gtu " + gtu);
-                        SimEvent<OTSSimTimeDouble> event =
-                                new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(triggerTime), this, sensor, "trigger",
-                                        new Object[] { gtu });
+                        SimEvent<OTSSimTimeDouble> event = new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(triggerTime),
+                                this, sensor, "trigger", new Object[] { gtu });
                         gtu.getSimulator().scheduleEvent(event);
                         gtu.addTrigger(this, event);
                     }
@@ -772,8 +788,8 @@ public class Lane extends CrossSectionElement implements Serializable
         double position = laneBasedObject.getLongitudinalPosition().si;
         if (position < 0 || position > getLength().getSI())
         {
-            throw new NetworkException("Illegal position for laneBasedObject " + position + " valid range is 0.."
-                    + getLength().getSI());
+            throw new NetworkException(
+                    "Illegal position for laneBasedObject " + position + " valid range is 0.." + getLength().getSI());
         }
         List<LaneBasedObject> laneBasedObjectList = this.laneBasedObjects.get(position);
         if (null == laneBasedObjectList)
@@ -940,8 +956,8 @@ public class Lane extends CrossSectionElement implements Serializable
             }
         }
         this.gtuList.add(index, gtu);
-        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size() }, gtu.getSimulator()
-                .getSimulatorTime());
+        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size() },
+                gtu.getSimulator().getSimulatorTime());
         getParentLink().addGTU(gtu);
         return index;
     }
@@ -968,8 +984,8 @@ public class Lane extends CrossSectionElement implements Serializable
     public final void removeGTU(final LaneBasedGTU gtu, final boolean removeFromParentLink, Length position)
     {
         this.gtuList.remove(gtu);
-        fireTimedEvent(Lane.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size(), position }, gtu
-                .getSimulator().getSimulatorTime());
+        fireTimedEvent(Lane.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size(), position },
+                gtu.getSimulator().getSimulatorTime());
         if (removeFromParentLink)
         {
             this.parentLink.removeGTU(gtu);
@@ -1226,6 +1242,80 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
+     * Returns the lanes that could be followed in a given direction and for the given GTU type.
+     * @param direction GTUDirectionality; gtu direction
+     * @param gtuType GTUType; gtu type
+     * @return lanes that can be followed in a given direction and for the given GTU type
+     */
+    public final Map<Lane, GTUDirectionality> downstreamLanes(final GTUDirectionality direction, final GTUType gtuType)
+    {
+        if (this.downLanes == null)
+        {
+            this.downLanes = new LinkedHashMap<>(1);
+        }
+        if (!this.downLanes.containsKey(gtuType))
+        {
+            this.downLanes.put(gtuType, new HashMap<>());
+        }
+        if (!this.downLanes.get(gtuType).containsKey(direction))
+        {
+            Map<Lane, GTUDirectionality> down = direction.isPlus() ? nextLanes(gtuType) : prevLanes(gtuType);
+            down = new LinkedHashMap<>(down); // safe copy
+            Node downNode = direction.isPlus() ? getParentLink().getEndNode() : getParentLink().getStartNode();
+            Iterator<Entry<Lane, GTUDirectionality>> iterator = down.entrySet().iterator();
+            while (iterator.hasNext())
+            {
+                Entry<Lane, GTUDirectionality> entry = iterator.next();
+                if ((entry.getValue().isPlus() && !entry.getKey().getParentLink().getStartNode().equals(downNode))
+                        || (entry.getValue().isMinus() && !entry.getKey().getParentLink().getEndNode().equals(downNode)))
+                {
+                    // cannot move onto this lane
+                    iterator.remove();
+                }
+            }
+            this.downLanes.get(gtuType).put(direction, down);
+        }
+        return this.downLanes.get(gtuType).get(direction);
+    }
+
+    /**
+     * Returns the lanes that could precede in a given direction and for the given GTU type.
+     * @param direction GTUDirectionality; gtu direction
+     * @param gtuType GTUType; gtu type
+     * @return lanes that can be followed in a given direction and for the given GTU type
+     */
+    public final Map<Lane, GTUDirectionality> upstreamLanes(final GTUDirectionality direction, final GTUType gtuType)
+    {
+        if (this.upLanes == null)
+        {
+            this.upLanes = new LinkedHashMap<>(1);
+        }
+        if (!this.upLanes.containsKey(gtuType))
+        {
+            this.upLanes.put(gtuType, new HashMap<>());
+        }
+        if (!this.upLanes.get(gtuType).containsKey(direction))
+        {
+            Map<Lane, GTUDirectionality> up = direction.isPlus() ? prevLanes(gtuType) : nextLanes(gtuType);
+            up = new LinkedHashMap<>(up); // safe copy
+            Node upNode = direction.isPlus() ? getParentLink().getStartNode() : getParentLink().getEndNode();
+            Iterator<Entry<Lane, GTUDirectionality>> iterator = up.entrySet().iterator();
+            while (iterator.hasNext())
+            {
+                Entry<Lane, GTUDirectionality> entry = iterator.next();
+                if ((entry.getValue().isPlus() && !entry.getKey().getParentLink().getEndNode().equals(upNode))
+                        || (entry.getValue().isMinus() && !entry.getKey().getParentLink().getStartNode().equals(upNode)))
+                {
+                    // cannot have come from this lane
+                    iterator.remove();
+                }
+            }
+            this.upLanes.get(gtuType).put(direction, up);
+        }
+        return this.upLanes.get(gtuType).get(direction);
+    }
+
+    /**
      * Determine the set of lanes to the left or to the right of this lane, which are accessible from this lane, or an empty set
      * if no lane could be found. The method takes the LongitidinalDirectionality of the lane into account. In other words, if
      * we drive in the DIR_PLUS direction and look for a lane on the LEFT, and there is a lane but the Directionality of that
@@ -1241,9 +1331,8 @@ public class Lane extends CrossSectionElement implements Serializable
     public final Set<Lane> accessibleAdjacentLanes(final LateralDirectionality lateralDirection, final GTUType gtuType)
     {
         Set<Lane> candidates = new LinkedHashSet<>(1);
-        LateralDirectionality dir =
-                this.getDirectionality(gtuType).isForwardOrBoth() ? lateralDirection : lateralDirection.isLeft()
-                        ? LateralDirectionality.RIGHT : LateralDirectionality.LEFT;
+        LateralDirectionality dir = this.getDirectionality(gtuType).isForwardOrBoth() ? lateralDirection
+                : lateralDirection.isLeft() ? LateralDirectionality.RIGHT : LateralDirectionality.LEFT;
         for (Lane lane : neighbors(dir, gtuType))
         {
             if (lane.getDirectionality(gtuType).equals(LongitudinalDirectionality.DIR_BOTH)
@@ -1280,7 +1369,8 @@ public class Lane extends CrossSectionElement implements Serializable
      * km/h. If the speed limit is the same for all GTU types, GTUType.ALL will be used. This means that the settings can be
      * used additive, or subtractive. <br>
      * In <b>additive use</b>, do not set the speed limit for GTUType.ALL. Now, one by one, the allowed maximum speeds for each
-     * of the GTU Types have be added. Do this when there are few GTU types or the speed limits per TU type are very different. <br>
+     * of the GTU Types have be added. Do this when there are few GTU types or the speed limits per TU type are very different.
+     * <br>
      * In <b>subtractive use</b>, set the speed limit for GTUType.ALL to the most common one. Override the speed limit for
      * certain GTUTypes to a different value. An example is a lane on a highway where all vehicles, except truck (CAR, BUS,
      * MOTORCYCLE, etc.), can drive 120 km/h, but trucks are allowed only 90 km/h. In that case, set the speed limit for

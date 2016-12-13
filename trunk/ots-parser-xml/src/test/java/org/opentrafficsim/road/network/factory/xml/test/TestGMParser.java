@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml.test;
 
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.io.IOException;
@@ -193,7 +195,7 @@ public class TestGMParser extends AbstractWrappableAnimation
             new GisRenderable2D(this.simulator, gisURL, rdto0);
 
             // make the GTU generators.
-            GTUType carType = new GTUType("CAR");
+            GTUType carType = CAR;
             StreamInterface stream = new MersenneTwister(1);
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist =
                     new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 0.0), SpeedUnit.METER_PER_SECOND);

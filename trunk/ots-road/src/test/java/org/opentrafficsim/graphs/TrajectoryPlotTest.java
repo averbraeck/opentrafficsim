@@ -1,20 +1,14 @@
 package org.opentrafficsim.graphs;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.swing.JLabel;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.UNITS;
@@ -23,7 +17,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.jfree.chart.ChartPanel;
 import org.jfree.data.DomainOrder;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
@@ -65,23 +58,21 @@ public class TrajectoryPlotTest implements UNITS
     public final void trajectoryTest() throws Exception
     {
         OTSDEVSSimulator simulator = CarTest.makeSimulator();
-        GTUType gtuType = new GTUType("Car");
+        GTUType gtuType = CAR;
         Set<GTUType> gtuTypes = new HashSet<GTUType>();
         gtuTypes.add(gtuType);
         LaneType laneType = new LaneType("CarLane", gtuTypes);
         OTSNetwork network = new OTSNetwork("trajectory plot test network");
         OTSNode node1 = new OTSNode(network, "node 1", new OTSPoint3D(100, 100, 0));
-        OTSNode node2 = new OTSNode(network, "node 2", new OTSPoint3D(1100, 100, 0)); 
-        OTSNode node3 = new OTSNode(network, "node 3", new OTSPoint3D(10100, 100, 0)); 
+        OTSNode node2 = new OTSNode(network, "node 2", new OTSPoint3D(1100, 100, 0));
+        OTSNode node3 = new OTSNode(network, "node 3", new OTSPoint3D(10100, 100, 0));
         List<Lane> trajectory = new ArrayList<Lane>();
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
-        Lane lane1 =
-                LaneFactory.makeMultiLane(network, "12", node1, node2, null, 1, 0, 0, laneType, speedLimit, simulator,
-                        LongitudinalDirectionality.DIR_PLUS)[0];
+        Lane lane1 = LaneFactory.makeMultiLane(network, "12", node1, node2, null, 1, 0, 0, laneType, speedLimit, simulator,
+                LongitudinalDirectionality.DIR_PLUS)[0];
         trajectory.add(lane1);
-        Lane lane2 =
-                LaneFactory.makeMultiLane(network, "23", node2, node3, null, 1, 0, 0, laneType, speedLimit, simulator,
-                        LongitudinalDirectionality.DIR_PLUS)[0];
+        Lane lane2 = LaneFactory.makeMultiLane(network, "23", node2, node3, null, 1, 0, 0, laneType, speedLimit, simulator,
+                LongitudinalDirectionality.DIR_PLUS)[0];
         trajectory.add(lane2);
         TrajectoryPlot tp = new TrajectoryPlot("TestTrajectory", this.sampleInterval, trajectory, simulator);
         assertEquals("Number of trajectories should initially be 0", 0, tp.getSeriesCount());
@@ -109,7 +100,7 @@ public class TrajectoryPlotTest implements UNITS
                         laneChangeModel, network);
         // Make the car accelerate with constant acceleration of 0.05 m/s/s for 400 seconds
         Duration duration = new Duration(400, SECOND);
-
+        
         Time endTime = simulator.getSimulatorTime().getTime().plus(duration);
         car.setState(new GTUFollowingModelResult(new Acceleration(0.05, METER_PER_SECOND_2), endTime));
         // System.out.println("Car end position " + car.getPosition(car.getNextEvaluationTime()));
@@ -240,6 +231,5 @@ public class TrajectoryPlotTest implements UNITS
             assertEquals("Sample position should have been " + actualPosition, actualPosition.getSI(), sampledPosition, 0.0001);
         }
     }
-    
 
 }

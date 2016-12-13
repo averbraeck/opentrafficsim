@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.strategical;
 
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +23,6 @@ import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
-import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 
 /**
  * Test the LaneBasedStrategicalRoutePlanner class.
@@ -46,7 +47,7 @@ public class LaneBasedStrategicalRoutePlannerTest
     public final void nextLinkDirectionTest() throws GTUException, NetworkException, OTSGeometryException
     {
         Network network = new OTSNetwork("next link direction test");
-        GTUType gtuType = new GTUType("car");
+        GTUType gtuType = CAR;
         // Build a really simple network
         OTSNode fromNode = new OTSNode(network, "from", new OTSPoint3D(0, 0, 0));
         OTSNode toNode = new OTSNode(network, "to", new OTSPoint3D(100, 0, 0));

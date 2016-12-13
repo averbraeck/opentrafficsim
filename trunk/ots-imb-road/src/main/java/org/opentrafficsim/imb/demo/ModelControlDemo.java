@@ -1,5 +1,7 @@
 package org.opentrafficsim.imb.demo;
 
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
@@ -798,7 +800,7 @@ public class ModelControlDemo extends ModelStarter
                         }
                     }
                 }
-                GTUType gtuType = new GTUType("car");
+                GTUType gtuType = new GTUType("car", CAR);
                 Set<GTUType> compatibility = new HashSet<GTUType>();
                 compatibility.add(gtuType);
                 LaneType laneType = new LaneType("CarLane", compatibility);

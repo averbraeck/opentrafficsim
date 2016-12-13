@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -76,14 +77,12 @@ public class ContourPlotTest implements UNITS
     {
         OTSNode b = new OTSNode(network, "B", new OTSPoint3D(12345, 0, 0));
         ArrayList<Lane> result = new ArrayList<Lane>();
-        Lane[] lanes =
-                LaneFactory.makeMultiLane(network, "AtoB", new OTSNode(network, "A", new OTSPoint3D(1234, 0, 0)), b, null, 1,
-                        laneType, new Speed(100, KM_PER_HOUR), null, LongitudinalDirectionality.DIR_PLUS);
+        Lane[] lanes = LaneFactory.makeMultiLane(network, "AtoB", new OTSNode(network, "A", new OTSPoint3D(1234, 0, 0)), b,
+                null, 1, laneType, new Speed(100, KM_PER_HOUR), null, LongitudinalDirectionality.DIR_PLUS);
         result.add(lanes[0]);
         // Make a continuation lane to prevent errors when the operational plan exceeds the available remaining length
-        lanes =
-                LaneFactory.makeMultiLane(network, "BtoC", b, new OTSNode(network, "C", new OTSPoint3D(99999, 0, 0)), null, 1,
-                        laneType, new Speed(100, KM_PER_HOUR), null, LongitudinalDirectionality.DIR_PLUS);
+        lanes = LaneFactory.makeMultiLane(network, "BtoC", b, new OTSNode(network, "C", new OTSPoint3D(99999, 0, 0)), null, 1,
+                laneType, new Speed(100, KM_PER_HOUR), null, LongitudinalDirectionality.DIR_PLUS);
         // System.out.println("continuation lane is " + lanes[0] + " length is " + lanes[0].getLength());
         // System.out.println("next lanes is " + result.get(0).nextLanes(gtuType));
         return result;
@@ -98,7 +97,7 @@ public class ContourPlotTest implements UNITS
     public final void accelerationContourTest() throws Exception
     {
         Network network = new OTSNetwork("contour test network");
-        GTUType gtuType = new GTUType("Car");
+        GTUType gtuType = CAR;
         Set<GTUType> compatibility = new HashSet<GTUType>();
         compatibility.add(gtuType);
         LaneType laneType = new LaneType("CarLane", compatibility);
@@ -118,7 +117,7 @@ public class ContourPlotTest implements UNITS
     public final void densityContourTest() throws Exception
     {
         Network network = new OTSNetwork("contour test network");
-        GTUType gtuType = new GTUType("Car");
+        GTUType gtuType = CAR;
         Set<GTUType> compatibility = new HashSet<GTUType>();
         compatibility.add(gtuType);
         LaneType laneType = new LaneType("CarLane", compatibility);
@@ -178,7 +177,7 @@ public class ContourPlotTest implements UNITS
     public final void flowContourTest() throws Exception
     {
         Network network = new OTSNetwork("contour test network");
-        GTUType gtuType = new GTUType("Car");
+        GTUType gtuType = CAR;
         Set<GTUType> compatibility = new HashSet<GTUType>();
         compatibility.add(gtuType);
         LaneType laneType = new LaneType("CarLane", compatibility);
@@ -198,7 +197,7 @@ public class ContourPlotTest implements UNITS
     public final void speedContourTest() throws Exception
     {
         Network network = new OTSNetwork("contour test network");
-        GTUType gtuType = new GTUType("Car");
+        GTUType gtuType = CAR;
         Set<GTUType> compatibility = new HashSet<GTUType>();
         compatibility.add(gtuType);
         LaneType laneType = new LaneType("CarLane", compatibility);
@@ -230,13 +229,12 @@ public class ContourPlotTest implements UNITS
         assertEquals("getGroup always returns null", null, cp.getGroup());
         int xBins = cp.xAxisBins();
         int yBins = cp.yAxisBins();
-        int expectedXBins =
-                (int) Math.ceil((DoubleScalar.minus(ContourPlot.INITIALUPPERTIMEBOUND, ContourPlot.INITIALLOWERTIMEBOUND)
-                        .getSI()) / ContourPlot.STANDARDTIMEGRANULARITIES[ContourPlot.STANDARDINITIALTIMEGRANULARITYINDEX]);
+        int expectedXBins = (int) Math
+                .ceil((DoubleScalar.minus(ContourPlot.INITIALUPPERTIMEBOUND, ContourPlot.INITIALLOWERTIMEBOUND).getSI())
+                        / ContourPlot.STANDARDTIMEGRANULARITIES[ContourPlot.STANDARDINITIALTIMEGRANULARITYINDEX]);
         assertEquals("Initial xBins should be " + expectedXBins, expectedXBins, xBins);
-        int expectedYBins =
-                (int) Math.ceil(lane.getLength().getSI()
-                        / ContourPlot.STANDARDDISTANCEGRANULARITIES[ContourPlot.STANDARDINITIALDISTANCEGRANULARITYINDEX]);
+        int expectedYBins = (int) Math.ceil(lane.getLength().getSI()
+                / ContourPlot.STANDARDDISTANCEGRANULARITIES[ContourPlot.STANDARDINITIALDISTANCEGRANULARITYINDEX]);
         assertEquals("yBins should be " + expectedYBins, expectedYBins, yBins);
         int bins = cp.getItemCount(0);
         assertEquals("Total bin count is product of xBins * yBins", xBins * yBins, bins);
@@ -252,9 +250,9 @@ public class ContourPlotTest implements UNITS
             {
                 cp.actionPerformed(new ActionEvent(cp, 0, "setDistanceGranularity " + distanceGranularity));
                 cp.reGraph();
-                expectedXBins =
-                        (int) Math.ceil((DoubleScalar.minus(ContourPlot.INITIALUPPERTIMEBOUND,
-                                ContourPlot.INITIALLOWERTIMEBOUND).getSI()) / timeGranularity);
+                expectedXBins = (int) Math
+                        .ceil((DoubleScalar.minus(ContourPlot.INITIALUPPERTIMEBOUND, ContourPlot.INITIALLOWERTIMEBOUND).getSI())
+                                / timeGranularity);
                 xBins = cp.xAxisBins();
                 assertEquals("Modified xBins should be " + expectedXBins, expectedXBins, xBins);
                 expectedYBins = (int) Math.ceil(lane.getLength().getSI() / distanceGranularity);
@@ -431,11 +429,10 @@ public class ContourPlotTest implements UNITS
             }
         }
 
-        LaneBasedIndividualGTU car =
-                CarTest.makeReferenceCar("0", gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
-                        laneChangeModel, network);
-        car.getStrategicalPlanner().getBehavioralCharacteristics()
-                .setParameter(ParameterTypes.LOOKAHEAD, new Length(10, LengthUnit.KILOMETER));
+        LaneBasedIndividualGTU car = CarTest.makeReferenceCar("0", gtuType, lane, initialPosition, initialSpeed, simulator,
+                gtuFollowingModel, laneChangeModel, network);
+        car.getStrategicalPlanner().getBehavioralCharacteristics().setParameter(ParameterTypes.LOOKAHEAD,
+                new Length(10, LengthUnit.KILOMETER));
 
         // System.out.println("Running simulator from " + simulator.getSimulatorTime().get() + " to "
         // + gtuFollowingModel.timeAfterCompletionOfStep(0));
@@ -705,9 +702,7 @@ class ContourPlotModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(
-            SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
-            throws SimRuntimeException
+    public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator) throws SimRuntimeException
     {
         // NOT USED
     }

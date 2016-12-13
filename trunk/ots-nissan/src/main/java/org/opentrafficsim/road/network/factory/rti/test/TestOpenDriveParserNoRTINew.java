@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.rti.test;
 
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -236,7 +238,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                     SpeedUnit.MILE_PER_HOUR);
             this.initialPosDist =
                     new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 0.0, 1.0), LengthUnit.METER);
-            this.carType = new GTUType("Car");
+            this.carType = CAR;
         }
 
         /** {@inheritDoc} */

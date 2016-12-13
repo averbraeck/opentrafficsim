@@ -1,12 +1,11 @@
 package org.opentrafficsim.road.network.lane;
 
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.naming.NamingException;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
@@ -36,6 +35,9 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationMode
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
+
 /**
  * Verify that GTUs register and unregister at the correct times and locations when following a curve.
  * <p>
@@ -62,7 +64,7 @@ public class CurveTest
     public void curveTest() throws OTSGeometryException, SimRuntimeException, NamingException, NetworkException, GTUException
     {
         final int laneCount = 1;
-        GTUType gtuType = new GTUType("Car");
+        GTUType gtuType = CAR;
         Set<GTUType> compatibility = new HashSet<GTUType>();
         compatibility.add(gtuType);
         LaneType laneType = new LaneType("CarLane", compatibility);

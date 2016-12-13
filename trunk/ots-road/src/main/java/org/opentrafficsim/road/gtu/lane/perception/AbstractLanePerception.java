@@ -250,7 +250,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
         {
             if (!laneRecord.isCutOffEnd())
             {
-                for (Lane nextLane : laneRecord.getLane().nextLanes(gtuType).keySet())
+                for (Lane nextLane : laneRecord.getLane().downstreamLanes(GTUDirectionality.DIR_PLUS, gtuType).keySet())
                 {
                     Link nextLink = nextLane.getParentLink();
                     if (!laneSets.containsKey(nextLink))
@@ -264,7 +264,8 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
                     Length start = laneRecord.getStartDistance().plus(laneRecord.getLane().getLength());
                     maxStart.put(nextLink, Length.max(maxStart.get(nextLink), start));
                     LaneStructureRecord nextRecord = constructRecord(nextLane,
-                            laneRecord.getLane().nextLanes(gtuType).get(nextLane), start, relativeLane);
+                            laneRecord.getLane().downstreamLanes(GTUDirectionality.DIR_PLUS, gtuType).get(nextLane), start,
+                            relativeLane);
                     if (start.plus(nextLane.getLength()).ge(down))
                     {
                         nextRecord.setCutOffEnd(down.minus(start));
@@ -276,7 +277,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
             }
             else
             {
-                for (Lane nextLane : laneRecord.getLane().nextLanes(gtuType).keySet())
+                for (Lane nextLane : laneRecord.getLane().downstreamLanes(GTUDirectionality.DIR_PLUS, gtuType).keySet())
                 {
                     this.ignoreSet.add(nextLane); // beyond 'down', do not add in lateral step
                 }
@@ -437,7 +438,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
         {
             if (!laneRecord.isCutOffStart())
             {
-                for (Lane prevLane : laneRecord.getLane().prevLanes(gtuType).keySet())
+                for (Lane prevLane : laneRecord.getLane().upstreamLanes(GTUDirectionality.DIR_PLUS, gtuType).keySet())
                 {
                     Link prevLink = prevLane.getParentLink();
                     if (!laneSets.containsKey(prevLink))
@@ -451,7 +452,8 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
                     Length start = laneRecord.getStartDistance().minus(prevLane.getLength());
                     minStart.put(prevLink, Length.min(minStart.get(prevLink), start));
                     LaneStructureRecord prevRecord = constructRecord(prevLane,
-                            laneRecord.getLane().prevLanes(gtuType).get(prevLane), start, relativeLane);
+                            laneRecord.getLane().upstreamLanes(GTUDirectionality.DIR_PLUS, gtuType).get(prevLane), start,
+                            relativeLane);
                     if (start.le(up))
                     {
                         prevRecord.setCutOffStart(up.minus(start));
@@ -463,7 +465,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
             }
             else
             {
-                for (Lane prevLane : laneRecord.getLane().prevLanes(gtuType).keySet())
+                for (Lane prevLane : laneRecord.getLane().upstreamLanes(GTUDirectionality.DIR_PLUS, gtuType).keySet())
                 {
                     this.ignoreSet.add(prevLane); // beyond 'up', do not add in lateral step
                 }

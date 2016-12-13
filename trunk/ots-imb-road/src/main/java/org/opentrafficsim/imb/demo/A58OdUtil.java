@@ -1,6 +1,8 @@
 package org.opentrafficsim.imb.demo;
 
 import static org.djunits.value.StorageType.DENSE;
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.TRUCK;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
@@ -142,12 +144,12 @@ public class A58OdUtil
         Length lookAheadStdev = new Length(250.0, LengthUnit.SI);
         Length perception = new Length(1.0, LengthUnit.KILOMETER);
         Acceleration b = new Acceleration(3.5, AccelerationUnit.SI);
-        GTUType gtuType = new GTUType("car");
+        GTUType gtuType = new GTUType("car", CAR);
         bcFactory.addGaussianParameter(gtuType, ParameterTypes.FSPEED, 123.7 / 120, 12.0 / 120, streams.get("gtuClass"));
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
         bcFactory.addGaussianParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead, lookAheadStdev, streams.get("gtuClass"));
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
-        gtuType = new GTUType("car_equipped");
+        gtuType = new GTUType("car_equipped", CAR);
         bcFactory.addGaussianParameter(gtuType, ParameterTypes.FSPEED, 123.7 / 120, 12.0 / 120, streams.get("gtuClass"));
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
         bcFactory.addParameter(gtuType, ParameterTypes.T, new Duration(0.6, TimeUnit.SI));
@@ -155,13 +157,13 @@ public class A58OdUtil
         bcFactory.addParameter(gtuType, ParameterTypes.A, new Acceleration(2.0, AccelerationUnit.SI));
         bcFactory.addGaussianParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead, lookAheadStdev, streams.get("gtuClass"));
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
-        gtuType = new GTUType("truck");
+        gtuType = new GTUType("truck", TRUCK);
         bcFactory.addParameter(gtuType, ParameterTypes.A, new Acceleration(0.4, AccelerationUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
         bcFactory.addGaussianParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead, lookAheadStdev, streams.get("gtuClass"));
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
         bcFactory.addParameter(gtuType, ParameterTypes.FSPEED, 2.0);
-        gtuType = new GTUType("truck_equipped");
+        gtuType = new GTUType("truck_equipped", TRUCK);
         bcFactory.addParameter(gtuType, ParameterTypes.A, new Acceleration(0.4, AccelerationUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
         bcFactory.addParameter(gtuType, ParameterTypes.T, new Duration(0.6, TimeUnit.SI));
@@ -231,10 +233,10 @@ public class A58OdUtil
                     new Speed(180.0, SpeedUnit.KM_PER_HOUR), streams.get("gtuClass"));
             SpeedGenerator speedTruck = new SpeedGenerator(new Speed(80.0, SpeedUnit.KM_PER_HOUR),
                     new Speed(95.0, SpeedUnit.KM_PER_HOUR), streams.get("gtuClass"));
-            gtuTypeGenerator.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI), new GTUType("car"),
+            gtuTypeGenerator.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI), new GTUType("car", CAR),
                     speedCar, (1.0 - penetrationRate));
             gtuTypeGenerator.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI),
-                    new GTUType("car_equipped"), speedCar, penetrationRate);
+                    new GTUType("car_equipped", CAR), speedCar, penetrationRate);
 
             Map<String, Lane> lanesById = new HashMap<>();
             for (Lane lane : link.getLanes())
@@ -253,14 +255,14 @@ public class A58OdUtil
                 }
                 // add trucks
                 gtuTypeGenerator = new GTUTypeGenerator(simulator);
-                gtuTypeGenerator.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI), new GTUType("car"),
-                        speedCar, (1.0 - penetrationRate) * (1 - truckFrac));
                 gtuTypeGenerator.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI),
-                        new GTUType("car_equipped"), speedCar, penetrationRate * (1 - truckFrac));
-                gtuTypeGenerator.addType(new Length(15.0, LengthUnit.SI), new Length(2.5, LengthUnit.SI), new GTUType("truck"),
-                        speedTruck, (1.0 - penetrationRate) * truckFrac);
+                        new GTUType("car", CAR), speedCar, (1.0 - penetrationRate) * (1 - truckFrac));
+                gtuTypeGenerator.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI),
+                        new GTUType("car_equipped", CAR), speedCar, penetrationRate * (1 - truckFrac));
                 gtuTypeGenerator.addType(new Length(15.0, LengthUnit.SI), new Length(2.5, LengthUnit.SI),
-                        new GTUType("truck_equipped"), speedTruck, penetrationRate * truckFrac);
+                        new GTUType("truck", TRUCK), speedTruck, (1.0 - penetrationRate) * truckFrac);
+                gtuTypeGenerator.addType(new Length(15.0, LengthUnit.SI), new Length(2.5, LengthUnit.SI),
+                        new GTUType("truck_equipped", TRUCK), speedTruck, penetrationRate * truckFrac);
                 Lane lane = lanesById.get("A" + nLanes);
                 Speed generationSpeed = new Speed(nLanes == 1 ? 60.0 : 120, SpeedUnit.KM_PER_HOUR);
                 String id = link.getId() + ":A" + nLanes;

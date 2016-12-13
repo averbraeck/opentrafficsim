@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.lane;
 
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -65,7 +67,7 @@ public class SensorTest implements UNITS
         OTSNode nodeAFrom = new OTSNode(network, "AFrom", new OTSPoint3D(0, 0, 0));
         OTSNode nodeATo = new OTSNode(network, "ATo", new OTSPoint3D(1000, 0, 0));
         OTSNode nodeBTo = new OTSNode(network, "BTo", new OTSPoint3D(20000, 0, 0)); // so car won't run off lane B in 100 s.
-        GTUType gtuType = new GTUType("Car");
+        GTUType gtuType = CAR;
         Set<GTUType> compatibility = new HashSet<GTUType>();
         compatibility.add(gtuType);
         LaneType laneType = new LaneType("CarLane", compatibility);
@@ -73,20 +75,17 @@ public class SensorTest implements UNITS
         OTSModelInterface model = new DummyModelForSensorTest();
         final SimpleSimulator simulator =
                 new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND), model);
-        Lane[] lanesA =
-                LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType, new Speed(100, KM_PER_HOUR),
-                        simulator, LongitudinalDirectionality.DIR_PLUS);
-        Lane[] lanesB =
-                LaneFactory.makeMultiLane(network, "B", nodeATo, nodeBTo, null, 3, laneType, new Speed(100, KM_PER_HOUR),
-                        simulator, LongitudinalDirectionality.DIR_PLUS);
+        Lane[] lanesA = LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType,
+                new Speed(100, KM_PER_HOUR), simulator, LongitudinalDirectionality.DIR_PLUS);
+        Lane[] lanesB = LaneFactory.makeMultiLane(network, "B", nodeATo, nodeBTo, null, 3, laneType,
+                new Speed(100, KM_PER_HOUR), simulator, LongitudinalDirectionality.DIR_PLUS);
 
         // put a sensor on each of the lanes at the end of LaneA
         for (Lane lane : lanesA)
         {
             Length longitudinalPosition = new Length(999.9999, METER);
-            TriggerSensor sensor =
-                    new TriggerSensor(lane, longitudinalPosition, RelativePosition.REFERENCE, "Trigger@" + lane.toString(),
-                            simulator);
+            TriggerSensor sensor = new TriggerSensor(lane, longitudinalPosition, RelativePosition.REFERENCE,
+                    "Trigger@" + lane.toString(), simulator);
         }
 
         Length positionA = new Length(100, METER);
@@ -113,9 +112,8 @@ public class SensorTest implements UNITS
         // new LaneBasedBehavioralCharacteristics(fas, null);
         LaneBasedIndividualGTU car =
                 new LaneBasedIndividualGTU(carID, gtuType, carLength, carWidth, maximumSpeed, simulator, (OTSNetwork) network);
-        LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedGTUFollowingTacticalPlanner(fas,
-                        car), car);
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                new LaneBasedGTUFollowingTacticalPlanner(fas, car), car);
         car.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
         simulator.runUpTo(new Time(1, SECOND));
         if (!simulator.isRunning())
@@ -163,11 +161,11 @@ class TriggerSensor extends AbstractSensor
     private static final long serialVersionUID = 1L;
 
     /**
-     * @param lane lane of the sensor 
+     * @param lane lane of the sensor
      * @param longitudinalPosition position of the sensor on the lane
      * @param positionType trigger position of the GTU
      * @param name name of the sensor
-     * @param simulator the simulator 
+     * @param simulator the simulator
      * @throws NetworkException in case position is out of bounds
      */
     public TriggerSensor(final Lane lane, final Length longitudinalPosition, final RelativePosition.TYPE positionType,
@@ -215,17 +213,14 @@ class DummyModelForSensorTest implements OTSModelInterface
      * Register the simulator.
      * @param simulator SimulatorInterface&lt;Time, Duration, OTSSimTimeDouble&gt;; the simulator
      */
-    public final void setSimulator(
-            SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
+    public final void setSimulator(SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
     {
         this.simulator = simulator;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(
-            SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0)
-            throws SimRuntimeException
+    public final void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0) throws SimRuntimeException
     {
         // Nothing happens here
     }

@@ -1,5 +1,7 @@
 package org.opentrafficsim.demo.carFollowing;
 
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+
 import java.awt.Container;
 import java.awt.Frame;
 import java.rmi.RemoteException;
@@ -315,7 +317,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
     private int carsCreated = 0;
 
     /** Type of all GTUs. */
-    private GTUType gtuType = new GTUType("Car");
+    private GTUType gtuType = CAR;
 
     /** The car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModelOld carFollowingModelCars;
