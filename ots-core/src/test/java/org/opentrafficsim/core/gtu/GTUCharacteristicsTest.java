@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.gtu;
 
 import static org.junit.Assert.assertEquals;
+import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 
 import java.rmi.RemoteException;
 
@@ -47,8 +48,8 @@ public class GTUCharacteristicsTest implements OTSModelInterface
     public final void testGTUCharacteristics() throws SimRuntimeException, NamingException
     {
         // Make two sets of values so we can prove that the constructed GTUCharacteristics sets are really distinct.
-        GTUType gtuTypeA = new GTUType("Type A");
-        GTUType gtuTypeB = new GTUType("Type B");
+        GTUType gtuTypeA = new GTUType("Type A", VEHICLE);
+        GTUType gtuTypeB = new GTUType("Type B", VEHICLE);
         IdGenerator idGeneratorA = new IdGenerator("A");
         IdGenerator idGeneratorB = new IdGenerator("B");
         Length lengthA = new Length(5, LengthUnit.METER);

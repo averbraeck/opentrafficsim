@@ -9,6 +9,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
 
 /**
@@ -53,10 +54,11 @@ public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Seria
     public final BehavioralCharacteristics getDefaultBehavioralCharacteristics()
     {
         BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
-        behavioralCharacteristics.setAll(this.defaultCarFollowingBehavioralCharacteristics);
         behavioralCharacteristics.setDefaultParameters(ParameterTypes.class);
         behavioralCharacteristics.setDefaultParameters(LmrsUtil.class);
         behavioralCharacteristics.setDefaultParameters(IncentiveSpeedWithCourtesy.class);
+        behavioralCharacteristics.setDefaultParameters(ConflictUtil.class);
+        behavioralCharacteristics.setAll(this.defaultCarFollowingBehavioralCharacteristics);
         return behavioralCharacteristics;
     }
 

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -65,7 +66,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
 
     /** The network. */
     private OTSNetwork network = new OTSNetwork("network");
-    
+
     /** the simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
@@ -77,13 +78,12 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
     // XXX @Test
     public final void fundamentalDiagramTest() throws Exception
     {
-        this.simulator =
-                new SimpleSimulator(new Time(0, SECOND), new Duration(0, SECOND), new Duration(1800, SECOND), this);
+        this.simulator = new SimpleSimulator(new Time(0, SECOND), new Duration(0, SECOND), new Duration(1800, SECOND), this);
 
         Duration aggregationTime = new Duration(30, SECOND);
         Length position = new Length(123, METER);
         Length carPosition = new Length(122.5, METER);
-        GTUType gtuType = new GTUType("Car");
+        GTUType gtuType = CAR;
         Set<GTUType> compatibility = new HashSet<GTUType>();
         compatibility.add(gtuType);
         LaneType laneType = new LaneType("CarLane", compatibility);
@@ -149,9 +149,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         // Construct a car
         BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create();
         LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("1", gtuType, length, width, maxSpeed, simulator, this.network);
-        LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
-                        gtuFollowingModel, laneChangeModel, gtu), gtu);
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
         gtu.init(strategicalPlanner, initialLongitudinalPositions, speed);
         simulator.runUpTo(new Time(124, SECOND));
         while (simulator.isRunning())
@@ -239,9 +238,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         behavioralCharacteristics = DefaultTestParameters.create();
         LaneBasedIndividualGTU gtuX =
                 new LaneBasedIndividualGTU("1234", gtuType, length, width, maxSpeed, simulator, this.network);
-        strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(
-                        gtuFollowingModel, laneChangeModel, gtuX), gtuX);
+        strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtuX), gtuX);
         gtuX.init(strategicalPlanner, initialLongitudinalPositions, speed);
         simulator.runUpTo(new Time(125, SECOND));
         while (simulator.isRunning())
@@ -334,17 +332,15 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
     @Test
     public final void testHints() throws Exception
     {
-        this.simulator =
-                new SimpleSimulator(new Time(0, SECOND), new Duration(0, SECOND), new Duration(1800, SECOND), this);
+        this.simulator = new SimpleSimulator(new Time(0, SECOND), new Duration(0, SECOND), new Duration(1800, SECOND), this);
 
         Duration aggregationTime = new Duration(30, SECOND);
         Length position = new Length(123, METER);
         Set<GTUType> compatibility = new HashSet<GTUType>();
         compatibility.add(GTUType.ALL);
         LaneType laneType = new LaneType("CarLane", compatibility);
-        FundamentalDiagram fd =
-                new FundamentalDiagram("Fundamental Diagram", aggregationTime, CarTest.makeLane(this.network, laneType),
-                        position, this.simulator);
+        FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime,
+                CarTest.makeLane(this.network, laneType), position, this.simulator);
         // First get the panel that stores the result of updateHint (this is ugly)
         JLabel hintPanel = null;
         ChartPanel chartPanel = null;
@@ -427,8 +423,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0)
-            throws SimRuntimeException
+    public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0) throws SimRuntimeException
     {
         // Do nothing
     }

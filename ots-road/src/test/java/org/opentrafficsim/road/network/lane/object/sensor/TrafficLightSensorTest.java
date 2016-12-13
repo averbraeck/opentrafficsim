@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.lane.object.sensor;
 
 import static org.junit.Assert.assertEquals;
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.TRUCK;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -99,7 +100,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
             {
                 return this.sim;
             }
-            
+
             /** {@inheritDoc} */
             @Override
             public OTSNetwork getNetwork()
@@ -245,7 +246,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 tls.addListener(this, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT);
                 assertEquals("event list is empty", 0, this.loggedEvents.size());
 
-                GTUType gtuType = new GTUType("Truck");
+                GTUType gtuType = TRUCK;
                 Length gtuLength = new Length(17, LengthUnit.METER);
                 Length gtuWidth = new Length(2, LengthUnit.METER);
                 Speed maximumSpeed = new Speed(90, SpeedUnit.KM_PER_HOUR);

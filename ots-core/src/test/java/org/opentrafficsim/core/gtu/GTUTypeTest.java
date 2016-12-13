@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.gtu;
 
+import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -34,9 +35,9 @@ public class GTUTypeTest
     @Test
     public final void constructorTest()
     {
-        GTUType t = new GTUType("abc");
+        GTUType t = new GTUType("abc", VEHICLE);
         assertTrue("Id is stored in the newly created GTUType", "abc".equals(t.getId()));
-        GTUType t2 = new GTUType("pqr");
+        GTUType t2 = new GTUType("pqr", VEHICLE);
         assertTrue("Id is stored in the newly created GTUType", "pqr".equals(t2.getId()));
         // prove that the two are really distinct (do not use the same storage for the type string
         assertTrue("Id is stored in the newly created GTUType", "abc".equals(t.getId()));

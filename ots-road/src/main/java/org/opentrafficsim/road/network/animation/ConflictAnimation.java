@@ -1,7 +1,9 @@
 package org.opentrafficsim.road.network.animation;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
@@ -10,6 +12,7 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.network.animation.PaintPolygons;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
@@ -32,14 +35,15 @@ public class ConflictAnimation extends Renderable2D implements Serializable
 
     /** The half width left and right of the center line that is used to draw the block. */
     private final double halfWidth;
-    
+
     /**
      * @param source the conflict to draw
      * @param simulator the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public ConflictAnimation(final Conflict source, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
+    public ConflictAnimation(final Conflict source, final OTSSimulatorInterface simulator)
+            throws NamingException, RemoteException
     {
         super(source, simulator);
         this.halfWidth = 0.45 * source.getLane().getWidth(source.getLongitudinalPosition()).getSI();
@@ -64,18 +68,31 @@ public class ConflictAnimation extends Renderable2D implements Serializable
             case GIVE_WAY:
                 fillColor = Color.orange;
                 break;
-                
+
             default:
                 // STOP, ALL_STOP
                 fillColor = Color.red;
                 break;
         }
-        
-        // TODO geometry, as soon as conflicts have that
-        // PaintPolygons.paintMultiPolygon(graphics, fillColor, conflict.getLocation(), conflict.getGeometry(), false);
+
         graphics.setColor(fillColor);
         Rectangle2D rectangle = new Rectangle2D.Double(-0.25, -this.halfWidth, 0.5, 2 * this.halfWidth);
         graphics.fill(rectangle);
+
+        graphics.setStroke(new BasicStroke(.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
+                new float[] { 1.0f, 0.95f, 0.1f, 0.95f }, 0.0f));
+        AffineTransform saveAT = graphics.getTransform();
+        double angle = -getSource().getLocation().getRotZ();
+        if (isRotate() && angle != 0.0)
+        {
+            graphics.rotate(-angle);
+        }
+        if (conflict.getGeometry() != null)
+        {
+            PaintPolygons.paintMultiPolygon(graphics, fillColor, conflict.getLocation(), conflict.getGeometry(), false);
+        }
+        graphics.setTransform(saveAT);
+
     }
 
     /** {@inheritDoc} */

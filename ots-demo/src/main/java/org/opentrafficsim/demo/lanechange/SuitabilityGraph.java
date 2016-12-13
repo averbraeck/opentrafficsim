@@ -1,5 +1,7 @@
 package org.opentrafficsim.demo.lanechange;
 
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -144,7 +146,7 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
                 double mainLength = speedLimit.getSI() * this.timeRange.getSI();
                 OTSNode from = new OTSNode(network, "From", new OTSPoint3D(-mainLength, 0, 0));
                 OTSNode branchPoint = new OTSNode(network, "Branch point", new OTSPoint3D(0, 0, 0));
-                GTUType gtuType = new GTUType("Car");
+                GTUType gtuType = CAR;
                 Set<GTUType> compatibility = new HashSet<GTUType>();
                 compatibility.add(gtuType);
                 LaneType laneType = new LaneType("CarLane", compatibility);

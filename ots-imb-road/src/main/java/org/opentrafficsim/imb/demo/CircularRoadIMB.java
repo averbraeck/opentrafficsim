@@ -1,5 +1,7 @@
 package org.opentrafficsim.imb.demo;
 
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Frame;
@@ -664,7 +666,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
                     }
                 }
             }
-            GTUType gtuType = new GTUType("car");
+            GTUType gtuType = CAR;
             Set<GTUType> compatibility = new HashSet<GTUType>();
             compatibility.add(gtuType);
             LaneType laneType = new LaneType("CarLane", compatibility);

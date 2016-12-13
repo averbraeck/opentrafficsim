@@ -1,5 +1,7 @@
 package org.opentrafficsim.demo.carFollowing;
 
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+
 import java.awt.Container;
 import java.awt.Frame;
 import java.rmi.RemoteException;
@@ -540,7 +542,8 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
                             this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
                                     new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(this.carFollowingModelCars));
                             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(this.carFollowingModelTrucks));
+                                    new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(
+                                            this.carFollowingModelTrucks));
                         }
                         else if ("LMRS".equals(tacticalPlannerName))
                         {
@@ -601,7 +604,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
                     }
                 }
             }
-            GTUType gtuType = new GTUType("car");
+            GTUType gtuType = CAR;
             Set<GTUType> compatibility = new HashSet<GTUType>();
             compatibility.add(gtuType);
             LaneType laneType = new LaneType("CarLane", compatibility);

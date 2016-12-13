@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.rti.test;
 
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.SocketException;
@@ -224,7 +226,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
             new GisRenderable2D(this.simulator, gisURL, latLonToXY);
 
             // Make a GTU Type
-            GTUType carType = new GTUType("Car");
+            GTUType carType = CAR;
 
             // new ReceiverThread(this.simulator).run();
 

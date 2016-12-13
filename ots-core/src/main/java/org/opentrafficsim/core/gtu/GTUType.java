@@ -26,28 +26,64 @@ public final class GTUType extends Type<GTUType> implements Serializable
 
     /** The id of the GTUType to make it identifiable. */
     private final String id;
+    
+    /** Parent GTUType. */
+    private final GTUType parent;
 
     /** ALL GTUType to be used only for permeability and accessibility. */
     public static final GTUType ALL;
 
     /** NONE GTUType to be used only for permeability and accessibility. */
     public static final GTUType NONE;
+    
+    /** Super type for pedestrians. */
+    public static final GTUType PEDESTRIAN;
+    
+    /** Super type for bikes. */
+    public static final GTUType BIKE;
+    
+    /** Super type for vehicles. */
+    public static final GTUType VEHICLE;
+    
+    /** Super type for boats. */
+    public static final GTUType BOAT;
+    
+    /** Super type for trains. */ 
+    public static final GTUType TRAIN;
 
     /* static block to guarantee that ALL is always on the first place, and NONE on the second, for code reproducibility. */
     static
     {
         ALL = new GTUType("ALL");
         NONE = new GTUType("NONE");
+        PEDESTRIAN = new GTUType("PEDESTRIAN", ALL);
+        BIKE = new GTUType("BIKE", ALL);
+        VEHICLE = new GTUType("VEHICLE", ALL);
+        BOAT = new GTUType("BOAT", ALL);
+        TRAIN = new GTUType("TRAIN", ALL);
     }
 
     /**
      * @param id The id of the GTUType to make it identifiable.
      * @throws NullPointerException if the id is null
      */
-    public GTUType(final String id) throws NullPointerException
+    private GTUType(final String id) throws NullPointerException
     {
         Throw.whenNull(id, "id cannot be null for GTUType");
         this.id = id;
+        this.parent = null;
+    }
+    
+    /**
+     * @param id The id of the GTUType to make it identifiable.
+     * @param parent GTUType; parent GTU type
+     * @throws NullPointerException if the id is null
+     */
+    public GTUType(final String id, final GTUType parent) throws NullPointerException
+    {
+        Throw.whenNull(id, "id cannot be null for GTUType");
+        this.id = id;
+        this.parent = parent;
     }
 
     /**
@@ -56,6 +92,32 @@ public final class GTUType extends Type<GTUType> implements Serializable
     public String getId()
     {
         return this.id;
+    }
+    
+    /**
+     * @return parent.
+     */
+    public GTUType getParent()
+    {
+        return this.parent;
+    }
+
+    /**
+     * Whether this, or any of the parent GTU types, equals the given GTU type.
+     * @param gtuType GTUType; gtu type
+     * @return whether this, or any of the parent GTU types, equals the given GTU type
+     */
+    public boolean isOfType(final GTUType gtuType)
+    {
+        if (this.equals(gtuType))
+        {
+            return true;
+        }
+        if (this.parent != null)
+        {
+            return this.parent.isOfType(gtuType);
+        }
+        return false;
     }
 
     /** {@inheritDoc} */
@@ -68,7 +130,10 @@ public final class GTUType extends Type<GTUType> implements Serializable
     @Override
     public int hashCode()
     {
-        int result = 31 + this.id.hashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        result = prime * result + ((this.parent == null) ? 0 : this.parent.hashCode());
         return result;
     }
 
@@ -85,6 +150,11 @@ public final class GTUType extends Type<GTUType> implements Serializable
             return false;
         GTUType other = (GTUType) obj;
         if (!this.id.equals(other.id))
+            return false;
+        if (this.parent == null)
+            if (other.parent != null)
+                return false;
+        else if (!this.parent.equals(other.parent))
             return false;
         return true;
     }

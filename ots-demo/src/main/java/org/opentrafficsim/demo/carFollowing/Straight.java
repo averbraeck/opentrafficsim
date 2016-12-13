@@ -1,5 +1,7 @@
 package org.opentrafficsim.demo.carFollowing;
 
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+
 import java.awt.Container;
 import java.awt.Frame;
 import java.io.IOException;
@@ -105,10 +107,10 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
         outputProperties.add(new BooleanProperty("DensityPlot", "Density", "Density contour plot", true, false, 0));
         outputProperties.add(new BooleanProperty("FlowPlot", "Flow", "Flow contour plot", true, false, 1));
         outputProperties.add(new BooleanProperty("SpeedPlot", "Speed", "Speed contour plot", true, false, 2));
-        outputProperties.add(new BooleanProperty("AccelerationPlot", "Acceleration", "Acceleration contour plot", true, false,
-                3));
-        outputProperties.add(new BooleanProperty("TrajectoryPlot", "Trajectories", "Trajectory (time/distance) diagram", true,
-                false, 4));
+        outputProperties
+                .add(new BooleanProperty("AccelerationPlot", "Acceleration", "Acceleration contour plot", true, false, 3));
+        outputProperties.add(
+                new BooleanProperty("TrajectoryPlot", "Trajectories", "Trajectory (time/distance) diagram", true, false, 4));
         this.properties.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
                 outputProperties, true, 1000));
     }
@@ -153,13 +155,14 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
                                     + "the acceleration that a vehicle will make taking into account "
                                     + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
                                     + "curvature of the road) capabilities of the vehicle and personality "
-                                    + "of the driver.</html>", new String[] { "IDM", "IDM+" }, 1, false, 1));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car", new Acceleration(1.0,
-                            METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length(2.0, METER),
-                            new Duration(1.0, SECOND), 2));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck", new Acceleration(0.5,
-                            METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER),
-                            new Duration(1.0, SECOND), 3));
+                                    + "of the driver.</html>",
+                            new String[] { "IDM", "IDM+" }, 1, false, 1));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car",
+                            new Acceleration(1.0, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
+                            new Length(2.0, METER), new Duration(1.0, SECOND), 2));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck",
+                            new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2),
+                            new Length(2.0, METER), new Duration(1.0, SECOND), 3));
                     straight.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND),
                             localProperties, null, true);
                     straight.panel.getTabbedPane().addTab("info", straight.makeInfoPane());
@@ -171,7 +174,7 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
             }
         });
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected final void addAnimationToggles()
@@ -212,8 +215,7 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final void addTabs(final SimpleSimulatorInterface simulator) throws OTSSimulationException,
-            PropertyException
+    protected final void addTabs(final SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
     {
 
         // Make the tab with the plots
@@ -322,8 +324,8 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
 
 /**
  * Simulate a single lane road of 5 km length. Vehicles are generated at a constant rate of 1500 veh/hour. At time 300s a
- * blockade is inserted at position 4 km; this blockade is removed at time 500s. The used car following algorithm is IDM+ <a
- * href="http://opentrafficsim.org/downloads/MOTUS%20reference.pdf"><i>Integrated Lane Change Model with Relaxation and
+ * blockade is inserted at position 4 km; this blockade is removed at time 500s. The used car following algorithm is IDM+
+ * <a href="http://opentrafficsim.org/downloads/MOTUS%20reference.pdf"><i>Integrated Lane Change Model with Relaxation and
  * Synchronization</i>, by Wouter J. Schakel, Victor L. Knoop and Bart van Arem, 2012</a>. <br>
  * Output is a set of block charts:
  * <ul>
@@ -359,7 +361,7 @@ class StraightModel implements OTSModelInterface, UNITS
     private int carsCreated = 0;
 
     /** Type of all GTUs. */
-    private GTUType gtuType = new GTUType("Car");
+    private GTUType gtuType = CAR;
 
     /** The car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModelOld carFollowingModelCars;
@@ -432,17 +434,15 @@ class StraightModel implements OTSModelInterface, UNITS
             Set<GTUType> compatibility = new HashSet<>();
             compatibility.add(this.gtuType);
             LaneType laneType = new LaneType("CarLane", compatibility);
-            this.lane =
-                    LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator,
-                            LongitudinalDirectionality.DIR_PLUS);
+            this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator,
+                    LongitudinalDirectionality.DIR_PLUS);
             this.path.add(this.lane);
             CrossSectionLink endLink =
                     LaneFactory.makeLink(this.network, "endLink", to, end, null, LongitudinalDirectionality.DIR_PLUS);
             // No overtaking, single lane
-            Lane sinkLane =
-                    new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
-                            this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0),
-                            laneType, LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.None());
+            Lane sinkLane = new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
+                    this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
+                    LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.None());
             new SinkSensor(sinkLane, new Length(10.0, METER), this.simulator);
             String carFollowingModelName = null;
             CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
@@ -567,12 +567,10 @@ class StraightModel implements OTSModelInterface, UNITS
         {
             initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
             BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
-            this.block =
-                    new LaneBasedIndividualGTU("999999", this.gtuType, new Length(4, METER), new Length(1.8, METER),
-                            Speed.ZERO, this.simulator, this.network);
-            LaneBasedStrategicalPlanner strategicalPlanner =
-                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedGTUFollowingTacticalPlanner(
-                            new IDMOld(), this.block), this.block);
+            this.block = new LaneBasedIndividualGTU("999999", this.gtuType, new Length(4, METER), new Length(1.8, METER),
+                    Speed.ZERO, this.simulator, this.network);
+            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                    new LaneBasedGTUFollowingTacticalPlanner(new IDMOld(), this.block), this.block);
             this.block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
                     this.gtuColorer);
         }
@@ -610,12 +608,10 @@ class StraightModel implements OTSModelInterface, UNITS
                 throw new Error("gtuFollowingModel is null");
             }
             BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
-            LaneBasedIndividualGTU gtu =
-                    new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength, new Length(1.8, METER),
-                            new Speed(200, KM_PER_HOUR), this.simulator, this.network);
-            LaneBasedStrategicalPlanner strategicalPlanner =
-                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedGTUFollowingTacticalPlanner(
-                            gtuFollowingModel, gtu), gtu);
+            LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
+                    new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, this.network);
+            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                    new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
             gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
                     this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);

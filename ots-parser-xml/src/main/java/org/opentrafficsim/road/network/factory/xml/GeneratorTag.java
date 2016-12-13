@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,8 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
+import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -19,6 +22,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
 import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
+import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
@@ -45,6 +49,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 
 /**
  * <p>
@@ -311,12 +316,43 @@ class GeneratorTag implements Serializable
     {
         Lane lane = linkTag.lanes.get(generatorTag.laneName);
         Class<?> gtuClass = LaneBasedIndividualGTU.class;
-        List<org.opentrafficsim.core.network.Node> nodeList = new ArrayList<>();
-        for (NodeTag nodeTag : generatorTag.routeTag.routeNodeTags)
+
+        RouteGenerator routeGenerator;
+        if (generatorTag.routeMixTag == null)
         {
-            nodeList.add(parser.nodeTags.get(nodeTag.name).node);
+            List<org.opentrafficsim.core.network.Node> nodeList = new ArrayList<>();
+            for (NodeTag nodeTag : generatorTag.routeTag.routeNodeTags)
+            {
+                nodeList.add(parser.nodeTags.get(nodeTag.name).node);
+            }
+            routeGenerator = new FixedRouteGenerator(new Route(generatorTag.laneName, nodeList));
         }
-        RouteGenerator routeGenerator = new FixedRouteGenerator(new Route(generatorTag.laneName, nodeList));
+        else
+        {
+            List<FrequencyAndObject<Route>> probRoutes = new ArrayList<>();
+            for (int i = 0; i < generatorTag.routeMixTag.weights.size(); i++)
+            {
+                List<org.opentrafficsim.core.network.Node> nodeList = new ArrayList<>();
+                for (NodeTag nodeTag : generatorTag.routeMixTag.routes.get(i).routeNodeTags)
+                {
+                    nodeList.add(parser.nodeTags.get(nodeTag.name).node);
+                }
+                probRoutes.add(new FrequencyAndObject<>(generatorTag.routeMixTag.weights.get(i),
+                        new Route(generatorTag.routeMixTag.routes.get(i).name, nodeList)));
+            }
+            try
+            {
+                if (simulator.getReplication().getStream("GENERAL") == null)
+                {
+                    simulator.getReplication().getStreams().put("GENERAL", new MersenneTwister(1L));
+                }
+                routeGenerator = new ProbabilisticRouteGenerator(probRoutes, simulator.getReplication().getStream("GENERAL"));
+            }
+            catch (RemoteException | ProbabilityException exception)
+            {
+                throw new RuntimeException("Could not generate route mix.");
+            }
+        }
         Time startTime = generatorTag.startTime != null ? generatorTag.startTime : Time.ZERO;
         Time endTime = generatorTag.endTime != null ? generatorTag.endTime : new Time(Double.MAX_VALUE, TimeUnit.SI);
         Length position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, lane);

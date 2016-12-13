@@ -45,6 +45,9 @@ public class CrossSectionLink extends OTSLink implements Serializable
 
     /** The policy to generally keep left, keep right, or keep lane. */
     private final LaneKeepingPolicy laneKeepingPolicy;
+    
+    /** Priority. */
+    private Priority priority = Priority.NONE;
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the addition of a Lane to a CrossSectionLink. <br>
@@ -146,7 +149,6 @@ public class CrossSectionLink extends OTSLink implements Serializable
         {
             addCrossSectionElement(cse.clone(this, newSimulator, animation));
         }
-
     }
 
     /**
@@ -209,6 +211,22 @@ public class CrossSectionLink extends OTSLink implements Serializable
         return this.lanes == null ? new ArrayList<>() : new ArrayList<>(this.lanes);
     }
 
+    /**
+     * @return priority.
+     */
+    public final Priority getPriority()
+    {
+        return this.priority;
+    }
+
+    /**
+     * @param priority set priority.
+     */
+    public final void setPriority(final Priority priority)
+    {
+        this.priority = priority;
+    }
+
     /** {@inheritDoc} */
     @Override
     public final String toString()
@@ -226,4 +244,67 @@ public class CrossSectionLink extends OTSLink implements Serializable
         return new CrossSectionLink(newNetwork, newSimulator, animation, this);
     }
 
+    /**
+     * Priority of a link.
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 12 dec. 2016 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public enum Priority
+    {
+        /** Traffic has priority. */
+        PRIORITY,
+        
+        /** No priority. */
+        NONE,
+        
+        /** Need to stop. */
+        STOP,
+        
+        /** Priority according to all-stop rules. */
+        ALL_STOP;
+        
+        /**
+         * Returns whether this is priority.
+         * @return whether this is priority
+         */
+        public boolean isPriority()
+        {
+            return this.equals(PRIORITY);
+        }
+        
+        /**
+         * Returns whether this is none.
+         * @return whether this is none
+         */
+        public boolean isNone()
+        {
+            return this.equals(NONE);
+        }
+        
+        /**
+         * Returns whether this is stop.
+         * @return whether this is stop
+         */
+        public boolean isStop()
+        {
+            return this.equals(STOP);
+        }
+        
+        /**
+         * Returns whether this is all-stop.
+         * @return whether this is all-stop
+         */
+        public boolean isAllStop()
+        {
+            return this.equals(ALL_STOP);
+        }
+        
+    }
+    
 }

@@ -1,5 +1,7 @@
 package org.opentrafficsim.demo.carFollowing;
 
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Frame;
@@ -147,7 +149,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
         super.stopTimersThreads();
         this.model = null;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected final void addAnimationToggles()
@@ -249,7 +251,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     // private int carsCreated = 0;
 
     /** Type of all GTUs (required to permit lane changing). */
-    GTUType gtuType = new GTUType("Car");
+    GTUType gtuType = CAR;
 
     /** The car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModelOld carFollowingModelCars;

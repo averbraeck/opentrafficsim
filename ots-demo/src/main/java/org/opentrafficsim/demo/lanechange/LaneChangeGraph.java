@@ -1,5 +1,7 @@
 package org.opentrafficsim.demo.lanechange;
 
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.geom.Line2D;
@@ -274,7 +276,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
     {
         // Set up the network
         Network network = new OTSNetwork("lane change graph network");
-        GTUType gtuType = new GTUType("car");
+        GTUType gtuType = CAR;
         Set<GTUType> compatibility = new HashSet<>();
         compatibility.add(gtuType);
         LaneType laneType = new LaneType("CarLane", compatibility);
@@ -456,7 +458,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
     {
         return this.network;
     }
-    
+
 }
 
 /** */

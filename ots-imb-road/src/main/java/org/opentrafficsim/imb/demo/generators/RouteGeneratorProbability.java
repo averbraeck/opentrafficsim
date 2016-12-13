@@ -1,5 +1,7 @@
 package org.opentrafficsim.imb.demo.generators;
 
+import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
+
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +11,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -45,7 +46,7 @@ public class RouteGeneratorProbability implements RouteGenerator
 
     /** Stream name of GTU class generation. */
     private final static String GTU_ROUTE_STREAM = "gtuRoute";
-    
+
     /** Demand map. */
     private final HashMap<OTSNode, Object> demandMap = new HashMap<>();
 
@@ -90,7 +91,7 @@ public class RouteGeneratorProbability implements RouteGenerator
         this.demandMap.put(to, demand);
         try
         {
-            this.routeMap.put(to, this.network.getShortestRouteBetween(new GTUType("car"), this.from, to));
+            this.routeMap.put(to, this.network.getShortestRouteBetween(VEHICLE, this.from, to));
         }
         catch (NullPointerException | NetworkException exception)
         {

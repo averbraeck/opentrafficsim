@@ -152,7 +152,7 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
         /** The TrafCOD evaluator. */
         private TrafCOD trafCOD;
 
-        /** the model. */
+        /** The network. */
         private OTSNetwork network;
 
         @SuppressWarnings("synthetic-access")

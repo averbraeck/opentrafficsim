@@ -1,5 +1,8 @@
 package org.opentrafficsim.imb.demo;
 
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.TRUCK;
+
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
@@ -121,29 +124,29 @@ public class ModelControlA58 extends ModelStarter
      */
     public static void main(String[] args) throws IMBException, InvocationTargetException, InterruptedException
     {
-//        if (args.length == 0)
-//        {
-//            ModelControlA58 modelControlA58 = new ModelControlA58(new String[0], "A58 model", 1248);
-//            modelControlA58.startModel(null, modelControlA58.connection); // null will use default penetration rate
-//        }
-//        else
-//        {
-            SwingUtilities.invokeAndWait(new Runnable()
+        // if (args.length == 0)
+        // {
+        // ModelControlA58 modelControlA58 = new ModelControlA58(new String[0], "A58 model", 1248);
+        // modelControlA58.startModel(null, modelControlA58.connection); // null will use default penetration rate
+        // }
+        // else
+        // {
+        SwingUtilities.invokeAndWait(new Runnable()
+        {
+            @Override
+            public void run()
             {
-                @Override
-                public void run()
+                try
                 {
-                    try
-                    {
-                        new ModelControlA58(args, "A58 model", 1248);
-                    }
-                    catch (IMBException exception)
-                    {
-                        exception.printStackTrace();
-                    }
+                    new ModelControlA58(args, "A58 model", 1248);
                 }
-            });
-//        }
+                catch (IMBException exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+        });
+        // }
 
         // try
         // {
@@ -457,8 +460,8 @@ public class ModelControlA58 extends ModelStarter
 
                 metaDataSet = new MetaDataSet();
                 gtuTypes = new HashSet<>();
-                gtuTypes.add(new GtuTypeData(new GTUType("car_equipped")));
-                gtuTypes.add(new GtuTypeData(new GTUType("truck_equipped")));
+                gtuTypes.add(new GtuTypeData(new GTUType("car_equipped", CAR)));
+                gtuTypes.add(new GtuTypeData(new GTUType("truck_equipped", TRUCK)));
                 metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
                 query = getQuery(A58Model.this.network, sampler, metaDataSet, "Equipped");
                 new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(), query,
@@ -466,8 +469,8 @@ public class ModelControlA58 extends ModelStarter
 
                 metaDataSet = new MetaDataSet();
                 gtuTypes = new HashSet<>();
-                gtuTypes.add(new GtuTypeData(new GTUType("car")));
-                gtuTypes.add(new GtuTypeData(new GTUType("truck")));
+                gtuTypes.add(new GtuTypeData(new GTUType("car", CAR)));
+                gtuTypes.add(new GtuTypeData(new GTUType("truck", TRUCK)));
                 metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
                 query = getQuery(A58Model.this.network, sampler, metaDataSet, "Not equipped");
                 new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(), query,

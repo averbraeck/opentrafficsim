@@ -192,6 +192,18 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
     @Override
     default int compareTo(Headway headway)
     {
+        if (getDistance() == null && headway.getDistance() == null)
+        {
+            return getOverlapFront().compareTo(headway.getOverlapFront());
+        }
+        else if (getDistance() == null)
+        {
+             return -1;
+        }
+        else if (headway.getDistance() == null)
+        {
+            return 1;
+        }
         return getDistance().compareTo(headway.getDistance());
     }
 }

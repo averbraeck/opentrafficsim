@@ -1,5 +1,8 @@
 package org.opentrafficsim.road.network.factory.xml.test;
 
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.BUS;
+import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -141,7 +144,7 @@ public class N201ODfactory
         Time startTime = Time.ZERO;
         Time endTime = new Time(Double.MAX_VALUE, TimeUnit.SI);
         Length position = new Length(1.0, LengthUnit.SI);
-        GTUType gtuType = new GTUType("CAR");
+        GTUType gtuType = CAR;
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initSpeedDist =
                 new ContinuousDistDoubleScalar.Rel<>(30, SpeedUnit.KM_PER_HOUR);
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist =
@@ -234,8 +237,8 @@ public class N201ODfactory
                 "L6b", "L5b", "L4b3b", "L2b", "L1b" };
         MetaDataSet metaDataSet = new MetaDataSet();
         Set<GtuTypeDataInterface> gtuTypes = new HashSet<>();
-        gtuTypes.add(new GtuTypeData(new GTUType("CAR")));
-        gtuTypes.add(new GtuTypeData(new GTUType("BUS")));
+        gtuTypes.add(new GtuTypeData(CAR));
+        gtuTypes.add(new GtuTypeData(BUS));
         metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
         Query query = new Query(sampling, "N201 both directions", metaDataSet, new Frequency(2.0, FrequencyUnit.PER_MINUTE));
         // addSpaceTimeRegions(query, network, northBound);
