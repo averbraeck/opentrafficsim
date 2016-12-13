@@ -157,36 +157,8 @@ public class TrafCODDemo extends AbstractWrappableAnimation
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
                 this.network = nlp.build(url);
 
-                /*-
-                Network network = new OTSNetwork("TrafCOD test network");
-                Map<GTUType, LongitudinalDirectionality> directionalityMap = new HashMap<>();
-                directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
-                OTSNode nodeX = new OTSNode(network, "Crossing", new OTSPoint3D(0, 0, 0));
-                OTSNode nodeS = new OTSNode(network, "South", new OTSPoint3D(0, -100, 0));
-                OTSNode nodeE = new OTSNode(network, "East", new OTSPoint3D(100, 0, 0));
-                OTSNode nodeN = new OTSNode(network, "North", new OTSPoint3D(0, 100, 0));
-                OTSNode nodeW = new OTSNode(network, "West", new OTSPoint3D(-100, 0, 0));
-                Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
-                Set<GTUType> compatibility = new HashSet<GTUType>();
-                compatibility.add(GTUType.ALL);
-                LaneType laneType = new LaneType("CarLane", compatibility);
-                Lane laneNX =
-                        LaneFactory.makeMultiLane(network, "LinkNX", nodeN, nodeX, null, 1, laneType, speedLimit,
-                                (OTSDEVSSimulatorInterface) theSimulator, LongitudinalDirectionality.DIR_PLUS)[0];
-                Lane laneWX =
-                        LaneFactory.makeMultiLane(network, "LinkWX", nodeW, nodeX, null, 1, laneType, speedLimit,
-                                (OTSDEVSSimulatorInterface) theSimulator, LongitudinalDirectionality.DIR_PLUS)[0];
-                LaneFactory.makeMultiLane(network, "LinkXE", nodeX, nodeE, null, 1, laneType, speedLimit,
-                        (OTSDEVSSimulatorInterface) theSimulator, LongitudinalDirectionality.DIR_PLUS);
-                LaneFactory.makeMultiLane(network, "LinkXS", nodeX, nodeS, null, 1, laneType, speedLimit,
-                        (OTSDEVSSimulatorInterface) theSimulator, LongitudinalDirectionality.DIR_PLUS);
-                 */
                 Lane laneNX = (Lane) ((CrossSectionLink) this.network.getLink("N", "X")).getCrossSectionElement("FORWARD");
                 Lane laneWX = (Lane) ((CrossSectionLink) this.network.getLink("W", "X")).getCrossSectionElement("FORWARD");
-                Lane laneXS = (Lane) ((CrossSectionLink) this.network.getLink("X", "S")).getCrossSectionElement("FORWARD");
-                Lane laneXE = (Lane) ((CrossSectionLink) this.network.getLink("X", "E")).getCrossSectionElement("FORWARD");
-                new SinkSensor(laneXS, new Length(90, LengthUnit.METER), (OTSDEVSSimulatorInterface) theSimulator);
-                new SinkSensor(laneXE, new Length(90, LengthUnit.METER), (OTSDEVSSimulatorInterface) theSimulator);
                 Set<TrafficLight> trafficLights = new HashSet<>();
                 trafficLights.add(new SimpleTrafficLight("TL08", laneWX, new Length(296, LengthUnit.METER),
                         (OTSDEVSSimulatorInterface) theSimulator));
@@ -206,10 +178,6 @@ public class TrafCODDemo extends AbstractWrappableAnimation
                         LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
                         (OTSDEVSSimulatorInterface) theSimulator));
                 String controllerName = "Simple TrafCOD controller";
-                // this.trafCOD =
-                // new TrafCOD(controllerName, "file:///d:/cppb/trafcod/otsim/simpleTest.tfc", trafficLights, sensors,
-                // (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator,
-                // TrafCODDemo.this.controllerDisplayPanel);
                 TrafCODDemo.this.trafCOD =
                         new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo1/simpleTest.tfc"),
                                 trafficLights, sensors,
