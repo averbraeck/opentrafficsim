@@ -182,7 +182,7 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
     @Override
     protected final void addAnimationToggles()
     {
-        AnimationToggles.setTextAnimationTogglesStandard(this);
+        AnimationToggles.setIconAnimationTogglesStandard(this);
     }
 
     /** {@inheritDoc} */
