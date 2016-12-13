@@ -148,7 +148,7 @@ public final class LaneAttributes {
      */
     private static GTUType parseGTUType(final String typeName, final VissimNetworkLaneParser parser) {
         if (!parser.getGtuTypes().containsKey(typeName)) {
-            GTUType gtuType = new GTUType(typeName);
+            GTUType gtuType = new GTUType(typeName, GTUType.ALL);
             parser.getGtuTypes().put(typeName, gtuType);
         }
         return parser.getGtuTypes().get(typeName);
