@@ -121,12 +121,12 @@ public class VissimNetworkLaneParser implements Serializable {
     }
 
     /**
-     * @param inputUrl: input
-     * @param outputFile: outputfile
-     * @param network: network
-     * @param sinkKillClassName: name of the sink-sensor class
-     * @param sensorClassName: name of the sensor class
-     * @param trafficLightName: name of the trafficLight class
+     * @param inputUrl URL; input
+     * @param outputFile File; output file
+     * @param network OTSNetwork; network
+     * @param sinkKillClassName String; name of the sink-sensor class
+     * @param sensorClassName String; name of the sensor class
+     * @param trafficLightName String; name of the trafficLight class
      * @return the network with Nodes, Links, and Lanes.
      * @throws NetworkException in case of parsing problems.
      * @throws SAXException in case of parsing problems.
@@ -138,9 +138,10 @@ public class VissimNetworkLaneParser implements Serializable {
      * @throws SimRuntimeException when simulator cannot be used to schedule GTU generation
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public OTSNetwork build(final URL inputUrl, File outputFile, final OTSNetwork network, String sinkKillClassName,
-        String sensorClassName, String trafficLightName) throws NetworkException, ParserConfigurationException, SAXException,
-            IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException {
+    public OTSNetwork build(final URL inputUrl, final File outputFile, final OTSNetwork network, final String sinkKillClassName,
+        final String sensorClassName, final String trafficLightName) throws NetworkException, ParserConfigurationException, 
+                SAXException, IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException 
+    {
         if (inputUrl.getFile().length() > 0 && !(new File(inputUrl.getFile()).exists())) {
             throw new SAXException("XmlNetworkLaneParser.build: File url.getFile() does not exist");
         }
@@ -275,10 +276,11 @@ public class VissimNetworkLaneParser implements Serializable {
     }
 
     /**
-     * @param vissimNetworkLaneParser
+     * @param parser VissimNetworkLaneParser;
      * @throws OTSGeometryException
      */
-    private void createLinkBetweenConnectorAndLink(VissimNetworkLaneParser parser) throws OTSGeometryException {
+    private void createLinkBetweenConnectorAndLink(final VissimNetworkLaneParser parser) throws OTSGeometryException 
+    {
         // loop through all connector links
         for (LinkTag connectorLinkTag : this.connectorTags.values()) {
 
