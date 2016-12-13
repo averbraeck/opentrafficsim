@@ -93,6 +93,9 @@ public class TrafCODDemo extends AbstractWrappableAnimation
 
     /** TrafCOD controller display. */
     private JPanel controllerDisplayPanel = new JPanel(new BorderLayout());
+    
+    /** The TrafCOD controller. */
+    private TrafCOD trafCOD;
 
     /** {@inheritDoc} */
     @Override
@@ -115,7 +118,7 @@ public class TrafCODDemo extends AbstractWrappableAnimation
         JScrollPane scrollPane = new JScrollPane(TrafCODDemo.this.controllerDisplayPanel);
         JPanel wrapper = new JPanel(new BorderLayout());
         wrapper.add(scrollPane);
-        addTab(getTabCount() - 1, "TrafCOD display", wrapper);
+        addTab(getTabCount() - 1, this.trafCOD.getId(), wrapper);
     }
 
     /** {@inheritDoc} */
@@ -140,9 +143,6 @@ public class TrafCODDemo extends AbstractWrappableAnimation
         /** */
         private static final long serialVersionUID = 20161020L;
 
-        /** The TrafCOD evaluator. */
-        private TrafCOD trafCOD;
-        
         /** the model. */
         private OTSNetwork network;
 
@@ -210,19 +210,19 @@ public class TrafCODDemo extends AbstractWrappableAnimation
                 // new TrafCOD(controllerName, "file:///d:/cppb/trafcod/otsim/simpleTest.tfc", trafficLights, sensors,
                 // (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator,
                 // TrafCODDemo.this.controllerDisplayPanel);
-                this.trafCOD =
+                TrafCODDemo.this.trafCOD =
                         new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo1/simpleTest.tfc"),
                                 trafficLights, sensors,
                                 (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator,
                                 TrafCODDemo.this.controllerDisplayPanel);
-                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
-                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
-                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);
-                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_STATE_CHANGED);
-                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_VARIABLE_CREATED);
-                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED);
+                TrafCODDemo.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
+                TrafCODDemo.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
+                TrafCODDemo.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);
+                TrafCODDemo.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_STATE_CHANGED);
+                TrafCODDemo.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_VARIABLE_CREATED);
+                TrafCODDemo.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED);
                 // Subscribe the TrafCOD machine to trace command events that we emit
-                addListener(this.trafCOD, TrafficController.TRAFFICCONTROL_SET_TRACING);
+                addListener(TrafCODDemo.this.trafCOD, TrafficController.TRAFFICCONTROL_SET_TRACING);
                 // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] {controllerName, "TGX", 8, true});
                 // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] {controllerName, "XR1", 11, true});
                 // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] {controllerName, "TD1", 11, true});
@@ -231,9 +231,9 @@ public class TrafCODDemo extends AbstractWrappableAnimation
                 // System.out.println("demo: emitting a SET TRACING event for all variables related to stream 11");
                 // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] { controllerName, "", 11, true });
 
-                // this.trafCOD.traceVariablesOfStream(TrafficController.NO_STREAM, true);
-                // this.trafCOD.traceVariablesOfStream(11, true);
-                // this.trafCOD.traceVariable("MRV", 11, true);
+                // TrafCODDemo.this.trafCOD.traceVariablesOfStream(TrafficController.NO_STREAM, true);
+                // TrafCODDemo.this.trafCOD.traceVariablesOfStream(11, true);
+                // TrafCODDemo.this.trafCOD.traceVariable("MRV", 11, true);
             }
             catch (Exception exception)
             {
@@ -241,10 +241,11 @@ public class TrafCODDemo extends AbstractWrappableAnimation
             }
         }
 
+        @SuppressWarnings("synthetic-access")
         @Override
         public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
         {
-            return this.trafCOD.getSimulator();
+            return TrafCODDemo.this.trafCOD.getSimulator();
         }
 
         /** {@inheritDoc} */
