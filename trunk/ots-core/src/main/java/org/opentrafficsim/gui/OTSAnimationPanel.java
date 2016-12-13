@@ -3,6 +3,7 @@ package org.opentrafficsim.gui;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -189,7 +190,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         if (iconPath != null)
         {
             button = new JCheckBox(new ImageIcon(URLResource.getResource(iconPath)));
-            button.setPreferredSize(new Dimension(34, 32));
+            button.setPreferredSize(new Dimension(32, 28));
         }
         else
         {
@@ -201,7 +202,29 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         button.setActionCommand(name);
         button.setToolTipText(toolTipText);
         button.addActionListener(this);
-        this.togglePanel.add(button);
+        if (iconPath == null)
+        {
+            JPanel toggleBox = new JPanel();
+            toggleBox.setLayout(new BoxLayout(toggleBox, BoxLayout.X_AXIS));
+            toggleBox.add(button);
+            this.togglePanel.add(toggleBox);
+        }
+        else
+        {
+            // place an Id button to the right of the corresponding content button
+            if (iconPath.toLowerCase().endsWith("id24.png") && this.togglePanel.getComponentCount() > 0)
+            {
+                JPanel lastToggleBox = (JPanel) this.togglePanel.getComponent(this.togglePanel.getComponentCount() - 1);
+                lastToggleBox.add(button);
+            }
+            else
+            {
+                JPanel toggleBox = new JPanel();
+                toggleBox.setLayout(new BoxLayout(toggleBox, BoxLayout.X_AXIS));
+                toggleBox.add(button);
+                this.togglePanel.add(toggleBox);
+            }
+        }
 
         if (initiallyVisible)
         {

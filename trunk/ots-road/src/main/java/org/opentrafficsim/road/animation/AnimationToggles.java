@@ -64,7 +64,7 @@ public final class AnimationToggles
         aws.addToggleAnimationButton("Conflict", Conflict.class, "Show/hide conflicts", true);
         // aws.addToggleAnimationButton("Generator", LaneBasedGTUGenerator.class, "Show/hide generators", true);
     }
-    
+
     /**
      * Set the most common animation on, and create the toggles on the left hand side.
      * @param aws the WrappableAnimation.
@@ -93,6 +93,58 @@ public final class AnimationToggles
      * Set all animation on, and create the toggles on the left hand side.
      * @param aws the WrappableAnimation.
      */
+    public static void setIconAnimationTogglesFull(final AbstractWrappableAnimation aws)
+    {
+        aws.addToggleAnimationButton("Node", OTSNode.class, "/icons/Node24.png", "Show/hide nodes", true);
+        aws.addToggleAnimationButton("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node Ids", false);
+        aws.addToggleAnimationButton("Link", OTSLink.class, "/icons/Link24.png", "Show/hide links", true);
+        aws.addToggleAnimationButton("LinkId", LinkAnimation.Text.class, "/icons/Id24.png", "Show/hide link Ids", false);
+        aws.addToggleAnimationButton("Lane", Lane.class, "/icons/Lane24.png", "Show/hide lanes", true);
+        aws.addToggleAnimationButton("LaneId", LaneAnimation.Text.class, "/icons/Id24.png", "Show/hide lane Ids", false);
+        aws.addToggleAnimationButton("Stripe", Stripe.class, "/icons/Stripe24.png", "Show/hide stripes", true);
+        aws.addToggleAnimationButton("Shoulder", Shoulder.class, "Show/hide shoulders", true);
+        aws.addToggleAnimationButton("GTU", GTU.class, "Show/hide GTUs", true);
+        aws.addToggleAnimationButton("GTUId", DefaultCarAnimation.Text.class, "/icons/Id24.png", "Show/hide GTU Ids", false);
+        aws.addToggleAnimationButton("Sensor", Sensor.class, "/icons/Sensor24.png", "Show/hide sensors", true);
+        aws.addToggleAnimationButton("SensorId", SensorAnimation.Text.class, "/icons/Id24.png", "Show/hide sensors Ids", false);
+        aws.addToggleAnimationButton("Light", TrafficLight.class, "/icons/TrafficLight24.png", "Show/hide traffic lights",
+                true);
+        aws.addToggleAnimationButton("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png", "Show/hide sensors Ids",
+                false);
+        aws.addToggleAnimationButton("Conflict", Conflict.class, "Show/hide conflicts", true);
+        // aws.addToggleAnimationButton("Generator", LaneBasedGTUGenerator.class, "Show/hide generators", true);
+    }
+
+    /**
+     * Set the most common animation on, and create the toggles on the left hand side.
+     * @param aws the WrappableAnimation.
+     */
+    public static void setIconAnimationTogglesStandard(final AbstractWrappableAnimation aws)
+    {
+        aws.addToggleAnimationButton("Node", OTSNode.class, "/icons/Node24.png", "Show/hide nodes", false);
+        aws.addToggleAnimationButton("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node Ids", false);
+        aws.addToggleAnimationButton("Link", OTSLink.class, "/icons/Link24.png", "Show/hide links", false);
+        aws.addToggleAnimationButton("LinkId", LinkAnimation.Text.class, "/icons/Id24.png", "Show/hide link Ids", false);
+        aws.addToggleAnimationButton("Lane", Lane.class, "/icons/Lane24.png", "Show/hide lanes", true);
+        aws.addToggleAnimationButton("LaneId", LaneAnimation.Text.class, "/icons/Id24.png", "Show/hide lane Ids", false);
+        aws.addToggleAnimationButton("Stripe", Stripe.class, "/icons/Stripe24.png", "Show/hide stripes", true);
+        aws.addToggleAnimationButton("Shoulder", Shoulder.class, "/icons/Shoulder24.png", "Show/hide shoulders", true);
+        aws.addToggleAnimationButton("GTU", GTU.class, "Show/hide GTUs", true);
+        aws.addToggleAnimationButton("GTUId", DefaultCarAnimation.Text.class, "/icons/Id24.png", "Show/hide GTU Ids", false);
+        aws.addToggleAnimationButton("Sensor", Sensor.class, "/icons/Sensor24.png", "Show/hide sensors", false);
+        aws.addToggleAnimationButton("SensorId", SensorAnimation.Text.class, "/icons/Id24.png", "Show/hide sensors Ids", false);
+        aws.addToggleAnimationButton("Light", TrafficLight.class, "/icons/TrafficLight24.png", "Show/hide traffic lights",
+                true);
+        aws.addToggleAnimationButton("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png", "Show/hide sensors Ids",
+                false);
+        aws.addToggleAnimationButton("Conflict", Conflict.class, "Show/hide conflicts", false);
+        // aws.addToggleAnimationButton("Generator", LaneBasedGTUGenerator.class, "Show/hide generators", false);
+    }
+
+    /**
+     * Set all animation on, and create the toggles on the left hand side.
+     * @param aws the WrappableAnimation.
+     */
     public static void showAnimationFull(final AbstractWrappableAnimation aws)
     {
         aws.showAnimationClass(OTSNode.class);
@@ -112,7 +164,7 @@ public final class AnimationToggles
         aws.showAnimationClass(Conflict.class);
         // aws.showAnimationClass(LaneBasedGTUGenerator.class);
     }
-    
+
     /**
      * Set the most common animation on, and create the toggles on the left hand side.
      * @param aws the WrappableAnimation.
@@ -138,4 +190,3 @@ public final class AnimationToggles
     }
 
 }
-
