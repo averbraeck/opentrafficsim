@@ -89,7 +89,7 @@ public class SuperDemo implements UNITS
     protected List<Property<?>> activeProperties = null;
 
     /** Panel with the description of the currently selected demonstration. */
-    LabeledPanel descriptionPanel;
+    private LabeledPanel descriptionPanel;
 
     /**
      * Start the application.
@@ -227,7 +227,8 @@ public class SuperDemo implements UNITS
                     simulation.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND),
                             SuperDemo.this.activeProperties, null, false);
                 }
-                catch (SimRuntimeException | NetworkException | NamingException | OTSSimulationException | PropertyException exception)
+                catch (SimRuntimeException | NetworkException | NamingException | OTSSimulationException 
+                        | PropertyException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -342,6 +343,7 @@ public class SuperDemo implements UNITS
      * @param ap AbstractProperty; the abstract property for which an editor must be created
      * @return JPanel
      */
+    @SuppressWarnings("checkstyle:methodlength")
     final JPanel makePropertyEditor(final Property<?> ap)
     {
         JPanel result;
