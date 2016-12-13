@@ -142,8 +142,8 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
                 // Register the GTUs currently (i.e. already) on the lane (if any) for statistics sampling.
                 for (LaneBasedGTU gtu : lane.getGtuList())
                 {
-                    notify(new TimedEvent<OTSSimTimeDouble>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), gtu },
-                            gtu.getSimulator().getSimulatorTime()));
+                    notify(new TimedEvent<OTSSimTimeDouble>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), gtu }, gtu
+                            .getSimulator().getSimulatorTime()));
                 }
             }
             catch (RemoteException exception)
@@ -179,7 +179,7 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
     /**
      * Sample all the GTUs on the observed lanes.
      */
-    public void sample()
+    public final void sample()
     {
         Time now = this.simulator.getSimulatorTime().getTime();
         for (LaneBasedGTU gtu : this.gtusOfInterest)
@@ -289,7 +289,7 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
 
     /** {@inheritDoc} */
     @Override
-    protected JFreeChart createChart(final JFrame container)
+    protected final JFreeChart createChart(final JFrame container)
     {
         final JLabel statusLabel = new JLabel(" ", SwingConstants.CENTER);
         container.add(statusLabel, BorderLayout.SOUTH);
@@ -564,7 +564,7 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
          * Construct a new VariableSamplerateTrajectory.
          * @param id String; id of the new Trajectory (id of the GTU)
          */
-        public VariableSampleRateTrajectory(final String id)
+        VariableSampleRateTrajectory(final String id)
         {
             this.id = id;
         }
@@ -592,7 +592,8 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
 
         /** {@inheritDoc} */
         @Override
-        public void addSample(LaneBasedGTU gtu, Lane lane, double position) throws NetworkException, GTUException
+        public void addSample(final LaneBasedGTU gtu, final Lane lane, final double position) throws NetworkException,
+                GTUException
         {
             if (this.samples.size() > 0)
             {
@@ -609,6 +610,10 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
             }
             this.currentEndTime = gtu.getSimulator().getSimulatorTime().getTime();
             this.samples.add(new DistanceAndTime(position, this.currentEndTime.si));
+            if (gtu.getSimulator().getSimulatorTime().getTime().gt(getMaximumTime()))
+            {
+                setMaximumTime(gtu.getSimulator().getSimulatorTime().getTime());
+            }
         }
 
         /**
@@ -631,14 +636,14 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
          * @param item int; the number of the sample
          * @return DistanceAndTime; the Nth sample (samples can be null to indicate that GTU went off the trajectory).
          */
-        private DistanceAndTime getSample(int item)
+        private DistanceAndTime getSample(final int item)
         {
             return this.samples.get(item);
         }
 
         /** {@inheritDoc} */
         @Override
-        public double getTime(int item)
+        public double getTime(final int item)
         {
             DistanceAndTime sample = getSample(item);
             if (null == sample)
@@ -650,7 +655,7 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
 
         /** {@inheritDoc} */
         @Override
-        public double getDistance(int item)
+        public double getDistance(final int item)
         {
             DistanceAndTime sample = getSample(item);
             if (null == sample)
@@ -659,7 +664,7 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
             }
             return sample.getDistance();
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public String toString()
@@ -673,17 +678,17 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
         class DistanceAndTime
         {
             /** The position [m]. */
-            final double distance;
+            private final double distance;
 
             /** The time [s]. */
-            final double time;
+            private final double time;
 
             /**
              * Construct a new DistanceAndTime object.
              * @param distance double; the position
              * @param time double; the time
              */
-            public DistanceAndTime(final double distance, final double time)
+            DistanceAndTime(final double distance, final double time)
             {
                 this.distance = distance;
                 this.time = time;
@@ -775,8 +780,8 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
         }
 
         /** {@inheritDoc} */
-        public final void addSample(final LaneBasedGTU gtu, final Lane lane, final double position)
-                throws NetworkException, GTUException
+        public final void addSample(final LaneBasedGTU gtu, final Lane lane, final double position) throws NetworkException,
+                GTUException
         {
             final int sample = (int) Math.ceil(gtu.getOperationalPlan().getStartTime().si / getSampleInterval().si);
             if (0 == this.positions.size())
@@ -796,8 +801,6 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
                 adjustedPosition = null;
             }
             this.positions.add(adjustedPosition);
-
-            this.currentEndTime = gtu.getSimulator().getSimulatorTime().getTime();
 
             /*-
             try
