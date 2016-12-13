@@ -165,15 +165,7 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
                 URL url = URLResource.getResource("/TrafCODDemo2/Network.xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
                 this.network = nlp.build(url);
-                Length sinkSpacing = new Length(10, LengthUnit.METER);
                 String[] directions = { "E", "S", "W", "N" };
-                for (String direction : directions)
-                {
-                    Lane l =
-                            (Lane) ((CrossSectionLink) this.network.getLink(direction + "CO", direction))
-                                    .getCrossSectionElement("FORWARD");
-                    new SinkSensor(l, l.getLength().minus(sinkSpacing), (OTSDEVSSimulatorInterface) theSimulator);
-                }
                 // Add the traffic lights and the detectors
                 Set<TrafficLight> trafficLights = new HashSet<>();
                 Set<TrafficLightSensor> sensors = new HashSet<>();
