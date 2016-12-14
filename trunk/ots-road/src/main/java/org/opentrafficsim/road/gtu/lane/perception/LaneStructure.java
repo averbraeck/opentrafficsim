@@ -14,7 +14,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.road.network.lane.conflict.Conflict;
+import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 import nl.tudelft.simulation.language.Throw;
@@ -213,13 +214,45 @@ public class LaneStructure implements Serializable
         for (LaneBasedObject object : record.getLane().getLaneBasedObjects(minimumPosition, maximumPosition))
         {
             distance = record.getDistanceToPosition(object.getLongitudinalPosition()).minus(ds);
-            if (clazz.isAssignableFrom(object.getClass()) && distance.le(this.lookAhead))
+            if (clazz.isAssignableFrom(object.getClass()) && distance.le(this.lookAhead)
+                    && ((record.getDirection().isPlus() && object.getDirection().isForwardOrBoth())
+                            || (record.getDirection().isMinus() && object.getDirection().isBackwardOrBoth())))
             {
                 // unchecked, but the above isAssignableFrom assures correctness
                 set.add(new Entry<>(distance, (T) object));
             }
         }
         getDownstreamObjectsRecursive(set, record, clazz, ds);
+        return set;
+    }
+
+    /**
+     * Retrieve objects on a lane of a specific type. Returns objects over a maximum length of the look ahead distance
+     * downstream from the relative position, or as far as the lane map goes. Objects on links not on the route are ignored.
+     * @param lane lane
+     * @param clazz class of objects to find
+     * @param gtu gtu
+     * @param pos relative position to start search from
+     * @param <T> type of objects to find
+     * @param route the route
+     * @return Sorted set of objects of requested type
+     * @throws GTUException if lane is not in current set
+     */
+    public final <T extends LaneBasedObject> SortedSet<Entry<T>> getDownstreamObjectsOnRoute(final RelativeLane lane,
+            final Class<T> clazz, final GTU gtu, final RelativePosition.TYPE pos, final Route route) throws GTUException
+    {
+        SortedSet<Entry<T>> set = getDownstreamObjects(lane, clazz, gtu, pos);
+        Iterator<Entry<T>> iterator = set.iterator();
+        while (iterator.hasNext())
+        {
+            Entry<T> entry = iterator.next();
+            CrossSectionLink link = entry.getLaneBasedObject().getLane().getParentLink();
+            if (!route.contains(link.getStartNode()) || !route.contains(link.getEndNode())
+                    || Math.abs(route.indexOf(link.getStartNode()) - route.indexOf(link.getEndNode())) != 1)
+            {
+                iterator.remove();
+            }
+        }
         return set;
     }
 
@@ -245,7 +278,9 @@ public class LaneStructure implements Serializable
             for (LaneBasedObject object : next.getLane().getLaneBasedObjects())
             {
                 distance = next.getDistanceToPosition(object.getLongitudinalPosition()).minus(ds);
-                if (clazz.isAssignableFrom(object.getClass()) && distance.le(this.lookAhead))
+                if (clazz.isAssignableFrom(object.getClass()) && distance.le(this.lookAhead)
+                        && ((record.getDirection().isPlus() && object.getDirection().isForwardOrBoth())
+                                || (record.getDirection().isMinus() && object.getDirection().isBackwardOrBoth())))
                 {
                     // unchecked, but the above isAssignableFrom assures correctness
                     set.add(new Entry<>(distance, (T) object));
@@ -289,7 +324,9 @@ public class LaneStructure implements Serializable
         Length distance;
         for (LaneBasedObject object : record.getLane().getLaneBasedObjects(minimumPosition, maximumPosition))
         {
-            if (clazz.isAssignableFrom(object.getClass()))
+            if (clazz.isAssignableFrom(object.getClass())
+                    && ((record.getDirection().isPlus() && object.getDirection().isForwardOrBoth())
+                            || (record.getDirection().isMinus() && object.getDirection().isBackwardOrBoth())))
             {
                 distance = record.getDistanceToPosition(object.getLongitudinalPosition()).neg().minus(ds);
                 // unchecked, but the above isAssignableFrom assures correctness
@@ -317,7 +354,9 @@ public class LaneStructure implements Serializable
             Length distance;
             for (LaneBasedObject object : prev.getLane().getLaneBasedObjects())
             {
-                if (clazz.isAssignableFrom(object.getClass()))
+                if (clazz.isAssignableFrom(object.getClass())
+                        && ((record.getDirection().isPlus() && object.getDirection().isForwardOrBoth())
+                                || (record.getDirection().isMinus() && object.getDirection().isBackwardOrBoth())))
                 {
                     distance = prev.getDistanceToPosition(object.getLongitudinalPosition()).neg().minus(ds);
                     // unchecked, but the above isAssignableFrom assures correctness
@@ -347,7 +386,7 @@ public class LaneStructure implements Serializable
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      * @param <T> class of lane based object contained
      */
-    public class Entry<T extends LaneBasedObject> implements Comparable<Entry<T>>
+    public static class Entry<T extends LaneBasedObject> implements Comparable<Entry<T>>
     {
 
         /** Distance to lane based object. */

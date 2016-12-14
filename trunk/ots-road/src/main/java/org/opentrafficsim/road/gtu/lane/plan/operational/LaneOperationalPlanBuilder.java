@@ -289,7 +289,7 @@ public final class LaneOperationalPlanBuilder
             final Duration timeStep) throws OperationalPlanException, OTSGeometryException
     {
 
-        if (startSpeed.eq(Speed.ZERO) && acceleration.le(Acceleration.ZERO))
+        if (startSpeed.si <= OperationalPlan.DRIFTING_SPEED_SI && acceleration.le(Acceleration.ZERO))
         {
             // stand-still
             return new LaneBasedOperationalPlan(gtu, gtu.getLocation(), startTime, timeStep, lanes.get(0));

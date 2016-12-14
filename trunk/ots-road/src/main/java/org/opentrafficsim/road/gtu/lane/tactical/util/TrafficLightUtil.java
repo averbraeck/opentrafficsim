@@ -16,7 +16,6 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeAccele
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 import nl.tudelft.simulation.language.Throw;
@@ -33,8 +32,9 @@ import nl.tudelft.simulation.language.Throw;
 public final class TrafficLightUtil
 {
     /** Maximum deceleration for stopping for yellow traffic light. */
-    public static final ParameterTypeAcceleration B_YELLOW = new ParameterTypeAcceleration("bYellow",
-        "Maximum deceleration for stopping for yellow traffic light.", new Acceleration(3.5, AccelerationUnit.SI), POSITIVE);
+    public static final ParameterTypeAcceleration B_YELLOW =
+            new ParameterTypeAcceleration("bYellow", "Maximum deceleration for stopping for yellow traffic light.",
+                    new Acceleration(3.5, AccelerationUnit.SI), POSITIVE);
 
     /**
      * Do not instantiate.
@@ -63,21 +63,20 @@ public final class TrafficLightUtil
      * @throws IllegalArgumentException if the traffic light is not downstream
      */
     public static Acceleration respondToTrafficLights(final BehavioralCharacteristics behavioralCharacteristics,
-        final Set<HeadwayTrafficLight> headwayTrafficLights, final CarFollowingModel carFollowingModel, final Speed speed,
-        final SpeedLimitInfo speedLimitInfo) throws ParameterException
+            final Set<HeadwayTrafficLight> headwayTrafficLights, final CarFollowingModel carFollowingModel, final Speed speed,
+            final SpeedLimitInfo speedLimitInfo) throws ParameterException
     {
         Throw.whenNull(headwayTrafficLights, "Traffic light set may not be null.");
         Acceleration a = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
         for (HeadwayTrafficLight headwayTrafficLight : headwayTrafficLights)
         {
-            Acceleration aLight =
-                respondToTrafficLight(behavioralCharacteristics, headwayTrafficLight, carFollowingModel, speed,
-                    speedLimitInfo);
+            Acceleration aLight = respondToTrafficLight(behavioralCharacteristics, headwayTrafficLight, carFollowingModel,
+                    speed, speedLimitInfo);
             a = Acceleration.min(a, aLight);
         }
         return a;
-    }  
-    
+    }
+
     /**
      * Returns an acceleration as response to a traffic light, being positive infinity if ignored. The response is governed by
      * the car-following model in case the traffic light is yellow or red. A constant deceleration to stop is also calculated,
@@ -96,8 +95,8 @@ public final class TrafficLightUtil
      * @throws IllegalArgumentException if the traffic light is not downstream
      */
     public static Acceleration respondToTrafficLight(final BehavioralCharacteristics behavioralCharacteristics,
-        final HeadwayTrafficLight headwayTrafficLight, final CarFollowingModel carFollowingModel, final Speed speed,
-        final SpeedLimitInfo speedLimitInfo) throws ParameterException
+            final HeadwayTrafficLight headwayTrafficLight, final CarFollowingModel carFollowingModel, final Speed speed,
+            final SpeedLimitInfo speedLimitInfo) throws ParameterException
     {
         Throw.whenNull(behavioralCharacteristics, "Behavioral characteristics may not be null.");
         Throw.whenNull(headwayTrafficLight, "Traffic light may not be null.");
@@ -105,22 +104,19 @@ public final class TrafficLightUtil
         Throw.whenNull(speed, "Speed may not be null.");
         Throw.whenNull(speedLimitInfo, "Speed limit info may not be null.");
         Throw.when(!headwayTrafficLight.isAhead(), IllegalArgumentException.class, "Traffic light must be downstream.");
-        if (headwayTrafficLight.getTrafficLightColor().isRed()
-            || headwayTrafficLight.getTrafficLightColor().isYellow())
+        if (headwayTrafficLight.getTrafficLightColor().isRed() || headwayTrafficLight.getTrafficLightColor().isYellow())
         {
             // deceleration from car-following model
             SortedMap<Length, Speed> leaders = new TreeMap<>();
             leaders.put(headwayTrafficLight.getDistance(), Speed.ZERO);
-            Acceleration a =
-                carFollowingModel.followingAcceleration(behavioralCharacteristics, speed, speedLimitInfo, leaders);
+            Acceleration a = carFollowingModel.followingAcceleration(behavioralCharacteristics, speed, speedLimitInfo, leaders);
             // compare to constant deceleration
             Length s0 = behavioralCharacteristics.getParameter(ParameterTypes.S0);
             if (headwayTrafficLight.getDistance().gt(s0)) // constant acceleration not applicable if within s0
             {
                 // constant acceleration is -.5*v^2/s, where s = distance-s0 > 0
-                Acceleration aConstant =
-                    new Acceleration(-0.5 * speed.si * speed.si / (headwayTrafficLight.getDistance().si - s0.si),
-                        AccelerationUnit.SI);
+                Acceleration aConstant = CarFollowingUtil.constantAccelerationStop(carFollowingModel, behavioralCharacteristics,
+                        speed, headwayTrafficLight.getDistance());
                 a = Acceleration.max(a, aConstant);
             }
             // return a if a > -b

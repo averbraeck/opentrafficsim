@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import java.util.LinkedHashSet;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -60,7 +61,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
 
     /** Lane change status. */
     private final LaneChange laneChange = new LaneChange();
-    
+
     /** LMRS data. */
     private final LmrsData lmrsData = new LmrsData();
 
@@ -137,9 +138,9 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
         // LMRS
         SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(getGtu(), startTime, getCarFollowingModel(), this.laneChange,
                 this.lmrsData, getPerception(), this.mandatoryIncentives, this.voluntaryIncentives);
-        
+
         // speed limits
-        Speed speed = getGtu().getSpeed();
+        Speed speed = getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
         simplePlan.minimumAcceleration(SpeedLimitUtil.considerSpeedLimitTransitions(bc, speed, slp, getCarFollowingModel()));
 
         // traffic lights
@@ -149,10 +150,11 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
                 getCarFollowingModel(), speed, sli));
 
         // conflicts
+        Acceleration acceleration = getPerception().getPerceptionCategory(EgoPerception.class).getAcceleration();
         simplePlan.minimumAcceleration(ConflictUtil.approachConflicts(bc,
                 getPerception().getPerceptionCategory(IntersectionPerception.class).getConflicts(RelativeLane.CURRENT),
                 getPerception().getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT),
-                getCarFollowingModel(), getGtu().getLength(), speed, sli, this.yieldPlans));
+                getCarFollowingModel(), getGtu().getLength(), speed, acceleration, sli, this.yieldPlans));
 
         // create plan
         return buildPlanFromSimplePlan(getGtu(), startTime, bc, simplePlan, this.laneChange);

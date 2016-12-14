@@ -17,17 +17,18 @@ import javax.media.j3d.Bounds;
 import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
 
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.NonDirectionalOccupancySensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
+
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Display the current state of a TrafCOD machine.
@@ -318,6 +319,13 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
     public Lane getLane()
     {
         return null;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public LongitudinalDirectionality getDirection()
+    {
+        return LongitudinalDirectionality.DIR_NONE;
     }
 
     /** {@inheritDoc} */

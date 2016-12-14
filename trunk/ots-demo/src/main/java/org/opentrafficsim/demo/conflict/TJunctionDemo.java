@@ -1,6 +1,6 @@
 package org.opentrafficsim.demo.conflict;
 
-import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -19,6 +19,9 @@ import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.animation.AnimationToggles;
@@ -26,7 +29,10 @@ import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.lane.conflict.Conflict;
+import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
+import org.opentrafficsim.road.network.lane.conflict.ConflictRule;
+import org.opentrafficsim.road.network.lane.conflict.ConflictType;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 
@@ -112,19 +118,7 @@ public class TJunctionDemo extends AbstractWrappableAnimation
                 ((CrossSectionLink) this.network.getLink("WCEC")).setPriority(Priority.PRIORITY);
                 // ((CrossSectionLink) this.network.getLink("SCEC")).setPriority(Priority.STOP);
                 // ((CrossSectionLink) this.network.getLink("SCWC")).setPriority(Priority.STOP);
-                ConflictBuilder.buildConflicts(this.network, CAR, (OTSDEVSSimulatorInterface) this.simulator);
-
-                // add sinks
-                Length sinkSpacing = new Length(30.0, LengthUnit.SI);
-                for (String linkId : this.network.getLinkMap().keySet())
-                {
-                    // all links toward "?C" are connectors or origin lanes
-                    if (!linkId.endsWith("C"))
-                    {
-                        Lane l = ((CrossSectionLink) this.network.getLink(linkId)).getLanes().get(0);
-                        new SinkSensor(l, l.getLength().minus(sinkSpacing), (OTSDEVSSimulatorInterface) this.simulator);
-                    }
-                }
+                ConflictBuilder.buildConflicts(this.network, VEHICLE, (OTSDEVSSimulatorInterface) this.simulator);
 
             }
             catch (Exception exception)

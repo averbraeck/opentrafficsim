@@ -4,6 +4,7 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 
+import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -45,8 +46,8 @@ public final class CarFollowingUtil
      * @throws ParameterException if a parameter is not given or out of bounds
      */
     public static Acceleration followLeaders(final CarFollowingModel carFollowingModel,
-        final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final SpeedLimitInfo speedLimitInfo,
-        final SortedSet<AbstractHeadwayGTU> leaders) throws ParameterException
+            final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final SpeedLimitInfo speedLimitInfo,
+            final SortedSet<AbstractHeadwayGTU> leaders) throws ParameterException
     {
         SortedMap<Length, Speed> leaderMap = new TreeMap<>();
         for (AbstractHeadwayGTU headwayGTU : leaders)
@@ -67,12 +68,30 @@ public final class CarFollowingUtil
      * @throws ParameterException if a parameter is not given or out of bounds
      */
     public static Acceleration stop(final CarFollowingModel carFollowingModel,
-        final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final SpeedLimitInfo speedLimitInfo,
-        final Length distance) throws ParameterException
+            final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final SpeedLimitInfo speedLimitInfo,
+            final Length distance) throws ParameterException
     {
         SortedMap<Length, Speed> leaderMap = new TreeMap<>();
         leaderMap.put(distance, Speed.ZERO);
         return carFollowingModel.followingAcceleration(behavioralCharacteristics, speed, speedLimitInfo, leaderMap);
+    }
+
+    /**
+     * Return constant acceleration in order to stop in specified distance. The car-following model is used to determine the
+     * stopping distance (i.e. distance remaining at stand still, e.g. 1-3m).
+     * @param carFollowingModel car-following model
+     * @param behavioralCharacteristics behavioral characteristics
+     * @param speed current speed
+     * @param distance distance to stop over
+     * @return constant acceleration in order to stop in specified distance
+     * @throws ParameterException on missing parameter
+     */
+    public static Acceleration constantAccelerationStop(final CarFollowingModel carFollowingModel,
+            final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final Length distance)
+            throws ParameterException
+    {
+        Length s0 = carFollowingModel.desiredHeadway(behavioralCharacteristics, Speed.ZERO);
+        return new Acceleration(-0.5 * speed.si * speed.si / (distance.si - s0.si), AccelerationUnit.SI);
     }
 
     /**
@@ -85,8 +104,8 @@ public final class CarFollowingUtil
      * @throws ParameterException if a parameter is not given or out of bounds
      */
     public static Acceleration freeAcceleration(final CarFollowingModel carFollowingModel,
-        final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final SpeedLimitInfo speedLimitInfo)
-        throws ParameterException
+            final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final SpeedLimitInfo speedLimitInfo)
+            throws ParameterException
     {
         SortedMap<Length, Speed> leaderMap = new TreeMap<>();
         return carFollowingModel.followingAcceleration(behavioralCharacteristics, speed, speedLimitInfo, leaderMap);
