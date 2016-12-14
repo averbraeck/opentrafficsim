@@ -1,4 +1,4 @@
-package org.opentrafficsim.demo.conflict;
+package org.opentrafficsim.road.network.lane.conflict;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +19,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.conflict.Conflict;
-import org.opentrafficsim.road.network.lane.conflict.ConflictRule;
-import org.opentrafficsim.road.network.lane.conflict.ConflictType;
 
 import nl.tudelft.simulation.immutablecollections.ImmutableMap;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -54,8 +51,8 @@ public final class ConflictBuilder
      * @param simulator simulator
      * @throws OTSGeometryException in case of geometry exception
      */
-    static void buildConflicts(final OTSNetwork network, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator)
-            throws OTSGeometryException
+    public static void buildConflicts(final OTSNetwork network, final GTUType gtuType,
+            final OTSDEVSSimulatorInterface simulator) throws OTSGeometryException
     {
         // create list of lanes
         ImmutableMap<String, Link> links = network.getLinkMap();
@@ -84,7 +81,7 @@ public final class ConflictBuilder
      * @param simulator simulator
      * @throws OTSGeometryException in case of geometry exception
      */
-    static void buildConflicts(final List<Lane> lanes, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator)
+    public static void buildConflicts(final List<Lane> lanes, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator)
             throws OTSGeometryException
     {
         // loop Lane / GTUDirectionality combinations
@@ -285,8 +282,9 @@ public final class ConflictBuilder
         // make conflict
         try
         {
-            Conflict.generateConflictPair(conflictType, lane1, longitudinalPosition1, length1, geometry1, conflictRules[0],
-                    gtuType, lane2, longitudinalPosition2, length2, geometry2, conflictRules[1], gtuType, simulator);
+            Conflict.generateConflictPair(conflictType, lane1, longitudinalPosition1, length1, dir1, geometry1,
+                    conflictRules[0], gtuType, lane2, longitudinalPosition2, length2, dir2, geometry2, conflictRules[1],
+                    gtuType, simulator);
         }
         catch (NetworkException exception)
         {

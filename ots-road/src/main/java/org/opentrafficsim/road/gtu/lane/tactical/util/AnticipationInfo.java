@@ -135,6 +135,10 @@ public final class AnticipationInfo implements Serializable
         final SpeedLimitInfo speedLimitInfo, final Duration timeStep) throws ParameterException
     {
         Duration out = Duration.ZERO;
+        if (distance.lt(Length.ZERO))
+        {
+            return new AnticipationInfo(out, initialSpeed);
+        }
         Length xCumul = Length.ZERO;
         Speed speed = initialSpeed;
         while (xCumul.lt(distance))

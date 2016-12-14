@@ -47,6 +47,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
     private final LaneKeepingPolicy laneKeepingPolicy;
     
     /** Priority. */
+    // TODO per GTUDirectionality / LongitudinalDirectionality?
     private Priority priority = Priority.NONE;
 
     /**

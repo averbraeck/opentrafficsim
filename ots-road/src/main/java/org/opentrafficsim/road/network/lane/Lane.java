@@ -47,6 +47,7 @@ import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * The Lane is the CrossSectionElement of a CrossSectionLink on which GTUs can drive. The Lane stores several important
@@ -610,7 +611,8 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param gtuType the GTU type to provide the sensors for
      * @return List&lt;Sensor&gt;; list of the sensor in the specified range. This is a defensive copy.
      */
-    public final List<SingleSensor> getSensors(final Length minimumPosition, final Length maximumPosition, final GTUType gtuType)
+    public final List<SingleSensor> getSensors(final Length minimumPosition, final Length maximumPosition,
+            final GTUType gtuType)
     {
         List<SingleSensor> sensorList = new ArrayList<>(1);
         for (List<SingleSensor> sl : this.sensors.values())
@@ -1362,6 +1364,22 @@ public class Lane extends CrossSectionElement implements Serializable
             return this.speedLimitMap.get(GTUType.ALL);
         }
         throw new NetworkException("No speed limit set for GTUType " + gtuType + " on lane " + toString());
+    }
+
+    /**
+     * Get the highest speed limit of this lane.
+     * @return the highest speedLimit.
+     * @throws NetworkException on network inconsistency
+     */
+    public final Speed getHighestSpeedLimit() throws NetworkException
+    {
+        Throw.when(this.speedLimitMap.isEmpty(), NetworkException.class, "Lane %s has no speed limits set.", toString());
+        Speed out = Speed.ZERO;
+        for (GTUType gtuType : this.speedLimitMap.keySet())
+        {
+            out = Speed.max(out, this.speedLimitMap.get(gtuType));
+        }
+        return out;
     }
 
     /**

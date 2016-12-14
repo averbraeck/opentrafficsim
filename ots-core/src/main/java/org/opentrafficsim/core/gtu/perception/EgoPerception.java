@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.gtu.perception;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.TimeStampedObject;
@@ -26,13 +27,16 @@ public class EgoPerception extends AbstractPerceptionCategory
 
     /** Speed. */
     private TimeStampedObject<Speed> speed;
-    
+
+    /** Speed. */
+    private TimeStampedObject<Acceleration> acceleration;
+
     /** Length. */
     private TimeStampedObject<Length> length;
-    
+
     /** Width. */
     private TimeStampedObject<Length> width;
-    
+
     /**
      * @param perception perception
      */
@@ -49,7 +53,16 @@ public class EgoPerception extends AbstractPerceptionCategory
     {
         this.speed = new TimeStampedObject<>(getGtu().getSpeed(), getTimestamp());
     }
-    
+
+    /**
+     * Update acceleration.
+     * @throws GTUException if the GTU has not been initialized
+     */
+    public final void updateAcceleration() throws GTUException
+    {
+        this.acceleration = new TimeStampedObject<>(getGtu().getAcceleration(), getTimestamp());
+    }
+
     /**
      * Update length.
      * @throws GTUException if the GTU has not been initialized
@@ -58,7 +71,7 @@ public class EgoPerception extends AbstractPerceptionCategory
     {
         this.length = new TimeStampedObject<>(getGtu().getLength(), getTimestamp());
     }
-    
+
     /**
      * Update width.
      * @throws GTUException if the GTU has not been initialized
@@ -66,6 +79,15 @@ public class EgoPerception extends AbstractPerceptionCategory
     public final void updateWidth() throws GTUException
     {
         this.width = new TimeStampedObject<>(getGtu().getWidth(), getTimestamp());
+    }
+
+    /**
+     * Returns the acceleration.
+     * @return acceleration
+     */
+    public final Acceleration getAcceleration()
+    {
+        return this.acceleration.getObject();
     }
     
     /**
@@ -76,7 +98,7 @@ public class EgoPerception extends AbstractPerceptionCategory
     {
         return this.speed.getObject();
     }
-    
+
     /**
      * Returns the length.
      * @return length
@@ -85,7 +107,7 @@ public class EgoPerception extends AbstractPerceptionCategory
     {
         return this.length.getObject();
     }
-    
+
     /**
      * Returns the width.
      * @return width
@@ -94,7 +116,7 @@ public class EgoPerception extends AbstractPerceptionCategory
     {
         return this.width.getObject();
     }
-    
+
     /**
      * Return the time stamped speed.
      * @return time stamped speed
@@ -103,7 +125,16 @@ public class EgoPerception extends AbstractPerceptionCategory
     {
         return this.speed;
     }
-    
+
+    /**
+     * Return the time stamped acceleration.
+     * @return time stamped acceleration
+     */
+    public final TimeStampedObject<Acceleration> getTimeStampedAcceleration()
+    {
+        return this.acceleration;
+    }
+
     /**
      * Return the time stamped length.
      * @return time stamped length
@@ -112,7 +143,7 @@ public class EgoPerception extends AbstractPerceptionCategory
     {
         return this.length;
     }
-    
+
     /**
      * Return the time stamped width.
      * @return time stamped width
@@ -121,19 +152,23 @@ public class EgoPerception extends AbstractPerceptionCategory
     {
         return this.width;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final void updateAll() throws GTUException, NetworkException, ParameterException
     {
         updateSpeed();
+        updateAcceleration();
+        updateLength();
+        updateWidth();
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "EgoPerception [speed=" + this.speed + "]";
+        return "EgoPerception [speed=" + this.speed + ", acceleration=" + this.acceleration + ", length=" + this.length
+                + ", width=" + this.width + "]";
     }
 
 }
