@@ -12,12 +12,11 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 
-import org.opentrafficsim.core.animation.TextAnimation;
 import org.opentrafficsim.core.animation.TextAlignment;
+import org.opentrafficsim.core.animation.TextAnimation;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
-import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -40,10 +39,10 @@ public class DefaultCarAnimation extends Renderable2D implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;
-    
+
     /** The GTUColorer that determines the fill color for the car. */
     private GTUColorer gtuColorer;
-    
+
     /**
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
      * @param gtu the Car to draw
@@ -52,7 +51,7 @@ public class DefaultCarAnimation extends Renderable2D implements Serializable
      * @throws RemoteException on communication failure
      */
     public DefaultCarAnimation(final LaneBasedIndividualGTU gtu, final OTSSimulatorInterface simulator)
-        throws NamingException, RemoteException
+            throws NamingException, RemoteException
     {
         this(gtu, simulator, null);
     }
@@ -66,7 +65,7 @@ public class DefaultCarAnimation extends Renderable2D implements Serializable
      * @throws RemoteException on communication failure
      */
     public DefaultCarAnimation(final LaneBasedIndividualGTU gtu, final OTSSimulatorInterface simulator,
-        final GTUColorer gtuColorer) throws NamingException, RemoteException
+            final GTUColorer gtuColorer) throws NamingException, RemoteException
     {
         super(gtu, simulator);
         if (null == gtuColorer)
@@ -77,7 +76,7 @@ public class DefaultCarAnimation extends Renderable2D implements Serializable
         {
             this.gtuColorer = gtuColorer;
         }
-        
+
         new Text(gtu, gtu.getId(), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, simulator);
     }
 
@@ -109,9 +108,9 @@ public class DefaultCarAnimation extends Renderable2D implements Serializable
                         {
                             destroy();
                         }
-                        catch (NamingException exception)
+                        catch (NamingException | NullPointerException e)
                         {
-                            System.err.println("Failed to destroy GTU animation of GTU " + getSource().toString());
+                            // ignore
                         }
                     }
                 });
@@ -150,12 +149,12 @@ public class DefaultCarAnimation extends Renderable2D implements Serializable
         if (car.getTurnIndicatorStatus() != null && car.getTurnIndicatorStatus().isRightOrBoth())
         {
             Rectangle2D.Double rightIndicator = new Rectangle2D.Double(l2 - w4, w2 - w4, w4, w4);
-            graphics.fill(rightIndicator);            
+            graphics.fill(rightIndicator);
         }
-        
+
         // braking lights
         graphics.setColor(Color.RED);
-        if (car.getAcceleration().si < -0.5) // TODO this could be a property of a GTU 
+        if (car.getAcceleration().si < -0.5) // TODO this could be a property of a GTU
         {
             Rectangle2D.Double leftBrake = new Rectangle2D.Double(-l2, w2 - w4, w4, w4);
             Rectangle2D.Double rightBrake = new Rectangle2D.Double(-l2, -w2, w4, w4);
@@ -170,7 +169,7 @@ public class DefaultCarAnimation extends Renderable2D implements Serializable
     @Override
     public final String toString()
     {
-        return this.getSource().toString();
+        return super.toString(); // this.getSource().toString();
     }
 
     /**
@@ -232,10 +231,10 @@ public class DefaultCarAnimation extends Renderable2D implements Serializable
                 }
                 return;
             }
-            
+
             super.paint(graphics, observer);
         }
-        
+
         /**
          * Try to destroy the animation.
          */
@@ -250,7 +249,7 @@ public class DefaultCarAnimation extends Renderable2D implements Serializable
                 System.err.println("Tried to destroy Text for GTU animation of GTU " + getSource().toString());
             }
         }
-        
+
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
