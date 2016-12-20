@@ -79,7 +79,7 @@ public class IncentiveRoute implements MandatoryIncentive
             final RelativeLane lane) throws ParameterException, OperationalPlanException
     {
         Speed v = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
-        double dOut = Double.NEGATIVE_INFINITY;
+        double dOut = 0.0;
         if (perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection().contains(lane))
         {
             for (InfrastructureLaneChangeInfo info : perception.getPerceptionCategory(InfrastructurePerception.class)

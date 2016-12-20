@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;

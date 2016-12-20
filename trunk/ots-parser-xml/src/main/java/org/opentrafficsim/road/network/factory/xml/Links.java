@@ -377,10 +377,20 @@ final class Links
         }
         else if (linkTag.arcTag != null)
         {
-            // TODO move the radius if there is an start and end offset? How?
             // calculate the center position
             double radiusSI = linkTag.arcTag.radius.getSI();
-            List<OTSPoint3D> center = OTSPoint3D.circleCenter(from.coordinate, to.coordinate, radiusSI);
+            double offsetStart = 0.0;
+            if (linkTag.offsetStart != null)
+            {
+                offsetStart = linkTag.offsetStart.si;
+            }
+            double offsetEnd = 0.0;
+            if (linkTag.offsetEnd != null)
+            {
+                offsetEnd = linkTag.offsetEnd.si;
+            }
+            List<OTSPoint3D> center = OTSPoint3D.circleIntersections(from.coordinate, radiusSI + offsetStart, to.coordinate,
+                    radiusSI + offsetEnd);
             OTSPoint3D c = linkTag.arcTag.center =
                     (linkTag.arcTag.direction.equals(ArcTag.ArcDirection.RIGHT)) ? center.get(0) : center.get(1);
 
@@ -400,8 +410,10 @@ final class Links
 
             int points = (Angle.normalize2Pi(ea - sa) <= Math.PI / 2.0) ? 64 : 128;
             coordinates = new OTSPoint3D[points];
-            coordinates[0] = new OTSPoint3D(from.coordinate.x, from.coordinate.y, from.coordinate.z);
-            coordinates[coordinates.length - 1] = new OTSPoint3D(to.coordinate.x, to.coordinate.y, to.coordinate.z);
+            coordinates[0] = new OTSPoint3D(from.coordinate.x + Math.cos(sa) * offsetStart,
+                    from.coordinate.y + Math.sin(sa) * offsetStart, from.coordinate.z);
+            coordinates[coordinates.length - 1] = new OTSPoint3D(to.coordinate.x + Math.cos(ea) * offsetEnd,
+                    to.coordinate.y + Math.sin(ea) * offsetEnd, to.coordinate.z);
             double angleStep = linkTag.arcTag.angle.getSI() / points;
             double slopeStep = (to.coordinate.z - from.coordinate.z) / points;
 
@@ -409,9 +421,10 @@ final class Links
             {
                 for (int p = 1; p < points - 1; p++)
                 {
+                    double dRad = offsetStart + (offsetEnd - offsetStart) * p / points;
                     coordinates[p] = new OTSPoint3D(
-                            linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle - angleStep * p),
-                            linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle - angleStep * p),
+                            linkTag.arcTag.center.x + (radiusSI + dRad) * Math.cos(linkTag.arcTag.startAngle - angleStep * p),
+                            linkTag.arcTag.center.y + (radiusSI + dRad) * Math.sin(linkTag.arcTag.startAngle - angleStep * p),
                             from.coordinate.z + slopeStep * p);
                 }
             }
@@ -419,9 +432,10 @@ final class Links
             {
                 for (int p = 1; p < points - 1; p++)
                 {
+                    double dRad = offsetStart + (offsetEnd - offsetStart) * p / points;
                     coordinates[p] = new OTSPoint3D(
-                            linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle + angleStep * p),
-                            linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle + angleStep * p),
+                            linkTag.arcTag.center.x + (radiusSI + dRad) * Math.cos(linkTag.arcTag.startAngle + angleStep * p),
+                            linkTag.arcTag.center.y + (radiusSI + dRad) * Math.sin(linkTag.arcTag.startAngle + angleStep * p),
                             from.coordinate.z + slopeStep * p);
                 }
             }
@@ -430,7 +444,7 @@ final class Links
         else if (linkTag.bezierTag != null)
         {
             coordinates = Bezier.cubic(128, new DirectedPoint(startPoint.x, startPoint.y, startPoint.z, 0, 0, startAngle),
-                    new DirectedPoint(endPoint.x, endPoint.y, endPoint.z, 0, 0, endAngle)).getPoints();
+                    new DirectedPoint(endPoint.x, endPoint.y, endPoint.z, 0, 0, endAngle), linkTag.bezierTag.shape).getPoints();
         }
 
         else

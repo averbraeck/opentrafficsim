@@ -4,6 +4,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -48,6 +49,9 @@ public class HeadwayGTUReal extends AbstractHeadwayGTU
 
     /** stored speed limit info of the observed GTU. */
     private final SpeedLimitInfo speedLimitInfo;
+    
+    /** stored route of the observed GTU. */
+    private final Route route;
 
     /**
      * Construct a new Headway information object, for a GTU ahead of us or behind us.
@@ -62,6 +66,7 @@ public class HeadwayGTUReal extends AbstractHeadwayGTU
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
         this.behavioralCharacteristics = new BehavioralCharacteristics(gtu.getBehavioralCharacteristics());
         this.speedLimitInfo = getSpeedLimitInfo(gtu);
+        this.route = gtu.getStrategicalPlanner().getRoute();
     }
 
     /**
@@ -80,6 +85,7 @@ public class HeadwayGTUReal extends AbstractHeadwayGTU
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
         this.behavioralCharacteristics = new BehavioralCharacteristics(gtu.getBehavioralCharacteristics());
         this.speedLimitInfo = getSpeedLimitInfo(gtu);
+        this.route = gtu.getStrategicalPlanner().getRoute();
     }
     
     /**
@@ -125,4 +131,11 @@ public class HeadwayGTUReal extends AbstractHeadwayGTU
         return this.speedLimitInfo;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final Route getRoute()
+    {
+        return this.route;
+    }
+    
 }

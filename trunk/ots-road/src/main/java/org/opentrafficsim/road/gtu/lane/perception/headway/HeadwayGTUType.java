@@ -6,6 +6,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.perception.GTUTypeAssumptions;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -140,6 +141,13 @@ public class HeadwayGTUType extends AbstractHeadwayGTU
     public final SpeedLimitInfo getSpeedLimitInfo()
     {
         return null; // TODO create SpeedLimitInfo on the basis of this.gtuTypeAssumptions.getLaneTypeMaxSpeed(...)
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Route getRoute()
+    {
+        return null;
     }
 
 }

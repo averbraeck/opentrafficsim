@@ -1359,9 +1359,9 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             return this.speedLimitMap.get(gtuType);
         }
-        if (this.speedLimitMap.containsKey(GTUType.ALL))
+        if (gtuType.getParent() != null)
         {
-            return this.speedLimitMap.get(GTUType.ALL);
+            return getSpeedLimit(gtuType.getParent());
         }
         throw new NetworkException("No speed limit set for GTUType " + gtuType + " on lane " + toString());
     }

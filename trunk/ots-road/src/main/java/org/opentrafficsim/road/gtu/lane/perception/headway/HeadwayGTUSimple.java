@@ -6,6 +6,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -131,4 +132,11 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
         throw new UnsupportedOperationException("HeadwayGTUSimple does not support the getSpeedLimitInfo() method.");
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final Route getRoute()
+    {
+        return null;
+    }
+    
 }

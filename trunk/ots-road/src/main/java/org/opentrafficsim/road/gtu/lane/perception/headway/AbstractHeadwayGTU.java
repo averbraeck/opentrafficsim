@@ -8,6 +8,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -251,6 +252,14 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadway
      * @return a speed limit model that helps in determining the expected behavior of the observed GTU
      */
     public abstract SpeedLimitInfo getSpeedLimitInfo();
+
+    /**
+     * Models responding to other GTU may assume a route of the vehicle, for instance at intersections. The route may be short,
+     * i.e. only over the next intersection. Implementations may return anything from the actual route, a route based on
+     * indicators and other assumptions, or {@code null} if simply not known/estimated.
+     * @return route of gtu
+     */
+    public abstract Route getRoute();
 
     /** {@inheritDoc} */
     @Override

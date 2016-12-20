@@ -8,6 +8,7 @@ import java.util.TreeSet;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -100,7 +101,7 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
         }
         updateCrossSection();
         checkLaneIsInCrossSection(lane);
-
+        
         // start at requested lane
         SortedSet<InfrastructureLaneChangeInfo> resultSet = new TreeSet<>();
         Map<LaneStructureRecord, InfrastructureLaneChangeInfo> currentSet = new HashMap<>();
@@ -141,7 +142,16 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
             InfrastructureLaneChangeInfo bestNotOk = null;
             for (LaneStructureRecord laneRecord : currentSet.keySet())
             {
-                if (anyNextOk(laneRecord, getGtu().getStrategicalPlanner().getRoute()))
+                boolean anyOk;
+                try
+                {
+                    anyOk = anyNextOk(laneRecord, getGtu().getStrategicalPlanner().getRoute(), getGtu().getGTUType());
+                }
+                catch (NetworkException exception)
+                {
+                    throw new GTUException("Route has no destination.", exception);
+                }
+                if (anyOk)
                 {
                     // add to nextSet
                     for (LaneStructureRecord next : laneRecord.getNext())
@@ -169,6 +179,19 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
                 }
 
             }
+            if (bestOk == null)
+            {
+                if (lane.isCurrent())
+                {
+                    // on the current lane, we need something to drive to
+                    throw new GTUException("No lane was found on which to continue.");
+                }
+                else
+                {
+                    // empty set on other lanes permissible, on adjacent lanes, we might not be able to continue on our route
+                    break;
+                }
+            }
             // if there are lanes that are not okay and only -further- lanes that are ok, we need to change to one of the ok's
             if (bestNotOk != null && bestOk.getRequiredNumberOfLaneChanges() > bestNotOk.getRequiredNumberOfLaneChanges())
             {
@@ -186,10 +209,14 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
      * Returns whether the given record end is ok to pass.
      * @param record checked record
      * @param route route to check at splits
+     * @param gtuType gtu type
      * @return whether the given record end is ok to pass
+     * @throws NetworkException if destination could not be obtained
      */
-    private boolean anyNextOk(final LaneStructureRecord record, final Route route)
+    private boolean anyNextOk(final LaneStructureRecord record, final Route route, final GTUType gtuType)
+            throws NetworkException
     {
+        
         if (record.isCutOffEnd())
         {
             return true; // always ok if cut-off
@@ -223,19 +250,22 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
         {
             return false; // never ok if dead-end
         }
-        if (!record.isLinkSplit())
-        {
-            return true; // always ok if not a split
-        }
-        // split, check next based on route
-        for (LaneStructureRecord next : record.getNext())
-        {
-            if (route.contains(next.getToNode()))
-            {
-                return true; // this next record goes towards a node on the route
-            }
-        }
-        return false; // none of the next records go towards a node on the route
+        return record.allowsRoute(route, gtuType);
+
+        // if (!record.isLinkSplit())
+        // {
+        // // always ok if no split
+        // return true;
+        // }
+        // // split, check next based on route
+        // for (LaneStructureRecord next : record.getNext())
+        // {
+        // if (route.contains(next.getToNode()))
+        // {
+        // return true; // this next record goes towards a node on the route
+        // }
+        // }
+        // return false; // none of the next records go towards a node on the route
     }
 
     /**

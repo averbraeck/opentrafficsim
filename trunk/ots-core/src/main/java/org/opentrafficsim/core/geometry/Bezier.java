@@ -28,9 +28,9 @@ public final class Bezier
     private static final int DEFAULT_NUM_POINTS = 64;
 
     /** Cached factorial values. */
-    private static long[] fact = new long[]{1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,
-        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L, 20922789888000L, 355687428096000L,
-        6402373705728000L, 121645100408832000L, 2432902008176640000L};
+    private static long[] fact = new long[] { 1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L, 39916800L,
+            479001600L, 6227020800L, 87178291200L, 1307674368000L, 20922789888000L, 355687428096000L, 6402373705728000L,
+            121645100408832000L, 2432902008176640000L };
 
     /** Utility class. */
     private Bezier()
@@ -50,7 +50,7 @@ public final class Bezier
      *             constructed
      */
     public static OTSLine3D cubic(final int numPoints, final OTSPoint3D start, final OTSPoint3D control1,
-        final OTSPoint3D control2, final OTSPoint3D end) throws OTSGeometryException
+            final OTSPoint3D control2, final OTSPoint3D end) throws OTSGeometryException
     {
         OTSPoint3D[] points = new OTSPoint3D[numPoints];
         for (int n = 0; n < numPoints; n++)
@@ -75,16 +75,55 @@ public final class Bezier
      *             constructed
      */
     public static OTSLine3D cubic(final int numPoints, final DirectedPoint start, final DirectedPoint end)
-        throws OTSGeometryException
+            throws OTSGeometryException
+    {
+        return cubic(numPoints, start, end, .5);
+    }
+
+    /**
+     * Construct a cubic B&eacute;zier curve from start to end with two generated control points at half the distance between
+     * start and end. The z-value is interpolated in a linear way.
+     * @param numPoints the number of points for the B&eacute;zier curve
+     * @param start the directed start point of the B&eacute;zier curve
+     * @param end the directed end point of the B&eacute;zier curve
+     * @param shape shape factor; 1 = control points at half the distance between start and end, &gt; 1 results in pointier a
+     *            shape, &lt; 1 results in a flatter shape, value should be above 0
+     * @return a cubic B&eacute;zier curve between start and end, with the two provided control points
+     * @throws OTSGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
+     *             constructed
+     */
+    public static OTSLine3D cubic(final int numPoints, final DirectedPoint start, final DirectedPoint end, final double shape)
+            throws OTSGeometryException
     {
         double distance2 =
-            Math.sqrt((end.x - start.x) * (end.x - start.x) + (end.y - start.y) * (end.y - start.y)) / 2.0;
-        OTSPoint3D control1 =
-            new OTSPoint3D(start.x + distance2 * Math.cos(start.getRotZ()), start.y + distance2
-                * Math.sin(start.getRotZ()), start.z);
+                shape * Math.sqrt((end.x - start.x) * (end.x - start.x) + (end.y - start.y) * (end.y - start.y)) / 2.0;
+        OTSPoint3D control1 = new OTSPoint3D(start.x + distance2 * Math.cos(start.getRotZ()),
+                start.y + distance2 * Math.sin(start.getRotZ()), start.z);
         OTSPoint3D control2 =
-            new OTSPoint3D(end.x - distance2 * Math.cos(end.getRotZ()), end.y - distance2 * Math.sin(end.getRotZ()),
-                end.z);
+                new OTSPoint3D(end.x - distance2 * Math.cos(end.getRotZ()), end.y - distance2 * Math.sin(end.getRotZ()), end.z);
+
+        // Limit control points to not intersect with the other (infinite) line
+        double dx1 = Math.cos(start.getRotZ());
+        double dy1 = Math.sin(start.getRotZ());
+        double dx2 = Math.cos(end.getRotZ());
+        double dy2 = Math.sin(end.getRotZ());
+        OTSPoint3D intersection = OTSPoint3D.intersectionOfLines(new OTSPoint3D(start.x, start.y, start.z),
+                new OTSPoint3D(start.x + dx1, start.y + dy1, start.z), new OTSPoint3D(end.x, end.y, end.z),
+                new OTSPoint3D(end.x + dx2, end.y + dy2, end.z));
+        if (intersection != null)
+        {
+            OTSPoint3D s = new OTSPoint3D(start);
+            OTSPoint3D e = new OTSPoint3D(end);
+            if (s.distanceSI(control1) > s.distanceSI(intersection))
+            {
+                control1 = intersection;
+            }
+            if (e.distanceSI(control2) > e.distanceSI(intersection))
+            {
+                control2 = intersection;
+            }
+        }
+
         // return cubic(numPoints, new OTSPoint3D(start), control1, control2, new OTSPoint3D(end));
         return bezier(numPoints, new OTSPoint3D(start), control1, control2, new OTSPoint3D(end));
     }

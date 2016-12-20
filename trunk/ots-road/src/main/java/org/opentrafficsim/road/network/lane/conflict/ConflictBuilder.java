@@ -36,6 +36,9 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 public final class ConflictBuilder
 {
 
+    /** Default width generator for conflicts which uses the lane width. */
+    public static final DefaultWidthGenerator DEFAULT_WIDTH_GENERATOR = new DefaultWidthGenerator();
+
     /**
      * Empty constructor.
      */
@@ -49,10 +52,11 @@ public final class ConflictBuilder
      * @param network network
      * @param gtuType gtu type
      * @param simulator simulator
+     * @param widthGenerator width generator
      * @throws OTSGeometryException in case of geometry exception
      */
     public static void buildConflicts(final OTSNetwork network, final GTUType gtuType,
-            final OTSDEVSSimulatorInterface simulator) throws OTSGeometryException
+            final OTSDEVSSimulatorInterface simulator, final WidthGenerator widthGenerator) throws OTSGeometryException
     {
         // create list of lanes
         ImmutableMap<String, Link> links = network.getLinkMap();
@@ -71,7 +75,7 @@ public final class ConflictBuilder
                 }
             }
         }
-        buildConflicts(lanes, gtuType, simulator);
+        buildConflicts(lanes, gtuType, simulator, widthGenerator);
     }
 
     /**
@@ -79,10 +83,11 @@ public final class ConflictBuilder
      * @param lanes lanes
      * @param gtuType gtu type
      * @param simulator simulator
+     * @param widthGenerator width generator
      * @throws OTSGeometryException in case of geometry exception
      */
-    public static void buildConflicts(final List<Lane> lanes, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator)
-            throws OTSGeometryException
+    public static void buildConflicts(final List<Lane> lanes, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
+            final WidthGenerator widthGenerator) throws OTSGeometryException
     {
         // loop Lane / GTUDirectionality combinations
         for (int i = 0; i < lanes.size(); i++)
@@ -134,7 +139,7 @@ public final class ConflictBuilder
                         Map<Lane, GTUDirectionality> up2 = lane2.upstreamLanes(dir2, gtuType);
 
                         // see if conflict needs to be build, and build if so
-                        buildConflict(lane1, dir1, down1, up1, lane2, dir2, down2, up2, gtuType, simulator);
+                        buildConflict(lane1, dir1, down1, up1, lane2, dir2, down2, up2, gtuType, simulator, widthGenerator);
                     }
                 }
             }
@@ -150,18 +155,19 @@ public final class ConflictBuilder
      * @param dir2 gtu direction 2
      * @param gtuType gtu type
      * @param simulator simulator
+     * @param widthGenerator width generator
      * @throws OTSGeometryException in case of geometry exception
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static void buildConflict(final Lane lane1, final GTUDirectionality dir1, final Lane lane2,
-            final GTUDirectionality dir2, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator)
-            throws OTSGeometryException
+            final GTUDirectionality dir2, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
+            final WidthGenerator widthGenerator) throws OTSGeometryException
     {
         Map<Lane, GTUDirectionality> down1 = lane1.downstreamLanes(dir1, gtuType);
         Map<Lane, GTUDirectionality> up1 = lane1.upstreamLanes(dir1, gtuType);
         Map<Lane, GTUDirectionality> down2 = lane2.downstreamLanes(dir2, gtuType);
         Map<Lane, GTUDirectionality> up2 = lane2.upstreamLanes(dir2, gtuType);
-        buildConflict(lane1, dir1, down1, up1, lane2, dir2, down2, up2, gtuType, simulator);
+        buildConflict(lane1, dir1, down1, up1, lane2, dir2, down2, up2, gtuType, simulator, widthGenerator);
     }
 
     /**
@@ -176,13 +182,14 @@ public final class ConflictBuilder
      * @param up2 upstream lanes 2
      * @param gtuType gtu type
      * @param simulator simulator
+     * @param widthGenerator width generator
      * @throws OTSGeometryException in case of geometry exception
      */
     @SuppressWarnings("checkstyle:parameternumber")
     private static void buildConflict(final Lane lane1, final GTUDirectionality dir1, final Map<Lane, GTUDirectionality> down1,
             final Map<Lane, GTUDirectionality> up1, final Lane lane2, final GTUDirectionality dir2,
             final Map<Lane, GTUDirectionality> down2, final Map<Lane, GTUDirectionality> up2, final GTUType gtuType,
-            final OTSDEVSSimulatorInterface simulator) throws OTSGeometryException
+            final OTSDEVSSimulatorInterface simulator, final WidthGenerator widthGenerator) throws OTSGeometryException
     {
 
         // find if lanes intersect
@@ -245,10 +252,11 @@ public final class ConflictBuilder
         // obtain fractional locations of intersections of left and right side of lanes
         double[] fractions = new double[] { dir1.isPlus() ? 1.0 : 0, dir1.isPlus() ? 0 : 1.0, dir2.isPlus() ? 1.0 : 0,
                 dir2.isPlus() ? 0 : 1.0 };
-        OTSLine3D left1 = line1.offsetLine(lane1.getBeginWidth().si / 2, lane1.getEndWidth().si / 2);
-        OTSLine3D right1 = line1.offsetLine(-lane1.getBeginWidth().si / 2, -lane1.getEndWidth().si / 2);
-        OTSLine3D left2 = line2.offsetLine(lane2.getBeginWidth().si / 2, lane2.getEndWidth().si / 2);
-        OTSLine3D right2 = line2.offsetLine(-lane2.getBeginWidth().si / 2, -lane2.getEndWidth().si / 2);
+        OTSLine3D left1 = line1.offsetLine(widthGenerator.getWidth(lane1, 0.0) / 2, widthGenerator.getWidth(lane1, 1.0) / 2);
+        OTSLine3D right1 = line1.offsetLine(-widthGenerator.getWidth(lane1, 0.0) / 2, -widthGenerator.getWidth(lane1, 1.0) / 2);
+        OTSLine3D left2 = line2.offsetLine(widthGenerator.getWidth(lane2, 0.0) / 2, widthGenerator.getWidth(lane2, 1.0) / 2);
+        OTSLine3D right2 = line2.offsetLine(-widthGenerator.getWidth(lane2, 0.0) / 2, -widthGenerator.getWidth(lane2, 1.0) / 2);
+
         deriveFractions(fractions, left1, dir1, left2, dir2);
         deriveFractions(fractions, left1, dir1, right2, dir2);
         deriveFractions(fractions, right1, dir1, left2, dir2);
@@ -272,8 +280,8 @@ public final class ConflictBuilder
         Length length2 = lane2.getLength().multiplyBy(Math.abs(fractions[3] - fractions[2]));
 
         // get geometries
-        OTSLine3D geometry1 = getGeometry(lane1, fractions[0], fractions[1]);
-        OTSLine3D geometry2 = getGeometry(lane2, fractions[2], fractions[3]);
+        OTSLine3D geometry1 = getGeometry(lane1, fractions[0], fractions[1], widthGenerator);
+        OTSLine3D geometry2 = getGeometry(lane2, fractions[2], fractions[3], widthGenerator);
 
         // determine conflict rules
         ConflictRule[] conflictRules =
@@ -323,16 +331,18 @@ public final class ConflictBuilder
      * @param lane lane
      * @param fStart longitudinal fraction of start
      * @param fEnd longitudinal fraction of end
+     * @param widthGenerator width generator
      * @return geometry for conflict
      * @throws OTSGeometryException in case of geometry exception
      */
-    private static OTSLine3D getGeometry(final Lane lane, final double fStart, final double fEnd) throws OTSGeometryException
+    private static OTSLine3D getGeometry(final Lane lane, final double fStart, final double fEnd,
+            final WidthGenerator widthGenerator) throws OTSGeometryException
     {
         OTSLine3D centerLine = lane.getCenterLine().extractFractional(fStart, fEnd);
-        double startWidth = lane.getWidth(fStart).si;
-        double endWidth = lane.getWidth(fEnd).si;
-        OTSLine3D left = centerLine.offsetLine(startWidth / 2, endWidth / 2);
-        OTSLine3D right = centerLine.offsetLine(-startWidth / 2, -endWidth / 2).reverse();
+        OTSLine3D left =
+                centerLine.offsetLine(widthGenerator.getWidth(lane, fStart) / 2, widthGenerator.getWidth(lane, fEnd) / 2);
+        OTSLine3D right = centerLine
+                .offsetLine(-widthGenerator.getWidth(lane, fStart) / 2, -widthGenerator.getWidth(lane, fEnd) / 2).reverse();
         OTSPoint3D[] points = new OTSPoint3D[left.size() + right.size()];
         System.arraycopy(left.getPoints(), 0, points, 0, left.size());
         System.arraycopy(right.getPoints(), 0, points, left.size(), right.size());
@@ -516,6 +526,123 @@ public final class ConflictBuilder
         public double getFraction2()
         {
             return this.fraction2;
+        }
+
+    }
+
+    /**
+     * Generator for width.
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 16 dec. 2016 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public interface WidthGenerator
+    {
+
+        /**
+         * Returns the begin width of this lane.
+         * @param lane Lane; lane
+         * @param fraction double; fraction
+         * @return begin width of this lane
+         */
+        default double getWidth(final Lane lane, final double fraction)
+        {
+            return lane.getWidth(fraction).si;
+        }
+
+    }
+
+    /**
+     * Default width generator using the lane width.
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 16 dec. 2016 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public static class DefaultWidthGenerator implements WidthGenerator
+    {
+        //
+    }
+
+    /**
+     * Generator with fixed width.
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 16 dec. 2016 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public static class FixedWidthGenerator implements WidthGenerator
+    {
+
+        /** Fixed width. */
+        private final double width;
+
+        /**
+         * Constructor with width.
+         * @param width double; width
+         */
+        public FixedWidthGenerator(final Length width)
+        {
+            this.width = width.si;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final double getWidth(final Lane lane, final double fraction)
+        {
+            return this.width;
+        }
+
+    }
+
+    /**
+     * Generator with width factor on actual lane width.
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 16 dec. 2016 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public static class RelativeWidthGenerator implements WidthGenerator
+    {
+
+        /** Width factor. */
+        private final double factor;
+
+        /**
+         * Constructor with width factor.
+         * @param factor double; width factor
+         */
+        public RelativeWidthGenerator(final double factor)
+        {
+            this.factor = factor;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final double getWidth(final Lane lane, final double fraction)
+        {
+            return lane.getWidth(fraction).si * this.factor;
         }
 
     }

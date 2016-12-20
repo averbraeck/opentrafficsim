@@ -124,13 +124,13 @@ public class ModelControlA58 extends ModelStarter
      */
     public static void main(String[] args) throws IMBException, InvocationTargetException, InterruptedException
     {
-        // if (args.length == 0)
-        // {
-        // ModelControlA58 modelControlA58 = new ModelControlA58(new String[0], "A58 model", 1248);
-        // modelControlA58.startModel(null, modelControlA58.connection); // null will use default penetration rate
-        // }
-        // else
-        // {
+//         if (args.length == 0)
+//         {
+//         ModelControlA58 modelControlA58 = new ModelControlA58(new String[0], "A58 model", 1248);
+//         modelControlA58.startModel(null, modelControlA58.connection); // null will use default penetration rate
+//         }
+//         else
+//         {
         SwingUtilities.invokeAndWait(new Runnable()
         {
             @Override
@@ -146,7 +146,7 @@ public class ModelControlA58 extends ModelStarter
                 }
             }
         });
-        // }
+//         }
 
         // try
         // {

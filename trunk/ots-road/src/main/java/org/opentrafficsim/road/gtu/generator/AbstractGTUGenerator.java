@@ -278,8 +278,9 @@ public abstract class AbstractGTUGenerator implements Serializable
             minimumHeadway = followingModel.minimumHeadway(carBuilder.getInitialSpeed(), headway.getSpeed(),
                     new Length(1.0, LengthUnit.CENTIMETER), new Length(250.0, LengthUnit.METER),
                     generatorLane.getSpeedLimit(carBuilder.getGtuType()), carBuilder.getMaximumSpeed());
+            // WS: changed mininumHeadway to headway.getDistance()
             double acc = followingModel.computeAcceleration(carBuilder.getInitialSpeed(), carBuilder.getMaximumSpeed(),
-                    headway.getSpeed(), minimumHeadway, carBuilder.getMaximumSpeed()).getSI();
+                    headway.getSpeed(), headway.getDistance(), carBuilder.getMaximumSpeed()).getSI();
             if (acc < 0)
             {
                 // System.err.println(getSimulator().getSimulatorTime() + ", generator headway for GTU " + headway.getId()
@@ -430,7 +431,7 @@ public abstract class AbstractGTUGenerator implements Serializable
         Headway closest;
         if (this.direction.equals(GTUDirectionality.DIR_PLUS))
         {
-            closest = headwayRecursiveForwardSI(this.lane, generatorLane.getLength().getSI(), 0.0, maxDistanceSI, when);
+            closest = headwayRecursiveForwardSI(this.lane, 0.0, 0.0, maxDistanceSI, when);
         }
         else
         {

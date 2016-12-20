@@ -174,16 +174,14 @@ public class OTSPoint3D implements Locatable, Serializable
         {
             return null; // lines are parallel (they might even be on top of each other, but we don't check that)
         }
-        double uA =
-                ((line2P2.x - line2P1.x) * (line1P1.y - line2P1.y) - (line2P2.y - line2P1.y) * (line1P1.x - line2P1.x))
-                        / denominator;
+        double uA = ((line2P2.x - line2P1.x) * (line1P1.y - line2P1.y) - (line2P2.y - line2P1.y) * (line1P1.x - line2P1.x))
+                / denominator;
         if ((uA < 0f) || (uA > 1f))
         {
             return null; // intersection outside line 1
         }
-        double uB =
-                ((line1P2.x - line1P1.x) * (line1P1.y - line2P1.y) - (line1P2.y - line1P1.y) * (line1P1.x - line2P1.x))
-                        / denominator;
+        double uB = ((line1P2.x - line1P1.x) * (line1P1.y - line2P1.y) - (line1P2.y - line1P1.y) * (line1P1.x - line2P1.x))
+                / denominator;
         if (uB < 0 || uB > 1)
         {
             return null; // intersection outside line 2
@@ -210,12 +208,10 @@ public class OTSPoint3D implements Locatable, Serializable
             return null;
         }
         return new OTSPoint3D(
-                ((line1P1.x * line1P2.y - line1P1.y * line1P2.x) * (line2P1.x - line2P2.x) - (line1P1.x - line1P2.x)
-                        * (line2P1.x * line2P2.y - line2P1.y * line2P2.x))
-                        / determinant,
-                ((line1P1.x * line1P2.y - line1P1.y * line1P2.x) * (line2P1.y - line2P2.y) - (line1P1.y - line1P2.y)
-                        * (line2P1.x * line2P2.y - line2P1.y * line2P2.x))
-                        / determinant);
+                ((line1P1.x * line1P2.y - line1P1.y * line1P2.x) * (line2P1.x - line2P2.x)
+                        - (line1P1.x - line1P2.x) * (line2P1.x * line2P2.y - line2P1.y * line2P2.x)) / determinant,
+                ((line1P1.x * line1P2.y - line1P1.y * line1P2.x) * (line2P1.y - line2P2.y)
+                        - (line1P1.y - line1P2.y) * (line2P1.x * line2P2.y - line2P1.y * line2P2.x)) / determinant);
     }
 
     /**
@@ -311,7 +307,7 @@ public class OTSPoint3D implements Locatable, Serializable
         double length = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
         return this.translate(length);
     }
-    
+
     /**
      * Return this point translated by a factor from the origin.
      * @param factor the translation factor
@@ -321,7 +317,7 @@ public class OTSPoint3D implements Locatable, Serializable
     {
         return new OTSPoint3D(this.x / factor, this.y / factor, this.z / factor);
     }
-    
+
     /**
      * Return the possible center points of a circle when two points and a radius are given.
      * @param point1 OTSPoint3D; the first point
@@ -333,7 +329,6 @@ public class OTSPoint3D implements Locatable, Serializable
     {
         List<OTSPoint3D> center = new ArrayList<>();
         OTSPoint3D m = interpolate(0.5, point1, point2);
-        OTSPoint3D p = new OTSPoint3D(point2.y - point1.y, point1.x - point2.x).normalize();
         double h = point1.distanceSI(m);
         if (radius < h) // no intersection
         {
@@ -344,12 +339,43 @@ public class OTSPoint3D implements Locatable, Serializable
             center.add(m);
             return center;
         }
+        OTSPoint3D p = new OTSPoint3D(point2.y - point1.y, point1.x - point2.x).normalize();
         double d = Math.sqrt(radius * radius - h * h); // distance of center from m
         center.add(new OTSPoint3D(m.x + d * p.x, m.y + d * p.y, m.z));
         center.add(new OTSPoint3D(m.x - d * p.x, m.y - d * p.y, m.z));
         return center;
     }
-    
+
+    /**
+     * Return the possible intersections between two circles.
+     * @param center1 OTSPoint3D; the center of circle 1
+     * @param radius1 double; the radius of circle 1
+     * @param center2 OTSPoint3D; the center of circle 2
+     * @param radius2 double; the radius of circle 2
+     * @return List&lt;OTSPoint3D&gt; a list of zero, one or two points
+     */
+    public static final List<OTSPoint3D> circleIntersections(final OTSPoint3D center1, final double radius1,
+            final OTSPoint3D center2, final double radius2)
+    {
+        List<OTSPoint3D> center = new ArrayList<>();
+        OTSPoint3D m = interpolate(radius1 / (radius1 + radius2), center1, center2);
+        double h = center1.distanceSI(m);
+        if (radius1 < h) // no intersection
+        {
+            return center;
+        }
+        if (radius1 == h) // intersection at m
+        {
+            center.add(m);
+            return center;
+        }
+        OTSPoint3D p = new OTSPoint3D(center2.y - center1.y, center1.x - center2.x).normalize();
+        double d = Math.sqrt(radius1 * radius1 - h * h); // distance of center from m
+        center.add(new OTSPoint3D(m.x + d * p.x, m.y + d * p.y, m.z));
+        center.add(new OTSPoint3D(m.x - d * p.x, m.y - d * p.y, m.z));
+        return center;
+    }
+
     /**
      * @param point the point to which the distance has to be calculated.
      * @return the distance in 3D according to Pythagoras, expressed in the SI unit for length (meter)
