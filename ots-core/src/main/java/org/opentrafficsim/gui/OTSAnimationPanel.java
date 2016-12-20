@@ -207,6 +207,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
             toggleBox.setLayout(new BoxLayout(toggleBox, BoxLayout.X_AXIS));
             toggleBox.add(button);
             this.togglePanel.add(toggleBox);
+            // FIXME; this wrapping in a toggleBox ruins the left alignment of the check boxes.
         }
         else
         {
