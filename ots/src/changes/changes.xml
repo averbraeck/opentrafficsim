@@ -2,6 +2,15 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="0.13.01" date="2016-12-20" description="Sprint 9">
+      <action issue="OTS-235" type="add">
+        OTS-235: Arc with variable radius.
+      </action>
+      <action issue="OTS-236" type="add">
+        OTS-236: Bezier SHAPE and control points limited to intersection of control lines.
+      </action>
+    </release>
+
     <release version="0.13.00" date="2016-12-11" description="Sprint 8">
       <action issue="OTS-64" type="add">
         OTS-64: LMRS - Relaxation.
