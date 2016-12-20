@@ -37,8 +37,8 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategicalPlanner implements
-        LaneBasedStrategicalPlanner, Serializable
+public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategicalPlanner
+        implements LaneBasedStrategicalPlanner, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150724L;
@@ -74,7 +74,8 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         super(behavioralCharacteristics, gtu);
         this.route = route;
         this.fixedTacticalPlanner = fixedTacticalPlanner;
-        Throw.when(fixedTacticalPlanner == null, GTUException.class, "Fixed Tactical Planner for a Strategical planner is null");
+        Throw.when(fixedTacticalPlanner == null, GTUException.class,
+                "Fixed Tactical Planner for a Strategical planner is null");
     }
 
     /** {@inheritDoc} */
@@ -119,15 +120,15 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         if (node.getLinks().size() == 1 && previousLink != null)
         {
             // end node
-            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link, but node " + node
-                    + " has no successors");
+            throw new NetworkException(
+                    "LaneBasedStrategicalRoutePlanner is asked for a next link, but node " + node + " has no successors");
         }
         if (node.getLinks().size() == 1 && previousLink == null)
         {
             // start node
             Link link = node.getLinks().iterator().next();
-            return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS) : new LinkDirection(
-                    link, GTUDirectionality.DIR_MINUS);
+            return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS)
+                    : new LinkDirection(link, GTUDirectionality.DIR_MINUS);
         }
         if (node.getLinks().size() == 2)
         {
@@ -191,8 +192,8 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         if (links.size() == 1)
         {
             Link link = links.iterator().next();
-            return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS) : new LinkDirection(
-                    link, GTUDirectionality.DIR_MINUS);
+            return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS)
+                    : new LinkDirection(link, GTUDirectionality.DIR_MINUS);
         }
 
         // more than 2 links... We have to check the route!
@@ -237,8 +238,9 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                 return new LinkDirection(link, GTUDirectionality.DIR_PLUS);
             }
         }
-        throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from " + previousLink
-                + ", but no link could be found connecting node " + node + " and node " + nextNode + " for route " + this.route);
+        throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from "
+                + previousLink.getId() + ", but no link could be found connecting node " + node + " and node " + nextNode
+                + " for route " + this.route);
     }
 
     /** {@inheritDoc} */

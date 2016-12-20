@@ -9,7 +9,11 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.language.Throw;
@@ -113,6 +117,11 @@ public class LaneStructureRecord implements Serializable
      */
     public final boolean isLinkSplit()
     {
+        if (isCutOffEnd())
+        {
+            // if the end is a split, it's out of range
+            return false;
+        }
         Set<Node> toNodes = new HashSet<>();
         LaneStructureRecord lsr = this;
         while (lsr != null)
@@ -141,6 +150,11 @@ public class LaneStructureRecord implements Serializable
      */
     public final boolean isLinkMerge()
     {
+        if (isCutOffStart())
+        {
+            // if the start is a merge, it's out of range
+            return false;
+        }
         Set<Node> fromNodes = new HashSet<>();
         LaneStructureRecord lsr = this;
         while (lsr != null)
@@ -161,6 +175,96 @@ public class LaneStructureRecord implements Serializable
             lsr = lsr.getRight();
         }
         return fromNodes.size() > 1;
+    }
+
+    /**
+     * Returns all accessible nodes from this lane at the current split.
+     * @param route Route; the route to follow
+     * @param gtuType GTUType; gtu type
+     * @return all accessible nodes from this lane at the current split
+     * @throws NetworkException if no destination node
+     */
+    public final boolean allowsRoute(final Route route, final GTUType gtuType) throws NetworkException
+    {
+
+        Set<LaneStructureRecord> currentSet = new HashSet<>();
+        Set<LaneStructureRecord> nextSet = new HashSet<>();
+        currentSet.add(this);
+
+        boolean notFirstLoop = false;
+        while (!currentSet.isEmpty())
+        {
+
+            // move longitudinal
+            
+            for (LaneStructureRecord laneRecord : currentSet)
+            {
+                for (LaneStructureRecord next : laneRecord.getNext())
+                {
+                    if (next.getToNode().equals(route.destinationNode()))
+                    {
+                        // reached destination, by definition ok
+                        return true;
+                    }
+                    if (route.contains(next.getToNode()))
+                    {
+                        nextSet.add(next);
+                    }
+                }
+            }
+            currentSet = nextSet;
+            nextSet = new HashSet<>();
+            
+            // move lateral
+            nextSet.addAll(currentSet);
+            for (LaneStructureRecord laneRecord : currentSet)
+            {
+                while (laneRecord.getLeft() != null && !nextSet.contains(laneRecord.getLeft()))
+                {
+                    nextSet.add(laneRecord.getLeft());
+                    laneRecord = laneRecord.getLeft();
+                }
+            }
+            for (LaneStructureRecord laneRecord : currentSet)
+            {
+                while (laneRecord.getRight() != null && !nextSet.contains(laneRecord.getRight()))
+                {
+                    nextSet.add(laneRecord.getRight());
+                    laneRecord = laneRecord.getRight();
+                }
+            }
+            
+            // none of the next lanes was on the route
+            if (nextSet.isEmpty())
+            {
+                return false;
+            }
+
+            // reached a link on the route where all lanes can be reached?
+            int nLanesOnNextLink = 0;
+            LaneStructureRecord nextRecord = nextSet.iterator().next();
+            for (Lane l : nextRecord.getLane().getParentLink().getLanes())
+            {
+                if (l.getDirectionality(gtuType).equals(LongitudinalDirectionality.DIR_BOTH)
+                        || ((l.getDirectionality(gtuType).isForward() && nextRecord.getDirection().isPlus())
+                                || (l.getDirectionality(gtuType).isBackward() && nextRecord.getDirection().isMinus())))
+                {
+                    nLanesOnNextLink++;
+                }
+            }
+            if (nextSet.size() == nLanesOnNextLink)
+            {
+                // in this case we don't need to look further, anything is possible again
+                return true;
+            }
+            
+            currentSet = nextSet;
+            nextSet = new HashSet<>();
+
+        }
+
+        // never reached our destination or a link with all lanes accessible
+        return false;
     }
 
     /**
@@ -300,7 +404,7 @@ public class LaneStructureRecord implements Serializable
     {
         return this.cutOffStart != null;
     }
-    
+
     /**
      * Returns distance where the structure was cut-off.
      * @return distance where the structure was cut-off

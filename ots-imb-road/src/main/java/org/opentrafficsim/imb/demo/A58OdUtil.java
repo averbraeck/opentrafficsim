@@ -45,6 +45,7 @@ import org.opentrafficsim.imb.demo.generators.IDMPlusOldFactory;
 import org.opentrafficsim.imb.demo.generators.RouteGeneratorProbability;
 import org.opentrafficsim.imb.demo.generators.SpeedGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
+import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
@@ -123,7 +124,7 @@ public class A58OdUtil
             throw new RuntimeException("Could not obtain replication.", exception);
         }
 
-        A58RoomChecker roomChecker = new A58RoomChecker();
+        TTCRoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, TimeUnit.SI));
         IdGenerator idGenerator = new IdGenerator("");
         LaneBasedTacticalPlannerFactory<LaneBasedGTUFollowingDirectedChangeTacticalPlanner> tacticalFactory =
                 new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(new IDMPlusOldFactory());

@@ -194,6 +194,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
                     }
                     current.setRight(adjacentRecord);
                 }
+                
                 recordSet.add(adjacentRecord);
                 laneSet.add(lane);
                 current = adjacentRecord;
@@ -202,6 +203,17 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
         }
         try
         {
+            for (LaneStructureRecord record : recordSet)
+            {
+                if (record.getStartDistance().plus(record.getLane().getLength()).ge(down))
+                {
+                    record.setCutOffEnd(down.minus(record.getStartDistance()));
+                }
+                if (record.getStartDistance().le(up))
+                {
+                    record.setCutOffStart(up.minus(record.getStartDistance()));
+                }
+            }
             this.ignoreSet.clear();
             buildDownstreamRecursive(recordSet, gtuType, down, up, downSplit, upMerge);
             this.ignoreSet.clear();

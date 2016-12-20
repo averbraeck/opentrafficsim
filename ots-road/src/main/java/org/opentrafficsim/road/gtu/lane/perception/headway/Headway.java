@@ -184,7 +184,7 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
     boolean isBehind();
 
     /**
-     * @return whether the other object is behind the reference object.
+     * @return whether the other object is parallel the reference object.
      */
     boolean isParallel();
     

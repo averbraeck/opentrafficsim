@@ -2,13 +2,11 @@ package org.opentrafficsim.road.gtu.strategical.route;
 
 import java.io.Serializable;
 
-import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactory;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactoryDefault;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
@@ -33,9 +31,6 @@ public class LaneBasedStrategicalRoutePlannerFactory
 
     /** */
     private static final long serialVersionUID = 20160811L;
-
-    /** Behavioral characteristics for the next strategical planner. */
-    private BehavioralCharacteristics behavioralCharacteristics;
 
     /** Factory for tactical planners. */
     private final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory;
@@ -69,31 +64,12 @@ public class LaneBasedStrategicalRoutePlannerFactory
 
     /** {@inheritDoc} */
     @Override
-    public final BehavioralCharacteristics getDefaultBehavioralCharacteristics()
-    {
-        return this.tacticalPlannerFactory.getDefaultBehavioralCharacteristics();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void setBehavioralCharacteristics(final BehavioralCharacteristics behavioralCharacteristics)
-    {
-        this.behavioralCharacteristics = behavioralCharacteristics;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final LaneBasedStrategicalPlanner create(final LaneBasedGTU gtu, final Route route) throws GTUException
     {
-        if (this.behavioralCharacteristics == null)
-        {
-            this.behavioralCharacteristics = this.getDefaultBehavioralCharacteristics();
-            this.behavioralCharacteristicsFactory.setValues(this.behavioralCharacteristics, gtu.getGTUType());
-        }
-        LaneBasedStrategicalRoutePlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
-                this.behavioralCharacteristics, this.tacticalPlannerFactory.create(gtu), route, gtu);
-
-        this.behavioralCharacteristics = null;
+        BehavioralCharacteristics behavioralCharacteristics = this.tacticalPlannerFactory.getDefaultBehavioralCharacteristics();
+        this.behavioralCharacteristicsFactory.setValues(behavioralCharacteristics, gtu.getGTUType());
+        LaneBasedStrategicalRoutePlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                this.tacticalPlannerFactory.create(gtu), route, gtu);
         return strategicalPlanner;
     }
 

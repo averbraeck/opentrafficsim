@@ -28,6 +28,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUReal;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayStopLine;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.conflict.Conflict.ConflictEnd;
@@ -145,6 +146,7 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
                 Length distance = entry.getDistance();
                 Length length = conflict.getLength();
                 Length conflictingLength = otherConflict.getLength();
+                CrossSectionLink conflictingLink = otherConflict.getLane().getParentLink();
 
                 // TODO get from link combination (needs to be a map property on the links)
                 Length conflictingVisibility = new Length(Double.MAX_VALUE, LengthUnit.SI);
@@ -277,7 +279,7 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
                 // add conflict to set
                 set.add(new HeadwayConflict(conflictType, conflictRule, id, distance, length, conflictingLength,
                         upstreamConflictingGTUs, downstreamConflictingGTUs, conflictingVisibility, conflictingSpeedLimit,
-                        stopLine, conflictingStopLine));
+                        conflictingLink, stopLine, conflictingStopLine));
             }
         }
     }

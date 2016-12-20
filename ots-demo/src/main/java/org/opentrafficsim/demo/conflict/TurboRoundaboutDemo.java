@@ -46,7 +46,7 @@ import nl.tudelft.simulation.language.io.URLResource;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TJunctionDemo extends AbstractWrappableAnimation
+public class TurboRoundaboutDemo extends AbstractWrappableAnimation
 {
 
     /** */
@@ -56,7 +56,7 @@ public class TJunctionDemo extends AbstractWrappableAnimation
     @Override
     protected final OTSModelInterface makeModel(final GTUColorer colorer) throws OTSSimulationException
     {
-        return new TJunctionModel();
+        return new TurboRoundaboutModel();
     }
 
     /** {@inheritDoc} */
@@ -70,20 +70,20 @@ public class TJunctionDemo extends AbstractWrappableAnimation
     @Override
     public final String shortName()
     {
-        return "T-junction demonstration";
+        return "Turbo roundabout demonstration";
     }
 
     /** {@inheritDoc} */
     @Override
     public final String description()
     {
-        return "T-junction demonstration";
+        return "Turbo roundabout demonstration";
     }
 
     /**
      * The simulation model.
      */
-    class TJunctionModel implements OTSModelInterface
+    class TurboRoundaboutModel implements OTSModelInterface
     {
 
         /** */
@@ -103,26 +103,26 @@ public class TJunctionDemo extends AbstractWrappableAnimation
             this.simulator = (OTSDEVSSimulatorInterface) arg0;
             try
             {
-                URL url = URLResource.getResource("/conflict/TJunction.xml");
+                URL url = URLResource.getResource("/conflict/TurboRoundabout.xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
                 this.network = nlp.build(url);
 
                 // add conflicts
-                ((CrossSectionLink) this.network.getLink("ECSC")).setPriority(Priority.PRIORITY);
-                ((CrossSectionLink) this.network.getLink("ECWC")).setPriority(Priority.PRIORITY);
-                ((CrossSectionLink) this.network.getLink("WCSC")).setPriority(Priority.PRIORITY);
-                ((CrossSectionLink) this.network.getLink("WCEC")).setPriority(Priority.PRIORITY);
-                // ((CrossSectionLink) this.network.getLink("SCEC")).setPriority(Priority.STOP);
-                // ((CrossSectionLink) this.network.getLink("SCWC")).setPriority(Priority.STOP);
+                ((CrossSectionLink) this.network.getLink("EBNA")).setPriority(Priority.PRIORITY);
+                ((CrossSectionLink) this.network.getLink("NBWA")).setPriority(Priority.PRIORITY);
+                ((CrossSectionLink) this.network.getLink("WBSA")).setPriority(Priority.PRIORITY);
+                ((CrossSectionLink) this.network.getLink("SBEA")).setPriority(Priority.PRIORITY);
                 ConflictBuilder.buildConflicts(this.network, VEHICLE, this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
 
-                // add trafficlight
-                Lane lane = ((CrossSectionLink) this.network.getLink("ECE")).getLanes().get(0);
-                SimpleTrafficLight trafficLight =
-                        new SimpleTrafficLight("light", lane, new Length(50.0, LengthUnit.SI), this.simulator);
-                trafficLight.setTrafficLightColor(TrafficLightColor.RED);
-                changePhase(trafficLight);
+                // add trafficlights
+                for (Lane lane : ((CrossSectionLink) this.network.getLink("SEXITS")).getLanes())
+                {
+                    SimpleTrafficLight trafficLight = new SimpleTrafficLight("light" + lane.getId(), lane,
+                            new Length(150.0, LengthUnit.SI), this.simulator);
+                    trafficLight.setTrafficLightColor(TrafficLightColor.RED);
+                    changePhase(trafficLight);
+                }
 
             }
             catch (Exception exception)
@@ -198,7 +198,7 @@ public class TJunctionDemo extends AbstractWrappableAnimation
             {
                 try
                 {
-                    TJunctionDemo animation = new TJunctionDemo();
+                    TurboRoundaboutDemo animation = new TurboRoundaboutDemo();
                     // 1 hour simulation run for testing
                     animation.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
                             new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);

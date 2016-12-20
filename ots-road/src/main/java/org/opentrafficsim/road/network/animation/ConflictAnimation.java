@@ -14,6 +14,7 @@ import javax.naming.NamingException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.animation.PaintPolygons;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
+import org.opentrafficsim.road.network.lane.conflict.ConflictType;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
@@ -79,8 +80,18 @@ public class ConflictAnimation extends Renderable2D implements Serializable
         Rectangle2D rectangle = new Rectangle2D.Double(-0.25, -this.halfWidth, 0.5, 2 * this.halfWidth);
         graphics.fill(rectangle);
 
-        graphics.setStroke(new BasicStroke(.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
-                new float[] { 1.0f, 0.95f, 0.1f, 0.95f }, 0.0f));
+        BasicStroke stroke;
+        if (conflict.getConflictType().equals(ConflictType.CROSSING))
+        {
+            stroke = new BasicStroke(.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
+                    new float[] { 1.0f, 2.0f }, 0.0f);
+        }
+        else
+        {
+            stroke = new BasicStroke(.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
+                    new float[] { 1.0f, 0.95f, 0.1f, 0.95f }, 0.0f);
+        }
+        graphics.setStroke(stroke);
         AffineTransform saveAT = graphics.getTransform();
         double angle = -getSource().getLocation().getRotZ();
         if (isRotate() && angle != 0.0)

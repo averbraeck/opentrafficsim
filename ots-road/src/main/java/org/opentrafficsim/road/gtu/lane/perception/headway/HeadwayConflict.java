@@ -6,6 +6,7 @@ import java.util.TreeSet;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.conflict.ConflictRule;
 import org.opentrafficsim.road.network.lane.conflict.ConflictType;
 
@@ -54,6 +55,9 @@ public class HeadwayConflict extends AbstractHeadway
     /** Speed limit on the conflicting lane. */
     private final Speed conflictingSpeedLimit;
 
+    /** Link of conflicting conflict. */
+    private final CrossSectionLink conflictingLink;
+
     /** Stop line on the own lane. */
     private final HeadwayStopLine stopLine;
 
@@ -72,17 +76,18 @@ public class HeadwayConflict extends AbstractHeadway
      * @param downstreamConflictingGTUs conflicting GTU's downstream of the <i>start</i> of the conflict
      * @param conflictingVisibility visibility on the conflicting lane within which conflicting vehicles are visible
      * @param conflictingSpeedLimit speed limit on the conflicting lane
+     * @param conflictingLink conflicting link
      * @param stopLine stop line on the own lane
      * @param conflictingStopLine stop line on the conflicting lane
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public HeadwayConflict(final ConflictType conflictType, final ConflictRule conflictRule, final String id,
-        final Length distance, final Length length, final Length conflictingLength,
-        final SortedSet<AbstractHeadwayGTU> upstreamConflictingGTUs,
-        final SortedSet<AbstractHeadwayGTU> downstreamConflictingGTUs, final Length conflictingVisibility,
-        final Speed conflictingSpeedLimit, final HeadwayStopLine stopLine, final HeadwayStopLine conflictingStopLine)
-        throws GTUException
+            final Length distance, final Length length, final Length conflictingLength,
+            final SortedSet<AbstractHeadwayGTU> upstreamConflictingGTUs,
+            final SortedSet<AbstractHeadwayGTU> downstreamConflictingGTUs, final Length conflictingVisibility,
+            final Speed conflictingSpeedLimit, final CrossSectionLink conflictingLink, final HeadwayStopLine stopLine,
+            final HeadwayStopLine conflictingStopLine) throws GTUException
     {
         super(ObjectType.CONFLICT, id, distance, length);
         Throw.whenNull(conflictType, "Conflict type may not be null.");
@@ -101,6 +106,7 @@ public class HeadwayConflict extends AbstractHeadway
         this.downstreamConflictingGTUs = downstreamConflictingGTUs;
         this.conflictingVisibility = conflictingVisibility;
         this.conflictingSpeedLimit = conflictingSpeedLimit;
+        this.conflictingLink = conflictingLink;
         this.stopLine = stopLine;
         this.conflictingStopLine = conflictingStopLine;
     }
@@ -117,17 +123,18 @@ public class HeadwayConflict extends AbstractHeadway
      * @param downstreamConflictingGTUs conflicting GTU's downstream of the <i>start</i> of the conflict
      * @param conflictingVisibility visibility on the conflicting lane within which conflicting vehicles are visible
      * @param conflictingSpeedLimit speed limit on the conflicting lane
+     * @param conflictingLink conflicting link
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public HeadwayConflict(final ConflictType conflictType, final ConflictRule conflictRule, final String id,
-        final Length distance, final Length length, final Length conflictingLength,
-        final SortedSet<AbstractHeadwayGTU> upstreamConflictingGTUs,
-        final SortedSet<AbstractHeadwayGTU> downstreamConflictingGTUs, final Length conflictingVisibility,
-        final Speed conflictingSpeedLimit) throws GTUException
+            final Length distance, final Length length, final Length conflictingLength,
+            final SortedSet<AbstractHeadwayGTU> upstreamConflictingGTUs,
+            final SortedSet<AbstractHeadwayGTU> downstreamConflictingGTUs, final Length conflictingVisibility,
+            final Speed conflictingSpeedLimit, final CrossSectionLink conflictingLink) throws GTUException
     {
         this(conflictType, conflictRule, id, distance, length, conflictingLength, upstreamConflictingGTUs,
-            downstreamConflictingGTUs, conflictingVisibility, conflictingSpeedLimit, null, null);
+                downstreamConflictingGTUs, conflictingVisibility, conflictingSpeedLimit, conflictingLink, null, null);
     }
 
     /**
@@ -145,7 +152,7 @@ public class HeadwayConflict extends AbstractHeadway
      */
     public final boolean isCrossing()
     {
-        return this.conflictType == ConflictType.CROSSING;
+        return this.conflictType.equals(ConflictType.CROSSING);
     }
 
     /**
@@ -154,16 +161,16 @@ public class HeadwayConflict extends AbstractHeadway
      */
     public final boolean isMerge()
     {
-        return this.conflictType == ConflictType.MERGE;
+        return this.conflictType.equals(ConflictType.MERGE);
     }
-    
+
     /**
      * Returns whether this is a split conflict.
      * @return whether this is a split conflict
      */
     public final boolean isSplit()
     {
-        return this.conflictType == ConflictType.SPLIT;
+        return this.conflictType.equals(ConflictType.SPLIT);
     }
 
     /**
@@ -181,7 +188,7 @@ public class HeadwayConflict extends AbstractHeadway
      */
     public final boolean isPriority()
     {
-        return this.conflictRule == ConflictRule.PRIORITY;
+        return this.conflictRule.equals(ConflictRule.PRIORITY);
     }
 
     /**
@@ -190,7 +197,7 @@ public class HeadwayConflict extends AbstractHeadway
      */
     public final boolean isGiveWay()
     {
-        return this.conflictRule == ConflictRule.GIVE_WAY;
+        return this.conflictRule.equals(ConflictRule.GIVE_WAY);
     }
 
     /**
@@ -199,7 +206,7 @@ public class HeadwayConflict extends AbstractHeadway
      */
     public final boolean isStop()
     {
-        return this.conflictRule == ConflictRule.STOP;
+        return this.conflictRule.equals(ConflictRule.STOP);
     }
 
     /**
@@ -208,7 +215,7 @@ public class HeadwayConflict extends AbstractHeadway
      */
     public final boolean isAllStop()
     {
-        return this.conflictRule == ConflictRule.ALL_STOP;
+        return this.conflictRule.equals(ConflictRule.ALL_STOP);
     }
 
     /**
@@ -258,6 +265,15 @@ public class HeadwayConflict extends AbstractHeadway
     public final Speed getConflictingSpeedLimit()
     {
         return this.conflictingSpeedLimit;
+    }
+
+    /**
+     * Returns the conflicting link.
+     * @return the conflicting link
+     */
+    public final CrossSectionLink getConflictingLink()
+    {
+        return this.conflictingLink;
     }
 
     /**

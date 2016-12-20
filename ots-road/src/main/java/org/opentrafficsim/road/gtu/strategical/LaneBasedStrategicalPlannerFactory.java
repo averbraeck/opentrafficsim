@@ -22,21 +22,7 @@ public interface LaneBasedStrategicalPlannerFactory<T extends LaneBasedStrategic
 {
 
     /**
-     * Returns a set of behavioral characteristics with default values for the next strategical planner that will be generated.
-     * @return set of behavioral characteristics with default values for the next strategical planner that will be generated
-     */
-    BehavioralCharacteristics getDefaultBehavioralCharacteristics();
-
-    /**
-     * Set behavioral characteristics to use with the next creation of a strategical planner. Only the next planner will use
-     * this.
-     * @param behavioralCharacteristics behavioral characteristics to use with the next creation of a strategical planner
-     */
-    void setBehavioralCharacteristics(BehavioralCharacteristics behavioralCharacteristics);
-
-    /**
-     * Creates a new strategical planner for the given GTU. If no default behavioral characteristics are set, the default values
-     * will be used.
+     * Creates a new strategical planner for the given GTU. The default behavioral characteristics should be used.
      * @param gtu GTU
      * @param route route
      * @return strategical planner for the given GTU

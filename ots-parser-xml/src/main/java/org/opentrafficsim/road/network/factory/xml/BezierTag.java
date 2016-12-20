@@ -1,6 +1,8 @@
 package org.opentrafficsim.road.network.factory.xml;
 
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
@@ -15,6 +17,11 @@ import org.xml.sax.SAXException;
  */
 class BezierTag
 {
+    
+    /** The shape factor. Will be filled after parsing. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    double shape;
+    
     /**
      * Parse the LINK.BEZIER tag.
      * @param bezierNode the XML-node to parse
@@ -27,6 +34,23 @@ class BezierTag
     static void parseBezier(final Node bezierNode, final XmlNetworkLaneParser parser, final LinkTag linkTag)
         throws SAXException, NetworkException
     {
+        NamedNodeMap bezierAttributes = bezierNode.getAttributes();
         linkTag.bezierTag = new BezierTag();
+        
+        Node shape = bezierAttributes.getNamedItem("SHAPE");
+        if (shape == null)
+        {
+            linkTag.bezierTag.shape = 1.0;
+        }
+        else
+        {
+            double s = Double.parseDouble(shape.getNodeValue());
+            if (s <= 0)
+            {
+                throw new SAXException("BEZIER: SHAPE attribute negative or zero");
+            }
+            linkTag.bezierTag.shape = s;
+        }
+        
     }
 }

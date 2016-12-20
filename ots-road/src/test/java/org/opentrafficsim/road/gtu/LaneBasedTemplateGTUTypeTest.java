@@ -194,20 +194,6 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public BehavioralCharacteristics getDefaultBehavioralCharacteristics()
-        {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void setBehavioralCharacteristics(final BehavioralCharacteristics behavioralCharacteristics)
-        {
-            //
-        }
-
-        /** {@inheritDoc} */
-        @Override
         public LaneBasedStrategicalPlanner create(LaneBasedGTU gtu, Route route) throws GTUException
         {
             return null;
