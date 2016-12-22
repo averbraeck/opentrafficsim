@@ -148,7 +148,8 @@ public class CrossSectionLink extends OTSLink implements Serializable
         this.laneKeepingPolicy = link.laneKeepingPolicy;
         for (CrossSectionElement cse : link.crossSectionElementList)
         {
-            addCrossSectionElement(cse.clone(this, newSimulator, animation));
+            cse.clone(this, newSimulator, animation);
+            // the CrossSectionElement will add itself to the Link (OTS-237)
         }
     }
 

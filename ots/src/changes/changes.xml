@@ -2,12 +2,24 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
-    <release version="0.13.01" date="2016-12-20" description="Sprint 9">
+    <release version="0.13.01" date="2016-12-20" description="Intermediate Release 0.13.01">
       <action issue="OTS-235" type="add">
         OTS-235: Arc with variable radius.
       </action>
       <action issue="OTS-236" type="add">
         OTS-236: Bezier SHAPE and control points limited to intersection of control lines.
+      </action>
+      <action issue="OTS-237" type="fix">
+        OTS-237: Clone of CrossSectionLink added CrossSectionElements twice.
+      </action>
+      <action issue="OTS-238" type="fix">
+        OTS-238: GTU should not immediately change lane on initialization with the DirectedLaneChange tactical planner.
+      </action>
+      <action issue="OTS-239" type="fix">
+        OTS-239: Time to not change lanes after a lane change with the DirectedLaneChange tactical planner should be settable.
+      </action>
+      <action issue="OTS-240" type="add">
+        OTS-240: The threshold distance for differences between initial locations of the GTU on different lanes should be settable.
       </action>
     </release>
 
@@ -63,7 +75,7 @@
     </release>
 
 
-    <release version="0.12.02" date="2016-11-20" description="SIntermediate Release 12.02">
+    <release version="0.12.02" date="2016-11-20" description="Intermediate Release 0.12.02">
       <action issue="OTS-87" type="update">
         OTS-87 Implement mandatory incentives for LMRS.
       </action>
@@ -79,7 +91,7 @@
     </release>
     
     
-    <release version="0.12.01" date="2016-11-07" description="Intermediate release 12.01">
+    <release version="0.12.01" date="2016-11-07" description="Intermediate release 0.12.01">
       <action issue="OTS-213" type="fix">
         OTS-213 Change SimpleWeightedGraph in OTSNetwork into SimpleDirectedWeightedGraph
       </action>

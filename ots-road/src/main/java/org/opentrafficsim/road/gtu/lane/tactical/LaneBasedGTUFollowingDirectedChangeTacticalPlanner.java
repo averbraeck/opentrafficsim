@@ -43,6 +43,7 @@ import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -84,6 +85,9 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     /** Earliest next lane change time (unless we HAVE to change lanes). */
     private Time earliestNextLaneChangeTime = Time.ZERO;
 
+    /** Time a GTU should stay in its current lane after a lane change. */
+    private Duration durationInLaneAfterLaneChange = new Duration(15.0, TimeUnit.SECOND);
+
     /** Lane we changed to at instantaneous lane change. */
     private Lane laneAfterLaneChange = null;
 
@@ -103,6 +107,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     {
         super(carFollowingModel, gtu);
         getPerception().addPerceptionCategory(new DefaultSimplePerception(getPerception()));
+        setNoLaneChange(new Duration(0.25, TimeUnit.SECOND));
     }
 
     /**
@@ -112,6 +117,16 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     public final GTUFollowingModelOld getCarFollowingModelOld()
     {
         return (GTUFollowingModelOld) super.getCarFollowingModel();
+    }
+
+    /**
+     * Indicate that no lane change should happen for the indicated duration.
+     * @param noLaneChangeDuration the duration for which no lane change should happen.
+     */
+    public final void setNoLaneChange(final Duration noLaneChangeDuration)
+    {
+        Throw.when(noLaneChangeDuration.lt(Duration.ZERO), RuntimeException.class, "noLaneChangeDuration should be >= 0");
+        this.earliestNextLaneChangeTime = getGtu().getSimulator().getSimulatorTime().getTime().plus(noLaneChangeDuration);
     }
 
     /**
@@ -561,9 +576,9 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     {
         gtu.changeLaneInstantaneously(direction);
 
-        // stay at least 15 seconds in the current lane (unless we HAVE to change lanes)
+        // stay at a certain number of seconds in the current lane (unless we HAVE to change lanes)
         this.earliestNextLaneChangeTime =
-                gtu.getSimulator().getSimulatorTime().getTime().plus(new Duration(15, TimeUnit.SECOND));
+                gtu.getSimulator().getSimulatorTime().getTime().plus(this.durationInLaneAfterLaneChange);
 
         // make sure out turn indicator is on!
         gtu.setTurnIndicatorStatus(direction.isLeft() ? TurnIndicatorStatus.LEFT : TurnIndicatorStatus.RIGHT);
@@ -723,6 +738,27 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     public final void setDestroyGtuOnFailure(final boolean destroyGtuOnFailure)
     {
         this.destroyGtuOnFailure = destroyGtuOnFailure;
+    }
+
+    /**
+     * Get the duration to stay in a Lane after a lane change.
+     * @return Duration; durationInLaneAfterLaneChange
+     */
+    protected final Duration getDurationInLaneAfterLaneChange()
+    {
+        return this.durationInLaneAfterLaneChange;
+    }
+
+    /**
+     * Set the duration to stay in a Lane after a lane change.
+     * @param durationInLaneAfterLaneChange set duration to stay in a Lane after a lane change
+     * @throws GTUException when durationInLaneAfterLaneChange less than zero
+     */
+    protected final void setDurationInLaneAfterLaneChange(final Duration durationInLaneAfterLaneChange) throws GTUException
+    {
+        Throw.when(durationInLaneAfterLaneChange.lt(Duration.ZERO), GTUException.class,
+                "durationInLaneAfterLaneChange should be >= 0");
+        this.durationInLaneAfterLaneChange = durationInLaneAfterLaneChange;
     }
 
     /** {@inheritDoc} */
