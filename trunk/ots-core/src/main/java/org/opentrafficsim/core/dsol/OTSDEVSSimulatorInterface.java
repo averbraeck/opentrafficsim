@@ -5,6 +5,7 @@ import org.djunits.value.vdouble.scalar.Time;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.eventlists.EventListInterface;
+import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
@@ -44,6 +45,7 @@ public interface OTSDEVSSimulatorInterface
      * @return the simulation event so it can be cancelled later
      * @throws SimRuntimeException whenever the event is scheduled in the past.
      */
+    @Override
     SimEventInterface<OTSSimTimeDouble> scheduleEventRel(Duration relativeDelay, short priority, Object source, Object target,
             String method, Object[] args) throws SimRuntimeException;
 
@@ -57,6 +59,7 @@ public interface OTSDEVSSimulatorInterface
      * @return the simulation event so it can be cancelled later
      * @throws SimRuntimeException whenever the event is scheduled in the past.
      */
+    @Override
     SimEventInterface<OTSSimTimeDouble> scheduleEventRel(Duration relativeDelay, Object source, Object target, String method,
             Object[] args) throws SimRuntimeException;
 
@@ -75,6 +78,7 @@ public interface OTSDEVSSimulatorInterface
      * @return the simulation event so it can be cancelled later
      * @throws SimRuntimeException whenever the event is scheduled in the past.
      */
+    @Override
     SimEventInterface<OTSSimTimeDouble> scheduleEventAbs(Time absoluteTime, Object source, Object target, String method,
             Object[] args) throws SimRuntimeException;
 
@@ -89,6 +93,7 @@ public interface OTSDEVSSimulatorInterface
      * @return the simulation event so it can be cancelled later
      * @throws SimRuntimeException whenever the event is scheduled in the past.
      */
+    @Override
     SimEventInterface<OTSSimTimeDouble> scheduleEventAbs(Time absoluteTime, short priority, Object source, Object target,
             String method, Object[] args) throws SimRuntimeException;
 
@@ -110,11 +115,16 @@ public interface OTSDEVSSimulatorInterface
     /** {@inheritDoc} */
     @Override
     void setEventList(EventListInterface<OTSSimTimeDouble> eventList) throws SimRuntimeException;
+    
+    /** {@inheritDoc} */
+    @Override
+    Replication<Time, Duration, OTSSimTimeDouble> getReplication();
 
     /**
      * Runs the simulator up to a certain time; events at that time will not yet be executed.
      * @param when the absolute time till when we want to run the simulation
      * @throws SimRuntimeException whenever starting fails. Possible occasions include starting a started simulator
      */
+    @Override
     void runUpTo(final Time when) throws SimRuntimeException;
 }

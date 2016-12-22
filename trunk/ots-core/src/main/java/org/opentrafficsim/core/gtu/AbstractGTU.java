@@ -208,6 +208,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     /**
      * Destructor. Don't forget to call with super.destroy() from any override to avoid memory leaks in the network.
      */
+    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public void destroy()
     {
@@ -320,6 +321,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     /**
      * @return simulator the simulator to schedule plan changes on
      */
+    @Override
     public final OTSDEVSSimulatorInterface getSimulator()
     {
         return this.simulator;
@@ -329,6 +331,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
      * @return strategicalPlanner the planner responsible for the overall 'mission' of the GTU, usually indicating where it
      *         needs to go. It operates by instantiating tactical planners to do the work.
      */
+    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public StrategicalPlanner getStrategicalPlanner()
     {
@@ -338,6 +341,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     /**
      * @return tacticalPlanner the tactical planner that can generate an operational plan
      */
+    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public TacticalPlanner getTacticalPlanner()
     {
@@ -352,6 +356,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     /**
      * @return operationalPlan the current operational plan, which provides a short-term movement over time
      */
+    @Override
     public final OperationalPlan getOperationalPlan()
     {
         return this.operationalPlan;
@@ -417,6 +422,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     /**
      * @return maximumAcceleration
      */
+    @Override
     public final Acceleration getMaximumAcceleration()
     {
         return this.maximumAcceleration;
@@ -437,6 +443,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     /**
      * @return maximumDeceleration
      */
+    @Override
     public final Acceleration getMaximumDeceleration()
     {
         return this.maximumDeceleration;

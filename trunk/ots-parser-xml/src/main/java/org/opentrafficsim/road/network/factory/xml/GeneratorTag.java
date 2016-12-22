@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -348,7 +347,7 @@ class GeneratorTag implements Serializable
                 }
                 routeGenerator = new ProbabilisticRouteGenerator(probRoutes, simulator.getReplication().getStream("GENERAL"));
             }
-            catch (RemoteException | ProbabilityException exception)
+            catch (ProbabilityException exception)
             {
                 throw new RuntimeException("Could not generate route mix.");
             }
