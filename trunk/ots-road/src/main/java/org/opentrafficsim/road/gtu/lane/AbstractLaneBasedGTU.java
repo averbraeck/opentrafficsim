@@ -99,6 +99,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     /** The object to lock to make the GTU thread safe. */
     private Object lock = new Object();
 
+    /** The threshold distance for differences between initial locations of the GTU on different lanes. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    public static Length initialLocationThresholdDifference = new Length(1.0, LengthUnit.MILLIMETER);
+
     /**
      * Construct a Lane Based GTU.
      * @param id the id of the GTU
@@ -133,8 +137,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         DirectedPoint lastPoint = null;
         for (DirectedLanePosition pos : initialLongitudinalPositions)
         {
-            Throw.when(lastPoint != null && pos.getLocation().distance(lastPoint) > 1E-6, GTUException.class,
-                    "initial locations for GTU have distance > 1 mm");
+            Throw.when(lastPoint != null && pos.getLocation().distance(lastPoint) > initialLocationThresholdDifference.si,
+                    GTUException.class, "initial locations for GTU have distance > " + initialLocationThresholdDifference);
             lastPoint = pos.getLocation();
         }
         DirectedPoint initialLocation = lastPoint;
