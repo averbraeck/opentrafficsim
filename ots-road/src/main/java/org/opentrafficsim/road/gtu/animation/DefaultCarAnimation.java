@@ -111,6 +111,7 @@ public class DefaultCarAnimation extends Renderable2D implements Serializable
                         catch (NamingException | NullPointerException e)
                         {
                             // ignore
+                            // TODO Solve in DSOL
                         }
                     }
                 });

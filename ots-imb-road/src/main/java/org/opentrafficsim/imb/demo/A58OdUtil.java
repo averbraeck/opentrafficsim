@@ -4,7 +4,6 @@ import static org.djunits.value.StorageType.DENSE;
 import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
 import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.TRUCK;
 
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -115,14 +114,7 @@ public class A58OdUtil
         streams.put("headwayGeneration", new MersenneTwister(100L + j));
         streams.put("gtuClass", new MersenneTwister(101L + j));
         streams.put("gtuRoute", new MersenneTwister(102L + j));
-        try
-        {
-            simulator.getReplication().setStreams(streams);
-        }
-        catch (RemoteException exception)
-        {
-            throw new RuntimeException("Could not obtain replication.", exception);
-        }
+        simulator.getReplication().setStreams(streams);
 
         TTCRoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, TimeUnit.SI));
         IdGenerator idGenerator = new IdGenerator("");
