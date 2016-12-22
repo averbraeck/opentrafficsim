@@ -16,5 +16,5 @@ package org.opentrafficsim.water.role;
  */
 public enum CompanyTypes 
 {
-	
+    //
 }
