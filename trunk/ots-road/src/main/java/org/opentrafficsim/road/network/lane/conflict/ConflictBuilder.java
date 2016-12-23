@@ -37,6 +37,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 // TODO use z-coordinate for intersections of lines
+// TODO add ignore set of lane/link combinations such that the network can be processed automatically, and a few things manually
 public final class ConflictBuilder
 {
 
@@ -62,6 +63,22 @@ public final class ConflictBuilder
     public static void buildConflicts(final OTSNetwork network, final GTUType gtuType,
             final OTSDEVSSimulatorInterface simulator, final WidthGenerator widthGenerator) throws OTSGeometryException
     {
+        buildConflicts(network, gtuType, simulator, widthGenerator, new IgnoreList());
+    }
+
+    /**
+     * Build conflicts on network.
+     * @param network network
+     * @param gtuType gtu type
+     * @param simulator simulator
+     * @param widthGenerator width generator
+     * @param ignoreList lane combinations to ignore
+     * @throws OTSGeometryException in case of geometry exception
+     */
+    public static void buildConflicts(final OTSNetwork network, final GTUType gtuType,
+            final OTSDEVSSimulatorInterface simulator, final WidthGenerator widthGenerator, final IgnoreList ignoreList)
+            throws OTSGeometryException
+    {
         // Create list of lanes
         ImmutableMap<String, Link> links = network.getLinkMap();
         List<Lane> lanes = new ArrayList<>();
@@ -79,7 +96,7 @@ public final class ConflictBuilder
                 }
             }
         }
-        buildConflicts(lanes, gtuType, simulator, widthGenerator);
+        buildConflicts(lanes, gtuType, simulator, widthGenerator, ignoreList);
     }
 
     /**
@@ -92,6 +109,21 @@ public final class ConflictBuilder
      */
     public static void buildConflicts(final List<Lane> lanes, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
             final WidthGenerator widthGenerator) throws OTSGeometryException
+    {
+        buildConflicts(lanes, gtuType, simulator, widthGenerator, new IgnoreList());
+    }
+
+    /**
+     * Build conflicts on list of lanes.
+     * @param lanes lanes
+     * @param gtuType gtu type
+     * @param simulator simulator
+     * @param widthGenerator width generator
+     * @param ignoreList lane combinations to ignore
+     * @throws OTSGeometryException in case of geometry exception
+     */
+    public static void buildConflicts(final List<Lane> lanes, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
+            final WidthGenerator widthGenerator, final IgnoreList ignoreList) throws OTSGeometryException
     {
         // Loop Lane / GTUDirectionality combinations
         for (int i = 0; i < lanes.size(); i++)
@@ -119,6 +151,11 @@ public final class ConflictBuilder
                 {
 
                     Lane lane2 = lanes.get(j);
+                    if (ignoreList.ignore(lane1, lane2))
+                    {
+                        continue;
+                    }
+                    
                     GTUDirectionality[] dirs2;
                     if (lane2.getDirectionality(gtuType).isForward())
                     {
