@@ -23,7 +23,9 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
+import org.opentrafficsim.road.network.lane.conflict.IgnoreList;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 
@@ -102,8 +104,19 @@ public class TestNetworkDemo extends AbstractWrappableAnimation
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
                 this.network = nlp.build(url);
 
+                IgnoreList ignoreList = new IgnoreList();
+                ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("L_D3b-D3a"),
+                        (CrossSectionLink) this.network.getLink("L_B3a-A3b"));
+                ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("L_A3a-D3a"),
+                        (CrossSectionLink) this.network.getLink("L_C3b-B3b"));
+                ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("L_H3b-H3a"),
+                        (CrossSectionLink) this.network.getLink("L_F3a-E3b"));
+                ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("L_E3a-H3a"),
+                        (CrossSectionLink) this.network.getLink("L_G3b-F3b"));
                 ConflictBuilder.buildConflicts(this.network, VEHICLE, this.simulator,
-                        new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
+                        new ConflictBuilder.FixedWidthGenerator(new Length(1.0, LengthUnit.SI)), ignoreList);
+                // new ConflictBuilder.FixedWidthGenerator(new Length(1.0, LengthUnit.SI))
+                // ConflictBuilder.DEFAULT_WIDTH_GENERATOR
 
             }
             catch (Exception exception)
