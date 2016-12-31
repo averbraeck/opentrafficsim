@@ -14,6 +14,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
+ * A located object can report its location. 
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
