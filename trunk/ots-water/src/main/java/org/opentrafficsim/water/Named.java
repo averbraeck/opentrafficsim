@@ -3,6 +3,7 @@ package org.opentrafficsim.water;
 import java.io.Serializable;
 
 /**
+ * A named object can report its name.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
