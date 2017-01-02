@@ -121,7 +121,7 @@ public class DistributionTest
             dist.modifyFrequency(1, 1);
             fail("Bad index for modify should have thrown an IndexOutOfBoundsException");
         }
-        catch (IndexOutOfBoundsException e)
+        catch (ProbabilityException e)
         {
             // Ignore expected exception
         }
@@ -130,7 +130,7 @@ public class DistributionTest
             dist.modifyFrequency(-1, 1);
             fail("Bad index for modify should have thrown an IndexOutOfBoundsException");
         }
-        catch (IndexOutOfBoundsException e)
+        catch (ProbabilityException e)
         {
             // Ignore expected exception
         }
@@ -225,6 +225,22 @@ public class DistributionTest
         {
             // Ignore expected exception
         }
+        try
+        {
+            dist.set(-1, new FrequencyAndObject<DistributionTest.TestObject>(456, to2));
+        }
+        catch (ProbabilityException pe)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            dist.set(dist.size(), new FrequencyAndObject<DistributionTest.TestObject>(456, to2));
+        }
+        catch (ProbabilityException pe)
+        {
+            // Ignore expected exception
+        }
         // Modify the internal value "cumulativeTotal" to increase the odds that Distribution resorts to returning the first
         // non-zero frequency object
         double badTotal = 1000;
@@ -260,8 +276,8 @@ public class DistributionTest
         double expectedIn0 = (dist.get(0).getFrequency() + badFrequency) / badTotal * 10000;
         // System.out.println("Observed frequencies: [" + observed[0] + ", " + observed[1] + "]; expected in 0 " + expectedIn0);
         assertEquals("Total number of draws should add up to 10000", 10000, observed[0] + observed[1]);
-        assertTrue("observed frequency of to should be about " + expectedIn0,
-                expectedIn0 - 500 < observed[0] && observed[0] < expectedIn0 + 500);
+        assertTrue("observed frequency of to should be about " + expectedIn0, expectedIn0 - 500 < observed[0]
+                && observed[0] < expectedIn0 + 500);
         // When frequency of element 0 is 0; the draw method should never return it; even if the cumulativeTotal is wrong
         dist.modifyFrequency(0, 0);
         try
@@ -295,6 +311,22 @@ public class DistributionTest
         // System.out.println("Observed frequencies: [" + observed[0] + ", " + observed[1] + "]; expected in 0 " + expectedIn0);
         assertEquals("Total number of draws should add up to 10000", 10000, observed[0] + observed[1]);
         assertEquals("observed frequency of to should be 0", 0, observed[0]);
+        try
+        {
+            dist.modifyFrequency(dist.size(), 0);
+        }
+        catch (ProbabilityException pe)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            dist.modifyFrequency(-1, 0);
+        }
+        catch (ProbabilityException pe)
+        {
+            // Ignore expected exception
+        }
         // Execute the clear method and verify that size is 0
         dist.clear();
         assertEquals("after clear the set should be empty", 0, dist.size());
