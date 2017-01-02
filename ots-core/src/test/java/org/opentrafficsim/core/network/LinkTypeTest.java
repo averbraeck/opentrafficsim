@@ -28,7 +28,7 @@ public class LinkTypeTest
      * Test the constructor and methods of the LinkType class.
      */
     @Test
-    public void testLinkType()
+    public final void testLinkType()
     {
         try
         {
