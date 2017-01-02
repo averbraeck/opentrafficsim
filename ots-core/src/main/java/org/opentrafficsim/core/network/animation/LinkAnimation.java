@@ -115,6 +115,13 @@ public class LinkAnimation extends Renderable2D implements Serializable
             }
             return new DirectedPoint(p.x, p.y, Double.MAX_VALUE, 0.0, 0.0, a);
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "LinkAnimation.Text []";
+        }
     }
 
 }

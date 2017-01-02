@@ -95,6 +95,13 @@ public class NodeAnimation extends Renderable2D implements Serializable
             setFlip(false);
             setRotate(false);
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "NodeAnimation.Text []";
+        }
     }
 
 }
