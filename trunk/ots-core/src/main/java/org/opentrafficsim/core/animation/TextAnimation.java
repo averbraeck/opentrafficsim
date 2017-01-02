@@ -193,5 +193,12 @@ public abstract class TextAnimation implements Locatable, Serializable
             ta.paint(graphics, observer);
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "TextAnimation.AnimationImpl []";
+        }
+
     }
 }
