@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.geometry;
 
+import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -52,6 +53,8 @@ public final class Bezier
     public static OTSLine3D cubic(final int numPoints, final OTSPoint3D start, final OTSPoint3D control1,
             final OTSPoint3D control2, final OTSPoint3D end) throws OTSGeometryException
     {
+        Throw.when(numPoints < 2, OTSGeometryException.class, "Number of points too small (got %d; minimum value is 2)",
+                numPoints);
         OTSPoint3D[] points = new OTSPoint3D[numPoints];
         for (int n = 0; n < numPoints; n++)
         {
@@ -86,7 +89,7 @@ public final class Bezier
      * @param numPoints the number of points for the B&eacute;zier curve
      * @param start the directed start point of the B&eacute;zier curve
      * @param end the directed end point of the B&eacute;zier curve
-     * @param shape shape factor; 1 = control points at half the distance between start and end, &gt; 1 results in pointier a
+     * @param shape shape factor; 1 = control points at half the distance between start and end, &gt; 1 results in a pointier
      *            shape, &lt; 1 results in a flatter shape, value should be above 0
      * @return a cubic B&eacute;zier curve between start and end, with the two provided control points
      * @throws OTSGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
@@ -97,8 +100,9 @@ public final class Bezier
     {
         double distance2 =
                 shape * Math.sqrt((end.x - start.x) * (end.x - start.x) + (end.y - start.y) * (end.y - start.y)) / 2.0;
-        OTSPoint3D control1 = new OTSPoint3D(start.x + distance2 * Math.cos(start.getRotZ()),
-                start.y + distance2 * Math.sin(start.getRotZ()), start.z);
+        OTSPoint3D control1 =
+                new OTSPoint3D(start.x + distance2 * Math.cos(start.getRotZ()),
+                        start.y + distance2 * Math.sin(start.getRotZ()), start.z);
         OTSPoint3D control2 =
                 new OTSPoint3D(end.x - distance2 * Math.cos(end.getRotZ()), end.y - distance2 * Math.sin(end.getRotZ()), end.z);
 
@@ -109,26 +113,17 @@ public final class Bezier
         double dy2 = Math.sin(end.getRotZ());
         OTSPoint3D s = new OTSPoint3D(start);
         OTSPoint3D e = new OTSPoint3D(end);
-        OTSPoint3D intersection = OTSPoint3D.intersectionOfLines(s, new OTSPoint3D(start.x + dx1, start.y + dy1, start.z), e,
-                new OTSPoint3D(end.x + dx2, end.y + dy2, end.z));
+        OTSPoint3D intersection =
+                OTSPoint3D.intersectionOfLines(s, new OTSPoint3D(start.x + dx1, start.y + dy1, start.z), e, new OTSPoint3D(
+                        end.x + dx2, end.y + dy2, end.z));
         if (intersection != null)
         {
-            /* {@formatter:off}
-             *
-             * The intersection is selected as control point only if it is between the start (end) and the original control 
-             * point. Thus only the second situation below. This requires that the intersection (i) is closer to the start (s) 
-             * than the control (c), and that the intersection (i) is closer to the control (c) than the start (s).
-             * 
-             * i       s             c
-             * o-------o-------------o            (i) further from (c) than (s), not accepted
-             * 
-             *         s       i     c
-             *         o-------o-----o
-             *         
-             *         s             c     i
-             *         o-------------o-----o      (i) further from (s) than (c), not accepted
-             * 
-             * {@formatter:on}
+            /*
+             * {@formatter:off} The intersection is selected as control point only if it is between the start (end) and the
+             * original control point. Thus only the second situation below. This requires that the intersection (i) is closer
+             * to the start (s) than the control (c), and that the intersection (i) is closer to the control (c) than the start
+             * (s). i s c o-------o-------------o (i) further from (c) than (s), not accepted s i c o-------o-----o s c i
+             * o-------------o-----o (i) further from (s) than (c), not accepted {@formatter:on}
              */
             if (s.distanceSI(intersection) < s.distanceSI(control1)
                     && control1.distanceSI(intersection) < control1.distanceSI(s))

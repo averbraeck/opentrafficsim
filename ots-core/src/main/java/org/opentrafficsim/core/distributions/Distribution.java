@@ -181,6 +181,8 @@ public class Distribution<O> implements Generator<O>, Serializable
      */
     public final Distribution<O> modifyFrequency(final int index, final double frequency) throws ProbabilityException
     {
+        Throw.when(index < 0 || index >= this.size(), ProbabilityException.class, "Index %s out of range (0..%d)", index,
+                this.size() - 1);
         return set(index, new FrequencyAndObject<O>(frequency, this.generators.get(index).getObject()));
     }
 
