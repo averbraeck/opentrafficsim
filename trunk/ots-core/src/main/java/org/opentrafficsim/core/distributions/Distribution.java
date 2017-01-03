@@ -80,6 +80,7 @@ public class Distribution<O> implements Generator<O>, Serializable
     }
 
     /** {@inheritDoc} */
+    @Override
     public final O draw() throws ProbabilityException
     {
         Throw.when(0 == this.generators.size(), ProbabilityException.class, "Cannot draw from empty collection");
