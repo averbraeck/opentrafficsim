@@ -2,6 +2,22 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="0.13.02" date="2017-01-03" description="Intermediate Release 0.13.02">
+      <action issue="OTS-242" type="fix">
+        OTS-242. Repair of Bezier curve.
+      </action>
+      <action type="update">
+        toString() methods added to several classes in ots-core.
+      </action>
+      <action type="update">
+        Throw.when(...) added to constructor of Distribution.java.
+      </action>
+      <action type="update">
+        unit tests added for several classes in ots-core.
+      </action>
+    </release>
+
+
     <release version="0.13.01" date="2016-12-20" description="Intermediate Release 0.13.01">
       <action issue="OTS-235" type="add">
         OTS-235: Arc with variable radius.
@@ -22,6 +38,7 @@
         OTS-240: The threshold distance for differences between initial locations of the GTU on different lanes should be settable.
       </action>
     </release>
+
 
     <release version="0.13.00" date="2016-12-11" description="Sprint 8">
       <action issue="OTS-64" type="add">
