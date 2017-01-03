@@ -100,9 +100,8 @@ public final class Bezier
     {
         double distance2 =
                 shape * Math.sqrt((end.x - start.x) * (end.x - start.x) + (end.y - start.y) * (end.y - start.y)) / 2.0;
-        OTSPoint3D control1 =
-                new OTSPoint3D(start.x + distance2 * Math.cos(start.getRotZ()),
-                        start.y + distance2 * Math.sin(start.getRotZ()), start.z);
+        OTSPoint3D control1 = new OTSPoint3D(start.x + distance2 * Math.cos(start.getRotZ()),
+                start.y + distance2 * Math.sin(start.getRotZ()), start.z);
         OTSPoint3D control2 =
                 new OTSPoint3D(end.x - distance2 * Math.cos(end.getRotZ()), end.y - distance2 * Math.sin(end.getRotZ()), end.z);
 
@@ -113,18 +112,27 @@ public final class Bezier
         double dy2 = Math.sin(end.getRotZ());
         OTSPoint3D s = new OTSPoint3D(start);
         OTSPoint3D e = new OTSPoint3D(end);
-        OTSPoint3D intersection =
-                OTSPoint3D.intersectionOfLines(s, new OTSPoint3D(start.x + dx1, start.y + dy1, start.z), e, new OTSPoint3D(
-                        end.x + dx2, end.y + dy2, end.z));
+        OTSPoint3D intersection = OTSPoint3D.intersectionOfLines(s, new OTSPoint3D(start.x + dx1, start.y + dy1, start.z), e,
+                new OTSPoint3D(end.x + dx2, end.y + dy2, end.z));
         if (intersection != null)
         {
-            /*
-             * {@formatter:off} The intersection is selected as control point only if it is between the start (end) and the
-             * original control point. Thus only the second situation below. This requires that the intersection (i) is closer
-             * to the start (s) than the control (c), and that the intersection (i) is closer to the control (c) than the start
-             * (s). i s c o-------o-------------o (i) further from (c) than (s), not accepted s i c o-------o-----o s c i
-             * o-------------o-----o (i) further from (s) than (c), not accepted {@formatter:on}
-             */
+            /* {@formatter:off}
+            *
+            * The intersection is selected as control point only if it is between the start (end) and the original control 
+            * point. Thus only the second situation below. This requires that the intersection (i) is closer to the start (s) 
+            * than the control (c), and that the intersection (i) is closer to the control (c) than the start (s).
+            * 
+            * i       s             c
+            * o-------o-------------o            (i) further from (c) than (s), not accepted
+            * 
+            *         s       i     c
+            *         o-------o-----o
+            *         
+            *         s             c     i
+            *         o-------------o-----o      (i) further from (s) than (c), not accepted
+            * 
+            * {@formatter:on}
+            */
             if (s.distanceSI(intersection) < s.distanceSI(control1)
                     && control1.distanceSI(intersection) < control1.distanceSI(s))
             {
