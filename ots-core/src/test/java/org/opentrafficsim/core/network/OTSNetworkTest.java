@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
@@ -16,6 +18,8 @@ import org.junit.Test;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.route.Route;
 
 /**
  * <p>
@@ -270,5 +274,98 @@ public class OTSNetworkTest implements EventListenerInterface
         {
             this.otherEventCount++;
         }
+    }
+
+    /**
+     * Test the route map stuff.
+     * @throws NetworkException if that happens uncaught; this test has failed
+     */
+    @Test
+    public final void testRouteMap() throws NetworkException
+    {
+        Network network = new OTSNetwork("Route map test network");
+        Node node1 = new OTSNode(network, "node1", new OTSPoint3D(10, 20, 30));
+        Node node2 = new OTSNode(network, "node2", new OTSPoint3D(110, 20, 30));
+        List<Node> nodeList = new ArrayList<>();
+        nodeList.add(node1);
+        nodeList.add(node2);
+        Route route1 = new Route("route1", nodeList);
+        Route route2 = new Route("route2");
+        Route route3 = new Route("route3");
+        GTUType carType = new GTUType("car", GTUType.VEHICLE);
+        GTUType bicycleType = new GTUType("bicycle", GTUType.BIKE);
+        // The next test makes little sense until the getters are changed to search up to the GTUType root.
+        assertEquals("initially the network has 0 routes", 0, network.getDefinedRouteMap(GTUType.ALL).size());
+        network.addRoute(carType, route1);
+        assertEquals("list for carType contains one entry", 1, network.getDefinedRouteMap(carType).size());
+        assertEquals("route for carType route1 is route1", route1, network.getRoute(carType, "route1"));
+        assertNull("route for bycicleType route1 is null", network.getRoute(bicycleType, "route1"));
+        assertEquals("list for bicycleType contains 0 routes", 0, network.getDefinedRouteMap(bicycleType).size());
+        network.addRoute(carType, route2);
+        network.addRoute(bicycleType, route3);
+        assertEquals("list for carType contains two entries", 2, network.getDefinedRouteMap(carType).size());
+        assertEquals("list for bicycleType contains one entry", 1, network.getDefinedRouteMap(bicycleType).size());
+        assertEquals("route for carType route1 is route1", route1, network.getRoute(carType, "route1"));
+        assertEquals("route for carType route2 is route2", route2, network.getRoute(carType, "route2"));
+        assertEquals("route for bicycle route3 is route3", route3, network.getRoute(bicycleType, "route3"));
+        assertNull("route for bicycle route1 is null", network.getRoute(bicycleType, "route1"));
+        try
+        {
+            network.addRoute(carType, route2);
+            fail("adding route again should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        Network otherNetwork = new OTSNetwork("other Route map test network");
+        Node badNode = new OTSNode(otherNetwork, "nodeInOtherNetwork", new OTSPoint3D(100, 200, 0));
+        List<Node> badNodeList = new ArrayList<>();
+        badNodeList.add(node1);
+        badNodeList.add(node2);
+        badNodeList.add(badNode);
+        Route badRoute = new Route("badRoute", badNodeList);
+        try
+        {
+            network.addRoute(carType, badRoute);
+            fail("adding a route with a node that is not in the network should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            network.removeRoute(bicycleType, route1);
+            fail("attempt to remove a route that is not defined for this GTUType should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        assertEquals("there is one route from node1 to node2 for carType", 1, network.getRoutesBetween(carType, node1, node2)
+                .size());
+        assertEquals("the one route from node1 to node2 is route1", route1, network.getRoutesBetween(carType, node1, node2)
+                .iterator().next());
+        assertEquals("there are no routes from node1 to node2 for bicycleType", 0,
+                network.getRoutesBetween(bicycleType, node1, node2).size());
+        assertEquals("there are no routes from node2 to node1 for carTypecleType", 0,
+                network.getRoutesBetween(carType, node2, node1).size());
+        assertEquals("there are no routes from node1 to node1 for carTypecleType", 0,
+                network.getRoutesBetween(carType, node1, node1).size());
+        GTUType junkType = new GTUType("junk", GTUType.VEHICLE);
+        assertEquals("there are no routes from node1 to node2 for badType", 0, network.getRoutesBetween(junkType, node1, node2)
+                .size());
+        network.removeRoute(carType, route1);
+        assertEquals("list for carType now contains one entry", 1, network.getDefinedRouteMap(carType).size());
+        assertEquals("list for bicycleType contains one entry", 1, network.getDefinedRouteMap(bicycleType).size());
+        assertNull("route for carType route1 is null", network.getRoute(carType, "route1"));
+        assertEquals("route for carType route2 is route2", route2, network.getRoute(carType, "route2"));
+        assertEquals("route for bicycle route3 is route3", route3, network.getRoute(bicycleType, "route3"));
+        assertTrue("network contains route2 for carType", network.containsRoute(carType, route2));
+        assertFalse("network does not contain route1 for carType", network.containsRoute(carType, route1));
+        assertTrue("network contains route with name route2 for carType", network.containsRoute(carType, "route2"));
+        assertFalse("network does not contain route with name route1 for carType", network.containsRoute(carType, "route1"));
+        assertFalse("network does not contain route with name route1 for junkType", network.containsRoute(junkType, "route1"));
     }
 }
