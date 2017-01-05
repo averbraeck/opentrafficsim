@@ -111,7 +111,6 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @param network the network that the GTU is initially registered in
      * @throws GTUException when initial values are not correct
      */
-    @SuppressWarnings("checkstyle:parameternumber")
     public AbstractLaneBasedGTU(final String id, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
             final OTSNetwork network) throws GTUException
     {
@@ -127,7 +126,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @throws GTUException when initial values are not correct
      * @throws OTSGeometryException when the initial path is wrong
      */
-    public final void init(final LaneBasedStrategicalPlanner strategicalPlanner,
+    @SuppressWarnings("checkstyle:designforextension")
+    public void init(final LaneBasedStrategicalPlanner strategicalPlanner,
             final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed)
             throws NetworkException, SimRuntimeException, GTUException, OTSGeometryException
     {
@@ -176,7 +176,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public final void enterLane(final Lane lane, final Length position, final GTUDirectionality gtuDirection)
+    @SuppressWarnings("checkstyle:designforextension")
+    public void enterLane(final Lane lane, final Length position, final GTUDirectionality gtuDirection)
             throws GTUException
     {
         if (lane == null || gtuDirection == null || position == null)
@@ -203,7 +204,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public final void leaveLane(final Lane lane) throws GTUException
+    @SuppressWarnings("checkstyle:designforextension")
+    public void leaveLane(final Lane lane) throws GTUException
     {
         leaveLane(lane, false);
     }
@@ -214,7 +216,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @param beingDestroyed if true, no complaints about having no lanes left
      * @throws GTUException in case leaveLane should not be called
      */
-    public final void leaveLane(final Lane lane, final boolean beingDestroyed) throws GTUException
+    @SuppressWarnings("checkstyle:designforextension")
+    public void leaveLane(final Lane lane, final boolean beingDestroyed) throws GTUException
     {
         Length position = position(lane, getReference());
         this.lanesCurrentOperationalPlan.remove(lane);
@@ -256,7 +259,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public final void changeLaneInstantaneously(final LateralDirectionality laneChangeDirection) throws GTUException
+    @SuppressWarnings("checkstyle:designforextension")
+    public void changeLaneInstantaneously(final LateralDirectionality laneChangeDirection) throws GTUException
     {
 
         // keep a copy of the lanes and directions (!)
@@ -314,7 +318,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @param laneChangeDirection direction of lane change
      * @throws GTUException exception
      */
-    public final void initLaneChange(final LateralDirectionality laneChangeDirection) throws GTUException
+    @SuppressWarnings("checkstyle:designforextension")
+    public void initLaneChange(final LateralDirectionality laneChangeDirection) throws GTUException
     {
         Map<Lane, GTUDirectionality> lanesCopy = new HashMap<>(this.lanesCurrentOperationalPlan);
         Map<Lane, Double> fractionalLanePositions = new HashMap<>();
@@ -344,7 +349,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @param time time to leave lanes
      * @throws GTUException exception
      */
-    public final void finalizeLaneChange(final LateralDirectionality laneChangeDirection, final Time time) throws GTUException
+    @SuppressWarnings("checkstyle:designforextension")
+    public void finalizeLaneChange(final LateralDirectionality laneChangeDirection, final Time time) throws GTUException
     {
         try
         {
@@ -361,7 +367,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * Performs the finalization of a lane change by leaving the from lanes.
      * @param laneChangeDirection direction of lane change
      */
-    protected final void executeLaneChangeFinalization(final LateralDirectionality laneChangeDirection)
+    @SuppressWarnings("checkstyle:designforextension")
+    protected void executeLaneChangeFinalization(final LateralDirectionality laneChangeDirection)
     {
         Map<Lane, GTUDirectionality> lanesCopy = new HashMap<>(this.lanesCurrentOperationalPlan);
         Set<Lane> lanesToBeRemoved = new HashSet<>();
@@ -404,7 +411,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    protected final void move(final DirectedPoint fromLocation)
+    @SuppressWarnings("checkstyle:designforextension")
+    protected void move(final DirectedPoint fromLocation)
             throws SimRuntimeException, GTUException, OperationalPlanException, NetworkException, ParameterException
     {
         // Only carry out move() if we still have lane(s) to drive on.
@@ -477,7 +485,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public final Length projectedPosition(final Lane projectionLane, final RelativePosition relativePosition, final Time when)
+    @SuppressWarnings("checkstyle:designforextension")
+    public Length projectedPosition(final Lane projectionLane, final RelativePosition relativePosition, final Time when)
             throws GTUException
     {
         // do not make a wedge in a curve of the projected position!
@@ -504,7 +513,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public final Length position(final Lane lane, final RelativePosition relativePosition, final Time when) throws GTUException
+    @SuppressWarnings("checkstyle:designforextension")
+    public Length position(final Lane lane, final RelativePosition relativePosition, final Time when) throws GTUException
     {
         if (null == lane)
         {
@@ -556,7 +566,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public final DirectedLanePosition getReferencePosition() throws GTUException
+    @SuppressWarnings("checkstyle:designforextension")
+    public DirectedLanePosition getReferencePosition() throws GTUException
     {
         for (Lane lane : this.lanesCurrentOperationalPlan.keySet())
         {
@@ -579,7 +590,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @throws SimRuntimeException should never happen
      * @throws GTUException when a branch is reached where the GTU does not know where to go next
      */
-    private void scheduleEnterLeaveTriggers() throws NetworkException, SimRuntimeException, GTUException
+    @SuppressWarnings("checkstyle:designforextension")
+    protected void scheduleEnterLeaveTriggers() throws NetworkException, SimRuntimeException, GTUException
     {
         /*
          * Move the vehicle into any new lanes with the front, and schedule entrance during this time step and calculate the
@@ -750,7 +762,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @throws NetworkException when no next lane exists or the route branches into multiple next lanes
      * @throws GTUException when no route could be found or the routeNavigator returns null
      */
-    private Lane determineNextLane(final Lane lane) throws NetworkException, GTUException
+    @SuppressWarnings("checkstyle:designforextension")
+    protected Lane determineNextLane(final Lane lane) throws NetworkException, GTUException
     {
         Lane nextLane = null;
         if (lane.nextLanes(getGTUType()).size() == 0)
@@ -810,7 +823,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @throws NetworkException when no next lane exists or the route branches into multiple next lanes
      * @throws GTUException when no route could be found or the routeNavigator returns null
      */
-    private Lane determinePrevLane(final Lane lane) throws NetworkException, GTUException
+    @SuppressWarnings("checkstyle:designforextension")
+    protected Lane determinePrevLane(final Lane lane) throws NetworkException, GTUException
     {
         Lane prevLane = null;
         if (lane.prevLanes(getGTUType()).size() == 0)
@@ -920,6 +934,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     }
 
     /** {@inheritDoc} */
+    @Override
     public final void addTrigger(final Lane lane, final SimEvent<OTSSimTimeDouble> event)
     {
         List<SimEvent<OTSSimTimeDouble>> list = this.pendingTriggers.get(lane);
@@ -990,6 +1005,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     }
 
     /** {@inheritDoc} */
+    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
