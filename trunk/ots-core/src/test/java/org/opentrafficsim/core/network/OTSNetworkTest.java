@@ -19,6 +19,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
 
 /**
@@ -368,4 +369,60 @@ public class OTSNetworkTest implements EventListenerInterface
         assertFalse("network does not contain route with name route1 for carType", network.containsRoute(carType, "route1"));
         assertFalse("network does not contain route with name route1 for junkType", network.containsRoute(junkType, "route1"));
     }
+
+    /**
+     * Test the shortest path functionality.
+     * @throws NetworkException if that happens uncaught; this test has failed
+     * @throws OTSGeometryException if that happens uncaught; this test has failed
+     */
+    @Test
+    public final void testShortestPath() throws NetworkException, OTSGeometryException
+    {
+        Network network = new OTSNetwork("shortest path test network");
+        // Create a bunch of nodes spread out over a circle
+        List<Node> nodes = new ArrayList<>();
+        double radius = 500;
+        double centerX = 0;
+        double centerY = 0;
+        int maxNode = 4;
+        for (int i = 0; i < maxNode; i++)
+        {
+            double angle = i * Math.PI * 2 / maxNode;
+            nodes.add(new OTSNode(network, "node" + i, new OTSPoint3D(centerX + radius * Math.cos(angle), centerY + radius
+                    * Math.sin(angle), 20)));
+        }
+        // Create bi-directional links between all adjacent nodes
+        Node prevNode = nodes.get(maxNode - 1);
+        for (Node node : nodes)
+        {
+            new OTSLink(network, "from " + prevNode.getId() + " to " + node.getId(), prevNode, node, LinkType.ALL,
+                    new OTSLine3D(prevNode.getPoint(), node.getPoint()), LongitudinalDirectionality.DIR_BOTH);
+            prevNode = node;
+        }
+        for (int skip = 1; skip < maxNode / 2; skip++)
+        {
+            for (int fromNodeIndex = 0; fromNodeIndex < maxNode; fromNodeIndex++)
+            {
+                Node fromNode = nodes.get(fromNodeIndex);
+                Node toNode = nodes.get((fromNodeIndex + skip) % maxNode);
+                CompleteRoute route = network.getShortestRouteBetween(GTUType.ALL, fromNode, toNode);
+                assertEquals("route size is skip + 1", skip + 1, route.size());
+                for (int i = 0; i < route.size(); i++)
+                {
+                    assertEquals("node in route at position i should match", nodes.get((fromNodeIndex + i) % maxNode),
+                            route.getNode(i));
+                }
+                // reverse direction
+                route = network.getShortestRouteBetween(GTUType.ALL, toNode, fromNode);
+                System.out.println("Shortest route from " + toNode + " to " + fromNode + " is " + route);
+                assertEquals("route size is skip + 1", skip + 1, route.size());
+                for (int i = 0; i < route.size(); i++)
+                {
+                    assertEquals("node in route at position i should match",
+                            nodes.get((fromNodeIndex + skip - i + maxNode) % maxNode), route.getNode(i));
+                }
+            }
+        }
+    }
+
 }
