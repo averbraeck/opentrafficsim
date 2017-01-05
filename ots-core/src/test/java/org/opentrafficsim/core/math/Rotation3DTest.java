@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.math;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.djunits.unit.AngleUnit;
@@ -126,6 +127,7 @@ public class Rotation3DTest
         {
             // Ignore expected exception
         }
+        assertTrue("toString contains class name", r3dr.toString().contains("Rotation3D"));
     }
 
     /**

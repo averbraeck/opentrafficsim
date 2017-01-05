@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.math;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.djunits.unit.AccelerationUnit;
@@ -34,14 +35,14 @@ public class Acceleration3DTest
         double x = 2.2;
         double y = 3.3;
         double z = 5.5;
-        Acceleration3D s3d = new Acceleration3D(x, y, z, AccelerationUnit.SI);
-        checkAcceleration(s3d, x, y, z);
+        Acceleration3D a3d = new Acceleration3D(x, y, z, AccelerationUnit.SI);
+        checkAcceleration(a3d, x, y, z);
         AccelerationVector sv = new AccelerationVector(new double[] { x, y, z }, AccelerationUnit.SI, StorageType.DENSE);
-        s3d = new Acceleration3D(sv);
-        checkAcceleration(s3d, x, y, z);
+        a3d = new Acceleration3D(sv);
+        checkAcceleration(a3d, x, y, z);
         sv = new AccelerationVector(new double[] { x, y, z }, AccelerationUnit.SI, StorageType.SPARSE);
-        s3d = new Acceleration3D(sv);
-        checkAcceleration(s3d, x, y, z);
+        a3d = new Acceleration3D(sv);
+        checkAcceleration(a3d, x, y, z);
         sv = new AccelerationVector(new double[] { x, y }, AccelerationUnit.SI, StorageType.DENSE);
         try
         {
@@ -82,19 +83,20 @@ public class Acceleration3DTest
         {
             // Ignore expected exception
         }
-        s3d = new Acceleration3D(new Acceleration(x, AccelerationUnit.SI), new Acceleration(y, AccelerationUnit.SI),
+        a3d = new Acceleration3D(new Acceleration(x, AccelerationUnit.SI), new Acceleration(y, AccelerationUnit.SI),
                 new Acceleration(z, AccelerationUnit.SI));
-        checkAcceleration(s3d, x, y, z);
-        s3d = new Acceleration3D(new Acceleration(x, AccelerationUnit.STANDARD_GRAVITY),
+        checkAcceleration(a3d, x, y, z);
+        a3d = new Acceleration3D(new Acceleration(x, AccelerationUnit.STANDARD_GRAVITY),
                 new Acceleration(y, AccelerationUnit.STANDARD_GRAVITY), new Acceleration(z, AccelerationUnit.STANDARD_GRAVITY));
-        checkAcceleration(s3d, x * 9.80665, y * 9.80665, z * 9.80665);
+        checkAcceleration(a3d, x * 9.80665, y * 9.80665, z * 9.80665);
         double theta = Math.PI * 0.4;
         double phi = Math.PI * 0.3;
         double length = 10;
-        s3d = new Acceleration3D(new Acceleration(length, AccelerationUnit.SI), new Direction(theta, AngleUnit.RADIAN),
+        a3d = new Acceleration3D(new Acceleration(length, AccelerationUnit.SI), new Direction(theta, AngleUnit.RADIAN),
                 new Direction(phi, AngleUnit.RADIAN));
-        checkAcceleration(s3d, length * Math.cos(phi) * Math.sin(theta), length * Math.sin(phi) * Math.sin(theta),
+        checkAcceleration(a3d, length * Math.cos(phi) * Math.sin(theta), length * Math.sin(phi) * Math.sin(theta),
                 length * Math.cos(theta));
+        assertTrue("toString output contains the class name", a3d.toString().contains("Acceleration3D"));
     }
 
     /**

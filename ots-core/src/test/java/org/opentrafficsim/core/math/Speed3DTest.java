@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.math;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.djunits.unit.AngleUnit;
@@ -95,6 +96,7 @@ public class Speed3DTest
                 new Direction(phi, AngleUnit.RADIAN));
         checkSpeed(s3d, length * Math.cos(phi) * Math.sin(theta), length * Math.sin(phi) * Math.sin(theta),
                 length * Math.cos(theta));
+        assertTrue("toString output contains class name", s3d.toString().contains("Speed3D"));
     }
 
     /**
