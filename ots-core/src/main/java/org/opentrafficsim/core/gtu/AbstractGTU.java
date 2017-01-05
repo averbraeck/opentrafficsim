@@ -151,8 +151,8 @@ public abstract class AbstractGTU extends EventProducer implements GTU
      * @throws GTUException when the preconditions of the parameters are not met or when the construction of the original
      *             waiting path fails
      */
-    @SuppressWarnings({ "checkstyle:hiddenfield", "hiding" })
-    public final void init(final StrategicalPlanner strategicalPlanner, final DirectedPoint initialLocation,
+    @SuppressWarnings({ "checkstyle:hiddenfield", "hiding", "checkstyle:designforextension" })
+    public void init(final StrategicalPlanner strategicalPlanner, final DirectedPoint initialLocation,
             final Speed initialSpeed) throws SimRuntimeException, GTUException
     {
         Throw.when(strategicalPlanner == null, GTUException.class, "strategicalPlanner is null for GTU with id %s", this.id);
