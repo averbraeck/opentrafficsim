@@ -2,6 +2,13 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="0.14.00" date="2017-XX-XX" description="Sprint 9, Release 0.14.00">
+      <action issue="OTS-244" type="fix">
+        OTS-244. OTSNetwork.shortestPath does not calculate shortest route when direction is BOTH.
+      </action>
+    </release>
+    
+    
     <release version="0.13.02" date="2017-01-03" description="Intermediate Release 0.13.02">
       <action issue="OTS-242" type="fix">
         OTS-242. Repair of Bezier curve.
