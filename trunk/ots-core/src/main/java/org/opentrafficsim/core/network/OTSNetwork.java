@@ -359,18 +359,17 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         }
         for (Link link : this.linkMap.values())
         {
-            LinkEdge<Link> linkEdge = new LinkEdge<>(link);
             // determine if the link is accessible for the GTUType , and in which direction(s)
             LongitudinalDirectionality directionality = link.getDirectionality(gtuType);
-            if (directionality.equals(LongitudinalDirectionality.DIR_PLUS)
-                    || directionality.equals(LongitudinalDirectionality.DIR_BOTH))
+            if (directionality.isForwardOrBoth())
             {
+                LinkEdge<Link> linkEdge = new LinkEdge<>(link);
                 graph.addEdge(link.getStartNode(), link.getEndNode(), linkEdge);
                 graph.setEdgeWeight(linkEdge, link.getLength().doubleValue());
             }
-            if (directionality.equals(LongitudinalDirectionality.DIR_MINUS)
-                    || directionality.equals(LongitudinalDirectionality.DIR_BOTH))
+            if (directionality.isBackwardOrBoth())
             {
+                LinkEdge<Link> linkEdge = new LinkEdge<>(link);
                 graph.addEdge(link.getEndNode(), link.getStartNode(), linkEdge);
                 graph.setEdgeWeight(linkEdge, link.getLength().doubleValue());
             }
