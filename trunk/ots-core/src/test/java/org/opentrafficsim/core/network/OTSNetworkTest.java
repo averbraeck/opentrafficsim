@@ -133,6 +133,15 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("other event count is 0", 0, this.otherEventCount);
         assertEquals("Node map is empty", 0, network.getNodeMap().size());
         assertEquals("network now had 0 nodes", 0, network.getNodeMap().size());
+        try
+        {
+            network.removeNode(node1);
+            fail("Attempt to remove an already removed node should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
         network.addNode(node1);
         assertEquals("Node map now contains one node", 1, network.getNodeMap().size());
         assertEquals("Node is node1", node1, network.getNodeMap().values().iterator().next());
@@ -314,7 +323,7 @@ public class OTSNetworkTest implements EventListenerInterface
         assertNull("gtu2 can no longer be retrieved", network.getGTU("gtu2"));
         assertTrue("toString contains the name of the network", network.toString().contains(network.getId()));
     }
-    
+
     /**
      * Check that the cloned network is a good copy of the original.
      * @param network OTSNetwork; the original network
@@ -463,29 +472,11 @@ public class OTSNetworkTest implements EventListenerInterface
      * @throws OTSGeometryException if that happens uncaught; this test has failed
      */
     @Test
-    public final void testShortestPath() throws NetworkException, OTSGeometryException
+    public final void testShortestPathBiDirectional() throws NetworkException, OTSGeometryException
     {
         OTSNetwork network = new OTSNetwork("shortest path test network");
-        // Create a bunch of nodes spread out over a circle
-        List<Node> nodes = new ArrayList<>();
-        double radius = 500;
-        double centerX = 0;
-        double centerY = 0;
-        int maxNode = 4;
-        for (int i = 0; i < maxNode; i++)
-        {
-            double angle = i * Math.PI * 2 / maxNode;
-            nodes.add(new OTSNode(network, "node" + i, new OTSPoint3D(centerX + radius * Math.cos(angle), centerY + radius
-                    * Math.sin(angle), 20)));
-        }
-        // Create bi-directional links between all adjacent nodes
-        Node prevNode = nodes.get(maxNode - 1);
-        for (Node node : nodes)
-        {
-            new OTSLink(network, "from " + prevNode.getId() + " to " + node.getId(), prevNode, node, LinkType.ALL,
-                    new OTSLine3D(prevNode.getPoint(), node.getPoint()), LongitudinalDirectionality.DIR_BOTH);
-            prevNode = node;
-        }
+        List<Node> nodes = createRingNodesAndLinks(network, LongitudinalDirectionality.DIR_BOTH);
+        int maxNode = nodes.size();
         for (int skip = 1; skip < maxNode / 2; skip++)
         {
             for (int fromNodeIndex = 0; fromNodeIndex < maxNode; fromNodeIndex++)
@@ -501,16 +492,125 @@ public class OTSNetworkTest implements EventListenerInterface
                 }
                 // reverse direction
                 route = network.getShortestRouteBetween(GTUType.ALL, toNode, fromNode);
-                System.out.println("Shortest route from " + toNode + " to " + fromNode + " is " + route);
-                // assertEquals("route size is skip + 1", skip + 1, route.size());
-                // for (int i = 0; i < route.size(); i++)
-                // {
-                // assertEquals("node in route at position i should match",
-                // nodes.get((fromNodeIndex + skip - i + maxNode) % maxNode), route.getNode(i));
-                // }
+                // System.out.println("Shortest route from " + toNode + " to " + fromNode + " is " + route);
+                assertEquals("route size is skip + 1", skip + 1, route.size());
+                for (int i = 0; i < route.size(); i++)
+                {
+                    assertEquals("node in route at position i should match",
+                            nodes.get((fromNodeIndex + skip - i + maxNode) % maxNode), route.getNode(i));
+                }
             }
         }
         compareNetworkWithClone(network);
+    }
+
+    /**
+     * Test the shortest path functionality.
+     * @throws NetworkException if that happens uncaught; this test has failed
+     * @throws OTSGeometryException if that happens uncaught; this test has failed
+     */
+    @Test
+    public final void testShortestPathClockWise() throws NetworkException, OTSGeometryException
+    {
+        OTSNetwork network = new OTSNetwork("shortest path test network");
+        List<Node> nodes = createRingNodesAndLinks(network, LongitudinalDirectionality.DIR_PLUS);
+        int maxNode = nodes.size();
+        for (int skip = 1; skip < maxNode; skip++)
+        {
+            for (int fromNodeIndex = 0; fromNodeIndex < maxNode; fromNodeIndex++)
+            {
+                Node fromNode = nodes.get(fromNodeIndex);
+                Node toNode = nodes.get((fromNodeIndex + skip) % maxNode);
+                CompleteRoute route = network.getShortestRouteBetween(GTUType.ALL, fromNode, toNode);
+                assertEquals("route size is skip + 1", skip + 1, route.size());
+                for (int i = 0; i < route.size(); i++)
+                {
+                    assertEquals("node in route at position i should match", nodes.get((fromNodeIndex + i) % maxNode),
+                            route.getNode(i));
+                }
+                // reverse direction
+                route = network.getShortestRouteBetween(GTUType.ALL, toNode, fromNode);
+                // System.out.println("Shortest route from " + toNode + " to " + fromNode + " is " + route);
+                assertEquals("route size is maxNode - skip + 1", maxNode - skip + 1, route.size());
+                for (int i = 0; i < route.size(); i++)
+                {
+                    assertEquals("node in route at position i should match", nodes.get((fromNodeIndex + skip + i) % maxNode),
+                            route.getNode(i));
+                }
+            }
+        }
+        compareNetworkWithClone(network);
+    }
+
+    /**
+     * Test the shortest path functionality.
+     * @throws NetworkException if that happens uncaught; this test has failed
+     * @throws OTSGeometryException if that happens uncaught; this test has failed
+     */
+    @Test
+    public final void testShortestPathAntiClockWise() throws NetworkException, OTSGeometryException
+    {
+        OTSNetwork network = new OTSNetwork("shortest path test network");
+        List<Node> nodes = createRingNodesAndLinks(network, LongitudinalDirectionality.DIR_MINUS);
+        int maxNode = nodes.size();
+        for (int skip = 1; skip < maxNode; skip++)
+        {
+            for (int fromNodeIndex = 0; fromNodeIndex < maxNode; fromNodeIndex++)
+            {
+                Node fromNode = nodes.get(fromNodeIndex);
+                Node toNode = nodes.get((fromNodeIndex + skip) % maxNode);
+                CompleteRoute route = network.getShortestRouteBetween(GTUType.ALL, fromNode, toNode);
+                assertEquals("route size is maxNode - skip + 1", maxNode - skip + 1, route.size());
+                for (int i = 0; i < route.size(); i++)
+                {
+                    assertEquals("node in route at position i should match",
+                            nodes.get((fromNodeIndex + maxNode - i) % maxNode), route.getNode(i));
+                }
+                // reverse direction
+                route = network.getShortestRouteBetween(GTUType.ALL, toNode, fromNode);
+                // System.out.println("Shortest route from " + toNode + " to " + fromNode + " is " + route);
+                assertEquals("route size is skip + 1", skip + 1, route.size());
+                for (int i = 0; i < route.size(); i++)
+                {
+                    assertEquals("node in route at position i should match",
+                            nodes.get((fromNodeIndex + skip + maxNode - i) % maxNode), route.getNode(i));
+                }
+            }
+        }
+        compareNetworkWithClone(network);
+    }
+
+    /**
+     * Construct a ring of nodes with links in clockwise fashion.
+     * @param network Network; the network that will contain the nodes
+     * @param ld LongitudinalDirectionalty; the directionality of the links between adjacent nodes
+     * @return List&lt;Node&gt;; the constructed nodes (in clockwise order)
+     * @throws NetworkException if that happens uncaught; this test has failed
+     * @throws OTSGeometryException if that happens uncaught; this test has failed
+     */
+    private List<Node> createRingNodesAndLinks(final Network network, final LongitudinalDirectionality ld)
+            throws NetworkException, OTSGeometryException
+    {
+        List<Node> nodes = new ArrayList<>();
+        double radius = 500;
+        double centerX = 0;
+        double centerY = 0;
+        int maxNode = 10;
+        for (int i = 0; i < maxNode; i++)
+        {
+            double angle = i * Math.PI * 2 / maxNode;
+            nodes.add(new OTSNode(network, "node" + i, new OTSPoint3D(centerX + radius * Math.cos(angle), centerY + radius
+                    * Math.sin(angle), 20)));
+        }
+        // Create bi-directional links between all adjacent nodes
+        Node prevNode = nodes.get(maxNode - 1);
+        for (Node node : nodes)
+        {
+            new OTSLink(network, "from " + prevNode.getId() + " to " + node.getId(), prevNode, node, LinkType.ALL,
+                    new OTSLine3D(prevNode.getPoint(), node.getPoint()), ld);
+            prevNode = node;
+        }
+        return nodes;
     }
 
 }
