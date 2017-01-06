@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.media.j3d.BoundingSphere;
@@ -296,4 +297,200 @@ public class OTSNodeTest
             // Ignore expected exception
         }
     }
+
+    /**
+     * Test the addConnection method with a Set and related functions.
+     * @throws NetworkException if that happens uncaught; this test has failed
+     * @throws OTSGeometryException if that happens uncaught; this test has failed
+     */
+    @Test
+    public final void connectionSetTest() throws NetworkException, OTSGeometryException
+    {
+        Network network = new OTSNetwork("connectionSets test network");
+        OTSNode node = new OTSNode(network, "main", new OTSPoint3D(10, 100, 10));
+        int maxNeighbor = 10;
+        for (int i = 0; i < maxNeighbor; i++)
+        {
+            Node neighborNode = new OTSNode(network, "neighbor node " + i, new OTSPoint3D(20 + 10 * i, 0, 10));
+            new OTSLink(network, "link from neighbor node " + i, neighborNode, node, LinkType.ALL, new OTSLine3D(
+                    neighborNode.getPoint(), node.getPoint()), LongitudinalDirectionality.DIR_BOTH);
+        }
+        // Prove that we can go from any neighborNode to any OTHER neighborNode
+        for (int fromIndex = 0; fromIndex < maxNeighbor; fromIndex++)
+        {
+            Link fromLink = network.getLink("link from neighbor node " + fromIndex);
+            Set<Link> nextLinks = node.nextLinks(GTUType.ALL, fromLink);
+            assertEquals("should be maxNeighbor - 1 nextLinks", maxNeighbor - 1, nextLinks.size());
+            assertFalse("should not contain fromLink", nextLinks.contains(fromLink));
+        }
+        // Add an explicit connection for the link from neighbor 1 to neighbor 2
+        node.addConnections(GTUType.ALL, network.getLink("link from neighbor node 1"),
+                wrap(network.getLink("link from neighbor node 2")));
+        for (int fromIndex = 0; fromIndex < maxNeighbor; fromIndex++)
+        {
+            Link fromLink = network.getLink("link from neighbor node " + fromIndex);
+            Set<Link> nextLinks = node.nextLinks(GTUType.ALL, fromLink);
+            if (1 == fromIndex)
+            {
+                assertEquals("should be 1", 1, nextLinks.size());
+                assertEquals("should only contain link form neighbor 2", network.getLink("link from neighbor node 2"),
+                        nextLinks.iterator().next());
+            }
+            else
+            {
+                assertEquals("should be 0", 0, nextLinks.size());
+            }
+        }
+        Node n1 = network.getNode("neighbor node 1");
+        Node n2 = network.getNode("neighbor node 2");
+        Link unrelatedLink =
+                new OTSLink(network, "unrelated link", n1, n2, LinkType.ALL, new OTSLine3D(n1.getPoint(), n2.getPoint()),
+                        LongitudinalDirectionality.DIR_BOTH);
+        try
+        {
+            node.addConnections(GTUType.ALL, unrelatedLink, wrap(network.getLink("link from neighbor node 1")));
+            fail("attempt to connect from a link not connected to node should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            node.addConnections(GTUType.ALL, network.getLink("link from neighbor node 1"), wrap(unrelatedLink));
+            fail("attempt to connect to a link not connected to node should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        GTUType unrelatedGTUType = new GTUType("junk", null);
+        Set<Link> nextLinks = node.nextLinks(unrelatedGTUType, network.getLink("link from neighbor node 1"));
+        assertEquals("There should be no nextLinks for an unrelated GTU type", 0, nextLinks.size());
+        // Check to be sure there is no typo or other stupid error
+        nextLinks = node.nextLinks(GTUType.ALL, network.getLink("link from neighbor node 1"));
+        assertEquals("There should be one nextLinks for GTUType.ALL", 1, nextLinks.size());
+        // Create a link that does not allow traffic TO the node
+        Link oneWay =
+                new OTSLink(network, "one way toward reverse", n1, node, LinkType.ALL, new OTSLine3D(n1.getPoint(),
+                        node.getPoint()), LongitudinalDirectionality.DIR_MINUS);
+        try
+        {
+            node.addConnections(GTUType.ALL, oneWay, wrap(network.getLink("link from neighbor node 1")));
+            fail("attempt to connect from a link that does not allow traffic TO the node should have thrown a "
+                    + "NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        oneWay =
+                new OTSLink(network, "one way away forward", node, n1, LinkType.ALL, new OTSLine3D(node.getPoint(),
+                        n1.getPoint()), LongitudinalDirectionality.DIR_PLUS);
+        try
+        {
+            node.addConnections(GTUType.ALL, oneWay, wrap(network.getLink("link from neighbor node 1")));
+            fail("attempt to connect from a link that does not allow traffic TO the node should have thrown a "
+                    + "NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        oneWay =
+                new OTSLink(network, "one way toward forward", n1, node, LinkType.ALL, new OTSLine3D(n1.getPoint(),
+                        node.getPoint()), LongitudinalDirectionality.DIR_PLUS);
+        try
+        {
+            node.addConnections(GTUType.ALL, network.getLink("link from neighbor node 1"), wrap(oneWay));
+            fail("attempt to connect to a link that does not allow outbound traffic should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        oneWay =
+                new OTSLink(network, "one way away reverse", node, n1, LinkType.ALL, new OTSLine3D(node.getPoint(),
+                        n1.getPoint()), LongitudinalDirectionality.DIR_MINUS);
+        try
+        {
+            node.addConnections(GTUType.ALL, network.getLink("link from neighbor node 1"), wrap(oneWay));
+            fail("attempt to connect to a link that does not allow outbound traffic should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        Link noWay =
+                new OTSLink(network, "no way traffic inbound link", n2, node, LinkType.ALL, new OTSLine3D(n2.getPoint(),
+                        node.getPoint()), LongitudinalDirectionality.DIR_NONE);
+        try
+        {
+            node.addConnections(GTUType.ALL, network.getLink("link from neighbor node 1"), wrap(noWay));
+            fail("attempt to connect to a no way link should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            node.addConnections(GTUType.ALL, noWay, wrap(network.getLink("link from neighbor node 1")));
+            fail("attempt to connect from a no way link should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        noWay =
+                new OTSLink(network, "no way traffic outbound link", node, n2, LinkType.ALL, new OTSLine3D(node.getPoint(),
+                        n2.getPoint()), LongitudinalDirectionality.DIR_NONE);
+        try
+        {
+            node.addConnections(GTUType.ALL, network.getLink("link from neighbor node 1"), wrap(noWay));
+            fail("attempt to connect to a no way link should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            node.addConnections(GTUType.ALL, noWay, wrap(network.getLink("link from neighbor node 1")));
+            fail("attempt to connect from a no way link should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        checkClone((OTSNetwork) network);
+    }
+
+    /**
+     * Put some Links in a Set and return that Set.
+     * @param links Link...; the links
+     * @return Set&lt;Link&gt;; the set that contains only the given link
+     */
+    private Set<Link> wrap(final Link... links)
+    {
+        Set<Link> result = new HashSet<>();
+        for (Link link : links)
+        {
+            result.add(link);
+        }
+        return result;
+    }
+    
+    /**
+     * Check that cloning the network correctly clones the Nodes.
+     * @param network OTSNetwork; the network
+     * @throws NetworkException if that happens; this test has failed
+     */
+    private void checkClone(final OTSNetwork network) throws NetworkException
+    {
+        OTSNetwork clonedNetwork = network.clone("clonedNetwork", new MySim(), false);
+        assertEquals("Number of nodes should be same", network.getNodeMap().size(), clonedNetwork.getNodeMap().size());
+        assertTrue("Node map should be equal", network.getNodeMap().equals(clonedNetwork.getNodeMap()));
+    }
+
 }
