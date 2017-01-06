@@ -68,7 +68,7 @@ public class CapacityOTSLinkTest
         assertTrue("capacity mathes", initialCapacity.equals(link.getCapacity()));
         link.setCapacity(finalCapacity);
         assertTrue("capacity mathes", finalCapacity.equals(link.getCapacity()));
-        
+
         Network newNetwork = new OTSNetwork("clonedNetworkForCapacityOTSLink");
         // Create nodes with matching IDs in the new network
         new OTSNode(newNetwork, fromNode.getId(), fromPoint);
@@ -93,5 +93,6 @@ public class CapacityOTSLinkTest
         assertTrue("capacity mathes", finalCapacity.equals(clonedLink.getCapacity()));
         clonedLink.setCapacity(initialCapacity);
         assertTrue("capacity mathes", initialCapacity.equals(clonedLink.getCapacity()));
+        assertTrue("toString method returns something with the class name in it", link.toString().contains("CapacityOTSLink"));
     }
 }
