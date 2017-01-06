@@ -502,6 +502,11 @@ public class OTSNetworkTest implements EventListenerInterface
             }
         }
         compareNetworkWithClone(network);
+        // Add another node (that is not connected to any of the existing nodes)
+        // TODO fix OTSNetwork class to throw the documented exception instead of
+        // java.lang IllegalArgumentException: graph must contain the start vertex
+        // Node freeNode = new OTSNode(network, "unconnectedNode", new OTSPoint3D(5, 5, 5));
+        // assertNull(network.getShortestRouteBetween(GTUType.ALL, freeNode, network.getNode("node1")));
     }
 
     /**
@@ -581,7 +586,100 @@ public class OTSNetworkTest implements EventListenerInterface
     }
 
     /**
-     * Construct a ring of nodes with links in clockwise fashion.
+     * Test the shortest path method that takes a list of intermediate nodes.
+     * @throws OTSGeometryException if that happens uncaught; this test has failed
+     * @throws NetworkException if that happens uncaught; this test has failed
+     */
+    @Test
+    public final void testShortestPathWithIntermediateNodes() throws NetworkException, OTSGeometryException
+    {
+        OTSNetwork network = new OTSNetwork("shortest path test network");
+        List<Node> nodes = createRingNodesAndLinks(network, LongitudinalDirectionality.DIR_BOTH, 5);
+        int maxNode = nodes.size();
+        for (int fromNodeIndex = 0; fromNodeIndex < maxNode; fromNodeIndex++)
+        {
+            Node fromNode = network.getNode("node" + fromNodeIndex);
+            for (int intermediateNodes = 0; intermediateNodes <= 2; intermediateNodes++)
+            {
+                // Because the number of nodes is odd, and they are evenly spread out; there is never a tie
+                int numPaths = (int) Math.pow(maxNode - 1, intermediateNodes);
+                for (int path = 0; path < numPaths; path++)
+                {
+                    List<Node> viaNodes = new ArrayList<>();
+                    int prevNodeIndex = fromNodeIndex;
+                    int pathNumber = path;
+                    for (int step = 0; step < intermediateNodes; step++)
+                    {
+                        int nextNodeIndex = pathNumber % (maxNode - 1);
+                        if (nextNodeIndex >= prevNodeIndex)
+                        {
+                            nextNodeIndex = (nextNodeIndex + 1) % maxNode;
+                        }
+                        viaNodes.add(network.getNode("node" + nextNodeIndex));
+                        prevNodeIndex = nextNodeIndex;
+                        pathNumber /= (maxNode - 1);
+                    }
+                    for (int toNodeIndex = 0; toNodeIndex < maxNode; toNodeIndex++)
+                    {
+                        if (prevNodeIndex == toNodeIndex)
+                        {
+                            continue;
+                        }
+                        // System.out.print("Path " + path + " from " + fromNodeIndex + " to " + toNodeIndex + " visits");
+                        // for (Node node : viaNodes)
+                        // {
+                        // System.out.print(" " + node.getId());
+                        // }
+                        // System.out.println("");
+                        Node toNode = network.getNode("node" + toNodeIndex);
+                        CompleteRoute route = network.getShortestRouteBetween(GTUType.ALL, fromNode, toNode, viaNodes);
+                        // Now compute the expected path using our knowledge about the structure
+                        List<Node> expectedPath = new ArrayList<>();
+                        expectedPath.add(fromNode);
+                        viaNodes.add(network.getNode("node" + toNodeIndex));
+                        int from = fromNodeIndex;
+                        for (int positionInPlan = 0; positionInPlan < viaNodes.size(); positionInPlan++)
+                        {
+                            Node nextNode = viaNodes.get(positionInPlan);
+                            int to = Integer.parseInt(nextNode.getId().substring(4));
+                            int distance = (to + maxNode - from) % maxNode;
+                            if (distance > maxNode / 2)
+                            {
+                                distance -= maxNode;
+                            }
+                            boolean clockWise = distance > 0;
+                            while (from != to)
+                            {
+                                from = (from + (clockWise ? 1 : maxNode - 1)) % maxNode;
+                                expectedPath.add(network.getNode("node" + from));
+                            }
+                        }
+                        // System.out.print("expected path");
+                        // for (int i = 0; i < expectedPath.size(); i++)
+                        // {
+                        // System.out.print(" " + expectedPath.get(i).getId());
+                        // }
+                        // System.out.println("");
+                        // System.out.print("  actual path");
+                        // for (int i = 0; i < route.size(); i++)
+                        // {
+                        // System.out.print(" " + route.getNode(i).getId());
+                        // }
+                        // System.out.println("");
+                        // Verify that the expected path matches the route
+                        assertEquals("expected path should have same length as route", expectedPath.size(), route.size());
+                        for (int i = 0; i < expectedPath.size(); i++)
+                        {
+                            assertEquals("node i should match", expectedPath.get(i), route.getNode(i));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Construct a ring of 10 nodes with links in clockwise fashion.
      * @param network Network; the network that will contain the nodes
      * @param ld LongitudinalDirectionalty; the directionality of the links between adjacent nodes
      * @return List&lt;Node&gt;; the constructed nodes (in clockwise order)
@@ -591,11 +689,25 @@ public class OTSNetworkTest implements EventListenerInterface
     private List<Node> createRingNodesAndLinks(final Network network, final LongitudinalDirectionality ld)
             throws NetworkException, OTSGeometryException
     {
+        return createRingNodesAndLinks(network, ld, 10);
+    }
+
+    /**
+     * Construct a ring of nodes with links in clockwise fashion.
+     * @param network Network; the network that will contain the nodes
+     * @param ld LongitudinalDirectionalty; the directionality of the links between adjacent nodes
+     * @param maxNode int; number of nodes on the ring
+     * @return List&lt;Node&gt;; the constructed nodes (in clockwise order)
+     * @throws NetworkException if that happens uncaught; this test has failed
+     * @throws OTSGeometryException if that happens uncaught; this test has failed
+     */
+    private List<Node> createRingNodesAndLinks(final Network network, final LongitudinalDirectionality ld, final int maxNode)
+            throws NetworkException, OTSGeometryException
+    {
         List<Node> nodes = new ArrayList<>();
         double radius = 500;
         double centerX = 0;
         double centerY = 0;
-        int maxNode = 10;
         for (int i = 0; i < maxNode; i++)
         {
             double angle = i * Math.PI * 2 / maxNode;
