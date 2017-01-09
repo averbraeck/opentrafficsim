@@ -242,15 +242,18 @@ public class LaneStructure implements Serializable
             final Class<T> clazz, final GTU gtu, final RelativePosition.TYPE pos, final Route route) throws GTUException
     {
         SortedSet<Entry<T>> set = getDownstreamObjects(lane, clazz, gtu, pos);
-        Iterator<Entry<T>> iterator = set.iterator();
-        while (iterator.hasNext())
+        if (route != null)
         {
-            Entry<T> entry = iterator.next();
-            CrossSectionLink link = entry.getLaneBasedObject().getLane().getParentLink();
-            if (!route.contains(link.getStartNode()) || !route.contains(link.getEndNode())
-                    || Math.abs(route.indexOf(link.getStartNode()) - route.indexOf(link.getEndNode())) != 1)
+            Iterator<Entry<T>> iterator = set.iterator();
+            while (iterator.hasNext())
             {
-                iterator.remove();
+                Entry<T> entry = iterator.next();
+                CrossSectionLink link = entry.getLaneBasedObject().getLane().getParentLink();
+                if (!route.contains(link.getStartNode()) || !route.contains(link.getEndNode())
+                        || Math.abs(route.indexOf(link.getStartNode()) - route.indexOf(link.getEndNode())) != 1)
+                {
+                    iterator.remove();
+                }
             }
         }
         return set;

@@ -101,7 +101,7 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
         }
         updateCrossSection();
         checkLaneIsInCrossSection(lane);
-        
+
         // start at requested lane
         SortedSet<InfrastructureLaneChangeInfo> resultSet = new TreeSet<>();
         Map<LaneStructureRecord, InfrastructureLaneChangeInfo> currentSet = new HashMap<>();
@@ -206,7 +206,9 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
     }
 
     /**
-     * Returns whether the given record end is ok to pass.
+     * Returns whether the given record end is ok to pass. If not, a lane change is required before this end. The method will
+     * also return true if the next node is the end node of the route, if the lane is cur off due to limited perception range,
+     * or when there is a {@code SinkSensor} on the lane.
      * @param record checked record
      * @param route route to check at splits
      * @param gtuType gtu type
@@ -216,15 +218,23 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
     private boolean anyNextOk(final LaneStructureRecord record, final Route route, final GTUType gtuType)
             throws NetworkException
     {
-        
+
         if (record.isCutOffEnd())
         {
             return true; // always ok if cut-off
         }
+        for (SingleSensor s : record.getLane().getSensors())
+        {
+            if (s instanceof SinkSensor)
+            {
+                return true; // ok towards sink
+            }
+        }
+        Node nextNode = record.getDirection().isPlus() ? record.getLane().getParentLink().getEndNode()
+                : record.getLane().getParentLink().getStartNode();
         try
         {
-            if (route != null && route.destinationNode().equals(record.getDirection().isPlus()
-                    ? record.getLane().getParentLink().getEndNode() : record.getLane().getParentLink().getStartNode()))
+            if (route != null && route.destinationNode().equals(nextNode))
             {
                 return true;
             }
@@ -233,22 +243,13 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
         {
             throw new RuntimeException("Could not determine destination node.", exception);
         }
-        Node nextNode = record.getDirection().isPlus() ? record.getLane().getParentLink().getEndNode()
-                : record.getLane().getParentLink().getStartNode();
-        // TODO only towards end node
-        if (route == null || route.contains(nextNode))
-        {
-            for (SingleSensor s : record.getLane().getSensors())
-            {
-                if (s instanceof SinkSensor)
-                {
-                    return true; // ok towards sink
-                }
-            }
-        }
         if (record.getNext().isEmpty())
         {
             return false; // never ok if dead-end
+        }
+        if (route == null)
+        {
+            return true; // if no route assume ok, i.e. simple networks without routes
         }
         return record.allowsRoute(route, gtuType);
 
