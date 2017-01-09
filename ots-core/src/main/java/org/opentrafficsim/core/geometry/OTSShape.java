@@ -156,18 +156,18 @@ public class OTSShape extends OTSLine3D
         }
 
         // step 2: quick check to see if any of the points of shape 1 is in shape 2
-        for (int i = 1; i < getPoints().length; i++)
+        for (OTSPoint3D p : getPoints())
         {
-            if (otsShape.contains(getPoints()[i]))
+            if (otsShape.contains(p))
             {
                 return true;
             }
         }
 
         // step 3: quick check to see if any of the points of shape 2 is in shape 1
-        for (int i = 1; i < otsShape.getPoints().length; i++)
+        for (OTSPoint3D p : otsShape.getPoints())
         {
-            if (contains(otsShape.getPoints()[i]))
+            if (contains(p))
             {
                 return true;
             }
