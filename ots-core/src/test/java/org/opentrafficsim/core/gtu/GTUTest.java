@@ -3,6 +3,7 @@ package org.opentrafficsim.core.gtu;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 
 import java.rmi.RemoteException;
@@ -10,6 +11,7 @@ import java.rmi.RemoteException;
 import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
+import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -24,6 +26,7 @@ import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
+import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
@@ -53,6 +56,9 @@ public class GTUTest implements OTSModelInterface
 
 {
 
+    /** GTU that will be returned when the fake strategical planner is asked for the associated GTU with getGTU. */
+    public GTU gtuOfStrategicalPlanner = null;
+
     /** */
     private static final long serialVersionUID = 20151217L;
 
@@ -66,14 +72,15 @@ public class GTUTest implements OTSModelInterface
      * @throws OTSGeometryException should not happen uncaught; if it does the test has failed
      */
     @Test
-    public final void testAbstractGTU()
-            throws GTUException, SimRuntimeException, NetworkException, NamingException, RemoteException, OTSGeometryException
+    public final void testAbstractGTU() throws GTUException, SimRuntimeException, NetworkException, NamingException,
+            RemoteException, OTSGeometryException
     {
         TestGTU firstGTU = null;
         TestGTU lastGTU = null;
         OTSNetwork perceivableContext = new OTSNetwork("network");
-        OTSDEVSSimulatorInterface simulator = new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI),
-                new Duration(9999, TimeUnit.SI), this);
+        OTSDEVSSimulatorInterface simulator =
+                new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI), new Duration(9999, TimeUnit.SI),
+                        this);
         StrategicalPlanner strategicalPlanner = new StrategicalPlanner()
         {
 
@@ -119,7 +126,7 @@ public class GTUTest implements OTSModelInterface
             @Override
             public GTU getGtu()
             {
-                return null;
+                return GTUTest.this.gtuOfStrategicalPlanner;
             }
         };
         DirectedPoint initialLocation =
@@ -151,6 +158,145 @@ public class GTUTest implements OTSModelInterface
         assertEquals("perceivable context now contains 5 GTUs", 5, perceivableContext.getGTUs().size());
         gtu.destroy();
         assertFalse("perceivable context no longer contains the destroyed GTU", perceivableContext.containsGTU(gtu));
+        try
+        {
+            new TestGTU((String) null, gtuType1, simulator, perceivableContext);
+            fail("null id should have thrown a GTUException");
+        }
+        catch (GTUException ge)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            new TestGTU("IdOfGTU", null, simulator, perceivableContext);
+            fail("null gtuType should have thrown a GTUException");
+        }
+        catch (GTUException ge)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            new TestGTU("IdOfGTU", gtuType1, null, perceivableContext);
+            fail("null simulator should have thrown a GTUException");
+        }
+        catch (GTUException ge)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            new TestGTU("IdOfGTU", gtuType1, simulator, null);
+            fail("null perceivableContext should have thrown a GTUException");
+        }
+        catch (GTUException ge)
+        {
+            // Ignore expected exception
+        }
+        IdGenerator idGenerator = new IdGenerator("baseName");
+        int lastBeforeId = Integer.parseInt(idGenerator.nextId().substring(8));
+        gtu = new TestGTU(idGenerator, gtuType1, simulator, perceivableContext);
+        int firstAfterId = Integer.parseInt(idGenerator.nextId().substring(8));
+        assertEquals("Id generator was called once in the constructor", 1 + 1, firstAfterId - lastBeforeId);
+        try
+        {
+            new TestGTU((IdGenerator) null, gtuType1, simulator, perceivableContext);
+            fail("null idGenerator should have thrown a GTUException");
+        }
+        catch (GTUException ge)
+        {
+            // Ignore expected exception
+        }
+        Speed initialSpeed = new Speed(10, SpeedUnit.KM_PER_HOUR);
+        try
+        {
+            gtu.init(null, initialLocation, initialSpeed);
+            fail("null strategicalPlanner should have thrown a GTUException");
+        }
+        catch (GTUException ge)
+        {
+            // Ignore expected exception
+        }
+        // FIXME should the next one not ge a GTUException?
+        try
+        {
+            gtu.init(strategicalPlanner, null, initialSpeed);
+            fail("null initialLocation should have thrown a NullPointerException");
+        }
+        catch (NullPointerException ne)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            gtu.init(strategicalPlanner, new DirectedPoint(Double.NaN, 20, 30), initialSpeed);
+            fail("null initialSpeed should have thrown a GTUException");
+        }
+        catch (GTUException ge)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            gtu.init(strategicalPlanner, new DirectedPoint(10, Double.NaN, 30), initialSpeed);
+            fail("null initialSpeed should have thrown a GTUException");
+        }
+        catch (GTUException ge)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            gtu.init(strategicalPlanner, new DirectedPoint(10, 20, Double.NaN), initialSpeed);
+            fail("null initialSpeed should have thrown a GTUException");
+        }
+        catch (GTUException ge)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            gtu.init(strategicalPlanner, initialLocation, null);
+            fail("null initialSpeed should have thrown a GTUException");
+        }
+        catch (GTUException ge)
+        {
+            // Ignore expected exception
+        }
+        // The null pointer returned by the strategical planner will cause a NullPointerException
+        // FIXME should probably explicitly throw an exception for a misbehaving strategical planner
+        try
+        {
+            gtu.init(strategicalPlanner, initialLocation, initialSpeed);
+            fail("strategicalPlanner that returns a null pointer should have thrown a NullPointerException");
+        }
+        catch (NullPointerException ne)
+        {
+            // Ignore expected exception
+        }
+        this.gtuOfStrategicalPlanner = firstGTU;
+        try
+        {
+            gtu.init(strategicalPlanner, initialLocation, initialSpeed);
+            fail("wrong strategicalPlanner should have thrown a GTUException");
+        }
+        catch (GTUException ge)
+        {
+            // Ignore expected exception
+        }
+        this.gtuOfStrategicalPlanner = gtu;
+        // FIXME should the AbstractGTU not complain more directly about a null returned by
+        // strategicalPlanner.generateTacticalPlanner()?
+        try
+        {
+            gtu.init(strategicalPlanner, initialLocation, initialSpeed);
+            fail("init with fake strategical planner should have caused a NullPointerExeption in move");
+        }
+        catch (NullPointerException ne)
+        {
+            // Ignore expected exception
+        }
     }
 
     /** {@inheritDoc} */
@@ -167,14 +313,14 @@ public class GTUTest implements OTSModelInterface
     {
         return null;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final OTSNetwork getNetwork()
     {
         return null;
     }
-    
+
 }
 
 /** ... */
@@ -193,9 +339,24 @@ class TestGTU extends AbstractGTU
      */
     TestGTU(final String id, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
 
-            final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
+    final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
     {
         super(id, gtuType, simulator, perceivableContext);
+    }
+
+    /**
+     * @param idGenerator IdGenerator; id generator that will generate the id of the new GTU
+     * @param gtuType GTUType; type of the new GTU
+     * @param simulator OTSDEVSSimulatorInterface; simulator that controls the new GTU
+     * @param perceivableContext PerceivableContext; the perceivable context of the new GTU
+     * @throws SimRuntimeException when something goes wrong in the scheduling of the first move event
+     * @throws GTUException when something goes wrong during GTU instantiation
+     */
+    TestGTU(final IdGenerator idGenerator, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
+
+    final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
+    {
+        super(idGenerator, gtuType, simulator, perceivableContext);
     }
 
     /** {@inheritDoc} */
