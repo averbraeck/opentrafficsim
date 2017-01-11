@@ -79,6 +79,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         ParameterType<Length> a = new ParameterType<>("a", "along", Length.class, defaultValue);
         assertEquals("Parameter type id not properly set.", "a", a.getId());
         assertEquals("Parameter type description not properly set.", "along", a.getDescription());
+        assertTrue("has a default value", a.hasDefaultValue());
         try
         {
             assertEquals("Parameter type default value not properly set.", defaultValue, a.getDefaultValue());
@@ -92,6 +93,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         ParameterType<Length> b = new ParameterType<>("b", "blong", Length.class);
         assertEquals("Parameter type id not properly set.", "b", b.getId());
         assertEquals("Parameter type description not properly set.", "blong", b.getDescription());
+        assertFalse("does not have a default value", b.hasDefaultValue());
         try
         {
             b.getDefaultValue();
@@ -101,7 +103,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         {
             // ignore expected exception
         }
-
+        assertTrue("toString returns something with ParameterType in it", b.toString().contains("ParameterType"));
     }
 
     /**
@@ -122,6 +124,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         checkDefaultValue(0.0, UNITINTERVAL, false);
         checkDefaultValue(0.5, UNITINTERVAL, false);
         checkDefaultValue(1.0, UNITINTERVAL, false);
+        checkDefaultValue(1.0, ATLEASTONE, false);
         // Check default values that should not work
         checkDefaultValue(-1.0, POSITIVE, true);
         checkDefaultValue(0.0, POSITIVE, true);
@@ -132,6 +135,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         checkDefaultValue(0.0, NONZERO, true);
         checkDefaultValue(-0.01, UNITINTERVAL, true);
         checkDefaultValue(1.01, UNITINTERVAL, true);
+        checkDefaultValue(0.99, ATLEASTONE, true);
 
         // Check set values that should work
         checkSetValue(1.0, POSITIVE, false);
@@ -145,6 +149,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         checkSetValue(0.0, UNITINTERVAL, false);
         checkSetValue(0.5, UNITINTERVAL, false);
         checkSetValue(1.0, UNITINTERVAL, false);
+        checkSetValue(1.0, ATLEASTONE, false);
         // Check set values that should not work
         checkSetValue(-1.0, POSITIVE, true);
         checkSetValue(0.0, POSITIVE, true);
@@ -155,6 +160,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         checkSetValue(0.0, NONZERO, true);
         checkSetValue(-0.01, UNITINTERVAL, true);
         checkSetValue(1.01, UNITINTERVAL, true);
+        checkSetValue(0.99, ATLEASTONE, true);
     }
 
     /**
@@ -526,17 +532,17 @@ public class BehavioralCharacteristicsTest implements CheckInterface
      * @throws IllegalAccessException Reflection.
      * @throws InstantiationException Reflection.
      */
-    private <R extends AbstractParameterType<?>> void checkDefaultValuesPerClass(final Class<R> clazz,
-            final Object defaultValue) throws InstantiationException, IllegalAccessException, IllegalArgumentException,
-            InvocationTargetException, NoSuchMethodException, SecurityException
+    private <R extends AbstractParameterType<?>> void checkDefaultValuesPerClass(final Class<R> clazz, final Object defaultValue)
+            throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+            NoSuchMethodException, SecurityException
     {
-
         // none set
         AbstractParameterType<?> ld;
         if (clazz.equals(ParameterType.class))
         {
-            ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class).newInstance("v", "vcong",
-                    getClass(defaultValue));
+            ld =
+                    clazz.getDeclaredConstructor(String.class, String.class, Class.class).newInstance("v", "vcong",
+                            getClass(defaultValue));
         }
         else
         {
@@ -556,8 +562,9 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         {
             if (clazz.equals(ParameterType.class))
             {
-                ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, Check.class).newInstance("v",
-                        "vcong", getClass(defaultValue), POSITIVE);
+                ld =
+                        clazz.getDeclaredConstructor(String.class, String.class, Class.class, Check.class).newInstance("v",
+                                "vcong", getClass(defaultValue), POSITIVE);
             }
             else
             {
@@ -577,13 +584,15 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         // value set
         if (clazz.equals(ParameterType.class))
         {
-            ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, DoubleScalarInterface.class).newInstance("v",
-                    "vcong", getClass(defaultValue), defaultValue);
+            ld =
+                    clazz.getDeclaredConstructor(String.class, String.class, Class.class, DoubleScalarInterface.class)
+                            .newInstance("v", "vcong", getClass(defaultValue), defaultValue);
         }
         else
         {
-            ld = clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue)).newInstance("v", "vcong",
-                    defaultValue);
+            ld =
+                    clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue)).newInstance("v", "vcong",
+                            defaultValue);
         }
         try
         {
@@ -598,13 +607,15 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         {
             if (clazz.equals(ParameterType.class))
             {
-                ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, DoubleScalarInterface.class, Check.class)
-                        .newInstance("v", "vcong", getClass(defaultValue), defaultValue, POSITIVE);
+                ld =
+                        clazz.getDeclaredConstructor(String.class, String.class, Class.class, DoubleScalarInterface.class,
+                                Check.class).newInstance("v", "vcong", getClass(defaultValue), defaultValue, POSITIVE);
             }
             else
             {
-                ld = clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue), Check.class)
-                        .newInstance("v", "vcong", defaultValue, POSITIVE);
+                ld =
+                        clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue), Check.class)
+                                .newInstance("v", "vcong", defaultValue, POSITIVE);
             }
             try
             {
@@ -615,7 +626,6 @@ public class BehavioralCharacteristicsTest implements CheckInterface
                 fail("Could not obtain a default value that was set.");
             }
         }
-
     }
 
     /**
