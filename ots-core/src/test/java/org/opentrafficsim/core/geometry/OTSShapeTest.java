@@ -154,9 +154,8 @@ public class OTSShapeTest
         // Make shapes that overlap along the X axis
         for (int dx = -20; dx <= 20; dx++)
         {
-            OTSShape other =
-                    new OTSShape(new OTSPoint3D[] { new OTSPoint3D(dx, 0, 0), new OTSPoint3D(dx + 5, 0, 0),
-                            new OTSPoint3D(dx, -20, 0) });
+            OTSShape other = new OTSShape(
+                    new OTSPoint3D[] { new OTSPoint3D(dx, 0, 0), new OTSPoint3D(dx + 5, 0, 0), new OTSPoint3D(dx, -20, 0) });
             boolean hit = dx >= -5 && dx <= 10;
             if (hit)
             {
@@ -170,9 +169,8 @@ public class OTSShapeTest
         // Make shapes that overlap along the Y axis
         for (int dy = -20; dy <= 20; dy++)
         {
-            OTSShape other =
-                    new OTSShape(new OTSPoint3D[] { new OTSPoint3D(20, dy, 0), new OTSPoint3D(10, dy, 0),
-                            new OTSPoint3D(10, dy + 10, 0) });
+            OTSShape other = new OTSShape(
+                    new OTSPoint3D[] { new OTSPoint3D(20, dy, 0), new OTSPoint3D(10, dy, 0), new OTSPoint3D(10, dy + 10, 0) });
             boolean hit = dy >= -10 && dy <= 10;
             if (hit)
             {
@@ -183,6 +181,12 @@ public class OTSShapeTest
                 assertFalse("shapes do not hit", reference.intersects(other));
             }
         }
+        // Make vertical and horizontal box
+        OTSShape vertical = new OTSShape(new OTSPoint3D[] { new OTSPoint3D(-1, -10, 0), new OTSPoint3D(1, -10, 0),
+                new OTSPoint3D(1, 10, 0), new OTSPoint3D(-1, 10, 0), new OTSPoint3D(-1, -10, 0) });
+        OTSShape horizontal = new OTSShape(new OTSPoint3D[] { new OTSPoint3D(-10, -1, 0), new OTSPoint3D(10, -1, 0),
+                new OTSPoint3D(10, 1, 0), new OTSPoint3D(-10, 1, 0), new OTSPoint3D(-10, -1, 0) });
+        assertTrue("shapes hit", vertical.intersects(horizontal));
     }
 
     /**
@@ -221,8 +225,8 @@ public class OTSShapeTest
         }
         try
         {
-            OTSShape.createAndCleanOTSShape(new OTSPoint3D[] { new OTSPoint3D(1, 2, 3), new OTSPoint3D(1, 2, 3),
-                    new OTSPoint3D(1, 2, 3) });
+            OTSShape.createAndCleanOTSShape(
+                    new OTSPoint3D[] { new OTSPoint3D(1, 2, 3), new OTSPoint3D(1, 2, 3), new OTSPoint3D(1, 2, 3) });
             fail("array of three identical points should have thrown an OTSGeometryException");
         }
         catch (OTSGeometryException oge)
@@ -231,8 +235,8 @@ public class OTSShapeTest
         }
         // FIXME: No geometry exception if thrown for two points that only differ in Z
         OTSShape.createAndCleanOTSShape(new OTSPoint3D[] { new OTSPoint3D(1, 2, 3), new OTSPoint3D(1, 2, 1) });
-        OTSShape.createAndCleanOTSShape(new OTSPoint3D[] { new OTSPoint3D(1, 2, 3), new OTSPoint3D(1, 3, 3),
-                new OTSPoint3D(1, 2, 3) });
+        OTSShape.createAndCleanOTSShape(
+                new OTSPoint3D[] { new OTSPoint3D(1, 2, 3), new OTSPoint3D(1, 3, 3), new OTSPoint3D(1, 2, 3) });
         List<OTSPoint3D> points = new ArrayList<>();
         points.add(new OTSPoint3D(1, 2, 3));
         points.add(new OTSPoint3D(1, 2, 3));
