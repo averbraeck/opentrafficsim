@@ -1040,7 +1040,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param position Length; the position after which the relative position of an object will be searched.
      * @param direction GTUDirectionality; whether we are looking in the the center line direction or against the center line
      *            direction.
-     * @return Set&lt;LaneBasedObject&gt;; the first object(s) after a position on this lane in the given direction, or null if
+     * @return List&lt;LaneBasedObject&gt;; the first object(s) after a position on this lane in the given direction, or null if
      *         no object could be found.
      */
     public final List<LaneBasedObject> getObjectAhead(final Length position, final GTUDirectionality direction)
@@ -1068,6 +1068,25 @@ public class Lane extends CrossSectionElement implements Serializable
             }
         }
         return null;
+    }
+    
+    /**
+     * Get the first object where the relativePosition is behind of a certain position on the lane, in a driving direction on
+     * this lane, compared to the DESIGN LINE. Perception should iterate over results from this method to see what is most
+     * limiting.
+     * @param position Length; the position after which the relative position of an object will be searched.
+     * @param direction GTUDirectionality; whether we are looking in the the center line direction or against the center line
+     *            direction.
+     * @return List&lt;LaneBasedObject&gt;; the first object(s) after a position on this lane in the given direction, or null if
+     *         no object could be found.
+     */
+    public final List<LaneBasedObject> getObjectBehind(final Length position, final GTUDirectionality direction)
+    {
+        if (direction.equals(GTUDirectionality.DIR_PLUS))
+        {
+            return getObjectAhead(position, GTUDirectionality.DIR_MINUS);
+        }
+        return getObjectAhead(position, GTUDirectionality.DIR_PLUS);
     }
 
     /**

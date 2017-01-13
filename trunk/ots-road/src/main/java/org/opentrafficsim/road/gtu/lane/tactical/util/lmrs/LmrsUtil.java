@@ -30,8 +30,10 @@ import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -523,8 +525,10 @@ public final class LmrsUtil
         }
         Acceleration b = bc.getParameter(ParameterTypes.B);
         Acceleration a = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-        SortedSet<AbstractHeadwayGTU> set =
-                perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(new RelativeLane(lat, 1));
+        RelativeLane relativeLane = new RelativeLane(lat, 1);
+        SortedSet<AbstractHeadwayGTU> set = removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
+                perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception, relativeLane),
+                perception, RelativeLane.CURRENT);
         if (!set.isEmpty())
         {
             Acceleration aSingle =
@@ -558,8 +562,10 @@ public final class LmrsUtil
         Acceleration b = bc.getParameter(ParameterTypes.B);
         Acceleration a = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
         double dCoop = bc.getParameter(DCOOP);
-        for (AbstractHeadwayGTU leader : perception.getPerceptionCategory(NeighborsPerception.class)
-                .getLeaders(new RelativeLane(lat, 1)))
+        RelativeLane relativeLane = new RelativeLane(lat, 1);
+        for (AbstractHeadwayGTU leader : removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
+                perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception, relativeLane),
+                perception, RelativeLane.CURRENT))
         {
             BehavioralCharacteristics bc2 = leader.getBehavioralCharacteristics();
             double desire = lat.equals(LateralDirectionality.LEFT) && bc2.contains(DRIGHT) ? bc2.getParameter(DRIGHT)
@@ -573,6 +579,38 @@ public final class LmrsUtil
         }
 
         return Acceleration.max(a, b.neg());
+    }
+
+    /**
+     * Removes all GTUs from the set, that are found upstream on the conflicting lane of a conflict in the current lane.
+     * @param set set of GTUs
+     * @param perception perception
+     * @param relativeLane relative lane
+     * @return the input set
+     * @throws OperationalPlanException if the {@code IntersectionPerception} category is not present
+     */
+    private static SortedSet<AbstractHeadwayGTU> removeAllUpstreamOfConflicts(final SortedSet<AbstractHeadwayGTU> set,
+            final LanePerception perception, final RelativeLane relativeLane) throws OperationalPlanException
+    {
+        for (HeadwayConflict conflict : perception.getPerceptionCategory(IntersectionPerception.class)
+                .getConflicts(relativeLane))
+        {
+            if (conflict.isCrossing())
+            {
+                for (AbstractHeadwayGTU conflictGtu : conflict.getUpstreamConflictingGTUs())
+                {
+                    for (AbstractHeadwayGTU gtu : set)
+                    {
+                        if (conflictGtu.getId().equals(gtu.getId()))
+                        {
+                            set.remove(gtu);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return set;
     }
 
     /**

@@ -16,6 +16,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 import nl.tudelft.simulation.language.Throw;
@@ -91,7 +92,7 @@ public class LaneStructure implements Serializable
     private static final long serialVersionUID = 20160400L;
 
     /** The lanes from which we observe the situation. */
-    private LaneStructureRecord rootLSR;
+    private final LaneStructureRecord rootLSR;
 
     /** Look ahead distance. */
     private Length lookAhead;
@@ -101,7 +102,7 @@ public class LaneStructure implements Serializable
 
     /** Lane structure records grouped per relative lane. */
     private final Map<RelativeLane, Set<LaneStructureRecord>> relativeLaneMap = new HashMap<>();
-
+    
     /**
      * @param rootLSR the root record.
      * @param lookAhead look ahead distance

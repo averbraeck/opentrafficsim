@@ -68,9 +68,9 @@ public class NeighborsPerception extends LaneBasedAbstractPerceptionCategory
     /** Whether a GTU is alongside per lateral direction, i.e. in the left or right lane. */
     private final Map<LateralDirectionality, TimeStampedObject<Boolean>> gtuAlongside = new HashMap<>();
 
-    /** 
+    /**
      * Margin used for neighbor search in some cases to prevent possible deadlock. This does not affect calculated distances to
-     * neighbors, but only whether they are considered a leader or follower. 
+     * neighbors, but only whether they are considered a leader or follower.
      */
     private static final Length MARGIN = new Length(0.000001, LengthUnit.SI);
 
@@ -421,8 +421,8 @@ public class NeighborsPerception extends LaneBasedAbstractPerceptionCategory
                 for (int i = first; i >= 0; i--)
                 {
                     LaneBasedGTU gtu = record.getLane().getGtuList().get(i);
-                    Length distance = record.getStartDistance().neg()
-                            .minus(gtu.position(record.getLane(), gtu.getFront())).plus(dsRear);
+                    Length distance =
+                            record.getStartDistance().neg().minus(gtu.position(record.getLane(), gtu.getFront())).plus(dsRear);
                     // only within lookback
                     if (distance.le(lookback))
                     {

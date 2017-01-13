@@ -9,7 +9,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
- * Contains lane combinations that should be ignored for building conflicts.
+ * Contains lane combinations that should be treated differently.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -19,14 +19,14 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class IgnoreList
+public class LaneCombinationList
 {
 
-    /** Lane combinations to ignore. Each combination is contained in both directions. */
-    private final Map<Lane, Set<Lane>> ignoreMap = new HashMap<>();
+    /** Lane combinations. Each combination is contained in both directions. */
+    private final Map<Lane, Set<Lane>> map = new HashMap<>();
 
     /**
-     * Add any combination of lanes on both links to the set to ignore. Order of the links does not matter.
+     * Add any combination of lanes on both links to the list. Order of the links does not matter.
      * @param link1 link 1
      * @param link2 link 2
      */
@@ -42,37 +42,37 @@ public class IgnoreList
     }
 
     /**
-     * Add lane combination to the set to ignore. Order of the lanes does not matter.
+     * Add lane combination to the list. Order of the lanes does not matter.
      * @param lane1 lane 1
      * @param lane2 lane 2
      */
     public final void addLaneCombination(final Lane lane1, final Lane lane2)
     {
-        if (!this.ignoreMap.containsKey(lane1))
+        if (!this.map.containsKey(lane1))
         {
-            this.ignoreMap.put(lane1, new HashSet<>());
+            this.map.put(lane1, new HashSet<>());
         }
-        this.ignoreMap.get(lane1).add(lane2);
-        if (!this.ignoreMap.containsKey(lane2))
+        this.map.get(lane1).add(lane2);
+        if (!this.map.containsKey(lane2))
         {
-            this.ignoreMap.put(lane2, new HashSet<>());
+            this.map.put(lane2, new HashSet<>());
         }
-        this.ignoreMap.get(lane2).add(lane1);
+        this.map.get(lane2).add(lane1);
     }
 
     /**
-     * Returns whether the combination of the two lanes should be ignored. Order of the lanes does not matter.
+     * Returns whether the combination of the two lanes is included. Order of the lanes does not matter.
      * @param lane1 lane 1
      * @param lane2 lane 2
-     * @return whether the combination of the two lanes should be ignored
+     * @return whether the combination of the two lanes is included
      */
-    public final boolean ignore(final Lane lane1, final Lane lane2)
+    public final boolean contains(final Lane lane1, final Lane lane2)
     {
-        if (!this.ignoreMap.containsKey(lane1))
+        if (!this.map.containsKey(lane1))
         {
             return false;
         }
-        return this.ignoreMap.get(lane1).contains(lane2);
+        return this.map.get(lane1).contains(lane2);
     }
 
 }

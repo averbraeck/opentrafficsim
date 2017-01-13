@@ -159,6 +159,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
     private void startBuild(final LaneStructureRecord rootLSR, final double fraction, final GTUType gtuType, final Length down,
             final Length downSplit, final Length up, final Length upMerge)
     {
+        //System.out.println("Creating lane structure for gtu " + getGtu().getId());
         // Build initial lateral set
         Set<LaneStructureRecord> recordSet = new HashSet<>();
         Set<Lane> laneSet = new HashSet<>();
@@ -298,21 +299,24 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
         // loop links to connect the lanes laterally and continue the build
         Link currentLink = recordSet.iterator().next().getLane().getParentLink();
         GTUDirectionality direction = recordSet.iterator().next().getDirection();
+        Node nextNode = direction.isPlus() ? currentLink.getEndNode() : currentLink.getStartNode();
+        Route route = getGtu().getStrategicalPlanner().getRoute();
         for (Link link : laneSets.keySet())
         {
             connectLaterally(recordSets.get(link), gtuType);
             Set<LaneStructureRecord> set = new HashSet<>(recordSets.get(link).values()); // collection to set
-            set = extendLateral(set, gtuType, down, up, upMerge, true);
             // reduce remaining downstream length if not on route, to at most 'downSplit'
-            Node nextNode = direction.isPlus() ? currentLink.getEndNode() : currentLink.getStartNode();
             Length downLimit = down;
-            Route route = getGtu().getStrategicalPlanner().getRoute();
             if (route != null && (!route.contains(nextNode) // if no route, do not limit
                     || !((LaneBasedStrategicalRoutePlanner) getGtu().getStrategicalPlanner())
-                            .nextLinkDirection(nextNode, currentLink, gtuType).equals(link)))
+                            .nextLinkDirection(nextNode, currentLink, gtuType).getLink().equals(link)))
             {
                 // as each lane has a separate start distance, use the maximum value from maxStart
                 downLimit = Length.min(downLimit, maxStart.get(link).plus(downSplit));
+            }
+            else
+            {
+                set = extendLateral(set, gtuType, down, up, upMerge, true);
             }
             buildDownstreamRecursive(set, gtuType, downLimit, up, downSplit, upMerge);
         }
@@ -374,7 +378,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
                             "Multiple adjacent lanes encountered during construction of lane map.");
                     Lane laneAdjacent = adjacentLanes.iterator().next();
                     Length adjacentStart = downstreamBuild ? startDistance : endDistance.minus(laneAdjacent.getLength());
-                    // skip is lane already in set, no effective length in structure, or in ignore list
+                    // skip if lane is already in set, no effective length in structure, or in ignore list
                     if (!laneSet.contains(laneAdjacent) && !adjacentStart.plus(laneAdjacent.getLength()).le(up)
                             && !adjacentStart.ge(down) && !this.ignoreSet.contains(laneAdjacent))
                     {
@@ -488,7 +492,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
         {
             connectLaterally(recordSets.get(link), gtuType);
             Set<LaneStructureRecord> set = new HashSet<>(recordSets.get(link).values()); // collection to set
-            set = extendLateral(set, gtuType, down, up, upMerge, false);
+            //set = extendLateral(set, gtuType, down, up, upMerge, false);
             buildUpstreamRecursive(set, gtuType, down, up, upMerge);
         }
     }
@@ -504,6 +508,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
     private LaneStructureRecord constructRecord(final Lane lane, final GTUDirectionality direction, final Length startDistance,
             final RelativeLane relativeLane)
     {
+        //System.out.println("Adding lane " + lane + " to structure.");
         LaneStructureRecord record = new LaneStructureRecord(lane, direction, startDistance);
         this.laneStructure.addLaneStructureRecord(record, relativeLane);
         this.relativeLaneMap.put(record, relativeLane);

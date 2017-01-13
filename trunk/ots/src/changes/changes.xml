@@ -2,6 +2,12 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="0.13.04" date="2017-01-XX" description="Intermediate Release 0.13.04">
+      <action issue="OTS-250" type="add">
+        OTS-250. Interaction conflicts and traffic lights. conflict partially ignored in case of traffic lights.
+      </action>
+    </release>
+
     <release version="0.13.03" date="2017-01-05" description="Intermediate Release 0.13.03">
       <action issue="OTS-244" type="fix">
         OTS-244. OTSNetwork.shortestPath does not calculate shortest route when direction is BOTH.

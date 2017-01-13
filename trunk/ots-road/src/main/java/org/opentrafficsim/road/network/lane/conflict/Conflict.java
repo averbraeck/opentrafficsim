@@ -64,6 +64,9 @@ public final class Conflict extends AbstractLaneBasedObject
     /** GTU type. */
     private final GTUType gtuType;
 
+    /** Whether the conflict is a permitted conflict in traffic light control. */
+    private final boolean permitted;
+
     /** Lock object for cloning a pair of conflicts. */
     private final Object cloneLock;
 
@@ -76,14 +79,16 @@ public final class Conflict extends AbstractLaneBasedObject
      * @param conflictRule conflict rule, i.e. priority, give way, stop or all-stop
      * @param conflictType conflict type, i.e. crossing, merge or split
      * @param simulator the simulator for animation and timed events
-     * @param cloneLock lock object for cloning a pair of conflicts
+     * @param permitted whether the conflict is permitted in traffic light control
      * @param gtuType gtu type
+     * @param cloneLock lock object for cloning a pair of conflicts
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
     private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final GTUDirectionality direction,
             final OTSLine3D geometry, final ConflictType conflictType, final ConflictRule conflictRule,
-            final OTSDEVSSimulatorInterface simulator, final GTUType gtuType, final Object cloneLock) throws NetworkException
+            final OTSDEVSSimulatorInterface simulator, final GTUType gtuType, final boolean permitted, final Object cloneLock)
+            throws NetworkException
     {
         super(UUID.randomUUID().toString(), lane, Throw.whenNull(direction, "Direction may not be null.").isPlus()
                 ? LongitudinalDirectionality.DIR_PLUS : LongitudinalDirectionality.DIR_MINUS, longitudinalPosition, geometry);
@@ -93,6 +98,7 @@ public final class Conflict extends AbstractLaneBasedObject
         this.conflictRule = conflictRule;
         this.simulator = simulator;
         this.gtuType = gtuType;
+        this.permitted = permitted;
         this.cloneLock = cloneLock;
 
         try
@@ -165,8 +171,18 @@ public final class Conflict extends AbstractLaneBasedObject
     }
 
     /**
+     * If permitted, traffic upstream of traffic lights may not be ignored, as these can have green light.
+     * @return permitted.
+     */
+    public boolean isPermitted()
+    {
+        return this.permitted;
+    }
+
+    /**
      * Creates a pair of conflicts.
      * @param conflictType conflict type, i.e. crossing, merge or split
+     * @param permitted whether the conflict is permitted in traffic light control
      * @param lane1 lane of conflict 1
      * @param longitudinalPosition1 longitudinal position of conflict 1
      * @param length1 {@code Length} of conflict 1
@@ -185,7 +201,7 @@ public final class Conflict extends AbstractLaneBasedObject
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static void generateConflictPair(final ConflictType conflictType, final Lane lane1,
+    public static void generateConflictPair(final ConflictType conflictType, final boolean permitted, final Lane lane1,
             final Length longitudinalPosition1, final Length length1, final GTUDirectionality direction1,
             final OTSLine3D geometry1, final ConflictRule conflictRule1, final GTUType gtuType1, final Lane lane2,
             final Length longitudinalPosition2, final Length length2, final GTUDirectionality direction2,
@@ -227,9 +243,9 @@ public final class Conflict extends AbstractLaneBasedObject
         }
         Object cloneLock = new Object();
         Conflict conf1 = new Conflict(lane1, longitudinalPosition1, length1, direction1, geometry1, conflictType, conflictRule1,
-                simulator, gtuType1, cloneLock);
+                simulator, gtuType1, permitted, cloneLock);
         Conflict conf2 = new Conflict(lane2, longitudinalPosition2, length2, direction2, geometry2, conflictType, conflictRule2,
-                simulator, gtuType2, cloneLock);
+                simulator, gtuType2, permitted, cloneLock);
         conf1.otherConflict = conf2;
         conf2.otherConflict = conf1;
     }
@@ -255,7 +271,7 @@ public final class Conflict extends AbstractLaneBasedObject
         Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
                 "simulator should be a DEVSSimulator");
         Conflict out = new Conflict((Lane) newCSE, getLongitudinalPosition(), this.length, this.direction, getGeometry(),
-                this.conflictType, this.conflictRule, this.simulator, this.gtuType, this.cloneLock);
+                this.conflictType, this.conflictRule, this.simulator, this.gtuType, this.permitted, this.cloneLock);
         synchronized (this.cloneLock)
         {
             // couple both clones
