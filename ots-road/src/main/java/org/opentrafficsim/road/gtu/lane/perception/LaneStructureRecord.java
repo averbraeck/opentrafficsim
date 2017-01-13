@@ -178,43 +178,71 @@ public class LaneStructureRecord implements Serializable
     }
 
     /**
-     * Returns all accessible nodes from this lane at the current split.
+     * Returns whether this lane allows the route to be followed.
      * @param route Route; the route to follow
      * @param gtuType GTUType; gtu type
-     * @return all accessible nodes from this lane at the current split
+     * @return whether this lane allows the route to be followed
      * @throws NetworkException if no destination node
      */
     public final boolean allowsRoute(final Route route, final GTUType gtuType) throws NetworkException
+    {
+        return allowsRoute(route, gtuType, false);
+    }
+
+    /**
+     * Returns whether the end of this lane allows the route to be followed.
+     * @param route Route; the route to follow
+     * @param gtuType GTUType; gtu type
+     * @return whether the end of this lane allows the route to be followed
+     * @throws NetworkException if no destination node
+     */
+    public final boolean allowsRouteAtEnd(final Route route, final GTUType gtuType) throws NetworkException
+    {
+        return allowsRoute(route, gtuType, true);
+    }
+
+    /**
+     * Returns whether the end of this lane allows the route to be followed.
+     * @param route Route; the route to follow
+     * @param gtuType GTUType; gtu type
+     * @param end boolean; whether to consider the end (or otherwise the lane itself, i.e. allow lane change from this lane)
+     * @return whether the end of this lane allows the route to be followed
+     * @throws NetworkException if no destination node
+     */
+    private boolean allowsRoute(final Route route, final GTUType gtuType, final boolean end) throws NetworkException
     {
 
         Set<LaneStructureRecord> currentSet = new HashSet<>();
         Set<LaneStructureRecord> nextSet = new HashSet<>();
         currentSet.add(this);
 
-        boolean notFirstLoop = false;
+        boolean firstLoop = true;
         while (!currentSet.isEmpty())
         {
 
-            // move longitudinal
-            
-            for (LaneStructureRecord laneRecord : currentSet)
+            if (!firstLoop || end)
             {
-                for (LaneStructureRecord next : laneRecord.getNext())
+                // move longitudinal
+                for (LaneStructureRecord laneRecord : currentSet)
                 {
-                    if (next.getToNode().equals(route.destinationNode()))
+                    for (LaneStructureRecord next : laneRecord.getNext())
                     {
-                        // reached destination, by definition ok
-                        return true;
-                    }
-                    if (route.contains(next.getToNode()))
-                    {
-                        nextSet.add(next);
+                        if (next.getToNode().equals(route.destinationNode()))
+                        {
+                            // reached destination, by definition ok
+                            return true;
+                        }
+                        if (route.contains(next.getToNode()))
+                        {
+                            nextSet.add(next);
+                        }
                     }
                 }
+                currentSet = nextSet;
+                nextSet = new HashSet<>();
             }
-            currentSet = nextSet;
-            nextSet = new HashSet<>();
-            
+            firstLoop = false;
+
             // move lateral
             nextSet.addAll(currentSet);
             for (LaneStructureRecord laneRecord : currentSet)
@@ -233,7 +261,7 @@ public class LaneStructureRecord implements Serializable
                     laneRecord = laneRecord.getRight();
                 }
             }
-            
+
             // none of the next lanes was on the route
             if (nextSet.isEmpty())
             {
@@ -257,7 +285,7 @@ public class LaneStructureRecord implements Serializable
                 // in this case we don't need to look further, anything is possible again
                 return true;
             }
-            
+
             currentSet = nextSet;
             nextSet = new HashSet<>();
 

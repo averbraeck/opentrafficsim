@@ -81,15 +81,16 @@ public class ConflictAnimation extends Renderable2D implements Serializable
         graphics.fill(rectangle);
 
         BasicStroke stroke;
+        float factor = conflict.isPermitted() ? .5f : 1f;
         if (conflict.getConflictType().equals(ConflictType.CROSSING))
         {
             stroke = new BasicStroke(.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
-                    new float[] { 1.0f, 2.0f }, 0.0f);
+                    new float[] { factor * 1.0f, factor * 2.0f }, 0.0f);
         }
         else
         {
             stroke = new BasicStroke(.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
-                    new float[] { 1.0f, 0.95f, 0.1f, 0.95f }, 0.0f);
+                    new float[] { factor * 1.0f, factor * 0.95f, factor * 0.1f, factor * 0.95f }, 0.0f);
         }
         graphics.setStroke(stroke);
         AffineTransform saveAT = graphics.getTransform();

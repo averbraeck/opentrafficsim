@@ -123,7 +123,15 @@ public class TurboRoundaboutDemo extends AbstractWrappableAnimation
                     trafficLight.setTrafficLightColor(TrafficLightColor.RED);
                     changePhase(trafficLight);
                 }
-
+                
+                // test for ignoring conflicting GTU's upstream of traffic light
+//                for (Lane lane : ((CrossSectionLink) this.network.getLink("SBEA")).getLanes())
+//                {
+//                    SimpleTrafficLight trafficLight = new SimpleTrafficLight("light" + lane.getId(), lane,
+//                            new Length(10.0, LengthUnit.SI), this.simulator);
+//                    trafficLight.setTrafficLightColor(TrafficLightColor.GREEN);
+//                }
+                
             }
             catch (Exception exception)
             {

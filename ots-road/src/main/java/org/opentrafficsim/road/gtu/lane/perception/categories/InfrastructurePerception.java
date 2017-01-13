@@ -104,9 +104,22 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
 
         // start at requested lane
         SortedSet<InfrastructureLaneChangeInfo> resultSet = new TreeSet<>();
+        LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(lane);
+        try
+        {
+            if (!record.allowsRoute(getGtu().getStrategicalPlanner().getRoute(), getGtu().getGTUType()))
+            {
+                resultSet.add(new InfrastructureLaneChangeInfo(1, Length.ZERO));
+                this.infrastructureLaneChangeInfo.put(lane, new TimeStampedObject<>(resultSet, getTimestamp()));
+                return;
+            }
+        }
+        catch (NetworkException exception)
+        {
+            throw new GTUException("Route has no destination.", exception);
+        }
         Map<LaneStructureRecord, InfrastructureLaneChangeInfo> currentSet = new HashMap<>();
         Map<LaneStructureRecord, InfrastructureLaneChangeInfo> nextSet = new HashMap<>();
-        LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(lane);
         currentSet.put(record,
                 new InfrastructureLaneChangeInfo(0, record.getLane().getLength().plus(record.getStartDistance())));
         while (!currentSet.isEmpty())
@@ -251,7 +264,7 @@ public class InfrastructurePerception extends LaneBasedAbstractPerceptionCategor
         {
             return true; // if no route assume ok, i.e. simple networks without routes
         }
-        return record.allowsRoute(route, gtuType);
+        return record.allowsRouteAtEnd(route, gtuType);
 
         // if (!record.isLinkSplit())
         // {

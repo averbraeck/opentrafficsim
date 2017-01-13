@@ -128,6 +128,11 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
             throws OperationalPlanException, GTUException, NetworkException, ParameterException
     {
 
+        if (getGtu().getId().equals("WWP.LANE:2") && startTime.si > 0)
+        {
+            double q = 8;
+        }
+        
         // obtain objects to get info
         getPerception().perceive();
         SpeedLimitProspect slp = getPerception().getPerceptionCategory(InfrastructurePerception.class)

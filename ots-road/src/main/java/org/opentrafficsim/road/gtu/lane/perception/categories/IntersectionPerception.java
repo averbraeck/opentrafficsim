@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.perception.categories;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -34,6 +35,7 @@ import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.conflict.Conflict.ConflictEnd;
 import org.opentrafficsim.road.network.lane.conflict.ConflictRule;
 import org.opentrafficsim.road.network.lane.conflict.ConflictType;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 import nl.tudelft.simulation.language.Throw;
@@ -183,6 +185,34 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
                     Set<LaneInfo> upLanes = new HashSet<>();
                     for (LaneInfo laneInfo : currentLanes)
                     {
+                        // get nearest traffic light, if any, and if conflict is not permitted by traffic light control
+                        Length trafficLightPosition = null;
+                        if (!conflict.isPermitted())
+                        {
+                            List<LaneBasedObject> objects =
+                                    laneInfo.getLane().getObjectBehind(laneInfo.getPosition(), laneInfo.getDirection());
+                            while (objects != null)
+                            {
+                                for (LaneBasedObject object : objects)
+                                {
+                                    if (object instanceof TrafficLight)
+                                    {
+                                        trafficLightPosition = object.getLongitudinalPosition();
+                                        break;
+                                    }
+                                }
+                                if (trafficLightPosition == null)
+                                {
+                                    objects = laneInfo.getLane().getObjectBehind(objects.get(0).getLongitudinalPosition(),
+                                            laneInfo.getDirection());
+                                }
+                                else
+                                {
+                                    objects = null;
+                                }
+                            }
+                        }
+
                         LaneBasedGTU next = laneInfo.getLane().getGtuBehind(laneInfo.getPosition(), laneInfo.getDirection(),
                                 RelativePosition.FRONT, getTimestamp());
                         while (next != null)
@@ -191,7 +221,9 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
                             Length increment = laneInfo.getDirection().isPlus()
                                     ? laneInfo.getLane().getLength().minus(nextPosition) : nextPosition;
                             Length nextDistance = laneInfo.getDistance().plus(increment);
-                            if (nextDistance.le(lookAhead))
+                            if (nextDistance.le(lookAhead))// && (trafficLightPosition == null ||
+                                                           // (laneInfo.getDirection().isPlus()
+                            // ? trafficLightPosition.lt(nextPosition) : trafficLightPosition.gt(nextPosition))))
                             {
                                 // TODO also other HeadwayGTU type (i.e. not real)
                                 // TODO GTU status (blinkers)
@@ -208,7 +240,10 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
                                 next = null;
                             }
                         }
-                        upLanes.addAll(laneInfo.getUpstreamLaneInfos(lookAhead));
+                        if (trafficLightPosition == null)
+                        {
+                            upLanes.addAll(laneInfo.getUpstreamLaneInfos(lookAhead));
+                        }
                     }
                     currentLanes = upLanes;
                 }
@@ -295,7 +330,7 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    private static class LaneInfo
+    private static final class LaneInfo
     {
 
         /** Lane. */
@@ -368,23 +403,20 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
          */
         public Set<LaneInfo> getUpstreamLaneInfos(final Length maxDistance)
         {
-            Set<LaneInfo> out = new HashSet<>();
             // TODO use set of gtu types that may be conflicting
+            Length nextDistance = this.distance.plus(this.lane.getLength());
+            Set<LaneInfo> set = new HashSet<>();
             Map<Lane, GTUDirectionality> map = this.lane.upstreamLanes(this.direction, this.gtuType);
             if (!map.isEmpty())
             {
-                Length nextDistance = this.distance.plus(this.lane.getLength());
-                if (nextDistance.le(maxDistance))
+                for (Lane l : map.keySet())
                 {
-                    for (Lane l : map.keySet())
-                    {
-                        GTUDirectionality nextDirection = map.get(l);
-                        Length nextLocation = nextDirection.isPlus() ? l.getLength() : Length.ZERO;
-                        out.add(new LaneInfo(l, nextDirection, nextDistance, nextLocation, this.gtuType));
-                    }
+                    GTUDirectionality nextDirection = map.get(l);
+                    Length nextLocation = nextDirection.isPlus() ? l.getLength() : Length.ZERO;
+                    set.add(new LaneInfo(l, nextDirection, nextDistance, nextLocation, this.gtuType));
                 }
             }
-            return out;
+            return set;
         }
 
         /**
@@ -393,23 +425,103 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
          */
         public Set<LaneInfo> getDownstreamLaneInfos(final Length maxDistance)
         {
-            Set<LaneInfo> out = new HashSet<>();
             // TODO use set of gtu types that may be conflicting
+            Length nextDistance = this.distance.plus(this.lane.getLength());
+
+            Set<LaneInfo> set = new HashSet<>();
             Map<Lane, GTUDirectionality> map = this.lane.downstreamLanes(this.direction, this.gtuType);
             if (!map.isEmpty())
             {
-                Length nextDistance = this.distance.plus(this.lane.getLength());
-                if (nextDistance.le(maxDistance))
+                for (Lane l : map.keySet())
                 {
-                    for (Lane l : map.keySet())
-                    {
-                        GTUDirectionality nextDirection = map.get(l);
-                        Length nextLocation = nextDirection.isPlus() ? Length.ZERO : l.getLength();
-                        out.add(new LaneInfo(l, nextDirection, nextDistance, nextLocation, this.gtuType));
-                    }
+                    GTUDirectionality nextDirection = map.get(l);
+                    Length nextLocation = nextDirection.isPlus() ? Length.ZERO : l.getLength();
+                    set.add(new LaneInfo(l, nextDirection, nextDistance, nextLocation, this.gtuType));
                 }
             }
-            return out;
+            return set;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int hashCode()
+        {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((this.direction == null) ? 0 : this.direction.hashCode());
+            result = prime * result + ((this.distance == null) ? 0 : this.distance.hashCode());
+            result = prime * result + ((this.gtuType == null) ? 0 : this.gtuType.hashCode());
+            result = prime * result + ((this.lane == null) ? 0 : this.lane.hashCode());
+            result = prime * result + ((this.position == null) ? 0 : this.position.hashCode());
+            return result;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean equals(final Object obj)
+        {
+            if (this == obj)
+            {
+                return true;
+            }
+            if (obj == null)
+            {
+                return false;
+            }
+            if (getClass() != obj.getClass())
+            {
+                return false;
+            }
+            LaneInfo other = (LaneInfo) obj;
+            if (this.direction != other.direction)
+            {
+                return false;
+            }
+            if (this.distance == null)
+            {
+                if (other.distance != null)
+                {
+                    return false;
+                }
+            }
+            else if (!this.distance.equals(other.distance))
+            {
+                return false;
+            }
+            if (this.gtuType == null)
+            {
+                if (other.gtuType != null)
+                {
+                    return false;
+                }
+            }
+            else if (!this.gtuType.equals(other.gtuType))
+            {
+                return false;
+            }
+            if (this.lane == null)
+            {
+                if (other.lane != null)
+                {
+                    return false;
+                }
+            }
+            else if (!this.lane.equals(other.lane))
+            {
+                return false;
+            }
+            if (this.position == null)
+            {
+                if (other.position != null)
+                {
+                    return false;
+                }
+            }
+            else if (!this.position.equals(other.position))
+            {
+                return false;
+            }
+            return true;
         }
 
     }
