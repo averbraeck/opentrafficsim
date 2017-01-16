@@ -5,49 +5,27 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.media.j3d.Bounds;
 
-import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
+import mockit.Mock;
+import mockit.MockUp;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
-import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
-import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
-import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
-
-import mockit.MockUp;
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.eventlists.EventListInterface;
-import nl.tudelft.simulation.dsol.experiment.Replication;
-import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.Executable;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.immutablecollections.ImmutableMap;
-import nl.tudelft.simulation.immutablecollections.ImmutableSet;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Test the OTSLink class.
@@ -116,8 +94,44 @@ public class OTSLinkTest implements EventListenerInterface
         assertEquals("add counter is 0", 0, this.gtuAddedCount);
         assertEquals("remove counter is 0", 0, this.gtuRemovedCount);
         assertEquals("other event counter is 0", 0, this.otherEventCount);
-        GTU gtu1 = new MyGTU("gtu1");
-        GTU gtu2 = new MyGTU("gtu2");
+        // GTU gtu1 = new MyGTU("gtu1");
+        // GTU gtu2 = new MyGTU("gtu2");
+        GTU gtu1 = new MockUp<GTU>()
+        {
+            @Mock
+            public String getId()
+            {
+                return "gtu1";
+            }
+
+            @Mock
+            public OTSDEVSSimulatorInterface getSimulator()
+            {
+                return new MockUp<OTSDEVSSimulatorInterface>()
+                {
+                    // no implementation needed.
+                }.getMockInstance();
+            }
+
+        }.getMockInstance();
+        GTU gtu2 = new MockUp<GTU>()
+        {
+            @Mock
+            public String getId()
+            {
+                return "gtu2";
+            }
+
+            @Mock
+            public OTSDEVSSimulatorInterface getSimulator()
+            {
+                return new MockUp<OTSDEVSSimulatorInterface>()
+                {
+                    // no implementation needed.
+                }.getMockInstance();
+            }
+
+        }.getMockInstance();
         link.addGTU(gtu1);
         assertEquals("add counter is now 1", 1, this.gtuAddedCount);
         assertEquals("remove counter is 0", 0, this.gtuRemovedCount);
@@ -172,12 +186,17 @@ public class OTSLinkTest implements EventListenerInterface
         assertFalse("link is not equal to extremely similar link with different id", link.equals(otherLink));
         // make a link with the same name in another network
         Network otherNetwork = new OTSNetwork("other");
-        otherLink = new OTSLink(otherNetwork, "link", new OTSNode(otherNetwork, "start", new OTSPoint3D(10, 20, 0)),
-                new OTSNode(otherNetwork, "end", new OTSPoint3D(1000, 2000, 10)), linkType, designLine, simulator,
-                directionalityMap);
+        otherLink =
+                new OTSLink(otherNetwork, "link", new OTSNode(otherNetwork, "start", new OTSPoint3D(10, 20, 0)), new OTSNode(
+                        otherNetwork, "end", new OTSPoint3D(1000, 2000, 10)), linkType, designLine, simulator,
+                        directionalityMap);
         assertTrue("link is equal to extremely similar link with same id but different network", link.equals(otherLink));
         otherNetwork.removeLink(otherLink);
-        otherLink = link.clone(otherNetwork, new MySim(), false);
+        OTSSimulatorInterface simulator2 = new MockUp<OTSSimulatorInterface>()
+        {
+            // no implementation needed.
+        }.getMockInstance();
+        otherLink = link.clone(otherNetwork, simulator2, false);
         assertTrue("link is equal to clone in different network", link.equals(otherLink));
     }
 
@@ -202,517 +221,3 @@ public class OTSLinkTest implements EventListenerInterface
     }
 
 }
-
-/**
- * Really simple GTU.
- */
-class MyGTU implements GTU
-{
-    /** The id of the GTU. */
-    private final String id;
-
-    /**
-     * Construct a new MyGTU.
-     * @param id String; id of the new MyGTU
-     */
-    MyGTU(final String id)
-    {
-        this.id = id;
-    }
-
-    /** */
-    private static final long serialVersionUID = 1L;
-
-    /** {@inheritDoc} */
-    @Override
-    public DirectedPoint getLocation() throws RemoteException
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Bounds getBounds() throws RemoteException
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean addListener(final EventListenerInterface listener, final EventType eventType) throws RemoteException
-    {
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean addListener(final EventListenerInterface listener, final EventType eventType, final boolean weak)
-            throws RemoteException
-    {
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean addListener(final EventListenerInterface listener, final EventType eventType, final short position)
-            throws RemoteException
-    {
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean addListener(final EventListenerInterface listener, final EventType eventType, final short position,
-            final boolean weak) throws RemoteException
-    {
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean removeListener(final EventListenerInterface listener, final EventType eventType) throws RemoteException
-    {
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getId()
-    {
-        return this.id;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Length getLength()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Length getWidth()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Speed getMaximumSpeed()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Acceleration getMaximumAcceleration()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Acceleration getMaximumDeceleration()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public GTUType getGTUType()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OTSDEVSSimulatorInterface getSimulator()
-    {
-        return new MySim();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public RelativePosition getReference()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public RelativePosition getFront()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public RelativePosition getRear()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public RelativePosition getCenter()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ImmutableSet<RelativePosition> getContourPoints()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ImmutableMap<TYPE, RelativePosition> getRelativePositions()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Speed getSpeed()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Acceleration getAcceleration()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Length getOdometer()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public BehavioralCharacteristics getBehavioralCharacteristics()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public StrategicalPlanner getStrategicalPlanner()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public TacticalPlanner getTacticalPlanner()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OperationalPlan getOperationalPlan()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public TurnIndicatorStatus getTurnIndicatorStatus()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setTurnIndicatorStatus(final TurnIndicatorStatus turnIndicatorStatus) throws GTUException
-    {
-        // / do nothing
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void destroy()
-    {
-        // do nothing
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Color getBaseColor()
-    {
-        return null;
-    }
-
-}
-
-/**
- * Dummy simulator.
- */
-class MySim implements OTSDEVSSimulatorInterface
-{
-
-    /** */
-    private static final long serialVersionUID = 1L;
-
-    @Override
-    public SimEventInterface<OTSSimTimeDouble> scheduleEventRel(final Duration relativeDelay, final short priority,
-            final Executable executable) throws RemoteException, SimRuntimeException
-    {
-        return null;
-    }
-
-    @Override
-    public SimEventInterface<OTSSimTimeDouble> scheduleEventRel(final Duration relativeDelay, final Executable executable)
-            throws RemoteException, SimRuntimeException
-    {
-        return null;
-    }
-
-    @Override
-    public SimEventInterface<OTSSimTimeDouble> scheduleEventAbs(final OTSSimTimeDouble absoluteTime, final short priority,
-            final Executable executable) throws RemoteException, SimRuntimeException
-    {
-        return null;
-    }
-
-    @Override
-    public SimEventInterface<OTSSimTimeDouble> scheduleEventAbs(final Time absoluteTime, final Executable executable)
-            throws RemoteException, SimRuntimeException
-    {
-        return null;
-    }
-
-    @Override
-    public SimEventInterface<OTSSimTimeDouble> scheduleEventAbs(final Time absoluteTime, final short priority,
-            final Executable executable) throws RemoteException, SimRuntimeException
-    {
-        return null;
-    }
-
-    @Override
-    public SimEventInterface<OTSSimTimeDouble> scheduleEventAbs(final OTSSimTimeDouble absoluteTime,
-            final Executable executable) throws RemoteException, SimRuntimeException
-    {
-        return null;
-    }
-
-    @Override
-    public SimEventInterface<OTSSimTimeDouble> scheduleEventNow(final short priority, final Executable executable)
-            throws RemoteException, SimRuntimeException
-    {
-        return null;
-    }
-
-    @Override
-    public SimEventInterface<OTSSimTimeDouble> scheduleEventNow(final Executable executable)
-            throws RemoteException, SimRuntimeException
-    {
-        return null;
-    }
-
-    @Override
-    public void runUpToAndIncluding(final Time when) throws SimRuntimeException, RemoteException
-    {
-        // do nothing
-    }
-
-    @Override
-    public boolean isPauseOnError()
-    {
-        return false;
-    }
-
-    @Override
-    public void setPauseOnError(final boolean pauseOnError)
-    {
-        // do nothing
-    }
-
-    @Override
-    public OTSSimTimeDouble getSimulatorTime()
-    {
-        return new OTSSimTimeDouble(Time.ZERO);
-    }
-
-    @Override
-    public void initialize(final Replication<Time, Duration, OTSSimTimeDouble> replication,
-            final ReplicationMode replicationMode)
-    {
-        // do nothing
-    }
-
-    @Override
-    public boolean isRunning()
-    {
-        return false;
-    }
-
-    @Override
-    public void start()
-    {
-        // do nothing
-    }
-
-    @Override
-    public void start(final boolean fireStartEvent)
-    {
-        // do nothing
-    }
-
-    @Override
-    public void step()
-    {
-        // do nothing
-    }
-
-    @Override
-    public void step(final boolean fireStepEvent)
-    {
-        // do nothing
-    }
-
-    @Override
-    public void stop()
-    {
-        // do nothing
-    }
-
-    @Override
-    public void stop(final boolean fireStopEvent) throws RemoteException, SimRuntimeException
-    {
-        // do nothing
-    }
-
-    @Override
-    public boolean addListener(final EventListenerInterface listener, final EventType eventType) throws RemoteException
-    {
-        return false;
-    }
-
-    @Override
-    public boolean addListener(final EventListenerInterface listener, final EventType eventType, final boolean weak)
-            throws RemoteException
-    {
-        return false;
-    }
-
-    @Override
-    public boolean addListener(final EventListenerInterface listener, final EventType eventType, final short position)
-            throws RemoteException
-    {
-        return false;
-    }
-
-    @Override
-    public boolean addListener(final EventListenerInterface listener, final EventType eventType, final short position,
-            final boolean weak) throws RemoteException
-    {
-        return false;
-    }
-
-    @Override
-    public boolean removeListener(final EventListenerInterface listener, final EventType eventType) throws RemoteException
-    {
-        return false;
-    }
-
-    @Override
-    public boolean cancelEvent(final SimEventInterface<OTSSimTimeDouble> event)
-    {
-        return false;
-    }
-
-    @Override
-    public EventListInterface<OTSSimTimeDouble> getEventList()
-    {
-        return null;
-    }
-
-    @Override
-    public SimEventInterface<OTSSimTimeDouble> scheduleEvent(final SimEventInterface<OTSSimTimeDouble> event)
-            throws SimRuntimeException
-    {
-        return null;
-    }
-
-    @Override
-    public SimEventInterface<OTSSimTimeDouble> scheduleEventRel(final Duration relativeDelay, final short priority,
-            final Object source, final Object target, final String method, final Object[] args) throws SimRuntimeException
-    {
-        return null;
-    }
-
-    @Override
-    public SimEventInterface<OTSSimTimeDouble> scheduleEventRel(final Duration relativeDelay, final Object source,
-            final Object target, final String method, final Object[] args) throws SimRuntimeException
-    {
-        return null;
-    }
-
-    @Override
-    public SimEventInterface<OTSSimTimeDouble> scheduleEventAbs(final OTSSimTimeDouble absoluteTime, final short priority,
-            final Object source, final Object target, final String method, final Object[] args) throws SimRuntimeException
-    {
-        return null;
-    }
-
-    @Override
-    public SimEventInterface<OTSSimTimeDouble> scheduleEventAbs(final Time absoluteTime, final Object source,
-            final Object target, final String method, final Object[] args) throws SimRuntimeException
-    {
-        return null;
-    }
-
-    @Override
-    public SimEventInterface<OTSSimTimeDouble> scheduleEventAbs(final Time absoluteTime, final short priority,
-            final Object source, final Object target, final String method, final Object[] args) throws SimRuntimeException
-    {
-        return null;
-    }
-
-    @Override
-    public SimEventInterface<OTSSimTimeDouble> scheduleEventAbs(final OTSSimTimeDouble absoluteTime, final Object source,
-            final Object target, final String method, final Object[] args) throws SimRuntimeException
-    {
-        return null;
-    }
-
-    @Override
-    public SimEventInterface<OTSSimTimeDouble> scheduleEventNow(final short priority, final Object source, final Object target,
-            final String method, final Object[] args) throws SimRuntimeException
-    {
-        return null;
-    }
-
-    @Override
-    public SimEventInterface<OTSSimTimeDouble> scheduleEventNow(final Object source, final Object target, final String method,
-            final Object[] args) throws SimRuntimeException
-    {
-        return null;
-    }
-
-    @Override
-    public void setEventList(final EventListInterface<OTSSimTimeDouble> eventList) throws SimRuntimeException
-    {
-        // do nothing
-    }
-
-    @Override
-    public Replication<Time, Duration, OTSSimTimeDouble> getReplication()
-    {
-        return null;
-    }
-
-    @Override
-    public void runUpTo(final Time when) throws SimRuntimeException
-    {
-        // do nothing
-    }
-};

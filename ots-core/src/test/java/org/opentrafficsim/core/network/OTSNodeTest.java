@@ -8,23 +8,22 @@ import static org.junit.Assert.fail;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.measure.unit.SI;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
+import mockit.MockUp;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.AngleUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.junit.Test;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
-
-import mockit.MockUp;
 
 /**
  * Test the OTSNode class.
@@ -487,7 +486,15 @@ public class OTSNodeTest
      */
     private void checkClone(final OTSNetwork network) throws NetworkException
     {
-        OTSNetwork clonedNetwork = network.clone("clonedNetwork", new MySim(), new MySim(), false);
+        OTSDEVSSimulatorInterface oldSimulator = new MockUp<OTSDEVSSimulatorInterface>()
+        {
+            // no implementation needed.
+        }.getMockInstance();
+        OTSDEVSSimulatorInterface newSimulator = new MockUp<OTSDEVSSimulatorInterface>()
+        {
+            // no implementation needed.
+        }.getMockInstance();
+        OTSNetwork clonedNetwork = network.clone("clonedNetwork", oldSimulator, newSimulator, false);
         assertEquals("Number of nodes should be same", network.getNodeMap().size(), clonedNetwork.getNodeMap().size());
         assertTrue("Node map should be equal", network.getNodeMap().equals(clonedNetwork.getNodeMap()));
     }

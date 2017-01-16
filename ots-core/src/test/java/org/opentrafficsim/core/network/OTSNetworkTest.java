@@ -10,11 +10,14 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import mockit.Mock;
+import mockit.MockUp;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.event.EventType;
 
 import org.junit.Test;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -23,8 +26,6 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
-
-import mockit.MockUp;
 
 /**
  * <p>
@@ -294,7 +295,24 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("GTU removed event count is 0", 0, this.gtuRemovedCount);
         assertEquals("other event count is 0", 0, this.otherEventCount);
         assertEquals("network now contains one link", 1, network.getLinkMap().size());
-        GTU gtu1 = new MyGTU("gtu1");
+        GTU gtu1 = new MockUp<GTU>()
+        {
+            @Mock
+            public String getId()
+            {
+                return "gtu1";
+            }
+
+            @Mock
+            public OTSDEVSSimulatorInterface getSimulator()
+            {
+                return new MockUp<OTSDEVSSimulatorInterface>()
+                {
+                    // no implementation needed.
+                }.getMockInstance();
+            }
+
+        }.getMockInstance();
         network.addGTU(gtu1);
         assertEquals("link add event count is 2", 2, this.linkAddedCount);
         assertEquals("link removed event count is 1", 1, this.linkRemovedCount);
@@ -302,7 +320,24 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("node removed event count is 1", 1, this.nodeRemovedCount);
         assertEquals("GTU add event count is 1", 1, this.gtuAddedCount);
         assertEquals("GTU removed event count is 0", 0, this.gtuRemovedCount);
-        GTU gtu2 = new MyGTU("gtu2");
+        GTU gtu2 = new MockUp<GTU>()
+        {
+            @Mock
+            public String getId()
+            {
+                return "gtu2";
+            }
+
+            @Mock
+            public OTSDEVSSimulatorInterface getSimulator()
+            {
+                return new MockUp<OTSDEVSSimulatorInterface>()
+                {
+                    // no implementation needed.
+                }.getMockInstance();
+            }
+
+        }.getMockInstance();
         network.addGTU(gtu2);
         assertEquals("link add event count is 2", 2, this.linkAddedCount);
         assertEquals("link removed event count is 1", 1, this.linkRemovedCount);
@@ -338,7 +373,15 @@ public class OTSNetworkTest implements EventListenerInterface
      */
     private void compareNetworkWithClone(final OTSNetwork network) throws NetworkException
     {
-        OTSNetwork clone = network.clone("cloned network", new MySim(), new MySim(), false);
+        OTSDEVSSimulatorInterface oldSimulator = new MockUp<OTSDEVSSimulatorInterface>()
+        {
+            // no implementation needed.
+        }.getMockInstance();
+        OTSDEVSSimulatorInterface newSimulator = new MockUp<OTSDEVSSimulatorInterface>()
+        {
+            // no implementation needed.
+        }.getMockInstance();
+        OTSNetwork clone = network.clone("cloned network", oldSimulator, newSimulator, false);
         assertTrue("nodes match", network.getNodeMap().equals(clone.getNodeMap()));
         assertTrue("links match", network.getLinkMap().equals(clone.getLinkMap()));
         // TODO: Checking routes is a bit harder; not done for now
