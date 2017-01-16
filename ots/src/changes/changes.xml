@@ -2,12 +2,41 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
-    <release version="0.13.04" date="2017-01-XX" description="Intermediate Release 0.13.04">
-      <action issue="OTS-250" type="add">
-        OTS-250. Interaction conflicts and traffic lights. conflict partially ignored in case of traffic lights.
+    <release version="0.13.04" date="2017-01-15" description="Intermediate Release 0.13.04">
+      <action issue="OTS-156" type="update">
+        OTS-156. Make conflicts GTUType dependent.
+      </action>
+      <action issue="OTS-156" type="fix">
+        OTS-246. Demo model XMLNetworks merge with LMRS throws error.
+      </action>
+      <action issue="OTS-250" type="update">
+        OTS-250. Interaction conflicts and traffic lights.
+      </action>
+      <action issue="OTS-251" type="fix">
+        OTS-251. Memory leak in simulation when GTUs leave the system. DefaultCarAnimation object changed.
+      </action>
+      <action issue="OTS-252" type="fix">
+        OTS-252. GTUs do not have a hashCode function
+      </action>
+      <action issue="OTS-253" type="fix">
+        OTS-253. Memory leak in infrastructure animation after cloning. Extra functions in OTSNetwork to clone and destroy networks.
+      </action>
+      <action issue="OTS-254" type="update">
+        OTS-254. ToggleAnimationButtons should be aligned to the left.
+      </action>
+      <action issue="OTS-255" type="update">
+        OTS-255. As a result of update OTS-253, the constructor of the OTSLink and CrossSectionLink have changed to include 
+        the simulator.
+      </action>
+      <action type="update">
+        Default jog4j-2 configuration file added.
+      </action>
+      <action type="update">
+        Updated to use DSOL version 3.01.03, which allows to override the Renderable2D.destroy() function.
       </action>
     </release>
-
+    
+    
     <release version="0.13.03" date="2017-01-05" description="Intermediate Release 0.13.03">
       <action issue="OTS-244" type="fix">
         OTS-244. OTSNetwork.shortestPath does not calculate shortest route when direction is BOTH.
@@ -29,7 +58,10 @@
         Throw.when(...) added to constructor of Distribution.java.
       </action>
       <action type="update">
-        unit tests added for several classes in ots-core.
+        Unit tests added for several classes in ots-core.
+      </action>
+      <action type="update">
+        Hierarchical GTUType class.
       </action>
     </release>
 

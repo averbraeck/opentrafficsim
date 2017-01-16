@@ -15,6 +15,8 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 
+import mockit.MockUp;
+
 /**
  * Test the CapacityOTSLink class.
  * <p>
@@ -44,12 +46,16 @@ public class CapacityOTSLinkTest
         Node toNode = new OTSNode(network, "endNode", toPoint);
         LinkType linkType = LinkType.ALL;
         OTSLine3D designLine = new OTSLine3D(fromPoint, toPoint);
+        OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
+        {
+            // no implementation needed.
+        }.getMockInstance();
         Frequency initialCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
         Frequency finalCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new HashMap<>();
         directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
-        CapacityOTSLink link =
-                new CapacityOTSLink(network, "link", fromNode, toNode, linkType, designLine, initialCapacity, directionalityMap);
+        CapacityOTSLink link = new CapacityOTSLink(network, "link", fromNode, toNode, linkType, designLine, simulator,
+                initialCapacity, directionalityMap);
         assertTrue("from point matches", fromPoint.equals(link.getDesignLine().get(0)));
         assertTrue("to point matches", toPoint.equals(link.getDesignLine().get(1)));
         assertTrue("from node matches", fromNode.equals(link.getStartNode()));
@@ -58,9 +64,8 @@ public class CapacityOTSLinkTest
         link.setCapacity(finalCapacity);
         assertTrue("capacity mathes", finalCapacity.equals(link.getCapacity()));
 
-        link =
-                new CapacityOTSLink(network, "link2", fromNode, toNode, linkType, designLine, initialCapacity,
-                        LongitudinalDirectionality.DIR_PLUS);
+        link = new CapacityOTSLink(network, "link2", fromNode, toNode, linkType, designLine, simulator, initialCapacity,
+                LongitudinalDirectionality.DIR_PLUS);
         assertTrue("from point matches", fromPoint.equals(link.getDesignLine().get(0)));
         assertTrue("to point matches", toPoint.equals(link.getDesignLine().get(1)));
         assertTrue("from node matches", fromNode.equals(link.getStartNode()));

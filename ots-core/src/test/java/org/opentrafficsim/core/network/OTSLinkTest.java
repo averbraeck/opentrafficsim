@@ -12,19 +12,6 @@ import java.util.Map;
 
 import javax.media.j3d.Bounds;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.eventlists.EventListInterface;
-import nl.tudelft.simulation.dsol.experiment.Replication;
-import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.Executable;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.immutablecollections.ImmutableMap;
-import nl.tudelft.simulation.immutablecollections.ImmutableSet;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -33,6 +20,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -46,6 +34,20 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacter
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
+
+import mockit.MockUp;
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.eventlists.EventListInterface;
+import nl.tudelft.simulation.dsol.experiment.Replication;
+import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.Executable;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.immutablecollections.ImmutableMap;
+import nl.tudelft.simulation.immutablecollections.ImmutableSet;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Test the OTSLink class.
@@ -82,8 +84,12 @@ public class OTSLinkTest implements EventListenerInterface
         Node endNode = new OTSNode(network, "end", new OTSPoint3D(1000, 2000, 10));
         LinkType linkType = LinkType.ALL;
         OTSLine3D designLine = new OTSLine3D(startNode.getPoint(), endNode.getPoint());
+        OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
+        {
+            // no implementation needed.
+        }.getMockInstance();
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new HashMap<>();
-        OTSLink link = new OTSLink(network, "link", startNode, endNode, linkType, designLine, directionalityMap);
+        OTSLink link = new OTSLink(network, "link", startNode, endNode, linkType, designLine, simulator, directionalityMap);
         assertTrue("network contains the newly constructed link", network.containsLink(link));
         assertTrue("our directionality map is stored and returned", directionalityMap.equals(link.getDirectionalityMap()));
         // directionalityMap is currently empty
@@ -161,13 +167,14 @@ public class OTSLinkTest implements EventListenerInterface
         assertFalse("link is not equal to null", link.equals(null));
         assertFalse("link is not equal to some other object", link.equals("Hello World!"));
         // Make another link to test the rest of equals
-        OTSLink otherLink = new OTSLink(network, "link2", startNode, endNode, linkType, designLine, directionalityMap);
+        OTSLink otherLink =
+                new OTSLink(network, "link2", startNode, endNode, linkType, designLine, simulator, directionalityMap);
         assertFalse("link is not equal to extremely similar link with different id", link.equals(otherLink));
         // make a link with the same name in another network
         Network otherNetwork = new OTSNetwork("other");
-        otherLink =
-                new OTSLink(otherNetwork, "link", new OTSNode(otherNetwork, "start", new OTSPoint3D(10, 20, 0)), new OTSNode(
-                        otherNetwork, "end", new OTSPoint3D(1000, 2000, 10)), linkType, designLine, directionalityMap);
+        otherLink = new OTSLink(otherNetwork, "link", new OTSNode(otherNetwork, "start", new OTSPoint3D(10, 20, 0)),
+                new OTSNode(otherNetwork, "end", new OTSPoint3D(1000, 2000, 10)), linkType, designLine, simulator,
+                directionalityMap);
         assertTrue("link is equal to extremely similar link with same id but different network", link.equals(otherLink));
         otherNetwork.removeLink(otherLink);
         otherLink = link.clone(otherNetwork, new MySim(), false);
@@ -203,7 +210,7 @@ class MyGTU implements GTU
 {
     /** The id of the GTU. */
     private final String id;
-    
+
     /**
      * Construct a new MyGTU.
      * @param id String; id of the new MyGTU
@@ -212,7 +219,7 @@ class MyGTU implements GTU
     {
         this.id = id;
     }
-    
+
     /** */
     private static final long serialVersionUID = 1L;
 
@@ -490,8 +497,8 @@ class MySim implements OTSDEVSSimulatorInterface
     }
 
     @Override
-    public SimEventInterface<OTSSimTimeDouble> scheduleEventAbs(final OTSSimTimeDouble absoluteTime, final Executable executable)
-            throws RemoteException, SimRuntimeException
+    public SimEventInterface<OTSSimTimeDouble> scheduleEventAbs(final OTSSimTimeDouble absoluteTime,
+            final Executable executable) throws RemoteException, SimRuntimeException
     {
         return null;
     }
@@ -504,8 +511,8 @@ class MySim implements OTSDEVSSimulatorInterface
     }
 
     @Override
-    public SimEventInterface<OTSSimTimeDouble> scheduleEventNow(final Executable executable) throws RemoteException,
-            SimRuntimeException
+    public SimEventInterface<OTSSimTimeDouble> scheduleEventNow(final Executable executable)
+            throws RemoteException, SimRuntimeException
     {
         return null;
     }

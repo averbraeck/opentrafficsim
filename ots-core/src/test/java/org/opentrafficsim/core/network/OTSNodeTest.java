@@ -17,10 +17,13 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 import org.djunits.unit.AngleUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.junit.Test;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
+
+import mockit.MockUp;
 
 /**
  * Test the OTSNode class.
@@ -73,24 +76,26 @@ public class OTSNodeTest
         assertTrue("Node 1 does match node 3 in other network", node1.equals(node3));
 
         assertEquals("node 1 has no links", 0, node1.getLinks().size());
+
+        OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
+        {
+            // no implementation needed.
+        }.getMockInstance();
+
         // Create a couple of links
-        Link link1 =
-                new OTSLink(network, "link 1", node1, node2, LinkType.ALL, new OTSLine3D(node1.getPoint(), node2.getPoint()),
-                        LongitudinalDirectionality.DIR_BOTH);
+        Link link1 = new OTSLink(network, "link 1", node1, node2, LinkType.ALL,
+                new OTSLine3D(node1.getPoint(), node2.getPoint()), simulator, LongitudinalDirectionality.DIR_BOTH);
         assertEquals("node 1 has one link", 1, node1.getLinks().size());
         assertEquals("node 2 has one link", 1, node2.getLinks().size());
         assertEquals("link at node 1 is link1", link1, node1.getLinks().iterator().next());
         assertEquals("link at node 2 is link1", link1, node2.getLinks().iterator().next());
         OTSNode node4 = new OTSNode(network, "node 3", new OTSPoint3D(10, 10, 10));
-        Link link2 =
-                new OTSLink(network, "link 2", node1, node4, LinkType.ALL, new OTSLine3D(node1.getPoint(), node4.getPoint()),
-                        LongitudinalDirectionality.DIR_BOTH);
-        Link link3 =
-                new OTSLink(network, "link 3", node4, node2, LinkType.ALL, new OTSLine3D(node4.getPoint(), node2.getPoint()),
-                        LongitudinalDirectionality.DIR_BOTH);
-        Link link4 =
-                new OTSLink(network, "link 4", node2, node1, LinkType.ALL, new OTSLine3D(node2.getPoint(), node1.getPoint()),
-                        LongitudinalDirectionality.DIR_BOTH);
+        Link link2 = new OTSLink(network, "link 2", node1, node4, LinkType.ALL,
+                new OTSLine3D(node1.getPoint(), node4.getPoint()), simulator, LongitudinalDirectionality.DIR_BOTH);
+        Link link3 = new OTSLink(network, "link 3", node4, node2, LinkType.ALL,
+                new OTSLine3D(node4.getPoint(), node2.getPoint()), simulator, LongitudinalDirectionality.DIR_BOTH);
+        Link link4 = new OTSLink(network, "link 4", node2, node1, LinkType.ALL,
+                new OTSLine3D(node2.getPoint(), node1.getPoint()), simulator, LongitudinalDirectionality.DIR_BOTH);
         assertEquals("node 1 has three links", 3, node1.getLinks().size());
         assertEquals("node 2 has three links", 3, node2.getLinks().size());
         assertEquals("node 4 has two links", 2, node4.getLinks().size());
@@ -114,9 +119,8 @@ public class OTSNodeTest
         assertTrue("node 1 has direct connection to node 2", node1.isDirectionallyConnectedTo(GTUType.ALL, node2));
         Node node5 = new OTSNode(network, "node 5", new OTSPoint3D(1000, 0, 0));
         assertFalse("node 1 has no direct connection to node 5", node1.isDirectionallyConnectedTo(GTUType.ALL, node5));
-        Link link5 =
-                new OTSLink(network, "link 5", node1, node5, LinkType.ALL, new OTSLine3D(node1.getPoint(), node5.getPoint()),
-                        LongitudinalDirectionality.DIR_MINUS);
+        Link link5 = new OTSLink(network, "link 5", node1, node5, LinkType.ALL,
+                new OTSLine3D(node1.getPoint(), node5.getPoint()), simulator, LongitudinalDirectionality.DIR_MINUS);
         assertFalse("node 1 still has no direct connection to node 5", node1.isDirectionallyConnectedTo(GTUType.ALL, node5));
         assertTrue("node 5 does have a direct connection to node 1", node5.isDirectionallyConnectedTo(GTUType.ALL, node1));
         assertEquals("Connection from node 5 to node 1 is link5", link5, node5.getLinks().iterator().next());
