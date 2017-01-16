@@ -358,7 +358,8 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             }
 
             if (this.deadLock != null
-                    && getGtu().getSimulator().getSimulatorTime().getTime().minus(this.deadLock).ge(this.deadLockThreshold))
+                    && getGtu().getSimulator().getSimulatorTime().getTime().minus(this.deadLock).ge(this.deadLockThreshold)
+                    && isDestroyGtuOnFailure())
             {
                 System.err.println("Deleting gtu " + getGtu().getId() + " to prevent dead-lock.");
                 try
