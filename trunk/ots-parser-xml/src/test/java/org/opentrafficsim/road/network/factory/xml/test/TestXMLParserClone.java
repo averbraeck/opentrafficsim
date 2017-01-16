@@ -4,9 +4,13 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.io.IOException;
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+import javax.naming.Binding;
+import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.event.EventContext;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -18,12 +22,14 @@ import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gis.CoordinateTransformWGS84toRDNew;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
@@ -34,6 +40,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.io.URLResource;
+import nl.tudelft.simulation.naming.context.ContextUtil;
 
 /**
  * <p>
@@ -52,6 +59,12 @@ public class TestXMLParserClone extends AbstractWrappableAnimation
     /** the network for cloning. */
     protected OTSNetwork network;
 
+    /** the old simulator. */
+    protected OTSSimulatorInterface oldSimulator;
+
+    /** the new simulator. */
+    protected OTSSimulatorInterface newSimulator;
+
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
@@ -68,10 +81,19 @@ public class TestXMLParserClone extends AbstractWrappableAnimation
                 {
                     TestXMLParserClone xmlParserClone = new TestXMLParserClone();
                     // 1 hour simulation run for testing
-                    xmlParserClone.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
-                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
-                    xmlParserClone.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
-                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    xmlParserClone.oldSimulator =
+                            xmlParserClone.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                                    new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    System.out.println("Number of animation objects before for old sim : "
+                            + countNumberAnimationObjects(xmlParserClone.oldSimulator));
+
+                    xmlParserClone.newSimulator =
+                            xmlParserClone.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                                    new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    System.out.println("Number of animation objects after for old sim  : "
+                            + countNumberAnimationObjects(xmlParserClone.oldSimulator));
+                    System.out.println("Number of animation objects after for new sim  : "
+                            + countNumberAnimationObjects(xmlParserClone.newSimulator));
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -85,14 +107,14 @@ public class TestXMLParserClone extends AbstractWrappableAnimation
     @Override
     public final String shortName()
     {
-        return "TestXMLModel";
+        return "TestXMLModelClone";
     }
 
     /** {@inheritDoc} */
     @Override
     public final String description()
     {
-        return "TestXMLModel";
+        return "TestXMLModelClone";
     }
 
     /** {@inheritDoc} */
@@ -104,15 +126,22 @@ public class TestXMLParserClone extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
+    protected void addAnimationToggles()
+    {
+        AnimationToggles.setTextAnimationTogglesStandard(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected final OTSModelInterface makeModel(final GTUColorer colorer)
     {
         if (this.network == null)
         {
-            return new TestXMLModelStore();
+            return new TestXMLModelParse();
         }
         else
         {
-            return new TestXMLModelRetrieve();
+            return new TestXMLModelClone();
         }
     }
 
@@ -120,16 +149,38 @@ public class TestXMLParserClone extends AbstractWrappableAnimation
     @Override
     protected final Double makeAnimationRectangle()
     {
-        // return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
-        return new Rectangle2D.Double(104000, 482000, 5000, 5000);
-        // return new Rectangle2D.Double(0, 0, 5000, 5000);
+        return new Rectangle2D.Double(102500, 478350, (113100 - 102500), (483280 - 478350));
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "TestXMLParser []";
+        return "TestXMLParserClone []";
+    }
+
+    /**
+     * @param simulator the simulator to get the animation objects for
+     * @return number of animation objects for this.simulation
+     */
+    static int countNumberAnimationObjects(OTSSimulatorInterface simulator)
+    {
+        int numberAnimationObjects = 0;
+        try
+        {
+            EventContext context = (EventContext) ContextUtil.lookup(simulator.getReplication().getContext(), "/animation/2D");
+            NamingEnumeration<Binding> list = context.listBindings("");
+            while (list.hasMore())
+            {
+                list.next();
+                numberAnimationObjects++;
+            }
+        }
+        catch (NamingException | RemoteException exception)
+        {
+            System.err.println("Error when counting animation objects");
+        }
+        return numberAnimationObjects;
     }
 
     /**
@@ -144,7 +195,7 @@ public class TestXMLParserClone extends AbstractWrappableAnimation
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class TestXMLModelStore implements OTSModelInterface
+    class TestXMLModelParse implements OTSModelInterface
     {
         /** */
         private static final long serialVersionUID = 20141121L;
@@ -191,9 +242,8 @@ public class TestXMLParserClone extends AbstractWrappableAnimation
         @Override
         public final String toString()
         {
-            return "TestXMLModel [simulator=" + this.simulator + "]";
+            return "TestXMLModelParse to clone N201 model [simulator=" + this.simulator + "]";
         }
-
     }
 
     /**
@@ -208,7 +258,7 @@ public class TestXMLParserClone extends AbstractWrappableAnimation
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class TestXMLModelRetrieve implements OTSModelInterface
+    class TestXMLModelClone implements OTSModelInterface
     {
         /** */
         private static final long serialVersionUID = 20141121L;
@@ -223,18 +273,28 @@ public class TestXMLParserClone extends AbstractWrappableAnimation
         {
             long millis = System.currentTimeMillis();
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
+
             try
             {
-                TestXMLParserClone.this.network.clone("new N201", this.simulator, false);
+                OTSNetwork oldNetwork = TestXMLParserClone.this.network;
+                int oldNodes = oldNetwork.getNodeMap().size();
+                int oldLinks = oldNetwork.getLinkMap().size();
+                OTSNetwork newNetwork =
+                        oldNetwork.clone("new N201", TestXMLParserClone.this.oldSimulator, this.simulator, true);
+                oldNetwork.destroy(TestXMLParserClone.this.oldSimulator);
+                System.out.println("Nodes old = " + oldNodes + " - after delete: " + oldNetwork.getNodeMap().size()
+                        + " - new = " + newNetwork.getNodeMap().size());
+                System.out.println("Links old = " + oldLinks + " - after delete: " + oldNetwork.getLinkMap().size()
+                        + " - new = " + newNetwork.getLinkMap().size());
             }
             catch (NetworkException exception)
             {
                 exception.printStackTrace();
             }
+
             System.out.println("cloning took : " + (System.currentTimeMillis() - millis) + " ms");
 
             URL gisURL = URLResource.getResource("/N201/map.xml");
-            System.err.println("GIS-map file: " + gisURL.toString());
             CoordinateTransform rdto0 = new CoordinateTransformWGS84toRDNew(0, 0);
             new GisRenderable2D(this.simulator, gisURL, rdto0);
         }
@@ -257,8 +317,7 @@ public class TestXMLParserClone extends AbstractWrappableAnimation
         @Override
         public final String toString()
         {
-            return "TestXMLModel [simulator=" + this.simulator + "]";
+            return "TestXMLModelClone to clone N201 model [simulator=" + this.simulator + "]";
         }
-
     }
 }

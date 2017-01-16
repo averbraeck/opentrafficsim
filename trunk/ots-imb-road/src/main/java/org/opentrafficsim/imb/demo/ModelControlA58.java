@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -54,6 +55,7 @@ import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataGtuType;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataSet;
+import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.sampling.GtuTypeData;
@@ -72,6 +74,7 @@ import nl.tno.imb.mc.ModelStarter;
 import nl.tno.imb.mc.ModelState;
 import nl.tno.imb.mc.Parameter;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.simulators.Simulator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.io.URLResource;
@@ -124,39 +127,39 @@ public class ModelControlA58 extends ModelStarter
      */
     public static void main(String[] args) throws IMBException, InvocationTargetException, InterruptedException
     {
-//         if (args.length == 0)
-//         {
-//         ModelControlA58 modelControlA58 = new ModelControlA58(new String[0], "A58 model", 1248);
-//         modelControlA58.startModel(null, modelControlA58.connection); // null will use default penetration rate
-//         }
-//         else
-//         {
-        SwingUtilities.invokeAndWait(new Runnable()
+        if (args.length == 0)
         {
-            @Override
-            public void run()
+            ModelControlA58 modelControlA58 = new ModelControlA58(new String[0], "A58 model", 1248);
+            modelControlA58.startModel(null, modelControlA58.connection); // null will use default penetration rate
+        }
+        else
+        {
+            SwingUtilities.invokeAndWait(new Runnable()
             {
-                try
+                @Override
+                public void run()
                 {
-                    new ModelControlA58(args, "A58 model", 1248);
+                    try
+                    {
+                        new ModelControlA58(args, "A58 model", 1248);
+                    }
+                    catch (IMBException exception)
+                    {
+                        exception.printStackTrace();
+                    }
                 }
-                catch (IMBException exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
-        });
-//         }
+            });
+        }
 
-        // try
-        // {
-        // Thread.sleep(2000);
-        // }
-        // catch (InterruptedException exception)
-        // {
-        // exception.printStackTrace();
-        // }
-        // modelControlA58.doStopModel();
+//        try
+//        {
+//            Thread.sleep(2000);
+//        }
+//        catch (InterruptedException exception)
+//        {
+//            exception.printStackTrace();
+//        }
+//        modelControlA58.doStopModel();
     }
 
     /** {@inheritDoc} */
@@ -365,6 +368,13 @@ public class ModelControlA58 extends ModelStarter
             return new Rectangle2D.Double(136000, 388000, 21000, 9000);
         }
 
+        /** {@inheritDoc} */
+        @Override
+        protected void addAnimationToggles()
+        {
+            AnimationToggles.setTextAnimationTogglesStandard(this);
+        }
+
     }
 
     /**
@@ -502,10 +512,10 @@ public class ModelControlA58 extends ModelStarter
                 throw new RuntimeException(exception);
             }
 
-            // URL gisURL = URLResource.getResource("/A58/map.xml");
-            // System.err.println("GIS-map file: " + gisURL.toString());
-            // CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
-            // new GisRenderable2D(this.simulator, gisURL, rdto0);
+             URL gisURL = URLResource.getResource("/A58/map.xml");
+             System.err.println("GIS-map file: " + gisURL.toString());
+             CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
+             new GisRenderable2D(this.simulator, gisURL, rdto0);
 
             A58OdUtil.createDemand(this.network, this.gtuColorer, this.simulator, ModelControlA58.this.getPenetrationRate());
 

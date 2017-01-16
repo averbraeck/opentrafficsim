@@ -54,9 +54,11 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * version Jul 25, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-final class Links {
+final class Links
+{
     /** Utility class. */
-    private Links() {
+    private Links()
+    {
         // do not instantiate
     }
 
@@ -67,17 +69,21 @@ final class Links {
      * @throws NamingException when node animation cannot link to the animation context.
      */
     @SuppressWarnings("methodlength")
-    static void calculateNodeCoordinates(final VissimNetworkLaneParser parser) throws NetworkException, NamingException {
+    static void calculateNodeCoordinates(final VissimNetworkLaneParser parser) throws NetworkException, NamingException
+    {
         // are there straight tags with nodes without an angle?
-        for (LinkTag linkTag : parser.getLinkTags().values()) {
-            if (linkTag.straightTag != null && linkTag.nodeStartTag.coordinate != null
-                && linkTag.nodeEndTag.coordinate != null) {
-                if (linkTag.nodeStartTag.angle == null) {
+        for (LinkTag linkTag : parser.getLinkTags().values())
+        {
+            if (linkTag.straightTag != null && linkTag.nodeStartTag.coordinate != null && linkTag.nodeEndTag.coordinate != null)
+            {
+                if (linkTag.nodeStartTag.angle == null)
+                {
                     double dx = linkTag.nodeEndTag.coordinate.x - linkTag.nodeStartTag.coordinate.x;
                     double dy = linkTag.nodeEndTag.coordinate.y - linkTag.nodeStartTag.coordinate.y;
                     linkTag.nodeStartTag.angle = new Direction(Math.atan2(dy, dx), AngleUnit.RADIAN);
                 }
-                if (linkTag.nodeEndTag.angle == null) {
+                if (linkTag.nodeEndTag.angle == null)
+                {
                     double dx = linkTag.nodeEndTag.coordinate.x - linkTag.nodeStartTag.coordinate.x;
                     double dy = linkTag.nodeEndTag.coordinate.y - linkTag.nodeStartTag.coordinate.y;
                     linkTag.nodeEndTag.angle = new Direction(Math.atan2(dy, dx), AngleUnit.RADIAN);
@@ -87,30 +93,39 @@ final class Links {
 
         // see if we can find the coordinates of the nodes that have not yet been fixed.
         Set<NodeTag> nodeTags = new HashSet<>();
-        for (LinkTag linkTag : parser.getLinkTags().values()) {
+        for (LinkTag linkTag : parser.getLinkTags().values())
+        {
 
-            if (linkTag.nodeStartTag.coordinate == null) {
+            if (linkTag.nodeStartTag.coordinate == null)
+            {
                 nodeTags.add(linkTag.nodeStartTag);
             }
-            if (linkTag.nodeEndTag.coordinate == null) {
+            if (linkTag.nodeEndTag.coordinate == null)
+            {
                 nodeTags.add(linkTag.nodeEndTag);
             }
         }
 
-        while (nodeTags.size() > 0) {
+        while (nodeTags.size() > 0)
+        {
             boolean found = false;
-            for (LinkTag linkTag : parser.getLinkTags().values()) {
-                if (linkTag.straightTag != null || linkTag.polyLineTag != null || linkTag.arcTag != null) {
-                    if (nodeTags.contains(linkTag.nodeStartTag) == nodeTags.contains(linkTag.nodeEndTag)) {
+            for (LinkTag linkTag : parser.getLinkTags().values())
+            {
+                if (linkTag.straightTag != null || linkTag.polyLineTag != null || linkTag.arcTag != null)
+                {
+                    if (nodeTags.contains(linkTag.nodeStartTag) == nodeTags.contains(linkTag.nodeEndTag))
+                    {
                         continue;
                     }
 
-                    if (linkTag.straightTag != null) {
+                    if (linkTag.straightTag != null)
+                    {
                         double lengthSI = linkTag.straightTag.length.getSI();
-                        if (linkTag.nodeEndTag.node == null) {
+                        if (linkTag.nodeEndTag.node == null)
+                        {
                             CartesianPoint coordinate = new CartesianPoint(linkTag.nodeStartTag.node.getLocation().getX(),
-                                linkTag.nodeStartTag.node.getLocation().getY(), linkTag.nodeStartTag.node.getLocation()
-                                    .getZ());
+                                    linkTag.nodeStartTag.node.getLocation().getY(),
+                                    linkTag.nodeStartTag.node.getLocation().getZ());
                             double angle = linkTag.nodeStartTag.node.getDirection().getSI();
                             double slope = linkTag.nodeStartTag.node.getSlope().getSI();
                             coordinate.x += lengthSI * Math.cos(angle);
@@ -122,9 +137,11 @@ final class Links {
                             nodeTag.slope = new Direction(slope, AngleUnit.SI);
                             linkTag.nodeEndTag.node = NodeTag.makeOTSNode(nodeTag, parser);
                             nodeTags.remove(linkTag.nodeEndTag);
-                        } else if (linkTag.nodeStartTag.node == null) {
+                        }
+                        else if (linkTag.nodeStartTag.node == null)
+                        {
                             CartesianPoint coordinate = new CartesianPoint(linkTag.nodeEndTag.node.getLocation().getX(),
-                                linkTag.nodeEndTag.node.getLocation().getY(), linkTag.nodeEndTag.node.getLocation().getZ());
+                                    linkTag.nodeEndTag.node.getLocation().getY(), linkTag.nodeEndTag.node.getLocation().getZ());
                             double angle = linkTag.nodeEndTag.node.getDirection().getSI();
                             double slope = linkTag.nodeEndTag.node.getSlope().getSI();
                             coordinate.x -= lengthSI * Math.cos(angle);
@@ -137,7 +154,9 @@ final class Links {
                             linkTag.nodeStartTag.node = NodeTag.makeOTSNode(nodeTag, parser);
                             nodeTags.remove(linkTag.nodeStartTag);
                         }
-                    } else if (linkTag.polyLineTag != null) {
+                    }
+                    else if (linkTag.polyLineTag != null)
+                    {
                         double lengthSI = linkTag.polyLineTag.length.getSI();
                         // TODO create for polyLine
                         // if (linkTag.nodeEndTag.node == null) {
@@ -170,36 +189,44 @@ final class Links {
                         // linkTag.nodeStartTag.node = NodeTag.makeOTSNode(nodeTag, parser);
                         // nodeTags.remove(linkTag.nodeStartTag);
                         // }
-                    } else if (linkTag.arcTag != null) {
+                    }
+                    else if (linkTag.arcTag != null)
+                    {
                         double radiusSI = linkTag.arcTag.radius.getSI();
                         double angle = linkTag.arcTag.angle.getSI();
                         ArcDirection direction = linkTag.arcTag.direction;
 
-                        if (linkTag.nodeEndTag.node == null) {
+                        if (linkTag.nodeEndTag.node == null)
+                        {
                             CartesianPoint coordinate = new CartesianPoint(0.0, 0.0, 0.0);
                             double startAngle = linkTag.nodeStartTag.node.getDirection().getSI();
                             double slope = linkTag.nodeStartTag.node.getSlope().getSI();
                             double lengthSI = radiusSI * angle;
                             NodeTag nodeTag = linkTag.nodeEndTag;
-                            if (direction.equals(ArcDirection.LEFT)) {
-                                linkTag.arcTag.center = new OTSPoint3D(linkTag.nodeStartTag.node.getLocation().getX()
-                                    + radiusSI * Math.cos(startAngle + Math.PI / 2.0), linkTag.nodeStartTag.node
-                                        .getLocation().getY() + radiusSI * Math.sin(startAngle + Math.PI / 2.0), 0.0);
+                            if (direction.equals(ArcDirection.LEFT))
+                            {
+                                linkTag.arcTag.center = new OTSPoint3D(
+                                        linkTag.nodeStartTag.node.getLocation().getX()
+                                                + radiusSI * Math.cos(startAngle + Math.PI / 2.0),
+                                        linkTag.nodeStartTag.node.getLocation().getY()
+                                                + radiusSI * Math.sin(startAngle + Math.PI / 2.0),
+                                        0.0);
                                 linkTag.arcTag.startAngle = startAngle - Math.PI / 2.0;
-                                coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle
-                                    + angle);
-                                coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle
-                                    + angle);
+                                coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle + angle);
+                                coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle + angle);
                                 nodeTag.angle = new Direction(AngleUtil.normalize(startAngle + angle), AngleUnit.SI);
-                            } else {
-                                linkTag.arcTag.center = new OTSPoint3D(linkTag.nodeStartTag.node.getLocation().getX()
-                                    - radiusSI * Math.cos(startAngle + Math.PI / 2.0), linkTag.nodeStartTag.node
-                                        .getLocation().getY() - radiusSI * Math.sin(startAngle + Math.PI / 2.0), 0.0);
+                            }
+                            else
+                            {
+                                linkTag.arcTag.center = new OTSPoint3D(
+                                        linkTag.nodeStartTag.node.getLocation().getX()
+                                                - radiusSI * Math.cos(startAngle + Math.PI / 2.0),
+                                        linkTag.nodeStartTag.node.getLocation().getY()
+                                                - radiusSI * Math.sin(startAngle + Math.PI / 2.0),
+                                        0.0);
                                 linkTag.arcTag.startAngle = startAngle + Math.PI / 2.0;
-                                coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle
-                                    - angle);
-                                coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle
-                                    - angle);
+                                coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle - angle);
+                                coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle - angle);
                                 nodeTag.angle = new Direction(AngleUtil.normalize(startAngle - angle), AngleUnit.SI);
                             }
                             coordinate.z = linkTag.nodeStartTag.node.getLocation().getZ() + lengthSI * Math.sin(slope);
@@ -209,29 +236,35 @@ final class Links {
                             nodeTags.remove(linkTag.nodeEndTag);
                         }
 
-                        else if (linkTag.nodeStartTag.node == null) {
+                        else if (linkTag.nodeStartTag.node == null)
+                        {
                             CartesianPoint coordinate = new CartesianPoint(linkTag.nodeEndTag.node.getLocation().getX(),
-                                linkTag.nodeEndTag.node.getLocation().getY(), linkTag.nodeEndTag.node.getLocation().getZ());
+                                    linkTag.nodeEndTag.node.getLocation().getY(), linkTag.nodeEndTag.node.getLocation().getZ());
                             double endAngle = linkTag.nodeEndTag.node.getDirection().getSI();
                             double slope = linkTag.nodeEndTag.node.getSlope().getSI();
                             double lengthSI = radiusSI * angle;
                             NodeTag nodeTag = linkTag.nodeStartTag;
-                            if (direction.equals(ArcDirection.LEFT)) {
-                                linkTag.arcTag.center = new OTSPoint3D(coordinate.x + radiusSI * Math.cos(endAngle + Math.PI
-                                    / 2.0), coordinate.y + radiusSI * Math.sin(endAngle + Math.PI / 2.0), 0.0);
+                            if (direction.equals(ArcDirection.LEFT))
+                            {
+                                linkTag.arcTag.center =
+                                        new OTSPoint3D(coordinate.x + radiusSI * Math.cos(endAngle + Math.PI / 2.0),
+                                                coordinate.y + radiusSI * Math.sin(endAngle + Math.PI / 2.0), 0.0);
                                 linkTag.arcTag.startAngle = endAngle - Math.PI / 2.0 - angle;
                                 coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle);
                                 coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle);
                                 nodeTag.angle = new Direction(AngleUtil.normalize(linkTag.arcTag.startAngle + Math.PI / 2.0),
-                                    AngleUnit.SI);
-                            } else {
-                                linkTag.arcTag.center = new OTSPoint3D(coordinate.x + radiusSI * Math.cos(endAngle - Math.PI
-                                    / 2.0), coordinate.y + radiusSI * Math.sin(endAngle - Math.PI / 2.0), 0.0);
+                                        AngleUnit.SI);
+                            }
+                            else
+                            {
+                                linkTag.arcTag.center =
+                                        new OTSPoint3D(coordinate.x + radiusSI * Math.cos(endAngle - Math.PI / 2.0),
+                                                coordinate.y + radiusSI * Math.sin(endAngle - Math.PI / 2.0), 0.0);
                                 linkTag.arcTag.startAngle = endAngle + Math.PI / 2.0 + angle;
                                 coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle);
                                 coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle);
                                 nodeTag.angle = new Direction(AngleUtil.normalize(linkTag.arcTag.startAngle - Math.PI / 2.0),
-                                    AngleUnit.SI);
+                                        AngleUnit.SI);
                             }
                             coordinate.z -= lengthSI * Math.sin(slope);
                             nodeTag.coordinate = new OTSPoint3D(coordinate.x, coordinate.y, coordinate.z);
@@ -242,15 +275,17 @@ final class Links {
                     }
                 }
             }
-            if (!found) {
+            if (!found)
+            {
                 throw new NetworkException("Cannot find coordinates of one or more nodes");
             }
         }
 
         // are there straight tags with nodes without an angle?
-        for (LinkTag linkTag : parser.getLinkTags().values()) {
-            if (linkTag.straightTag != null && linkTag.nodeStartTag.coordinate != null
-                && linkTag.nodeEndTag.coordinate != null) {
+        for (LinkTag linkTag : parser.getLinkTags().values())
+        {
+            if (linkTag.straightTag != null && linkTag.nodeStartTag.coordinate != null && linkTag.nodeEndTag.coordinate != null)
+            {
                 double dx = linkTag.nodeEndTag.coordinate.x - linkTag.nodeStartTag.coordinate.x;
                 double dy = linkTag.nodeEndTag.coordinate.y - linkTag.nodeStartTag.coordinate.y;
                 linkTag.nodeStartTag.angle = new Direction(Math.atan2(dy, dx), AngleUnit.RADIAN);
@@ -262,9 +297,10 @@ final class Links {
 
         // are there polyLine tags with nodes without an angle?
 
-        for (LinkTag linkTag : parser.getLinkTags().values()) {
-            if (linkTag.polyLineTag != null && linkTag.nodeStartTag.coordinate != null
-                && linkTag.nodeEndTag.coordinate != null) {
+        for (LinkTag linkTag : parser.getLinkTags().values())
+        {
+            if (linkTag.polyLineTag != null && linkTag.nodeStartTag.coordinate != null && linkTag.nodeEndTag.coordinate != null)
+            {
                 double dx = linkTag.polyLineTag.vertices[0].x - linkTag.nodeStartTag.coordinate.x;
                 double dy = linkTag.polyLineTag.vertices[0].y - linkTag.nodeStartTag.coordinate.y;
                 linkTag.nodeStartTag.angle = new Direction(Math.atan2(dy, dx), AngleUnit.RADIAN);
@@ -276,12 +312,16 @@ final class Links {
         }
 
         // which nodes have not yet been created?
-        for (NodeTag nodeTag : parser.getNodeTags().values()) {
-            if (nodeTag.coordinate != null && nodeTag.node == null) {
-                if (nodeTag.angle == null) {
+        for (NodeTag nodeTag : parser.getNodeTags().values())
+        {
+            if (nodeTag.coordinate != null && nodeTag.node == null)
+            {
+                if (nodeTag.angle == null)
+                {
                     nodeTag.angle = Direction.ZERO;
                 }
-                if (nodeTag.slope == null) {
+                if (nodeTag.slope == null)
+                {
                     nodeTag.slope = Direction.ZERO;
                 }
                 nodeTag.node = NodeTag.makeOTSNode(nodeTag, parser);
@@ -300,51 +340,60 @@ final class Links {
      * @throws NetworkException when tag type not filled
      */
     static void buildLink(final LinkTag linkTag, final VissimNetworkLaneParser parser,
-        final OTSDEVSSimulatorInterface simulator) throws OTSGeometryException, NamingException, NetworkException {
+            final OTSDEVSSimulatorInterface simulator) throws OTSGeometryException, NamingException, NetworkException
+    {
         NodeTag from = linkTag.nodeStartTag;
         OTSPoint3D startPoint = new OTSPoint3D(from.coordinate);
         double startAngle = 0.0;
-        if (from.angle != null) {
+        if (from.angle != null)
+        {
             startAngle = from.angle.si;
         }
-        if (linkTag.offsetStart != null && linkTag.offsetStart.si != 0.0) {
+        if (linkTag.offsetStart != null && linkTag.offsetStart.si != 0.0)
+        {
             // shift the start point perpendicular to the node direction or read from tag
             double offset = linkTag.offsetStart.si;
-            startPoint = new OTSPoint3D(startPoint.x + offset * Math.cos(startAngle + Math.PI / 2.0), startPoint.y + offset
-                * Math.sin(startAngle + Math.PI / 2.0), startPoint.z);
-            System.out.println("fc = " + from.coordinate + ", sa = " + startAngle + ", so = " + offset + ", sp = "
-                + startPoint);
+            startPoint = new OTSPoint3D(startPoint.x + offset * Math.cos(startAngle + Math.PI / 2.0),
+                    startPoint.y + offset * Math.sin(startAngle + Math.PI / 2.0), startPoint.z);
+            System.out
+                    .println("fc = " + from.coordinate + ", sa = " + startAngle + ", so = " + offset + ", sp = " + startPoint);
         }
 
         NodeTag to = linkTag.nodeEndTag;
         OTSPoint3D endPoint = new OTSPoint3D(to.coordinate);
         double endAngle = to.angle.si;
-        if (linkTag.offsetEnd != null && linkTag.offsetEnd.si != 0.0) {
+        if (linkTag.offsetEnd != null && linkTag.offsetEnd.si != 0.0)
+        {
             // shift the start point perpendicular to the node direction or read from tag
             double offset = linkTag.offsetEnd.si;
-            endPoint = new OTSPoint3D(endPoint.x + offset * Math.cos(endAngle + Math.PI / 2.0), endPoint.y + offset * Math
-                .sin(endAngle + Math.PI / 2.0), endPoint.z);
+            endPoint = new OTSPoint3D(endPoint.x + offset * Math.cos(endAngle + Math.PI / 2.0),
+                    endPoint.y + offset * Math.sin(endAngle + Math.PI / 2.0), endPoint.z);
             System.out.println("tc = " + to.coordinate + ", ea = " + endAngle + ", eo = " + offset + ", ep = " + endPoint);
         }
 
         OTSPoint3D[] coordinates = null;
 
-        if (linkTag.straightTag != null) {
+        if (linkTag.straightTag != null)
+        {
             coordinates = new OTSPoint3D[2];
             coordinates[0] = startPoint;
             coordinates[1] = endPoint;
         }
 
-        else if (linkTag.polyLineTag != null) {
+        else if (linkTag.polyLineTag != null)
+        {
             int intermediatePoints = linkTag.polyLineTag.vertices.length;
             coordinates = new OTSPoint3D[intermediatePoints + 2];
             coordinates[0] = startPoint;
             coordinates[intermediatePoints + 1] = endPoint;
-            for (int p = 0; p < intermediatePoints; p++) {
+            for (int p = 0; p < intermediatePoints; p++)
+            {
                 coordinates[p + 1] = linkTag.polyLineTag.vertices[p];
             }
 
-        } else if (linkTag.arcTag != null) {
+        }
+        else if (linkTag.arcTag != null)
+        {
             // TODO move the radius if there is an start and end offset? How?
             int points = (Math.abs(linkTag.arcTag.angle.getSI()) <= Math.PI / 2.0) ? 64 : 128;
             coordinates = new OTSPoint3D[points];
@@ -353,21 +402,31 @@ final class Links {
             double angleStep = linkTag.arcTag.angle.getSI() / points;
             double slopeStep = (to.coordinate.z - from.coordinate.z) / points;
             double radiusSI = linkTag.arcTag.radius.getSI();
-            if (linkTag.arcTag.direction.equals(ArcDirection.RIGHT)) {
-                for (int p = 1; p < points - 1; p++) {
-                    coordinates[p] = new OTSPoint3D(linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle
-                        - angleStep * p), linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle - angleStep
-                            * p), from.coordinate.z + slopeStep * p);
+            if (linkTag.arcTag.direction.equals(ArcDirection.RIGHT))
+            {
+                for (int p = 1; p < points - 1; p++)
+                {
+                    coordinates[p] = new OTSPoint3D(
+                            linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle - angleStep * p),
+                            linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle - angleStep * p),
+                            from.coordinate.z + slopeStep * p);
                 }
-            } else {
-                for (int p = 1; p < points - 1; p++) {
-                    try {
+            }
+            else
+            {
+                for (int p = 1; p < points - 1; p++)
+                {
+                    try
+                    {
                         System.err.println("linkTag.arcTag.center = " + linkTag.arcTag.center);
                         System.err.println("linkTag.arcTag.startAngle = " + linkTag.arcTag.startAngle);
-                        coordinates[p] = new OTSPoint3D(linkTag.arcTag.center.x + radiusSI * Math.cos(
-                            linkTag.arcTag.startAngle + angleStep * p), linkTag.arcTag.center.y + radiusSI * Math.sin(
-                                linkTag.arcTag.startAngle + angleStep * p), from.coordinate.z + slopeStep * p);
-                    } catch (NullPointerException npe) {
+                        coordinates[p] = new OTSPoint3D(
+                                linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle + angleStep * p),
+                                linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle + angleStep * p),
+                                from.coordinate.z + slopeStep * p);
+                    }
+                    catch (NullPointerException npe)
+                    {
                         npe.printStackTrace();
                         System.err.println(npe.getMessage());
                     }
@@ -375,30 +434,34 @@ final class Links {
             }
         }
 
-        else if (linkTag.bezierTag != null) {
-            if (new DirectedPoint(startPoint.x, startPoint.y, startPoint.z, 0, 0, startAngle).equals(new DirectedPoint(
-                endPoint.x, endPoint.y, endPoint.z, 0, 0, endAngle))) {
+        else if (linkTag.bezierTag != null)
+        {
+            if (new DirectedPoint(startPoint.x, startPoint.y, startPoint.z, 0, 0, startAngle)
+                    .equals(new DirectedPoint(endPoint.x, endPoint.y, endPoint.z, 0, 0, endAngle)))
+            {
                 System.out.println("   ");
             }
 
             coordinates = Bezier.cubic(128, new DirectedPoint(startPoint.x, startPoint.y, startPoint.z, 0, 0, startAngle),
-                new DirectedPoint(endPoint.x, endPoint.y, endPoint.z, 0, 0, endAngle)).getPoints();
+                    new DirectedPoint(endPoint.x, endPoint.y, endPoint.z, 0, 0, endAngle)).getPoints();
         }
 
-        else {
-            throw new NetworkException("Making link, but link " + linkTag.name
-                + " has no filled straight, arc, or bezier curve");
+        else
+        {
+            throw new NetworkException(
+                    "Making link, but link " + linkTag.name + " has no filled straight, arc, or bezier curve");
         }
-        if (coordinates.length < 2) {
-            throw new OTSGeometryException("Degenerate OTSLine3D; has " + coordinates.length + " point"
-                + (coordinates.length != 1 ? "s" : ""));
+        if (coordinates.length < 2)
+        {
+            throw new OTSGeometryException(
+                    "Degenerate OTSLine3D; has " + coordinates.length + " point" + (coordinates.length != 1 ? "s" : ""));
         }
         OTSLine3D designLine = OTSLine3D.createAndCleanOTSLine3D(coordinates);
 
         // Directionality has to be added later when the lanes and their direction are known.
         CrossSectionLink link = new CrossSectionLink(parser.getNetwork(), linkTag.name, linkTag.nodeStartTag.node,
-            linkTag.nodeEndTag.node, LinkType.ALL, designLine, new HashMap<GTUType, LongitudinalDirectionality>(),
-            linkTag.laneKeepingPolicy);
+                linkTag.nodeEndTag.node, LinkType.ALL, designLine, simulator,
+                new HashMap<GTUType, LongitudinalDirectionality>(), linkTag.laneKeepingPolicy);
         linkTag.link = link;
     }
 
@@ -413,10 +476,11 @@ final class Links {
      * @throws OTSGeometryException when construction of the offset-line or contour fails
      * @throws SimRuntimeException when construction of the generator fails
      */
-    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:methodlength"})
+    @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:methodlength" })
     static void applyRoadTypeToLink(final LinkTag linkTag, final VissimNetworkLaneParser parser,
-        final OTSDEVSSimulatorInterface simulator) throws NetworkException, NamingException, SAXException, GTUException,
-            OTSGeometryException, SimRuntimeException {
+            final OTSDEVSSimulatorInterface simulator)
+            throws NetworkException, NamingException, SAXException, GTUException, OTSGeometryException, SimRuntimeException
+    {
         CrossSectionLink csl = linkTag.link;
 
         List<CrossSectionElement> cseList = new ArrayList<>();
@@ -428,14 +492,18 @@ final class Links {
         // first the total width is computed
         // The offset of the lanes will be computed to match this Vissim layout
         Double roadWidth = 0.0;
-        for (LaneTag laneTag : linkTag.laneTags.values()) {
+        for (LaneTag laneTag : linkTag.laneTags.values())
+        {
             roadWidth += Double.parseDouble(laneTag.width);
         }
 
         Color color;
-        if (linkTag.connector) {
+        if (linkTag.connector)
+        {
             color = Color.LIGHT_GRAY;
-        } else {
+        }
+        else
+        {
             color = Color.DARK_GRAY;
 
         }
@@ -443,8 +511,10 @@ final class Links {
         // The lanes are ordered from the outside to the inner side of the road
         Double totalLaneWidth = 0.0;
 
-        if (!linkTag.connector) {
-            for (LaneTag laneTag : linkTag.laneTags.values()) {
+        if (!linkTag.connector)
+        {
+            for (LaneTag laneTag : linkTag.laneTags.values())
+            {
                 String name = laneTag.laneNo;
                 Double laneWidth = Double.parseDouble(laneTag.width);
                 Length thisLaneWidth = new Length(laneWidth, LengthUnit.METER);
@@ -461,26 +531,34 @@ final class Links {
                 Speed speedLimit = new Speed(Double.parseDouble(linkTag.legalSpeed), SpeedUnit.KM_PER_HOUR);
                 // OvertakingConditions overtakingConditions; TODO (not clear yet)
                 Lane lane = new Lane(csl, name, lateralOffset, thisLaneWidth, laneType, linkDirection, speedLimit, null);
-                if (!linkTag.sensors.isEmpty()) {
-                    for (SensorTag sensorTag : linkTag.sensors) {
-                        if (sensorTag.laneName.equals(laneTag.laneNo)) {
+                if (!linkTag.sensors.isEmpty())
+                {
+                    for (SensorTag sensorTag : linkTag.sensors)
+                    {
+                        if (sensorTag.laneName.equals(laneTag.laneNo))
+                        {
                             Length pos = new Length(Double.parseDouble(sensorTag.positionStr), LengthUnit.METER);
-                            if (pos.lt(lane.getLength())) {
-                                SimpleReportingSensor sensor = new SimpleReportingSensor(sensorTag.name, lane, pos,
-                                    RelativePosition.FRONT, simulator);
+                            if (pos.lt(lane.getLength()))
+                            {
+                                SimpleReportingSensor sensor =
+                                        new SimpleReportingSensor(sensorTag.name, lane, pos, RelativePosition.FRONT, simulator);
                                 lane.getSensors().add(sensor);
                             }
                         }
                     }
                 }
 
-                if (!linkTag.signalHeads.isEmpty()) {
-                    for (SignalHeadTag signalHeadTag : linkTag.signalHeads) {
-                        if (signalHeadTag.laneName.equals(laneTag.laneNo)) {
+                if (!linkTag.signalHeads.isEmpty())
+                {
+                    for (SignalHeadTag signalHeadTag : linkTag.signalHeads)
+                    {
+                        if (signalHeadTag.laneName.equals(laneTag.laneNo))
+                        {
                             Length pos = new Length(Double.parseDouble(signalHeadTag.positionStr), LengthUnit.METER);
-                            if (pos.lt(lane.getLength())) {
-                                SimpleTrafficLight simpleTrafficLight = new SimpleTrafficLight(signalHeadTag.no, lane, pos,
-                                    simulator);
+                            if (pos.lt(lane.getLength()))
+                            {
+                                SimpleTrafficLight simpleTrafficLight =
+                                        new SimpleTrafficLight(signalHeadTag.no, lane, pos, simulator);
                                 lane.getLaneBasedObjects().add(simpleTrafficLight);
                             }
                         }
@@ -493,10 +571,14 @@ final class Links {
                 linkTag.lanes.put(name, lane);
                 // update totalLaneWidth
                 totalLaneWidth += Double.parseDouble(laneTag.width);
-                if (simulator != null && simulator instanceof AnimatorInterface) {
-                    try {
+                if (simulator != null && simulator instanceof AnimatorInterface)
+                {
+                    try
+                    {
                         new LaneAnimation(lane, simulator, color, true);
-                    } catch (RemoteException exception) {
+                    }
+                    catch (RemoteException exception)
+                    {
                         exception.printStackTrace();
                     }
                 }
@@ -517,10 +599,11 @@ final class Links {
      * @throws OTSGeometryException when construction of the offset-line or contour fails
      * @throws SimRuntimeException when construction of the generator fails
      */
-    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:methodlength"})
+    @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:methodlength" })
     static void applyRoadTypeToConnector(final LinkTag linkTag, final VissimNetworkLaneParser parser,
-        final OTSDEVSSimulatorInterface simulator) throws NetworkException, NamingException, SAXException, GTUException,
-            OTSGeometryException, SimRuntimeException {
+            final OTSDEVSSimulatorInterface simulator)
+            throws NetworkException, NamingException, SAXException, GTUException, OTSGeometryException, SimRuntimeException
+    {
         CrossSectionLink csl = linkTag.link;
 
         List<CrossSectionElement> cseList = new ArrayList<>();
@@ -532,14 +615,18 @@ final class Links {
         // first the total width is computed
         // The offset of the lanes will be computed to match this Vissim layout
         Double roadWidth = 0.0;
-        for (LaneTag laneTag : linkTag.laneTags.values()) {
+        for (LaneTag laneTag : linkTag.laneTags.values())
+        {
             roadWidth += Double.parseDouble(laneTag.width);
         }
 
         Color color;
-        if (linkTag.connector) {
+        if (linkTag.connector)
+        {
             color = Color.LIGHT_GRAY;
-        } else {
+        }
+        else
+        {
             color = Color.DARK_GRAY;
 
         }
@@ -552,7 +639,8 @@ final class Links {
 
         // The lanes are ordered from the outside to the inner side of the road
         // only lanes from connectors are being set
-        if (linkTag.connector) {
+        if (linkTag.connector)
+        {
             Double totalFromLaneWidth = -1.75;
             Double totalToLaneWidth = -1.75;
             // find the link and lane downstream
@@ -564,7 +652,8 @@ final class Links {
             Lane laneFrom = linkFromTag.lanes.get(linkTag.connectorTag.fromLaneNo);
 
             // loop along all lanes (Tags)
-            for (LaneTag connectLaneTag : linkTag.laneTags.values()) {
+            for (LaneTag connectLaneTag : linkTag.laneTags.values())
+            {
                 // the name (number) of the downstream lane (the order is from outer to center)
                 String name = connectLaneTag.laneNo;
                 // the width of the current lane
@@ -574,20 +663,23 @@ final class Links {
                 Length totToLaneWidth = new Length(totalToLaneWidth, LengthUnit.METER);
 
                 Length lateralOffsetStart;
-                Length lateralOffsetEnd = laneTo.getLateralBoundaryPosition(LateralDirectionality.RIGHT, 0).plus(
-                    totToLaneWidth);
+                Length lateralOffsetEnd =
+                        laneTo.getLateralBoundaryPosition(LateralDirectionality.RIGHT, 0).plus(totToLaneWidth);
                 // the lateral offset
-                if (laneFrom != null) {
-                    lateralOffsetStart = laneFrom.getLateralBoundaryPosition(LateralDirectionality.RIGHT, 0).plus(
-                        totfromLaneWidth);
-                } else {
+                if (laneFrom != null)
+                {
+                    lateralOffsetStart =
+                            laneFrom.getLateralBoundaryPosition(LateralDirectionality.RIGHT, 0).plus(totfromLaneWidth);
+                }
+                else
+                {
                     lateralOffsetStart = lateralOffsetEnd;
                 }
 
                 // the road offset is negative if the lanes are at the right side of the median (for right hand rule)
                 // OvertakingConditions overtakingConditions; TODO (not clear yet)
                 Lane lane = new Lane(csl, name, lateralOffsetStart, lateralOffsetEnd, thisLaneWidth, thisLaneWidth, laneType,
-                    linkDirection, speedLimit, null);
+                        linkDirection, speedLimit, null);
                 cseList.add(lane);
                 lanes.add(lane);
                 linkTag.lanes.put(name, lane);
@@ -595,10 +687,14 @@ final class Links {
                 // update totalLaneWidth
                 totalFromLaneWidth += Double.parseDouble(connectLaneTag.width);
                 totalToLaneWidth += Double.parseDouble(connectLaneTag.width);
-                if (simulator != null && simulator instanceof AnimatorInterface) {
-                    try {
+                if (simulator != null && simulator instanceof AnimatorInterface)
+                {
+                    try
+                    {
                         new LaneAnimation(lane, simulator, color, true);
-                    } catch (RemoteException exception) {
+                    }
+                    catch (RemoteException exception)
+                    {
                         exception.printStackTrace();
                     }
                 }
@@ -615,17 +711,23 @@ final class Links {
      * @throws NetworkException
      */
     public static void createSinkSensor(LinkTag realLinkTag, VissimNetworkLaneParser vissimNetworkLaneParser,
-        OTSDEVSSimulatorInterface simulator) throws NetworkException {
-        if (!realLinkTag.connector) {
+            OTSDEVSSimulatorInterface simulator) throws NetworkException
+    {
+        if (!realLinkTag.connector)
+        {
             boolean deadLink = true;
-            for (LinkTag linkTag : vissimNetworkLaneParser.getLinkTags().values()) {
-                if (realLinkTag.nodeEndTag.name.equals(linkTag.nodeStartTag.name) && !realLinkTag.equals(linkTag)) {
+            for (LinkTag linkTag : vissimNetworkLaneParser.getLinkTags().values())
+            {
+                if (realLinkTag.nodeEndTag.name.equals(linkTag.nodeStartTag.name) && !realLinkTag.equals(linkTag))
+                {
                     deadLink = false;
                 }
             }
 
-            if (deadLink) {
-                for (Lane lane : realLinkTag.lanes.values()) {
+            if (deadLink)
+            {
+                for (Lane lane : realLinkTag.lanes.values())
+                {
                     Double smallest = Math.min(10, lane.getLength().getInUnit(LengthUnit.METER) - 1);
                     Length beforeEnd = new Length(smallest, LengthUnit.METER);
                     Length pos = lane.getLength().minus(beforeEnd);
