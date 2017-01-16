@@ -460,7 +460,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                             LongitudinalDirectionality.DIR_PLUS);
             this.path.add(this.lane);
             CrossSectionLink endLink =
-                    LaneFactory.makeLink(this.network, "endLink", to, end, null, LongitudinalDirectionality.DIR_PLUS);
+                    LaneFactory.makeLink(this.network, "endLink", to, end, null, LongitudinalDirectionality.DIR_PLUS, simulator);
             // No overtaking, single lane
             Lane sinkLane =
                     new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),

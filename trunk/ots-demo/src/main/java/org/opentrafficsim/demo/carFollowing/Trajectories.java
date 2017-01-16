@@ -287,7 +287,7 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
             this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator,
                     LongitudinalDirectionality.DIR_PLUS);
             CrossSectionLink endLink =
-                    LaneFactory.makeLink(this.network, "endLink", to, end, null, LongitudinalDirectionality.DIR_PLUS);
+                    LaneFactory.makeLink(this.network, "endLink", to, end, null, LongitudinalDirectionality.DIR_PLUS, simulator);
             // No overtaking, single (sink) lane
             Lane sinkLane = new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
                     this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,

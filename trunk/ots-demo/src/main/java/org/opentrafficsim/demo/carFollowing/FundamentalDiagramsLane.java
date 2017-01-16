@@ -304,8 +304,8 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 }
                 // create SinkLane
                 OTSNode end = new OTSNode(this.network, "End", new OTSPoint3D(node.getPoint().x + 50.0, 0, 0));
-                CrossSectionLink endLink =
-                        LaneFactory.makeLink(this.network, "endLink", node, end, null, LongitudinalDirectionality.DIR_PLUS);
+                CrossSectionLink endLink = LaneFactory.makeLink(this.network, "endLink", node, end, null,
+                        LongitudinalDirectionality.DIR_PLUS, simulator);
                 int last = this.lanes.size() - 1;
                 Lane sinkLane = new Lane(endLink, "sinkLane", this.lanes.get(last).getLateralCenterPosition(1.0),
                         this.lanes.get(last).getLateralCenterPosition(1.0), this.lanes.get(last).getWidth(1.0),
