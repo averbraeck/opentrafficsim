@@ -4,7 +4,7 @@
 
   <groupId>opentrafficsim</groupId>
   <artifactId>ots</artifactId>
-  <version>0.14.00-SNAPSHOT</version>
+  <version>0.13.04</version>
   <packaging>pom</packaging>
 
   <name>OpenTrafficSim base project</name>
@@ -1006,27 +1006,9 @@
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
-      <id>central</id>
-      <name>Maven Repository Switchboard</name>
-      <url>http://repo1.maven.org/maven2</url>
-    </repository>
-
-    <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
       <id>apache</id>
       <name>apache</name>
       <url>http://repo.maven.apache.org/maven2</url>
-    </repository>
-
-    <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>boundless</id>
-      <name>Boundless Maven Repository</name>
-      <url>http://repo.boundlessgeo.com/main</url>
     </repository>
 
     <repository>
