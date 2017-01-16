@@ -117,12 +117,15 @@ public final class Convert
      * This method converts an OSM link to an OTS link.
      * @param network the network
      * @param link OSM Link to be converted
+     * @param simulator OTSDEVSSimulatorInterface; the simulator that will animate the generates lanes (if it happens to be an
+     *            instance of OTSAnimatorInterface)
      * @return OTS Link
      * @throws OTSGeometryException on failure
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    public CrossSectionLink convertLink(final Network network, final OSMLink link) throws OTSGeometryException, NetworkException
+    public CrossSectionLink convertLink(final Network network, final OSMLink link, final OTSDEVSSimulatorInterface simulator)
+            throws OTSGeometryException, NetworkException
     {
         if (null == link.getStart().getOtsNode())
         {
@@ -148,7 +151,7 @@ public final class Convert
         OTSLine3D designLine = new OTSLine3D(coordinates);
         // XXX How to figure out whether to keep left, right or keep lane?
         // XXX How to figure out if this is a lane in one or two directions? For now, two is assumed...
-        result = new CrossSectionLink(network, link.getId(), start, end, LinkType.ALL, designLine,
+        result = new CrossSectionLink(network, link.getId(), start, end, LinkType.ALL, designLine, simulator,
                 LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_RIGHT);
         return result;
     }
@@ -615,7 +618,7 @@ public final class Convert
     public List<Lane> makeLanes(final Network network, final OSMLink osmlink, final OTSDEVSSimulatorInterface simulator,
             final WarningListener warningListener) throws NetworkException, NamingException, OTSGeometryException
     {
-        CrossSectionLink otslink = convertLink(network, osmlink);
+        CrossSectionLink otslink = convertLink(network, osmlink, simulator);
         List<Lane> lanes = new ArrayList<Lane>();
         Map<Double, LaneAttributes> structure = makeStructure(osmlink, warningListener);
 

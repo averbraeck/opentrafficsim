@@ -443,8 +443,10 @@ final class Links
 
         else if (linkTag.bezierTag != null)
         {
-            coordinates = Bezier.cubic(128, new DirectedPoint(startPoint.x, startPoint.y, startPoint.z, 0, 0, startAngle),
-                    new DirectedPoint(endPoint.x, endPoint.y, endPoint.z, 0, 0, endAngle), linkTag.bezierTag.shape).getPoints();
+            coordinates = Bezier
+                    .cubic(128, new DirectedPoint(startPoint.x, startPoint.y, startPoint.z, 0, 0, startAngle),
+                            new DirectedPoint(endPoint.x, endPoint.y, endPoint.z, 0, 0, endAngle), linkTag.bezierTag.shape)
+                    .getPoints();
         }
 
         else
@@ -457,8 +459,8 @@ final class Links
 
         // Directionality has to be added later when the lanes and their direction are known.
         CrossSectionLink link = new CrossSectionLink(parser.network, linkTag.name, linkTag.nodeStartTag.node,
-                linkTag.nodeEndTag.node, LinkType.ALL, designLine, new HashMap<GTUType, LongitudinalDirectionality>(),
-                linkTag.laneKeepingPolicy);
+                linkTag.nodeEndTag.node, LinkType.ALL, designLine, simulator,
+                new HashMap<GTUType, LongitudinalDirectionality>(), linkTag.laneKeepingPolicy);
         try
         {
             new LinkAnimation(link, simulator, 0.5f);

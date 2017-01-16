@@ -814,7 +814,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
             }
             OTSLine3D designLine = Bezier.cubic(64, sp, ep);
             CrossSectionLink newLink =
-                    new CrossSectionLink(network, linkId, sNode, eNode, linkType, designLine, laneKeepingPolicy);
+                    new CrossSectionLink(network, linkId, sNode, eNode, linkType, designLine, this.simulator, laneKeepingPolicy);
             newLink.addDirectionality(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
             Lane newLane = new Lane(newLink, laneId, Length.ZERO, Length.ZERO, beginWidth, endWidth, sLane.getLaneType(),
                     LongitudinalDirectionality.DIR_PLUS, sLane.getSpeedLimit(GTUType.ALL), sLane.getOvertakingConditions());

@@ -309,7 +309,7 @@ class RoadTag implements Serializable
                         OTSLine3D designLine = new OTSLine3D(points);
                         String sublinkId = roadTag.id + "." + laneSecIndex.toString();
                         CrossSectionLink sublink = new CrossSectionLink(openDriveNetworkLaneParser.network, sublinkId,
-                                from.node, to.node, LinkType.ALL, designLine, LongitudinalDirectionality.DIR_BOTH,
+                                from.node, to.node, LinkType.ALL, designLine, simulator, LongitudinalDirectionality.DIR_BOTH,
                                 LaneKeepingPolicy.KEEP_LANE);
 
                         roadTag.subLinks.add(sublink);
@@ -375,7 +375,7 @@ class RoadTag implements Serializable
             OTSLine3D designLine = new OTSLine3D(points);
             String sublinkId = roadTag.id + "." + Integer.toString(roadTag.lanesTag.laneSectionTags.size());
             CrossSectionLink sublink = new CrossSectionLink(openDriveNetworkLaneParser.network, sublinkId, from.node, to.node,
-                    LinkType.ALL, designLine, LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_LANE);
+                    LinkType.ALL, designLine, simulator, LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_LANE);
 
             roadTag.subLinks.add(sublink);
 
@@ -884,7 +884,8 @@ class RoadTag implements Serializable
             roadTag.endNode = to;
 
             CrossSectionLink newlink = new CrossSectionLink(openDriveNetworkLaneParser.network, roadTag.id, from, to,
-                    LinkType.ALL, roadTag.designLine, LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_LANE);
+                    LinkType.ALL, roadTag.designLine, openDriveNetworkLaneParser.simulator, LongitudinalDirectionality.DIR_PLUS,
+                    LaneKeepingPolicy.KEEP_LANE);
             roadTag.link = newlink;
 
             roadTag.link = newlink;
@@ -895,7 +896,8 @@ class RoadTag implements Serializable
             OTSNode from = roadTag.startNode;
             OTSNode to = roadTag.endNode;
             CrossSectionLink newlink = new CrossSectionLink(openDriveNetworkLaneParser.network, roadTag.id, from, to,
-                    LinkType.ALL, roadTag.designLine, LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_LANE);
+                    LinkType.ALL, roadTag.designLine, openDriveNetworkLaneParser.simulator, LongitudinalDirectionality.DIR_BOTH,
+                    LaneKeepingPolicy.KEEP_LANE);
 
             roadTag.link = newlink;
         }
