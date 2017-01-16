@@ -11,6 +11,7 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
+import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -28,9 +29,10 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * initial version Nov 6, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public interface Located extends Serializable
+public interface Located extends Locatable, Serializable
 {
     /** @return the directed point */
+    @Override
     DirectedPoint getLocation();
 
     /** @return the GIS coordinate */

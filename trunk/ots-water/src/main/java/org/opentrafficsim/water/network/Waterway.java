@@ -5,6 +5,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
@@ -57,6 +59,7 @@ public class Waterway extends OTSLink
      * @param endNode end node (directional)
      * @param linkType Link type to indicate compatibility with GTU types
      * @param designLine the OTSLine3D design line of the Link
+     * @param simulator the simujlator to schedule events on
      * @param directionality to indicate the general direction of the waterway (FORWARD = in the direction of the design line;
      *            BACKWARD is in the opposite direction; BOTH is a waterway that can be used in both directions; NONE is a
      *            waterway that cannot be used for sailing.
@@ -64,10 +67,10 @@ public class Waterway extends OTSLink
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Waterway(final Network network, final String id, final String name, final OTSNode startNode, final OTSNode endNode,
-            final LinkType linkType, final OTSLine3D designLine, final LongitudinalDirectionality directionality)
-            throws NetworkException
+            final LinkType linkType, final OTSLine3D designLine, final OTSDEVSSimulatorInterface simulator,
+            final LongitudinalDirectionality directionality) throws NetworkException
     {
-        super(network, id, startNode, endNode, linkType, designLine, directionality);
+        super(network, id, startNode, endNode, linkType, designLine, simulator, directionality);
         this.name = name;
     }
 
@@ -80,6 +83,7 @@ public class Waterway extends OTSLink
      * @param endNode end node (directional)
      * @param linkType Link type to indicate compatibility with GTU types
      * @param designLine the OTSLine3D design line of the Link
+     * @param simulator the simujlator to schedule events on
      * @param directionalityMap the directions for different type of ships; it might be that all or certain types of ships are
      *            only allowed to use a canal in one direction. Furthermore, the directions can limit waterways for certain
      *            classes of ships. Set the LongitudinalDirectionality to NONE for ships that are not allowed to sail this
@@ -88,10 +92,10 @@ public class Waterway extends OTSLink
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Waterway(final Network network, final String id, final String name, final OTSNode startNode, final OTSNode endNode,
-            final LinkType linkType, final OTSLine3D designLine,
+            final LinkType linkType, final OTSLine3D designLine, final OTSDEVSSimulatorInterface simulator,
             final Map<GTUType, LongitudinalDirectionality> directionalityMap) throws NetworkException
     {
-        super(network, id, startNode, endNode, linkType, designLine, directionalityMap);
+        super(network, id, startNode, endNode, linkType, designLine, simulator, directionalityMap);
         this.name = name;
     }
 
