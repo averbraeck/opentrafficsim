@@ -116,6 +116,7 @@ public class OTSNode implements Node, Locatable, Serializable
     /**
      * @return node id.
      */
+    @Override
     public final String getId()
     {
         return this.id;
@@ -124,6 +125,7 @@ public class OTSNode implements Node, Locatable, Serializable
     /**
      * @return point.
      */
+    @Override
     public final OTSPoint3D getPoint()
     {
         return this.point;
@@ -420,12 +422,11 @@ public class OTSNode implements Node, Locatable, Serializable
      * Clone the OTSode for e.g., copying a network.
      * @param newNetwork the new network to which the clone belongs
      * @param newSimulator the new simulator for this network
-     * @param animation whether to (re)create animation or not
      * @return a clone of this object
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public OTSNode clone1(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
+    public OTSNode clone1(final Network newNetwork, final OTSSimulatorInterface newSimulator)
             throws NetworkException
     {
         return new OTSNode(newNetwork, this.id, this.point, this.direction, this.slope);
@@ -436,7 +437,7 @@ public class OTSNode implements Node, Locatable, Serializable
      * constructed in the new network.
      * @param newNetwork the new network to which the clone belongs
      * @param newSimulator the new simulator for this network
-     * @param animation whether to (re)create animation or not
+     * @param animation whether to clone the animation or not (could be used in subclasses)
      * @return the completed clone
      * @throws NetworkException in case the cloning fails
      */

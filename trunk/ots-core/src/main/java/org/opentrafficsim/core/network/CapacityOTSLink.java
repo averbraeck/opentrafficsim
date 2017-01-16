@@ -34,16 +34,18 @@ public class CapacityOTSLink extends OTSLink implements Capacity
      * @param endNode end node (directional)
      * @param linkType Link type to indicate compatibility with GTU types
      * @param designLine the OTSLine3D design line of the Link
+     * @param simulator the simulator on which events can be scheduled
      * @param capacity link capacity in GTUs per hour // XXX per direction? which GTUType?
      * @param directionalityMap the directions (FORWARD, BACKWARD, BOTH, NONE) that GTUtypes can traverse this link
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
+    @SuppressWarnings("checkstyle:parameternumber")
     public CapacityOTSLink(final Network network, final String id, final Node startNode, final Node endNode,
-            final LinkType linkType, final OTSLine3D designLine, final Frequency capacity,
-            final Map<GTUType, LongitudinalDirectionality> directionalityMap) throws NetworkException
+            final LinkType linkType, final OTSLine3D designLine, final OTSSimulatorInterface simulator,
+            final Frequency capacity, final Map<GTUType, LongitudinalDirectionality> directionalityMap) throws NetworkException
     {
-        super(network, id, startNode, endNode, linkType, designLine, directionalityMap);
+        super(network, id, startNode, endNode, linkType, designLine, simulator, directionalityMap);
         this.capacity = capacity;
     }
 
@@ -55,16 +57,18 @@ public class CapacityOTSLink extends OTSLink implements Capacity
      * @param endNode end node (directional)
      * @param linkType Link type to indicate compatibility with GTU types
      * @param designLine the OTSLine3D design line of the Link
+     * @param simulator the simulator on which events can be scheduled
      * @param capacity link capacity in GTUs per hour
      * @param directionality the directionality for all GTUs
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
+    @SuppressWarnings("checkstyle:parameternumber")
     public CapacityOTSLink(final Network network, final String id, final Node startNode, final Node endNode,
-            final LinkType linkType, final OTSLine3D designLine, final Frequency capacity,
-            final LongitudinalDirectionality directionality) throws NetworkException
+            final LinkType linkType, final OTSLine3D designLine, final OTSSimulatorInterface simulator,
+            final Frequency capacity, final LongitudinalDirectionality directionality) throws NetworkException
     {
-        super(network, id, startNode, endNode, linkType, designLine, directionality);
+        super(network, id, startNode, endNode, linkType, designLine, simulator, directionality);
         this.capacity = capacity;
     }
 

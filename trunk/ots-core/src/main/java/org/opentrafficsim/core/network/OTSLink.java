@@ -53,6 +53,9 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     /** Design line of the link. */
     private final OTSLine3D designLine;
 
+    /** The simulator on which events can be scheduled. */
+    private final OTSSimulatorInterface simulator;
+
     /** The GTUs on this Link. */
     private final Set<GTU> gtus = new HashSet<>();
 
@@ -80,13 +83,15 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
      * @param endNode end node (directional)
      * @param linkType Link type to indicate compatibility with GTU types
      * @param designLine the OTSLine3D design line of the Link
+     * @param simulator the simulator on which events can be scheduled
      * @param directionalityMap the directions (FORWARD, BACKWARD, BOTH, NONE) that GTUtypes can traverse this link
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
+    @SuppressWarnings("checkstyle:parameternumber")
     public OTSLink(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
-            final OTSLine3D designLine, final Map<GTUType, LongitudinalDirectionality> directionalityMap)
-            throws NetworkException
+            final OTSLine3D designLine, final OTSSimulatorInterface simulator,
+            final Map<GTUType, LongitudinalDirectionality> directionalityMap) throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
@@ -94,6 +99,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         Throw.whenNull(endNode, "endNode cannot be null");
         Throw.whenNull(linkType, "linkType cannot be null");
         Throw.whenNull(designLine, "designLine cannot be null");
+        Throw.whenNull(simulator, "simulator cannot be null");
         Throw.whenNull(directionalityMap, "directionalityMap cannot be null");
 
         this.network = network;
@@ -104,6 +110,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         this.startNode.addLink(this);
         this.endNode.addLink(this);
         this.designLine = designLine;
+        this.simulator = simulator;
         this.directionalityMap = directionalityMap;
 
         this.network.addLink(this);
@@ -117,14 +124,18 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
      * @param endNode end node (directional)
      * @param linkType Link type to indicate compatibility with GTU types
      * @param designLine the OTSLine3D design line of the Link
+     * @param simulator the simulator on which events can be scheduled
      * @param directionality the directionality for all GTUs
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
+    @SuppressWarnings("checkstyle:parameternumber")
     public OTSLink(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
-            final OTSLine3D designLine, final LongitudinalDirectionality directionality) throws NetworkException
+            final OTSLine3D designLine, final OTSSimulatorInterface simulator, final LongitudinalDirectionality directionality)
+            throws NetworkException
     {
-        this(network, id, startNode, endNode, linkType, designLine, new HashMap<GTUType, LongitudinalDirectionality>());
+        this(network, id, startNode, endNode, linkType, designLine, simulator,
+                new HashMap<GTUType, LongitudinalDirectionality>());
         addDirectionality(GTUType.ALL, directionality);
     }
 
@@ -132,7 +143,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
      * Clone a link for a new network.
      * @param newNetwork the new network to which the clone belongs
      * @param newSimulator the new simulator for this network
-     * @param animation whether to (re)create animation or not
+     * @param animation whether to (re)create animation or not. Could be used in subclasses.
      * @param link the link to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
@@ -141,7 +152,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
             final OTSLink link) throws NetworkException
     {
         this(newNetwork, link.id, newNetwork.getNode(link.startNode.getId()), newNetwork.getNode(link.endNode.getId()),
-                link.linkType, link.designLine, new HashMap<>(link.directionalityMap));
+                link.linkType, link.designLine, newSimulator, new HashMap<>(link.directionalityMap));
     }
 
     /** {@inheritDoc} */
@@ -253,6 +264,13 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         return this.designLine;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final OTSSimulatorInterface getSimulator()
+    {
+        return this.simulator;
+    }
+
     /**
      * @return directionalityMap the directionality map. Only for internal use in (sub)classes.
      */
@@ -270,7 +288,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
 
     /** the location with 0.01 m extra height. */
     private DirectedPoint zLocation = null;
-    
+
     /** {@inheritDoc} */
     @Override
     public final DirectedPoint getLocation()

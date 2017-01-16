@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,8 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.naming.Binding;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.event.EventContext;
+
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -17,10 +24,14 @@ import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
+import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.immutablecollections.Immutable;
 import nl.tudelft.simulation.immutablecollections.ImmutableHashMap;
 import nl.tudelft.simulation.immutablecollections.ImmutableMap;
+import nl.tudelft.simulation.naming.context.ContextUtil;
 
 /**
  * A Network consists of a set of links. Each link has, in its turn, a start node and an end node.
@@ -352,7 +363,8 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         @SuppressWarnings("rawtypes")
         Class linkEdgeClass = LinkEdge.class;
         @SuppressWarnings("unchecked")
-        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = new SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>(linkEdgeClass);
+        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph =
+                new SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>(linkEdgeClass);
         for (Node node : this.nodeMap.values())
         {
             graph.addVertex(node);
@@ -529,33 +541,42 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     /**
      * Clone the OTSNetwork.
      * @param newId the new id of the network
+     * @param oldSimulator the old simulator for this network
      * @param newSimulator the new simulator for this network
      * @param animation whether to (re)create animation or not
      * @return a clone of this network
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public OTSNetwork clone(final String newId, final OTSSimulatorInterface newSimulator, final boolean animation)
-            throws NetworkException
+    public OTSNetwork clone(final String newId, final OTSSimulatorInterface oldSimulator,
+            final OTSSimulatorInterface newSimulator, final boolean animation) throws NetworkException
     {
         OTSNetwork newNetwork = new OTSNetwork(newId);
-        
+
         // clone the nodes
         for (Node node : this.nodeMap.values())
         {
-            ((OTSNode) node).clone1(newNetwork, newSimulator, animation);
+            ((OTSNode) node).clone1(newNetwork, newSimulator);
         }
-        
+
         // clone the links
-        for (Link link : this.linkMap.values())
+        for (Link oldLink : this.linkMap.values())
         {
-            ((OTSLink) link).clone(newNetwork, newSimulator, animation);
+            OTSLink newLink = ((OTSLink) oldLink).clone(newNetwork, newSimulator, animation);
+            if (animation)
+            {
+                cloneAnimation(oldLink, newLink, oldSimulator, newSimulator);
+            }
         }
 
         // make the link-connections for the cloned nodes
-        for (Node node : this.nodeMap.values())
+        for (Node oldNode : this.nodeMap.values())
         {
-            ((OTSNode) node).clone2(newNetwork, newSimulator, animation);
+            OTSNode newNode = ((OTSNode) oldNode).clone2(newNetwork, newSimulator, animation);
+            if (animation)
+            {
+                cloneAnimation(oldNode, newNode, oldSimulator, newSimulator);
+            }
         }
 
         // clone the graphs that had been created for the old network
@@ -580,4 +601,126 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         return newNetwork;
     }
 
+    /**
+     * Clone all animation objects for the given class. The given class is the <b>source</b> of the animation objects, as it is
+     * not known on beforehand which objects need to be cloned. It is important for cloning that the animation objects implement
+     * the CloneableRenderable2DInterface, so they can be cloned with their properties. If not, they will not be taken into
+     * account for cloning by this method.
+     * @param oldSource the old source object that might have one or more animation objects attached to it
+     * @param newSource the new source object to attach the cloned animation objects to
+     * @param oldSimulator the old simulator when the old objects can be found
+     * @param newSimulator the new simulator where the new simulation objects need to be registered
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    public static void cloneAnimation(final Locatable oldSource, final Locatable newSource,
+            final OTSSimulatorInterface oldSimulator, final OTSSimulatorInterface newSimulator)
+    {
+        if (!(oldSimulator instanceof AnimatorInterface) || !(newSimulator instanceof AnimatorInterface))
+        {
+            return;
+        }
+
+        try
+        {
+            EventContext context =
+                    (EventContext) ContextUtil.lookup(oldSimulator.getReplication().getContext(), "/animation/2D");
+            NamingEnumeration<Binding> list = context.listBindings("");
+            while (list.hasMore())
+            {
+                Binding binding = list.next();
+                Renderable2DInterface animationObject = (Renderable2DInterface) binding.getObject();
+                Locatable locatable = animationObject.getSource();
+                if (oldSource.equals(locatable) && animationObject instanceof ClonableRenderable2DInterface)
+                {
+                    ((ClonableRenderable2DInterface) animationObject).clone(newSource, newSimulator);
+                }
+            }
+        }
+        catch (NamingException | RemoteException exception)
+        {
+            System.err.println("Error when cloning animation objects for object " + oldSource);
+        }
+    }
+
+    /**
+     * Remove all objects and animation in the network.
+     * @param simulator the simulator of the old network
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    public void destroy(final OTSSimulatorInterface simulator)
+    {
+        for (GTU gtu : this.getGTUs())
+        {
+            gtu.destroy();
+        }
+
+        Set<Renderable2DInterface> animationObjects = new HashSet<>();
+        try
+        {
+            EventContext context = (EventContext) ContextUtil.lookup(simulator.getReplication().getContext(), "/animation/2D");
+            NamingEnumeration<Binding> list = context.listBindings("");
+            while (list.hasMore())
+            {
+                Binding binding = list.next();
+                Renderable2DInterface animationObject = (Renderable2DInterface) binding.getObject();
+                animationObjects.add(animationObject);
+            }
+
+            for (Renderable2DInterface ao : animationObjects)
+            {
+                try
+                {
+                    ao.destroy();
+                }
+                catch (Exception e)
+                {
+                    //
+                }
+            }
+        }
+        catch (NamingException | RemoteException exception)
+        {
+            System.err.println("Error when destroying animation objects");
+        }
+
+        this.nodeMap.clear();
+        this.linkMap.clear();
+        this.linkGraphs.clear();
+        this.routeMap.clear();
+    }
+
+    /**
+     * Remove all animation objects of the given class.
+     * @param clazz the class to remove the animation objects for
+     * @param oldSimulator the old simulator
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    public void removeAnimation(final Class<?> clazz, final OTSSimulatorInterface oldSimulator)
+    {
+        if (!(oldSimulator instanceof AnimatorInterface))
+        {
+            return;
+        }
+
+        try
+        {
+            EventContext context =
+                    (EventContext) ContextUtil.lookup(oldSimulator.getReplication().getContext(), "/animation/2D");
+            NamingEnumeration<Binding> list = context.listBindings("");
+            while (list.hasMore())
+            {
+                Binding binding = list.next();
+                Renderable2DInterface animationObject = (Renderable2DInterface) binding.getObject();
+                Locatable locatable = animationObject.getSource();
+                if (clazz.isAssignableFrom(locatable.getClass()))
+                {
+                    animationObject.destroy();
+                }
+            }
+        }
+        catch (NamingException | RemoteException exception)
+        {
+            System.err.println("Error when destroying animation objects for class " + clazz.getSimpleName());
+        }
+    }
 }

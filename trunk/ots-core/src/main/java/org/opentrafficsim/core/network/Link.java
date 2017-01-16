@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -44,6 +45,9 @@ public interface Link extends Locatable, Serializable
 
     /** @return the design line. */
     OTSLine3D getDesignLine();
+    
+    /** @return the simulator. */
+    OTSSimulatorInterface getSimulator();
 
     /** @return length of the link. */
     Length getLength();
