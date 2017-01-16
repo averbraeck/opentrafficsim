@@ -186,7 +186,7 @@ public class OTSShapeTest
                 new OTSPoint3D(1, 10, 0), new OTSPoint3D(-1, 10, 0), new OTSPoint3D(-1, -10, 0) });
         OTSShape horizontal = new OTSShape(new OTSPoint3D[] { new OTSPoint3D(-10, -1, 0), new OTSPoint3D(10, -1, 0),
                 new OTSPoint3D(10, 1, 0), new OTSPoint3D(-10, 1, 0), new OTSPoint3D(-10, -1, 0) });
-        // assertTrue("shapes hit", vertical.intersects(horizontal));
+        assertTrue("shapes hit", vertical.intersects(horizontal));
     }
 
     /**
