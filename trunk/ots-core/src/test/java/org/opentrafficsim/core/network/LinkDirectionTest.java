@@ -3,10 +3,13 @@ package org.opentrafficsim.core.network;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
+
+import mockit.MockUp;
 
 /**
  * Test the LinkDirection class.
@@ -37,8 +40,12 @@ public class LinkDirectionTest
         Node toNode = new OTSNode(network, "endNode", toPoint);
         LinkType linkType = LinkType.ALL;
         OTSLine3D designLine = new OTSLine3D(fromPoint, toPoint);
+        OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
+        {
+            // no implementation needed.
+        }.getMockInstance();
         LongitudinalDirectionality directionality = LongitudinalDirectionality.DIR_PLUS;
-        Link link = new OTSLink(network, "link", fromNode, toNode, linkType, designLine, directionality);
+        Link link = new OTSLink(network, "link", fromNode, toNode, linkType, designLine, simulator, directionality);
         LinkDirection ld = new LinkDirection(link, GTUDirectionality.DIR_PLUS);
         assertTrue(ld.getLink().equals(link));
         assertTrue(ld.getDirection().equals(GTUDirectionality.DIR_PLUS));

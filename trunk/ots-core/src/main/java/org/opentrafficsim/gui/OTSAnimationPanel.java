@@ -1,6 +1,7 @@
 package org.opentrafficsim.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -23,16 +24,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
+import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.opentrafficsim.simulationengine.WrappableAnimation;
+
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
 import nl.tudelft.simulation.language.io.URLResource;
-
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.simulationengine.SimpleAnimator;
-import org.opentrafficsim.simulationengine.WrappableAnimation;
 
 /**
  * Animation panel with various controls.
@@ -175,55 +176,42 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     }
 
     /**
-     * Add a button for toggling an animatable class on or off.
+     * Add a button for toggling an animatable class on or off. Button icons for which 'idButton' is true will be placed to the
+     * right of the previous button, which should be the corresponding button without the id. An example is an icon for
+     * showing/hiding the class 'Lane' followed by the button to show/hide the Lane ids.
      * @param name the name of the button
      * @param locatableClass the class for which the button holds (e.g., GTU.class)
      * @param iconPath the path to the 24x24 icon to display
      * @param toolTipText the tool tip text to show when hovering over the button
      * @param initiallyVisible whether the class is initially shown or not
+     * @param idButton id button that needs to be placed next to the previous button
      */
-    public final void addToggleAnimationButton(final String name, final Class<? extends Locatable> locatableClass,
-            final String iconPath, final String toolTipText, final boolean initiallyVisible)
+    public final void addToggleAnimationButtonIcon(final String name, final Class<? extends Locatable> locatableClass,
+            final String iconPath, final String toolTipText, final boolean initiallyVisible, final boolean idButton)
     {
         JToggleButton button;
-        if (iconPath != null)
-        {
-            button = new JCheckBox(new ImageIcon(URLResource.getResource(iconPath)));
-            button.setPreferredSize(new Dimension(32, 28));
-        }
-        else
-        {
-            button = new JCheckBox(name);
-        }
+        button = new JCheckBox(new ImageIcon(URLResource.getResource(iconPath)));
+        button.setPreferredSize(new Dimension(32, 28));
         button.setName(name);
         button.setEnabled(true);
         button.setSelected(initiallyVisible);
         button.setActionCommand(name);
         button.setToolTipText(toolTipText);
         button.addActionListener(this);
-        if (iconPath == null)
+
+        // place an Id button to the right of the corresponding content button
+        if (idButton && this.togglePanel.getComponentCount() > 0)
+        {
+            JPanel lastToggleBox = (JPanel) this.togglePanel.getComponent(this.togglePanel.getComponentCount() - 1);
+            lastToggleBox.add(button);
+        }
+        else
         {
             JPanel toggleBox = new JPanel();
             toggleBox.setLayout(new BoxLayout(toggleBox, BoxLayout.X_AXIS));
             toggleBox.add(button);
             this.togglePanel.add(toggleBox);
-            // FIXME; this wrapping in a toggleBox ruins the left alignment of the check boxes.
-        }
-        else
-        {
-            // place an Id button to the right of the corresponding content button
-            if (iconPath.toLowerCase().endsWith("id24.png") && this.togglePanel.getComponentCount() > 0)
-            {
-                JPanel lastToggleBox = (JPanel) this.togglePanel.getComponent(this.togglePanel.getComponentCount() - 1);
-                lastToggleBox.add(button);
-            }
-            else
-            {
-                JPanel toggleBox = new JPanel();
-                toggleBox.setLayout(new BoxLayout(toggleBox, BoxLayout.X_AXIS));
-                toggleBox.add(button);
-                this.togglePanel.add(toggleBox);
-            }
+            toggleBox.setAlignmentX(Component.LEFT_ALIGNMENT);
         }
 
         if (initiallyVisible)
@@ -244,10 +232,33 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * @param toolTipText the tool tip text to show when hovering over the button
      * @param initiallyVisible whether the class is initially shown or not
      */
-    public final void addToggleAnimationButton(final String name, final Class<? extends Locatable> locatableClass,
+    public final void addToggleAnimationButtonText(final String name, final Class<? extends Locatable> locatableClass,
             final String toolTipText, final boolean initiallyVisible)
     {
-        addToggleAnimationButton(name, locatableClass, null, toolTipText, initiallyVisible);
+        JToggleButton button;
+        button = new JCheckBox(name);
+        button.setName(name);
+        button.setEnabled(true);
+        button.setSelected(initiallyVisible);
+        button.setActionCommand(name);
+        button.setToolTipText(toolTipText);
+        button.addActionListener(this);
+
+        JPanel toggleBox = new JPanel();
+        toggleBox.setLayout(new BoxLayout(toggleBox, BoxLayout.X_AXIS));
+        toggleBox.add(button);
+        this.togglePanel.add(toggleBox);
+        toggleBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        if (initiallyVisible)
+        {
+            this.animationPanel.showClass(locatableClass);
+        }
+        else
+        {
+            this.animationPanel.hideClass(locatableClass);
+        }
+        this.toggleLocatableMap.put(name, locatableClass);
     }
 
     /** {@inheritDoc} */
