@@ -9,8 +9,9 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.opentrafficsim.core.animation.TextAnimation;
+import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
 import org.opentrafficsim.core.animation.TextAlignment;
+import org.opentrafficsim.core.animation.TextAnimation;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Node;
 
@@ -26,10 +27,13 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class NodeAnimation extends Renderable2D implements Serializable
+public class NodeAnimation extends Renderable2D implements ClonableRenderable2DInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20140000L;
+
+    /** the Text object to destroy when the animation is destroyed. */
+    private Text text;
 
     /**
      * @param node n
@@ -40,7 +44,7 @@ public class NodeAnimation extends Renderable2D implements Serializable
     public NodeAnimation(final Node node, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
     {
         super(node, simulator);
-        new Text(node, node.getId(), 0.0f, 3.0f, TextAlignment.CENTER, Color.BLACK, simulator);
+        this.text = new Text(node, node.getId(), 0.0f, 3.0f, TextAlignment.CENTER, Color.BLACK, simulator);
     }
 
     /** {@inheritDoc} */
@@ -49,6 +53,24 @@ public class NodeAnimation extends Renderable2D implements Serializable
     {
         graphics.setColor(Color.BLACK);
         graphics.draw(new Ellipse2D.Double(-1.0, -1.0, 2.0, 2.0));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void destroy() throws NamingException
+    {
+        super.destroy();
+        this.text.destroy();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public ClonableRenderable2DInterface clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+            throws NamingException, RemoteException
+    {
+        // the constructor also constructs the corresponding Text object
+        return new NodeAnimation((Node) newSource, newSimulator);
     }
 
     /** {@inheritDoc} */
@@ -94,6 +116,15 @@ public class NodeAnimation extends Renderable2D implements Serializable
             super(source, text, dx, dy, textPlacement, color, simulator);
             setFlip(false);
             setRotate(false);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        @SuppressWarnings("checkstyle:designforextension")
+        public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+                throws RemoteException, NamingException
+        {
+            return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);
         }
 
         /** {@inheritDoc} */

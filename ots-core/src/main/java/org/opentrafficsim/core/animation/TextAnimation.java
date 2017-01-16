@@ -37,40 +37,34 @@ public abstract class TextAnimation implements Locatable, Serializable
     private static final long serialVersionUID = 20161211L;
 
     /** the object for which the text is displayed. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final Locatable source;
+    private final Locatable source;
 
     /** the text to display. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final String text;
+    private String text;
 
     /** the horizontal movement of the text, in meters. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final float dx;
+    private final float dx;
 
     /** the vertical movement of the text, in meters. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final float dy;
+    private final float dy;
 
     /** whether to center or not. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final TextAlignment textAlignment;
+    private final TextAlignment textAlignment;
 
     /** the color of the text. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final Color color;
+    private Color color;
 
     /** fontSize the size of the font; default = 2.0 (meters). */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final float fontSize;
+    private final float fontSize;
 
     /** the animation implementation. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final AnimationImpl animationImpl;
-    
+    private final AnimationImpl animationImpl;
+
     /** the font. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected Font font;
+    private Font font;
+
+    /** the font rectangle. */
+    private Rectangle2D fontRectangle = null;
 
     /**
      * @param source the object for which the text is displayed
@@ -102,7 +96,7 @@ public abstract class TextAnimation implements Locatable, Serializable
         {
             this.font = this.font.deriveFont(this.fontSize);
         }
-        
+
         this.animationImpl = new AnimationImpl(this, simulator);
     }
 
@@ -151,16 +145,133 @@ public abstract class TextAnimation implements Locatable, Serializable
     public void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
         graphics.setFont(this.font);
-        FontMetrics fm = graphics.getFontMetrics();
-        Rectangle2D r = fm.getStringBounds(this.text, graphics);
-        graphics.setColor(this.color);
-        float dxText = this.textAlignment.equals(TextAlignment.LEFT) ? 0.0f
-                : this.textAlignment.equals(TextAlignment.CENTER) ? (float) -r.getWidth() / 2.0f : (float) -r.getWidth();
-        graphics.drawString(this.text, dxText + this.dx, this.fontSize / 2.0f - this.dy);
+        synchronized (this.font)
+        {
+            if (this.fontRectangle == null)
+            {
+                FontMetrics fm = graphics.getFontMetrics();
+                this.fontRectangle = fm.getStringBounds(this.text, graphics);
+            }
+            graphics.setColor(this.color);
+            float dxText =
+                    this.textAlignment.equals(TextAlignment.LEFT) ? 0.0f : this.textAlignment.equals(TextAlignment.CENTER)
+                            ? (float) -this.fontRectangle.getWidth() / 2.0f : (float) -this.fontRectangle.getWidth();
+            graphics.drawString(this.text, dxText + this.dx, this.fontSize / 2.0f - this.dy);
+        }
     }
 
     /**
-     * The implementation of the text animation.
+     * Destroy the text animation.
+     */
+    public final void destroy()
+    {
+        try
+        {
+            this.animationImpl.destroy();
+        }
+        catch (NamingException exception)
+        {
+            System.err.println("Tried to destroy Text for GTU animation of GTU " + this.source.toString());
+        }
+    }
+
+    /**
+     * Clone the TextAnimation and return a copy for the new source on the new simulator.
+     * @param newSource the new source to link to the text animation
+     * @param newSimulator the new simulator to register the animation on
+     * @return a copy of the TextAnimation
+     * @throws RemoteException when remote animation cannot be reached
+     * @throws NamingException when animation name cannot be found or bound in the Context
+     */
+    public abstract TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+            throws RemoteException, NamingException;
+
+    /**
+     * @return source
+     */
+    protected final Locatable getSource()
+    {
+        return this.source;
+    }
+
+    /**
+     * @return dx
+     */
+    protected final float getDx()
+    {
+        return this.dx;
+    }
+
+    /**
+     * @return dy
+     */
+    protected final float getDy()
+    {
+        return this.dy;
+    }
+
+    /**
+     * @return textAlignment
+     */
+    protected final TextAlignment getTextAlignment()
+    {
+        return this.textAlignment;
+    }
+
+    /**
+     * @return fontSize
+     */
+    protected final float getFontSize()
+    {
+        return this.fontSize;
+    }
+
+    /**
+     * @return font
+     */
+    protected final Font getFont()
+    {
+        return this.font;
+    }
+
+    /**
+     * @return current text
+     */
+    protected final String getText()
+    {
+        return this.text;
+    }
+
+    /**
+     * @param text set new text
+     */
+    protected final void setText(final String text)
+    {
+        this.text = text;
+        synchronized (this.font)
+        {
+            this.fontRectangle = null;
+        }
+    }
+
+    /**
+     * @return current color
+     */
+    protected final Color getColor()
+    {
+        return this.color;
+    }
+
+    /**
+     * @param color set new color
+     */
+    protected final void setColor(final Color color)
+    {
+        this.color = color;
+    }
+
+    /**
+     * The implementation of the text animation. Cloning will be taken care of by the overarching TextAnimation-derived class.
      * <p>
      * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
@@ -172,7 +283,7 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    protected static class AnimationImpl extends Renderable2D
+    private static class AnimationImpl extends Renderable2D
     {
         /**
          * @param source the source

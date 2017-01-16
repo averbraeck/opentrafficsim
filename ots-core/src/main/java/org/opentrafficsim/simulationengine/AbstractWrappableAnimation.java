@@ -70,7 +70,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /** Save the runLength for restarting the simulation. */
     private Duration savedRunLength;
-    
+
     /** the model. */
     private OTSModelInterface model;
 
@@ -163,17 +163,20 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     }
 
     /**
-     * Add a button for toggling an animatable class on or off.
+     * Add a button for toggling an animatable class on or off. Button icons for which 'idButton' is true will be placed to the
+     * right of the previous button, which should be the corresponding button without the id. An example is an icon for
+     * showing/hiding the class 'Lane' followed by the button to show/hide the Lane ids.
      * @param name the name of the button
      * @param locatableClass the class for which the button holds (e.g., GTU.class)
      * @param iconPath the path to the 24x24 icon to display
      * @param toolTipText the tool tip text to show when hovering over the button
      * @param initiallyVisible whether the class is initially shown or not
+     * @param idButton id button that needs to be placed next to the previous button
      */
-    public final void addToggleAnimationButton(final String name, final Class<? extends Locatable> locatableClass,
-            final String iconPath, final String toolTipText, final boolean initiallyVisible)
+    public final void addToggleAnimationButtonIcon(final String name, final Class<? extends Locatable> locatableClass,
+            final String iconPath, final String toolTipText, final boolean initiallyVisible, final boolean idButton)
     {
-        this.panel.addToggleAnimationButton(name, locatableClass, iconPath, toolTipText, initiallyVisible);
+        this.panel.addToggleAnimationButtonIcon(name, locatableClass, iconPath, toolTipText, initiallyVisible, idButton);
     }
 
     /**
@@ -183,10 +186,10 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
      * @param toolTipText the tool tip text to show when hovering over the button
      * @param initiallyVisible whether the class is initially shown or not
      */
-    public final void addToggleAnimationButton(final String name, final Class<? extends Locatable> locatableClass,
+    public final void addToggleAnimationButtonText(final String name, final Class<? extends Locatable> locatableClass,
             final String toolTipText, final boolean initiallyVisible)
     {
-        this.panel.addToggleAnimationButton(name, locatableClass, toolTipText, initiallyVisible);
+        this.panel.addToggleAnimationButtonText(name, locatableClass, toolTipText, initiallyVisible);
     }
 
     /**
@@ -255,12 +258,12 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         {
             // ignore
         }
-        
+
         minX = minX - 0.05 * Math.abs(minX);
         minY = minY - 0.05 * Math.abs(minY);
         maxX = maxX + 0.05 * Math.abs(maxX);
         maxY = maxY + 0.05 * Math.abs(maxY);
-        
+
         return new Rectangle2D.Double(minX, minY, maxX - minX, maxY - minY);
     }
 
