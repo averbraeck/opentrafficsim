@@ -47,22 +47,22 @@ public final class AnimationToggles
      */
     public static void setTextAnimationTogglesFull(final AbstractWrappableAnimation aws)
     {
-        aws.addToggleAnimationButton("Node", OTSNode.class, "Show/hide nodes", true);
-        aws.addToggleAnimationButton("NodeId", NodeAnimation.Text.class, "Show/hide node Ids", false);
-        aws.addToggleAnimationButton("Link", OTSLink.class, "Show/hide links", true);
-        aws.addToggleAnimationButton("LinkId", LinkAnimation.Text.class, "Show/hide link Ids", false);
-        aws.addToggleAnimationButton("Lane", Lane.class, "Show/hide lanes", true);
-        aws.addToggleAnimationButton("LaneId", LaneAnimation.Text.class, "Show/hide lane Ids", false);
-        aws.addToggleAnimationButton("Stripe", Stripe.class, "Show/hide stripes", true);
-        aws.addToggleAnimationButton("Shoulder", Shoulder.class, "Show/hide shoulders", true);
-        aws.addToggleAnimationButton("GTU", GTU.class, "Show/hide GTUs", true);
-        aws.addToggleAnimationButton("GTUId", DefaultCarAnimation.Text.class, "Show/hide GTU Ids", false);
-        aws.addToggleAnimationButton("Sensor", SingleSensor.class, "Show/hide sensors", true);
-        aws.addToggleAnimationButton("SensorId", SensorAnimation.Text.class, "Show/hide sensors Ids", false);
-        aws.addToggleAnimationButton("Light", TrafficLight.class, "Show/hide traffic lights", true);
-        aws.addToggleAnimationButton("LightId", TrafficLightAnimation.Text.class, "Show/hide sensors Ids", false);
-        aws.addToggleAnimationButton("Conflict", Conflict.class, "Show/hide conflicts", true);
-        // aws.addToggleAnimationButton("Generator", LaneBasedGTUGenerator.class, "Show/hide generators", true);
+        aws.addToggleAnimationButtonText("Node", OTSNode.class, "Show/hide nodes", true);
+        aws.addToggleAnimationButtonText("NodeId", NodeAnimation.Text.class, "Show/hide node Ids", false);
+        aws.addToggleAnimationButtonText("Link", OTSLink.class, "Show/hide links", true);
+        aws.addToggleAnimationButtonText("LinkId", LinkAnimation.Text.class, "Show/hide link Ids", false);
+        aws.addToggleAnimationButtonText("Lane", Lane.class, "Show/hide lanes", true);
+        aws.addToggleAnimationButtonText("LaneId", LaneAnimation.Text.class, "Show/hide lane Ids", false);
+        aws.addToggleAnimationButtonText("Stripe", Stripe.class, "Show/hide stripes", true);
+        aws.addToggleAnimationButtonText("Shoulder", Shoulder.class, "Show/hide shoulders", true);
+        aws.addToggleAnimationButtonText("GTU", GTU.class, "Show/hide GTUs", true);
+        aws.addToggleAnimationButtonText("GTUId", DefaultCarAnimation.Text.class, "Show/hide GTU Ids", false);
+        aws.addToggleAnimationButtonText("Sensor", SingleSensor.class, "Show/hide sensors", true);
+        aws.addToggleAnimationButtonText("SensorId", SensorAnimation.Text.class, "Show/hide sensors Ids", false);
+        aws.addToggleAnimationButtonText("Light", TrafficLight.class, "Show/hide traffic lights", true);
+        aws.addToggleAnimationButtonText("LightId", TrafficLightAnimation.Text.class, "Show/hide sensors Ids", false);
+        aws.addToggleAnimationButtonText("Conflict", Conflict.class, "Show/hide conflicts", true);
+        // aws.addToggleAnimationButtonText("Generator", LaneBasedGTUGenerator.class, "Show/hide generators", true);
     }
 
     /**
@@ -71,22 +71,22 @@ public final class AnimationToggles
      */
     public static void setTextAnimationTogglesStandard(final AbstractWrappableAnimation aws)
     {
-        aws.addToggleAnimationButton("Node", OTSNode.class, "Show/hide nodes", false);
-        aws.addToggleAnimationButton("NodeId", NodeAnimation.Text.class, "Show/hide node Ids", false);
-        aws.addToggleAnimationButton("Link", OTSLink.class, "Show/hide links", false);
-        aws.addToggleAnimationButton("LinkId", LinkAnimation.Text.class, "Show/hide link Ids", false);
-        aws.addToggleAnimationButton("Lane", Lane.class, "Show/hide lanes", true);
-        aws.addToggleAnimationButton("LaneId", LaneAnimation.Text.class, "Show/hide lane Ids", false);
-        aws.addToggleAnimationButton("Stripe", Stripe.class, "Show/hide stripes", true);
-        aws.addToggleAnimationButton("Shoulder", Shoulder.class, "Show/hide shoulders", true);
-        aws.addToggleAnimationButton("GTU", GTU.class, "Show/hide GTUs", true);
-        aws.addToggleAnimationButton("GTUId", DefaultCarAnimation.Text.class, "Show/hide GTU Ids", false);
-        aws.addToggleAnimationButton("Sensor", Sensor.class, "Show/hide sensors", false);
-        aws.addToggleAnimationButton("SensorId", SensorAnimation.Text.class, "Show/hide sensors Ids", false);
-        aws.addToggleAnimationButton("Light", TrafficLight.class, "Show/hide traffic lights", true);
-        aws.addToggleAnimationButton("LightId", TrafficLightAnimation.Text.class, "Show/hide sensors Ids", false);
-        aws.addToggleAnimationButton("Conflict", Conflict.class, "Show/hide conflicts", false);
-        // aws.addToggleAnimationButton("Generator", LaneBasedGTUGenerator.class, "Show/hide generators", false);
+        aws.addToggleAnimationButtonText("Node", OTSNode.class, "Show/hide nodes", false);
+        aws.addToggleAnimationButtonText("NodeId", NodeAnimation.Text.class, "Show/hide node Ids", false);
+        aws.addToggleAnimationButtonText("Link", OTSLink.class, "Show/hide links", false);
+        aws.addToggleAnimationButtonText("LinkId", LinkAnimation.Text.class, "Show/hide link Ids", false);
+        aws.addToggleAnimationButtonText("Lane", Lane.class, "Show/hide lanes", true);
+        aws.addToggleAnimationButtonText("LaneId", LaneAnimation.Text.class, "Show/hide lane Ids", false);
+        aws.addToggleAnimationButtonText("Stripe", Stripe.class, "Show/hide stripes", true);
+        aws.addToggleAnimationButtonText("Shoulder", Shoulder.class, "Show/hide shoulders", true);
+        aws.addToggleAnimationButtonText("GTU", GTU.class, "Show/hide GTUs", true);
+        aws.addToggleAnimationButtonText("GTUId", DefaultCarAnimation.Text.class, "Show/hide GTU Ids", false);
+        aws.addToggleAnimationButtonText("Sensor", Sensor.class, "Show/hide sensors", false);
+        aws.addToggleAnimationButtonText("SensorId", SensorAnimation.Text.class, "Show/hide sensors Ids", false);
+        aws.addToggleAnimationButtonText("Light", TrafficLight.class, "Show/hide traffic lights", true);
+        aws.addToggleAnimationButtonText("LightId", TrafficLightAnimation.Text.class, "Show/hide sensors Ids", false);
+        aws.addToggleAnimationButtonText("Conflict", Conflict.class, "Show/hide conflicts", false);
+        // aws.addToggleAnimationButtonText("Generator", LaneBasedGTUGenerator.class, "Show/hide generators", false);
     }
 
     /**
@@ -95,24 +95,29 @@ public final class AnimationToggles
      */
     public static void setIconAnimationTogglesFull(final AbstractWrappableAnimation aws)
     {
-        aws.addToggleAnimationButton("Node", OTSNode.class, "/icons/Node24.png", "Show/hide nodes", true);
-        aws.addToggleAnimationButton("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node Ids", false);
-        aws.addToggleAnimationButton("Link", OTSLink.class, "/icons/Link24.png", "Show/hide links", true);
-        aws.addToggleAnimationButton("LinkId", LinkAnimation.Text.class, "/icons/Id24.png", "Show/hide link Ids", false);
-        aws.addToggleAnimationButton("Lane", Lane.class, "/icons/Lane24.png", "Show/hide lanes", true);
-        aws.addToggleAnimationButton("LaneId", LaneAnimation.Text.class, "/icons/Id24.png", "Show/hide lane Ids", false);
-        aws.addToggleAnimationButton("Stripe", Stripe.class, "/icons/Stripe24.png", "Show/hide stripes", true);
-        aws.addToggleAnimationButton("Shoulder", Shoulder.class, "Show/hide shoulders", true);
-        aws.addToggleAnimationButton("GTU", GTU.class, "Show/hide GTUs", true);
-        aws.addToggleAnimationButton("GTUId", DefaultCarAnimation.Text.class, "/icons/Id24.png", "Show/hide GTU Ids", false);
-        aws.addToggleAnimationButton("Sensor", Sensor.class, "/icons/Sensor24.png", "Show/hide sensors", true);
-        aws.addToggleAnimationButton("SensorId", SensorAnimation.Text.class, "/icons/Id24.png", "Show/hide sensors Ids", false);
-        aws.addToggleAnimationButton("Light", TrafficLight.class, "/icons/TrafficLight24.png", "Show/hide traffic lights",
+        aws.addToggleAnimationButtonIcon("Node", OTSNode.class, "/icons/Node24.png", "Show/hide nodes", true, false);
+        aws.addToggleAnimationButtonIcon("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node Ids", false,
                 true);
-        aws.addToggleAnimationButton("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png", "Show/hide sensors Ids",
-                false);
-        aws.addToggleAnimationButton("Conflict", Conflict.class, "Show/hide conflicts", true);
-        // aws.addToggleAnimationButton("Generator", LaneBasedGTUGenerator.class, "Show/hide generators", true);
+        aws.addToggleAnimationButtonIcon("Link", OTSLink.class, "/icons/Link24.png", "Show/hide links", true, false);
+        aws.addToggleAnimationButtonIcon("LinkId", LinkAnimation.Text.class, "/icons/Id24.png", "Show/hide link Ids", false,
+                true);
+        aws.addToggleAnimationButtonIcon("Lane", Lane.class, "/icons/Lane24.png", "Show/hide lanes", true, false);
+        aws.addToggleAnimationButtonIcon("LaneId", LaneAnimation.Text.class, "/icons/Id24.png", "Show/hide lane Ids", false,
+                true);
+        aws.addToggleAnimationButtonIcon("Stripe", Stripe.class, "/icons/Stripe24.png", "Show/hide stripes", true, false);
+        aws.addToggleAnimationButtonText("Shoulder", Shoulder.class, "Show/hide shoulders", true);
+        aws.addToggleAnimationButtonText("GTU", GTU.class, "Show/hide GTUs", true);
+        aws.addToggleAnimationButtonIcon("GTUId", DefaultCarAnimation.Text.class, "/icons/Id24.png", "Show/hide GTU Ids", false,
+                true);
+        aws.addToggleAnimationButtonIcon("Sensor", Sensor.class, "/icons/Sensor24.png", "Show/hide sensors", true, false);
+        aws.addToggleAnimationButtonIcon("SensorId", SensorAnimation.Text.class, "/icons/Id24.png", "Show/hide sensors Ids",
+                false, true);
+        aws.addToggleAnimationButtonIcon("Light", TrafficLight.class, "/icons/TrafficLight24.png", "Show/hide traffic lights",
+                true, false);
+        aws.addToggleAnimationButtonIcon("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png",
+                "Show/hide sensors Ids", false, true);
+        aws.addToggleAnimationButtonText("Conflict", Conflict.class, "Show/hide conflicts", true);
+        // aws.addToggleAnimationButtonText("Generator", LaneBasedGTUGenerator.class, "Show/hide generators", true);
     }
 
     /**
@@ -121,24 +126,30 @@ public final class AnimationToggles
      */
     public static void setIconAnimationTogglesStandard(final AbstractWrappableAnimation aws)
     {
-        aws.addToggleAnimationButton("Node", OTSNode.class, "/icons/Node24.png", "Show/hide nodes", false);
-        aws.addToggleAnimationButton("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node Ids", false);
-        aws.addToggleAnimationButton("Link", OTSLink.class, "/icons/Link24.png", "Show/hide links", false);
-        aws.addToggleAnimationButton("LinkId", LinkAnimation.Text.class, "/icons/Id24.png", "Show/hide link Ids", false);
-        aws.addToggleAnimationButton("Lane", Lane.class, "/icons/Lane24.png", "Show/hide lanes", true);
-        aws.addToggleAnimationButton("LaneId", LaneAnimation.Text.class, "/icons/Id24.png", "Show/hide lane Ids", false);
-        aws.addToggleAnimationButton("Stripe", Stripe.class, "/icons/Stripe24.png", "Show/hide stripes", true);
-        aws.addToggleAnimationButton("Shoulder", Shoulder.class, "/icons/Shoulder24.png", "Show/hide shoulders", true);
-        aws.addToggleAnimationButton("GTU", GTU.class, "Show/hide GTUs", true);
-        aws.addToggleAnimationButton("GTUId", DefaultCarAnimation.Text.class, "/icons/Id24.png", "Show/hide GTU Ids", false);
-        aws.addToggleAnimationButton("Sensor", Sensor.class, "/icons/Sensor24.png", "Show/hide sensors", false);
-        aws.addToggleAnimationButton("SensorId", SensorAnimation.Text.class, "/icons/Id24.png", "Show/hide sensors Ids", false);
-        aws.addToggleAnimationButton("Light", TrafficLight.class, "/icons/TrafficLight24.png", "Show/hide traffic lights",
+        aws.addToggleAnimationButtonIcon("Node", OTSNode.class, "/icons/Node24.png", "Show/hide nodes", false, false);
+        aws.addToggleAnimationButtonIcon("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node Ids", false,
                 true);
-        aws.addToggleAnimationButton("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png", "Show/hide sensors Ids",
+        aws.addToggleAnimationButtonIcon("Link", OTSLink.class, "/icons/Link24.png", "Show/hide links", false, false);
+        aws.addToggleAnimationButtonIcon("LinkId", LinkAnimation.Text.class, "/icons/Id24.png", "Show/hide link Ids", false,
+                true);
+        aws.addToggleAnimationButtonIcon("Lane", Lane.class, "/icons/Lane24.png", "Show/hide lanes", true, false);
+        aws.addToggleAnimationButtonIcon("LaneId", LaneAnimation.Text.class, "/icons/Id24.png", "Show/hide lane Ids", false,
+                true);
+        aws.addToggleAnimationButtonIcon("Stripe", Stripe.class, "/icons/Stripe24.png", "Show/hide stripes", true, false);
+        aws.addToggleAnimationButtonIcon("Shoulder", Shoulder.class, "/icons/Shoulder24.png", "Show/hide shoulders", true,
                 false);
-        aws.addToggleAnimationButton("Conflict", Conflict.class, "Show/hide conflicts", false);
-        // aws.addToggleAnimationButton("Generator", LaneBasedGTUGenerator.class, "Show/hide generators", false);
+        aws.addToggleAnimationButtonText("GTU", GTU.class, "Show/hide GTUs", true);
+        aws.addToggleAnimationButtonIcon("GTUId", DefaultCarAnimation.Text.class, "/icons/Id24.png", "Show/hide GTU Ids", false,
+                true);
+        aws.addToggleAnimationButtonIcon("Sensor", Sensor.class, "/icons/Sensor24.png", "Show/hide sensors", false, false);
+        aws.addToggleAnimationButtonIcon("SensorId", SensorAnimation.Text.class, "/icons/Id24.png", "Show/hide sensors Ids",
+                false, true);
+        aws.addToggleAnimationButtonIcon("Light", TrafficLight.class, "/icons/TrafficLight24.png", "Show/hide traffic lights",
+                true, false);
+        aws.addToggleAnimationButtonIcon("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png",
+                "Show/hide sensors Ids", false, true);
+        aws.addToggleAnimationButtonText("Conflict", Conflict.class, "Show/hide conflicts", false);
+        // aws.addToggleAnimationButtonText("Generator", LaneBasedGTUGenerator.class, "Show/hide generators", false);
     }
 
     /**

@@ -10,17 +10,18 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.language.d2.Angle;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
+import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
 import org.opentrafficsim.core.animation.TextAlignment;
 import org.opentrafficsim.core.animation.TextAnimation;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.animation.PaintLine;
 import org.opentrafficsim.core.network.animation.PaintPolygons;
 import org.opentrafficsim.road.network.lane.Lane;
+
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.language.d2.Angle;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -31,7 +32,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class LaneAnimation extends Renderable2D implements Serializable
+public class LaneAnimation extends Renderable2D implements ClonableRenderable2DInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20141017L;
@@ -41,6 +42,9 @@ public class LaneAnimation extends Renderable2D implements Serializable
 
     /** Whether to draw the center line or not. */
     private final boolean drawCenterLine;
+
+    /** the Text object to destroy when the animation is destroyed. */
+    private Text text;
 
     /**
      * Animate a Lane.
@@ -87,6 +91,24 @@ public class LaneAnimation extends Renderable2D implements Serializable
 
     /** {@inheritDoc} */
     @Override
+    public final void destroy() throws NamingException
+    {
+        super.destroy();
+        this.text.destroy();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public ClonableRenderable2DInterface clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+            throws NamingException, RemoteException
+    {
+        // the constructor also constructs the corresponding Text object
+        return new LaneAnimation((Lane) newSource, newSimulator, this.color, this.drawCenterLine);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return "LaneAnimation [lane = " + getSource().toString() + ", color=" + this.color + ", drawCenterLine="
@@ -128,20 +150,29 @@ public class LaneAnimation extends Renderable2D implements Serializable
         {
             super(source, text, dx, dy, textPlacement, color, simulator);
         }
-        
+
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
         public DirectedPoint getLocation() throws RemoteException
         {
             // draw always on top.
-            DirectedPoint p = ((Lane) this.source).getCenterLine().getLocationFractionExtended(0.5);
+            DirectedPoint p = ((Lane) getSource()).getCenterLine().getLocationFractionExtended(0.5);
             double a = Angle.normalizePi(p.getRotZ());
             if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
             {
                 a += Math.PI;
             }
             return new DirectedPoint(p.x, p.y, Double.MAX_VALUE, 0.0, 0.0, a);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        @SuppressWarnings("checkstyle:designforextension")
+        public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+                throws RemoteException, NamingException
+        {
+            return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);
         }
 
     }

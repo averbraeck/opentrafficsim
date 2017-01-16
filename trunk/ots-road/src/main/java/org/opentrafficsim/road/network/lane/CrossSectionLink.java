@@ -45,7 +45,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
 
     /** The policy to generally keep left, keep right, or keep lane. */
     private final LaneKeepingPolicy laneKeepingPolicy;
-    
+
     /** Priority. */
     // TODO per GTUDirectionality / LongitudinalDirectionality?
     private Priority priority = Priority.NONE;
@@ -72,6 +72,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * @param endNode OTSNode; the end node (directional).
      * @param linkType LinkType; the link type
      * @param designLine OTSLine3D; the design line of the Link
+     * @param simulator the simulator on which events can be scheduled
      * @param directionalityMap Map&lt;GTUType, LongitudinalDirectionality&gt;; the directions (FORWARD, BACKWARD, BOTH, NONE)
      *            that various GTUtypes can traverse this link
      * @param laneKeepingPolicy LaneKeepingPolicy; the policy to generally keep left, keep right, or keep lane
@@ -80,11 +81,11 @@ public class CrossSectionLink extends OTSLink implements Serializable
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public CrossSectionLink(final Network network, final String id, final Node startNode, final Node endNode,
-            final LinkType linkType, final OTSLine3D designLine,
+            final LinkType linkType, final OTSLine3D designLine, final OTSSimulatorInterface simulator,
             final Map<GTUType, LongitudinalDirectionality> directionalityMap, final LaneKeepingPolicy laneKeepingPolicy)
             throws NetworkException
     {
-        super(network, id, startNode, endNode, linkType, designLine, directionalityMap);
+        super(network, id, startNode, endNode, linkType, designLine, simulator, directionalityMap);
         this.laneKeepingPolicy = laneKeepingPolicy;
     }
 
@@ -97,6 +98,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * @param endNode OTSNode; the end node (directional).
      * @param linkType LinkType; the link type
      * @param designLine OTSLine3D; the design line of the Link
+     * @param simulator the simulator on which events can be scheduled
      * @param directionality LongitudinalDirectionality; the default directionality for all GTUs
      * @param laneKeepingPolicy LaneKeepingPolicy; the policy to generally keep left, keep right, or keep lane
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
@@ -104,10 +106,10 @@ public class CrossSectionLink extends OTSLink implements Serializable
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public CrossSectionLink(final Network network, final String id, final Node startNode, final Node endNode,
-            final LinkType linkType, final OTSLine3D designLine, final LongitudinalDirectionality directionality,
-            final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
+            final LinkType linkType, final OTSLine3D designLine, final OTSSimulatorInterface simulator,
+            final LongitudinalDirectionality directionality, final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {
-        super(network, id, startNode, endNode, linkType, designLine, directionality);
+        super(network, id, startNode, endNode, linkType, designLine, simulator, directionality);
         this.laneKeepingPolicy = laneKeepingPolicy;
     }
 
@@ -120,16 +122,18 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * @param endNode OTSNode; the end node (directional).
      * @param linkType LinkType; the link type
      * @param designLine OTSLine3D; the design line of the Link
+     * @param simulator the simulator on which events can be scheduled
      * @param laneKeepingPolicy LaneKeepingPolicy; the policy to generally keep left, keep right, or keep lane
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
+    @SuppressWarnings("checkstyle:parameternumber")
     public CrossSectionLink(final Network network, final String id, final OTSNode startNode, final OTSNode endNode,
-            final LinkType linkType, final OTSLine3D designLine, final LaneKeepingPolicy laneKeepingPolicy)
-            throws NetworkException
+            final LinkType linkType, final OTSLine3D designLine, final OTSSimulatorInterface simulator,
+            final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {
-        this(network, id, startNode, endNode, linkType, designLine, new HashMap<GTUType, LongitudinalDirectionality>(),
-                laneKeepingPolicy);
+        this(network, id, startNode, endNode, linkType, designLine, simulator,
+                new HashMap<GTUType, LongitudinalDirectionality>(), laneKeepingPolicy);
     }
 
     /**
@@ -249,7 +253,8 @@ public class CrossSectionLink extends OTSLink implements Serializable
     /**
      * Priority of a link.
      * <p>
-     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 12 dec. 2016 <br>
@@ -261,16 +266,16 @@ public class CrossSectionLink extends OTSLink implements Serializable
     {
         /** Traffic has priority. */
         PRIORITY,
-        
+
         /** No priority. */
         NONE,
-        
+
         /** Need to stop. */
         STOP,
-        
+
         /** Priority according to all-stop rules. */
         ALL_STOP;
-        
+
         /**
          * Returns whether this is priority.
          * @return whether this is priority
@@ -279,7 +284,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
         {
             return this.equals(PRIORITY);
         }
-        
+
         /**
          * Returns whether this is none.
          * @return whether this is none
@@ -288,7 +293,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
         {
             return this.equals(NONE);
         }
-        
+
         /**
          * Returns whether this is stop.
          * @return whether this is stop
@@ -297,7 +302,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
         {
             return this.equals(STOP);
         }
-        
+
         /**
          * Returns whether this is all-stop.
          * @return whether this is all-stop
@@ -306,7 +311,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
         {
             return this.equals(ALL_STOP);
         }
-        
+
     }
-    
+
 }

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Length;
 import org.junit.Test;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -17,6 +18,8 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
+
+import mockit.MockUp;
 
 /**
  * Test the LinkLocation class.
@@ -42,36 +45,39 @@ public class LinkLocationTest implements UNITS
         Network network = new OTSNetwork("link location test network");
         OTSNode nodeFrom = new OTSNode(network, "From", new OTSPoint3D(0, 0, 0));
         OTSNode nodeTo = new OTSNode(network, "To", new OTSPoint3D(1000, 0, 0));
-        OTSLine3D line = new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0)});
-        CrossSectionLink link =
-            new CrossSectionLink(network, "Link", nodeFrom, nodeTo, LinkType.ALL, line, LongitudinalDirectionality.DIR_PLUS,
-                LaneKeepingPolicy.KEEP_RIGHT);
+        OTSLine3D line = new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0) });
+        OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
+        {
+            // no implementation needed.
+        }.getMockInstance();
+        CrossSectionLink link = new CrossSectionLink(network, "Link", nodeFrom, nodeTo, LinkType.ALL, line, simulator,
+                LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
         Length linkLength = line.getLength();
         // Now we can make a LinkLocation.
         Length referenceLocationDistance = new Length(123, METER);
         LinkLocation referenceLocation = new LinkLocation(link, referenceLocationDistance);
         assertEquals("link should be the provided Link", link, referenceLocation.getLink());
         assertEquals("longitudinalPosition should be " + referenceLocationDistance, referenceLocationDistance.getSI(),
-            referenceLocation.getLongitudinalPosition().getSI(), 0.0001);
+                referenceLocation.getLongitudinalPosition().getSI(), 0.0001);
         for (int position = 0; position < 1000; position += 100)
         {
             final double fraction = position / linkLength.getSI();
             LinkLocation linkLocation = new LinkLocation(link, fraction);
             assertEquals("link should be the provided Link", link, linkLocation.getLink());
-            assertEquals("fractionalLongitudinalPosition should be " + fraction, fraction, linkLocation
-                .getFractionalLongitudinalPosition(), 0.000001);
-            assertEquals("longitudinalPosition should be " + position, position, linkLocation.getLongitudinalPosition()
-                .getSI(), 0.0001);
+            assertEquals("fractionalLongitudinalPosition should be " + fraction, fraction,
+                    linkLocation.getFractionalLongitudinalPosition(), 0.000001);
+            assertEquals("longitudinalPosition should be " + position, position, linkLocation.getLongitudinalPosition().getSI(),
+                    0.0001);
             // Repeat with the other constructor
             linkLocation = new LinkLocation(link, new Length(position, METER));
             assertEquals("link should be the provided Link", link, linkLocation.getLink());
-            assertEquals("fractionalLongitudinalPosition should be " + fraction, fraction, linkLocation
-                .getFractionalLongitudinalPosition(), 0.000001);
-            assertEquals("longitudinalPosition should be " + position, position, linkLocation.getLongitudinalPosition()
-                .getSI(), 0.0001);
+            assertEquals("fractionalLongitudinalPosition should be " + fraction, fraction,
+                    linkLocation.getFractionalLongitudinalPosition(), 0.000001);
+            assertEquals("longitudinalPosition should be " + position, position, linkLocation.getLongitudinalPosition().getSI(),
+                    0.0001);
             double delta = referenceLocationDistance.getSI() - position;
-            assertEquals("distance from reference should be " + delta, delta, linkLocation.distance(referenceLocation)
-                .getSI(), 0.0001);
+            assertEquals("distance from reference should be " + delta, delta, linkLocation.distance(referenceLocation).getSI(),
+                    0.0001);
             // TODO distance to location on another link (not yet possible; currently ALWAYS returns null)
         }
     }

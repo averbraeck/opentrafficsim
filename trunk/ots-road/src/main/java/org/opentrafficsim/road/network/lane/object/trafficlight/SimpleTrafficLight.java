@@ -12,6 +12,8 @@ import org.opentrafficsim.road.network.animation.TrafficLightAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * Standard implementation of a traffic light.
  * <p>
@@ -64,8 +66,13 @@ public class SimpleTrafficLight extends AbstractTrafficLight
     public SimpleTrafficLight clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
             final boolean animation) throws NetworkException
     {
-        // TODO
-        return null;
+        Throw.when(!(newCSE instanceof Lane), NetworkException.class, "traffic lights can only be cloned for Lanes");
+        Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
+                "simulator should be a DEVSSimulator");
+        return new SimpleTrafficLight(getId(), (Lane) newCSE, getLongitudinalPosition(),
+                (OTSDEVSSimulatorInterface) newSimulator);
+
+        // the traffic light creates its own animation (for now)
     }
 
 }

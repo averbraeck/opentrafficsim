@@ -10,8 +10,7 @@ import java.util.Arrays;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-
+import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -24,6 +23,9 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.linearref.LengthIndexedLine;
 import com.vividsolutions.jts.operation.buffer.BufferParameters;
 
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+
 /**
  * Draw road stripes.
  * <p>
@@ -34,7 +36,7 @@ import com.vividsolutions.jts.operation.buffer.BufferParameters;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class StripeAnimation extends Renderable2D implements Serializable
+public class StripeAnimation extends Renderable2D implements ClonableRenderable2DInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20141017L;
@@ -59,8 +61,8 @@ public class StripeAnimation extends Renderable2D implements Serializable
      * @return ArrayList&lt;Coordinate&gt;; the coordinates of the dashes separated and terminated by a <cite>NEWPATH</cite>
      *         Coordinate
      */
-    private ArrayList<OTSPoint3D> makeDashes(final LengthIndexedLine center, final double width,
-        final double startOffset, final double[] onOffLengths)
+    private ArrayList<OTSPoint3D> makeDashes(final LengthIndexedLine center, final double width, final double startOffset,
+            final double[] onOffLengths)
     {
         double period = 0;
         for (double length : onOffLengths)
@@ -93,8 +95,7 @@ public class StripeAnimation extends Renderable2D implements Serializable
                 {
                     endPosition = length; // Draw a partial dash, ending at length (end of the center line)
                 }
-                Coordinate[] oneDash =
-                    center.extractLine(position, endPosition)
+                Coordinate[] oneDash = center.extractLine(position, endPosition)
                         .buffer(width / 2, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
                 for (int i = 0; i < oneDash.length; i++)
                 {
@@ -119,17 +120,14 @@ public class StripeAnimation extends Renderable2D implements Serializable
         switch (this.type)
         {
             case DASHED:// : - Draw a 3-9 dash pattern on the center line
-                return makeDashes(new LengthIndexedLine(stripe.getCenterLine().getLineString()), 0.2, 0, new double[]{
-                    3, 9});
+                return makeDashes(new LengthIndexedLine(stripe.getCenterLine().getLineString()), 0.2, 0, new double[] { 3, 9 });
 
             case DOUBLE:// ||- Draw two solid lines
             {
                 OTSLine3D centerLine = stripe.getCenterLine();
-                Coordinate[] leftLine =
-                    centerLine.offsetLine(0.2).getLineString().buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT)
-                        .getCoordinates();
-                Coordinate[] rightLine =
-                    centerLine.offsetLine(-0.2).getLineString()
+                Coordinate[] leftLine = centerLine.offsetLine(0.2).getLineString()
+                        .buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
+                Coordinate[] rightLine = centerLine.offsetLine(-0.2).getLineString()
                         .buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
                 ArrayList<OTSPoint3D> result = new ArrayList<OTSPoint3D>(leftLine.length + rightLine.length);
                 for (int i = 0; i < leftLine.length; i++)
@@ -148,11 +146,11 @@ public class StripeAnimation extends Renderable2D implements Serializable
                 OTSLine3D centerLine = stripe.getCenterLine();
                 Geometry rightDesignLine = centerLine.offsetLine(-0.2).getLineString();
                 ArrayList<OTSPoint3D> result =
-                    makeDashes(new LengthIndexedLine(rightDesignLine), 0.2, 0, new double[]{3, 9});
+                        makeDashes(new LengthIndexedLine(rightDesignLine), 0.2, 0, new double[] { 3, 9 });
                 Geometry leftDesignLine =
-                    centerLine.offsetLine(0.2).getLineString().buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT);
+                        centerLine.offsetLine(0.2).getLineString().buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT);
                 Coordinate[] leftCoordinates =
-                    leftDesignLine.buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
+                        leftDesignLine.buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
                 for (int i = 0; i < leftCoordinates.length; i++)
                 {
                     result.add(new OTSPoint3D(leftCoordinates[i]));
@@ -165,13 +163,11 @@ public class StripeAnimation extends Renderable2D implements Serializable
             {
                 OTSLine3D centerLine = stripe.getCenterLine();
                 Geometry leftDesignLine = centerLine.offsetLine(0.2).getLineString();
-                ArrayList<OTSPoint3D> result =
-                    makeDashes(new LengthIndexedLine(leftDesignLine), 0.2, 0, new double[]{3, 9});
+                ArrayList<OTSPoint3D> result = makeDashes(new LengthIndexedLine(leftDesignLine), 0.2, 0, new double[] { 3, 9 });
                 Geometry rightDesignLine =
-                    centerLine.offsetLine(-0.2).getLineString()
-                        .buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT);
+                        centerLine.offsetLine(-0.2).getLineString().buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT);
                 Coordinate[] rightCoordinates =
-                    rightDesignLine.buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
+                        rightDesignLine.buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
                 for (int i = 0; i < rightCoordinates.length; i++)
                 {
                     result.add(new OTSPoint3D(rightCoordinates[i]));
@@ -198,7 +194,7 @@ public class StripeAnimation extends Renderable2D implements Serializable
      * @throws OTSGeometryException when something is very wrong with the geometry of the line
      */
     public StripeAnimation(final Stripe source, final OTSSimulatorInterface simulator, final TYPE type)
-        throws NamingException, RemoteException, OTSGeometryException
+            throws NamingException, RemoteException, OTSGeometryException
     {
         super(source, simulator);
         this.type = type;
@@ -235,6 +231,22 @@ public class StripeAnimation extends Renderable2D implements Serializable
 
         /** Double solid line ||, don't cross. */
         DOUBLE
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public ClonableRenderable2DInterface clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+            throws NamingException, RemoteException
+    {
+        try
+        {
+            return new StripeAnimation((Stripe) newSource, newSimulator, this.type);
+        }
+        catch (OTSGeometryException exception)
+        {
+            throw new RemoteException("Stripe animation clone failed", exception);
+        }
     }
 
     /** {@inheritDoc} */

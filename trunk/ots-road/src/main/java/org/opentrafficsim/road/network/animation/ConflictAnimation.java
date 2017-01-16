@@ -30,7 +30,8 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  */
 public class ConflictAnimation extends Renderable2D implements Serializable
 {
-
+    // TODO should ConflictAnimation implement the ClonableRenderable2DInterface?
+    
     /** */
     private static final long serialVersionUID = 20161207L;
 

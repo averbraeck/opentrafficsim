@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -23,6 +24,8 @@ import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+
+import mockit.MockUp;
 
 /**
  * Test the LaneBasedStrategicalRoutePlanner class.
@@ -54,7 +57,11 @@ public class LaneBasedStrategicalRoutePlannerTest
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new HashMap<GTUType, LongitudinalDirectionality>();
         directionalityMap.put(gtuType, LongitudinalDirectionality.DIR_PLUS); // Start with the easy cases
         OTSLine3D designLine = new OTSLine3D(fromNode.getPoint(), toNode.getPoint());
-        OTSLink link = new OTSLink(network, "link", fromNode, toNode, LinkType.ALL, designLine, directionalityMap);
+        OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
+        {
+            // no implementation needed.
+        }.getMockInstance();
+        OTSLink link = new OTSLink(network, "link", fromNode, toNode, LinkType.ALL, designLine, simulator, directionalityMap);
         CarFollowingModel cfm = new IDMPlus();
         LaneBasedCFLCTacticalPlanner tacticalPlanner = new LaneBasedCFLCTacticalPlanner(null, null, null);
         BehavioralCharacteristics bc = DefaultTestParameters.create();

@@ -10,8 +10,6 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -34,6 +32,8 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
+
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -61,14 +61,15 @@ public final class LaneFactory
      * @param intermediatePoints OTSPoint3D[]; array of intermediate coordinates (may be null); the intermediate points may
      *            contain the coordinates of the from node and to node
      * @param direction the direction of the link
+     * @param simulator the simulator for this network
      * @return Link; the newly constructed Link
      * @throws OTSGeometryException when the design line is degenerate (only one point or duplicate point)
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
     public static CrossSectionLink makeLink(final Network network, final String name, final Node from, final Node to,
-            final OTSPoint3D[] intermediatePoints, final LongitudinalDirectionality direction)
-            throws OTSGeometryException, NetworkException
+            final OTSPoint3D[] intermediatePoints, final LongitudinalDirectionality direction,
+            final OTSDEVSSimulatorInterface simulator) throws OTSGeometryException, NetworkException
     {
         List<OTSPoint3D> pointList = intermediatePoints == null ? new ArrayList<OTSPoint3D>()
                 : new ArrayList<OTSPoint3D>(Arrays.asList(intermediatePoints));
@@ -110,7 +111,7 @@ public final class LaneFactory
          */
 
         OTSLine3D designLine = new OTSLine3D(pointList);
-        CrossSectionLink link = new CrossSectionLink(network, name, from, to, LinkType.ALL, designLine, direction,
+        CrossSectionLink link = new CrossSectionLink(network, name, from, to, LinkType.ALL, designLine, simulator, direction,
                 LaneKeepingPolicy.KEEP_RIGHT);
         return link;
     }
@@ -182,7 +183,7 @@ public final class LaneFactory
             throws NamingException, NetworkException, OTSGeometryException
     {
         Length width = new Length(4.0, LengthUnit.METER);
-        final CrossSectionLink link = makeLink(network, name, from, to, intermediatePoints, direction);
+        final CrossSectionLink link = makeLink(network, name, from, to, intermediatePoints, direction, simulator);
         Length latPos = new Length(0.0, LengthUnit.METER);
         return makeLane(link, "lane", laneType, latPos, latPos, width, speedLimit, simulator, direction);
     }
@@ -215,7 +216,7 @@ public final class LaneFactory
             final LaneType laneType, final Speed speedLimit, final OTSDEVSSimulatorInterface simulator,
             final LongitudinalDirectionality direction) throws NamingException, NetworkException, OTSGeometryException
     {
-        final CrossSectionLink link = makeLink(network, name, from, to, intermediatePoints, direction);
+        final CrossSectionLink link = makeLink(network, name, from, to, intermediatePoints, direction, simulator);
         Lane[] result = new Lane[laneCount];
         Length width = new Length(4.0, LengthUnit.METER);
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
@@ -288,7 +289,7 @@ public final class LaneFactory
             final LongitudinalDirectionality direction) throws NamingException, NetworkException, OTSGeometryException
     {
         OTSLine3D bezier = makeBezier(n1, n2, n3, n4);
-        final CrossSectionLink link = makeLink(network, name, n2, n3, bezier.getPoints(), direction);
+        final CrossSectionLink link = makeLink(network, name, n2, n3, bezier.getPoints(), direction, simulator);
         Lane[] result = new Lane[laneCount];
         Length width = new Length(4.0, LengthUnit.METER);
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)

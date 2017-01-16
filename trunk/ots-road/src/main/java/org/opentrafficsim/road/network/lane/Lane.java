@@ -1,8 +1,6 @@
 package org.opentrafficsim.road.network.lane;
 
-import java.awt.Color;
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,13 +8,11 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
-
-import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
@@ -36,8 +32,8 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
@@ -403,6 +399,10 @@ public class Lane extends CrossSectionElement implements Serializable
         this.speedLimitMap = new HashMap<GTUType, Speed>(cse.speedLimitMap);
         this.overtakingConditions = cse.overtakingConditions;
 
+        if (animation)
+        {
+            OTSNetwork.cloneAnimation(cse, this, cse.getParentLink().getSimulator(), newSimulator);
+        }
     }
 
     // TODO constructor calls with this(...)
@@ -1604,49 +1604,38 @@ public class Lane extends CrossSectionElement implements Serializable
     public Lane clone(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator, final boolean animation)
             throws NetworkException
     {
-        try
+        Lane newLane = new Lane(newParentLink, newSimulator, animation, this);
+        // nextLanes, prevLanes, nextNeighbors, rightNeighbors are filled at first request
+
+        SortedMap<Double, List<SingleSensor>> newSensorMap = new TreeMap<>();
+        for (double distance : this.sensors.keySet())
         {
-            Lane newLane = new Lane(newParentLink, newSimulator, animation, this);
-            // nextLanes, prevLanes, nextNeighbors, rightNeighbors are filled at first request
-
-            SortedMap<Double, List<SingleSensor>> newSensorMap = new TreeMap<>();
-            for (double distance : this.sensors.keySet())
+            List<SingleSensor> newSensorList = new ArrayList<>();
+            for (SingleSensor sensor : this.sensors.get(distance))
             {
-                List<SingleSensor> newSensorList = new ArrayList<>();
-                for (SingleSensor sensor : this.sensors.get(distance))
-                {
-                    SingleSensor newSensor = ((AbstractSensor) sensor).clone(newLane, newSimulator, animation);
-                    newSensorList.add(newSensor);
-                }
-                newSensorMap.put(distance, newSensorList);
+                SingleSensor newSensor = ((AbstractSensor) sensor).clone(newLane, newSimulator, animation);
+                newSensorList.add(newSensor);
             }
-            newLane.sensors.clear();
-            newLane.sensors.putAll(newSensorMap);
-
-            SortedMap<Double, List<LaneBasedObject>> newLaneBasedObjectMap = new TreeMap<>();
-            for (double distance : this.laneBasedObjects.keySet())
-            {
-                List<LaneBasedObject> newLaneBasedObjectList = new ArrayList<>();
-                for (LaneBasedObject lbo : this.laneBasedObjects.get(distance))
-                {
-                    AbstractLaneBasedObject laneBasedObject = (AbstractLaneBasedObject) lbo;
-                    LaneBasedObject newLbo = laneBasedObject.clone(newLane, newSimulator, animation);
-                    newLaneBasedObjectList.add(newLbo);
-                }
-                newLaneBasedObjectMap.put(distance, newLaneBasedObjectList);
-            }
-            newLane.laneBasedObjects.clear();
-            newLane.laneBasedObjects.putAll(newLaneBasedObjectMap);
-
-            if (animation)
-            {
-                new LaneAnimation(newLane, newSimulator, Color.DARK_GRAY, false);
-            }
-            return newLane;
+            newSensorMap.put(distance, newSensorList);
         }
-        catch (NamingException | RemoteException exception)
+        newLane.sensors.clear();
+        newLane.sensors.putAll(newSensorMap);
+
+        SortedMap<Double, List<LaneBasedObject>> newLaneBasedObjectMap = new TreeMap<>();
+        for (double distance : this.laneBasedObjects.keySet())
         {
-            throw new NetworkException(exception);
+            List<LaneBasedObject> newLaneBasedObjectList = new ArrayList<>();
+            for (LaneBasedObject lbo : this.laneBasedObjects.get(distance))
+            {
+                AbstractLaneBasedObject laneBasedObject = (AbstractLaneBasedObject) lbo;
+                LaneBasedObject newLbo = laneBasedObject.clone(newLane, newSimulator, animation);
+                newLaneBasedObjectList.add(newLbo);
+            }
+            newLaneBasedObjectMap.put(distance, newLaneBasedObjectList);
         }
+        newLane.laneBasedObjects.clear();
+        newLane.laneBasedObjects.putAll(newLaneBasedObjectMap);
+
+        return newLane;
     }
 }

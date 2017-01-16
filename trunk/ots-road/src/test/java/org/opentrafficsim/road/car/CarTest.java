@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -48,6 +49,7 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 
+import mockit.MockUp;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.Experiment;
 import nl.tudelft.simulation.dsol.experiment.Replication;
@@ -173,11 +175,15 @@ public class CarTest implements UNITS
      */
     public static Lane makeLane(final Network network, final LaneType laneType) throws NetworkException, OTSGeometryException
     {
+        OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
+        {
+            // no implementation needed.
+        }.getMockInstance();
         OTSNode n1 = new OTSNode(network, "n1", new OTSPoint3D(0, 0));
         OTSNode n2 = new OTSNode(network, "n2", new OTSPoint3D(100000.0, 0.0));
         OTSPoint3D[] coordinates = new OTSPoint3D[] { new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100000.0, 0.0) };
         CrossSectionLink link12 = new CrossSectionLink(network, "link12", n1, n2, LinkType.ALL, new OTSLine3D(coordinates),
-                LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
+                simulator, LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
         Length latPos = new Length(0.0, METER);
         Length width = new Length(4.0, METER);
         return new Lane(link12, "lane.1", latPos, latPos, width, width, laneType, LongitudinalDirectionality.DIR_PLUS,

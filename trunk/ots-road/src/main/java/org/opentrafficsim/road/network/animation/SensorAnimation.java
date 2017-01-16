@@ -10,8 +10,9 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.animation.TextAnimation;
+import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
 import org.opentrafficsim.core.animation.TextAlignment;
+import org.opentrafficsim.core.animation.TextAnimation;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 
@@ -30,16 +31,22 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SensorAnimation extends Renderable2D implements Serializable
+public class SensorAnimation extends Renderable2D implements ClonableRenderable2DInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150130L;
 
+    /** the position of the sensor on the lane to determine the width of the lane at that point. */
+    private final Length sensorPosition;
+    
     /** The half width left and right of the center line that is used to draw the block. */
     private final double halfWidth;
 
     /** The color of the sensor. */
     private final Color color;
+
+    /** the Text object to destroy when the animation is destroyed. */
+    private Text text;
 
     /**
      * Construct a SensorAnimation.
@@ -55,6 +62,7 @@ public class SensorAnimation extends Renderable2D implements Serializable
     {
         super(sensor, simulator);
         this.halfWidth = 0.45 * sensor.getLane().getWidth(sensorPosition).getSI();
+        this.sensorPosition = sensorPosition;
         this.color = color;
 
         new Text(sensor, sensor.getLane().getParentLink().getId() + "." + sensor.getLane().getId() + sensor.getId(), 0.0f,
@@ -68,6 +76,24 @@ public class SensorAnimation extends Renderable2D implements Serializable
         graphics.setColor(this.color);
         Rectangle2D rectangle = new Rectangle2D.Double(-0.25, -this.halfWidth, 0.5, 2 * this.halfWidth);
         graphics.fill(rectangle);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void destroy() throws NamingException
+    {
+        super.destroy();
+        this.text.destroy();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public ClonableRenderable2DInterface clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+            throws NamingException, RemoteException
+    {
+        // the constructor also constructs the corresponding Text object
+        return new SensorAnimation((SingleSensor) newSource, this.sensorPosition, newSimulator, this.color);
     }
 
     /** {@inheritDoc} */
@@ -111,6 +137,15 @@ public class SensorAnimation extends Renderable2D implements Serializable
                 throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, simulator);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        @SuppressWarnings("checkstyle:designforextension")
+        public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+                throws RemoteException, NamingException
+        {
+            return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);
         }
     }
 

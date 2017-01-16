@@ -22,6 +22,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -58,6 +59,7 @@ import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
+import mockit.MockUp;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
@@ -96,10 +98,15 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
     {
         // TODO create a LinkAnimation if the simulator is compatible with that.
         // FIXME The current LinkAnimation is too bad to use...
+        // Mock the simulator. Alternatively, provide the simulator from the constructModel.
+        OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
+        {
+            // no implementation needed.
+        }.getMockInstance();
         OTSPoint3D[] coordinates = new OTSPoint3D[] { new OTSPoint3D(from.getPoint().x, from.getPoint().y, 0),
                 new OTSPoint3D(to.getPoint().x, to.getPoint().y, 0) };
         OTSLine3D line = new OTSLine3D(coordinates);
-        CrossSectionLink link = new CrossSectionLink(network, name, from, to, LinkType.ALL, line,
+        CrossSectionLink link = new CrossSectionLink(network, name, from, to, LinkType.ALL, line, simulator, 
                 LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
         return link;
     }

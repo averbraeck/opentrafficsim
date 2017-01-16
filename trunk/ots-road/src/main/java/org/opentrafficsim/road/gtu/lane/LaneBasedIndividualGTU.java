@@ -204,8 +204,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
             }
             catch (Exception e)
             {
-                System.err.println("Car: " + this.getId());
-                e.printStackTrace();
+                System.err.println("Error when destroying the animation of car: " + this.getId());
             }
         }
         super.destroy();
