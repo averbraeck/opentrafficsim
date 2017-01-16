@@ -858,7 +858,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         double endY = to.getPoint().y + (endLinkLength / link.getLength().getSI()) * (to.getPoint().y - from.getPoint().y);
         Node end = new OTSNode(this.network, link.getId() + "END", new OTSPoint3D(endX, endY, to.getPoint().z));
         CrossSectionLink endLink = LaneFactory.makeLink(this.network, link.getId() + "endLink", to, end, null,
-                LongitudinalDirectionality.DIR_PLUS);
+                LongitudinalDirectionality.DIR_PLUS, this.simulator);
         for (Lane lane : lanes)
         {
             // Overtaking left and right allowed on the sinkLane

@@ -140,7 +140,7 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected OTSModelInterface makeModel(GTUColorer colorer)
+    protected final OTSModelInterface makeModel(final GTUColorer colorer)
     {
         JFrame frame = new JFrame();
         FileDialog fd = new FileDialog(frame, "Choose a file", FileDialog.LOAD);
@@ -216,7 +216,8 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
             }
             for (OSMLink osmLink : this.osmNetwork.getLinks())
             {
-                Link link = converter.convertLink(this.otsNetwork, osmLink);
+                // TODO OTS-256
+                Link link = converter.convertLink(this.otsNetwork, osmLink, null);
                 this.otsNetwork.addLink(link);
             }
             this.osmNetwork.makeLinks(this.warningListener, this.progressListener);
@@ -349,7 +350,7 @@ class OSMModel implements OTSModelInterface
         {
             try
             {
-                otsNetwork.addLink(this.converter.convertLink(otsNetwork, osmLink));
+                otsNetwork.addLink(this.converter.convertLink(otsNetwork, osmLink, simulator));
             }
             catch (Exception e)
             {
