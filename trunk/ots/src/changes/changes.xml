@@ -2,7 +2,7 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
-    <release version="0.13.04" date="2017-01-15" description="Intermediate Release 0.13.04">
+    <release version="0.13.04" date="2017-01-16" description="Intermediate Release 0.13.04">
       <action issue="OTS-156" type="update">
         OTS-156. Make conflicts GTUType dependent.
       </action>
