@@ -26,7 +26,7 @@ public final class AccelerationUnits implements UNITS
     {
         ACCELERATION_UNITS.put("km/h^2", KM_PER_HOUR_2);
         ACCELERATION_UNITS.put("mi/h^2", MILE_PER_HOUR_2);
-        ACCELERATION_UNITS.put("m/s*2", METER_PER_SECOND_2);
+        ACCELERATION_UNITS.put("m/s^2", METER_PER_SECOND_2);
         ACCELERATION_UNITS.put("ft/s^2", FOOT_PER_SECOND_2);
     }
 
