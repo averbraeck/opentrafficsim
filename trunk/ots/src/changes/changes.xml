@@ -2,6 +2,12 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="0.13.05" date="2017-XX-XX" description="Intermediate Release 0.13.05">
+      <action issue="OTS-269" type="update">
+        OTS-269. Settable deletion of GTU's if in trouble.
+      </action>
+    </release>
+
     <release version="0.13.04" date="2017-01-16" description="Intermediate Release 0.13.04">
       <action issue="OTS-156" type="update">
         OTS-156. Make conflicts GTUType dependent.
@@ -13,19 +19,22 @@
         OTS-250. Interaction conflicts and traffic lights.
       </action>
       <action issue="OTS-251" type="fix">
-        OTS-251. Memory leak in simulation when GTUs leave the system. DefaultCarAnimation object changed.
+        OTS-251. Memory leak in simulation when GTUs leave the system. DefaultCarAnimation
+        object changed.
       </action>
       <action issue="OTS-252" type="fix">
         OTS-252. GTUs do not have a hashCode function
       </action>
       <action issue="OTS-253" type="fix">
-        OTS-253. Memory leak in infrastructure animation after cloning. Extra functions in OTSNetwork to clone and destroy networks.
+        OTS-253. Memory leak in infrastructure animation after cloning. Extra functions in
+        OTSNetwork to clone and destroy networks.
       </action>
       <action issue="OTS-254" type="update">
         OTS-254. ToggleAnimationButtons should be aligned to the left.
       </action>
       <action issue="OTS-255" type="update">
-        OTS-255. As a result of update OTS-253, the constructor of the OTSLink and CrossSectionLink have changed to include 
+        OTS-255. As a result of update OTS-253, the constructor of the OTSLink and
+        CrossSectionLink have changed to include
         the simulator.
       </action>
       <action type="update">
@@ -35,18 +44,20 @@
         Updated to use DSOL version 3.01.03, which allows to override the Renderable2D.destroy() function.
       </action>
     </release>
-    
-    
+
+
     <release version="0.13.03" date="2017-01-05" description="Intermediate Release 0.13.03">
       <action issue="OTS-244" type="fix">
-        OTS-244. OTSNetwork.shortestPath does not calculate shortest route when direction is BOTH.
+        OTS-244. OTSNetwork.shortestPath does not calculate shortest route when direction is
+        BOTH.
       </action>
       <action issue="OTS-245" type="update">
-        OTS-245. Several methods of AbstractGTU and AbstractLaneBasedGTU should be declared non-final to allow extensions.
+        OTS-245. Several methods of AbstractGTU and AbstractLaneBasedGTU should be declared
+        non-final to allow extensions.
       </action>
     </release>
-    
-    
+
+
     <release version="0.13.02" date="2017-01-03" description="Intermediate Release 0.13.02">
       <action issue="OTS-242" type="fix">
         OTS-242. Repair of Bezier curve.
@@ -77,13 +88,16 @@
         OTS-237: Clone of CrossSectionLink added CrossSectionElements twice.
       </action>
       <action issue="OTS-238" type="fix">
-        OTS-238: GTU should not immediately change lane on initialization with the DirectedLaneChange tactical planner.
+        OTS-238: GTU should not immediately change lane on initialization with the
+        DirectedLaneChange tactical planner.
       </action>
       <action issue="OTS-239" type="fix">
-        OTS-239: Time to not change lanes after a lane change with the DirectedLaneChange tactical planner should be settable.
+        OTS-239: Time to not change lanes after a lane change with the DirectedLaneChange
+        tactical planner should be settable.
       </action>
       <action issue="OTS-240" type="add">
-        OTS-240: The threshold distance for differences between initial locations of the GTU on different lanes should be settable.
+        OTS-240: The threshold distance for differences between initial locations of the GTU
+        on different lanes should be settable.
       </action>
     </release>
 
@@ -102,7 +116,8 @@
         OTS-200: Implement TrafCOD traffic controller.
       </action>
       <action issue="OTS-214" type="add">
-        OTS-214: TrafficLight implementation for car following + instantaneous lane change model.
+        OTS-214: TrafficLight implementation for car following + instantaneous lane change
+        model.
       </action>
       <action issue="OTS-215" type="add">
         OTS-215: TrafficLight implementation for LMRS.
@@ -154,14 +169,15 @@
         OTS-216 Added neg() function to djunits and updated djunits in ots to version 2.01.01.
       </action>
     </release>
-    
-    
+
+
     <release version="0.12.01" date="2016-11-07" description="Intermediate release 0.12.01">
       <action issue="OTS-213" type="fix">
         OTS-213 Change SimpleWeightedGraph in OTSNetwork into SimpleDirectedWeightedGraph
       </action>
       <action issue="OTS-214" type="add">
-        OTS-214 TrafficLight implementation for car following + instantaneous lane change model
+        OTS-214 TrafficLight implementation for car following + instantaneous lane change
+        model
       </action>
       <action issue="OTS-215" type="add">
         OTS-215 TrafficLight implementation for LMRS
@@ -171,7 +187,8 @@
 
     <release version="0.12.00" date="2016-11-02" description="Sprint 7">
       <action issue="OTS-106" type="add">
-        OTS-106 Traffic lights as separate objects that can be observed instead of a 'fake' GTU
+        OTS-106 Traffic lights as separate objects that can be observed instead of a 'fake'
+        GTU
       </action>
       <action issue="OTS-181" type="add">
         OTS-181 Observable object hierarchy
@@ -195,8 +212,8 @@
         Separate project 'ots' to act as the root instead of ots-base as ots-base now contains code
       </action>
     </release>
-    
-    
+
+
     <release version="0.11.00" date="2016-10-07" description="Sprint 6">
       <action issue="OTS-104" type="fix">
         OTS-104 XML parser dependent on order of parsing
@@ -256,8 +273,8 @@
         OTS-194 ImmutableCollections have to be updated
       </action>
     </release>
-    
-    
+
+
     <release version="0.10.00" date="2016-08-28" description="Sprint 5">
       <action issue="OTS-84" type="fix">
         OTS-84 Demo simulations don't check for sufficient headway.
