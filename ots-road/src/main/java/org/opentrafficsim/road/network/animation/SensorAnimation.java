@@ -38,7 +38,7 @@ public class SensorAnimation extends Renderable2D implements ClonableRenderable2
 
     /** the position of the sensor on the lane to determine the width of the lane at that point. */
     private final Length sensorPosition;
-    
+
     /** The half width left and right of the center line that is used to draw the block. */
     private final double halfWidth;
 
@@ -46,7 +46,7 @@ public class SensorAnimation extends Renderable2D implements ClonableRenderable2
     private final Color color;
 
     /** the Text object to destroy when the animation is destroyed. */
-    private Text text;
+    private final Text text;
 
     /**
      * Construct a SensorAnimation.
@@ -65,8 +65,16 @@ public class SensorAnimation extends Renderable2D implements ClonableRenderable2
         this.sensorPosition = sensorPosition;
         this.color = color;
 
-        new Text(sensor, sensor.getLane().getParentLink().getId() + "." + sensor.getLane().getId() + sensor.getId(), 0.0f,
-                (float) this.halfWidth + 0.2f, TextAlignment.CENTER, Color.BLACK, simulator);
+        this.text = new Text(sensor, sensor.getLane().getParentLink().getId() + "." + sensor.getLane().getId() + sensor.getId(),
+                0.0f, (float) this.halfWidth + 0.2f, TextAlignment.CENTER, Color.BLACK, simulator);
+    }
+    
+    /**
+     * @return text.
+     */
+    public final Text getText()
+    {
+        return this.text;
     }
 
     /** {@inheritDoc} */

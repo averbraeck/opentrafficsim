@@ -668,7 +668,7 @@ final class Links
                     {
                         BlockTag blockTag = linkTag.blockTags.get(cseTag.name);
                         Length position = LinkTag.parseBeginEndPosition(blockTag.positionStr, lane);
-                        new LaneBlock(UUID.randomUUID().toString(), lane, position, Length.ZERO);
+                        new LaneBlock(UUID.randomUUID().toString(), lane, position, Length.ZERO, simulator);
                     }
 
                     // TRAFFICLIGHT

@@ -14,6 +14,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
 /**
  * IDMPlus implements the <i>Integrated Lane Change Model with Relaxation and Synchronization</i> as published by Wouter J.
@@ -181,7 +182,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
         return String.format("%s (a=%.1fm/s\u00b2, b=%.1fm/s\u00b2, s0=%.1fm, tSafe=%.1fs, delta=%.2f)", getName(),
                 this.a.getSI(), this.b.getSI(), this.s0.getSI(), this.tSafe.getSI(), this.delta);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final void setA(final Acceleration a)
@@ -195,7 +196,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     {
         this.tSafe = t;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final void setFspeed(final double fSpeed)
@@ -210,7 +211,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedInfo)
             throws ParameterException
     {
-        return null;
+        throw new UnsupportedOperationException("Old car-following model does not support desired speed.");
     }
 
     /** {@inheritDoc} */
@@ -218,7 +219,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     public final Length desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
             throws ParameterException
     {
-        return null;
+       throw new UnsupportedOperationException("Old car-following model does not support desired headway.");
     }
 
     /** {@inheritDoc} */
@@ -226,7 +227,20 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
             final Speed speed, final SpeedLimitInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
-        return null;
+        Length headway;
+        Speed leaderSpeed;
+        if (leaders.isEmpty())
+        {
+            headway = new Length(Double.MAX_VALUE, LengthUnit.SI);
+            leaderSpeed = speed;
+        }
+        else
+        {
+            headway = leaders.firstKey();
+            leaderSpeed = leaders.get(headway);
+        }
+        return this.computeAcceleration(speed, speedInfo.getSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED), leaderSpeed, headway,
+                speedInfo.getSpeedInfo(SpeedLimitTypes.FIXED_SIGN));
     }
 
     /** {@inheritDoc} */

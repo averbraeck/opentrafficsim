@@ -14,6 +14,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
 /**
  * The Intelligent Driver Model by Treiber, Hennecke and Helbing.
@@ -193,7 +194,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedInfo)
             throws ParameterException
     {
-        return null;
+        throw new UnsupportedOperationException("Old car-following model does not support desired speed.");
     }
 
     /** {@inheritDoc} */
@@ -201,7 +202,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     public final Length desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
             throws ParameterException
     {
-        return null;
+       throw new UnsupportedOperationException("Old car-following model does not support desired headway.");
     }
 
     /** {@inheritDoc} */
@@ -209,7 +210,20 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
             final Speed speed, final SpeedLimitInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
-        return null;
+        Length headway;
+        Speed leaderSpeed;
+        if (leaders.isEmpty())
+        {
+            headway = new Length(Double.MAX_VALUE, LengthUnit.SI);
+            leaderSpeed = speed;
+        }
+        else
+        {
+            headway = leaders.firstKey();
+            leaderSpeed = leaders.get(headway);
+        }
+        return this.computeAcceleration(speed, speedInfo.getSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED), leaderSpeed, headway,
+                speedInfo.getSpeedInfo(SpeedLimitTypes.FIXED_SIGN));
     }
 
     /** {@inheritDoc} */

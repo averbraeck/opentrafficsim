@@ -13,6 +13,7 @@ import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
 import org.opentrafficsim.core.animation.TextAlignment;
 import org.opentrafficsim.core.animation.TextAnimation;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.road.network.animation.SensorAnimation.Text;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -38,7 +39,7 @@ public class TrafficLightAnimation extends Renderable2D implements ClonableRende
     private final double halfWidth;
 
     /** the Text object to destroy when the animation is destroyed. */
-    private Text text;
+    private final Text text;
 
     /**
      * Construct the DefaultCarAnimation for a LaneBlock (road block).
@@ -53,9 +54,17 @@ public class TrafficLightAnimation extends Renderable2D implements ClonableRende
         super(trafficLight, simulator);
         this.halfWidth = 0.45 * trafficLight.getLane().getWidth(trafficLight.getLongitudinalPosition()).getSI();
 
-        new Text(trafficLight,
+        this.text = new Text(trafficLight,
                 trafficLight.getLane().getParentLink().getId() + "." + trafficLight.getLane().getId() + trafficLight.getId(),
                 0.0f, (float) this.halfWidth + 0.2f, TextAlignment.CENTER, Color.BLACK, simulator);
+    }
+    
+    /**
+     * @return text.
+     */
+    public final Text getText()
+    {
+        return this.text;
     }
 
     /**

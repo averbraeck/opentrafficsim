@@ -6,6 +6,9 @@
       <action issue="OTS-269" type="update">
         OTS-269. Settable deletion of GTU's if in trouble.
       </action>
+      <action issue="OTS-265" type="update">
+        OTS-265. BLOCK should have a cloneable class and should have animation capabilities.
+      </action>
     </release>
 
     <release version="0.13.04" date="2017-01-16" description="Intermediate Release 0.13.04">

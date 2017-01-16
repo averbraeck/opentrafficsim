@@ -33,10 +33,10 @@ public final class AnticipationInfo implements Serializable
 
     /** Duration of movement. */
     private final Duration duration;
-    
+
     /** End speed of movement. */
     private final Speed endSpeed;
-    
+
     /**
      * @param duration duration of movement
      * @param endSpeed end speed of movement
@@ -62,7 +62,7 @@ public final class AnticipationInfo implements Serializable
     {
         return this.endSpeed;
     }
-    
+
     /**
      * Returns info of the anticipation assuming constant acceleration.
      * @param distance distance to cover
@@ -71,12 +71,12 @@ public final class AnticipationInfo implements Serializable
      * @return duration to cover given distance with given initial speed and acceleration
      */
     public static AnticipationInfo anticipateMovement(final Length distance, final Speed initialSpeed,
-        final Acceleration acceleration)
+            final Acceleration acceleration)
     {
-        return anticipateMovementSpeedLimited(distance, initialSpeed, acceleration, new Speed(Double.POSITIVE_INFINITY,
-            SpeedUnit.SI));
+        return anticipateMovementSpeedLimited(distance, initialSpeed, acceleration,
+                new Speed(Double.POSITIVE_INFINITY, SpeedUnit.SI));
     }
-    
+
     /**
      * Returns info of the anticipation assuming constant acceleration, without exceeding maximum speed.
      * @param distance distance to cover
@@ -86,7 +86,7 @@ public final class AnticipationInfo implements Serializable
      * @return duration to cover given distance with given initial speed and acceleration, without exceeding maximum speed
      */
     public static AnticipationInfo anticipateMovementSpeedLimited(final Length distance, final Speed initialSpeed,
-        final Acceleration acceleration, final Speed maxSpeed)
+            final Acceleration acceleration, final Speed maxSpeed)
     {
         if (distance.lt(Length.ZERO))
         {
@@ -122,7 +122,7 @@ public final class AnticipationInfo implements Serializable
         Length x2 = new Length(distance.si - initialSpeed.si * d1.si - .5 * acceleration.si * d1.si * d1.si, LengthUnit.SI);
         return new AnticipationInfo(d1.plus(x2.divideBy(maxSpeed)), maxSpeed);
     }
-    
+
     /**
      * Returns info of the anticipation using free acceleration from car-following model.
      * @param distance distance to cover
@@ -135,8 +135,8 @@ public final class AnticipationInfo implements Serializable
      * @throws ParameterException if parameter is not defined
      */
     public static AnticipationInfo anticipateMovementFreeAcceleration(final Length distance, final Speed initialSpeed,
-        final BehavioralCharacteristics behavioralCharacteristics, final CarFollowingModel carFollowingModel,
-        final SpeedLimitInfo speedLimitInfo, final Duration timeStep) throws ParameterException
+            final BehavioralCharacteristics behavioralCharacteristics, final CarFollowingModel carFollowingModel,
+            final SpeedLimitInfo speedLimitInfo, final Duration timeStep) throws ParameterException
     {
         if (distance.lt(Length.ZERO))
         {
@@ -152,8 +152,17 @@ public final class AnticipationInfo implements Serializable
         while (xCumul.lt(distance))
         {
             Acceleration a =
-                CarFollowingUtil.freeAcceleration(carFollowingModel, behavioralCharacteristics, speed, speedLimitInfo);
-            Length add = new Length(speed.si * timeStep.si + .5 * a.si * timeStep.si * timeStep.si, LengthUnit.SI);
+                    CarFollowingUtil.freeAcceleration(carFollowingModel, behavioralCharacteristics, speed, speedLimitInfo);
+            Length add;
+            try
+            {
+                add = new Length(speed.si * timeStep.si + .5 * a.si * timeStep.si * timeStep.si, LengthUnit.SI);
+            }
+            catch (NullPointerException npe)
+            {
+                double q = 8;
+                throw new RuntimeException(npe);
+            }
             Length remain = distance.minus(xCumul);
             if (add.lt(remain))
             {
@@ -187,7 +196,7 @@ public final class AnticipationInfo implements Serializable
     @Override
     public String toString()
     {
-        return "AnticipationInfo [duration = " + this.duration + ", endSpeed = " + this.endSpeed + "]"; 
+        return "AnticipationInfo [duration = " + this.duration + ", endSpeed = " + this.endSpeed + "]";
     }
 
 }
