@@ -16,6 +16,7 @@ import org.opentrafficsim.core.animation.TextAnimation;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.animation.PaintLine;
 import org.opentrafficsim.core.network.animation.PaintPolygons;
+import org.opentrafficsim.road.network.animation.SensorAnimation.Text;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -44,7 +45,7 @@ public class LaneAnimation extends Renderable2D implements ClonableRenderable2DI
     private final boolean drawCenterLine;
 
     /** the Text object to destroy when the animation is destroyed. */
-    private Text text;
+    private final Text text;
 
     /**
      * Animate a Lane.
@@ -61,10 +62,18 @@ public class LaneAnimation extends Renderable2D implements ClonableRenderable2DI
         super(lane, simulator);
         this.color = color;
         this.drawCenterLine = drawCenterLine;
-        new Text(lane, lane.getParentLink().getId() + "." + lane.getId(), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK,
-                simulator);
+        this.text = new Text(lane, lane.getParentLink().getId() + "." + lane.getId(), 0.0f, 0.0f, TextAlignment.CENTER,
+                Color.BLACK, simulator);
     }
 
+    /**
+     * @return text.
+     */
+    public final Text getText()
+    {
+        return this.text;
+    }
+    
     /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)

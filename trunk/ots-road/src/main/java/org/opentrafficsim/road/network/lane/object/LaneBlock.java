@@ -1,9 +1,16 @@
 package org.opentrafficsim.road.network.lane.object;
 
+import java.awt.Color;
+import java.rmi.RemoteException;
+
+import javax.naming.NamingException;
+
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.network.animation.LaneBlockAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -28,12 +35,21 @@ public class LaneBlock extends AbstractLaneBasedObject
      * @param lane the lane where the blockage exists
      * @param longitudinalPosition the position on the lane; position where the GTUs have to stop
      * @param height the height of the blockage
+     * @param simulator simulator the simulator to enable animation
      * @throws NetworkException in case object cannot be placed on the lane
      */
-    public LaneBlock(final String id, final Lane lane, final Length longitudinalPosition, final Length height)
-            throws NetworkException
+    public LaneBlock(final String id, final Lane lane, final Length longitudinalPosition, final Length height,
+            final OTSDEVSSimulatorInterface simulator) throws NetworkException
     {
         super(id, lane, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition), height);
+        try
+        {
+            new LaneBlockAnimation(this, simulator, Color.MAGENTA);
+        }
+        catch (RemoteException | NamingException exception)
+        {
+            exception.printStackTrace();
+        }
     }
 
     /**
@@ -63,8 +79,7 @@ public class LaneBlock extends AbstractLaneBasedObject
     public LaneBlock clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator, final boolean animation)
             throws NetworkException
     {
-        // TODO
-        return null;
+        return new LaneBlock(this.getId(), (Lane) newCSE, this.getLongitudinalPosition(), this.getGeometry(), this.getHeight());
     }
 
 }
