@@ -174,14 +174,23 @@ public class OTSShape extends OTSLine3D
         }
 
         // step 4: see if any of the lines of shape 1 and shape 2 intersect (expensive!)
-        for (int i = 0; i < getPoints().length - 1; i++)
+        Point2D prevPoint = getPoints()[this.size() - 1].getPoint2D();
+        // for (int i = 0; i < getPoints().length - 1; i++)
+        // {
+        for (OTSPoint3D point : this.getPoints())
         {
-            Line2D.Double line1 = new Line2D.Double(this.getPoints()[i].getPoint2D(), this.getPoints()[i + 1].getPoint2D());
-            for (int j = 0; j < otsShape.getPoints().length - 1; j++)
+            Point2D nextPoint = point.getPoint2D();
+            Line2D.Double line1 = new Line2D.Double(prevPoint, nextPoint);
+            // Line2D.Double line1 = new Line2D.Double(this.getPoints()[i].getPoint2D(), this.getPoints()[i + 1].getPoint2D());
+            // for (int j = 0; j < otsShape.getPoints().length - 1; j++)
+            // {
+            Point2D otherPrevPoint = otsShape.getPoints()[otsShape.size() - 1].getPoint2D();
+            for (OTSPoint3D otherPoint : otsShape.getPoints())
             {
-                Line2D.Double line2 =
-                        new Line2D.Double(otsShape.getPoints()[j].getPoint2D(), otsShape.getPoints()[j + 1].getPoint2D());
-
+                Point2D otherNextPoint = otherPoint.getPoint2D();
+                // Line2D.Double line2 =
+                // new Line2D.Double(otsShape.getPoints()[j].getPoint2D(), otsShape.getPoints()[j + 1].getPoint2D());
+                Line2D.Double line2 = new Line2D.Double(otherPrevPoint, otherNextPoint);
                 if (line1.intersectsLine(line2))
                 {
                     double p1x = line1.getX1(), p1y = line1.getY1(), d1x = line1.getX2() - p1x, d1y = line1.getY2() - p1y;
@@ -221,14 +230,16 @@ public class OTSShape extends OTSLine3D
                     else
                     {
                         double z = (d2x * (p2y - p1y) + d2y * (p1x - p2x)) / det;
-                        if (Math.abs(z) < 10.0 * Math.ulp(1.0) || Math.abs(z - 1.0) < 10.0 * Math.ulp(1.0))
+                        if (Math.abs(z) < 10.0 * Math.ulp(1.0) || Math.abs(z - 1.0) > 10.0 * Math.ulp(1.0))
                         {
                             return true; // intersection at end point
                         }
                     }
 
                 }
+                otherPrevPoint = otherNextPoint;
             }
+            prevPoint = nextPoint;
         }
         return false;
     }
