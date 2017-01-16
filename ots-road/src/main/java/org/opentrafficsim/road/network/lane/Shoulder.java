@@ -1,16 +1,12 @@
 package org.opentrafficsim.road.network.lane;
 
-import java.awt.Color;
-import java.rmi.RemoteException;
 import java.util.List;
-
-import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.animation.ShoulderAnimation;
+import org.opentrafficsim.core.network.OTSNetwork;
 
 /**
  * <p>
@@ -84,10 +80,15 @@ public class Shoulder extends CrossSectionElement
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected Shoulder(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator,
-            final boolean animation, final Shoulder cse) throws NetworkException
+    protected Shoulder(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator, final boolean animation,
+            final Shoulder cse) throws NetworkException
     {
         super(newParentLink, newSimulator, animation, cse);
+
+        if (animation)
+        {
+            OTSNetwork.cloneAnimation(cse, this, cse.getParentLink().getSimulator(), newSimulator);
+        }
     }
 
     /** {@inheritDoc} */
@@ -112,19 +113,7 @@ public class Shoulder extends CrossSectionElement
     public Shoulder clone(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator,
             final boolean animation) throws NetworkException
     {
-        try
-        {
-            Shoulder newShoulder = new Shoulder(newParentLink, newSimulator, animation, this);
-            if (animation)
-            {
-                new ShoulderAnimation(newShoulder, newSimulator, Color.GREEN);
-            }
-            return newShoulder;
-        }
-        catch (NamingException | RemoteException exception)
-        {
-            throw new NetworkException(exception);
-        }
+        return new Shoulder(newParentLink, newSimulator, animation, this);
     }
 
 }

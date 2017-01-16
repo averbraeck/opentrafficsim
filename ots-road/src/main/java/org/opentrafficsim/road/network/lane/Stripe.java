@@ -1,10 +1,7 @@
 package org.opentrafficsim.road.network.lane;
 
-import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Set;
-
-import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -12,7 +9,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.animation.StripeAnimation;
+import org.opentrafficsim.core.network.OTSNetwork;
 
 /**
  * Longitudinal road stripes; simple constructors.
@@ -96,10 +93,15 @@ public class Stripe extends RoadMarkerAlong
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected Stripe(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator,
-            final boolean animation, final Stripe cse) throws NetworkException
+    protected Stripe(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator, final boolean animation,
+            final Stripe cse) throws NetworkException
     {
         super(newParentLink, newSimulator, animation, cse);
+
+        if (animation)
+        {
+            OTSNetwork.cloneAnimation(cse, this, cse.getParentLink().getSimulator(), newSimulator);
+        }
     }
 
     /**
@@ -141,77 +143,10 @@ public class Stripe extends RoadMarkerAlong
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Stripe clone(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator,
-            final boolean animation) throws NetworkException
+    public Stripe clone(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator, final boolean animation)
+            throws NetworkException
     {
-        try
-        {
-            Stripe newStripe = new Stripe(newParentLink, newSimulator, animation, this);
-
-            if (animation)
-            {
-                // estimate the animation...
-                Permeable permeable = null;
-                for (GTUType gtuType : newStripe.getPermeabilityMap().keySet())
-                {
-                    for (LateralDirectionality dir : newStripe.getPermeabilityMap().get(gtuType))
-                    {
-                        if (dir.isLeft())
-                        {
-                            if (permeable == null)
-                            {
-                                permeable = Permeable.LEFT;
-                            }
-                            if (permeable.equals(Permeable.RIGHT))
-                            {
-                                permeable = Permeable.BOTH;
-                            }
-                        }
-                        if (dir.isRight())
-                        {
-                            if (permeable == null)
-                            {
-                                permeable = Permeable.RIGHT;
-                            }
-                            if (permeable.equals(Permeable.LEFT))
-                            {
-                                permeable = Permeable.BOTH;
-                            }
-                        }
-                    }
-                }
-                if (permeable == null)
-                {
-                    new StripeAnimation(newStripe, newSimulator, StripeAnimation.TYPE.SOLID);
-                }
-                else
-                {
-                    switch (permeable)
-                    {
-                        case BOTH:
-                            new StripeAnimation(newStripe, newSimulator, StripeAnimation.TYPE.DASHED);
-                            break;
-
-                        case LEFT:
-                            new StripeAnimation(newStripe, newSimulator, StripeAnimation.TYPE.LEFTONLY);
-                            break;
-
-                        case RIGHT:
-                            new StripeAnimation(newStripe, newSimulator, StripeAnimation.TYPE.RIGHTONLY);
-                            break;
-
-                        default:
-                            break;
-                    }
-                }
-            }
-
-            return newStripe;
-        }
-        catch (NamingException | RemoteException | OTSGeometryException exception)
-        {
-            throw new NetworkException(exception);
-        }
+        return new Stripe(newParentLink, newSimulator, animation, this);
     }
 
 }

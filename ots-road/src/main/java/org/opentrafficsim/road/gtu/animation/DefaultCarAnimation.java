@@ -10,8 +10,8 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
-import javax.swing.SwingUtilities;
 
+import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
 import org.opentrafficsim.core.animation.TextAlignment;
 import org.opentrafficsim.core.animation.TextAnimation;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -35,13 +35,19 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class DefaultCarAnimation extends Renderable2D implements Serializable
+public class DefaultCarAnimation extends Renderable2D implements ClonableRenderable2DInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;
 
     /** The GTUColorer that determines the fill color for the car. */
     private GTUColorer gtuColorer;
+
+    /** the Text object to destroy when the GTU animation is destroyed. */
+    private Text text;
+
+    /** is the animation destroyed? */
+    private boolean isDestroyed = false;
 
     /**
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
@@ -77,7 +83,7 @@ public class DefaultCarAnimation extends Renderable2D implements Serializable
             this.gtuColorer = gtuColorer;
         }
 
-        new Text(gtu, gtu.getId(), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, simulator);
+        this.text = new Text(gtu, gtu.getId(), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, simulator);
     }
 
     /**
@@ -97,28 +103,17 @@ public class DefaultCarAnimation extends Renderable2D implements Serializable
 
         if (car.isDestroyed())
         {
-            try
+            if (!this.isDestroyed)
             {
-                SwingUtilities.invokeLater(new Runnable()
+                try
                 {
-                    @Override
-                    public void run()
-                    {
-                        try
-                        {
-                            destroy();
-                        }
-                        catch (NamingException | NullPointerException e)
-                        {
-                            // ignore
-                            // TODO Solve in DSOL
-                        }
-                    }
-                });
-            }
-            catch (Exception e)
-            {
-                // ignore
+                    destroy();
+                }
+                catch (Exception e)
+                {
+                    System.err.println("Error while destroying GTU " + car.getId());
+                }
+                this.isDestroyed = true;
             }
             return;
         }
@@ -168,6 +163,24 @@ public class DefaultCarAnimation extends Renderable2D implements Serializable
 
     /** {@inheritDoc} */
     @Override
+    public final void destroy() throws NamingException
+    {
+        super.destroy();
+        this.text.destroy();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public ClonableRenderable2DInterface clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+            throws NamingException, RemoteException
+    {
+        // the constructor also constructs the corresponding Text object
+        return new DefaultCarAnimation((LaneBasedIndividualGTU) newSource, newSimulator, this.gtuColorer);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return super.toString(); // this.getSource().toString();
@@ -191,64 +204,51 @@ public class DefaultCarAnimation extends Renderable2D implements Serializable
         /** */
         private static final long serialVersionUID = 20161211L;
 
+        /** is the animation destroyed? */
+        private boolean isTextDestroyed = false;
+
         /**
          * @param source the object for which the text is displayed
          * @param text the text to display
          * @param dx the horizontal movement of the text, in meters
          * @param dy the vertical movement of the text, in meters
-         * @param textPlacement where to place the text
+         * @param textAlignment where to place the text
          * @param color the color of the text
          * @param simulator the simulator
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
         public Text(final Locatable source, final String text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final OTSSimulatorInterface simulator)
+                final TextAlignment textAlignment, final Color color, final OTSSimulatorInterface simulator)
                 throws RemoteException, NamingException
         {
-            super(source, text, dx, dy, textPlacement, color, 1.0f, simulator);
+            super(source, text, dx, dy, textAlignment, color, 1.0f, simulator);
         }
 
         /** {@inheritDoc} */
         @Override
         public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
         {
-            if (((LaneBasedIndividualGTU) getSource()).isDestroyed())
+            final LaneBasedIndividualGTU car = (LaneBasedIndividualGTU) getSource();
+
+            if (car.isDestroyed())
             {
-                try
+                if (!this.isTextDestroyed)
                 {
-                    SwingUtilities.invokeLater(new Runnable()
+                    try
                     {
-                        @Override
-                        public void run()
-                        {
-                            destroy();
-                        }
-                    });
-                }
-                catch (Exception e)
-                {
-                    // ignore
+                        destroy();
+                    }
+                    catch (Exception e)
+                    {
+                        System.err.println("Error while destroying text animation of GTU " + car.getId());
+                    }
+                    this.isTextDestroyed = true;
                 }
                 return;
             }
 
             super.paint(graphics, observer);
-        }
-
-        /**
-         * Try to destroy the animation.
-         */
-        protected final void destroy()
-        {
-            try
-            {
-                this.animationImpl.destroy();
-            }
-            catch (NamingException exception)
-            {
-                System.err.println("Tried to destroy Text for GTU animation of GTU " + getSource().toString());
-            }
         }
 
         /** {@inheritDoc} */
@@ -257,7 +257,7 @@ public class DefaultCarAnimation extends Renderable2D implements Serializable
         public DirectedPoint getLocation() throws RemoteException
         {
             // draw always on top, and not upside down.
-            DirectedPoint p = ((LaneBasedIndividualGTU) this.source).getLocation();
+            DirectedPoint p = ((LaneBasedIndividualGTU) getSource()).getLocation();
             double a = Angle.normalizePi(p.getRotZ());
             if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
             {
@@ -265,6 +265,16 @@ public class DefaultCarAnimation extends Renderable2D implements Serializable
             }
             return new DirectedPoint(p.x, p.y, Double.MAX_VALUE, 0.0, 0.0, a);
         }
+
+        /** {@inheritDoc} */
+        @Override
+        @SuppressWarnings("checkstyle:designforextension")
+        public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+                throws RemoteException, NamingException
+        {
+            return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);
+        }
+
     }
 
 }

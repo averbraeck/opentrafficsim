@@ -9,8 +9,9 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.opentrafficsim.core.animation.TextAnimation;
+import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
 import org.opentrafficsim.core.animation.TextAlignment;
+import org.opentrafficsim.core.animation.TextAnimation;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
@@ -28,13 +29,16 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrafficLightAnimation extends Renderable2D implements Serializable
+public class TrafficLightAnimation extends Renderable2D implements ClonableRenderable2DInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20160000L;
 
     /** The half width left and right of the center line that is used to draw the block. */
     private final double halfWidth;
+
+    /** the Text object to destroy when the animation is destroyed. */
+    private Text text;
 
     /**
      * Construct the DefaultCarAnimation for a LaneBlock (road block).
@@ -89,6 +93,24 @@ public class TrafficLightAnimation extends Renderable2D implements Serializable
 
     /** {@inheritDoc} */
     @Override
+    public final void destroy() throws NamingException
+    {
+        super.destroy();
+        this.text.destroy();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public ClonableRenderable2DInterface clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+            throws NamingException, RemoteException
+    {
+        // the constructor also constructs the corresponding Text object
+        return new TrafficLightAnimation((TrafficLight) newSource, newSimulator);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return "TrafficLightAnimation [getSource()=" + this.getSource() + "]";
@@ -128,6 +150,15 @@ public class TrafficLightAnimation extends Renderable2D implements Serializable
                 throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, simulator);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        @SuppressWarnings("checkstyle:designforextension")
+        public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+                throws RemoteException, NamingException
+        {
+            return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);
         }
     }
 

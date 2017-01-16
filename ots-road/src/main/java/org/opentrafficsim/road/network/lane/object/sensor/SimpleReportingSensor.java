@@ -82,6 +82,8 @@ public class SimpleReportingSensor extends AbstractSensor
                 "simulator should be a DEVSSimulator");
         return new SimpleReportingSensor(getId(), (Lane) newCSE, getLongitudinalPosition(), getPositionType(),
                 (OTSDEVSSimulatorInterface) newSimulator);
+        
+        // the sensor creates its own animation (for now)
     }
 
 }
