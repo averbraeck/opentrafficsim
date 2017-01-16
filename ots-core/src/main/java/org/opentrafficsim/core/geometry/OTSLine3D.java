@@ -471,7 +471,7 @@ public class OTSLine3D implements Locatable, Serializable
      */
     public static OTSLine3D concatenate(final double toleranceSI, final OTSLine3D... lines) throws OTSGeometryException
     {
-        System.out.println("Concatenating " + lines.length + " lines.");
+        // System.out.println("Concatenating " + lines.length + " lines.");
         if (0 == lines.length)
         {
             throw new OTSGeometryException("Empty argument list");
