@@ -3,6 +3,11 @@
  */
 package org.opentrafficsim.water;
 
+import java.rmi.RemoteException;
+
+import javax.media.j3d.BoundingSphere;
+import javax.media.j3d.Bounds;
+
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -43,4 +48,11 @@ public abstract class AbstractLocated implements Located
         return this.location;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public Bounds getBounds() throws RemoteException
+    {
+        return new BoundingSphere();
+    }
+    
 }
