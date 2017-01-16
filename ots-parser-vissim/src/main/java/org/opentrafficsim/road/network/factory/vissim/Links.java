@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.naming.NamingException;
 
@@ -35,6 +36,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.object.LaneBlock;
 import org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
@@ -50,8 +52,8 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision$, by $Author$, initial
- * version Jul 25, 2015 <br>
+ * LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision$, by $Author$,
+ * initial version Jul 25, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 final class Links
@@ -540,9 +542,7 @@ final class Links
                             Length pos = new Length(Double.parseDouble(sensorTag.positionStr), LengthUnit.METER);
                             if (pos.lt(lane.getLength()))
                             {
-                                SimpleReportingSensor sensor =
-                                        new SimpleReportingSensor(sensorTag.name, lane, pos, RelativePosition.FRONT, simulator);
-                                lane.getSensors().add(sensor);
+                                new SimpleReportingSensor(sensorTag.name, lane, pos, RelativePosition.FRONT, simulator);
                             }
                         }
                     }
@@ -557,12 +557,17 @@ final class Links
                             Length pos = new Length(Double.parseDouble(signalHeadTag.positionStr), LengthUnit.METER);
                             if (pos.lt(lane.getLength()))
                             {
-                                SimpleTrafficLight simpleTrafficLight =
-                                        new SimpleTrafficLight(signalHeadTag.no, lane, pos, simulator);
-                                lane.getLaneBasedObjects().add(simpleTrafficLight);
+                                new SimpleTrafficLight(signalHeadTag.no, lane, pos, simulator);
                             }
                         }
                     }
+                }
+
+                if (linkTag.blockTags.containsKey(laneTag.laneNo))
+                {
+                    BlockTag blockTag = linkTag.blockTags.get(laneTag.laneNo);
+                    Length pos = new Length(Double.parseDouble(blockTag.positionStr), LengthUnit.METER);
+                    new LaneBlock(UUID.randomUUID().toString(), lane, pos, Length.ZERO, simulator);
                 }
 
                 cseList.add(lane);
