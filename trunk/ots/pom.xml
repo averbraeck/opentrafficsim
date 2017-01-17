@@ -416,7 +416,7 @@
         </configuration>
       </plugin>
 
-      <plugin> <!-- to avoid BCEL compatibility issue with Java 1.8... -->
+      <plugin> 
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>${maven.project-info-reports.version}</version>
@@ -425,20 +425,20 @@
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>maven-shared-jar</artifactId>
             <version>1.1</version>
-            <exclusions>
+            <exclusions> <!-- to avoid BCEL compatibility issue with Java 1.8... -->
               <exclusion>
                 <groupId>org.apache.bcel</groupId>
                 <artifactId>bcel</artifactId>
               </exclusion>
             </exclusions>
           </dependency>
-          <dependency>
+          <dependency> <!-- to avoid BCEL compatibility issue with Java 1.8... -->
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>bcel-findbugs</artifactId>
             <version>6.0</version>
           </dependency>
         </dependencies>
-      </plugin> <!-- end avoid BCEL compatibility issue with Java 1.8... -->
+      </plugin>
 
     </plugins>
 
@@ -451,8 +451,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>${maven.project-info-reports.version}</version>
-        <configuration>
-          <dependencyDetailsEnabled>true</dependencyDetailsEnabled>
+        <configuration> <!-- false to avoid errors ... has no file -->
+          <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
           <dependencyLocationsEnabled>true</dependencyLocationsEnabled>
         </configuration>
         <reportSets>
