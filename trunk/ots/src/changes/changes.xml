@@ -12,6 +12,9 @@
       <action issue="OTS-263" type="fix">
         OTS-263. Fixed bug in detection of intersecting lines (shapes). 
       </action>
+      <action issue="OTS-273" type="fix">
+        OTS-273. XML parser parsed wrong value for use as Z-coordinate. 
+      </action>
     </release>
 
     <release version="0.13.04" date="2017-01-16" description="Intermediate Release 0.13.04">

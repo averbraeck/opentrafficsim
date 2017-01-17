@@ -22,7 +22,7 @@ public final class Coordinates
     /**
      * Parse a coordinate with (x,y) or (x,y,z).
      * @param cs the string containing the coordinate.
-     * @return a Point3d contaiing the x,y or x,y,z values.
+     * @return a Point3d containing the x,y or x,y,z values.
      */
     public static OTSPoint3D[] parseCoordinates(final String cs)
     {
@@ -43,7 +43,7 @@ public final class Coordinates
     /**
      * Parse a coordinate with (x,y) or (x,y,z).
      * @param cs the string containing the coordinate.
-     * @return a Point3d contaiing the x,y or x,y,z values.
+     * @return a Point3d containing the x,y or x,y,z values.
      */
     public static OTSPoint3D parseCoordinate(final String cs)
     {
@@ -52,7 +52,7 @@ public final class Coordinates
         String[] cc = c.split(",");
         double x = Double.parseDouble(cc[0]);
         double y = Double.parseDouble(cc[1]);
-        double z = cc.length > 2 ? Double.parseDouble(cc[1]) : 0.0;
+        double z = cc.length > 2 ? Double.parseDouble(cc[2]) : 0.0;
         return new OTSPoint3D(x, y, z);
     }
 
