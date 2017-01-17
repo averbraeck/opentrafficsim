@@ -9,6 +9,9 @@
       <action issue="OTS-265" type="update">
         OTS-265. BLOCK should have a cloneable class and should have animation capabilities.
       </action>
+      <action issue="OTS-263" type="fix">
+        OTS-263. Fixed bug in detection of intersecting lines (shapes). 
+      </action>
     </release>
 
     <release version="0.13.04" date="2017-01-16" description="Intermediate Release 0.13.04">
