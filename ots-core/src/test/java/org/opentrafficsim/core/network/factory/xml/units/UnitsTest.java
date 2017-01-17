@@ -367,9 +367,8 @@ public class UnitsTest
         checkUnitAndValue(SpeedUnits.parseSpeedUnit("123.456ft/s"), SpeedUnits.parseSpeed("123.456ft/s").si, "ft/s", 37.6293888);
         try
         {
-            // FIXME: "123 m/s" is accepted by the parser
             SpeedUnits.parseSpeedUnit("123 s");
-            fail("non-length unit should have thrown a ... NetworkException");
+            fail("non-speed unit should have thrown a ... NetworkException");
         }
         catch (NetworkException ne)
         {
