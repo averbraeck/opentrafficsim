@@ -81,4 +81,3 @@ public class DataSampler implements EventListenerInterface
     }
 
 }
-;
