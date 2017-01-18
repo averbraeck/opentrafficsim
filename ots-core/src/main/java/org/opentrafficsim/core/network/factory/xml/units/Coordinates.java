@@ -20,9 +20,9 @@ public final class Coordinates
     }
 
     /**
-     * Parse a coordinate with (x,y) or (x,y,z).
-     * @param cs the string containing the coordinate.
-     * @return a Point3d containing the x,y or x,y,z values.
+     * Parse a group of coordinates with (x,y) or (x,y,z).
+     * @param cs String; the string containing the coordinates
+     * @return OTSPoint3D[] containing the x,y or x,y,z values.
      */
     public static OTSPoint3D[] parseCoordinates(final String cs)
     {
@@ -42,8 +42,8 @@ public final class Coordinates
 
     /**
      * Parse a coordinate with (x,y) or (x,y,z).
-     * @param cs the string containing the coordinate.
-     * @return a Point3d containing the x,y or x,y,z values.
+     * @param cs String; the string containing the coordinate
+     * @return OTSPoint3D containing the x,y or x,y,z values
      */
     public static OTSPoint3D parseCoordinate(final String cs)
     {
