@@ -78,7 +78,7 @@ public final class ConflictUtil
 
     /** Multiplication factor on time for conservative assessment. */
     public static final ParameterTypeDouble TIME_FACTOR =
-            new ParameterTypeDouble("timeFactor", "Safety factor on estimated time.", 1.1, ATLEASTONE);
+            new ParameterTypeDouble("timeFactor", "Safety factor on estimated time.", 1.25, ATLEASTONE);
 
     /** Area before stop line where one is considered arrived at the intersection. */
     public static final ParameterTypeLength STOP_AREA =
@@ -220,11 +220,18 @@ public final class ConflictUtil
 
                     // stop for j'th conflict, if deceleration is too strong, for next one
                     behavioralCharacteristics.setParameter(ParameterTypes.S0, behavioralCharacteristics.getParameter(S0_CONF));
-                    Acceleration aCF = new Acceleration(Double.NEGATIVE_INFINITY, AccelerationUnit.SI);
+                    Acceleration aCF = new Acceleration(-Double.MAX_VALUE, AccelerationUnit.SI);
                     while (aCF.si < -6.0 && j < prevStarts.size())
                     {
-                        aCF = Acceleration.max(aCF, CarFollowingUtil.stop(carFollowingModel, behavioralCharacteristics, speed,
-                                speedLimitInfo, prevStarts.get(j)));
+                        if (prevStarts.get(j).lt(behavioralCharacteristics.getParameter(S0_CONF)))
+                        {
+                            aCF = Acceleration.max(aCF, new Acceleration(-6.0, AccelerationUnit.SI));
+                        }
+                        else
+                        {
+                            aCF = Acceleration.max(aCF, CarFollowingUtil.stop(carFollowingModel, behavioralCharacteristics,
+                                    speed, speedLimitInfo, prevStarts.get(j)));
+                        }
                         j++;
                     }
                     behavioralCharacteristics.resetParameter(ParameterTypes.S0);
@@ -243,7 +250,8 @@ public final class ConflictUtil
 
         if (a.si < -6.0)
         {
-            return IGNORE;
+            System.err.println("Deceleration from conflict util stronger than 6m/s^2.");
+            // return IGNORE;
         }
         return a;
     }

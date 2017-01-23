@@ -28,14 +28,18 @@ public final class RoadGTUTypes
 
     /** Super type for trucks. */
     public static final GTUType TRUCK;
+    
+    /** Super type for scheduled busses. */
+    public static final GTUType SCHEDULED_BUS;
 
-    /* static block to guarantee that ALL is always on the first place, and NONE on the second, for code reproducibility. */
+    /* static block to guarantee order. */
     static
     {
         CAR = new GTUType("CAR", VEHICLE);
         VAN = new GTUType("VAN", VEHICLE);
         BUS = new GTUType("BUS", VEHICLE);
         TRUCK = new GTUType("TRUCK", VEHICLE);
+        SCHEDULED_BUS = new GTUType("SCHEDULED BUS", BUS);
     }
 
     /**

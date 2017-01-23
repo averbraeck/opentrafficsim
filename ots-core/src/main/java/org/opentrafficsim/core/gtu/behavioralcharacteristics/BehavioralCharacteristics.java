@@ -25,7 +25,7 @@ import nl.tudelft.simulation.language.reflection.ClassUtil;
  */
 public class BehavioralCharacteristics implements Serializable
 {
-
+    
     /** */
     private static final long serialVersionUID = 20160400L;
 
@@ -33,19 +33,23 @@ public class BehavioralCharacteristics implements Serializable
      * Object to recognize that no value was set previously.
      */
     private static final Empty EMPTY = new Empty();
+    
+    /** Whether to copy internal data on write. */
+    private boolean copyOnWrite = false;
 
     /** List of parameters. */
-    private final Map<AbstractParameterType<?>, DoubleScalarInterface> parameters = new HashMap<>();
+    private Map<AbstractParameterType<?>, DoubleScalarInterface> parameters;
 
     /** List of parameters with values before last set. */
-    private final Map<AbstractParameterType<?>, DoubleScalarInterface> previous = new HashMap<>();
+    private Map<AbstractParameterType<?>, DoubleScalarInterface> previous;
 
     /**
      * Empty constructor.
      */
     public BehavioralCharacteristics()
     {
-        //
+        this.parameters = new HashMap<>();
+        this.previous = new HashMap<>();
     }
     
     /**
@@ -54,7 +58,10 @@ public class BehavioralCharacteristics implements Serializable
      */
     public BehavioralCharacteristics(final BehavioralCharacteristics behavioralCharacteristics)
     {
-        setAll(behavioralCharacteristics);
+        this.parameters = behavioralCharacteristics.parameters;
+        this.previous = behavioralCharacteristics.previous;
+        this.copyOnWrite = true;
+        behavioralCharacteristics.copyOnWrite = true;
     }
     
     /**
@@ -126,6 +133,7 @@ public class BehavioralCharacteristics implements Serializable
             final AbstractParameterType<T> parameterType, final T value) throws ParameterException
     {
         parameterType.checkCheck(value);
+        checkCopyOnWrite();
         if (this.parameters.containsKey(parameterType))
         {
             this.previous.put(parameterType, this.parameters.get(parameterType));
@@ -147,6 +155,7 @@ public class BehavioralCharacteristics implements Serializable
     {
         Throw.when(!this.previous.containsKey(parameterType), ParameterException.class,
                 "Reset on parameter of type '%s' could not be performed, it was not set.", parameterType.getId());
+        checkCopyOnWrite();
         if (this.previous.get(parameterType) instanceof Empty)
         {
             // no value was set before last set, so make parameter type not set
@@ -157,6 +166,19 @@ public class BehavioralCharacteristics implements Serializable
             this.parameters.put(parameterType, this.previous.get(parameterType));
         }
         this.previous.remove(parameterType); // prevent consecutive resets
+    }
+    
+    /**
+     * Check if internal data needs to be copied.
+     */
+    private void checkCopyOnWrite()
+    {
+        if (this.copyOnWrite)
+        {
+            this.parameters = new HashMap<>(this.parameters);
+            this.previous = new HashMap<>(this.previous);
+            this.copyOnWrite = false;
+        }
     }
 
     /**
@@ -362,7 +384,7 @@ public class BehavioralCharacteristics implements Serializable
             this.parameters.put(key, behavioralCharacteristics.parameters.get(key));
         }
     }
-
+    
     /** {@inheritDoc} */
     public final String toString()
     {
