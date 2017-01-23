@@ -117,7 +117,7 @@ public class TJunctionDemo extends AbstractWrappableAnimation
                 ConflictBuilder.buildConflicts(this.network, VEHICLE, this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
 
-                // add trafficlight
+                // add trafficlight after
                 Lane lane = ((CrossSectionLink) this.network.getLink("ECE")).getLanes().get(0);
                 SimpleTrafficLight trafficLight =
                         new SimpleTrafficLight("light", lane, new Length(50.0, LengthUnit.SI), this.simulator);

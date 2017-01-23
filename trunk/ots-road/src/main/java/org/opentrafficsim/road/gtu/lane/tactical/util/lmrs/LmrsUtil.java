@@ -22,6 +22,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacter
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
+import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -197,12 +198,26 @@ public final class LmrsUtil
         }
         if (remainingDist != null)
         {
-            remainingDist.minus(bc.getParameter(ParameterTypes.S0));
-            Acceleration bMin = new Acceleration(.5 * speed.si * speed.si / remainingDist.si, AccelerationUnit.SI);
             Acceleration bCrit = bc.getParameter(ParameterTypes.BCRIT);
-            if (bMin.ge(bCrit))
+            remainingDist = remainingDist.minus(bc.getParameter(ParameterTypes.S0)).minus(gtu.getFront().getDx());
+            if (remainingDist.le(Length.ZERO))
             {
-                a = Acceleration.min(a, bMin.neg());
+                if (speed.gt(Speed.ZERO))
+                {
+                    a = Acceleration.min(a, bCrit.neg());
+                }
+                else
+                {
+                    a = Acceleration.min(a, Acceleration.ZERO);
+                }
+            }
+            else
+            {
+                Acceleration bMin = new Acceleration(.5 * speed.si * speed.si / remainingDist.si, AccelerationUnit.SI);
+                if (bMin.ge(bCrit))
+                {
+                    a = Acceleration.min(a, bMin.neg());
+                }
             }
         }
 
@@ -560,7 +575,7 @@ public final class LmrsUtil
             return new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
         }
         Acceleration b = bc.getParameter(ParameterTypes.B);
-        Acceleration a = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
+        Acceleration a = new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
         double dCoop = bc.getParameter(DCOOP);
         RelativeLane relativeLane = new RelativeLane(lat, 1);
         for (AbstractHeadwayGTU leader : removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
@@ -570,7 +585,8 @@ public final class LmrsUtil
             BehavioralCharacteristics bc2 = leader.getBehavioralCharacteristics();
             double desire = lat.equals(LateralDirectionality.LEFT) && bc2.contains(DRIGHT) ? bc2.getParameter(DRIGHT)
                     : lat.equals(LateralDirectionality.RIGHT) && bc2.contains(DLEFT) ? bc2.getParameter(DLEFT) : 0;
-            if (desire >= dCoop)
+            if (desire >= dCoop && (perception.getPerceptionCategory(EgoPerception.class).getSpeed().gt(Speed.ZERO)
+                    || leader.getSpeed().gt(Speed.ZERO)))
             {
                 Acceleration aSingle =
                         singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, bc, sli, cfm);
