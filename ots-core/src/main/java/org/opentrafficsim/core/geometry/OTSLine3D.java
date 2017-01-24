@@ -638,7 +638,7 @@ public class OTSLine3D implements Locatable, Serializable
         }
         catch (OTSGeometryException exception)
         {
-            System.err.println("interval " + start + ".." + end + "too short");
+            System.err.println("interval " + start + ".." + end + " too short");
             throw new OTSGeometryException("interval " + start + ".." + end + "too short");
         }
     }
