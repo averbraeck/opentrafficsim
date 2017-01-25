@@ -99,10 +99,6 @@ final class LinkTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, List<SensorTag>> sensorTags = new HashMap<>();
 
-    /** Map of lane name to blocks. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    Map<String, BlockTag> blockTags = new HashMap<>();
-
     /** Map of lane name to traffic lights. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, List<TrafficLightTag>> trafficLightTags = new HashMap<>();
@@ -248,12 +244,6 @@ final class LinkTag implements Serializable
             for (Node sensorNode : XMLParser.getNodes(node.getChildNodes(), "SENSOR"))
             {
                 SensorTag.parseSensor(sensorNode, parser, linkTag);
-            }
-
-            // parse the BLOCK tags
-            for (Node blockNode : XMLParser.getNodes(node.getChildNodes(), "BLOCK"))
-            {
-                BlockTag.parseBlock(blockNode, parser, linkTag);
             }
 
             // parse the TRAFFICLIGHT tags

@@ -7,14 +7,12 @@ import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.core.network.animation.NodeAnimation;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
-import org.opentrafficsim.road.network.animation.LaneBlockAnimation;
 import org.opentrafficsim.road.network.animation.SensorAnimation;
 import org.opentrafficsim.road.network.animation.TrafficLightAnimation;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
-import org.opentrafficsim.road.network.lane.object.LaneBlock;
 import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -65,8 +63,6 @@ public final class AnimationToggles
         aws.addToggleAnimationButtonText("LightId", TrafficLightAnimation.Text.class, "Show/hide sensors Ids", false);
         aws.addToggleAnimationButtonText("Conflict", Conflict.class, "Show/hide conflicts", true);
         // aws.addToggleAnimationButtonText("Generator", LaneBasedGTUGenerator.class, "Show/hide generators", true);
-        aws.addToggleAnimationButtonText("Block", LaneBlock.class, "Show/hide Blocks", false);
-        aws.addToggleAnimationButtonText("BlockId", LaneBlockAnimation.Text.class, "Show/hide Block Ids", false);
     }
 
     /**
@@ -122,9 +118,6 @@ public final class AnimationToggles
                 "Show/hide sensors Ids", false, true);
         aws.addToggleAnimationButtonText("Conflict", Conflict.class, "Show/hide conflicts", true);
         // aws.addToggleAnimationButtonText("Generator", LaneBasedGTUGenerator.class, "Show/hide generators", true);
-        aws.addToggleAnimationButtonIcon("Block", LaneBlock.class, "/icons/LaneBlock24.png", "Show/hide Blocks", false, false);
-        aws.addToggleAnimationButtonIcon("BlockId", LaneBlockAnimation.Text.class, "/icons/Id24.png", "Show/hide Blocks", false,
-                true);
     }
 
     /**
