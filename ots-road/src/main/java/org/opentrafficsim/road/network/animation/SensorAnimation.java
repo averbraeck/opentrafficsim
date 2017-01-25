@@ -2,13 +2,13 @@ package org.opentrafficsim.road.network.animation;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
 import org.opentrafficsim.core.animation.TextAlignment;
@@ -17,7 +17,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 /**
  * Sensor animation.
@@ -31,16 +30,13 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SensorAnimation extends Renderable2D implements ClonableRenderable2DInterface, Serializable
+public class SensorAnimation extends AbstractLineAnimation implements ClonableRenderable2DInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150130L;
 
     /** the position of the sensor on the lane to determine the width of the lane at that point. */
     private final Length sensorPosition;
-
-    /** The half width left and right of the center line that is used to draw the block. */
-    private final double halfWidth;
 
     /** The color of the sensor. */
     private final Color color;
@@ -60,15 +56,14 @@ public class SensorAnimation extends Renderable2D implements ClonableRenderable2
     public SensorAnimation(final SingleSensor sensor, final Length sensorPosition, final OTSSimulatorInterface simulator,
             final Color color) throws NamingException, RemoteException
     {
-        super(sensor, simulator);
-        this.halfWidth = 0.45 * sensor.getLane().getWidth(sensorPosition).getSI();
+        super(sensor, simulator, .9, new Length(0.5, LengthUnit.SI));
         this.sensorPosition = sensorPosition;
         this.color = color;
 
         this.text = new Text(sensor, sensor.getLane().getParentLink().getId() + "." + sensor.getLane().getId() + sensor.getId(),
-                0.0f, (float) this.halfWidth + 0.2f, TextAlignment.CENTER, Color.BLACK, simulator);
+                0.0f, (float) getHalfLength() + 0.2f, TextAlignment.CENTER, Color.BLACK, simulator);
     }
-    
+
     /**
      * @return text.
      */
@@ -79,11 +74,10 @@ public class SensorAnimation extends Renderable2D implements ClonableRenderable2
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer)
+    public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
         graphics.setColor(this.color);
-        Rectangle2D rectangle = new Rectangle2D.Double(-0.25, -this.halfWidth, 0.5, 2 * this.halfWidth);
-        graphics.fill(rectangle);
+        super.paint(graphics, observer);
     }
 
     /** {@inheritDoc} */

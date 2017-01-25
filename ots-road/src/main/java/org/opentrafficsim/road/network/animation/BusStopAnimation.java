@@ -10,87 +10,52 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
 import org.opentrafficsim.core.animation.TextAlignment;
 import org.opentrafficsim.core.animation.TextAnimation;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
+import org.opentrafficsim.road.network.lane.object.BusStop;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
 /**
- * Draw a traffic light on the road at th place where the cars are expected to stop.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision: 1401 $, $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, by $Author: averbraeck $,
- *          initial version 29 dec. 2014 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version 25 jan. 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafficLightAnimation extends AbstractLineAnimation implements ClonableRenderable2DInterface, Serializable
-{
-    /** */
-    private static final long serialVersionUID = 20160000L;
 
-    /** the Text object to destroy when the animation is destroyed. */
+public class BusStopAnimation extends AbstractLineAnimation implements Serializable
+{
+
+    /** */
+    private static final long serialVersionUID = 20170125L;
+
+    /** Text label. */
     private final Text text;
 
     /**
-     * Construct the DefaultCarAnimation for a LaneBlock (road block).
-     * @param trafficLight the CSEBlock to draw
-     * @param simulator the simulator to schedule on
-     * @throws NamingException in case of registration failure of the animation
-     * @throws RemoteException on communication failure
+     * @param source source
+     * @param simulator simulator
+     * @throws NamingException when animation context cannot be created or retrieved
+     * @throws RemoteException when remote context cannot be found
      */
-    public TrafficLightAnimation(final TrafficLight trafficLight, final OTSSimulatorInterface simulator)
-            throws NamingException, RemoteException
+    public BusStopAnimation(final BusStop source, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
     {
-        super(trafficLight, simulator, 0.9, new Length(0.5, LengthUnit.SI));
+        super(source, simulator, .8, new Length(0.5, LengthUnit.SI));
 
-        this.text = new Text(trafficLight,
-                trafficLight.getLane().getParentLink().getId() + "." + trafficLight.getLane().getId() + trafficLight.getId(),
-                0.0f, (float) getHalfLength() + 0.2f, TextAlignment.CENTER, Color.BLACK, simulator);
+        this.text = new Text(source, source.getId(), 0.0f, (float) getHalfLength() + 0.2f, TextAlignment.CENTER, Color.BLACK,
+                simulator);
     }
 
-    /**
-     * @return text.
-     */
-    public final Text getText()
-    {
-        return this.text;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+    public void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        TrafficLight trafficLight = (TrafficLight) this.getSource();
-        Color fillColor;
-        switch (trafficLight.getTrafficLightColor())
-        {
-            case RED:
-                fillColor = Color.red;
-                break;
-
-            case YELLOW:
-                fillColor = Color.yellow;
-                break;
-
-            case GREEN:
-                fillColor = Color.green;
-                break;
-
-            default:
-                fillColor = Color.black;
-                break;
-        }
-
-        // PaintPolygons.paintMultiPolygon(graphics, fillColor, trafficLight.getLocation(), trafficLight.getGeometry(), false);
-        graphics.setColor(fillColor);
+        graphics.setColor(Color.white);
         super.paint(graphics, observer);
     }
 
@@ -104,23 +69,13 @@ public class TrafficLightAnimation extends AbstractLineAnimation implements Clon
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
-            throws NamingException, RemoteException
-    {
-        // the constructor also constructs the corresponding Text object
-        return new TrafficLightAnimation((TrafficLight) newSource, newSimulator);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final String toString()
     {
-        return "TrafficLightAnimation [getSource()=" + this.getSource() + "]";
+        return "BusStopAnimation [getSource()=" + getSource() + "]";
     }
 
     /**
-     * Text animation for the TrafficLight. Separate class to be able to turn it on and off...
+     * Text animation for the BusStop. Separate class to be able to turn it on and off...
      * <p>
      * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
