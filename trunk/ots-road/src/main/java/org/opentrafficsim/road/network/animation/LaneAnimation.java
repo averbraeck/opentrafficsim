@@ -16,7 +16,6 @@ import org.opentrafficsim.core.animation.TextAnimation;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.animation.PaintLine;
 import org.opentrafficsim.core.network.animation.PaintPolygons;
-import org.opentrafficsim.road.network.animation.SensorAnimation.Text;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -73,7 +72,7 @@ public class LaneAnimation extends Renderable2D implements ClonableRenderable2DI
     {
         return this.text;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)

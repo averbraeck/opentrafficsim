@@ -63,7 +63,7 @@ public class TJunctionDemo extends AbstractWrappableAnimation
     @Override
     protected final void addAnimationToggles()
     {
-        AnimationToggles.setTextAnimationTogglesStandard(this);
+        AnimationToggles.setIconAnimationTogglesFull(this);
     }
 
     /** {@inheritDoc} */

@@ -4,19 +4,18 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.animation.PaintPolygons;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.conflict.ConflictType;
-
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 /**
  * <p>
@@ -28,15 +27,12 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ConflictAnimation extends Renderable2D implements Serializable
+public class ConflictAnimation extends AbstractLineAnimation implements Serializable
 {
     // TODO should ConflictAnimation implement the ClonableRenderable2DInterface?
-    
+
     /** */
     private static final long serialVersionUID = 20161207L;
-
-    /** The half width left and right of the center line that is used to draw the block. */
-    private final double halfWidth;
 
     /**
      * @param source the conflict to draw
@@ -47,8 +43,7 @@ public class ConflictAnimation extends Renderable2D implements Serializable
     public ConflictAnimation(final Conflict source, final OTSSimulatorInterface simulator)
             throws NamingException, RemoteException
     {
-        super(source, simulator);
-        this.halfWidth = 0.45 * source.getLane().getWidth(source.getLongitudinalPosition()).getSI();
+        super(source, simulator, .9, new Length(0.5, LengthUnit.SI));
     }
 
     /** {@inheritDoc} */
@@ -78,8 +73,7 @@ public class ConflictAnimation extends Renderable2D implements Serializable
         }
 
         graphics.setColor(fillColor);
-        Rectangle2D rectangle = new Rectangle2D.Double(-0.25, -this.halfWidth, 0.5, 2 * this.halfWidth);
-        graphics.fill(rectangle);
+        super.paint(graphics, observer);
 
         BasicStroke stroke;
         float factor = conflict.isPermitted() ? .5f : 1f;

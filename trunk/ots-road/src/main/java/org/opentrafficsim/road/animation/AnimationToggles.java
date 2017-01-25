@@ -6,6 +6,7 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.core.network.animation.NodeAnimation;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.road.network.animation.BusStopAnimation;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.animation.SensorAnimation;
 import org.opentrafficsim.road.network.animation.TrafficLightAnimation;
@@ -13,6 +14,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
+import org.opentrafficsim.road.network.lane.object.BusStop;
 import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -63,6 +65,8 @@ public final class AnimationToggles
         aws.addToggleAnimationButtonText("LightId", TrafficLightAnimation.Text.class, "Show/hide sensors Ids", false);
         aws.addToggleAnimationButtonText("Conflict", Conflict.class, "Show/hide conflicts", true);
         // aws.addToggleAnimationButtonText("Generator", LaneBasedGTUGenerator.class, "Show/hide generators", true);
+        aws.addToggleAnimationButtonText("Bus", BusStop.class, "Show/hide bus stops", false);
+        aws.addToggleAnimationButtonText("BusId", BusStop.class, "Show/hide bus stop Ids", false);
     }
 
     /**
@@ -118,6 +122,9 @@ public final class AnimationToggles
                 "Show/hide sensors Ids", false, true);
         aws.addToggleAnimationButtonText("Conflict", Conflict.class, "Show/hide conflicts", true);
         // aws.addToggleAnimationButtonText("Generator", LaneBasedGTUGenerator.class, "Show/hide generators", true);
+        aws.addToggleAnimationButtonIcon("Bus", BusStop.class, "/icons/BusStop24.png", "Show/hide bus stops", false, false);
+        aws.addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops", false,
+                true);
     }
 
     /**
@@ -173,6 +180,8 @@ public final class AnimationToggles
         aws.showAnimationClass(TrafficLight.class);
         aws.hideAnimationClass(TrafficLightAnimation.Text.class);
         aws.showAnimationClass(Conflict.class);
+        aws.hideAnimationClass(BusStop.class);
+        aws.hideAnimationClass(BusStopAnimation.Text.class);
         // aws.showAnimationClass(LaneBasedGTUGenerator.class);
     }
 
@@ -197,6 +206,8 @@ public final class AnimationToggles
         aws.showAnimationClass(TrafficLight.class);
         aws.hideAnimationClass(TrafficLightAnimation.Text.class);
         aws.hideAnimationClass(Conflict.class);
+        aws.hideAnimationClass(BusStop.class);
+        aws.hideAnimationClass(BusStopAnimation.Text.class);
         // aws.showAnimationClass(LaneBasedGTUGenerator.class);
     }
 

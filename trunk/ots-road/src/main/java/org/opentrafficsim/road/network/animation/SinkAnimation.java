@@ -2,17 +2,16 @@ package org.opentrafficsim.road.network.animation;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
-
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 /**
  * sink sensor animation.
@@ -26,35 +25,29 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SinkAnimation extends Renderable2D implements Serializable
+public class SinkAnimation extends AbstractLineAnimation implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150130L;
-    
-    /** The half width left and right of the center line that is used to draw the block. */
-    private final double halfWidth;
 
     /**
-     * Construct the DefaultCarAnimation for a LaneBlock (road block).
+     * Construct the Sink animation.
      * @param source the Car to draw
      * @param simulator the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public SinkAnimation(final SinkSensor source, final OTSSimulatorInterface simulator) throws NamingException,
-        RemoteException
+    public SinkAnimation(final SinkSensor source, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
     {
-        super(source, simulator);
-        this.halfWidth = 0.4 * source.getLane().getWidth(0.0).getSI();
+        super(source, simulator, 0.8, new Length(0.5, LengthUnit.SI));
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer)
+    public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
         graphics.setColor(Color.YELLOW);
-        Rectangle2D rectangle = new Rectangle2D.Double(-0.25, -this.halfWidth, 0.5, 2 * this.halfWidth);
-        graphics.fill(rectangle);
+        super.paint(graphics, observer);
     }
 
     /** {@inheritDoc} */

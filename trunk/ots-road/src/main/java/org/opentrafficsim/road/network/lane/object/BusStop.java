@@ -1,12 +1,15 @@
 package org.opentrafficsim.road.network.lane.object;
 
+import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.naming.NamingException;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.network.animation.BusStopAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -41,15 +44,24 @@ public class BusStop extends AbstractLaneBasedObject
      * @param id id
      * @param lane lane
      * @param longitudinalPosition position
-     * @param geometry geometry
      * @param name name of stop
+     * @param simulator the simulator to schedule on
      * @throws NetworkException when the position on the lane is out of bounds
      */
-    public BusStop(final String id, final Lane lane, final Length longitudinalPosition, final OTSLine3D geometry,
-            final String name) throws NetworkException
+    public BusStop(final String id, final Lane lane, final Length longitudinalPosition, final String name,
+            final OTSSimulatorInterface simulator) throws NetworkException
     {
-        super(id, lane, longitudinalPosition, geometry);
+        super(id, lane, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition));
         this.name = name;
+
+        try
+        {
+            new BusStopAnimation(this, simulator);
+        }
+        catch (RemoteException | NamingException exception)
+        {
+            throw new NetworkException(exception);
+        }
     }
 
     /**
@@ -125,7 +137,7 @@ public class BusStop extends AbstractLaneBasedObject
     public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
             final boolean animation) throws NetworkException
     {
-        BusStop busStop = new BusStop(getId(), getLane(), getLongitudinalPosition(), getGeometry(), this.name);
+        BusStop busStop = new BusStop(getId(), getLane(), getLongitudinalPosition(), this.name, newSimulator);
         busStop.setLines(this.lines);
         return busStop;
     }
