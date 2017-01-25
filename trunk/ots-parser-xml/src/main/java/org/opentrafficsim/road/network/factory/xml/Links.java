@@ -11,7 +11,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.naming.NamingException;
 
@@ -44,7 +43,6 @@ import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
-import org.opentrafficsim.road.network.lane.object.LaneBlock;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.xml.sax.SAXException;
@@ -661,14 +659,6 @@ final class Links
                         SinkTag sinkTag = linkTag.sinkTags.get(cseTag.name);
                         Length position = LinkTag.parseBeginEndPosition(sinkTag.positionStr, lane);
                         new SinkSensor(lane, position, simulator);
-                    }
-
-                    // BLOCK
-                    if (linkTag.blockTags.containsKey(cseTag.name))
-                    {
-                        BlockTag blockTag = linkTag.blockTags.get(cseTag.name);
-                        Length position = LinkTag.parseBeginEndPosition(blockTag.positionStr, lane);
-                        new LaneBlock(UUID.randomUUID().toString(), lane, position, Length.ZERO, simulator);
                     }
 
                     // TRAFFICLIGHT

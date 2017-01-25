@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.naming.NamingException;
 
@@ -36,7 +35,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.object.LaneBlock;
 import org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
@@ -561,13 +559,6 @@ final class Links
                             }
                         }
                     }
-                }
-
-                if (linkTag.blockTags.containsKey(laneTag.laneNo))
-                {
-                    BlockTag blockTag = linkTag.blockTags.get(laneTag.laneNo);
-                    Length pos = new Length(Double.parseDouble(blockTag.positionStr), LengthUnit.METER);
-                    new LaneBlock(UUID.randomUUID().toString(), lane, pos, Length.ZERO, simulator);
                 }
 
                 cseList.add(lane);
