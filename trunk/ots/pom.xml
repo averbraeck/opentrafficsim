@@ -57,7 +57,7 @@
     <sonar.scm.disabled>true</sonar.scm.disabled>
 
     <ots.version>${project.version}</ots.version>
-    <djunits.version>2.01.01</djunits.version>
+    <djunits.version>2.01.02</djunits.version>
     <dsol.version>3.01.03</dsol.version>
     <sim0mq.version>0.01.00</sim0mq.version>
     <junit.version>4.11</junit.version>
