@@ -125,7 +125,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
      */
     public final void setNoLaneChange(final Duration noLaneChangeDuration)
     {
-        Throw.when(noLaneChangeDuration.lt(Duration.ZERO), RuntimeException.class, "noLaneChangeDuration should be >= 0");
+        Throw.when(noLaneChangeDuration.lt0(), RuntimeException.class, "noLaneChangeDuration should be >= 0");
         this.earliestNextLaneChangeTime = getGtu().getSimulator().getSimulatorTime().getTime().plus(noLaneChangeDuration);
     }
 
@@ -757,7 +757,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
      */
     protected final void setDurationInLaneAfterLaneChange(final Duration durationInLaneAfterLaneChange) throws GTUException
     {
-        Throw.when(durationInLaneAfterLaneChange.lt(Duration.ZERO), GTUException.class,
+        Throw.when(durationInLaneAfterLaneChange.lt0(), GTUException.class,
                 "durationInLaneAfterLaneChange should be >= 0");
         this.durationInLaneAfterLaneChange = durationInLaneAfterLaneChange;
     }

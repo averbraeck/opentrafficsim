@@ -200,9 +200,9 @@ public final class LmrsUtil
         {
             Acceleration bCrit = bc.getParameter(ParameterTypes.BCRIT);
             remainingDist = remainingDist.minus(bc.getParameter(ParameterTypes.S0)).minus(gtu.getFront().getDx());
-            if (remainingDist.le(Length.ZERO))
+            if (remainingDist.le0())
             {
-                if (speed.gt(Speed.ZERO))
+                if (speed.gt0())
                 {
                     a = Acceleration.min(a, bCrit.neg());
                 }
@@ -585,8 +585,8 @@ public final class LmrsUtil
             BehavioralCharacteristics bc2 = leader.getBehavioralCharacteristics();
             double desire = lat.equals(LateralDirectionality.LEFT) && bc2.contains(DRIGHT) ? bc2.getParameter(DRIGHT)
                     : lat.equals(LateralDirectionality.RIGHT) && bc2.contains(DLEFT) ? bc2.getParameter(DLEFT) : 0;
-            if (desire >= dCoop && (perception.getPerceptionCategory(EgoPerception.class).getSpeed().gt(Speed.ZERO)
-                    || leader.getSpeed().gt(Speed.ZERO)))
+            if (desire >= dCoop && (perception.getPerceptionCategory(EgoPerception.class).getSpeed().gt0()
+                    || leader.getSpeed().gt0()))
             {
                 Acceleration aSingle =
                         singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, bc, sli, cfm);

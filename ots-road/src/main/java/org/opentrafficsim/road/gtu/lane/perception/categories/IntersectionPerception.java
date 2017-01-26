@@ -283,11 +283,11 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
                                     Length overlapFront = nextDistance.plus(next.getLength()).minus(otherConflict.getLength());
                                     Length overlapRear = nextDistance;
                                     Length overlap = otherConflict.getLength(); // start with conflict length
-                                    if (overlapFront.lt(Length.ZERO))
+                                    if (overlapFront.lt0())
                                     {
                                         overlap = overlap.plus(overlapFront); // subtract front being before the conflict end
                                     }
-                                    if (overlapRear.gt(Length.ZERO))
+                                    if (overlapRear.gt0())
                                     {
                                         overlap = overlap.minus(overlapRear); // subtract rear being past the conflict start
                                     }

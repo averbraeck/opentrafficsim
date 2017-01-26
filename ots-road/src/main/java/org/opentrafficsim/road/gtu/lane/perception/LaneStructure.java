@@ -173,7 +173,7 @@ public class LaneStructure implements Serializable
             this.relativeLaneMap.put(relativeLane, new HashSet<>());
         }
         this.relativeLaneMap.get(relativeLane).add(lsr);
-        if (lsr.getStartDistance().le(Length.ZERO) && lsr.getStartDistance().plus(lsr.getLane().getLength()).ge(Length.ZERO)
+        if (lsr.getStartDistance().le0() && lsr.getStartDistance().plus(lsr.getLane().getLength()).ge0()
                 && !this.crossSectionRecords.containsKey(relativeLane))
         {
             this.crossSectionRecords.put(relativeLane, lsr);

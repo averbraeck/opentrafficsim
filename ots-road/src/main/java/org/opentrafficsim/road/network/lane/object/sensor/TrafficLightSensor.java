@@ -309,7 +309,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
                     {
                         System.out.println("Let op");
                     }
-                    if (frontPosition.lt(Length.ZERO) && rearPosition.lt(Length.ZERO) || frontPosition.gt(laneLength)
+                    if (frontPosition.lt0() && rearPosition.lt0() || frontPosition.gt(laneLength)
                             && rearPosition.gt(laneLength))
                     {
                         continue; // Not detected on this lane
