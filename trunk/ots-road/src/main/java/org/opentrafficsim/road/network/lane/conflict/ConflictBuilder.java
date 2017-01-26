@@ -438,14 +438,9 @@ public final class ConflictBuilder
         OTSLine3D geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
         OTSLine3D geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
 
-        // Determine conflict rules
-        ConflictRule[] conflictRules =
-                getConflictRules(lane1, longitudinalPosition1, lane2, longitudinalPosition2, ConflictType.MERGE);
-
         // Make conflict
-        Conflict.generateConflictPair(ConflictType.MERGE, permitted, lane1, longitudinalPosition1, length1, dir1, geometry1,
-                conflictRules[0], gtuType, lane2, longitudinalPosition2, length2, dir2, geometry2, conflictRules[1], gtuType,
-                simulator);
+        Conflict.generateConflictPair(ConflictType.MERGE, new DefaultConflictRule(), permitted, lane1, longitudinalPosition1,
+                length1, dir1, geometry1, gtuType, lane2, longitudinalPosition2, length2, dir2, geometry2, gtuType, simulator);
     }
 
     /**
@@ -483,9 +478,8 @@ public final class ConflictBuilder
         OTSLine3D geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
 
         // Make conflict
-        Conflict.generateConflictPair(ConflictType.SPLIT, false, lane1, longitudinalPosition1, length1, dir1, geometry1,
-                ConflictRule.SPLIT, gtuType, lane2, longitudinalPosition2, length2, dir2, geometry2, ConflictRule.SPLIT,
-                gtuType, simulator);
+        Conflict.generateConflictPair(ConflictType.SPLIT, new DefaultConflictRule(), false, lane1, longitudinalPosition1,
+                length1, dir1, geometry1, gtuType, lane2, longitudinalPosition2, length2, dir2, geometry2, gtuType, simulator);
     }
 
     /**
@@ -543,14 +537,9 @@ public final class ConflictBuilder
         OTSLine3D geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
         OTSLine3D geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
 
-        // Determine conflict rules
-        ConflictRule[] conflictRules =
-                getConflictRules(lane1, longitudinalPosition1, lane2, longitudinalPosition2, ConflictType.CROSSING);
-
         // Make conflict
-        Conflict.generateConflictPair(ConflictType.CROSSING, permitted, lane1, longitudinalPosition1, length1, dir1, geometry1,
-                conflictRules[0], gtuType, lane2, longitudinalPosition2, length2, dir2, geometry2, conflictRules[1], gtuType,
-                simulator);
+        Conflict.generateConflictPair(ConflictType.CROSSING, new DefaultConflictRule(), permitted, lane1, longitudinalPosition1,
+                length1, dir1, geometry1, gtuType, lane2, longitudinalPosition2, length2, dir2, geometry2, gtuType, simulator);
     }
 
     /**
@@ -598,22 +587,22 @@ public final class ConflictBuilder
      * @return conflict rule 1 and 2
      * @throws OTSGeometryException in case of geometry exception
      */
-    private static ConflictRule[] getConflictRules(final Lane lane1, final Length longitudinalPosition1, final Lane lane2,
+    private static ConflictPriority[] getConflictRules(final Lane lane1, final Length longitudinalPosition1, final Lane lane2,
             final Length longitudinalPosition2, final ConflictType conflictType) throws OTSGeometryException
     {
 
-        ConflictRule[] conflictRules = new ConflictRule[2];
+        ConflictPriority[] conflictRules = new ConflictPriority[2];
         Priority priority1 = lane1.getParentLink().getPriority();
         Priority priority2 = lane2.getParentLink().getPriority();
         if (conflictType.equals(ConflictType.SPLIT))
         {
-            conflictRules[0] = ConflictRule.SPLIT;
-            conflictRules[1] = ConflictRule.SPLIT;
+            conflictRules[0] = ConflictPriority.SPLIT;
+            conflictRules[1] = ConflictPriority.SPLIT;
         }
         else if (priority1.isAllStop() && priority2.isAllStop())
         {
-            conflictRules[0] = ConflictRule.ALL_STOP;
-            conflictRules[1] = ConflictRule.ALL_STOP;
+            conflictRules[0] = ConflictPriority.ALL_STOP;
+            conflictRules[1] = ConflictPriority.ALL_STOP;
         }
         else if (priority1.equals(priority2))
         {
@@ -632,35 +621,35 @@ public final class ConflictBuilder
             if (diff > 0.0)
             {
                 // 2 comes from the right
-                conflictRules[0] = priority1.isStop() ? ConflictRule.STOP : ConflictRule.GIVE_WAY;
-                conflictRules[1] = ConflictRule.PRIORITY;
+                conflictRules[0] = priority1.isStop() ? ConflictPriority.STOP : ConflictPriority.GIVE_WAY;
+                conflictRules[1] = ConflictPriority.PRIORITY;
             }
             else
             {
                 // 1 comes from the right
-                conflictRules[0] = ConflictRule.PRIORITY;
-                conflictRules[1] = priority2.isStop() ? ConflictRule.STOP : ConflictRule.GIVE_WAY;
+                conflictRules[0] = ConflictPriority.PRIORITY;
+                conflictRules[1] = priority2.isStop() ? ConflictPriority.STOP : ConflictPriority.GIVE_WAY;
             }
         }
         else if (priority1.isPriority() && (priority2.isNone() || priority2.isStop()))
         {
-            conflictRules[0] = ConflictRule.PRIORITY;
-            conflictRules[1] = priority2.isStop() ? ConflictRule.STOP : ConflictRule.GIVE_WAY;
+            conflictRules[0] = ConflictPriority.PRIORITY;
+            conflictRules[1] = priority2.isStop() ? ConflictPriority.STOP : ConflictPriority.GIVE_WAY;
         }
         else if (priority2.isPriority() && (priority1.isNone() || priority1.isStop()))
         {
-            conflictRules[0] = priority1.isStop() ? ConflictRule.STOP : ConflictRule.GIVE_WAY;
-            conflictRules[1] = ConflictRule.PRIORITY;
+            conflictRules[0] = priority1.isStop() ? ConflictPriority.STOP : ConflictPriority.GIVE_WAY;
+            conflictRules[1] = ConflictPriority.PRIORITY;
         }
         else if (priority1.isNone() && priority2.isStop())
         {
-            conflictRules[0] = ConflictRule.PRIORITY;
-            conflictRules[1] = ConflictRule.STOP;
+            conflictRules[0] = ConflictPriority.PRIORITY;
+            conflictRules[1] = ConflictPriority.STOP;
         }
         else if (priority2.isNone() && priority1.isStop())
         {
-            conflictRules[0] = ConflictRule.STOP;
-            conflictRules[1] = ConflictRule.PRIORITY;
+            conflictRules[0] = ConflictPriority.STOP;
+            conflictRules[1] = ConflictPriority.PRIORITY;
         }
         else
         {

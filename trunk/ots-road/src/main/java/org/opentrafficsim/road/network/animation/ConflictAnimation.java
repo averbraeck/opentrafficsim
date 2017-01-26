@@ -52,7 +52,7 @@ public class ConflictAnimation extends AbstractLineAnimation implements Serializ
     {
         Conflict conflict = (Conflict) this.getSource();
         Color fillColor;
-        switch (conflict.getConflictRule())
+        switch (conflict.conflictPriority())
         {
             case SPLIT:
                 fillColor = Color.blue;

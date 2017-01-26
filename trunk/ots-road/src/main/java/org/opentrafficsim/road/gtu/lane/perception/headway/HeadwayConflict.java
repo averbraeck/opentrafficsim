@@ -7,7 +7,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.conflict.ConflictRule;
+import org.opentrafficsim.road.network.lane.conflict.ConflictPriority;
 import org.opentrafficsim.road.network.lane.conflict.ConflictType;
 
 import nl.tudelft.simulation.language.Throw;
@@ -32,7 +32,7 @@ public class HeadwayConflict extends AbstractHeadway
     private final ConflictType conflictType;
 
     /** Conflict rule. */
-    private final ConflictRule conflictRule;
+    private final ConflictPriority conflictRule;
 
     /** Length of the conflict in the conflicting directions. */
     private final Length conflictingLength;
@@ -82,7 +82,7 @@ public class HeadwayConflict extends AbstractHeadway
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public HeadwayConflict(final ConflictType conflictType, final ConflictRule conflictRule, final String id,
+    public HeadwayConflict(final ConflictType conflictType, final ConflictPriority conflictRule, final String id,
             final Length distance, final Length length, final Length conflictingLength,
             final SortedSet<AbstractHeadwayGTU> upstreamConflictingGTUs,
             final SortedSet<AbstractHeadwayGTU> downstreamConflictingGTUs, final Length conflictingVisibility,
@@ -127,7 +127,7 @@ public class HeadwayConflict extends AbstractHeadway
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public HeadwayConflict(final ConflictType conflictType, final ConflictRule conflictRule, final String id,
+    public HeadwayConflict(final ConflictType conflictType, final ConflictPriority conflictRule, final String id,
             final Length distance, final Length length, final Length conflictingLength,
             final SortedSet<AbstractHeadwayGTU> upstreamConflictingGTUs,
             final SortedSet<AbstractHeadwayGTU> downstreamConflictingGTUs, final Length conflictingVisibility,
@@ -177,7 +177,7 @@ public class HeadwayConflict extends AbstractHeadway
      * Returns the conflict rule.
      * @return conflict rule
      */
-    public final ConflictRule getConflictRule()
+    public final ConflictPriority getConflictRule()
     {
         return this.conflictRule;
     }
@@ -188,7 +188,7 @@ public class HeadwayConflict extends AbstractHeadway
      */
     public final boolean isPriority()
     {
-        return this.conflictRule.equals(ConflictRule.PRIORITY);
+        return this.conflictRule.equals(ConflictPriority.PRIORITY);
     }
 
     /**
@@ -197,7 +197,7 @@ public class HeadwayConflict extends AbstractHeadway
      */
     public final boolean isGiveWay()
     {
-        return this.conflictRule.equals(ConflictRule.GIVE_WAY);
+        return this.conflictRule.equals(ConflictPriority.GIVE_WAY);
     }
 
     /**
@@ -206,7 +206,7 @@ public class HeadwayConflict extends AbstractHeadway
      */
     public final boolean isStop()
     {
-        return this.conflictRule.equals(ConflictRule.STOP);
+        return this.conflictRule.equals(ConflictPriority.STOP);
     }
 
     /**
@@ -215,7 +215,7 @@ public class HeadwayConflict extends AbstractHeadway
      */
     public final boolean isAllStop()
     {
-        return this.conflictRule.equals(ConflictRule.ALL_STOP);
+        return this.conflictRule.equals(ConflictPriority.ALL_STOP);
     }
 
     /**
