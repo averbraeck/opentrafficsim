@@ -40,7 +40,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayStopLine;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.conflict.ConflictRule;
+import org.opentrafficsim.road.network.lane.conflict.ConflictPriority;
 import org.opentrafficsim.road.network.lane.conflict.ConflictType;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -238,8 +238,8 @@ public final class ConflictUtil
                     a = Acceleration.min(a, aCF);
                     break;
                 }
-                if (conflict.getConflictRule().equals(ConflictRule.GIVE_WAY)
-                        || conflict.getConflictRule().equals(ConflictRule.STOP))
+                if (conflict.getConflictRule().equals(ConflictPriority.GIVE_WAY)
+                        || conflict.getConflictRule().equals(ConflictPriority.STOP))
                 {
                     prevStarts.add(conflict.getDistance());
                     prevEnds.add(conflict.getDistance().plus(conflict.getLength()));

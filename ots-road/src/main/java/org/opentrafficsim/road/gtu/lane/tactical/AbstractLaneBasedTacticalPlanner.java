@@ -659,6 +659,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         if (true)
         {
             lanes = buildLanePathInfo(gtu, forwardHeadway).getLanes();
+            System.out.println("TEMP remove me");
             try
             {
                 return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, lanes, gtu.getReferencePosition().getPosition(),

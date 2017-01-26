@@ -33,7 +33,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.conflict.Conflict.ConflictEnd;
-import org.opentrafficsim.road.network.lane.conflict.ConflictRule;
+import org.opentrafficsim.road.network.lane.conflict.ConflictPriority;
 import org.opentrafficsim.road.network.lane.conflict.ConflictType;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -143,7 +143,7 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
                 }
                 Conflict otherConflict = conflict.getOtherConflict();
                 ConflictType conflictType = conflict.getConflictType();
-                ConflictRule conflictRule = conflict.getConflictRule();
+                ConflictPriority conflictPriority = conflict.conflictPriority();
                 String id = conflict.getId();
                 Length distance = entry.getDistance();
                 Length length = conflict.getLength();
@@ -312,7 +312,7 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
                 }
 
                 // add conflict to set
-                set.add(new HeadwayConflict(conflictType, conflictRule, id, distance, length, conflictingLength,
+                set.add(new HeadwayConflict(conflictType, conflictPriority, id, distance, length, conflictingLength,
                         upstreamConflictingGTUs, downstreamConflictingGTUs, conflictingVisibility, conflictingSpeedLimit,
                         conflictingLink, stopLine, conflictingStopLine));
             }

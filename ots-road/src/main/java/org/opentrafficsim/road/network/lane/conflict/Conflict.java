@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -76,7 +75,7 @@ public final class Conflict extends AbstractLaneBasedObject
      * @param length length of the conflict along the lane centerline
      * @param direction GTU direction
      * @param geometry geometry of conflict
-     * @param conflictRule conflict rule, i.e. priority, give way, stop or all-stop
+     * @param conflictRule conflict rule, i.e. determines priority, give way, stop or all-stop
      * @param conflictType conflict type, i.e. crossing, merge or split
      * @param simulator the simulator for animation and timed events
      * @param permitted whether the conflict is permitted in traffic light control
@@ -147,6 +146,14 @@ public final class Conflict extends AbstractLaneBasedObject
     }
 
     /**
+     * @return conflictPriority.
+     */
+    public ConflictPriority conflictPriority()
+    {
+        return this.conflictRule.determinePriority(this);
+    }
+
+    /**
      * @return length.
      */
     public Length getLength()
@@ -182,69 +189,38 @@ public final class Conflict extends AbstractLaneBasedObject
     /**
      * Creates a pair of conflicts.
      * @param conflictType conflict type, i.e. crossing, merge or split
+     * @param conflictRule conflict rule
      * @param permitted whether the conflict is permitted in traffic light control
      * @param lane1 lane of conflict 1
      * @param longitudinalPosition1 longitudinal position of conflict 1
      * @param length1 {@code Length} of conflict 1
      * @param direction1 GTU direction of conflict 1
      * @param geometry1 geometry of conflict 1
-     * @param conflictRule1 conflict rule of conflict 1
      * @param gtuType1 gtu type of conflict 1
      * @param lane2 lane of conflict 2
      * @param longitudinalPosition2 longitudinal position of conflict 2
      * @param length2 {@code Length} of conflict 2
      * @param direction2 GTU direction of conflict 2
      * @param geometry2 geometry of conflict 2
-     * @param conflictRule2 conflict rule of conflict 2
      * @param gtuType2 gtu type of conflict 2
      * @param simulator the simulator for animation and timed events
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static void generateConflictPair(final ConflictType conflictType, final boolean permitted, final Lane lane1,
-            final Length longitudinalPosition1, final Length length1, final GTUDirectionality direction1,
-            final OTSLine3D geometry1, final ConflictRule conflictRule1, final GTUType gtuType1, final Lane lane2,
+    public static void generateConflictPair(final ConflictType conflictType, final ConflictRule conflictRule,
+            final boolean permitted, final Lane lane1, final Length longitudinalPosition1, final Length length1,
+            final GTUDirectionality direction1, final OTSLine3D geometry1, final GTUType gtuType1, final Lane lane2,
             final Length longitudinalPosition2, final Length length2, final GTUDirectionality direction2,
-            final OTSLine3D geometry2, final ConflictRule conflictRule2, final GTUType gtuType2,
-            final OTSDEVSSimulatorInterface simulator) throws NetworkException
+            final OTSLine3D geometry2, final GTUType gtuType2, final OTSDEVSSimulatorInterface simulator)
+            throws NetworkException
     {
         // lane, longitudinalPosition, length and geometry are checked in AbstractLaneBasedObject
         Throw.whenNull(conflictType, "Conflict type may not be null.");
-        Throw.whenNull(conflictRule1, "Conflict rule may not be null.");
-        Throw.whenNull(conflictRule2, "Conflict rule may not be null.");
-        if (conflictType.equals(ConflictType.SPLIT))
-        {
-            // Split with split (on split)
-            Throw.when(!conflictRule1.equals(ConflictRule.SPLIT) || !conflictRule2.equals(ConflictRule.SPLIT),
-                    NetworkException.class, "Both conflict rules should be split for conflict type split.");
-        }
-        else
-        {
-            // Priority with give-way/stop
-            boolean check1 = conflictRule1.equals(ConflictRule.PRIORITY) && !conflictRule2.equals(ConflictRule.GIVE_WAY)
-                    && !conflictRule2.equals(ConflictRule.STOP);
-            boolean check2 = conflictRule2.equals(ConflictRule.PRIORITY) && !conflictRule1.equals(ConflictRule.GIVE_WAY)
-                    && !conflictRule1.equals(ConflictRule.STOP);
-            boolean check3 = conflictRule1.equals(ConflictRule.GIVE_WAY) && !conflictRule2.equals(ConflictRule.PRIORITY);
-            boolean check4 = conflictRule2.equals(ConflictRule.GIVE_WAY) && !conflictRule1.equals(ConflictRule.PRIORITY);
-            boolean check5 = conflictRule1.equals(ConflictRule.STOP) && !conflictRule2.equals(ConflictRule.PRIORITY);
-            boolean check6 = conflictRule2.equals(ConflictRule.STOP) && !conflictRule1.equals(ConflictRule.PRIORITY);
-            Throw.when(check1 || check2 || check3 || check4 || check5 || check6, NetworkException.class,
-                    "Conflict rules need to be a combination of 'PRIORITY' and 'GIVE_WAY' or 'STOP', "
-                            + "if any of these types is used.");
-            // All-stop with all-stop
-            boolean check7 = conflictRule1.equals(ConflictRule.ALL_STOP) && !conflictRule2.equals(ConflictRule.ALL_STOP);
-            boolean check8 = conflictRule2.equals(ConflictRule.ALL_STOP) && !conflictRule1.equals(ConflictRule.ALL_STOP);
-            Throw.when(check7 || check8, NetworkException.class,
-                    "Conflict rule 'ALL_STOP' can only be combined with a conflict rule 'ALL_STOP'.");
-            // No split
-            Throw.when(conflictRule1.equals(ConflictRule.SPLIT) || conflictRule2.equals(ConflictRule.SPLIT),
-                    NetworkException.class, "Conflict rule 'SPLIT' may only be used on conflicts of type SPLIT.");
-        }
+
         Object cloneLock = new Object();
-        Conflict conf1 = new Conflict(lane1, longitudinalPosition1, length1, direction1, geometry1, conflictType, conflictRule1,
+        Conflict conf1 = new Conflict(lane1, longitudinalPosition1, length1, direction1, geometry1, conflictType, conflictRule,
                 simulator, gtuType1, permitted, cloneLock);
-        Conflict conf2 = new Conflict(lane2, longitudinalPosition2, length2, direction2, geometry2, conflictType, conflictRule2,
+        Conflict conf2 = new Conflict(lane2, longitudinalPosition2, length2, direction2, geometry2, conflictType, conflictRule,
                 simulator, gtuType2, permitted, cloneLock);
         conf1.otherConflict = conf2;
         conf2.otherConflict = conf1;
