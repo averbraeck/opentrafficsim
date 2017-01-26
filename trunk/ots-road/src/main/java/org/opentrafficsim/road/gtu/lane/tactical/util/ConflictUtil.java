@@ -151,7 +151,7 @@ public final class ConflictUtil
                 a = Acceleration.min(a, followConflictingLeaderOnMergeOrSplit(conflict, behavioralCharacteristics,
                         carFollowingModel, speed, speedLimitInfo));
             }
-            if (conflict.getDistance().lt(Length.ZERO))
+            if (conflict.getDistance().lt0())
             {
                 // ignore conflicts we are on (i.e. negative distance to start of conflict)
                 continue;
@@ -292,7 +292,7 @@ public final class ConflictUtil
         //                             /       /
         // {@formatter:on}
         Length virtualHeadway = conflict.getDistance().plus(c.getOverlapRear());
-        if (virtualHeadway.le(Length.ZERO) && conflict.getDistance().le(Length.ZERO))
+        if (virtualHeadway.le0() && conflict.getDistance().le0())
         {
             // conflict GTU downstream of start of conflict, but upstream of us
             return IGNORE;
@@ -392,7 +392,7 @@ public final class ConflictUtil
             // TODO safety factor?
             if (tteC.getDuration().lt(tteO.getDuration()) && tteO.getDuration().lt(ttcC.getDuration()))
             {
-                if (!conflictingGTU.getSpeed().eq(Speed.ZERO))
+                if (!conflictingGTU.getSpeed().eq0())
                 {
                     // solve parabolic speed profile s = v*t + .5*a*t*t, a =
                     double acc = 2 * (conflict.getDistance().si - speed.si * ttcC.getDuration().si)
@@ -451,13 +451,13 @@ public final class ConflictUtil
                 AnticipationInfo.anticipateMovement(distance, leaders.first().getSpeed(), leaders.first().getAcceleration());
         AbstractHeadwayGTU first = conflict.getUpstreamConflictingGTUs().first();
         boolean conflictGtuCanReachConflict =
-                first.getDistance().lt(behavioralCharacteristics.getParameter(STOP_AREA)) || first.getSpeed().gt(Speed.ZERO);
-        boolean leaderStandsOnConflict = leaders.first().getSpeed().eq(Speed.ZERO) && !leaders.first().isAhead();
+                first.getDistance().lt(behavioralCharacteristics.getParameter(STOP_AREA)) || first.getSpeed().gt0();
+        boolean leaderStandsOnConflict = leaders.first().getSpeed().eq0() && !leaders.first().isAhead();
         // Do not courtesy yield, even if this was the plan, if:
         // 1) Leader leaves conflict passable now
         // 2) Leader stands still on conflict (no point in yielding, conflict is blocked anyway)
         // 3) Conflict vehicle stand still away from conflict (i.e. blocked by something else)
-        if (ttpD.getDuration().eq(Duration.ZERO) || leaderStandsOnConflict || !conflictGtuCanReachConflict)
+        if (ttpD.getDuration().eq0() || leaderStandsOnConflict || !conflictGtuCanReachConflict)
         {
             return false;
         }

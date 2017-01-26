@@ -114,14 +114,14 @@ public class HeadwayDistance implements Headway
     @Override
     public final boolean isAhead()
     {
-        return this.distance.ge(Length.ZERO);
+        return this.distance.ge0();
     }
 
     /** {@inheritDoc} */
     @Override
     public final boolean isBehind()
     {
-        return this.distance.lt(Length.ZERO);
+        return this.distance.lt0();
     }
 
     /** {@inheritDoc} */

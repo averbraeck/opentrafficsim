@@ -737,7 +737,7 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
     private Headway forwardHeadway(final LanePathInfo lpi, final Length maxDistance, final boolean gtu) throws GTUException,
             NetworkException
     {
-        Throw.when(maxDistance.le(Length.ZERO), GTUException.class, "forwardHeadway: maxDistance should be positive");
+        Throw.when(maxDistance.le0(), GTUException.class, "forwardHeadway: maxDistance should be positive");
 
         int ldIndex = 0;
         LaneDirection ld = lpi.getReferenceLaneDirection();
@@ -934,7 +934,7 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
      */
     private Headway backwardHeadway(final Length maxDistance) throws GTUException, NetworkException
     {
-        Throw.when(maxDistance.ge(Length.ZERO), GTUException.class, "backwardHeadway: maxDistance should be negative");
+        Throw.when(maxDistance.ge0(), GTUException.class, "backwardHeadway: maxDistance should be negative");
         Time time = getGtu().getSimulator().getSimulatorTime().getTime();
         double maxDistanceSI = maxDistance.si;
         Headway foundHeadway = new HeadwayDistance(-maxDistanceSI);

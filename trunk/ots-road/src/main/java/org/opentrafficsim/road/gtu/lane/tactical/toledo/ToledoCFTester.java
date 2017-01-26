@@ -48,7 +48,7 @@ public class ToledoCFTester
         Length leader = new Length(300, LengthUnit.METER);
 
         SortedMap<Length, Speed> leaders = new TreeMap<>();
-        while (x.eq(Length.ZERO) || speed.gt(Speed.ZERO))
+        while (x.eq0() || speed.gt0())
         {
             Length s = leader.minus(x);
             leaders.clear();

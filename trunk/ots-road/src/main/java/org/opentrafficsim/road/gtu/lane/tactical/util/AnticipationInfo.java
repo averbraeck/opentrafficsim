@@ -88,14 +88,14 @@ public final class AnticipationInfo implements Serializable
     public static AnticipationInfo anticipateMovementSpeedLimited(final Length distance, final Speed initialSpeed,
             final Acceleration acceleration, final Speed maxSpeed)
     {
-        if (distance.lt(Length.ZERO))
+        if (distance.lt0())
         {
             return new AnticipationInfo(Duration.ZERO, initialSpeed);
         }
         // solve constant speed movement
         if (acceleration.eq(Acceleration.ZERO))
         {
-            if (initialSpeed.gt(Speed.ZERO))
+            if (initialSpeed.gt0())
             {
                 return new AnticipationInfo(distance.divideBy(initialSpeed), initialSpeed);
             }
@@ -138,12 +138,12 @@ public final class AnticipationInfo implements Serializable
             final BehavioralCharacteristics behavioralCharacteristics, final CarFollowingModel carFollowingModel,
             final SpeedLimitInfo speedLimitInfo, final Duration timeStep) throws ParameterException
     {
-        if (distance.lt(Length.ZERO))
+        if (distance.lt0())
         {
             return new AnticipationInfo(Duration.ZERO, initialSpeed);
         }
         Duration out = Duration.ZERO;
-        if (distance.lt(Length.ZERO))
+        if (distance.lt0())
         {
             return new AnticipationInfo(out, initialSpeed);
         }
