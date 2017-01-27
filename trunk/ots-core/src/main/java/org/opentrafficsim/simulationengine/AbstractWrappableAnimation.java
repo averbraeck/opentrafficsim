@@ -28,6 +28,7 @@ import org.opentrafficsim.gui.SimulatorFrame;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -217,6 +218,56 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     public final void toggleAnimationClass(final Class<? extends Locatable> locatableClass)
     {
         this.panel.getAnimationPanel().toggleClass(locatableClass);
+    }
+
+    /**
+     * Add a button for toggling a GIS class on or off.
+     * @param header the name of the group of layers
+     * @param gisMap the GIS map for which the toggles have to be added
+     * @param toolTipText the tool tip text to show when hovering over the button
+     */
+    public final void addToggleGISButtonText(final String header, final GisRenderable2D gisMap, final String toolTipText)
+    {
+        this.panel.addToggleText(" ");
+        this.panel.addToggleText(header);
+        try
+        {
+            for (String layerName : gisMap.getMap().getLayerMap().keySet())
+            {
+                this.panel.addToggleGISButtonText(layerName, layerName, gisMap, toolTipText);
+            }
+        }
+        catch (RemoteException exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+
+    /**
+     * Set a GIS layer to be shown in the animation to true.
+     * @param layerName the name of the GIS-layer that has to be shown.
+     */
+    public final void showGISLayer(final String layerName)
+    {
+        this.panel.showGISLayer(layerName);
+    }
+
+    /**
+     * Set a GIS layer to be hidden in the animation to true.
+     * @param layerName the name of the GIS-layer that has to be hidden.
+     */
+    public final void hideGISLayer(final String layerName)
+    {
+        this.panel.hideGISLayer(layerName);
+    }
+
+    /**
+     * Toggle a GIS layer to be displayed in the animation to its reverse value.
+     * @param layerName the name of the GIS-layer that has to be turned off or vice versa.
+     */
+    public final void toggleGISLayer(final String layerName)
+    {
+        this.panel.toggleGISLayer(layerName);
     }
 
     /**

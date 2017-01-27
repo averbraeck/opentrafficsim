@@ -39,6 +39,7 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.NetworkTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.NodeTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SensorGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;
+import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
@@ -138,6 +139,14 @@ public class A58IMB extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
+    protected void addAnimationToggles()
+    {
+        AnimationToggles.setTextAnimationTogglesStandard(this);
+        this.addToggleGISButtonText(" GIS Layers:", this.model.getGisMap(), "Turn GIS map layer on or off");
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected final Double makeAnimationRectangle()
     {
         return new Rectangle2D.Double(150000, 385000, 5500, 5000);
@@ -175,6 +184,9 @@ public class A58IMB extends AbstractWrappableAnimation
 
         /** the network as created by the AbstractWrappableIMBAnimation. */
         private final OTSNetwork network;
+        
+        /** the GIS map. */
+        private GisRenderable2D gisMap;
 
         /** Connector to the IMB hub. */
         OTSIMBConnector imbConnector;
@@ -254,10 +266,17 @@ public class A58IMB extends AbstractWrappableAnimation
             URL gisURL = URLResource.getResource("/A58/map.xml");
             System.err.println("GIS-map file: " + gisURL.toString());
             CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
-            new GisRenderable2D(this.simulator, gisURL, rdto0);
+            this.gisMap = new GisRenderable2D(this.simulator, gisURL, rdto0);
 //             URL nwbURL = URLResource.getResource("/A58/nwb.xml");
 //             System.err.println("NWB-map file: " + nwbURL.toString());
 //             new GisRenderable2D(this.simulator, nwbURL);
+        }
+        /**
+         * @return gisMap
+         */
+        public final GisRenderable2D getGisMap()
+        {
+            return this.gisMap;
         }
 
         /** {@inheritDoc} */
