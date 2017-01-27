@@ -1014,15 +1014,41 @@ public class OTSLine3D implements Locatable, Serializable
             return 0;
         }
 
-        for (int i = 0; i < this.lengthIndexedLine.length - 2; i++)
+        int lo = 0;
+        int hi = this.lengthIndexedLine.length - 1;
+        while (lo <= hi)
         {
-            if (pos > this.lengthIndexedLine[i] && pos <= this.lengthIndexedLine[i + 1])
+            if (hi == lo)
             {
-                return i;
+                return lo;
+            }
+            int mid = lo + (hi - lo) / 2;
+            if (pos < this.lengthIndexedLine[mid])
+            {
+                hi = mid - 1;
+            }
+            else if (pos > this.lengthIndexedLine[mid + 1])
+            {
+                lo = mid + 1;
+            }
+            else
+            {
+                return mid;
             }
         }
+        throw new OTSGeometryException("Could not find position " + pos + " on line with length indexes: "
+                + this.lengthIndexedLine);
+        
+        
+        // for (int i = 0; i < this.lengthIndexedLine.length - 2; i++)
+        // {
+        // if (pos > this.lengthIndexedLine[i] && pos <= this.lengthIndexedLine[i + 1])
+        // {
+        // return i;
+        // }
+        // }
 
-        return this.lengthIndexedLine.length - 2;
+        // return this.lengthIndexedLine.length - 2;
 
         /*- binary variant
         int lo = 0;
