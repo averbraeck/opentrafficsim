@@ -27,8 +27,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
-public class BusStopAnimation extends AbstractLineAnimation implements Serializable
+public class BusStopAnimation extends AbstractLineAnimation<BusStop> implements Serializable
 {
 
     /** */

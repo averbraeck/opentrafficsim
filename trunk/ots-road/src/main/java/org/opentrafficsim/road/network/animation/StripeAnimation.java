@@ -23,7 +23,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.linearref.LengthIndexedLine;
 import com.vividsolutions.jts.operation.buffer.BufferParameters;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 /**
@@ -36,7 +35,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class StripeAnimation extends Renderable2D implements ClonableRenderable2DInterface, Serializable
+public class StripeAnimation extends Renderable2D<Stripe> implements ClonableRenderable2DInterface<Stripe>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20141017L;
@@ -129,7 +128,7 @@ public class StripeAnimation extends Renderable2D implements ClonableRenderable2
                         .buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
                 Coordinate[] rightLine = centerLine.offsetLine(-0.2).getLineString()
                         .buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
-                ArrayList<OTSPoint3D> result = new ArrayList<OTSPoint3D>(leftLine.length + rightLine.length);
+                ArrayList<OTSPoint3D> result = new ArrayList<>(leftLine.length + rightLine.length);
                 for (int i = 0; i < leftLine.length; i++)
                 {
                     result.add(new OTSPoint3D(leftLine[i]));
@@ -177,7 +176,7 @@ public class StripeAnimation extends Renderable2D implements ClonableRenderable2
             }
 
             case SOLID:// | - Draw single solid line. This (regretfully) involves copying everything twice...
-                return new ArrayList<OTSPoint3D>(Arrays.asList(stripe.getContour().getPoints()));
+                return new ArrayList<>(Arrays.asList(stripe.getContour().getPoints()));
 
             default:
                 throw new NamingException("Unsupported stripe type: " + stripeType);
@@ -205,7 +204,7 @@ public class StripeAnimation extends Renderable2D implements ClonableRenderable2
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        PaintPolygons.paintMultiPolygon(graphics, Color.WHITE, ((Stripe) getSource()).getLocation(), this.line, true);
+        PaintPolygons.paintMultiPolygon(graphics, Color.WHITE, getSource().getLocation(), this.line, true);
     }
 
     /**
@@ -236,12 +235,12 @@ public class StripeAnimation extends Renderable2D implements ClonableRenderable2
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+    public ClonableRenderable2DInterface<Stripe> clone(final Stripe newSource, final OTSSimulatorInterface newSimulator)
             throws NamingException, RemoteException
     {
         try
         {
-            return new StripeAnimation((Stripe) newSource, newSimulator, this.type);
+            return new StripeAnimation(newSource, newSimulator, this.type);
         }
         catch (OTSGeometryException exception)
         {

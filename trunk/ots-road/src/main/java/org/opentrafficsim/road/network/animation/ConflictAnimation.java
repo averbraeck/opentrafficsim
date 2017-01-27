@@ -27,7 +27,7 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ConflictAnimation extends AbstractLineAnimation implements Serializable
+public class ConflictAnimation extends AbstractLineAnimation<Conflict> implements Serializable
 {
     // TODO should ConflictAnimation implement the ClonableRenderable2DInterface?
 
@@ -50,7 +50,7 @@ public class ConflictAnimation extends AbstractLineAnimation implements Serializ
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        Conflict conflict = (Conflict) this.getSource();
+        Conflict conflict = this.getSource();
         Color fillColor;
         switch (conflict.conflictPriority())
         {

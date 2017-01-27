@@ -30,7 +30,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrafficLightSensorAnimation extends Renderable2D implements Serializable
+public class TrafficLightSensorAnimation extends Renderable2D<TrafficLightSensor> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150130L;

@@ -32,7 +32,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class LaneAnimation extends Renderable2D implements ClonableRenderable2DInterface, Serializable
+public class LaneAnimation extends Renderable2D<Lane> implements ClonableRenderable2DInterface<Lane>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20141017L;
@@ -77,7 +77,7 @@ public class LaneAnimation extends Renderable2D implements ClonableRenderable2DI
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        Lane lane = (Lane) getSource();
+        Lane lane = getSource();
         if (this.color != null)
         {
             PaintPolygons.paintMultiPolygon(graphics, this.color, lane.getLocation(), lane.getContour(), true);
@@ -108,11 +108,11 @@ public class LaneAnimation extends Renderable2D implements ClonableRenderable2DI
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+    public ClonableRenderable2DInterface<Lane> clone(final Lane newSource, final OTSSimulatorInterface newSimulator)
             throws NamingException, RemoteException
     {
         // the constructor also constructs the corresponding Text object
-        return new LaneAnimation((Lane) newSource, newSimulator, this.color, this.drawCenterLine);
+        return new LaneAnimation(newSource, newSimulator, this.color, this.drawCenterLine);
     }
 
     /** {@inheritDoc} */

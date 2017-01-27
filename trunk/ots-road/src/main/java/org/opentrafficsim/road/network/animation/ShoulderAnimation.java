@@ -23,7 +23,7 @@ import org.opentrafficsim.road.network.lane.Shoulder;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class ShoulderAnimation extends Renderable2D implements Serializable
+public class ShoulderAnimation extends Renderable2D<Shoulder> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20141017L;
@@ -49,7 +49,7 @@ public class ShoulderAnimation extends Renderable2D implements Serializable
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        Shoulder shoulder = (Shoulder) getSource();
+        Shoulder shoulder = getSource();
         PaintPolygons.paintMultiPolygon(graphics, this.color, shoulder.getLocation(), shoulder.getContour(), true);
     }
 

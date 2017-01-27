@@ -23,8 +23,9 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @param <T> the LaneBasedObject class of the source that indicates the location of the Renderable on the screen
  */
-public abstract class AbstractLineAnimation extends Renderable2D
+public abstract class AbstractLineAnimation<T extends LaneBasedObject> extends Renderable2D<T>
 {
 
     /** Rectangle to color. */
@@ -42,7 +43,7 @@ public abstract class AbstractLineAnimation extends Renderable2D
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public AbstractLineAnimation(final LaneBasedObject source, final OTSSimulatorInterface simulator, final double length,
+    public AbstractLineAnimation(final T source, final OTSSimulatorInterface simulator, final double length,
             final Length width) throws NamingException, RemoteException
     {
         super(source, simulator);
