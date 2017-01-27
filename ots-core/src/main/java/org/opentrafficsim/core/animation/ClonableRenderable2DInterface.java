@@ -20,8 +20,9 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @param <T> the Locatable class of the source that indicates the location of the Renderable on the screen
  */
-public interface ClonableRenderable2DInterface extends Renderable2DInterface
+public interface ClonableRenderable2DInterface<T extends Locatable> extends Renderable2DInterface<T>
 {
     /**
      * Clone the animation object and register it for the new source on the new simulation.
@@ -31,7 +32,7 @@ public interface ClonableRenderable2DInterface extends Renderable2DInterface
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException - when remote context cannot be found
      */
-    ClonableRenderable2DInterface clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+    ClonableRenderable2DInterface<T> clone(T newSource, OTSSimulatorInterface newSimulator)
             throws NamingException, RemoteException;
 
 }
