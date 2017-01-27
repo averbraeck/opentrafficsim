@@ -459,6 +459,12 @@ final class Links
         CrossSectionLink link = new CrossSectionLink(parser.network, linkTag.name, linkTag.nodeStartTag.node,
                 linkTag.nodeEndTag.node, LinkType.ALL, designLine, simulator,
                 new HashMap<GTUType, LongitudinalDirectionality>(), linkTag.laneKeepingPolicy);
+        
+        if (linkTag.priority != null)
+        {
+            link.setPriority(linkTag.priority);
+        }
+        
         try
         {
             new LinkAnimation(link, simulator, 0.5f);

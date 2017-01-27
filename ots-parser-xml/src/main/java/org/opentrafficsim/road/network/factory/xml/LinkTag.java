@@ -14,6 +14,7 @@ import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.opentrafficsim.road.network.factory.xml.units.LaneAttributes;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.w3c.dom.NamedNodeMap;
@@ -122,6 +123,9 @@ final class LinkTag implements Serializable
     /** The lane keeping policy, i.e., keep left, keep right or keep lane. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     LaneKeepingPolicy laneKeepingPolicy = null;
+    
+    /** The priority for conflicts. */
+    Priority priority = null;
 
     /**
      * Parse the LINK tags.
@@ -177,6 +181,9 @@ final class LinkTag implements Serializable
             if (attributes.getNamedItem("ROTATIONEND") != null)
                 linkTag.rotationEnd = AngleUnits.parseAngle(attributes.getNamedItem("ROTATIONEND").getNodeValue());
 
+            if (attributes.getNamedItem("PRIORITY") != null)
+                linkTag.priority = LaneAttributes.parsePriority(attributes.getNamedItem("PRIORITY").getNodeValue());
+            
             Node lkp = attributes.getNamedItem("LANEKEEPING");
             if (lkp != null)
                 linkTag.laneKeepingPolicy = LaneAttributes.parseLaneKeepingPolicy(lkp.getNodeValue().trim());

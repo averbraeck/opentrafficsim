@@ -133,6 +133,12 @@
       <xsd:pattern value="KEEPLEFT|KEEPRIGHT|KEEPLANE"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
+  
+  <xsd:simpleType name="PRIORITYTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="PRIORITY|NONE|STOP|ALL_STOP|BUS_STOP"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
 
   <xsd:simpleType name="OVERTAKINGTYPE">
     <xsd:restriction base="xsd:string">

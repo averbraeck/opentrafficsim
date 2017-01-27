@@ -24,6 +24,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.immutablecollections.ImmutableMap;
+import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -438,9 +439,22 @@ public final class ConflictBuilder
         OTSLine3D geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
         OTSLine3D geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
 
+        // Determine conflict rule
+        ConflictRule conflictRule;
+        if (lane1.getParentLink().getPriority().isBusStop() || lane2.getParentLink().getPriority().isBusStop())
+        {
+            Throw.when(lane1.getParentLink().getPriority().isBusStop() && lane2.getParentLink().getPriority().isBusStop(),
+                    IllegalArgumentException.class, "Merge conflict between two links with bus stop priority not supported.");
+            conflictRule = new BusStopConflictRule();
+        }
+        else
+        {
+            conflictRule = new DefaultConflictRule();
+        }
+
         // Make conflict
-        Conflict.generateConflictPair(ConflictType.MERGE, new DefaultConflictRule(), permitted, lane1, longitudinalPosition1,
-                length1, dir1, geometry1, gtuType, lane2, longitudinalPosition2, length2, dir2, geometry2, gtuType, simulator);
+        Conflict.generateConflictPair(ConflictType.MERGE, conflictRule, permitted, lane1, longitudinalPosition1, length1, dir1,
+                geometry1, gtuType, lane2, longitudinalPosition2, length2, dir2, geometry2, gtuType, simulator);
     }
 
     /**
@@ -478,8 +492,8 @@ public final class ConflictBuilder
         OTSLine3D geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
 
         // Make conflict
-        Conflict.generateConflictPair(ConflictType.SPLIT, new DefaultConflictRule(), false, lane1, longitudinalPosition1,
-                length1, dir1, geometry1, gtuType, lane2, longitudinalPosition2, length2, dir2, geometry2, gtuType, simulator);
+        Conflict.generateConflictPair(ConflictType.SPLIT, new SplitConflictRule(), false, lane1, longitudinalPosition1, length1,
+                dir1, geometry1, gtuType, lane2, longitudinalPosition2, length2, dir2, geometry2, gtuType, simulator);
     }
 
     /**

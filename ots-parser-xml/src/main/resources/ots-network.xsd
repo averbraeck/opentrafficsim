@@ -165,6 +165,7 @@
       <xsd:attribute name="ROTATIONSTART" type="ANGLETYPE" use="optional" />
       <xsd:attribute name="ROTATIONEND" type="ANGLETYPE" use="optional" />
       <xsd:attribute name="LANEKEEPING" type="LANEKEEPINGTYPE" use="optional" />
+      <xsd:attribute name="PRIORITY" type="PRIORITYTYPE" use="optional" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
