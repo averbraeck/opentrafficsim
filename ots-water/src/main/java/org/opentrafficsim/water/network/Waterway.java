@@ -59,7 +59,7 @@ public class Waterway extends OTSLink
      * @param endNode end node (directional)
      * @param linkType Link type to indicate compatibility with GTU types
      * @param designLine the OTSLine3D design line of the Link
-     * @param simulator the simujlator to schedule events on
+     * @param simulator the simulator to schedule events on
      * @param directionality to indicate the general direction of the waterway (FORWARD = in the direction of the design line;
      *            BACKWARD is in the opposite direction; BOTH is a waterway that can be used in both directions; NONE is a
      *            waterway that cannot be used for sailing.

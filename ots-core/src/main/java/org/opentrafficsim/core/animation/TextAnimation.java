@@ -271,6 +271,71 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
+     * @return Returns the flip.
+     */
+    public final boolean isFlip()
+    {
+        return this.animationImpl.isFlip();
+    }
+
+    /**
+     * @param flip The flip to set.
+     */
+    public final void setFlip(final boolean flip)
+    {
+        this.animationImpl.setFlip(flip);
+    }
+
+    /**
+     * @return Returns the rotate.
+     */
+    public final boolean isRotate()
+    {
+        return this.animationImpl.isRotate();
+    }
+
+    /**
+     * @param rotate The rotate to set.
+     */
+    public final void setRotate(final boolean rotate)
+    {
+        this.animationImpl.setRotate(rotate);
+
+    }
+
+    /**
+     * @return Returns the scale.
+     */
+    public final boolean isScale()
+    {
+        return this.animationImpl.isScale();
+    }
+
+    /**
+     * @param scale The scale to set.
+     */
+    public final void setScale(final boolean scale)
+    {
+        this.animationImpl.setScale(scale);
+    }
+
+    /**
+     * @return Returns the translate.
+     */
+    public final boolean isTranslate()
+    {
+        return this.animationImpl.isTranslate();
+    }
+
+    /**
+     * @param translate The translate to set.
+     */
+    public final void setTranslate(final boolean translate)
+    {
+        this.animationImpl.setTranslate(translate);
+    }
+
+    /**
      * The implementation of the text animation. Cloning will be taken care of by the overarching TextAnimation-derived class.
      * <p>
      * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.

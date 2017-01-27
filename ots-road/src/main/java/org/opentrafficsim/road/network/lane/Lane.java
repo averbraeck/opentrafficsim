@@ -1552,6 +1552,7 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         CrossSectionLink link = getParentLink();

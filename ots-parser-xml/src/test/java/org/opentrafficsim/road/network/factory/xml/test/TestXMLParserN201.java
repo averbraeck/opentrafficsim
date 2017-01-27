@@ -49,6 +49,9 @@ public class TestXMLParserN201 extends AbstractWrappableAnimation
 {
     /** */
     private static final long serialVersionUID = 1L;
+    
+    /** */
+    private TestXMLModelN201 model;
 
     /**
      * Main program.
@@ -102,7 +105,8 @@ public class TestXMLParserN201 extends AbstractWrappableAnimation
     @Override
     protected final OTSModelInterface makeModel(final GTUColorer colorer)
     {
-        return new TestXMLModelN201();
+        this.model = new TestXMLModelN201();
+        return this.model;
     }
 
     /** {@inheritDoc} */
@@ -110,6 +114,7 @@ public class TestXMLParserN201 extends AbstractWrappableAnimation
     protected void addAnimationToggles()
     {
         AnimationToggles.setTextAnimationTogglesStandard(this);
+        this.addToggleGISButtonText(" GIS Layers:", this.model.getGisMap(), "Turn GIS map layer on or off");
     }
 
     /** {@inheritDoc} */
@@ -148,6 +153,9 @@ public class TestXMLParserN201 extends AbstractWrappableAnimation
 
         /** the network. */
         private OTSNetwork network;
+        
+        /** the GIS map. */
+        private GisRenderable2D gisMap;
 
         /** {@inheritDoc} */
         @Override
@@ -170,7 +178,15 @@ public class TestXMLParserN201 extends AbstractWrappableAnimation
             URL gisURL = URLResource.getResource("/N201/map.xml");
             System.err.println("GIS-map file: " + gisURL.toString());
             CoordinateTransform rdto0 = new CoordinateTransformWGS84toRDNew(0, 0);
-            new GisRenderable2D(this.simulator, gisURL, rdto0);
+            this.gisMap = new GisRenderable2D(this.simulator, gisURL, rdto0);
+        }
+
+        /**
+         * @return gisMap
+         */
+        public final GisRenderable2D getGisMap()
+        {
+            return this.gisMap;
         }
 
         /** {@inheritDoc} */

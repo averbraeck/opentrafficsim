@@ -40,6 +40,7 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.SensorGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.StatisticsGTULaneTransceiver;
 import org.opentrafficsim.kpi.sampling.Query;
+import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
@@ -138,6 +139,14 @@ public class N201IMB extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
+    protected void addAnimationToggles()
+    {
+        AnimationToggles.setTextAnimationTogglesStandard(this);
+        this.addToggleGISButtonText(" GIS Layers:", this.model.getGisMap(), "Turn GIS map layer on or off");
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected final Double makeAnimationRectangle()
     {
         return new Rectangle2D.Double(103000, 478000, 5500, 5000);
@@ -178,6 +187,9 @@ public class N201IMB extends AbstractWrappableAnimation
 
         /** Connector to the IMB hub. */
         OTSIMBConnector imbConnector;
+        
+        /** the GIS map. */
+        private GisRenderable2D gisMap;
 
         /**
          * @param modelProperties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
@@ -252,7 +264,15 @@ public class N201IMB extends AbstractWrappableAnimation
             URL gisURL = URLResource.getResource("/N201/map.xml");
             System.err.println("GIS-map file: " + gisURL.toString());
             CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
-            new GisRenderable2D(this.simulator, gisURL, rdto0);
+            this.gisMap = new GisRenderable2D(this.simulator, gisURL, rdto0);
+        }
+
+        /**
+         * @return gisMap
+         */
+        public final GisRenderable2D getGisMap()
+        {
+            return this.gisMap;
         }
 
         /** {@inheritDoc} */

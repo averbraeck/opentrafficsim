@@ -29,8 +29,10 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
 
+import nl.javel.gisbeans.map.MapInterface;
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
+import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
 import nl.tudelft.simulation.language.io.URLResource;
@@ -62,6 +64,12 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
 
     /** Map of toggle names to toggle animation classes. */
     private Map<String, Class<? extends Locatable>> toggleLocatableMap = new HashMap<>();
+
+    /** Set of GIS layer names to toggle GIS layers . */
+    private Map<String, MapInterface> toggleGISMap = new HashMap<>();
+
+    /** Set of GIS layer names to toggle buttons. */
+    private Map<String, JToggleButton> toggleGISButtons = new HashMap<>();
 
     /** The switchableGTUColorer used to color the GTUs. */
     private GTUColorer gtuColorer = null;
@@ -261,6 +269,122 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         this.toggleLocatableMap.put(name, locatableClass);
     }
 
+    /**
+     * Add a text to explain animatable classes.
+     * @param text the text to show
+     */
+    public final void addToggleText(final String text)
+    {
+        JPanel textBox = new JPanel();
+        textBox.setLayout(new BoxLayout(textBox, BoxLayout.X_AXIS));
+        textBox.add(new JLabel(text));
+        this.togglePanel.add(textBox);
+        textBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+    }
+
+    /**
+     * Add a button to toggle a GIS Layer on or off.
+     * @param layerName the name of the layer
+     * @param displayName the name to display next to the tick box
+     * @param gisMap the map
+     * @param toolTipText the tool tip text
+     */
+    public final void addToggleGISButtonText(final String layerName, final String displayName, final GisRenderable2D gisMap,
+            final String toolTipText)
+    {
+        JToggleButton button;
+        button = new JCheckBox(displayName);
+        button.setName(layerName);
+        button.setEnabled(true);
+        button.setSelected(true);
+        button.setActionCommand(layerName);
+        button.setToolTipText(toolTipText);
+        button.addActionListener(this);
+
+        JPanel toggleBox = new JPanel();
+        toggleBox.setLayout(new BoxLayout(toggleBox, BoxLayout.X_AXIS));
+        toggleBox.add(button);
+        this.togglePanel.add(toggleBox);
+        toggleBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        this.toggleGISMap.put(layerName, gisMap.getMap());
+        this.toggleGISButtons.put(layerName, button);
+    }
+
+    /**
+     * Set a GIS layer to be shown in the animation to true.
+     * @param layerName the name of the GIS-layer that has to be shown.
+     */
+    public final void showGISLayer(final String layerName)
+    {
+        MapInterface gisMap = this.toggleGISMap.get(layerName);
+        if (gisMap != null)
+        {
+            try
+            {
+                gisMap.showLayer(layerName);
+                this.toggleGISButtons.get(layerName).setSelected(true);
+                this.animationPanel.repaint();
+            }
+            catch (RemoteException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Set a GIS layer to be hidden in the animation to true.
+     * @param layerName the name of the GIS-layer that has to be hidden.
+     */
+    public final void hideGISLayer(final String layerName)
+    {
+        MapInterface gisMap = this.toggleGISMap.get(layerName);
+        if (gisMap != null)
+        {
+            try
+            {
+                gisMap.hideLayer(layerName);
+                this.toggleGISButtons.get(layerName).setSelected(false);
+                this.animationPanel.repaint();
+            }
+            catch (RemoteException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Toggle a GIS layer to be displayed in the animation to its reverse value.
+     * @param layerName the name of the GIS-layer that has to be turned off or vice versa.
+     */
+    public final void toggleGISLayer(final String layerName)
+    {
+        MapInterface gisMap = this.toggleGISMap.get(layerName);
+        if (gisMap != null)
+        {
+            try
+            {
+                if (gisMap.getVisibleLayers().contains(gisMap.getLayerMap().get(layerName)))
+                {
+                    gisMap.hideLayer(layerName);
+                    this.toggleGISButtons.get(layerName).setSelected(false);
+                }
+                else
+                {
+                    gisMap.showLayer(layerName);
+                    this.toggleGISButtons.get(layerName).setSelected(true);
+                }
+                this.animationPanel.repaint();
+            }
+            catch (RemoteException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
     public final void actionPerformed(final ActionEvent actionEvent)
@@ -285,6 +409,12 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
             {
                 Class<? extends Locatable> locatableClass = this.toggleLocatableMap.get(actionCommand);
                 this.animationPanel.toggleClass(locatableClass);
+                this.togglePanel.repaint();
+            }
+
+            if (this.toggleGISMap.containsKey(actionCommand))
+            {
+                this.toggleGISLayer(actionCommand);
                 this.togglePanel.repaint();
             }
         }
