@@ -110,10 +110,6 @@ public class TurboRoundaboutDemo extends AbstractWrappableAnimation
                 this.network = nlp.build(url);
 
                 // add conflicts
-                ((CrossSectionLink) this.network.getLink("EBNA")).setPriority(Priority.PRIORITY);
-                ((CrossSectionLink) this.network.getLink("NBWA")).setPriority(Priority.PRIORITY);
-                ((CrossSectionLink) this.network.getLink("WBSA")).setPriority(Priority.PRIORITY);
-                ((CrossSectionLink) this.network.getLink("SBEA")).setPriority(Priority.PRIORITY);
                 ConflictBuilder.buildConflicts(this.network, VEHICLE, this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
 

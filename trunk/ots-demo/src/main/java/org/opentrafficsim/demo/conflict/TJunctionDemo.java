@@ -108,10 +108,6 @@ public class TJunctionDemo extends AbstractWrappableAnimation
                 this.network = nlp.build(url);
 
                 // add conflicts
-                ((CrossSectionLink) this.network.getLink("ECSC")).setPriority(Priority.PRIORITY);
-                ((CrossSectionLink) this.network.getLink("ECWC")).setPriority(Priority.PRIORITY);
-                ((CrossSectionLink) this.network.getLink("WCSC")).setPriority(Priority.PRIORITY);
-                ((CrossSectionLink) this.network.getLink("WCEC")).setPriority(Priority.PRIORITY);
                 // ((CrossSectionLink) this.network.getLink("SCEC")).setPriority(Priority.STOP);
                 // ((CrossSectionLink) this.network.getLink("SCWC")).setPriority(Priority.STOP);
                 ConflictBuilder.buildConflicts(this.network, VEHICLE, this.simulator,

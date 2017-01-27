@@ -12,8 +12,9 @@ import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
- * Default determination of priority based on link priority, or right-hand traffic. Note that this class is statefull as the
- * priorities are cached. So eacht conflict pair should receive a separate {@code DefaultConflictRule}.
+ * Default determination of priority based on link priority, or right-hand traffic. Note that this class is stateful as the
+ * priorities are cached. So each conflict pair should receive a separate {@code DefaultConflictRule}. This rule is only for use
+ * on merge and crossing conflicts. For split conflicts there is a separate rule {@code SplitConflictRule}.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -95,15 +96,12 @@ public class DefaultConflictRule implements ConflictRule
     private static ConflictPriority[] getConflictRules(final Lane lane1, final Length longitudinalPosition1, final Lane lane2,
             final Length longitudinalPosition2, final ConflictType conflictType)
     {
+        Throw.when(conflictType.equals(ConflictType.SPLIT), UnsupportedOperationException.class,
+                "DefaultConflictRule is not for use on a split conflict. Use SplitConflictRule instead.");
         ConflictPriority[] conflictRules = new ConflictPriority[2];
         Priority priority1 = lane1.getParentLink().getPriority();
         Priority priority2 = lane2.getParentLink().getPriority();
-        if (conflictType.equals(ConflictType.SPLIT))
-        {
-            conflictRules[0] = ConflictPriority.SPLIT;
-            conflictRules[1] = ConflictPriority.SPLIT;
-        }
-        else if (priority1.isAllStop() && priority2.isAllStop())
+        if (priority1.isAllStop() && priority2.isAllStop())
         {
             conflictRules[0] = ConflictPriority.ALL_STOP;
             conflictRules[1] = ConflictPriority.ALL_STOP;

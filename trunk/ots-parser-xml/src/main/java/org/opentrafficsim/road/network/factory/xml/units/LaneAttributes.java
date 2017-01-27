@@ -10,6 +10,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 
@@ -196,6 +197,23 @@ public final class LaneAttributes
             parser.gtuTypes.put(typeName, gtuType);
         }
         return parser.gtuTypes.get(typeName);
+    }
+    
+    /**
+     * @param priority the priority string
+     * @return the priority
+     * @throws NetworkException in case of unknown priority
+     */
+    public static Priority parsePriority(final String priority) throws NetworkException
+    {
+        try
+        {
+            return Priority.valueOf(priority);
+        }
+        catch (IllegalArgumentException exception)
+        {
+            throw new NetworkException("Unknown priority string: " + priority, exception);
+        }
     }
 
 }
