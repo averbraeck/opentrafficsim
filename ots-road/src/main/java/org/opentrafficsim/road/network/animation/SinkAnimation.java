@@ -25,7 +25,7 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SinkAnimation extends AbstractLineAnimation implements Serializable
+public class SinkAnimation extends AbstractLineAnimation<SinkSensor> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150130L;

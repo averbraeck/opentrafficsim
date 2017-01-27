@@ -30,7 +30,8 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SensorAnimation extends AbstractLineAnimation implements ClonableRenderable2DInterface, Serializable
+public class SensorAnimation extends AbstractLineAnimation<SingleSensor>
+        implements ClonableRenderable2DInterface<SingleSensor>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150130L;
@@ -91,11 +92,11 @@ public class SensorAnimation extends AbstractLineAnimation implements ClonableRe
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
-            throws NamingException, RemoteException
+    public ClonableRenderable2DInterface<SingleSensor> clone(final SingleSensor newSource,
+            final OTSSimulatorInterface newSimulator) throws NamingException, RemoteException
     {
         // the constructor also constructs the corresponding Text object
-        return new SensorAnimation((SingleSensor) newSource, this.sensorPosition, newSimulator, this.color);
+        return new SensorAnimation(newSource, this.sensorPosition, newSimulator, this.color);
     }
 
     /** {@inheritDoc} */
