@@ -698,7 +698,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
 
             // Object[] arguments = new Object[1];
             // arguments[0] = lane;
-            // this.simulator.scheduleEventAbs(new Time(0.0, SECOND), this, this, "generateCar", arguments);
+            // this.simulator.scheduleEventAbs(Time.ZERO, this, this, "generateCar", arguments);
         }
         return lanes;
     }
@@ -741,6 +741,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         LaneBasedGTUGenerator.RoomChecker roomChecker = new CanPlaceDemoCode();
         return new LaneBasedGTUGenerator(lane.getId(), new Generator<Duration>()
         {
+            @Override
             public Duration draw()
             {
                 return new Duration(XMLNetworkModel.this.headwayGenerator.draw(), TimeUnit.SECOND);
@@ -796,18 +797,21 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     {
         return new LaneBasedTemplateGTUType(this.gtuType, this.idGenerator, new Generator<Length>()
         {
+            @Override
             public Length draw()
             {
                 return lengthDistribution.draw();
             }
         }, new Generator<Length>()
         {
+            @Override
             public Length draw()
             {
                 return widthDistribution.draw();
             }
         }, new Generator<Speed>()
         {
+            @Override
             public Speed draw()
             {
                 return maximumSpeedDistribution.draw();
@@ -832,11 +836,12 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                 }*/
                 strategicalPlannerFactory, this.routeGenerator, initialPositions, new Generator<Speed>()
                 {
+                    @Override
                     public Speed draw()
                     {
                         return initialSpeedDistribution.draw();
                     }
-                }, (OTSNetwork) this.network);
+                }, this.network);
 
     }
 
@@ -892,10 +897,10 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         // LaneChangeModel lcm = new FixedLaneChangeModel(null);
         BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
         LaneBasedIndividualGTU block = new LaneBasedIndividualGTU("999999", this.gtuType, new Length(1, METER),
-                lane.getWidth(1), new Speed(0.0, KM_PER_HOUR), this.simulator, (OTSNetwork) this.network);
+                lane.getWidth(1), Speed.ZERO, this.simulator, (OTSNetwork) this.network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
                 new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, block), block);
-        block.initWithAnimation(strategicalPlanner, initialPositions, new Speed(0.0, KM_PER_HOUR), DefaultCarAnimation.class,
+        block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
                 this.gtuColorer);
         return lane;
     }

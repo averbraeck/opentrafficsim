@@ -70,7 +70,7 @@ public final class SpeedLimitUtil
             speedLimitTypes =
                 new SpeedLimitTypeSpeedLegal[] {SpeedLimitTypes.MAX_LEGAL_VEHICLE_SPEED, SpeedLimitTypes.ROAD_CLASS};
         }
-        Speed result = new Speed(Double.POSITIVE_INFINITY, SpeedUnit.SI);
+        Speed result = Speed.POSITIVE_INFINITY;
         for (SpeedLimitTypeSpeedLegal lsl : speedLimitTypes)
         {
             if (speedLimitInfo.containsType(lsl))

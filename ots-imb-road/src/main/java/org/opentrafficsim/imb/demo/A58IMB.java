@@ -88,7 +88,7 @@ public class A58IMB extends AbstractWrappableAnimation
                     List<Property<?>> propertyList = new ArrayList<>();
                     propertyList.add(OTSIMBConnector.standardIMBProperties(0, "vps17642.public.cloudvps.com"));
                     // 1 hour simulation run for testing
-                    a58Model.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                    a58Model.buildAnimator(Time.ZERO, Duration.ZERO,
                             new Duration(10.0, TimeUnit.HOUR), propertyList, null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)

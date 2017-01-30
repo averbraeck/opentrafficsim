@@ -59,7 +59,7 @@ public class TestLaneDirections extends AbstractWrappableAnimation
                 {
                     TestLaneDirections xmlModel = new TestLaneDirections();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                    xmlModel.buildAnimator(Time.ZERO, Duration.ZERO,
                             new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)

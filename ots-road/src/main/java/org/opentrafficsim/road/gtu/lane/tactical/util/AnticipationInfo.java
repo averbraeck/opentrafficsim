@@ -74,7 +74,7 @@ public final class AnticipationInfo implements Serializable
             final Acceleration acceleration)
     {
         return anticipateMovementSpeedLimited(distance, initialSpeed, acceleration,
-                new Speed(Double.POSITIVE_INFINITY, SpeedUnit.SI));
+                Speed.POSITIVE_INFINITY);
     }
 
     /**

@@ -118,7 +118,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                 {
                     TestOpenDriveParserNoRTINew xmlModel = new TestOpenDriveParserNoRTINew();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                    xmlModel.buildAnimator(Time.ZERO, Duration.ZERO,
                             new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
@@ -707,7 +707,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
             LaneBasedIndividualGTU car = new LaneBasedIndividualGTU("" + (++this.lastId), this.carType, carLength,
                     this.widthDist.draw(), this.maxSpeedDist.draw(), this.simulator, network);
             car.init(laneBasedStrategicalPlannerFactory.create(car, route), lanepositionSet,
-                    new Speed(0.0, SpeedUnit.METER_PER_SECOND));
+                    Speed.ZERO);
             this.rtiCars.add(car);
         }
 

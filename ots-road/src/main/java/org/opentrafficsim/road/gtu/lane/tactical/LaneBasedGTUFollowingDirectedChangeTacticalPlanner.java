@@ -294,7 +294,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                             LateralDirectionality.LEFT, sameLaneTraffic, simplePerception.getNeighboringHeadwaysLeft(),
                             behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD), simplePerception.getSpeedLimit(),
                             // changes 1.0 to 0.0, no bias to the left: changed 0.5 to 0.1 (threshold from MOBIL model)
-                            new Acceleration(0.0, AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI),
+                            Acceleration.ZERO, new Acceleration(0.5, AccelerationUnit.SI),
                             new Duration(0.5, TimeUnit.SECOND));
                     if (dlms.getLaneChange() != null)
                     {
@@ -341,7 +341,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                             LateralDirectionality.RIGHT, sameLaneTraffic, simplePerception.getNeighboringHeadwaysRight(),
                             behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD), simplePerception.getSpeedLimit(),
                             // 1.0 = bias?
-                            new Acceleration(0.0, AccelerationUnit.SI), new Acceleration(0.1, AccelerationUnit.SI),
+                            Acceleration.ZERO, new Acceleration(0.1, AccelerationUnit.SI),
                             new Duration(0.5, TimeUnit.SECOND));
                     if (dlms.getLaneChange() != null)
                     {

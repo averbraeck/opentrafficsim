@@ -126,7 +126,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 try
                 {
                     FundamentalDiagramsLane fundamentalDiagramsLane = new FundamentalDiagramsLane();
-                    fundamentalDiagramsLane.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND),
+                    fundamentalDiagramsLane.buildAnimator(Time.ZERO, Duration.ZERO,
                             new Duration(3600.0, SECOND), fundamentalDiagramsLane.getProperties(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
@@ -379,7 +379,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
             try
             {
                 // Schedule creation of the first car (this will re-schedule itself one headway later, etc.).
-                this.simulator.scheduleEventAbs(new Time(0.0, SECOND), this, this, "generateCar", null);
+                this.simulator.scheduleEventAbs(Time.ZERO, this, this, "generateCar", null);
                 // Create a block at t = 5 minutes
                 this.simulator.scheduleEventAbs(new Time(1000, SECOND), this, this, "createBlock", null);
                 // Remove the block at t = 7 minutes
@@ -410,10 +410,10 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                         GTUDirectionality.DIR_PLUS));
                 BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
                 this.block = new LaneBasedIndividualGTU("999999", this.gtuType, new Length(4, METER), new Length(1.8, METER),
-                        new Speed(0.0, KM_PER_HOUR), this.simulator, this.network);
+                        Speed.ZERO, this.simulator, this.network);
                 LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
                         new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, this.block), this.block);
-                this.block.initWithAnimation(strategicalPlanner, initialPositions, new Speed(0.0, KM_PER_HOUR),
+                this.block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO,
                         DefaultCarAnimation.class, this.gtuColorer);
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)

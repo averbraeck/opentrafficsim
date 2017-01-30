@@ -294,7 +294,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         // The reference car only needs a simulator
         // But that needs a model (which this class implements)
         SimpleSimulator simpleSimulator =
-                new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND), this);
+                new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), this);
         this.carFollowingModel = new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
                 new Acceleration(1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d);
         this.carFollowingModel = new IDMOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),

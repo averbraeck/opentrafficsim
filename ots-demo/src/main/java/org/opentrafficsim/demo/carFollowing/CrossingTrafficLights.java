@@ -165,7 +165,7 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
                             METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER),
                             new Duration(1.0, SECOND), 3));
 
-                    crossingTrafficLights.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND),
+                    crossingTrafficLights.buildAnimator(Time.ZERO, Duration.ZERO,
                             new Duration(3600.0, SECOND), localProperties, null, true);
 
                     crossingTrafficLights.panel.getTabbedPane().addTab("info", crossingTrafficLights.makeInfoPane());

@@ -7,28 +7,39 @@
         OTS-269. Settable deletion of GTU's if in trouble.
       </action>
       <action issue="OTS-265" type="update">
-        OTS-265. BLOCK should have a cloneable class and should have animation capabilities.
+        OTS-265. BLOCK should have a cloneable class and should have animation
+        capabilities.
       </action>
       <action issue="OTS-263" type="fix">
-        OTS-263. Fixed bug in detection of intersecting lines (shapes). 
+        OTS-263. Fixed bug in detection of intersecting lines (shapes).
       </action>
       <action issue="OTS-273" type="fix">
-        OTS-273. XML parser parsed wrong value for use as Z-coordinate. 
+        OTS-273. XML parser parsed wrong value for use as Z-coordinate.
       </action>
       <action issue="OTS-279" type="add">
-        OTS-279. Added BusStop. 
+        OTS-279. Added BusStop.
       </action>
       <action issue="OTS-280" type="add">
-        OTS-280. Added BusSchedule. 
+        OTS-280. Added BusSchedule.
       </action>
-      <action issue="OTS-280" type="remove">
-        OTS-277. Removed LaneBlock. 
+      <action issue="OTS-280" type="update">
+        OTS-277. Removed LaneBlock.
       </action>
       <action issue="OTS-295" type="add">
-        OTS-295. PRIORITY added to LINK tag in xml parser. 
+        OTS-295. PRIORITY added to LINK tag in xml parser.
       </action>
       <action issue="OTS-299" type="add">
-        OTS-299. Method projectedPosition was actually translatedPosition; method name fixed. Added new method projectedPosition. 
+        OTS-299. Method projectedPosition was actually translatedPosition; method name
+        fixed. Added new method projectedPosition.
+      </action>
+      <action issue="OTS-297" type="update">
+        OTS-297. DJUNITS version 2.01.03 used. Scalars in SI units with the exception
+        of Money scalars can now be created with e.g., Length len = Length.createSI(5.0).
+      </action>
+      <action issue="OTS-298" type="update">
+        OTS-298. DJUNITS version 2.01.03 used. Constants NaN, POSITIVI_INFINITY,
+        NEGATIVE_INFINITY, POS_MAXVALUE and NEG_MAXVALUE have been added to scalars,
+        with the exception of Money scalars.
       </action>
     </release>
 
@@ -43,14 +54,16 @@
         OTS-250. Interaction conflicts and traffic lights.
       </action>
       <action issue="OTS-251" type="fix">
-        OTS-251. Memory leak in simulation when GTUs leave the system. DefaultCarAnimation
+        OTS-251. Memory leak in simulation when GTUs leave the system.
+        DefaultCarAnimation
         object changed.
       </action>
       <action issue="OTS-252" type="fix">
         OTS-252. GTUs do not have a hashCode function
       </action>
       <action issue="OTS-253" type="fix">
-        OTS-253. Memory leak in infrastructure animation after cloning. Extra functions in
+        OTS-253. Memory leak in infrastructure animation after cloning. Extra
+        functions in
         OTSNetwork to clone and destroy networks.
       </action>
       <action issue="OTS-254" type="update">
@@ -65,18 +78,21 @@
         Default jog4j-2 configuration file added.
       </action>
       <action type="update">
-        Updated to use DSOL version 3.01.03, which allows to override the Renderable2D.destroy() function.
+        Updated to use DSOL version 3.01.03, which allows to override the Renderable2D.destroy()
+        function.
       </action>
     </release>
 
 
     <release version="0.13.03" date="2017-01-05" description="Intermediate Release 0.13.03">
       <action issue="OTS-244" type="fix">
-        OTS-244. OTSNetwork.shortestPath does not calculate shortest route when direction is
+        OTS-244. OTSNetwork.shortestPath does not calculate shortest route when
+        direction is
         BOTH.
       </action>
       <action issue="OTS-245" type="update">
-        OTS-245. Several methods of AbstractGTU and AbstractLaneBasedGTU should be declared
+        OTS-245. Several methods of AbstractGTU and AbstractLaneBasedGTU should be
+        declared
         non-final to allow extensions.
       </action>
     </release>
@@ -106,7 +122,8 @@
         OTS-235: Arc with variable radius.
       </action>
       <action issue="OTS-236" type="add">
-        OTS-236: Bezier SHAPE and control points limited to intersection of control lines.
+        OTS-236: Bezier SHAPE and control points limited to intersection of control
+        lines.
       </action>
       <action issue="OTS-237" type="fix">
         OTS-237: Clone of CrossSectionLink added CrossSectionElements twice.
@@ -116,11 +133,13 @@
         DirectedLaneChange tactical planner.
       </action>
       <action issue="OTS-239" type="fix">
-        OTS-239: Time to not change lanes after a lane change with the DirectedLaneChange
+        OTS-239: Time to not change lanes after a lane change with the
+        DirectedLaneChange
         tactical planner should be settable.
       </action>
       <action issue="OTS-240" type="add">
-        OTS-240: The threshold distance for differences between initial locations of the GTU
+        OTS-240: The threshold distance for differences between initial locations of
+        the GTU
         on different lanes should be settable.
       </action>
     </release>
@@ -140,7 +159,8 @@
         OTS-200: Implement TrafCOD traffic controller.
       </action>
       <action issue="OTS-214" type="add">
-        OTS-214: TrafficLight implementation for car following + instantaneous lane change
+        OTS-214: TrafficLight implementation for car following + instantaneous lane
+        change
         model.
       </action>
       <action issue="OTS-215" type="add">
@@ -150,7 +170,8 @@
         OTS-218: Automatically register LaneBasedObject on their Lane.
       </action>
       <action issue="OTS-219" type="update">
-        OTS-219: Store the GTUs that trigger a Sensor in the Sensor and not in the Lane.
+        OTS-219: Store the GTUs that trigger a Sensor in the Sensor and not in the
+        Lane.
       </action>
       <action issue="OTS-221" type="add">
         OTS-221: Bring back LaneBasedGTUFollowingDirectedChangeTacticalPlanner.
@@ -168,7 +189,8 @@
         OTS-225: Provide default zoom for animation, and fix zoomAll method.
       </action>
       <action issue="OTS-226" type="add">
-        OTS-226: Allow animation of ids for Node, Link, Lane, Sensor, TrafficLight, and GTU.
+        OTS-226: Allow animation of ids for Node, Link, Lane, Sensor, TrafficLight,
+        and GTU.
       </action>
       <action type="update">
         Moved ImmutableCollections to DSOL version 3.01.01.
@@ -190,17 +212,20 @@
         OTS-160 Categorize perception.
       </action>
       <action issue="OTS-216" type="update">
-        OTS-216 Added neg() function to djunits and updated djunits in ots to version 2.01.01.
+        OTS-216 Added neg() function to djunits and updated djunits in ots to version
+        2.01.01.
       </action>
     </release>
 
 
     <release version="0.12.01" date="2016-11-07" description="Intermediate release 0.12.01">
       <action issue="OTS-213" type="fix">
-        OTS-213 Change SimpleWeightedGraph in OTSNetwork into SimpleDirectedWeightedGraph
+        OTS-213 Change SimpleWeightedGraph in OTSNetwork into
+        SimpleDirectedWeightedGraph
       </action>
       <action issue="OTS-214" type="add">
-        OTS-214 TrafficLight implementation for car following + instantaneous lane change
+        OTS-214 TrafficLight implementation for car following + instantaneous lane
+        change
         model
       </action>
       <action issue="OTS-215" type="add">
@@ -211,7 +236,8 @@
 
     <release version="0.12.00" date="2016-11-02" description="Sprint 7">
       <action issue="OTS-106" type="add">
-        OTS-106 Traffic lights as separate objects that can be observed instead of a 'fake'
+        OTS-106 Traffic lights as separate objects that can be observed instead of a
+        'fake'
         GTU
       </action>
       <action issue="OTS-181" type="add">
@@ -243,7 +269,8 @@
         OTS-104 XML parser dependent on order of parsing
       </action>
       <action issue="OTS-115" type="fix">
-        OTS-115 Repair error with lane direction in parser while link direction not yet set
+        OTS-115 Repair error with lane direction in parser while link direction not
+        yet set
       </action>
       <action issue="OTS-128" type="add">
         OTS-128 Add ROADCLASS definition in XML and as element under ROADTYPE
@@ -288,7 +315,8 @@
         OTS-190 IMB SensorGTUTransceiver
       </action>
       <action issue="OTS-192" type="add">
-        OTS-192 XML parser has to be adapted to latest changes in the way a network is built
+        OTS-192 XML parser has to be adapted to latest changes in the way a network is
+        built
       </action>
       <action issue="OTS-193" type="add">
         OTS-193 Sampling framework to calculate KPIs
@@ -369,11 +397,13 @@
         check
       </action>
       <action issue="OTS-133" type="add">
-        OTS-133 Add utility class for tactical planners for current active speed limit.
+        OTS-133 Add utility class for tactical planners for current active speed
+        limit.
         types
       </action>
       <action issue="OTS-134" type="add">
-        OTS-134 Add interface for perception with common lane change and car-following.
+        OTS-134 Add interface for perception with common lane change and
+        car-following.
         info
       </action>
       <action issue="OTS-135" type="fix">

@@ -190,7 +190,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                             new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2),
                             new Length(2.0, METER), new Duration(1.0, SECOND), 3));
 
-                    circularRoad.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND),
+                    circularRoad.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND),
                             propertyList, null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)

@@ -206,7 +206,7 @@ public class TurboRoundaboutDemo extends AbstractWrappableAnimation
                 {
                     TurboRoundaboutDemo animation = new TurboRoundaboutDemo();
                     // 1 hour simulation run for testing
-                    animation.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                    animation.buildAnimator(Time.ZERO, Duration.ZERO,
                             new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
