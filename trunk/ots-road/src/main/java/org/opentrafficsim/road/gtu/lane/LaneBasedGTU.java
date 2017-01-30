@@ -40,13 +40,12 @@ public interface LaneBasedGTU extends GTU
     @Override
     LaneBasedTacticalPlanner getTacticalPlanner();
 
-    /** 
-     * Return the location without a RemoteException.
-     * {@inheritDoc} 
+    /**
+     * Return the location without a RemoteException. {@inheritDoc}
      */
     @Override
     DirectedPoint getLocation();
-    
+
     /**
      * insert GTU at a certain position. This can happen at setup (first initialization), and after a lane change of the GTU.
      * The relative position that will be registered is the referencePosition (dx, dy, dz) = (0, 0, 0). Front and rear positions
@@ -162,8 +161,20 @@ public interface LaneBasedGTU extends GTU
     double fractionalPosition(Lane lane, RelativePosition relativePosition) throws GTUException;
 
     /**
-     * Return the longitudinal position that this GTU would have if it were to change to another Lane with a / the current
-     * CrossSectionLink.
+     * Return the longitudinal position that the indicated relative position of this GTU would have if it were to change to
+     * another Lane with a / the current CrossSectionLink. This point may be before the begin or after the end of the link of
+     * the projection lane of the GTU. This preserves the length of the GTU.
+     * @param projectionLane Lane; the lane onto which the position of this GTU must be projected
+     * @param relativePosition RelativePosition; the point on this GTU that must be projected
+     * @param when Time; the time for which to project the position of this GTU
+     * @return Length; the position of this GTU in the projectionLane
+     * @throws GTUException when projectionLane it not in any of the CrossSectionLink that the GTU is on
+     */
+    Length translatedPosition(Lane projectionLane, RelativePosition relativePosition, Time when) throws GTUException;
+
+    /**
+     * Return the longitudinal position on the projection lane that has the same fractional position on one of the current lanes
+     * of the indicated relative position. This preserves the fractional positions of all relative positions of the GTU.
      * @param projectionLane Lane; the lane onto which the position of this GTU must be projected
      * @param relativePosition RelativePosition; the point on this GTU that must be projected
      * @param when Time; the time for which to project the position of this GTU
@@ -178,7 +189,7 @@ public interface LaneBasedGTU extends GTU
      * @throws GTUException in case the reference position of the GTU cannot be found on the lanes in its current path
      */
     DirectedLanePosition getReferencePosition() throws GTUException;
-    
+
     /**
      * Return the directionality of a lane on which the GTU is registered for its current operational plan.
      * @param lane Lane; the lane for which we want to know the direction
@@ -186,7 +197,7 @@ public interface LaneBasedGTU extends GTU
      * @throws GTUException in case the GTU is not registered on the Lane
      */
     GTUDirectionality getDirection(Lane lane) throws GTUException;
-    
+
     /**
      * Add an event to the list of lane triggers scheduled for this GTU.
      * @param lane Lane; the lane on which the event occurs
