@@ -2,7 +2,6 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import java.util.LinkedHashSet;
 
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -23,10 +22,6 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuil
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
-import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.ConflictPlans;
-import org.opentrafficsim.road.gtu.lane.tactical.util.SpeedLimitUtil;
-import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil.LmrsData;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
@@ -56,9 +51,6 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     /** Serialization id. */
     private static final long serialVersionUID = 20160300L;
 
-    /** Set of yield plans at conflicts with priority. Remembering for static model. */
-    private final ConflictPlans yieldPlans = new ConflictPlans();
-
     /** Lane change status. */
     private final LaneChange laneChange = new LaneChange();
 
@@ -70,6 +62,9 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
 
     /** Set of voluntary lane change incentives. */
     private final LinkedHashSet<VoluntaryIncentive> voluntaryIncentives = new LinkedHashSet<>();
+
+    /** Set of acceleration incentives. */
+    private final LinkedHashSet<AccelerationIncentive> accelerationIncentives = new LinkedHashSet<>();
 
     /**
      * Constructor setting the car-following model.
@@ -87,7 +82,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     }
 
     /**
-     * Adds a mandatory incentive. Ignores <tt>null</tt>.
+     * Adds a mandatory incentive. Ignores {@code null}.
      * @param incentive Incentive to add.
      */
     public final void addMandatoryIncentive(final MandatoryIncentive incentive)
@@ -99,7 +94,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     }
 
     /**
-     * Adds a voluntary incentive. Ignores <tt>null</tt>.
+     * Adds a voluntary incentive. Ignores {@code null}.
      * @param incentive Incentive to add.
      */
     public final void addVoluntaryIncentive(final VoluntaryIncentive incentive)
@@ -111,15 +106,31 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     }
 
     /**
+     * Adds an acceleration incentive. Ignores {@code null}.
+     * @param incentive Incentive to add.
+     */
+    public final void addAccelerationIncentive(final AccelerationIncentive incentive)
+    {
+        if (incentive != null)
+        {
+            this.accelerationIncentives.add(incentive);
+        }
+    }
+
+    /**
      * Sets the default lane change incentives.
      */
     public final void setDefaultIncentives()
     {
         this.mandatoryIncentives.clear();
         this.voluntaryIncentives.clear();
+        this.accelerationIncentives.clear();
         this.mandatoryIncentives.add(new IncentiveRoute());
         this.voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
         this.voluntaryIncentives.add(new IncentiveKeep());
+        this.accelerationIncentives.add(new AccelerationSpeedLimitTransition());
+        this.accelerationIncentives.add(new AccelerationTrafficLights());
+        this.accelerationIncentives.add(new AccelerationConflicts());
     }
 
     /** {@inheritDoc} */
@@ -127,7 +138,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
             throws OperationalPlanException, GTUException, NetworkException, ParameterException
     {
-        
+
         // obtain objects to get info
         getPerception().perceive();
         SpeedLimitProspect slp = getPerception().getPerceptionCategory(InfrastructurePerception.class)
@@ -139,22 +150,13 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
         SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(getGtu(), startTime, getCarFollowingModel(), this.laneChange,
                 this.lmrsData, getPerception(), this.mandatoryIncentives, this.voluntaryIncentives);
 
-        // speed limits
+        // Lower acceleration from additional sources
         Speed speed = getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
-        simplePlan.minimumAcceleration(SpeedLimitUtil.considerSpeedLimitTransitions(bc, speed, slp, getCarFollowingModel()));
-
-        // traffic lights
-        // TODO traffic lights on route, possible on different lane (and possibly close)
-        simplePlan.minimumAcceleration(TrafficLightUtil.respondToTrafficLights(bc,
-                getPerception().getPerceptionCategory(IntersectionPerception.class).getTrafficLights(RelativeLane.CURRENT),
-                getCarFollowingModel(), speed, sli));
-
-        // conflicts
-        Acceleration acceleration = getPerception().getPerceptionCategory(EgoPerception.class).getAcceleration();
-        simplePlan.minimumAcceleration(ConflictUtil.approachConflicts(bc,
-                getPerception().getPerceptionCategory(IntersectionPerception.class).getConflicts(RelativeLane.CURRENT),
-                getPerception().getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT),
-                getCarFollowingModel(), getGtu().getLength(), speed, acceleration, sli, this.yieldPlans));
+        for (AccelerationIncentive incentive : this.accelerationIncentives)
+        {
+            simplePlan.minimumAcceleration(
+                    incentive.acceleration(getGtu(), getPerception(), getCarFollowingModel(), speed, bc, sli));
+        }
 
         // create plan
         return buildPlanFromSimplePlan(getGtu(), startTime, bc, simplePlan, this.laneChange);

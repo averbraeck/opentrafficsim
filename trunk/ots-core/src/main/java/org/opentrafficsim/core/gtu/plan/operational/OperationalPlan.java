@@ -376,6 +376,7 @@ public class OperationalPlan implements Serializable
                         new Time(this.startTime.si + this.segmentStartTimesRelSI[i], TimeUnit.SI),
                         new Length(cumulativeDistance, LengthUnit.SI));
             }
+            cumulativeDistance += this.operationalPlanSegmentList.get(i).distanceSI();
         }
         throw new OperationalPlanException(this.gtu + ", t = " + time
                 + " SegmentProgress cannot be determined for time after endTime " + getEndTime() + " of this OperationalPlan");
@@ -502,7 +503,7 @@ public class OperationalPlan implements Serializable
     {
         Time absTime = duration.plus(this.startTime);
         SegmentProgress sp = getSegmentProgress(absTime);
-        return sp.getSegment().distanceSI(absTime.minus(sp.getSegmentStartTime()).si);
+        return sp.getSegmentStartPosition().si + sp.getSegment().distanceSI(absTime.minus(sp.getSegmentStartTime()).si);
     }
 
     /**

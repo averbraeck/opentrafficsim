@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.lane.conflict;
 
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+
 /**
  * A conflict rule provides the conflict priority.
  * <p>
@@ -20,5 +22,12 @@ public interface ConflictRule
      * @return priority for the given conflict
      */
     ConflictPriority determinePriority(Conflict conflict);
+    
+    /**
+     * Creates a clone of the conflict rule.
+     * @param newSimulator new simulator
+     * @return clone of the conflict rule
+     */
+    ConflictRule clone(OTSSimulatorInterface newSimulator);
     
 }

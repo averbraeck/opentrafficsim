@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -659,7 +658,6 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         if (true)
         {
             lanes = buildLanePathInfo(gtu, forwardHeadway).getLanes();
-            System.out.println("TEMP remove me");
             try
             {
                 return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, lanes, gtu.getReferencePosition().getPosition(),

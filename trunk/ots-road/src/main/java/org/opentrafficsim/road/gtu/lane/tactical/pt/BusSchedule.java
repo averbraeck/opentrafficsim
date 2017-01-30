@@ -8,7 +8,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.network.lane.object.BusStop;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -32,7 +31,7 @@ public class BusSchedule extends Route
     private final String line;
 
     /** List of bus stops. */
-    private final Map<BusStop, BusStopInfo> schedule = new HashMap<>();
+    private final Map<String, BusStopInfo> schedule = new HashMap<>();
 
     /**
      * @param id id
@@ -57,73 +56,72 @@ public class BusSchedule extends Route
 
     /**
      * Adds a stop to the schedule.
-     * @param busStop bus stop
+     * @param busStopId bus stop id
      * @param departureTime departure time
      * @param dwellTime dwell time
      * @param forceSchedule whether to wait until departure time
      */
-    public final void addBusStop(final BusStop busStop, final Time departureTime, final Duration dwellTime,
+    public final void addBusStop(final String busStopId, final Time departureTime, final Duration dwellTime,
             final boolean forceSchedule)
     {
-        Throw.whenNull(busStop, "Bus stop may not be null.");
+        Throw.whenNull(busStopId, "Bus stop id may not be null.");
         Throw.whenNull(departureTime, "Departure time may not be null.");
         Throw.whenNull(dwellTime, "Dwell time may not be null.");
-        Throw.when(!busStop.isForLine(this.line), IllegalArgumentException.class, "Bus stop %s is not for schedule of line %s.",
-                busStop, this.line);
-        this.schedule.put(busStop, new BusStopInfo(departureTime, dwellTime, forceSchedule));
+        this.schedule.put(busStopId, new BusStopInfo(departureTime, dwellTime, forceSchedule));
     }
-    
+
     /**
      * Whether the bus of this line should stop for this bus stop.
-     * @param busStop bus stop
+     * @param busStopId id of bus stop
      * @return whether the bus of this line should stop for this bus stop
      */
-    public final boolean isLineStop(final BusStop busStop)
+    public final boolean isLineStop(final String busStopId)
     {
-        return this.schedule.containsKey(busStop);
+        return this.schedule.containsKey(busStopId);
     }
-    
+
     /**
      * Returns departure time for the given bus stop.
-     * @param busStop bus stop 
+     * @param busStopId id of bus stop
      * @return departure time for the given bus stop
      */
-    public final Time getDepartureTime(final BusStop busStop)
+    public final Time getDepartureTime(final String busStopId)
     {
-        checkStop(busStop);
-        return this.schedule.get(busStop).getDepartureTime();
+        checkStop(busStopId);
+        return this.schedule.get(busStopId).getDepartureTime();
     }
-    
+
     /**
      * Returns dwell time for the given bus stop.
-     * @param busStop bus stop 
+     * @param busStopId id of bus stop
      * @return dwell time for the given bus stop
      */
-    public final Duration getDwellTime(final BusStop busStop)
+    public final Duration getDwellTime(final String busStopId)
     {
-        checkStop(busStop);
-        return this.schedule.get(busStop).getDwellTime();
+        checkStop(busStopId);
+        return this.schedule.get(busStopId).getDwellTime();
     }
-    
+
     /**
      * Returns whether the departure time is enforced.
-     * @param busStop bus stop 
+     * @param busStopId id of bus stop
      * @return whether the departure time is enforced
      */
-    public final boolean isForceSchedule(final BusStop busStop)
+    public final boolean isForceSchedule(final String busStopId)
     {
-        checkStop(busStop);
-        return this.schedule.get(busStop).isForceSchedule();
+        checkStop(busStopId);
+        return this.schedule.get(busStopId).isForceSchedule();
     }
-    
+
     /**
      * Throws exception when the bus stop is not part of this schedule.
-     * @param busStop bus stop
+     * @param busStopId id of bus stop
      * @throws IllegalArgumentException if the bus stop is not part of this schedule
      */
-    private void checkStop(final BusStop busStop)
+    private void checkStop(final String busStopId)
     {
-        Throw.when(!isLineStop(busStop), IllegalArgumentException.class, "Bus stop %s is not for schedule %s.", busStop, this);
+        Throw.when(!isLineStop(busStopId), IllegalArgumentException.class, "Bus stop %s is not for schedule %s.", busStopId,
+                this);
     }
 
     /** {@inheritDoc} */

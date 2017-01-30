@@ -153,16 +153,7 @@ public final class AnticipationInfo implements Serializable
         {
             Acceleration a =
                     CarFollowingUtil.freeAcceleration(carFollowingModel, behavioralCharacteristics, speed, speedLimitInfo);
-            Length add;
-            try
-            {
-                add = new Length(speed.si * timeStep.si + .5 * a.si * timeStep.si * timeStep.si, LengthUnit.SI);
-            }
-            catch (NullPointerException npe)
-            {
-                double q = 8;
-                throw new RuntimeException(npe);
-            }
+            Length add = new Length(speed.si * timeStep.si + .5 * a.si * timeStep.si * timeStep.si, LengthUnit.SI);
             Length remain = distance.minus(xCumul);
             if (add.lt(remain))
             {

@@ -20,12 +20,10 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.immutablecollections.ImmutableMap;
 import nl.tudelft.simulation.language.Throw;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -445,7 +443,7 @@ public final class ConflictBuilder
         {
             Throw.when(lane1.getParentLink().getPriority().isBusStop() && lane2.getParentLink().getPriority().isBusStop(),
                     IllegalArgumentException.class, "Merge conflict between two links with bus stop priority not supported.");
-            conflictRule = new BusStopConflictRule();
+            conflictRule = new BusStopConflictRule(simulator);
         }
         else
         {
@@ -551,9 +549,22 @@ public final class ConflictBuilder
         OTSLine3D geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
         OTSLine3D geometry2 = getGeometry(lane2, f2start, f2end, widthGenerator);
 
+        // Determine conflict rule
+        ConflictRule conflictRule;
+        if (lane1.getParentLink().getPriority().isBusStop() || lane2.getParentLink().getPriority().isBusStop())
+        {
+            Throw.when(lane1.getParentLink().getPriority().isBusStop() && lane2.getParentLink().getPriority().isBusStop(),
+                    IllegalArgumentException.class, "Merge conflict between two links with bus stop priority not supported.");
+            conflictRule = new BusStopConflictRule(simulator);
+        }
+        else
+        {
+            conflictRule = new DefaultConflictRule();
+        }
+
         // Make conflict
-        Conflict.generateConflictPair(ConflictType.CROSSING, new DefaultConflictRule(), permitted, lane1, longitudinalPosition1,
-                length1, dir1, geometry1, gtuType, lane2, longitudinalPosition2, length2, dir2, geometry2, gtuType, simulator);
+        Conflict.generateConflictPair(ConflictType.CROSSING, conflictRule, permitted, lane1, longitudinalPosition1, length1,
+                dir1, geometry1, gtuType, lane2, longitudinalPosition2, length2, dir2, geometry2, gtuType, simulator);
     }
 
     /**
@@ -589,87 +600,6 @@ public final class ConflictBuilder
         System.arraycopy(left.getPoints(), 0, points, 0, left.size());
         System.arraycopy(right.getPoints(), 0, points, left.size(), right.size());
         return new OTSLine3D(points);
-    }
-
-    /**
-     * Determine conflict rules.
-     * @param lane1 lane 1
-     * @param longitudinalPosition1 position 1
-     * @param lane2 lane 2
-     * @param longitudinalPosition2 position 2
-     * @param conflictType conflict type
-     * @return conflict rule 1 and 2
-     * @throws OTSGeometryException in case of geometry exception
-     */
-    private static ConflictPriority[] getConflictRules(final Lane lane1, final Length longitudinalPosition1, final Lane lane2,
-            final Length longitudinalPosition2, final ConflictType conflictType) throws OTSGeometryException
-    {
-
-        ConflictPriority[] conflictRules = new ConflictPriority[2];
-        Priority priority1 = lane1.getParentLink().getPriority();
-        Priority priority2 = lane2.getParentLink().getPriority();
-        if (conflictType.equals(ConflictType.SPLIT))
-        {
-            conflictRules[0] = ConflictPriority.SPLIT;
-            conflictRules[1] = ConflictPriority.SPLIT;
-        }
-        else if (priority1.isAllStop() && priority2.isAllStop())
-        {
-            conflictRules[0] = ConflictPriority.ALL_STOP;
-            conflictRules[1] = ConflictPriority.ALL_STOP;
-        }
-        else if (priority1.equals(priority2))
-        {
-            // Based on right- or left-hand traffic
-            DirectedPoint p1 = lane1.getCenterLine().getLocation(longitudinalPosition1);
-            DirectedPoint p2 = lane2.getCenterLine().getLocation(longitudinalPosition2);
-            double diff = p2.getRotZ() - p1.getRotZ();
-            while (diff > Math.PI)
-            {
-                diff -= 2 * Math.PI;
-            }
-            while (diff < -Math.PI)
-            {
-                diff += 2 * Math.PI;
-            }
-            if (diff > 0.0)
-            {
-                // 2 comes from the right
-                conflictRules[0] = priority1.isStop() ? ConflictPriority.STOP : ConflictPriority.GIVE_WAY;
-                conflictRules[1] = ConflictPriority.PRIORITY;
-            }
-            else
-            {
-                // 1 comes from the right
-                conflictRules[0] = ConflictPriority.PRIORITY;
-                conflictRules[1] = priority2.isStop() ? ConflictPriority.STOP : ConflictPriority.GIVE_WAY;
-            }
-        }
-        else if (priority1.isPriority() && (priority2.isNone() || priority2.isStop()))
-        {
-            conflictRules[0] = ConflictPriority.PRIORITY;
-            conflictRules[1] = priority2.isStop() ? ConflictPriority.STOP : ConflictPriority.GIVE_WAY;
-        }
-        else if (priority2.isPriority() && (priority1.isNone() || priority1.isStop()))
-        {
-            conflictRules[0] = priority1.isStop() ? ConflictPriority.STOP : ConflictPriority.GIVE_WAY;
-            conflictRules[1] = ConflictPriority.PRIORITY;
-        }
-        else if (priority1.isNone() && priority2.isStop())
-        {
-            conflictRules[0] = ConflictPriority.PRIORITY;
-            conflictRules[1] = ConflictPriority.STOP;
-        }
-        else if (priority2.isNone() && priority1.isStop())
-        {
-            conflictRules[0] = ConflictPriority.STOP;
-            conflictRules[1] = ConflictPriority.PRIORITY;
-        }
-        else
-        {
-            throw new RuntimeException("Could not sort out priority from priorities " + priority1 + " and " + priority2);
-        }
-        return conflictRules;
     }
 
     /**
