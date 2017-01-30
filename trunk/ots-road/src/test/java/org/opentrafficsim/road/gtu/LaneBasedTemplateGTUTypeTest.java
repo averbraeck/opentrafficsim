@@ -84,7 +84,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
         OTSModelInterface model = new DummyModelForTemplateGTUTest();
         SimpleSimulator simulator =
-                new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND), model);
+                new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
         LaneBasedTemplateGTUType passengerCar =
                 new LaneBasedTemplateGTUType(pcType, new IdGenerator("Passenger car "), new Generator<Length>()
                 {
@@ -131,7 +131,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> truckInitialSpeed =
                 new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistConstant(this.stream, 85), KM_PER_HOUR);
         SimpleSimulator truckSimulator =
-                new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND), model);
+                new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
         LaneBasedTemplateGTUType truck =
                 new LaneBasedTemplateGTUType(truckType, new IdGenerator("Truck "), new Generator<Length>()
                 {
@@ -219,7 +219,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                 new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistConstant(this.stream, 180), KM_PER_HOUR);
         OTSModelInterface model = new DummyModelForTemplateGTUTest();
         SimpleSimulator simulator =
-                new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND), model);
+                new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
         TemplateGTUType passengerCar = new TemplateGTUType(pc, new IdGenerator("Passenger car "), new Generator<Length>()
         {
             public Length draw()
@@ -247,7 +247,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> truckMaximumSpeed =
                 new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistConstant(this.stream, 110), KM_PER_HOUR);
         SimpleSimulator truckSimulator =
-                new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND), model);
+                new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
         TemplateGTUType truck = new TemplateGTUType(truckType, new IdGenerator("Truck "), new Generator<Length>()
         {
             public Length draw()

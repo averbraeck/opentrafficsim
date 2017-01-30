@@ -256,8 +256,8 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                 {
                     BusStreetDemo animation = new BusStreetDemo();
                     // 1 hour simulation run for testing
-                    animation.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
-                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    animation.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, TimeUnit.MINUTE),
+                            new ArrayList<Property<?>>(), null, true);
 
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
@@ -576,8 +576,9 @@ public class BusStreetDemo extends AbstractWrappableAnimation
 
             if (gtuType.isOfType(RoadGTUTypes.CAR))
             {
-                defaultCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, new Length(100.0, LengthUnit.SI));
-                defaultCharacteristics.setParameter(IncentiveSpeedWithCourtesy.VGAIN, new Speed(3.0, SpeedUnit.SI));
+                defaultCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, new Length(100.0, LengthUnit.METER));
+                defaultCharacteristics.setParameter(IncentiveSpeedWithCourtesy.VGAIN,
+                        new Speed(3.0, SpeedUnit.METER_PER_SECOND));
             }
             else if (gtuType.isOfType(RoadGTUTypes.SCHEDULED_BUS))
             {

@@ -142,7 +142,7 @@ class NodeTag implements Serializable
         Throw.whenNull(nodeTag.angle, "NodeTag: " + nodeTag.name + " angle == null");
         String id = nodeTag.name;
         Direction angle = nodeTag.angle;
-        Direction slope = nodeTag.slope == null ? new Direction(0.0, AngleUnit.SI) : nodeTag.slope;
+        Direction slope = nodeTag.slope == null ? Direction.ZERO : nodeTag.slope;
         OTSNode node = new OTSNode(parser.network, id, nodeTag.coordinate, angle, slope);
         nodeTag.node = node;
         

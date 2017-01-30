@@ -10,11 +10,9 @@ import static org.junit.Assert.fail;
 import java.lang.reflect.InvocationTargetException;
 
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -508,13 +506,13 @@ public class BehavioralCharacteristicsTest implements CheckInterface
             InvocationTargetException, NoSuchMethodException, SecurityException
     {
         // @formatter:off
-        checkDefaultValuesPerClass(ParameterType.class,              new Speed(3, SpeedUnit.SI));
-        checkDefaultValuesPerClass(ParameterTypeSpeed.class,         new Speed(3, SpeedUnit.SI));
-        checkDefaultValuesPerClass(ParameterTypeAcceleration.class,  new Acceleration(3, AccelerationUnit.SI));
-        checkDefaultValuesPerClass(ParameterTypeLength.class,        new Length(3, LengthUnit.SI));
-        checkDefaultValuesPerClass(ParameterTypeFrequency.class,     new Frequency(3, FrequencyUnit.SI));
-        checkDefaultValuesPerClass(ParameterTypeDuration.class,      new Duration(3, TimeUnit.SI));
-        checkDefaultValuesPerClass(ParameterTypeLinearDensity.class, new LinearDensity(3, LinearDensityUnit.SI));
+        checkDefaultValuesPerClass(ParameterType.class,              Speed.createSI(3));
+        checkDefaultValuesPerClass(ParameterTypeSpeed.class,         Speed.createSI(3));
+        checkDefaultValuesPerClass(ParameterTypeAcceleration.class,  Acceleration.createSI(3));
+        checkDefaultValuesPerClass(ParameterTypeLength.class,        Length.createSI(3));
+        checkDefaultValuesPerClass(ParameterTypeFrequency.class,     Frequency.createSI(3));
+        checkDefaultValuesPerClass(ParameterTypeDuration.class,      Duration.createSI(3));
+        checkDefaultValuesPerClass(ParameterTypeLinearDensity.class, LinearDensity.createSI(3));
         checkDefaultValuesPerClass(ParameterTypeBoolean.class,       new Boolean(false));
         checkDefaultValuesPerClass(ParameterTypeDouble.class,        new Double(3));
         checkDefaultValuesPerClass(ParameterTypeInteger.class,       new Integer(3));

@@ -57,7 +57,7 @@ public class ShapeModel implements OTSModelInterface
             this.shpLinks = new HashMap<>();
             ShapeFileReader.readLinks(network, "/gis/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.nodes, this.simulator);
 
-            this.simulator.scheduleEventAbs(new Time(0.0, TimeUnit.SECOND), this, this, "ntmFlowTimestep", null);
+            this.simulator.scheduleEventAbs(Time.ZERO, this, this, "ntmFlowTimestep", null);
         }
         catch (Throwable exception)
         {

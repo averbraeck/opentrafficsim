@@ -106,7 +106,7 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
                 {
                     DemoTrafcodAndTurbo model = new DemoTrafcodAndTurbo();
                     // 1 hour simulation run for testing
-                    model.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                    model.buildAnimator(Time.ZERO, Duration.ZERO,
                             new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
@@ -352,10 +352,10 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
             GTUType gtuType = CAR;
             BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
             LaneBasedIndividualGTU block = new LaneBasedIndividualGTU("999999", gtuType, new Length(1, LengthUnit.METER),
-                    lane.getWidth(1), new Speed(0.0, SpeedUnit.KM_PER_HOUR), theSimulator, (OTSNetwork) this.network);
+                    lane.getWidth(1), Speed.ZERO, theSimulator, (OTSNetwork) this.network);
             LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
                     new LaneBasedGTUFollowingTacticalPlanner(carFollowingModelCars, block), block);
-            block.initWithAnimation(strategicalPlanner, initialPositions, new Speed(0.0, SpeedUnit.KM_PER_HOUR),
+            block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO,
                     DefaultCarAnimation.class, gtuColorer);
             return lane;
         }

@@ -88,7 +88,7 @@ public class N201IMB extends AbstractWrappableAnimation
                 {
                     N201IMB n201Model = new N201IMB();
                     // 1 hour simulation run for testing
-                    n201Model.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND), new Duration(
+                    n201Model.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(
                             10.0, TimeUnit.HOUR), new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)

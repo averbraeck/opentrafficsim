@@ -63,7 +63,7 @@ public class TestXMLParserReadXstream extends AbstractWrappableAnimation
                 {
                     TestXMLParserReadXstream xmlParserReadXStream = new TestXMLParserReadXstream();
                     // 1 hour simulation run for testing
-                    xmlParserReadXStream.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                    xmlParserReadXStream.buildAnimator(Time.ZERO, Duration.ZERO,
                             new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)

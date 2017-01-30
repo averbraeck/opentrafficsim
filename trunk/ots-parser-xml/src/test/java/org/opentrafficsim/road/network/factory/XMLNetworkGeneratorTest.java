@@ -75,7 +75,7 @@ public class XMLNetworkGeneratorTest implements UNITS
         {
             TestXMLModel model = new TestXMLModel();
             final SimpleAnimator simulator =
-                    new SimpleAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(120.0, SECOND), model);
+                    new SimpleAnimator(Time.ZERO, Duration.ZERO, new Duration(120.0, SECOND), model);
 
             // get nodes, links, and the lanes.
             Node n1 = model.getNetwork().getNodeMap().get("N1");

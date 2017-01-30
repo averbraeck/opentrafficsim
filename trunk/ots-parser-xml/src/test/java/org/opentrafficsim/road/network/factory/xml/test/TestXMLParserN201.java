@@ -69,7 +69,7 @@ public class TestXMLParserN201 extends AbstractWrappableAnimation
                 {
                     TestXMLParserN201 xmlParser = new TestXMLParserN201();
                     // 1 hour simulation run for testing
-                    xmlParser.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                    xmlParser.buildAnimator(Time.ZERO, Duration.ZERO,
                             new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)

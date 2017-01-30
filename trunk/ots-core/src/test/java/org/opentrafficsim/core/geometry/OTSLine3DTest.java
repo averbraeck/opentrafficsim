@@ -849,7 +849,7 @@ public class OTSLine3DTest
     @Test
     public final void testFractionalProjection() throws OTSGeometryException
     {
-        Direction zeroDir = new Direction(0.0, AngleUnit.SI);
+        Direction zeroDir = Direction.ZERO;
         // test correct projection with parallel helper lines on line /\/\
         OTSLine3D line =
                 new OTSLine3D(new OTSPoint3D(0, 0), new OTSPoint3D(1, 1), new OTSPoint3D(2, 0), new OTSPoint3D(3, 1),

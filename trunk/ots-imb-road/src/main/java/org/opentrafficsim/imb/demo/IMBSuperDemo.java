@@ -231,7 +231,7 @@ public class IMBSuperDemo implements UNITS
                 try
                 {
                     System.out.println("Active properties: " + IMBSuperDemo.this.activeProperties);
-                    simulation.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND),
+                    simulation.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND),
                             IMBSuperDemo.this.activeProperties, null, false);
                 }
                 catch (SimRuntimeException | NetworkException | NamingException | OTSSimulationException | PropertyException exception)

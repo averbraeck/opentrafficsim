@@ -82,13 +82,13 @@ public class TestXMLParserClone extends AbstractWrappableAnimation
                     TestXMLParserClone xmlParserClone = new TestXMLParserClone();
                     // 1 hour simulation run for testing
                     xmlParserClone.oldSimulator =
-                            xmlParserClone.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                            xmlParserClone.buildAnimator(Time.ZERO, Duration.ZERO,
                                     new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
                     System.out.println("Number of animation objects before for old sim : "
                             + countNumberAnimationObjects(xmlParserClone.oldSimulator));
 
                     xmlParserClone.newSimulator =
-                            xmlParserClone.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                            xmlParserClone.buildAnimator(Time.ZERO, Duration.ZERO,
                                     new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
                     System.out.println("Number of animation objects after for old sim  : "
                             + countNumberAnimationObjects(xmlParserClone.oldSimulator));

@@ -163,7 +163,7 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
                     localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck",
                             new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2),
                             new Length(2.0, METER), new Duration(1.0, SECOND), 3));
-                    straight.buildAnimator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND),
+                    straight.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND),
                             localProperties, null, true);
                     straight.panel.getTabbedPane().addTab("info", straight.makeInfoPane());
                 }
@@ -528,7 +528,7 @@ class StraightModel implements OTSModelInterface, UNITS
             // 1500 [veh / hour] == 2.4s headway
             this.headway = new Duration(3600.0 / 1500.0, SECOND);
             // Schedule creation of the first car (it will re-schedule itself one headway later, etc.).
-            this.simulator.scheduleEventAbs(new Time(0.0, SECOND), this, this, "generateCar", null);
+            this.simulator.scheduleEventAbs(Time.ZERO, this, this, "generateCar", null);
             // Create a block at t = 5 minutes
             this.simulator.scheduleEventAbs(new Time(300, SECOND), this, this, "createBlock", null);
             // Remove the block at t = 7 minutes

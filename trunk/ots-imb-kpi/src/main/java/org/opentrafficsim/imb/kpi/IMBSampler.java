@@ -6,9 +6,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -110,7 +108,7 @@ public class IMBSampler extends Sampler
     public IMBSampler(IMBConnector imbConnector) throws IMBException
     {
         this.imbConnector = imbConnector;
-        
+
         // default GTU Type and default route
         this.defaultGtuType = new GtuTypeData("car");
         NodeData nodeA = new NodeData("NodeA", new CartesianPoint(0, 0, 0));
@@ -131,7 +129,7 @@ public class IMBSampler extends Sampler
         Transceiver gtuTransceiver = new GTUTransceiver(this, this.imbConnector);
         this.imbConnector.register(gtuTransceiver.getId(), gtuTransceiver);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final Time now()
@@ -200,8 +198,8 @@ public class IMBSampler extends Sampler
         if ((!this.lastLanes.containsKey(gtuId) || !this.lastLanes.get(gtuId).equals(kpiLaneDirection))
                 && contains(kpiLaneDirection))
         {
-            processGtuAddEvent(kpiLaneDirection, new Length(longitudinalPosition, LengthUnit.SI),
-                    new Speed(speed, SpeedUnit.SI), new Acceleration(acceleration, AccelerationUnit.SI), now(), gtu);
+            processGtuAddEvent(kpiLaneDirection, Length.createSI(longitudinalPosition), Speed.createSI(speed),
+                    Acceleration.createSI(acceleration), now(), gtu);
         }
         else if (contains(kpiLaneDirection))
         {
@@ -223,8 +221,8 @@ public class IMBSampler extends Sampler
             }
             // END TEST LOOP
             // move on current
-            processGtuMoveEvent(kpiLaneDirection, new Length(longitudinalPosition, LengthUnit.SI),
-                    new Speed(speed, SpeedUnit.SI), new Acceleration(acceleration, AccelerationUnit.SI), now(), gtu);
+            processGtuMoveEvent(kpiLaneDirection, Length.createSI(longitudinalPosition),
+                    Speed.createSI(speed), Acceleration.createSI(acceleration), now(), gtu);
         }
         this.lastLanes.put(gtuId, kpiLaneDirection);
     }

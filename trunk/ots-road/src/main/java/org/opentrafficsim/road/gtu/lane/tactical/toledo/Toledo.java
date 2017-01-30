@@ -8,7 +8,6 @@ import java.util.Random;
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
@@ -367,8 +366,8 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             {
                 // TODO infinite -> some limited space, speed also
                 // one leader
-                leaderDist = new Length(Double.POSITIVE_INFINITY, LengthUnit.SI);
-                leaderSpeed = new Speed(Double.POSITIVE_INFINITY, SpeedUnit.SI);
+                leaderDist = Length.POSITIVE_INFINITY;
+                leaderSpeed = Speed.POSITIVE_INFINITY;
                 putativeLength = leaderDist;
             }
             // distance to nose, so add length
@@ -393,8 +392,8 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             }
             else
             {
-                leaderDist = new Length(Double.POSITIVE_INFINITY, LengthUnit.SI);
-                leaderSpeed = new Speed(Double.POSITIVE_INFINITY, SpeedUnit.SI);
+                leaderDist = Length.POSITIVE_INFINITY;
+                leaderSpeed = Speed.POSITIVE_INFINITY;
             }
             if (!perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).isEmpty())
             {
@@ -408,9 +407,9 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             }
             else
             {
-                followerDist = new Length(Double.NEGATIVE_INFINITY, LengthUnit.SI);
-                followerSpeed = new Speed(Double.NEGATIVE_INFINITY, SpeedUnit.SI);
-                putativeDistance = new Length(Double.POSITIVE_INFINITY, LengthUnit.SI);
+                followerDist = Length.NEGATIVE_INFINITY;
+                followerSpeed = Speed.NEGATIVE_INFINITY;
+                putativeDistance = Length.POSITIVE_INFINITY;
             }
             putativeSpeed = null;
             putativeLength = leaderDist.plus(followerDist).plus(getGtu().getLength());
@@ -440,8 +439,8 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             else
             {
                 // one follower
-                followerDist = new Length(Double.NEGATIVE_INFINITY, LengthUnit.SI);
-                followerSpeed = new Speed(Double.NEGATIVE_INFINITY, SpeedUnit.SI);
+                followerDist = Length.NEGATIVE_INFINITY;
+                followerSpeed = Speed.NEGATIVE_INFINITY;
                 putativeLength = followerDist;
             }
             // add vehicle length to get distance to tail of 1st follower (and then whole negative)
@@ -624,7 +623,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         }
         else
         {
-            dExit = new Length(Double.POSITIVE_INFINITY, LengthUnit.SI);
+            dExit = Length.POSITIVE_INFINITY;
         }
 
         int[] delta = new int[3];

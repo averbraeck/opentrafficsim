@@ -83,7 +83,7 @@ public class TestXMLParserKPIs extends AbstractWrappableAnimation
                 {
                     TestXMLParserKPIs xmlParserKPIs = new TestXMLParserKPIs();
                     // 1 hour simulation run for testing
-                    xmlParserKPIs.buildAnimator(new Time(0.0, TimeUnit.SECOND), new Duration(0.0, TimeUnit.SECOND),
+                    xmlParserKPIs.buildAnimator(Time.ZERO, Duration.ZERO,
                             new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)

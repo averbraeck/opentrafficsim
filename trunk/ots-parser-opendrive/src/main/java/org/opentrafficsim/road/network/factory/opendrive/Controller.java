@@ -66,7 +66,7 @@ public class Controller implements Serializable
             {
                 // TODO
             }
-            simulator.scheduleEventRel(new Duration(0.0, TimeUnit.SECOND), this, this, "unBlock", null);
+            simulator.scheduleEventRel(Duration.ZERO, this, this, "unBlock", null);
         }
         catch (SimRuntimeException exception)
         {
@@ -96,7 +96,7 @@ public class Controller implements Serializable
                 {
                     // System.out.println("traffic light 3 at time " + this.simulator.getSimulatorTime() + " is " +
                     // ((TrafficLight) light).getTrafficLightColor().toString());
-                    this.simulator.scheduleEventRel(new Duration(0.0, TimeUnit.SECOND), this, light,
+                    this.simulator.scheduleEventRel(Duration.ZERO, this, light,
                         "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
                     this.simulator.scheduleEventRel(new Duration(15.0, TimeUnit.SECOND), this, light,
                         "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
@@ -115,7 +115,7 @@ public class Controller implements Serializable
             {
                 try
                 {
-                    this.simulator.scheduleEventRel(new Duration(0.0, TimeUnit.SECOND), this, light,
+                    this.simulator.scheduleEventRel(Duration.ZERO, this, light,
                         "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
                     this.simulator.scheduleEventRel(new Duration(15.0, TimeUnit.SECOND), this, light,
                         "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});

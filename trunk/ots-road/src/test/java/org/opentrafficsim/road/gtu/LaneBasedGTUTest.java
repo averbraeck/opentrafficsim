@@ -96,7 +96,7 @@ public class LaneBasedGTUTest implements UNITS
         }
         OTSModelInterface model = new Model();
         SimpleSimulator simulator =
-                new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND), model);
+                new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
         GTUType carType = CAR;
         GTUType truckType = TRUCK;
         Set<GTUType> compatibility = new HashSet<GTUType>();
@@ -373,7 +373,7 @@ public class LaneBasedGTUTest implements UNITS
             // Create a car with constant acceleration
             OTSModelInterface model = new Model();
             SimpleSimulator simulator =
-                    new SimpleSimulator(new Time(0.0, SECOND), new Duration(0.0, SECOND), new Duration(3600.0, SECOND), model);
+                    new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
             // Run the simulator clock to some non-zero value
             simulator.runUpTo(new Time(60, SECOND));
             while (simulator.isRunning())
