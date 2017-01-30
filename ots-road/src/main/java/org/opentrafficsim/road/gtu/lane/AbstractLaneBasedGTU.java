@@ -431,6 +431,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             newLinkPositions.put(lane.getParentLink(), lane.fraction(position(lane, getReference())));
         }
 
+        // if (getId().endsWith("58") && getSimulator().getSimulatorTime().getTime().si >= 1 * 60 + 31.9)
+        // {
+        // System.out.println("Let op");
+        // }
         // generate the next operational plan and carry it out
         super.move(fromLocation);
 
@@ -487,10 +491,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Length projectedPosition(final Lane projectionLane, final RelativePosition relativePosition, final Time when)
+    public Length translatedPosition(final Lane projectionLane, final RelativePosition relativePosition, final Time when)
             throws GTUException
     {
-        // do not make a wedge in a curve of the projected position!
         CrossSectionLink link = projectionLane.getParentLink();
         for (CrossSectionElement cse : link.getCrossSectionElementList())
         {
@@ -506,6 +509,28 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                         return pos.plus(relativePosition.getDx());
                     }
                     return pos.minus(relativePosition.getDx());
+                }
+            }
+        }
+        throw new GTUException(this + " is not on any lane of Link " + link);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public Length projectedPosition(final Lane projectionLane, final RelativePosition relativePosition, final Time when)
+            throws GTUException
+    {
+        CrossSectionLink link = projectionLane.getParentLink();
+        for (CrossSectionElement cse : link.getCrossSectionElementList())
+        {
+            if (cse instanceof Lane)
+            {
+                Lane cseLane = (Lane) cse;
+                if (null != this.lanesCurrentOperationalPlan.get(cseLane))
+                {
+                    double fractionalPosition = fractionalPosition(cseLane, relativePosition, when);
+                    return new Length(projectionLane.getLength().getSI() * fractionalPosition, LengthUnit.SI);
                 }
             }
         }

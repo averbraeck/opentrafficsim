@@ -943,7 +943,8 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
             Headway closest =
                     headwayRecursiveBackwardSI(lane, getGtu().getDirection(lane),
                             getGtu().position(lane, getGtu().getRear(), time).getSI(), 0.0, -maxDistanceSI, time);
-            if (closest.getDistance().si < -maxDistanceSI && closest.getDistance().si < -foundHeadway.getDistance().si)
+            if (closest.getDistance().si < -maxDistanceSI
+                    && closest.getDistance().si < /* NOT - */foundHeadway.getDistance().si)
             {
                 foundHeadway = closest;
             }
@@ -1018,7 +1019,7 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
             }
         }
 
-        // No other GTU was not on one of the current lanes or their successors.
+        // No other GTU was not on one of the current lanes or their predecessors.
         return new HeadwayDistance(Double.MAX_VALUE);
     }
 
@@ -1151,7 +1152,7 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
         {
             Headway follower =
                     headwayRecursiveBackwardSI(adjacentLane, getGtu().getDirection(lane),
-                            getGtu().projectedPosition(adjacentLane, getGtu().getRear(), when).getSI(), 0.0,
+                            getGtu().translatedPosition(adjacentLane, getGtu().getRear(), when).getSI(), 0.0,
                             -maximumReverseHeadway.getSI(), when);
             if (follower instanceof AbstractHeadwayGTU)
             {
@@ -1202,7 +1203,7 @@ public class DefaultSimplePerception extends LaneBasedAbstractPerceptionCategory
         LanePathInfo lpi = getLanePathInfo();
         List<LaneDirection> laneDirectionList = new ArrayList<>();
         laneDirectionList.add(new LaneDirection(adjacentLane, lpi.getReferenceLaneDirection().getDirection()));
-        Length referencePosition = getGtu().projectedPosition(adjacentLane, getGtu().getReference(), when);
+        Length referencePosition = getGtu().translatedPosition(adjacentLane, getGtu().getReference(), when);
         for (int i = 1; i < lpi.getLaneDirectionList().size(); i++)
         {
             LaneDirection ld = lpi.getLaneDirectionList().get(i);

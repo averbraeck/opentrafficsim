@@ -259,6 +259,10 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             // Tell the strategical planner to provide a tactical planner
             this.tacticalPlanner = this.strategicalPlanner.generateTacticalPlanner();
         }
+        // if (getId().endsWith("3") && getSimulator().getSimulatorTime().getTime().si >= 20 * 60 + 47.9)
+        // {
+        // System.out.println("Let op");
+        // }
         this.operationalPlan = this.tacticalPlanner.generateOperationalPlan(now, fromLocation);
         if (getOperationalPlan().getAcceleration(Duration.ZERO).si < -10
                 && getOperationalPlan().getSpeed(Duration.ZERO).si > 2.5)

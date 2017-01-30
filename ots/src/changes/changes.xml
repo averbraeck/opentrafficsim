@@ -27,6 +27,9 @@
       <action issue="OTS-295" type="add">
         OTS-295. PRIORITY added to LINK tag in xml parser. 
       </action>
+      <action issue="OTS-299" type="add">
+        OTS-299. Method projectedPosition was actually translatedPosition; method name fixed. Added new method projectedPosition. 
+      </action>
     </release>
 
     <release version="0.13.04" date="2017-01-16" description="Intermediate Release 0.13.04">
