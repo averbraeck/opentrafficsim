@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.lane.conflict;
 
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+
 /**
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -19,6 +21,14 @@ public class SplitConflictRule implements ConflictRule
     public final ConflictPriority determinePriority(final Conflict conflict)
     {
         return ConflictPriority.SPLIT;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ConflictRule clone(final OTSSimulatorInterface newSimulator)
+    {
+        // stateless so no copy required
+        return this;
     }
 
 }

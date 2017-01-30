@@ -50,7 +50,10 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
         CONFLICT,
         
         /** stop line. */
-        STOPLINE;
+        STOPLINE,
+        
+        /** bus stop. */
+        BUSSTOP;
 
         /** @return whether this object is a GTU or not. */
         public boolean isGtu()
@@ -86,6 +89,12 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
         public boolean isStopLine()
         {
             return this.equals(STOPLINE);
+        }
+        
+        /** @return whether this object is a bus stop or not. */
+        public boolean isBusStop()
+        {
+            return this.equals(BUSSTOP);
         }
         
     }

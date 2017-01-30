@@ -163,8 +163,10 @@ public final class ConflictUtil
             {
                 case PRIORITY:
                 {
-                    stop = stopForPriorityConflict(conflict, leaders, speed, vehicleLength, behavioralCharacteristics,
-                            conflictPlans);
+                    // TODO fix courtesy yielding behavior
+                    stop = false;
+                    // stop = stopForPriorityConflict(conflict, leaders, speed, vehicleLength, behavioralCharacteristics,
+                    // conflictPlans);
                     break;
                 }
                 case GIVE_WAY:
@@ -432,7 +434,6 @@ public final class ConflictUtil
             final ConflictPlans yieldPlans) throws ParameterException
     {
 
-        // Escape if no conflicting traffic or traffic ahead
         if (leaders.isEmpty() || conflict.getUpstreamConflictingGTUs().isEmpty())
         {
             // no leader, or no conflicting vehicle

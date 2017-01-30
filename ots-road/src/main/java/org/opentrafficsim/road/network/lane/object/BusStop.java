@@ -13,6 +13,10 @@ import org.opentrafficsim.road.network.animation.BusStopAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
+import nl.tudelft.simulation.immutablecollections.Immutable;
+import nl.tudelft.simulation.immutablecollections.ImmutableHashSet;
+import nl.tudelft.simulation.immutablecollections.ImmutableSet;
+
 /**
  * A bus stop is a location on a lane. The stop has a name, and a set of lines. At a single stop in reality, there may be
  * different locations where busses stop for different lines. A {@code BusStop} pertains to only one such location. The bus stop
@@ -75,13 +79,12 @@ public class BusStop extends AbstractLaneBasedObject
     }
 
     /**
-     * Whether the lines belongs to this stop.
-     * @param line line number
+     * Returns the lines set.
      * @return whether the lines belongs to this stop
      */
-    public final boolean isForLine(final String line)
+    public final ImmutableSet<String> getLines()
     {
-        return this.lines.contains(line);
+        return new ImmutableHashSet<>(this.lines, Immutable.COPY);
     }
 
     /** {@inheritDoc} */

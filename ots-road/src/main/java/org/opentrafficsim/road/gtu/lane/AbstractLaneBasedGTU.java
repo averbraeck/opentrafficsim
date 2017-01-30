@@ -415,6 +415,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     protected void move(final DirectedPoint fromLocation)
             throws SimRuntimeException, GTUException, OperationalPlanException, NetworkException, ParameterException
     {
+        
         // Only carry out move() if we still have lane(s) to drive on.
         // Note: a (Sink) trigger can have 'destroyed' us between the previous evaluation step and this one.
         if (this.lanesCurrentOperationalPlan.isEmpty())
@@ -778,7 +779,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             if (!(getStrategicalPlanner() instanceof LaneBasedStrategicalRoutePlanner))
             {
-                throw new GTUException(this + " reaches branch but has no route navigator");
+                throw new GTUException(this + " reaches branch but has no route navigator ");
             }
             Node nextNode = ((LaneBasedStrategicalRoutePlanner) getStrategicalPlanner()).nextNode(lane.getParentLink(),
                     GTUDirectionality.DIR_PLUS, getGTUType());

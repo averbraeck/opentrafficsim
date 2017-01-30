@@ -58,7 +58,7 @@ public final class Conflict extends AbstractLaneBasedObject
     private final GTUDirectionality direction;
 
     /** Simulator for animation and timed events. */
-    private final OTSDEVSSimulatorInterface simulator;
+    private final OTSSimulatorInterface simulator;
 
     /** GTU type. */
     private final GTUType gtuType;
@@ -86,7 +86,7 @@ public final class Conflict extends AbstractLaneBasedObject
     @SuppressWarnings("checkstyle:parameternumber")
     private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final GTUDirectionality direction,
             final OTSLine3D geometry, final ConflictType conflictType, final ConflictRule conflictRule,
-            final OTSDEVSSimulatorInterface simulator, final GTUType gtuType, final boolean permitted, final Object cloneLock)
+            final OTSSimulatorInterface simulator, final GTUType gtuType, final boolean permitted, final Object cloneLock)
             throws NetworkException
     {
         super(UUID.randomUUID().toString(), lane, Throw.whenNull(direction, "Direction may not be null.").isPlus()
@@ -247,7 +247,8 @@ public final class Conflict extends AbstractLaneBasedObject
         Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
                 "simulator should be a DEVSSimulator");
         Conflict out = new Conflict((Lane) newCSE, getLongitudinalPosition(), this.length, this.direction, getGeometry(),
-                this.conflictType, this.conflictRule, this.simulator, this.gtuType, this.permitted, this.cloneLock);
+                this.conflictType, this.conflictRule.clone(newSimulator), newSimulator, this.gtuType, this.permitted,
+                this.cloneLock);
         synchronized (this.cloneLock)
         {
             // couple both clones

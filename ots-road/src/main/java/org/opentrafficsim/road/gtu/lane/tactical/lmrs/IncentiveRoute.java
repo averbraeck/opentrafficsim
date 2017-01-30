@@ -101,7 +101,7 @@ public class IncentiveRoute implements MandatoryIncentive
      * @return desire to leave a lane for a single infrastructure info
      * @throws ParameterException in case of a parameter exception
      */
-    private double getDesireToLeave(final BehavioralCharacteristics bc, final Length x, final int n, final Speed v)
+    public static double getDesireToLeave(final BehavioralCharacteristics bc, final Length x, final int n, final Speed v)
             throws ParameterException
     {
         double d1 = 1 - x.si / (n * bc.getParameter(ParameterTypes.LOOKAHEAD).si);

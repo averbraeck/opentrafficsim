@@ -10,13 +10,13 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 import nl.tudelft.simulation.language.Throw;
@@ -102,7 +102,7 @@ public class LaneStructure implements Serializable
 
     /** Lane structure records grouped per relative lane. */
     private final Map<RelativeLane, Set<LaneStructureRecord>> relativeLaneMap = new HashMap<>();
-    
+
     /**
      * @param rootLSR the root record.
      * @param lookAhead look ahead distance
@@ -195,7 +195,26 @@ public class LaneStructure implements Serializable
     public final <T extends LaneBasedObject> SortedSet<Entry<T>> getDownstreamObjects(final RelativeLane lane,
             final Class<T> clazz, final GTU gtu, final RelativePosition.TYPE pos) throws GTUException
     {
-        LaneStructureRecord record = this.getLaneLSR(lane);
+        LaneStructureRecord record = null;
+        if (this.crossSectionRecords.containsKey(lane))
+        {
+            record = this.getLaneLSR(lane);
+        }
+        else
+        {
+            Length minLength = new Length(Double.MAX_VALUE, LengthUnit.SI);
+            // not in current cross section, get first downstream
+            for (LaneStructureRecord rec : this.relativeLaneMap.get(lane))
+            {
+                if (rec.getStartDistance().ge0() && rec.getStartDistance().lt(minLength))
+                {
+                    record = rec;
+                    minLength = rec.getStartDistance();
+                }
+            }
+        }
+        Throw.when(record == null, GTUException.class, "Trying to get objects on %s, but that lane is not in the structure.",
+                lane);
         Length ds = gtu.getRelativePositions().get(pos).getDx().minus(gtu.getReference().getDx());
         // the list is ordered, but only for DIR_PLUS, need to do our own ordering
         Length minimumPosition;
@@ -292,6 +311,28 @@ public class LaneStructure implements Serializable
             }
             getDownstreamObjectsRecursive(set, next, clazz, ds);
         }
+    }
+
+    /**
+     * Retrieve objects of a specific type. Returns objects over a maximum length of the look ahead distance downstream from the
+     * relative position, or as far as the lane map goes. Objects on links not on the route are ignored.
+     * @param clazz class of objects to find
+     * @param gtu gtu
+     * @param pos relative position to start search from
+     * @param <T> type of objects to find
+     * @param route the route
+     * @return Sorted set of objects of requested type
+     * @throws GTUException if lane is not in current set
+     */
+    public <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjectsOnRoute(final Class<T> clazz,
+            final GTU gtu, final RelativePosition.TYPE pos, final Route route) throws GTUException
+    {
+        Map<RelativeLane, SortedSet<Entry<T>>> out = new HashMap<>();
+        for (RelativeLane relativeLane : this.relativeLaneMap.keySet())
+        {
+            out.put(relativeLane, getDownstreamObjectsOnRoute(relativeLane, clazz, gtu, pos, route));
+        }
+        return out;
     }
 
     /**

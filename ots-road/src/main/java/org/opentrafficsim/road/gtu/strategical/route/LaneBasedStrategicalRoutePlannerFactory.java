@@ -6,6 +6,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactory;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactoryDefault;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
@@ -67,7 +68,14 @@ public class LaneBasedStrategicalRoutePlannerFactory
     public final LaneBasedStrategicalPlanner create(final LaneBasedGTU gtu, final Route route) throws GTUException
     {
         BehavioralCharacteristics behavioralCharacteristics = this.tacticalPlannerFactory.getDefaultBehavioralCharacteristics();
-        this.behavioralCharacteristicsFactory.setValues(behavioralCharacteristics, gtu.getGTUType());
+        try 
+        {
+            this.behavioralCharacteristicsFactory.setValues(behavioralCharacteristics, gtu.getGTUType());
+        }
+        catch (ParameterException exception)
+        {
+            throw new GTUException("Parameter was set to illegal value.", exception);
+        }
         LaneBasedStrategicalRoutePlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
                 this.tacticalPlannerFactory.create(gtu), route, gtu);
         return strategicalPlanner;

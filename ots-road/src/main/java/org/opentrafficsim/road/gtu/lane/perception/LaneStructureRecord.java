@@ -202,7 +202,7 @@ public class LaneStructureRecord implements Serializable
     }
 
     /**
-     * Returns whether the end of this lane allows the route to be followed.
+     * Returns whether (the end of) this lane allows the route to be followed.
      * @param route Route; the route to follow
      * @param gtuType GTUType; gtu type
      * @param end boolean; whether to consider the end (or otherwise the lane itself, i.e. allow lane change from this lane)
@@ -212,6 +212,15 @@ public class LaneStructureRecord implements Serializable
     private boolean allowsRoute(final Route route, final GTUType gtuType, final boolean end) throws NetworkException
     {
 
+        // start with simple check
+        int from = route.indexOf(this.getFromNode());
+        int to = route.indexOf(this.getToNode());
+        if (from == -1 || to == -1 || from != to - 1)
+        {
+            return false;
+        }
+        
+        // link is on the route, but lane markings may still prevent the route from being followed
         Set<LaneStructureRecord> currentSet = new HashSet<>();
         Set<LaneStructureRecord> nextSet = new HashSet<>();
         currentSet.add(this);

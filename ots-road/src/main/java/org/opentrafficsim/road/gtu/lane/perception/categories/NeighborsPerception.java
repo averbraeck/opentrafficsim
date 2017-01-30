@@ -324,6 +324,10 @@ public class NeighborsPerception extends LaneBasedAbstractPerceptionCategory
         {
             for (LaneStructureRecord record : currentSet)
             {
+                if (!record.allowsRoute(getGtu().getStrategicalPlanner().getRoute(), getGtu().getGTUType()))
+                {
+                    continue;
+                }
                 int first;
                 Length loc = record.getStartDistance().neg().plus(ds);
                 if (lane.getLateralDirectionality().isLeft())

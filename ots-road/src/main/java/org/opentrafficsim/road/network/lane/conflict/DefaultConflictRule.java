@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -164,9 +165,17 @@ public class DefaultConflictRule implements ConflictRule
         }
         else
         {
-            throw new RuntimeException("Could not sort out priority from priorities " + priority1 + " and " + priority2);
+            throw new RuntimeException(
+                    "Could not sort out conflict priority from link priorities " + priority1 + " and " + priority2);
         }
         return conflictRules;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ConflictRule clone(final OTSSimulatorInterface newSimulator)
+    {
+        return new DefaultConflictRule();
     }
 
 }
