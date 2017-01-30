@@ -408,7 +408,7 @@ class DummyModel implements OTSModelInterface
      * Register the simulator.
      * @param simulator SimulatorInterface&lt;Time, Duration, OTSSimTimeDouble&gt;; the simulator
      */
-    public void setSimulator(SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
+    public void setSimulator(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
     {
         this.simulator = simulator;
     }
@@ -422,7 +422,7 @@ class DummyModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0) throws SimRuntimeException
+    public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0) throws SimRuntimeException
     {
         // Nothing happens here
     }
