@@ -166,4 +166,12 @@ public class TextProperties
         this.textAttributes.put(TextAttribute.STRIKETHROUGH, strikethrough ? TextAttribute.STRIKETHROUGH_ON : -1);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "TextProperties [textAlignment=" + this.textAlignment + ", color=" + this.color + ", font=" + this.font
+                + ", textAttributes=" + this.textAttributes + ", fontSize=" + this.fontSize + "]";
+    }
+
 }
