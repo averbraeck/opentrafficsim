@@ -24,11 +24,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.simulationengine.SimpleAnimator;
-import org.opentrafficsim.simulationengine.WrappableAnimation;
-
 import nl.javel.gisbeans.map.MapInterface;
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
@@ -36,6 +31,11 @@ import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
 import nl.tudelft.simulation.language.io.URLResource;
+
+import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.opentrafficsim.simulationengine.WrappableAnimation;
 
 /**
  * Animation panel with various controls.
@@ -198,7 +198,17 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
             final String iconPath, final String toolTipText, final boolean initiallyVisible, final boolean idButton)
     {
         JToggleButton button;
-        button = new JCheckBox(new ImageIcon(URLResource.getResource(iconPath)));
+        ImageIcon icon = null;
+        try
+        {
+            icon = new ImageIcon(URLResource.getResource(iconPath));
+        }
+        catch (NullPointerException npe)
+        {
+            System.err.println("Could not load icon " + iconPath + " for " + toolTipText);
+            // Leave icon null; it will create a button/check box with no icon
+        }
+        button = new JCheckBox(icon);
         button.setPreferredSize(new Dimension(32, 28));
         button.setName(name);
         button.setEnabled(true);
