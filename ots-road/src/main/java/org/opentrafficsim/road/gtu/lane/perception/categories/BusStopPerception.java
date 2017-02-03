@@ -1,6 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -13,6 +15,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructure.Entry;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayBusStop;
+import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.object.BusStop;
 
 /**
@@ -64,7 +67,12 @@ public class BusStopPerception extends LaneBasedAbstractPerceptionCategory
         {
             for (Entry<BusStop> entry : map.get(relativeLane))
             {
-                stops.add(new HeadwayBusStop(entry.getLaneBasedObject(), entry.getDistance(), relativeLane));
+                Set<String> conflictIds = new HashSet<>();
+                for (Conflict conflict : entry.getLaneBasedObject().getConflicts())
+                {
+                    conflictIds.add(conflict.getId());
+                }
+                stops.add(new HeadwayBusStop(entry.getLaneBasedObject(), entry.getDistance(), relativeLane, conflictIds));
             }
         }
         this.busStops = new TimeStampedObject<>(stops, getTimestamp());

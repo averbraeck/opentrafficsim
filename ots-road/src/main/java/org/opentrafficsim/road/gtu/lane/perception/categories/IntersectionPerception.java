@@ -34,6 +34,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.conflict.Conflict.ConflictEnd;
 import org.opentrafficsim.road.network.lane.conflict.ConflictPriority;
+import org.opentrafficsim.road.network.lane.conflict.ConflictRule;
 import org.opentrafficsim.road.network.lane.conflict.ConflictType;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -63,6 +64,12 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
 
     /** Set of conflicts. */
     private Map<RelativeLane, TimeStampedObject<SortedSet<HeadwayConflict>>> conflicts = new HashMap<>();
+
+    /** Conflicts alongside left. */
+    private TimeStampedObject<Boolean> alongsideConflictLeft;
+
+    /** Conflicts alongside right. */
+    private TimeStampedObject<Boolean> alongsideConflictRight;
 
     /**
      * @param perception perception
@@ -144,6 +151,7 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
                 Conflict otherConflict = conflict.getOtherConflict();
                 ConflictType conflictType = conflict.getConflictType();
                 ConflictPriority conflictPriority = conflict.conflictPriority();
+                Class<? extends ConflictRule> conflictRuleType = conflict.getConflictRule().getClass();
                 String id = conflict.getId();
                 Length distance = entry.getDistance();
                 Length length = conflict.getLength();
@@ -312,9 +320,34 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
                 }
 
                 // add conflict to set
-                set.add(new HeadwayConflict(conflictType, conflictPriority, id, distance, length, conflictingLength,
-                        upstreamConflictingGTUs, downstreamConflictingGTUs, conflictingVisibility, conflictingSpeedLimit,
-                        conflictingLink, stopLine, conflictingStopLine));
+                set.add(new HeadwayConflict(conflictType, conflictPriority, conflictRuleType, id, distance, length,
+                        conflictingLength, upstreamConflictingGTUs, downstreamConflictingGTUs, conflictingVisibility,
+                        conflictingSpeedLimit, conflictingLink, stopLine, conflictingStopLine));
+            }
+        }
+
+        // alongside
+        for (RelativeLane lane : new RelativeLane[] { RelativeLane.LEFT, RelativeLane.RIGHT })
+        {
+            if (getPerception().getLaneStructure().getCrossSection().contains(lane))
+            {
+                SortedSet<Entry<Conflict>> conflictEntries = getPerception().getLaneStructure().getUpstreamObjects(lane,
+                        Conflict.class, getGtu(), RelativePosition.FRONT);
+                boolean alongside = false;
+                if (!conflictEntries.isEmpty())
+                {
+                    Entry<Conflict> entry = conflictEntries.first();
+                    alongside = entry.getDistance().si < entry.getLaneBasedObject().getLength().si + getGtu().getLength().si;
+
+                }
+                if (lane.isLeft())
+                {
+                    this.alongsideConflictLeft = new TimeStampedObject<>(alongside, getTimestamp());
+                }
+                else
+                {
+                    this.alongsideConflictRight = new TimeStampedObject<>(alongside, getTimestamp());
+                }
             }
         }
     }
@@ -537,13 +570,31 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
     }
 
     /**
-     * Returns a set of traffic lights along the route. Traffic lights are sorted by headway value.
+     * Returns a set of conflicts along the route. Conflicts are sorted by headway value.
      * @param lane lane
-     * @return set of traffic lights along the route
+     * @return set of conflicts along the route
      */
     public final SortedSet<HeadwayConflict> getConflicts(final RelativeLane lane)
     {
         return this.conflicts.get(lane).getObject();
+    }
+
+    /**
+     * Returns whether there is a conflict alongside to the left.
+     * @return whether there is a conflict alongside to the left
+     */
+    public final boolean isAlongsideConflictLeft()
+    {
+        return this.alongsideConflictLeft.getObject();
+    }
+
+    /**
+     * Returns whether there is a conflict alongside to the right.
+     * @return whether there is a conflict alongside to the right
+     */
+    public final boolean isAlongsideConflictRight()
+    {
+        return this.alongsideConflictRight.getObject();
     }
 
     /**
@@ -564,6 +615,24 @@ public class IntersectionPerception extends LaneBasedAbstractPerceptionCategory
     public final TimeStampedObject<SortedSet<HeadwayConflict>> getTimeStampedConflicts(final RelativeLane lane)
     {
         return this.conflicts.get(lane);
+    }
+
+    /**
+     * Returns whether there is a conflict alongside to the left, time stamped.
+     * @return whether there is a conflict alongside to the left
+     */
+    public final TimeStampedObject<Boolean> isAlongsideConflictLeftTimeStamped()
+    {
+        return this.alongsideConflictLeft;
+    }
+
+    /**
+     * Returns whether there is a conflict alongside to the right, time stamped.
+     * @return whether there is a conflict alongside to the right
+     */
+    public final TimeStampedObject<Boolean> isAlongsideConflictRightTimeStamped()
+    {
+        return this.alongsideConflictRight;
     }
 
     /** {@inheritDoc} */

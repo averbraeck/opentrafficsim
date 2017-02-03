@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
@@ -38,11 +39,20 @@ public class IncentiveBusStop implements MandatoryIncentive
 
         HeadwayBusStop firstStop = null;
         SortedSet<HeadwayBusStop> stops = perception.getPerceptionCategory(BusStopPerception.class).getBusStops();
+        Time now;
+        try
+        {
+            now = perception.getGtu().getSimulator().getSimulatorTime().getTime();
+        }
+        catch (GTUException exception)
+        {
+            throw new RuntimeException("GTU not initialized.", exception);
+        }
         for (HeadwayBusStop stop : stops)
         {
             try
             {
-                if (((BusSchedule) perception.getGtu().getStrategicalPlanner().getRoute()).isLineStop(stop.getId()))
+                if (((BusSchedule) perception.getGtu().getStrategicalPlanner().getRoute()).isLineStop(stop.getId(), now))
                 {
                     firstStop = stop;
                     break;
@@ -64,13 +74,20 @@ public class IncentiveBusStop implements MandatoryIncentive
             double d = -IncentiveRoute.getDesireToLeave(behavioralCharacteristics, firstStop.getDistance(), 1, speed);
             return new Desire(d, d);
         }
-
+        
         int n = firstStop.getRelativeLane().getNumLanes();
+        
         double dNotGood = -IncentiveRoute.getDesireToLeave(behavioralCharacteristics, firstStop.getDistance(), n + 1, speed);
         double dGood = IncentiveRoute.getDesireToLeave(behavioralCharacteristics, firstStop.getDistance(), n, speed);
         return firstStop.getRelativeLane().getLateralDirectionality().isRight() ? new Desire(dNotGood, dGood)
                 : new Desire(dGood, dNotGood);
 
+    }
+    
+    @Override
+    public final String toString()
+    {
+        return "IncentiveBusStop";
     }
 
 }

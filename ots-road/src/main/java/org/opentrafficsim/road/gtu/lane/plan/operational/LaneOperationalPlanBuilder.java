@@ -149,10 +149,25 @@ public final class LaneOperationalPlanBuilder
         OTSLine3D path = lanes.get(0).getCenterLine().extract(firstLanePosition, lanes.get(0).getLength());
         for (int i = 1; i < lanes.size(); i++)
         {
-            // TODO tolerance may depend on network, increased by 4 for A58 demo
-            path = OTSLine3D.concatenate(0.15 * 4, path, lanes.get(i).getCenterLine());
+            path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lanes.get(i).getCenterLine());
         }
         return path.extract(0.0, distance.si);
+    }
+    
+    /**
+     * Concatenate two paths, where the first may be {@code null}.
+     * @param path path, may be {@code null}
+     * @param centerLine center line of lane to add
+     * @return concatenated line
+     * @throws OTSGeometryException when lines are degenerate or too distant
+     */
+    public static OTSLine3D concatenateNull(final OTSLine3D path, final OTSLine3D centerLine) throws OTSGeometryException
+    {
+        if (path == null)
+        {
+            return centerLine;
+        }
+        return OTSLine3D.concatenate(Lane.MARGIN.si, path, centerLine);
     }
 
     /**
@@ -334,8 +349,7 @@ public final class LaneOperationalPlanBuilder
         }
         catch (Exception e)
         {
-            path = makePath(lanes, firstLanePosition, distance);
-            throw new Error("Bad!");
+            throw new Error("Path for acceleration plan could not be made.", e);
         }
         return new LaneBasedOperationalPlan(gtu, path, startTime, startSpeed, segmentList, lanes);
     }

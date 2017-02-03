@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.pt;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
@@ -32,6 +33,12 @@ public class BusSchedule extends Route
 
     /** List of bus stops. */
     private final Map<String, BusStopInfo> schedule = new HashMap<>();
+
+    /** Map of actual departures stored per bus stop. */
+    private final Map<String, Time> actualDeparturesBusStop = new HashMap<>();
+    
+    /** Map of actual departures stored per conflict. */
+    private final Map<String, Time> actualDeparturesConflict = new HashMap<>();
 
     /**
      * @param id id
@@ -71,13 +78,15 @@ public class BusSchedule extends Route
     }
 
     /**
-     * Whether the bus of this line should stop for this bus stop.
+     * Whether the bus of this line should stop for this bus stop. False if not the correct line, or already stopped.
      * @param busStopId id of bus stop
+     * @param time time to check
      * @return whether the bus of this line should stop for this bus stop
      */
-    public final boolean isLineStop(final String busStopId)
+    public final boolean isLineStop(final String busStopId, final Time time)
     {
-        return this.schedule.containsKey(busStopId);
+        return this.schedule.containsKey(busStopId)
+                && (!this.actualDeparturesConflict.containsKey(busStopId) || time.lt(this.actualDeparturesConflict.get(busStopId)));
     }
 
     /**
@@ -120,15 +129,58 @@ public class BusSchedule extends Route
      */
     private void checkStop(final String busStopId)
     {
-        Throw.when(!isLineStop(busStopId), IllegalArgumentException.class, "Bus stop %s is not for schedule %s.", busStopId,
-                this);
+        Throw.when(!this.schedule.containsKey(busStopId), IllegalArgumentException.class, "Bus stop %s is not for schedule %s.",
+                busStopId, this);
+    }
+
+    /**
+     * Set actual departure time.
+     * @param busStopId bus stop id
+     * @param conflictIds conflicts downstream of the bus stop
+     * @param time actual departure time
+     */
+    public final void setActualDeparture(final String busStopId, final Set<String> conflictIds, final Time time)
+    {
+        this.actualDeparturesBusStop.put(busStopId, time);
+        for (String conflictId : conflictIds)
+        {
+            this.actualDeparturesConflict.put(conflictId, time);
+        }
+    }
+    
+    /**
+     * Return the actual departure time.
+     * @param busStopId bus stop id
+     * @return actual departure time, {@code null} if not given
+     */
+    public final Time getActualDepartureBusStop(final String busStopId)
+    {
+        return this.actualDeparturesBusStop.get(busStopId);
+    }
+
+    /**
+     * Return the actual departure time.
+     * @param conflictId conflict id
+     * @return actual departure time, {@code null} if not given
+     */
+    public final Time getActualDepartureConflict(final String conflictId)
+    {
+        return this.actualDeparturesConflict.get(conflictId);
+    }
+
+    /**
+     * @return line.
+     */
+    public String getLine()
+    {
+        return this.line;
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "BusSchedule [" + this.line + "]";
+        return "BusSchedule [id=" + getId() + ", line=" + this.line + "]";
     }
 
     /**

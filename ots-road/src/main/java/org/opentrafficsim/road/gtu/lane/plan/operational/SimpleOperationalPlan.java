@@ -3,6 +3,11 @@ package org.opentrafficsim.road.gtu.lane.plan.operational;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
+import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.network.LateralDirectionality;
 
 import nl.tudelft.simulation.language.Throw;
@@ -31,6 +36,12 @@ public class SimpleOperationalPlan implements Serializable
     /** Lane change direction. */
     private final LateralDirectionality laneChangeDirection;
 
+    /** Indicator intent. */
+    private TurnIndicatorIntent indicatorIntent = TurnIndicatorIntent.NONE;
+    
+    /** Distance to object causing turn  indicator intent. */
+    private Length indicatorObjectDistance = null;
+
     /**
      * @param acceleration acceleration
      */
@@ -47,6 +58,7 @@ public class SimpleOperationalPlan implements Serializable
     {
         Throw.whenNull(acceleration, "Acceleration may not be null.");
         Throw.whenNull(laneChangeDirection, "Lane change direction may not be null.");
+        checkAcceleration(acceleration);
         this.acceleration = acceleration;
         this.laneChangeDirection = laneChangeDirection;
     }
@@ -58,7 +70,7 @@ public class SimpleOperationalPlan implements Serializable
     {
         return this.acceleration;
     }
-    
+
     /**
      * @return if lane change.
      */
@@ -74,22 +86,171 @@ public class SimpleOperationalPlan implements Serializable
     {
         return this.laneChangeDirection;
     }
-    
+
     /**
      * Set minimum of current and given acceleration.
      * @param a acceleration to set if lower than current acceleration
      */
-    public final void minimumAcceleration(final Acceleration a)
+    public final void minimizeAcceleration(final Acceleration a)
     {
+        checkAcceleration(a);
         this.acceleration = Acceleration.min(this.acceleration, a);
     }
+
+    /**
+     * Check acceleration level.
+     * @param a acceleration
+     */
+    private void checkAcceleration(final Acceleration a)
+    {
+        if (a.equals(Acceleration.NEGATIVE_INFINITY) || a.equals(Acceleration.NEG_MAXVALUE))
+        {
+            throw new RuntimeException("Model has calcalated a negative deceleration.");
+        }
+    }
+
+    /**
+     * @return indicatorIntent.
+     */
+    public final TurnIndicatorIntent getIndicatorIntent()
+    {
+        return this.indicatorIntent;
+    }
+
+    /**
+     * Set left indicator intent. Any intent given with distance overrules this intent.
+     */
+    public final void setIndicatorIntentLeft()
+    {
+        if (this.indicatorObjectDistance != null)
+        {
+            return;
+        }
+        if (this.indicatorIntent.isRight())
+        {
+            this.indicatorIntent = TurnIndicatorIntent.CONFLICTING;
+        }
+        else
+        {
+            this.indicatorIntent = TurnIndicatorIntent.LEFT;
+        }
+    }
+
+    /**
+     * Set right indicator intent. Any intent given with distance overrules this intent.
+     */
+    public final void setIndicatorIntentRight()
+    {
+        if (this.indicatorObjectDistance != null)
+        {
+            return;
+        }
+        if (this.indicatorIntent.isLeft())
+        {
+            this.indicatorIntent = TurnIndicatorIntent.CONFLICTING;
+        }
+        else
+        {
+            this.indicatorIntent = TurnIndicatorIntent.RIGHT;
+        }
+    }
     
+    /**
+     * Set left indicator intent. Intent with smallest provided distance has priority.
+     * @param distance distance to object pertaining to the turn indicator intent
+     */
+    public final void setIndicatorIntentLeft(final Length distance)
+    {
+        if (compareAndIgnore(distance))
+        {
+            return;
+        }
+        if (this.indicatorIntent.isRight())
+        {
+            this.indicatorIntent = TurnIndicatorIntent.CONFLICTING;
+        }
+        else
+        {
+            this.indicatorIntent = TurnIndicatorIntent.LEFT;
+        }
+        
+    }
+
+    /**
+     * Set right indicator intent. Intent with smallest provided distance has priority.
+     * @param distance distance to object pertaining to the turn indicator intent
+     */
+    public final void setIndicatorIntentRight(final Length distance)
+    {
+        if (compareAndIgnore(distance))
+        {
+            return;
+        }
+        if (this.indicatorIntent.isLeft())
+        {
+            this.indicatorIntent = TurnIndicatorIntent.CONFLICTING;
+        }
+        else
+        {
+            this.indicatorIntent = TurnIndicatorIntent.RIGHT;
+        }
+    }
+    
+    /**
+     * Compares distances and returns whether the given distance (and intent) can be ignored.
+     * @param distance distance to object of intent
+     * @return whether the given distance can be ignored
+     */
+    private boolean compareAndIgnore(final Length distance)
+    {
+        if (this.indicatorObjectDistance != null)
+        {
+            if (this.indicatorObjectDistance.lt(distance))
+            {
+                // disregard input; the intent from larger distance
+                return true;
+            }
+            if (this.indicatorObjectDistance.gt(distance))
+            {
+                // disregard existing; the intent from larger distance
+                this.indicatorIntent = TurnIndicatorIntent.NONE; // prevents a set to CONFLICTING
+            }
+        }
+        else
+        {
+            // disregard existing; the intent without distance
+            this.indicatorIntent = TurnIndicatorIntent.NONE; // prevents a set to CONFLICTING
+        }
+        return false;
+    }
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "SimpleOperationalPlan [Acceleration=" + this.acceleration + ", change=" + this.laneChangeDirection + "]";
+        return "SimpleOperationalPlan [Acceleration=" + this.acceleration + ", change=" + this.laneChangeDirection
+                + ", indicator intent=" + this.indicatorIntent + "]";
+    }
+
+    /**
+     * @param gtu GTU to set the indicator on
+     * @throws GTUException if GTU does not support the indicator
+     */
+    public void setTurnIndicator(final GTU gtu) throws GTUException
+    {
+        if (this.indicatorIntent.isLeft())
+        {
+            gtu.setTurnIndicatorStatus(TurnIndicatorStatus.LEFT);
+        }
+        else if (this.indicatorIntent.isRight())
+        {
+            gtu.setTurnIndicatorStatus(TurnIndicatorStatus.RIGHT);
+        }
+        else
+        {
+            gtu.setTurnIndicatorStatus(TurnIndicatorStatus.NONE);
+        }
     }
 
 }

@@ -66,7 +66,7 @@ public final class AnimationToggles
         aws.addToggleAnimationButtonText("Conflict", Conflict.class, "Show/hide conflicts", true);
         // aws.addToggleAnimationButtonText("Generator", LaneBasedGTUGenerator.class, "Show/hide generators", true);
         aws.addToggleAnimationButtonText("Bus", BusStop.class, "Show/hide bus stops", false);
-        aws.addToggleAnimationButtonText("BusId", BusStop.class, "Show/hide bus stop Ids", false);
+        aws.addToggleAnimationButtonText("BusId", BusStopAnimation.Text.class, "Show/hide bus stop Ids", false);
     }
 
     /**

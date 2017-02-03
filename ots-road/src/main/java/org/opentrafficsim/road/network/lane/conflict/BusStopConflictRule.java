@@ -10,10 +10,9 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.RoadGTUTypes;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
+import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.language.Throw;
-
-import org.opentrafficsim.road.network.lane.Lane;
 
 /**
  * <p>
@@ -28,7 +27,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 public class BusStopConflictRule implements ConflictRule
 {
 
-    /** Simualtor. */
+    /** Simulator. */
     private final OTSSimulatorInterface simulator;
 
     /**
@@ -45,6 +44,7 @@ public class BusStopConflictRule implements ConflictRule
     public ConflictPriority determinePriority(final Conflict conflict)
     {
 
+        // determine if we request from bus stop, or not
         boolean requestingFromBusStop;
         Conflict busConflict;
         // conflict builder enforces that only one of the two links has priority BUS_STOP
@@ -62,10 +62,12 @@ public class BusStopConflictRule implements ConflictRule
             busConflict = conflict.getOtherConflict();
         }
 
+        // find bus and determine if it has priority
         // conflict forces that LongitudinalDirection is DIR_PLUS or DIR_MINUS
         Lane lane = busConflict.getLane();
-        GTUDirectionality dir = conflict.getDirection().isForward() ? GTUDirectionality.DIR_PLUS : GTUDirectionality.DIR_MINUS;
-        Length pos = conflict.getLongitudinalPosition();
+        GTUDirectionality dir =
+                busConflict.getDirection().isForward() ? GTUDirectionality.DIR_PLUS : GTUDirectionality.DIR_MINUS;
+        Length pos = busConflict.getLongitudinalPosition();
         LaneBasedGTU gtu = null;
         try
         {
@@ -78,8 +80,16 @@ public class BusStopConflictRule implements ConflictRule
                     if (map.size() == 1)
                     {
                         lane = map.keySet().iterator().next();
-                        dir = map.get(lane);
-                        pos = dir.isPlus() ? lane.getLength() : Length.ZERO;
+                        // only on bus stop
+                        if (lane.getParentLink().getPriority().isBusStop())
+                        {
+                            dir = map.get(lane);
+                            pos = dir.isPlus() ? lane.getLength() : Length.ZERO;
+                        }
+                        else
+                        {
+                            lane = null;
+                        }
                     }
                     else
                     {
@@ -100,12 +110,19 @@ public class BusStopConflictRule implements ConflictRule
         return busHasPriority == requestingFromBusStop ? ConflictPriority.PRIORITY : ConflictPriority.GIVE_WAY;
 
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public ConflictRule clone(final OTSSimulatorInterface newSimulator)
     {
         return new BusStopConflictRule(newSimulator);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "BusStopConflictRule";
     }
 
 }

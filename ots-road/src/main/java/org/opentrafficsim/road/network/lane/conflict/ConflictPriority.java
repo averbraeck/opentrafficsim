@@ -28,4 +28,50 @@ public enum ConflictPriority
     
     /** Split. */
     SPLIT;
+    
+    /**
+     * Returns whether this is a priority conflict.
+     * @return whether this is a priority conflict
+     */
+    public final boolean isPriority()
+    {
+        return this.equals(PRIORITY);
+    }
+
+    /**
+     * Returns whether this is a give-way conflict.
+     * @return whether this is a give-way conflict
+     */
+    public final boolean isGiveWay()
+    {
+        return this.equals(GIVE_WAY);
+    }
+
+    /**
+     * Returns whether this is a stop conflict.
+     * @return whether this is a stop conflict
+     */
+    public final boolean isStop()
+    {
+        return this.equals(STOP);
+    }
+
+    /**
+     * Returns whether this is an all-stop conflict.
+     * @return whether this is an all-stop conflict
+     */
+    public final boolean isAllStop()
+    {
+        return this.equals(ALL_STOP);
+    }
+
+    /**
+     * Returns whether this is a stop conflict.
+     * @return whether this is a stop conflict
+     */
+    public final boolean isSplit()
+    {
+        return this.equals(SPLIT);
+    }
+
 }
