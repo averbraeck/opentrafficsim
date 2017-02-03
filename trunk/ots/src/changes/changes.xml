@@ -41,6 +41,9 @@
         NEGATIVE_INFINITY, POS_MAXVALUE and NEG_MAXVALUE have been added to scalars,
         with the exception of Money scalars.
       </action>
+      <action issue="OTS-278" type="add">
+        OTS-278. Scheduled busses and bus stops.
+      </action>
     </release>
 
     <release version="0.13.04" date="2017-01-16" description="Intermediate Release 0.13.04">

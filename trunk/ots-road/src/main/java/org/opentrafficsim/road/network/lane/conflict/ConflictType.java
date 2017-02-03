@@ -13,6 +13,7 @@ package org.opentrafficsim.road.network.lane.conflict;
  */
 public enum ConflictType
 {
+    
     /** Crossing conflict. */
     CROSSING,
 
@@ -21,4 +22,31 @@ public enum ConflictType
     
     /** Split conflict. */
     SPLIT;
+    
+    /**
+     * Returns whether this is a crossing.
+     * @return whether this is a crossing
+     */
+    public boolean isCrossing()
+    {
+        return this.equals(CROSSING);
+    }
+    
+    /**
+     * Returns whether this is a merge.
+     * @return whether this is a merge
+     */
+    public boolean isMerge()
+    {
+        return this.equals(MERGE);
+    }
+    
+    /**
+     * Returns whether this is a split.
+     * @return whether this is a split
+     */
+    public boolean isSplit()
+    {
+        return this.equals(SPLIT);
+    }
 }

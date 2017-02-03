@@ -2,16 +2,23 @@ package org.opentrafficsim.road.network.lane.object;
 
 import java.rmi.RemoteException;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.lane.RoadGTUTypes;
 import org.opentrafficsim.road.network.animation.BusStopAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.conflict.BusStopConflictRule;
+import org.opentrafficsim.road.network.lane.conflict.Conflict;
 
 import nl.tudelft.simulation.immutablecollections.Immutable;
 import nl.tudelft.simulation.immutablecollections.ImmutableHashSet;
@@ -44,6 +51,9 @@ public class BusStop extends AbstractLaneBasedObject
     /** Stop name. */
     private final String name;
 
+    /** Stored conflicts downstream. */
+    private Set<Conflict> conflicts = null;
+
     /**
      * @param id id
      * @param lane lane
@@ -55,7 +65,8 @@ public class BusStop extends AbstractLaneBasedObject
     public BusStop(final String id, final Lane lane, final Length longitudinalPosition, final String name,
             final OTSSimulatorInterface simulator) throws NetworkException
     {
-        super(id, lane, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition));
+        super(id, lane, LongitudinalDirectionality.DIR_PLUS, longitudinalPosition,
+                LaneBasedObject.makeGeometry(lane, longitudinalPosition), Length.ZERO);
         this.name = name;
 
         try
@@ -85,6 +96,58 @@ public class BusStop extends AbstractLaneBasedObject
     public final ImmutableSet<String> getLines()
     {
         return new ImmutableHashSet<>(this.lines, Immutable.COPY);
+    }
+
+    /**
+     * Returns the downstream conflicts of the bus stop. Search is only performed over links with BUS_STOP priority.
+     * @return downstream conflicts of the given conflict
+     */
+    public final Set<Conflict> getConflicts()
+    {
+        if (this.conflicts == null)
+        {
+            this.conflicts = new HashSet<>();
+            Lane lane = getLane();
+            // conflict forces only plus or minus as direction
+            GTUDirectionality dir = getDirection().isForward() ? GTUDirectionality.DIR_PLUS : GTUDirectionality.DIR_MINUS;
+            Length position = getLongitudinalPosition();
+            while (lane != null)
+            {
+                List<LaneBasedObject> objects = lane.getObjectAhead(position, dir);
+                while (objects != null)
+                {
+                    for (LaneBasedObject object : objects)
+                    {
+                        if (object instanceof Conflict)
+                        {
+                            Conflict conflict = (Conflict) object;
+                            if (conflict.getConflictRule() instanceof BusStopConflictRule)
+                            {
+                                this.conflicts.add(conflict);
+                            }
+                        }
+                    }
+                    objects = lane.getObjectAhead(objects.get(0).getLongitudinalPosition(), dir);
+                }
+                Map<Lane, GTUDirectionality> downstreamLanes = lane.downstreamLanes(dir, RoadGTUTypes.BUS);
+                int numLanes = 0;
+                for (Lane nextLane : downstreamLanes.keySet())
+                {
+                    if (nextLane.getParentLink().getPriority().isBusStop())
+                    {
+                        numLanes++;
+                        lane = nextLane;
+                        dir = downstreamLanes.get(lane);
+                        position = dir.isPlus() ? Length.ZERO : lane.getLength();
+                    }
+                }
+                if (numLanes != 1)
+                {
+                    lane = null;
+                }
+            }
+        }
+        return this.conflicts;
     }
 
     /** {@inheritDoc} */

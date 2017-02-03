@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.gtu;
 
 /**
+ * Intent for turn indicator.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -10,8 +11,9 @@ package org.opentrafficsim.core.gtu;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public enum TurnIndicatorStatus
+public enum TurnIndicatorIntent
 {
+    
     /** None. */
     NONE,
     
@@ -21,14 +23,11 @@ public enum TurnIndicatorStatus
     /** Right. */
     RIGHT,
     
-    /** Hazard warning. */
-    HAZARD,
-    
-    /** Does not have a turn indicator. */
-    NOTPRESENT;
+    /** Conflicting intents. */
+    CONFLICTING;
 
     /**
-     * @return whether no indicator is on
+     * @return whether no indicator intent
      */
     public boolean isNone()
     {
@@ -36,7 +35,7 @@ public enum TurnIndicatorStatus
     }
     
     /**
-     * @return whether left turn indicator is on
+     * @return whether left turn indicator intent
      */
     public boolean isLeft()
     {
@@ -44,15 +43,7 @@ public enum TurnIndicatorStatus
     }
 
     /**
-     * @return whether left turn indicator or hazard light is on
-     */
-    public boolean isLeftOrBoth()
-    {
-        return this.equals(LEFT) || this.equals(HAZARD);
-    }
-
-    /**
-     * @return whether right turn indicator is on
+     * @return whether right turn indicator intent
      */
     public boolean isRight()
     {
@@ -60,19 +51,11 @@ public enum TurnIndicatorStatus
     }
     
     /**
-     * @return whether right turn indicator or hazard light is on
+     * @return whether conflicting indicator intent
      */
-    public boolean isRightOrBoth()
+    public boolean isConflicting()
     {
-        return this.equals(RIGHT) || this.equals(HAZARD);
-    }
-
-    /**
-     * @return whether hazard lights are on
-     */
-    public boolean isHazard()
-    {
-        return this.equals(HAZARD);
+        return this.equals(CONFLICTING);
     }
 
 }

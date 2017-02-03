@@ -159,7 +159,6 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
     private void startBuild(final LaneStructureRecord rootLSR, final double fraction, final GTUType gtuType, final Length down,
             final Length downSplit, final Length up, final Length upMerge)
     {
-        //System.out.println("Creating lane structure for gtu " + getGtu().getId());
         // Build initial lateral set
         Set<LaneStructureRecord> recordSet = new HashSet<>();
         Set<Lane> laneSet = new HashSet<>();
@@ -492,7 +491,6 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
         {
             connectLaterally(recordSets.get(link), gtuType);
             Set<LaneStructureRecord> set = new HashSet<>(recordSets.get(link).values()); // collection to set
-            //set = extendLateral(set, gtuType, down, up, upMerge, false);
             buildUpstreamRecursive(set, gtuType, down, up, upMerge);
         }
     }
@@ -508,7 +506,6 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
     private LaneStructureRecord constructRecord(final Lane lane, final GTUDirectionality direction, final Length startDistance,
             final RelativeLane relativeLane)
     {
-        //System.out.println("Adding lane " + lane + " to structure.");
         LaneStructureRecord record = new LaneStructureRecord(lane, direction, startDistance);
         this.laneStructure.addLaneStructureRecord(record, relativeLane);
         this.relativeLaneMap.put(record, relativeLane);

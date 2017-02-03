@@ -32,11 +32,11 @@ public class ParameterTypes
     {
         //
     }
-    
+
     /** Fixed model time step. */
-    public static final ParameterTypeDuration DT = new ParameterTypeDuration("dt", "Fixed model time step.", new Duration(
-        0.5, TimeUnit.SI), POSITIVE);
-    
+    public static final ParameterTypeDuration DT =
+            new ParameterTypeDuration("dt", "Fixed model time step.", new Duration(0.5, TimeUnit.SI), POSITIVE);
+
     /** Car-following stopping distance. */
     public static final ParameterTypeLength S0;
 
@@ -85,7 +85,7 @@ public class ParameterTypes
 
     /** Regular lane change duration. */
     public static final ParameterTypeDuration LCDUR;
-    
+
     /** Length of mental map ahead. */
     public static final ParameterTypeLength PERCEPTION;
 
@@ -100,13 +100,49 @@ public class ParameterTypes
             new Acceleration(1.25, AccelerationUnit.SI), POSITIVE);
 
         B = new ParameterTypeAcceleration("b", "Maximum comfortable car-following deceleration.", 
-            new Acceleration(2.09, AccelerationUnit.SI), POSITIVE);
+            new Acceleration(2.09, AccelerationUnit.SI), POSITIVE)
+        {
+            /** */
+            private static final long serialVersionUID = 20170203L;
+
+            public void check(final Acceleration value, final BehavioralCharacteristics bc) throws ParameterException
+            {
+                Throw.when(bc.contains(B0) && value.si <= bc.getParameter(B0).si, ParameterException.class,
+                        "Value of b is below or equal to b0.");
+                Throw.when(bc.contains(BCRIT) && value.si >= bc.getParameter(BCRIT).si, ParameterException.class,
+                        "Value of b is above or equal to bCrit.");
+            }
+        };
 
         BCRIT = new ParameterTypeAcceleration("bCrit", "Maximum critical deceleration, e.g. stop/go at traffic light.",
-            new Acceleration(3.5, AccelerationUnit.SI), POSITIVE);
+            new Acceleration(3.5, AccelerationUnit.SI), POSITIVE)
+        {
+            /** */
+            private static final long serialVersionUID = 20170203L;
+
+            public void check(final Acceleration value, final BehavioralCharacteristics bc) throws ParameterException
+            {
+                Throw.when(bc.contains(B0) && value.si <= bc.getParameter(B0).si, ParameterException.class,
+                        "Value of bCrit is below or equal to b0.");
+                Throw.when(bc.contains(B) && value.si <= bc.getParameter(B).si, ParameterException.class,
+                        "Value of bCrit is below or equal to b.");
+            }
+        };
 
         B0 = new ParameterTypeAcceleration("b0", "Maximum adjustment deceleration, e.g. when speed limit drops.",
-            new Acceleration(0.5, AccelerationUnit.SI), POSITIVE);
+            new Acceleration(0.5, AccelerationUnit.SI), POSITIVE)
+            {
+                /** */
+                private static final long serialVersionUID = 20170203L;
+    
+                public void check(final Acceleration value, final BehavioralCharacteristics bc) throws ParameterException
+                {
+                    Throw.when(bc.contains(B) && value.si >= bc.getParameter(B).si, ParameterException.class,
+                            "Value of b0 is above or equal to b.");
+                    Throw.when(bc.contains(BCRIT) && value.si >= bc.getParameter(BCRIT).si, ParameterException.class,
+                            "Value of b0 is above or equal to bCrit.");
+                }
+            };
 
         T = new ParameterTypeDuration("T", "Current car-following headway.", new Duration(1.2, TimeUnit.SI), POSITIVE);
 

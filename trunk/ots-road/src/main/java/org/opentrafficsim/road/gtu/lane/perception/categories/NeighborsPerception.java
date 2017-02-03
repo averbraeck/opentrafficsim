@@ -352,6 +352,11 @@ public class NeighborsPerception extends LaneBasedAbstractPerceptionCategory
                 for (int i = first; i < record.getLane().getGtuList().size(); i++)
                 {
                     LaneBasedGTU gtu = record.getLane().getGtuList().get(i);
+                    if (gtu.position(record.getLane(), gtu.getRear()).lt0())
+                    {
+                        // rear still on previous lane; it is either already found there, or merge conflict should deal with it
+                        continue;
+                    }
                     Length distance = record.getStartDistance().plus(gtu.position(record.getLane(), gtu.getRear())).minus(ds);
                     // only within lookahead
                     if (distance.le(lookahead) && !gtu.equals(getGtu()))

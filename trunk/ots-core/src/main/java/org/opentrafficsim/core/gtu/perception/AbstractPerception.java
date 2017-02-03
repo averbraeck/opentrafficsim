@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.gtu.perception;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.opentrafficsim.core.gtu.GTU;
@@ -30,7 +30,7 @@ public abstract class AbstractPerception implements Perception
 
     /** Set of available perception categories. */
     private final Map<Class<? extends AbstractPerceptionCategory>, AbstractPerceptionCategory> perceptionCategories =
-        new HashMap<>();
+        new LinkedHashMap<>();
     
     /** GTU. */
     private GTU gtu;

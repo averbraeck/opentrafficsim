@@ -25,6 +25,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
@@ -33,14 +34,17 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.RoadGTUTypes;
 import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayStopLine;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.pt.BusSchedule;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.conflict.ConflictPriority;
+import org.opentrafficsim.road.network.lane.conflict.BusStopConflictRule;
+import org.opentrafficsim.road.network.lane.conflict.ConflictRule;
 import org.opentrafficsim.road.network.lane.conflict.ConflictType;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -85,11 +89,12 @@ public final class ConflictUtil
             new ParameterTypeLength("stopArea", "Area before stop line where one is considered arrived at the intersection.",
                     new Length(4, LengthUnit.METER), POSITIVE);
 
+    /** Parameter of how much time before departure a bus indicates its departure to get priority. */
+    public static final ParameterTypeDuration TI =
+            new ParameterTypeDuration("ti", "Indicator time before departure.", Duration.createSI(3.0), POSITIVE);
+
     /** Time step for free acceleration anticipation. */
     private static final Duration TIME_STEP = new Duration(0.5, TimeUnit.SI);
-
-    /** Acceleration that is equal to ignoring. */
-    private static final Acceleration IGNORE = new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
 
     /**
      * Do not instantiate.
@@ -113,6 +118,7 @@ public final class ConflictUtil
      * @param acceleration current acceleration
      * @param speedLimitInfo speed limit info
      * @param conflictPlans set of plans for conflict
+     * @param gtu gtu
      * @return acceleration appropriate for approaching the conflicts
      * @throws GTUException in case of an unsupported conflict rule
      * @throws ParameterException if a parameter is not defined or out of bounds
@@ -121,19 +127,21 @@ public final class ConflictUtil
     public static Acceleration approachConflicts(final BehavioralCharacteristics behavioralCharacteristics,
             final SortedSet<HeadwayConflict> conflicts, final SortedSet<AbstractHeadwayGTU> leaders,
             final CarFollowingModel carFollowingModel, final Length vehicleLength, final Speed speed,
-            final Acceleration acceleration, final SpeedLimitInfo speedLimitInfo, final ConflictPlans conflictPlans)
-            throws GTUException, ParameterException
+            final Acceleration acceleration, final SpeedLimitInfo speedLimitInfo, final ConflictPlans conflictPlans,
+            final LaneBasedGTU gtu) throws GTUException, ParameterException
     {
 
-        Acceleration a = IGNORE;
+        conflictPlans.cleanPlans();
+
+        Acceleration a = Acceleration.POS_MAXVALUE;
         if (conflicts.isEmpty())
         {
             return a;
         }
 
-        conflictPlans.cleanYieldPlans();
         List<Length> prevStarts = new ArrayList<>();
         List<Length> prevEnds = new ArrayList<>();
+        List<Class<? extends ConflictRule>> conflictRuleTypes = new ArrayList<>();
 
         for (HeadwayConflict conflict : conflicts)
         {
@@ -157,16 +165,28 @@ public final class ConflictUtil
                 continue;
             }
 
+            // indicator if bus
+            if (gtu.getStrategicalPlanner().getRoute() instanceof BusSchedule && gtu.getGTUType().isOfType(RoadGTUTypes.BUS)
+                    && conflict.getConflictRuleType().equals(BusStopConflictRule.class))
+            {
+                BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
+                Time actualDeparture = busSchedule.getActualDepartureConflict(conflict.getId());
+                if (actualDeparture != null && actualDeparture.si < gtu.getSimulator().getSimulatorTime().getTime().si
+                        + behavioralCharacteristics.getParameter(TI).si)
+                {
+                    // TODO depending on left/right-hand traffic
+                    conflictPlans.setIndicatorIntent(TurnIndicatorIntent.LEFT, conflict.getDistance());
+                }
+            }
+
             // determine if we need to stop
             boolean stop;
-            switch (conflict.getConflictRule())
+            switch (conflict.getConflictPriority())
             {
                 case PRIORITY:
                 {
-                    // TODO fix courtesy yielding behavior
-                    stop = false;
-                    // stop = stopForPriorityConflict(conflict, leaders, speed, vehicleLength, behavioralCharacteristics,
-                    // conflictPlans);
+                    stop = stopForPriorityConflict(conflict, leaders, speed, vehicleLength, behavioralCharacteristics,
+                            conflictPlans);
                     break;
                 }
                 case GIVE_WAY:
@@ -204,6 +224,7 @@ public final class ConflictUtil
                 if (stop)
                 {
                     prevStarts.add(conflict.getDistance());
+                    conflictRuleTypes.add(conflict.getConflictRuleType());
                     // stop for first conflict looking upstream of this blocked conflict that allows sufficient space
                     int j = 0; // most upstream conflict if not in between conflicts
                     for (int i = prevEnds.size() - 1; i >= 0; i--) // downstream to upstream
@@ -227,12 +248,20 @@ public final class ConflictUtil
                     {
                         if (prevStarts.get(j).lt(behavioralCharacteristics.getParameter(S0_CONF)))
                         {
+                            // TODO what to do when we happen to be in the stopping distance? Stopping might be reasonable,
+                            // while car-following might give strong deceleration due to s < s0.
                             aCF = Acceleration.max(aCF, new Acceleration(-6.0, AccelerationUnit.SI));
                         }
                         else
                         {
-                            aCF = Acceleration.max(aCF, CarFollowingUtil.stop(carFollowingModel, behavioralCharacteristics,
-                                    speed, speedLimitInfo, prevStarts.get(j)));
+                            Acceleration aStop = CarFollowingUtil.stop(carFollowingModel, behavioralCharacteristics, speed,
+                                    speedLimitInfo, prevStarts.get(j));
+                            if (conflictRuleTypes.get(j).equals(BusStopConflictRule.class)
+                                    && aStop.lt(behavioralCharacteristics.getParameter(ParameterTypes.BCRIT).neg()))
+                            {
+                                aStop = Acceleration.POS_MAXVALUE;
+                            }
+                            aCF = Acceleration.max(aCF, aStop);
                         }
                         j++;
                     }
@@ -240,10 +269,10 @@ public final class ConflictUtil
                     a = Acceleration.min(a, aCF);
                     break;
                 }
-                if (conflict.getConflictRule().equals(ConflictPriority.GIVE_WAY)
-                        || conflict.getConflictRule().equals(ConflictPriority.STOP))
+                if (conflict.getConflictPriority().isGiveWay() || conflict.getConflictPriority().isStop())
                 {
                     prevStarts.add(conflict.getDistance());
+                    conflictRuleTypes.add(conflict.getConflictRuleType());
                     prevEnds.add(conflict.getDistance().plus(conflict.getLength()));
                 }
             }
@@ -275,14 +304,14 @@ public final class ConflictUtil
         // ignore if no conflicting GTU's
         if (conflict.getDownstreamConflictingGTUs().isEmpty())
         {
-            return IGNORE;
+            return Acceleration.POS_MAXVALUE;
         }
         // get the most upstream GTU to consider
         AbstractHeadwayGTU c = conflict.getDownstreamConflictingGTUs().first();
         if (c.isAhead())
         {
             // conflict GTU completely downstream of conflict (i.e. regular car-following, ignore here)
-            return IGNORE;
+            return Acceleration.POS_MAXVALUE;
         }
         // conflict GTU (partially) on the conflict
         // {@formatter:off}
@@ -297,7 +326,7 @@ public final class ConflictUtil
         if (virtualHeadway.le0() && conflict.getDistance().le0())
         {
             // conflict GTU downstream of start of conflict, but upstream of us
-            return IGNORE;
+            return Acceleration.POS_MAXVALUE;
         }
         // follow leader
         SortedMap<Length, Speed> leaders = new TreeMap<>();
@@ -367,10 +396,10 @@ public final class ConflictUtil
 
         if (conflictingGTUs.isEmpty())
         {
-            return IGNORE;
+            return Acceleration.POS_MAXVALUE;
         }
 
-        Acceleration a = IGNORE;
+        Acceleration a = Acceleration.POS_MAXVALUE;
         for (AbstractHeadwayGTU conflictingGTU : conflictingGTUs)
         {
             AnticipationInfo tteC;
@@ -429,10 +458,16 @@ public final class ConflictUtil
      * @return whether to stop for this conflict
      * @throws ParameterException if parameter B is not defined
      */
-    private static boolean stopForPriorityConflict(final HeadwayConflict conflict, final SortedSet<AbstractHeadwayGTU> leaders,
+    public static boolean stopForPriorityConflict(final HeadwayConflict conflict, final SortedSet<AbstractHeadwayGTU> leaders,
             final Speed speed, final Length vehicleLength, final BehavioralCharacteristics behavioralCharacteristics,
             final ConflictPlans yieldPlans) throws ParameterException
     {
+
+        if (true)
+        {
+            // TODO fix courtesy yielding behavior
+            return false;
+        }
 
         if (leaders.isEmpty() || conflict.getUpstreamConflictingGTUs().isEmpty())
         {
@@ -512,7 +547,7 @@ public final class ConflictUtil
      * @throws ParameterException if a parameter is not defined
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    private static boolean stopForGiveWayConflict(final HeadwayConflict conflict, final SortedSet<AbstractHeadwayGTU> leaders,
+    public static boolean stopForGiveWayConflict(final HeadwayConflict conflict, final SortedSet<AbstractHeadwayGTU> leaders,
             final Speed speed, final Acceleration acceleration, final Length vehicleLength,
             final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedLimitInfo,
             final CarFollowingModel carFollowingModel) throws ParameterException
@@ -700,7 +735,7 @@ public final class ConflictUtil
      * @throws ParameterException if a parameter is not defined
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    private static boolean stopForStopConflict(final HeadwayConflict conflict, final SortedSet<AbstractHeadwayGTU> leaders,
+    public static boolean stopForStopConflict(final HeadwayConflict conflict, final SortedSet<AbstractHeadwayGTU> leaders,
             final Speed speed, final Acceleration acceleration, final Length vehicleLength,
             final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedLimitInfo,
             final CarFollowingModel carFollowingModel) throws ParameterException
@@ -715,7 +750,7 @@ public final class ConflictUtil
      * @param conflictPlans set of plans for conflict
      * @return whether to stop for this conflict
      */
-    private static boolean stopForAllStopConflict(final HeadwayConflict conflict, final ConflictPlans conflictPlans)
+    public static boolean stopForAllStopConflict(final HeadwayConflict conflict, final ConflictPlans conflictPlans)
     {
         // TODO all-stop behavior
 
@@ -804,6 +839,12 @@ public final class ConflictUtil
         /** Estimated arrival times of vehicles at all-stop intersection. */
         private final HashMap<String, Time> arrivalTimes = new HashMap<>();
 
+        /** Indicator intent. */
+        private TurnIndicatorIntent indicatorIntent = TurnIndicatorIntent.NONE;
+
+        /** Distance to object causing turn indicator intent. */
+        private Length indicatorObjectDistance = null;
+
         /**
          * Returns whether a plan exists for yielding at the conflict for the given conflict GTU.
          * @param conflict conflict
@@ -827,9 +868,9 @@ public final class ConflictUtil
         }
 
         /**
-         * Clears any yield plan that was no longer kept active in the last evaluation of conflicts.
+         * Clean any yield plan that was no longer kept active in the last evaluation of conflicts.
          */
-        void cleanYieldPlans()
+        void cleanPlans()
         {
             // remove any plan not represented in activePlans
             Iterator<String> iterator = this.yieldPlans.keySet().iterator();
@@ -843,6 +884,8 @@ public final class ConflictUtil
             }
             // clear the activePlans for the next consideration of conflicts
             this.activeYieldPlans.clear();
+            this.indicatorIntent = TurnIndicatorIntent.NONE;
+            this.indicatorObjectDistance = null;
         }
 
         /**
@@ -934,6 +977,35 @@ public final class ConflictUtil
         public String toString()
         {
             return "ConflictPlans";
+        }
+
+        /**
+         * @return indicatorIntent.
+         */
+        public TurnIndicatorIntent getIndicatorIntent()
+        {
+            return this.indicatorIntent;
+        }
+
+        /**
+         * @return indicatorObjectDistance.
+         */
+        public Length getIndicatorObjectDistance()
+        {
+            return this.indicatorObjectDistance;
+        }
+
+        /**
+         * @param intent indicator intent
+         * @param distance distance to object pertaining to the turn indicator intent
+         */
+        public void setIndicatorIntent(final TurnIndicatorIntent intent, final Length distance)
+        {
+            if (this.indicatorObjectDistance == null || this.indicatorObjectDistance.gt(distance))
+            {
+                this.indicatorIntent = intent;
+                this.indicatorObjectDistance = distance;
+            }
         }
 
     }

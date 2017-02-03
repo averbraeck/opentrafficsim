@@ -74,11 +74,11 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     public LMRS(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu)
     {
         super(carFollowingModel, gtu);
+        getPerception().addPerceptionCategory(new EgoPerception(getPerception()));
         getPerception().addPerceptionCategory(new DefaultSimplePerception(getPerception()));
         getPerception().addPerceptionCategory(new InfrastructurePerception(getPerception()));
         getPerception().addPerceptionCategory(new NeighborsPerception(getPerception()));
         getPerception().addPerceptionCategory(new IntersectionPerception(getPerception()));
-        getPerception().addPerceptionCategory(new EgoPerception(getPerception()));
     }
 
     /**
@@ -152,11 +152,19 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
 
         // Lower acceleration from additional sources
         Speed speed = getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
+        RelativeLane[] lanes = this.laneChange.isChangingLane()
+                ? new RelativeLane[] { RelativeLane.CURRENT, this.laneChange.getSecondLane(getGtu()) }
+                : new RelativeLane[] { RelativeLane.CURRENT };
         for (AccelerationIncentive incentive : this.accelerationIncentives)
         {
-            simplePlan.minimumAcceleration(
-                    incentive.acceleration(getGtu(), getPerception(), getCarFollowingModel(), speed, bc, sli));
+            for (RelativeLane lane : lanes)
+            {
+                incentive.accelerate(simplePlan, lane, getGtu(), getPerception(), getCarFollowingModel(), speed, bc, sli);
+            }
         }
+
+        // set turn indicator
+        simplePlan.setTurnIndicator(getGtu());
 
         // create plan
         return buildPlanFromSimplePlan(getGtu(), startTime, bc, simplePlan, this.laneChange);

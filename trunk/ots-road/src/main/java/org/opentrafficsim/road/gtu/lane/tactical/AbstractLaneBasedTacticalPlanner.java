@@ -139,10 +139,16 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         }
         catch (OTSGeometryException exception)
         {
-            System.err.println(gtu + ": " + exception.getMessage());
-            System.err.println(lane + ", len=" + lane.getLength());
-            System.err.println(position);
-            throw new GTUException(exception);
+            // System.err.println(gtu + ": " + exception.getMessage());
+            // System.err.println(lane + ", len=" + lane.getLength());
+            // System.err.println(position);
+            // throw new GTUException(exception);
+
+            // section on current lane too short, floating point operations cause only a single point at the end of the lane
+            path = null;
+            distanceToEndOfLane = Length.ZERO;
+            laneListForward.clear();
+            startPosition = Length.ZERO;
         }
 
         while (distanceToEndOfLane.lt(maxHeadway))
@@ -211,13 +217,15 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                     if (lastLane.getParentLink().getEndNode().equals(lane.getParentLink().getStartNode()))
                     {
                         // -----> O ----->, GTU moves ---->
-                        path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine());
+                        path = LaneOperationalPlanBuilder.concatenateNull(path, lane.getCenterLine());
+                        // path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine());
                         lastGtuDir = GTUDirectionality.DIR_PLUS;
                     }
                     else
                     {
                         // -----> O <-----, GTU moves ---->
-                        path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine().reverse());
+                        path = LaneOperationalPlanBuilder.concatenateNull(path, lane.getCenterLine().reverse());
+                        // path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine().reverse());
                         lastGtuDir = GTUDirectionality.DIR_MINUS;
                     }
                 }
@@ -226,13 +234,15 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                     if (lastLane.getParentLink().getStartNode().equals(lane.getParentLink().getStartNode()))
                     {
                         // <----- O ----->, GTU moves ---->
-                        path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine());
+                        path = LaneOperationalPlanBuilder.concatenateNull(path, lane.getCenterLine());
+                        // path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine());
                         lastGtuDir = GTUDirectionality.DIR_PLUS;
                     }
                     else
                     {
                         // <----- O <-----, GTU moves ---->
-                        path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine().reverse());
+                        path = LaneOperationalPlanBuilder.concatenateNull(path, lane.getCenterLine().reverse());
+                        // path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine().reverse());
                         lastGtuDir = GTUDirectionality.DIR_MINUS;
                     }
                 }
@@ -657,10 +667,12 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         }
         if (true)
         {
-            lanes = buildLanePathInfo(gtu, forwardHeadway).getLanes();
+            LanePathInfo lanePathInfo = buildLanePathInfo(gtu, forwardHeadway);
+            lanes = lanePathInfo.getLanes();
+            Length startPosition = lanePathInfo.getReferencePosition(); //gtu.getReferencePosition().getPosition();
             try
             {
-                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, lanes, gtu.getReferencePosition().getPosition(),
+                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, lanes, startPosition,
                         startTime, gtu.getSpeed(), simplePlan.getAcceleration(), bc.getParameter(ParameterTypes.DT));
             }
             catch (OTSGeometryException exception)

@@ -42,6 +42,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.animation.AnimationToggles;
@@ -109,7 +110,8 @@ public class BusStreetDemo extends AbstractWrappableAnimation
     @Override
     protected final void addAnimationToggles()
     {
-        AnimationToggles.setIconAnimationTogglesFull(this);
+        AnimationToggles.setTextAnimationTogglesFull(this);
+        this.hideAnimationClass(OTSLink.class);
     }
 
     /** {@inheritDoc} */
@@ -191,6 +193,14 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                 stop = new BusStop("Kippenboerderij De Scharrelaar", lane, new Length(50.0, LengthUnit.SI),
                         "Kippenboerderij De Scharrelaar", this.simulator);
                 stop.setLines(lines2);
+
+                lane = ((CrossSectionLink) this.network.getLink("I1I2")).getLanes().get(0);
+                stop = new BusStop("Dorpshuys", lane, lane.getLength(), "Dorpshuys", this.simulator);
+                stop.setLines(lines1);
+
+                lane = ((CrossSectionLink) this.network.getLink("K1K2")).getLanes().get(0);
+                stop = new BusStop("De verkeerde afslag", lane, lane.getLength(), "De verkeerde afslag", this.simulator);
+                stop.setLines(lines12);
 
                 makeGenerator();
 
@@ -349,7 +359,10 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         private final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> plannerFactory;
 
         /** Route for car. */
-        private final Route carRoute;
+        private final Route carRouteN;
+
+        /** Route for car. */
+        private final Route carRouteO;
 
         /** Nodes for bus, line 1. */
         private final List<Node> busNodes1;
@@ -376,16 +389,25 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             this.probabilities = probabilities;
             this.initialLongitudinalPositions = initialLongitudinalPositions;
             this.network = network;
-            List<Node> carNodes = new ArrayList<>();
-            carNodes.add(network.getNode("A"));
-            carNodes.add(network.getNode("B"));
-            carNodes.add(network.getNode("C"));
-            carNodes.add(network.getNode("D"));
-            carNodes.add(network.getNode("E"));
-            carNodes.add(network.getNode("F"));
-            carNodes.add(network.getNode("G"));
-            carNodes.add(network.getNode("H"));
-            this.carRoute = new Route("car", carNodes);
+            List<Node> carNodesN = new ArrayList<>();
+            carNodesN.add(network.getNode("A"));
+            carNodesN.add(network.getNode("B"));
+            carNodesN.add(network.getNode("C"));
+            carNodesN.add(network.getNode("D"));
+            carNodesN.add(network.getNode("E"));
+            carNodesN.add(network.getNode("F"));
+            carNodesN.add(network.getNode("G"));
+            carNodesN.add(network.getNode("H"));
+            carNodesN.add(network.getNode("I"));
+            carNodesN.add(network.getNode("J"));
+            carNodesN.add(network.getNode("K"));
+            carNodesN.add(network.getNode("L"));
+            carNodesN.add(network.getNode("M"));
+            List<Node> carNodesO = new ArrayList<>(carNodesN);
+            carNodesN.add(network.getNode("N"));
+            carNodesO.add(network.getNode("O"));
+            this.carRouteN = new Route("carN", carNodesN);
+            this.carRouteO = new Route("carO", carNodesO);
             this.busNodes1 = new ArrayList<>();
             this.busNodes1.add(network.getNode("A"));
             this.busNodes1.add(network.getNode("B"));
@@ -396,6 +418,17 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             this.busNodes1.add(network.getNode("F"));
             this.busNodes1.add(network.getNode("G"));
             this.busNodes1.add(network.getNode("H"));
+            this.busNodes1.add(network.getNode("I"));
+            this.busNodes1.add(network.getNode("I1"));
+            this.busNodes1.add(network.getNode("I2"));
+            this.busNodes1.add(network.getNode("J"));
+            this.busNodes1.add(network.getNode("K"));
+            this.busNodes1.add(network.getNode("K1"));
+            this.busNodes1.add(network.getNode("K2"));
+            this.busNodes1.add(network.getNode("L"));
+            this.busNodes1.add(network.getNode("M"));
+            this.busNodes1.add(network.getNode("N"));
+
             this.busNodes2 = new ArrayList<>();
             this.busNodes2.add(network.getNode("A"));
             this.busNodes2.add(network.getNode("B"));
@@ -406,6 +439,15 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             this.busNodes2.add(network.getNode("F"));
             this.busNodes2.add(network.getNode("G"));
             this.busNodes2.add(network.getNode("H"));
+            this.busNodes2.add(network.getNode("I"));
+            this.busNodes2.add(network.getNode("J"));
+            this.busNodes2.add(network.getNode("K"));
+            this.busNodes2.add(network.getNode("K1"));
+            this.busNodes2.add(network.getNode("K2"));
+            this.busNodes2.add(network.getNode("K3"));
+            this.busNodes2.add(network.getNode("L"));
+            this.busNodes2.add(network.getNode("M"));
+            this.busNodes2.add(network.getNode("O"));
 
             this.plannerFactory = new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactoryCarBus(),
                     new BehavioralCharacteristicsFactoryCarBus());
@@ -418,6 +460,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
 
             double r = this.simulator.getReplication().getStream("generation").nextDouble();
             int classNum = r < this.probabilities[0] ? 0 : r < this.probabilities[0] + this.probabilities[1] ? 1 : 2;
+            r = this.simulator.getReplication().getStream("generation").nextDouble();
             GTUType gtuType;
             Length length;
             Length width;
@@ -431,7 +474,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                     length = new Length(4.0, LengthUnit.SI);
                     width = new Length(1.8, LengthUnit.SI);
                     maximumSpeed = new Speed(200.0, SpeedUnit.KM_PER_HOUR);
-                    route = this.carRoute;
+                    route = r < 0.5 ? this.carRouteN : this.carRouteO;
                     break;
                 }
                 case 1:
@@ -443,17 +486,14 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                     BusSchedule schedule =
                             new BusSchedule("bus1." + this.simulator.getSimulatorTime().getTime(), this.busNodes1, "1");
                     Time now = this.simulator.getSimulatorTime().getTime();
-                    /* {@formatter:off}
-                    line 1                         x   arrive dwell leave  schedule   
-                    Café Boszicht                  130 9,36   60    69,36  90
-                    Herberg De Deugd               245 98,28  15    113,28 120
-                    Kippenboerderij De Scharrelaar 500 138,36 15    153,36 180
-                    {@formatter:on} */
-                    schedule.addBusStop("Cafe Boszicht.1", now.plus(new Duration(90.0, TimeUnit.SI)), this.longDwellTime, true);
-                    schedule.addBusStop("Herberg De Deugd", now.plus(new Duration(120.0, TimeUnit.SI)), this.shortDwellTime,
+                    schedule.addBusStop("Cafe Boszicht.1", now.plus(new Duration(70.0, TimeUnit.SI)), this.longDwellTime, true);
+                    schedule.addBusStop("Herberg De Deugd", now.plus(new Duration(100.0, TimeUnit.SI)), this.shortDwellTime,
                             false);
-                    schedule.addBusStop("Kippenboerderij De Scharrelaar", now.plus(new Duration(180.0, TimeUnit.SI)),
-                            this.shortDwellTime, false);
+                    schedule.addBusStop("De Vleeshoeve", now.plus(new Duration(120.0, TimeUnit.SI)), this.shortDwellTime,
+                            false);
+                    schedule.addBusStop("Dorpshuys", now.plus(new Duration(200.0, TimeUnit.SI)), this.longDwellTime, true);
+                    schedule.addBusStop("De verkeerde afslag", now.plus(new Duration(270.0, TimeUnit.SI)), this.longDwellTime,
+                            true);
                     route = schedule;
                     break;
                 }
@@ -466,17 +506,13 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                     BusSchedule schedule =
                             new BusSchedule("bus2." + this.simulator.getSimulatorTime().getTime(), this.busNodes2, "2");
                     Time now = this.simulator.getSimulatorTime().getTime();
-                    /* {@formatter:off}
-                     line 2                         x   arrive dwell leave  schedule 
-                     Café Boszicht                  130 9,36   60    69,36  90
-                     De Vleeshoeve                  375 107,64 15    122,64 150
-                     Kippenboerderij De Scharrelaar 500 159    60    219    240
-                     {@formatter:on} */
-                    schedule.addBusStop("Cafe Boszicht.2", now.plus(new Duration(90.0, TimeUnit.SI)), this.longDwellTime, true);
-                    schedule.addBusStop("De Vleeshoeve", now.plus(new Duration(150.0, TimeUnit.SI)), this.shortDwellTime,
+                    schedule.addBusStop("Cafe Boszicht.2", now.plus(new Duration(80.0, TimeUnit.SI)), this.longDwellTime, true);
+                    schedule.addBusStop("De Vleeshoeve", now.plus(new Duration(110.0, TimeUnit.SI)), this.shortDwellTime,
                             false);
-                    schedule.addBusStop("Kippenboerderij De Scharrelaar", now.plus(new Duration(240.0, TimeUnit.SI)),
-                            this.longDwellTime, true);
+                    schedule.addBusStop("Kippenboerderij De Scharrelaar", now.plus(new Duration(180.0, TimeUnit.SI)),
+                            this.longDwellTime, false);
+                    schedule.addBusStop("De verkeerde afslag", now.plus(new Duration(260.0, TimeUnit.SI)), this.longDwellTime,
+                            true);
                     route = schedule;
                     break;
                 }
@@ -574,9 +610,9 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                 throws ParameterException
         {
 
+            defaultCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, new Length(100.0, LengthUnit.METER));
             if (gtuType.isOfType(RoadGTUTypes.CAR))
             {
-                defaultCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, new Length(100.0, LengthUnit.METER));
                 defaultCharacteristics.setParameter(IncentiveSpeedWithCourtesy.VGAIN,
                         new Speed(3.0, SpeedUnit.METER_PER_SECOND));
             }
