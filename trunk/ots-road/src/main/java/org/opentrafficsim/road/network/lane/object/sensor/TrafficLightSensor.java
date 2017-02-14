@@ -432,7 +432,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
             }
             catch (GTUException exception)
             {
-                System.err.println("Caught GTU exception tryint to get the frontPositions");
+                System.err.println("Caught GTU exception trying to get the frontPositions");
                 exception.printStackTrace();
             }
         }
