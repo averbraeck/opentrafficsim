@@ -305,10 +305,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
                     Length laneLength = remainingLane.getLength();
                     // System.out.println("frontPosition " + frontPosition + ", rearPosition " + rearPosition + ", laneLength "
                     // + laneLength + ", directionalityB " + this.directionalityB);
-                    if (laneLength.si >= 900)
-                    {
-                        System.out.println("Let op");
-                    }
+
                     if (frontPosition.lt0() && rearPosition.lt0() || frontPosition.gt(laneLength)
                             && rearPosition.gt(laneLength))
                     {
