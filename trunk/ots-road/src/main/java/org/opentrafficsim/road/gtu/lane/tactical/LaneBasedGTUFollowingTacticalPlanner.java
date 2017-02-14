@@ -3,8 +3,6 @@ package org.opentrafficsim.road.gtu.lane.tactical;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -18,10 +16,13 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Lane-based tactical planner that implements car following behavior. This tactical planner retrieves the car following model
@@ -77,36 +78,36 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         LanePathInfo lanePathInfo = buildLanePathInfo(laneBasedGTU, maxDistance);
 
         // look at the conditions for headway from a GTU in front
-        Headway headwayGTU = perception.getPerceptionCategory(DirectDefaultSimplePerception.class).getForwardHeadwayGTU();
+        Headway headwayGTU = perception.getPerceptionCategory(DefaultSimplePerception.class).getForwardHeadwayGTU();
         AccelerationStep accelerationStepGTU = null;
         if (headwayGTU.getDistance().ge(maxDistance))
         {
             // TODO I really don't like this -- if there is a lane drop at 20 m, the GTU should stop...
             accelerationStepGTU = ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStepWithNoLeader(
                     laneBasedGTU, lanePathInfo.getPath().getLength(),
-                    perception.getPerceptionCategory(DirectDefaultSimplePerception.class).getSpeedLimit());
+                    perception.getPerceptionCategory(DefaultSimplePerception.class).getSpeedLimit());
         }
         else
         {
             accelerationStepGTU = ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStep(laneBasedGTU,
                     headwayGTU.getSpeed(), headwayGTU.getDistance(), lanePathInfo.getPath().getLength(),
-                    perception.getPerceptionCategory(DirectDefaultSimplePerception.class).getSpeedLimit());
+                    perception.getPerceptionCategory(DefaultSimplePerception.class).getSpeedLimit());
         }
 
         // look at the conditions for headway from an object in front
-        Headway headwayObject = perception.getPerceptionCategory(DirectDefaultSimplePerception.class).getForwardHeadwayObject();
+        Headway headwayObject = perception.getPerceptionCategory(DefaultSimplePerception.class).getForwardHeadwayObject();
         AccelerationStep accelerationStepObject = null;
         if (headwayObject.getDistance().ge(maxDistance))
         {
             accelerationStepObject = ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStepWithNoLeader(
                     laneBasedGTU, lanePathInfo.getPath().getLength(),
-                    perception.getPerceptionCategory(DirectDefaultSimplePerception.class).getSpeedLimit());
+                    perception.getPerceptionCategory(DefaultSimplePerception.class).getSpeedLimit());
         }
         else
         {
             accelerationStepObject = ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStep(laneBasedGTU,
                     headwayObject.getSpeed(), headwayObject.getDistance(), lanePathInfo.getPath().getLength(),
-                    perception.getPerceptionCategory(DirectDefaultSimplePerception.class).getSpeedLimit());
+                    perception.getPerceptionCategory(DefaultSimplePerception.class).getSpeedLimit());
         }
 
         // see which one is most limiting

@@ -9,6 +9,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
+import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
@@ -18,6 +19,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimpl
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectIntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectNeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
@@ -141,7 +143,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
 
         // obtain objects to get info
         getPerception().perceive();
-        SpeedLimitProspect slp = getPerception().getPerceptionCategory(DirectInfrastructurePerception.class)
+        SpeedLimitProspect slp = getPerception().getPerceptionCategory(InfrastructurePerception.class)
                 .getSpeedLimitProspect(RelativeLane.CURRENT);
         SpeedLimitInfo sli = slp.getSpeedLimitInfo(Length.ZERO);
         BehavioralCharacteristics bc = getGtu().getBehavioralCharacteristics();
@@ -151,7 +153,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
                 this.lmrsData, getPerception(), this.mandatoryIncentives, this.voluntaryIncentives);
 
         // Lower acceleration from additional sources
-        Speed speed = getPerception().getPerceptionCategory(DirectEgoPerception.class).getSpeed();
+        Speed speed = getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
         RelativeLane[] lanes = this.laneChange.isChangingLane()
                 ? new RelativeLane[] { RelativeLane.CURRENT, this.laneChange.getSecondLane(getGtu()) }
                 : new RelativeLane[] { RelativeLane.CURRENT };

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
@@ -225,5 +226,28 @@ public interface DefaultSimplePerception extends PerceptionCategory
         updateParallelHeadwaysRight();
         updateSpeedLimit();
     }
+
+    /**
+     * Determine whether there is a lane to the left or to the right of this lane, which is accessible from this lane, or null
+     * if no lane could be found. The method takes the LongitidinalDirectionality of the lane into account. In other words, if
+     * we drive FORWARD and look for a lane on the LEFT, and there is a lane but the Directionality of that lane is not FORWARD
+     * or BOTH, null will be returned.<br>
+     * A lane is called adjacent to another lane if the lateral edges are not more than a delta distance apart. This means that
+     * a lane that <i>overlaps</i> with another lane is <b>not</b> returned as an adjacent lane. <br>
+     * The algorithm also looks for RoadMarkerAcross elements between the lanes to determine the lateral permeability for a GTU.
+     * A RoadMarkerAcross is seen as being between two lanes if its center line is not more than delta distance from the
+     * relevant lateral edges of the two adjacent lanes. <br>
+     * When there are multiple lanes that are adjacent, which could e.g. be the case if an overlapping tram lane and a car lane
+     * are adjacent to the current lane, the widest lane that best matches the GTU accessibility of the provided GTUType is
+     * returned. <br>
+     * <b>Note:</b> LEFT is seen as a negative lateral direction, RIGHT as a positive lateral direction. <br>
+     * FIXME In other places in OTS LEFT is positive (and RIGHT is negative). This should be made more consistent.
+     * @param currentLane the lane to look for the best accessible adjacent lane
+     * @param lateralDirection the direction (LEFT, RIGHT) to look at
+     * @param longitudinalPosition Length; the position of the GTU along <cite>currentLane</cite>
+     * @return the lane if it is accessible, or null if there is no lane, it is not accessible, or the driving direction does
+     *         not match.
+     */
+    Lane bestAccessibleAdjacentLane(Lane currentLane, LateralDirectionality lateralDirection, Length longitudinalPosition);
     
 }
