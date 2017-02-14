@@ -8,13 +8,13 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
+import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectIntersectionPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectNeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
@@ -47,11 +47,11 @@ public class AccelerationConflicts implements AccelerationIncentive
             final BehavioralCharacteristics bc, final SpeedLimitInfo speedLimitInfo)
             throws OperationalPlanException, ParameterException, GTUException
     {
-        Acceleration acceleration = perception.getPerceptionCategory(DirectEgoPerception.class).getAcceleration();
-        Length length = perception.getPerceptionCategory(DirectEgoPerception.class).getLength();
+        Acceleration acceleration = perception.getPerceptionCategory(EgoPerception.class).getAcceleration();
+        Length length = perception.getPerceptionCategory(EgoPerception.class).getLength();
         SortedSet<HeadwayConflict> conflicts =
-                perception.getPerceptionCategory(DirectIntersectionPerception.class).getConflicts(lane);
-        SortedSet<AbstractHeadwayGTU> leaders = perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane);
+                perception.getPerceptionCategory(IntersectionPerception.class).getConflicts(lane);
+        SortedSet<AbstractHeadwayGTU> leaders = perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
         simplePlan.minimizeAcceleration(ConflictUtil.approachConflicts(bc, conflicts, leaders, carFollowingModel, length, speed,
                 acceleration, speedLimitInfo, this.yieldPlans, gtu));
         if (this.yieldPlans.getIndicatorIntent().isLeft())

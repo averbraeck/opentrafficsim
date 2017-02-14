@@ -7,7 +7,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.SpeedLimitUtil;
@@ -34,7 +34,7 @@ public class AccelerationSpeedLimitTransition implements AccelerationIncentive
             final BehavioralCharacteristics bc, final SpeedLimitInfo speedLimitInfo)
             throws OperationalPlanException, ParameterException
     {
-        SpeedLimitProspect slp = perception.getPerceptionCategory(DirectInfrastructurePerception.class).getSpeedLimitProspect(lane);
+        SpeedLimitProspect slp = perception.getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(lane);
         simplePlan.minimizeAcceleration(SpeedLimitUtil.considerSpeedLimitTransitions(bc, speed, slp, carFollowingModel));
     }
 

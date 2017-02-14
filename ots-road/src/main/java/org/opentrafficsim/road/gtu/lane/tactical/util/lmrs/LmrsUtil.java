@@ -22,7 +22,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacter
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
-import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
+import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -30,9 +30,9 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectIntersectionPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectNeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
@@ -154,14 +154,14 @@ public final class LmrsUtil
 
         // obtain objects to get info
         SpeedLimitProspect slp =
-                perception.getPerceptionCategory(DirectInfrastructurePerception.class).getSpeedLimitProspect(RelativeLane.CURRENT);
+                perception.getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(RelativeLane.CURRENT);
         SpeedLimitInfo sli = slp.getSpeedLimitInfo(Length.ZERO);
         BehavioralCharacteristics bc = gtu.getBehavioralCharacteristics();
 
         // regular car-following
         Speed speed = gtu.getSpeed();
         SortedSet<AbstractHeadwayGTU> leaders =
-                perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
+                perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
         if (!leaders.isEmpty() && lmrsData.isNewLeader(leaders.first()))
         {
             initHeadwayRelaxation(bc, leaders.first());
@@ -170,7 +170,7 @@ public final class LmrsUtil
 
         // stop for end
         Length remainingDist = null;
-        for (InfrastructureLaneChangeInfo ili : perception.getPerceptionCategory(DirectInfrastructurePerception.class)
+        for (InfrastructureLaneChangeInfo ili : perception.getPerceptionCategory(InfrastructurePerception.class)
                 .getInfrastructureLaneChangeInfo(RelativeLane.CURRENT))
         {
             if (remainingDist == null || remainingDist.gt(ili.getRemainingDistance()))
@@ -211,7 +211,7 @@ public final class LmrsUtil
             RelativeLane secondLane = laneChange.getSecondLane(gtu);
             initiatedLaneChange = LateralDirectionality.NONE;
             SortedSet<AbstractHeadwayGTU> secondLeaders =
-                    perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(secondLane);
+                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(secondLane);
             Acceleration aSecond = CarFollowingUtil.followLeaders(carFollowingModel, bc, speed, sli, secondLeaders);
             if (!secondLeaders.isEmpty() && lmrsData.isNewLeader(secondLeaders.first()))
             {
@@ -244,7 +244,7 @@ public final class LmrsUtil
                 turnIndicatorStatus = TurnIndicatorIntent.LEFT;
                 bc.setParameter(DLC, desire.getLeft());
                 setDesiredHeadway(bc, desire.getLeft());
-                leaders = perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(RelativeLane.LEFT);
+                leaders = perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.LEFT);
                 if (!leaders.isEmpty())
                 {
                     // don't respond on its lane change desire, but remember it such that it isn't a new leader in the next step
@@ -258,7 +258,7 @@ public final class LmrsUtil
                 turnIndicatorStatus = TurnIndicatorIntent.RIGHT;
                 bc.setParameter(DLC, desire.getRight());
                 setDesiredHeadway(bc, desire.getRight());
-                leaders = perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(RelativeLane.RIGHT);
+                leaders = perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.RIGHT);
                 if (!leaders.isEmpty())
                 {
                     // don't respond on its lane change desire, but remember it such that it isn't a new leader in the next step
@@ -466,35 +466,35 @@ public final class LmrsUtil
         }
 
         // legal?
-        if (perception.getPerceptionCategory(DirectInfrastructurePerception.class).getLegalLaneChangePossibility(RelativeLane.CURRENT,
+        if (perception.getPerceptionCategory(InfrastructurePerception.class).getLegalLaneChangePossibility(RelativeLane.CURRENT,
                 lat).si <= 0.0)
         {
             return false;
         }
 
         // conflicts alongside?
-        if ((lat.isLeft() && perception.getPerceptionCategory(DirectIntersectionPerception.class).isAlongsideConflictLeft())
-                || (lat.isRight() && perception.getPerceptionCategory(DirectIntersectionPerception.class).isAlongsideConflictRight()))
+        if ((lat.isLeft() && perception.getPerceptionCategory(IntersectionPerception.class).isAlongsideConflictLeft())
+                || (lat.isRight() && perception.getPerceptionCategory(IntersectionPerception.class).isAlongsideConflictRight()))
         {
             return false;
         }
 
         // safe regarding neighbors?
-        if (perception.getPerceptionCategory(DirectNeighborsPerception.class).isGtuAlongside(lat))
+        if (perception.getPerceptionCategory(NeighborsPerception.class).isGtuAlongside(lat))
         {
             // gtu alongside
             return false;
         }
         Acceleration b = bc.getParameter(ParameterTypes.B);
         Acceleration aFollow = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-        for (AbstractHeadwayGTU follower : perception.getPerceptionCategory(DirectNeighborsPerception.class).getFirstFollowers(lat))
+        for (AbstractHeadwayGTU follower : perception.getPerceptionCategory(NeighborsPerception.class).getFirstFollowers(lat))
         {
             Acceleration a = singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed, desire,
                     follower.getBehavioralCharacteristics(), follower.getSpeedLimitInfo(), follower.getCarFollowingModel());
             aFollow = Acceleration.min(aFollow, a);
         }
         Acceleration aSelf = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-        for (AbstractHeadwayGTU leader : perception.getPerceptionCategory(DirectNeighborsPerception.class).getFirstLeaders(lat))
+        for (AbstractHeadwayGTU leader : perception.getPerceptionCategory(NeighborsPerception.class).getFirstLeaders(lat))
         {
             Acceleration a = singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, bc, sli, cfm);
             aSelf = Acceleration.min(aSelf, a);
@@ -554,7 +554,7 @@ public final class LmrsUtil
         Acceleration a = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
         RelativeLane relativeLane = new RelativeLane(lat, 1);
         SortedSet<AbstractHeadwayGTU> set = removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
-                perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(relativeLane), perception, relativeLane),
+                perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception, relativeLane),
                 perception, RelativeLane.CURRENT);
         if (!set.isEmpty())
         {
@@ -591,13 +591,13 @@ public final class LmrsUtil
         double dCoop = bc.getParameter(DCOOP);
         RelativeLane relativeLane = new RelativeLane(lat, 1);
         for (AbstractHeadwayGTU leader : removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
-                perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(relativeLane), perception, relativeLane),
+                perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception, relativeLane),
                 perception, RelativeLane.CURRENT))
         {
             BehavioralCharacteristics bc2 = leader.getBehavioralCharacteristics();
             double desire = lat.equals(LateralDirectionality.LEFT) && bc2.contains(DRIGHT) ? bc2.getParameter(DRIGHT)
                     : lat.equals(LateralDirectionality.RIGHT) && bc2.contains(DLEFT) ? bc2.getParameter(DLEFT) : 0;
-            if (desire >= dCoop && (perception.getPerceptionCategory(DirectEgoPerception.class).getSpeed().gt0()
+            if (desire >= dCoop && (perception.getPerceptionCategory(EgoPerception.class).getSpeed().gt0()
                     || leader.getSpeed().gt0() || leader.getDistance().gt(bc.getParameter(ParameterTypes.S0))))
             {
                 Acceleration aSingle =
@@ -620,7 +620,7 @@ public final class LmrsUtil
     private static SortedSet<AbstractHeadwayGTU> removeAllUpstreamOfConflicts(final SortedSet<AbstractHeadwayGTU> set,
             final LanePerception perception, final RelativeLane relativeLane) throws OperationalPlanException
     {
-        for (HeadwayConflict conflict : perception.getPerceptionCategory(DirectIntersectionPerception.class)
+        for (HeadwayConflict conflict : perception.getPerceptionCategory(IntersectionPerception.class)
                 .getConflicts(relativeLane))
         {
             if (conflict.isCrossing() || conflict.isMerge())

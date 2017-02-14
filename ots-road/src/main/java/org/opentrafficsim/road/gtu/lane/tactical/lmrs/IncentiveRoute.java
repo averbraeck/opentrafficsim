@@ -5,12 +5,12 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
-import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
+import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
@@ -78,11 +78,11 @@ public class IncentiveRoute implements MandatoryIncentive
     private double getDesireToLeave(final BehavioralCharacteristics bc, final LanePerception perception,
             final RelativeLane lane) throws ParameterException, OperationalPlanException
     {
-        Speed v = perception.getPerceptionCategory(DirectEgoPerception.class).getSpeed();
+        Speed v = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
         double dOut = 0.0;
-        if (perception.getPerceptionCategory(DirectInfrastructurePerception.class).getCrossSection().contains(lane))
+        if (perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection().contains(lane))
         {
-            for (InfrastructureLaneChangeInfo info : perception.getPerceptionCategory(DirectInfrastructurePerception.class)
+            for (InfrastructureLaneChangeInfo info : perception.getPerceptionCategory(InfrastructurePerception.class)
                     .getInfrastructureLaneChangeInfo(lane))
             {
                 double d = getDesireToLeave(bc, info.getRemainingDistance(), info.getRequiredNumberOfLaneChanges(), v);

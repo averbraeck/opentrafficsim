@@ -27,7 +27,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectNeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
@@ -152,14 +152,14 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             if (initiatedLaneChange == null)
             {
                 if ((vC > vR && vC > vL)
-                    || (!perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(RelativeLane.CURRENT)
-                        .isEmpty() && perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(
+                    || (!perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT)
+                        .isEmpty() && perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(
                         RelativeLane.CURRENT).first().getDistance().lt(
                         getCarFollowingModel().desiredHeadway(bc, getGtu().getSpeed()))))
                 {
                     acceleration =
                         CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, getGtu().getSpeed(), sli, perception
-                            .getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(RelativeLane.CURRENT));
+                            .getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT));
                     // TODO remove this test code
                     if (getGtu().getId().equals("19"))
                     {
@@ -170,10 +170,10 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
                             + " at "
                             + getGtu().getSpeed()
                             + ", following "
-                            + perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(RelativeLane.CURRENT)
+                            + perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT)
                                 .first().getSpeed()
                             + ", "
-                            + perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(RelativeLane.CURRENT)
+                            + perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT)
                                 .first().getDistance());
                     }
                 }
@@ -258,14 +258,14 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             // changing left
             acceleration =
                 CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, getGtu().getSpeed(), sli, perception
-                    .getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(RelativeLane.LEFT));
+                    .getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.LEFT));
         }
         else if (initiatedLaneChange.isRight())
         {
             // changing right
             acceleration =
                 CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, getGtu().getSpeed(), sli, perception
-                    .getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(RelativeLane.RIGHT));
+                    .getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.RIGHT));
         }
 
         if (acceleration == null)
@@ -319,13 +319,13 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
     {
 
         // capture no leaders/follower cases for forward and backward gaps
-        if (gap.equals(Gap.FORWARD) && perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane).isEmpty())
+        if (gap.equals(Gap.FORWARD) && perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).isEmpty())
         {
             // no leaders
             return new GapInfo(Double.NEGATIVE_INFINITY, null, null, null);
         }
         if (gap.equals(Gap.BACKWARD)
-            && perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(lane).isEmpty())
+            && perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).isEmpty())
         {
             // no followers
             return new GapInfo(Double.NEGATIVE_INFINITY, null, null, null);
@@ -347,20 +347,20 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         {
             constant = bc.getParameter(ToledoLaneChangeParameters.C_FWD_TG);
             alpha = 0;
-            if (perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane).size() > 1)
+            if (perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).size() > 1)
             {
                 // two leaders
                 Iterator<AbstractHeadwayGTU> it =
-                    perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane).iterator();
+                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).iterator();
                 it.next();
                 AbstractHeadwayGTU leader = it.next();
                 leaderDist = leader.getDistance();
                 leaderSpeed = leader.getSpeed();
                 putativeLength =
                     leaderDist.minus(
-                        perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane).first().getDistance())
+                        perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).first().getDistance())
                         .minus(
-                            perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane).first().getLength());
+                            perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).first().getLength());
             }
             else
             {
@@ -372,9 +372,9 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             }
             // distance to nose, so add length
             followerDist =
-                perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane).first().getDistance().plus(
-                    perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane).first().getLength());
-            followerSpeed = perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane).first().getSpeed();
+                perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).first().getDistance().plus(
+                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).first().getLength());
+            followerSpeed = perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).first().getSpeed();
             distanceToGap = followerDist; // same as distance to nose of first leader
             putativeDistance = distanceToGap;
             putativeSpeed = followerSpeed;
@@ -384,25 +384,25 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             constant = 0;
             alpha = bc.getParameter(ToledoLaneChangeParameters.ALPHA_ADJ);
             distanceToGap = Length.ZERO;
-            if (!perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane).isEmpty())
+            if (!perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).isEmpty())
             {
                 leaderDist =
-                    perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane).first().getDistance();
-                leaderSpeed = perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane).first().getSpeed();
+                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).first().getDistance();
+                leaderSpeed = perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).first().getSpeed();
             }
             else
             {
                 leaderDist = Length.POSITIVE_INFINITY;
                 leaderSpeed = Speed.POSITIVE_INFINITY;
             }
-            if (!perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(lane).isEmpty())
+            if (!perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).isEmpty())
             {
                 // plus own vehicle length for distance from nose of own vehicle (and then whole negative)
                 followerDist =
-                    perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(lane).first().getDistance().plus(
+                    perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).first().getDistance().plus(
                         getGtu().getLength());
                 followerSpeed =
-                    perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(lane).first().getSpeed();
+                    perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).first().getSpeed();
                 putativeDistance = followerDist;
             }
             else
@@ -419,11 +419,11 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             constant = bc.getParameter(ToledoLaneChangeParameters.C_BCK_TG);
             alpha = bc.getParameter(ToledoLaneChangeParameters.ALPHA_BCK);
             deltaFrontVehicle = 0;
-            if (perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(lane).size() > 1)
+            if (perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).size() > 1)
             {
                 // two followers
                 Iterator<AbstractHeadwayGTU> it =
-                    perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(lane).iterator();
+                    perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).iterator();
                 it.next();
                 AbstractHeadwayGTU follower = it.next();
                 followerDist = follower.getDistance();
@@ -431,10 +431,10 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
                 putativeLength =
                     followerDist
                         .minus(
-                            perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(lane).first()
+                            perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).first()
                                 .getDistance())
                         .minus(
-                            perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(lane).first().getLength());
+                            perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).first().getLength());
             }
             else
             {
@@ -445,29 +445,29 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             }
             // add vehicle length to get distance to tail of 1st follower (and then whole negative)
             leaderDist =
-                perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(lane).first().getDistance().plus(
-                    perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane).first().getLength());
-            leaderSpeed = perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(lane).first().getSpeed();
+                perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).first().getDistance().plus(
+                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).first().getLength());
+            leaderSpeed = perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).first().getSpeed();
             distanceToGap =
-                perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(lane).first().getDistance().plus(
+                perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).first().getDistance().plus(
                     getGtu().getLength()); // own nose to nose
             putativeDistance =
-                distanceToGap.plus(perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(lane).first()
+                distanceToGap.plus(perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).first()
                     .getLength());
             putativeSpeed = leaderSpeed;
         }
 
         // limit by leader in current lane
         if (!gap.equals(Gap.BACKWARD)
-            && !perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(RelativeLane.CURRENT).isEmpty()
-            && perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(RelativeLane.CURRENT).first()
+            && !perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT).isEmpty()
+            && perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT).first()
                 .getDistance().lt(leaderDist))
         {
             leaderDist =
-                perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(RelativeLane.CURRENT).first()
+                perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT).first()
                     .getDistance();
             leaderSpeed =
-                perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(RelativeLane.CURRENT).first()
+                perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT).first()
                     .getSpeed();
             deltaFrontVehicle = 1;
         }
@@ -516,12 +516,12 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         boolean acceptLead;
         boolean acceptLag;
 
-        if (!perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane).isEmpty())
+        if (!perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).isEmpty())
         {
             Speed dVLead =
-                perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane).first().getSpeed().minus(
+                perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).first().getSpeed().minus(
                     gtu.getSpeed());
-            Length sLead = perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane).first().getDistance();
+            Length sLead = perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).first().getDistance();
             // critical gap
             Length gLead =
                 new Length(Math.exp(bc.getParameter(ToledoLaneChangeParameters.C_LEAD)
@@ -545,12 +545,12 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             acceptLead = false;
         }
 
-        if (!perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(lane).isEmpty())
+        if (!perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).isEmpty())
         {
             Speed dVLag =
-                perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(lane).first().getSpeed().minus(
+                perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).first().getSpeed().minus(
                     gtu.getSpeed());
-            Length sLag = perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(lane).first().getDistance();
+            Length sLag = perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).first().getDistance();
             // critical gap
             Length gLag =
                 new Length(Math.exp(bc.getParameter(ToledoLaneChangeParameters.C_LAG)
@@ -641,12 +641,12 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
         // heavy neighbor
         Length leaderLength =
-            !perception.getPerceptionCategory(DirectNeighborsPerception.class).getFirstLeaders(lane.getLateralDirectionality())
-                .isEmpty() ? perception.getPerceptionCategory(DirectNeighborsPerception.class).getFirstLeaders(
+            !perception.getPerceptionCategory(NeighborsPerception.class).getFirstLeaders(lane.getLateralDirectionality())
+                .isEmpty() ? perception.getPerceptionCategory(NeighborsPerception.class).getFirstLeaders(
                 lane.getLateralDirectionality()).first().getLength() : Length.ZERO;
         Length followerLength =
-            !perception.getPerceptionCategory(DirectNeighborsPerception.class).getFirstFollowers(lane.getLateralDirectionality())
-                .isEmpty() ? perception.getPerceptionCategory(DirectNeighborsPerception.class).getFirstFollowers(
+            !perception.getPerceptionCategory(NeighborsPerception.class).getFirstFollowers(lane.getLateralDirectionality())
+                .isEmpty() ? perception.getPerceptionCategory(NeighborsPerception.class).getFirstFollowers(
                 lane.getLateralDirectionality()).first().getDistance() : Length.ZERO;
         int deltaHeavy = leaderLength.gt(MAX_LIGHT_VEHICLE_LENGTH) || followerLength.gt(MAX_LIGHT_VEHICLE_LENGTH) ? 1 : 0;
 
@@ -656,8 +656,8 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         // tail gating
         int deltaTailgate = 0;
         if (lane.equals(RelativeLane.CURRENT)
-            && !perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(RelativeLane.CURRENT).isEmpty()
-            && perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(RelativeLane.CURRENT).first()
+            && !perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(RelativeLane.CURRENT).isEmpty()
+            && perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(RelativeLane.CURRENT).first()
                 .getDistance().le(TAILGATE_LENGTH))
         {
             LinearDensity dL = getDensityInLane(gtu, perception, RelativeLane.LEFT);
@@ -692,13 +692,13 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         Length sFront;
         if (lane.equals(RelativeLane.CURRENT))
         {
-            if (!perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(RelativeLane.CURRENT).isEmpty())
+            if (!perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT).isEmpty())
             {
                 vFront =
-                    perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(RelativeLane.CURRENT).first()
+                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT).first()
                         .getSpeed();
                 sFront =
-                    perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(RelativeLane.CURRENT).first()
+                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT).first()
                         .getDistance();
             }
             else
@@ -761,17 +761,17 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         throws OperationalPlanException
     {
         int nVehicles = 0;
-        nVehicles += perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(lane).size();
-        nVehicles += perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane).size();
+        nVehicles += perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).size();
+        nVehicles += perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).size();
         if (nVehicles > 0)
         {
             Length d1;
-            if (!perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(lane).isEmpty())
+            if (!perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).isEmpty())
             {
-                d1 = perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(lane).last().getDistance();
+                d1 = perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).last().getDistance();
                 d1 = d1.plus(gtu.getLength().divideBy(2.0));
                 d1 =
-                    d1.plus(perception.getPerceptionCategory(DirectNeighborsPerception.class).getFollowers(lane).last().getLength()
+                    d1.plus(perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).last().getLength()
                         .divideBy(2.0));
             }
             else
@@ -779,12 +779,12 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
                 d1 = Length.ZERO;
             }
             Length d2;
-            if (!perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane).isEmpty())
+            if (!perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).isEmpty())
             {
-                d2 = perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane).last().getDistance();
+                d2 = perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).last().getDistance();
                 d2 = d2.plus(gtu.getLength().divideBy(2.0));
                 d2 =
-                    d2.plus(perception.getPerceptionCategory(DirectNeighborsPerception.class).getLeaders(lane).last().getLength()
+                    d2.plus(perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).last().getLength()
                         .divideBy(2.0));
             }
             else
