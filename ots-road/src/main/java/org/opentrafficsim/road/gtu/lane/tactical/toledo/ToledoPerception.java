@@ -8,11 +8,12 @@ import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
+import org.opentrafficsim.core.gtu.perception.PerceptionCategory;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 
 /**
@@ -29,14 +30,14 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 // TODO updateInfrastructureLaneChangeInfo with split number
-public class ToledoPerception extends AbstractPerceptionCategory
+public class ToledoPerception extends AbstractPerceptionCategory implements PerceptionCategory
 {
 
     /** Infrastructure lane change info per relative lane. */
     private Map<RelativeLane, TimeStampedObject<SortedSet<InfrastructureLaneChangeInfoToledo>>> infrastructureLaneChangeInfo;
 
     /** Wrapped regular infrastructureCategory. */
-    private final InfrastructurePerception infrastructureCategory;
+    private final DirectInfrastructurePerception infrastructureCategory;
 
     /**
      * @param perception perception
@@ -44,7 +45,7 @@ public class ToledoPerception extends AbstractPerceptionCategory
     public ToledoPerception(final LanePerception perception)
     {
         super(perception);
-        this.infrastructureCategory = new InfrastructurePerception(perception);
+        this.infrastructureCategory = new DirectInfrastructurePerception(perception);
     }
 
     /**

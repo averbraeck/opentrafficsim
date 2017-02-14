@@ -9,8 +9,6 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 
-import nl.tudelft.simulation.language.Throw;
-
 /**
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -29,7 +27,7 @@ public abstract class AbstractPerception implements Perception
     private static final long serialVersionUID = 20160729L;
 
     /** Set of available perception categories. */
-    private final Map<Class<? extends AbstractPerceptionCategory>, AbstractPerceptionCategory> perceptionCategories =
+    private final Map<Class<? extends PerceptionCategory>, PerceptionCategory> perceptionCategories =
         new LinkedHashMap<>();
     
     /** GTU. */
@@ -53,7 +51,7 @@ public abstract class AbstractPerception implements Perception
 
     /** {@inheritDoc} */
     @Override
-    public final void addPerceptionCategory(final AbstractPerceptionCategory perceptionCategory)
+    public final void addPerceptionCategory(final PerceptionCategory perceptionCategory)
     {
         // guarantees correct combination of class and perception category
         this.perceptionCategories.put(perceptionCategory.getClass(), perceptionCategory);
@@ -61,34 +59,58 @@ public abstract class AbstractPerception implements Perception
 
     /** {@inheritDoc} */
     @Override
-    public final <T extends AbstractPerceptionCategory> boolean contains(final Class<T> clazz)
+    public final <T extends PerceptionCategory> boolean contains(final Class<T> clazz)
     {
-        return this.perceptionCategories.containsKey(clazz);
+        for (Class<?> category : this.perceptionCategories.keySet())
+        {
+            if (clazz.isAssignableFrom(category))
+            {
+                // isAssignableFrom takes care of implementation of the category
+                return true;
+            }
+        }
+        return false;
     }
 
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
-    public final <T extends AbstractPerceptionCategory> T getPerceptionCategory(final Class<T> clazz)
+    public final <T extends PerceptionCategory> T getPerceptionCategory(final Class<T> category)
         throws OperationalPlanException
     {
-        Throw.when(!contains(clazz), OperationalPlanException.class, "Perception category" + clazz + " is not present.");
-        // addPerceptionCategory guarantees correct combination of class and perception category
-        return (T) this.perceptionCategories.get(clazz);
+        for (Class<?> clazz : this.perceptionCategories.keySet())
+        {
+            if (category.isAssignableFrom(clazz))
+            {
+                // addPerceptionCategory guarantees correct combination of class and perception category
+                // isAssignableFrom takes care of implementation of the category
+                return (T) this.perceptionCategories.get(clazz);
+            }
+        }
+        throw new OperationalPlanException("Perception category" + category + " is not present.");
     }
     
     /** {@inheritDoc} */
     @Override
-    public final void removePerceptionCategory(final AbstractPerceptionCategory perceptionCategory)
+    public final void removePerceptionCategory(final PerceptionCategory perceptionCategory)
     {
-        this.perceptionCategories.remove(perceptionCategory.getClass());
+        for (Class<?> category : this.perceptionCategories.keySet())
+        {
+            if (perceptionCategory.getClass().isAssignableFrom(category))
+            {
+                // addPerceptionCategory guarantees correct combination of class and perception category
+                // isAssignableFrom takes care of implementation of the category
+                this.perceptionCategories.remove(perceptionCategory.getClass());
+                return;
+            }
+        }
     }
 
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     public void perceive() throws GTUException, NetworkException, ParameterException
     {
-        for (AbstractPerceptionCategory category : this.perceptionCategories.values())
+        for (PerceptionCategory category : this.perceptionCategories.values())
         {
             category.updateAll();
         }
@@ -100,7 +122,7 @@ public abstract class AbstractPerception implements Perception
     {
         StringBuilder s = new StringBuilder("Perception [");
         String sep = "";
-        for (AbstractPerceptionCategory cat : this.perceptionCategories.values())
+        for (PerceptionCategory cat : this.perceptionCategories.values())
         {
             s.append(sep);
             s.append(cat);

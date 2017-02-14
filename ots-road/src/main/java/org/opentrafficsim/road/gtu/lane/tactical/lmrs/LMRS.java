@@ -8,16 +8,16 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
+import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DirectIntersectionPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
@@ -74,11 +74,11 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     public LMRS(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu)
     {
         super(carFollowingModel, gtu);
-        getPerception().addPerceptionCategory(new EgoPerception(getPerception()));
-        getPerception().addPerceptionCategory(new DefaultSimplePerception(getPerception()));
-        getPerception().addPerceptionCategory(new InfrastructurePerception(getPerception()));
-        getPerception().addPerceptionCategory(new NeighborsPerception(getPerception()));
-        getPerception().addPerceptionCategory(new IntersectionPerception(getPerception()));
+        getPerception().addPerceptionCategory(new DirectEgoPerception(getPerception()));
+        getPerception().addPerceptionCategory(new DirectDefaultSimplePerception(getPerception()));
+        getPerception().addPerceptionCategory(new DirectInfrastructurePerception(getPerception()));
+        getPerception().addPerceptionCategory(new DirectNeighborsPerception(getPerception()));
+        getPerception().addPerceptionCategory(new DirectIntersectionPerception(getPerception()));
     }
 
     /**
@@ -141,7 +141,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
 
         // obtain objects to get info
         getPerception().perceive();
-        SpeedLimitProspect slp = getPerception().getPerceptionCategory(InfrastructurePerception.class)
+        SpeedLimitProspect slp = getPerception().getPerceptionCategory(DirectInfrastructurePerception.class)
                 .getSpeedLimitProspect(RelativeLane.CURRENT);
         SpeedLimitInfo sli = slp.getSpeedLimitInfo(Length.ZERO);
         BehavioralCharacteristics bc = getGtu().getBehavioralCharacteristics();
@@ -151,7 +151,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
                 this.lmrsData, getPerception(), this.mandatoryIncentives, this.voluntaryIncentives);
 
         // Lower acceleration from additional sources
-        Speed speed = getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
+        Speed speed = getPerception().getPerceptionCategory(DirectEgoPerception.class).getSpeed();
         RelativeLane[] lanes = this.laneChange.isChangingLane()
                 ? new RelativeLane[] { RelativeLane.CURRENT, this.laneChange.getSecondLane(getGtu()) }
                 : new RelativeLane[] { RelativeLane.CURRENT };

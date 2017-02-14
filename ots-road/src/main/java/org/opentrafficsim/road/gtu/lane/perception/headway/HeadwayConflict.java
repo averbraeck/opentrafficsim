@@ -68,6 +68,12 @@ public class HeadwayConflict extends AbstractHeadway
     /** Type of conflict rule. */
     private final Class<? extends ConflictRule> conflictRuleType;
 
+    /** Distance of traffic light upstream on conflicting lane. */
+    private Length conflictingTrafficLightDistance = null;
+    
+    /** Whether the conflict is permitted by the traffic light. */
+    private boolean permitted = false;
+    
     /**
      * Constructor.
      * @param conflictType conflict type
@@ -274,6 +280,35 @@ public class HeadwayConflict extends AbstractHeadway
     public Class<? extends ConflictRule> getConflictRuleType()
     {
         return this.conflictRuleType;
+    }
+    
+    /**
+     * Returns the distance of a traffic light upstream on the conflicting lane.
+     * @return distance of a traffic light upstream on the conflicting lane.
+     */
+    public Length getConflictingTrafficLightDistance()
+    {
+        return this.conflictingTrafficLightDistance;
+    }
+    
+    /**
+     * Whether the conflict is permitted by the traffic light.
+     * @return whether the conflict is permitted by the traffic light
+     */
+    public boolean isPermitted()
+    {
+        return this.permitted;
+    }
+
+    /**
+     * Set the distance of a traffic light upstream on the conflicting lane.
+     * @param trafficLightDistance distance of a traffic light upstream on the conflicting lane.
+     * @param permittedConflict whether the conflict is permitted by the traffic light
+     */
+    public void setConflictingTrafficLight(final Length trafficLightDistance, final boolean permittedConflict)
+    {
+        this.conflictingTrafficLightDistance = trafficLightDistance;
+        this.permitted = permittedConflict;
     }
 
     /** {@inheritDoc} */

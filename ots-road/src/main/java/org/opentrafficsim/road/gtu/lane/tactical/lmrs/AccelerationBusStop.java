@@ -10,12 +10,12 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
+import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.BusStopPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DirectBusStopPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayBusStop;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -42,12 +42,13 @@ public class AccelerationBusStop implements AccelerationIncentive
 
     /** {@inheritDoc} */
     @Override
+    @SuppressWarnings("checkstyle:parameternumber")
     public void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final LaneBasedGTU gtu,
             final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
             final BehavioralCharacteristics bc, final SpeedLimitInfo speedLimitInfo)
             throws OperationalPlanException, ParameterException, GTUException
     {
-        SortedSet<HeadwayBusStop> stops = perception.getPerceptionCategory(BusStopPerception.class).getBusStops();
+        SortedSet<HeadwayBusStop> stops = perception.getPerceptionCategory(DirectBusStopPerception.class).getBusStops();
         if (stops.isEmpty())
         {
             return;
@@ -62,7 +63,7 @@ public class AccelerationBusStop implements AccelerationIncentive
 
                 // check when to leave
                 boolean stoppedAtStop = stop.getRelativeLane().isCurrent() && stop.getDistance().le(STOP_DISTANCE)
-                        && perception.getPerceptionCategory(EgoPerception.class).getSpeed().eq0();
+                        && perception.getPerceptionCategory(DirectEgoPerception.class).getSpeed().eq0();
                 if (busSchedule.getActualDepartureBusStop(busStopId) == null)
                 {
                     if (stoppedAtStop)

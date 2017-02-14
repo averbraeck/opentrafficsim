@@ -105,7 +105,7 @@ public class SimpleOperationalPlan implements Serializable
     {
         if (a.equals(Acceleration.NEGATIVE_INFINITY) || a.equals(Acceleration.NEG_MAXVALUE))
         {
-            throw new RuntimeException("Model has calcalated a negative deceleration.");
+            throw new RuntimeException("Model has calcalated a negative infinite or negative max value acceleration.");
         }
     }
 
