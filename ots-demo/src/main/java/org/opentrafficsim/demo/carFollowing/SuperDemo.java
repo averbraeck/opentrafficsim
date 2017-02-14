@@ -139,6 +139,8 @@ public class SuperDemo implements UNITS
         demonstrations.add(new CircularLane());
         demonstrations.add(new CircularRoad());
         demonstrations.add(new XMLNetworks());
+        demonstrations.add(new XMLNetworks2());
+        demonstrations.add(new XMLSampler());
         demonstrations.add(new OpenStreetMap());
         demonstrations.add(new CrossingTrafficLights());
         demonstrations.add(new TrafCODDemo2());
