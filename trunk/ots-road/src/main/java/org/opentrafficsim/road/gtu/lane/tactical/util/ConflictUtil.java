@@ -574,19 +574,19 @@ public final class ConflictUtil
             distance = distance.plus(conflict.getLength());
         }
         // based on current acceleration, but limited by free acceleration
-        // TODO maybe only constant acceleration? What did MOTUS do?
+        // TODO maybe only constant acceleration?
         AnticipationInfo ttcOa = AnticipationInfo.anticipateMovementFreeAcceleration(distance, speed, behavioralCharacteristics,
                 carFollowingModel, speedLimitInfo, TIME_STEP);
         AnticipationInfo ttcO;
-        if (acceleration.lt(Acceleration.ZERO))
-        {
-            AnticipationInfo ttcOb = AnticipationInfo.anticipateMovement(distance, speed, acceleration);
-            ttcO = ttcOa.getDuration().gt(ttcOb.getDuration()) ? ttcOa : ttcOb;
-        }
-        else
-        {
+//        if (acceleration.lt0())
+//        {
+//            AnticipationInfo ttcOb = AnticipationInfo.anticipateMovement(distance, speed, acceleration);
+//            ttcO = ttcOa.getDuration().gt(ttcOb.getDuration()) ? ttcOa : ttcOb;
+//        }
+//        else
+//        {
             ttcO = ttcOa;
-        }
+//        }
         // time till downstream vehicle will make the conflict passible, under constant speed or safe deceleration
         AnticipationInfo ttpDz = null;
         AnticipationInfo ttpDs = null;
@@ -619,13 +619,18 @@ public final class ConflictUtil
         {
             for (AbstractHeadwayGTU vehicle : conflict.getUpstreamConflictingGTUs())
             {
+                if (conflict.getConflictingTrafficLightDistance() != null
+                        && !conflict.isPermitted() && vehicle.getDistance().gt(conflict.getConflictingTrafficLightDistance()))
+                {
+                    break;
+                }
                 if (isOnRoute(conflict.getConflictingLink(), vehicle))
                 {
                     conflictingVehicles.add(vehicle);
                 }
             }
         }
-        else
+        else if (conflict.getConflictingTrafficLightDistance() == null)
         {
             // none within visibility, assume a conflicting vehicle just outside of visibility driving at speed limit
             try
@@ -801,8 +806,8 @@ public final class ConflictUtil
     private static Length passableDistance(final Speed speed, final Length vehicleLength,
             final BehavioralCharacteristics behavioralCharacteristics) throws ParameterException
     {
-        return behavioralCharacteristics.getParameter(ParameterTypes.T).multiplyBy(speed)
-                .plus(behavioralCharacteristics.getParameter(ParameterTypes.S0)).plus(vehicleLength);
+        return behavioralCharacteristics.getParameter(ParameterTypes.S0).plus(vehicleLength)
+                .plus(behavioralCharacteristics.getParameter(ParameterTypes.T).multiplyBy(speed));
     }
 
     /**

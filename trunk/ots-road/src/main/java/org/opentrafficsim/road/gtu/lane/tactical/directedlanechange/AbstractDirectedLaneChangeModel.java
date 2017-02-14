@@ -15,7 +15,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -59,7 +59,7 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
     {
         Lane lane = gtu.getReferencePosition().getLane();
         Length longitudinalPosition = gtu.getReferencePosition().getPosition();
-        Lane otherLane = getPerception().getPerceptionCategory(DefaultSimplePerception.class).bestAccessibleAdjacentLane(lane,
+        Lane otherLane = getPerception().getPerceptionCategory(DirectDefaultSimplePerception.class).bestAccessibleAdjacentLane(lane,
                 direction, longitudinalPosition);
         GTUFollowingModelOld gtuFollowingModel = (GTUFollowingModelOld) gtu.getTacticalPlanner().getCarFollowingModel();
         if (null == gtuFollowingModel)

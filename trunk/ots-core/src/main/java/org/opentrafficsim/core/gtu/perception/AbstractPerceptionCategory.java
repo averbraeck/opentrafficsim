@@ -6,8 +6,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.Type;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.network.NetworkException;
 
 /**
  * <p>
@@ -71,13 +69,5 @@ public abstract class AbstractPerceptionCategory extends Type<AbstractPerception
         }
         return getGtu().getSimulator().getSimulatorTime().getTime();
     }
-
-    /**
-     * Updates all information in the category.
-     * @throws GTUException if the GTU was not initialized
-     * @throws NetworkException when lanes are not properly linked
-     * @throws ParameterException when a necessary parameter to carry our perception is not defined (e.g., LOOKAHEAD)
-     */
-    public abstract void updateAll() throws GTUException, NetworkException, ParameterException;
 
 }

@@ -93,7 +93,7 @@ public class HeadwayGTUReal extends AbstractHeadwayGTU
      * @param gtu gtu to the the speed limit prospect for
      * @return speed limit prospect for given GTU
      */
-    // TODO this is a simple fix, and getReferenceLane()
+    // TODO this is a simple fix
     private SpeedLimitInfo getSpeedLimitInfo(final LaneBasedGTU gtu)
     {
         SpeedLimitInfo sli = new SpeedLimitInfo();

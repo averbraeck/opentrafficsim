@@ -7,10 +7,10 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
+import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.BusStopPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DirectBusStopPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayBusStop;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.pt.BusSchedule;
@@ -38,7 +38,7 @@ public class IncentiveBusStop implements MandatoryIncentive
     {
 
         HeadwayBusStop firstStop = null;
-        SortedSet<HeadwayBusStop> stops = perception.getPerceptionCategory(BusStopPerception.class).getBusStops();
+        SortedSet<HeadwayBusStop> stops = perception.getPerceptionCategory(DirectBusStopPerception.class).getBusStops();
         Time now;
         try
         {
@@ -68,7 +68,7 @@ public class IncentiveBusStop implements MandatoryIncentive
         {
             return new Desire(0, 0);
         }
-        Speed speed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
+        Speed speed = perception.getPerceptionCategory(DirectEgoPerception.class).getSpeed();
         if (firstStop.getRelativeLane().isCurrent())
         {
             double d = -IncentiveRoute.getDesireToLeave(behavioralCharacteristics, firstStop.getDistance(), 1, speed);

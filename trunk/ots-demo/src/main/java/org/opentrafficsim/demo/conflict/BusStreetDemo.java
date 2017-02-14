@@ -54,7 +54,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.lane.RoadGTUTypes;
-import org.opentrafficsim.road.gtu.lane.perception.categories.BusStopPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DirectBusStopPerception;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
@@ -578,7 +578,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             {
                 lmrs.addMandatoryIncentive(new IncentiveBusStop());
                 lmrs.addAccelerationIncentive(new AccelerationBusStop());
-                lmrs.getPerception().addPerceptionCategory(new BusStopPerception(lmrs.getPerception()));
+                lmrs.getPerception().addPerceptionCategory(new DirectBusStopPerception(lmrs.getPerception()));
             }
             return lmrs;
         }

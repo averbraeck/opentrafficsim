@@ -177,5 +177,12 @@ public class DefaultConflictRule implements ConflictRule
     {
         return new DefaultConflictRule();
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "DefaultConflictRule";
+    }
 
 }

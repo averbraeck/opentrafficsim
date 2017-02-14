@@ -16,7 +16,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGTUFollowingModelMobil;
@@ -60,9 +60,9 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             // road cars are supposed to drive
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;
             final LateralDirectionality nonPreferred = LateralDirectionality.LEFT;
-            Lane nonPreferredLane = perception.getPerceptionCategory(DefaultSimplePerception.class)
+            Lane nonPreferredLane = perception.getPerceptionCategory(DirectDefaultSimplePerception.class)
                     .bestAccessibleAdjacentLane(lane, nonPreferred, longitudinalPosition);
-            Lane preferredLane = perception.getPerceptionCategory(DefaultSimplePerception.class)
+            Lane preferredLane = perception.getPerceptionCategory(DirectDefaultSimplePerception.class)
                     .bestAccessibleAdjacentLane(lane, preferred, longitudinalPosition);
             AbstractLaneBasedTacticalPlanner albtp = (AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner();
             if (null == albtp)

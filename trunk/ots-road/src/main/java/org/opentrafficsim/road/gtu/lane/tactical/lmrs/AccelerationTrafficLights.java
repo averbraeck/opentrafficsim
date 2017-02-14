@@ -7,7 +7,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DirectIntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
@@ -34,7 +34,7 @@ public class AccelerationTrafficLights implements AccelerationIncentive
             throws ParameterException, OperationalPlanException
     {
         simplePlan.minimizeAcceleration(TrafficLightUtil.respondToTrafficLights(bc,
-                perception.getPerceptionCategory(IntersectionPerception.class).getTrafficLights(lane), carFollowingModel, speed,
+                perception.getPerceptionCategory(DirectIntersectionPerception.class).getTrafficLights(lane), carFollowingModel, speed,
                 speedLimitInfo));
     }
 

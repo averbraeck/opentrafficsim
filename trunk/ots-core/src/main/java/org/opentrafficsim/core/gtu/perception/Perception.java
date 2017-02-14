@@ -41,7 +41,7 @@ public interface Perception extends Serializable
      * Adds given perception category to the perception.
      * @param perceptionCategory perception category
      */
-    void addPerceptionCategory(final AbstractPerceptionCategory perceptionCategory);
+    void addPerceptionCategory(PerceptionCategory perceptionCategory);
 
     /**
      * Returns whether the given perception category is present.
@@ -49,21 +49,21 @@ public interface Perception extends Serializable
      * @param <T> perception category
      * @return whether the given perception category is present
      */
-    <T extends AbstractPerceptionCategory> boolean contains(final Class<T> clazz);
+    <T extends PerceptionCategory> boolean contains(Class<T> clazz);
 
     /**
      * Returns the given perception category.
-     * @param clazz perception category class
+     * @param category perception category class
      * @param <T> perception category
      * @return given perception category
      * @throws OperationalPlanException if the perception category is not present
      */
-    <T extends AbstractPerceptionCategory> T getPerceptionCategory(final Class<T> clazz) throws OperationalPlanException;
+    <T extends PerceptionCategory> T getPerceptionCategory(Class<T> category) throws OperationalPlanException;
 
     /**
      * Remove give perception category.
      * @param perceptionCategory perception category to remove
      */
-    void removePerceptionCategory(final AbstractPerceptionCategory perceptionCategory);
+    void removePerceptionCategory(PerceptionCategory perceptionCategory);
 
 }

@@ -29,7 +29,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedAltruistic;
@@ -106,7 +106,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             final LaneBasedGTU gtu)
     {
         super(carFollowingModel, gtu);
-        getPerception().addPerceptionCategory(new DefaultSimplePerception(getPerception()));
+        getPerception().addPerceptionCategory(new DirectDefaultSimplePerception(getPerception()));
         setNoLaneChange(new Duration(0.25, TimeUnit.SECOND));
     }
 
@@ -165,7 +165,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
 
             // ask Perception for the local situation
             LaneBasedGTU laneBasedGTU = getGtu();
-            DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);
+            DirectDefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DirectDefaultSimplePerception.class);
             BehavioralCharacteristics behavioralCharacteristics = laneBasedGTU.getBehavioralCharacteristics();
             // This is the only interaction between the car-following model and the behavioral characteristics
             getCarFollowingModelOld().setA(behavioralCharacteristics.getParameter(ParameterTypes.A));
@@ -404,7 +404,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             final DirectedPoint locationAtStartTime, final LanePathInfo lanePathInfo)
             throws OperationalPlanException, GTUException, ParameterException, NetworkException
     {
-        DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);
+        DirectDefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DirectDefaultSimplePerception.class);
 
         // No lane change. Continue on current lane.
         AccelerationStep accelerationStep = mostLimitingAccelerationStep(lanePathInfo, simplePerception.getForwardHeadwayGTU(),
@@ -511,7 +511,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         }
 
         Collection<Headway> otherLaneTraffic;
-        DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);
+        DirectDefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DirectDefaultSimplePerception.class);
         simplePerception.updateForwardHeadwayGTU();
         simplePerception.updateForwardHeadwayObject();
         simplePerception.updateBackwardHeadway();
@@ -541,7 +541,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         Collection<Headway> sameLaneTraffic = new HashSet<>();
         // TODO should it be getObjectType().isGtu() or !getObjectType().isDistanceOnly() ?
         // XXX Object & GTU
-        if (simplePerception.getForwardHeadwayGTU() != null && perception.getPerceptionCategory(DefaultSimplePerception.class)
+        if (simplePerception.getForwardHeadwayGTU() != null && perception.getPerceptionCategory(DirectDefaultSimplePerception.class)
                 .getForwardHeadwayGTU().getObjectType().isGtu())
         {
             sameLaneTraffic.add(simplePerception.getForwardHeadwayGTU());
@@ -606,7 +606,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     private AccelerationStep mostLimitingAccelerationStep(final LanePathInfo lanePathInfo, final Headway... headways)
             throws OperationalPlanException, ParameterException, GTUException, NetworkException
     {
-        DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);
+        DirectDefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DirectDefaultSimplePerception.class);
         simplePerception.updateForwardHeadwayGTU();
         simplePerception.updateForwardHeadwayObject();
         boolean sinkAtEnd = false;
