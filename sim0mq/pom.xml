@@ -25,7 +25,7 @@
 
     <sim0mq.version>${project.version}</sim0mq.version>
     <djunits.version>2.01.00</djunits.version>
-    <dsol.version>3.01.00</dsol.version>
+    <dsol.version>3.01.04</dsol.version>
     <jeromq.version>0.3.6</jeromq.version>
     <junit.version>4.11</junit.version>
 
@@ -636,6 +636,12 @@
       <name>DJUNIT Repository</name>
       <id>sim0mq</id>
       <url>http://sim0mq.org/maven</url>
+    </repository>
+
+    <repository>
+      <name>DSOL Public Repository</name>
+      <id>dsol</id>
+      <url>http://simulation.tudelft.nl/maven</url>
     </repository>
 
     <repository>
