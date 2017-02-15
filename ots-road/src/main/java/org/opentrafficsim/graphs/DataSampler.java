@@ -37,9 +37,9 @@ public class DataSampler implements EventListenerInterface
     private final Set<String> gtus = new HashSet<>();
 
     /**
-     * @param network the network
-     * @param lanes lanes to sample on
-     * 
+     * Construct the data sampler demo.
+     * @param network OTSNetwork; the network
+     * @param lanes List&lt;Lane&gt;; the lanes to sample on
      */
     public DataSampler(final OTSNetwork network, final List<Lane> lanes)
     {
