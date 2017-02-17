@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
@@ -43,13 +44,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 import javax.swing.text.MaskFormatter;
 
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.simulationengine.WrappableAnimation;
-
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
@@ -60,6 +54,13 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.language.io.URLResource;
+
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.simulationengine.WrappableAnimation;
 
 /**
  * Peter's improved simulation control panel.
@@ -161,7 +162,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             final boolean enabled)
     {
         // JButton result = new JButton(new ImageIcon(this.getClass().getResource(iconPath)));
-        JButton result = new JButton(new ImageIcon(URLResource.getResource(iconPath)));
+        JButton result = new JButton(loadIcon(iconPath));
         result.setName(name);
         result.setEnabled(enabled);
         result.setActionCommand(actionCommand);
@@ -169,6 +170,24 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
         result.addActionListener(this);
         this.buttons.add(result);
         return result;
+    }
+
+    /**
+     * Attempt to load and return an icon.
+     * @param iconPath String; the path that is used to load the icon
+     * @return Icon; or null if loading failed
+     */
+    public static final Icon loadIcon(final String iconPath)
+    {
+        try
+        {
+            return new ImageIcon(URLResource.getResource(iconPath));
+        }
+        catch (NullPointerException npe)
+        {
+            System.err.println("Could not load icon from path " + iconPath);
+            return null;
+        }
     }
 
     /**
@@ -408,12 +427,12 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                 if (this.simulator.isRunning())
                 {
                     button.setToolTipText("Pause the simulation");
-                    button.setIcon(new ImageIcon(URLResource.getResource("/Pause.png")));
+                    button.setIcon(OTSControlPanel.loadIcon("/Pause.png"));
                 }
                 else
                 {
                     button.setToolTipText("Run the simulation at the indicated speed");
-                    button.setIcon(new ImageIcon(URLResource.getResource("/Play.png")));
+                    button.setIcon(loadIcon("/Play.png"));
                 }
                 button.setEnabled(moreWorkToDo);
             }
