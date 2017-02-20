@@ -365,14 +365,16 @@ public class OTSNode implements Node, Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final DirectedPoint getLocation()
+    @SuppressWarnings("checkstyle:designforextension")
+    public DirectedPoint getLocation()
     {
         return this.point.getDirectedPoint();
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Bounds getBounds()
+    @SuppressWarnings("checkstyle:designforextension")
+    public Bounds getBounds()
     {
         return new BoundingSphere(new Point3d(0.0d, 0.0d, 0.0d), 10.0d);
     }

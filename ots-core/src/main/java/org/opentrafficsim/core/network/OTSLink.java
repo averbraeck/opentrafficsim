@@ -291,7 +291,8 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
 
     /** {@inheritDoc} */
     @Override
-    public final DirectedPoint getLocation()
+    @SuppressWarnings("checkstyle:designforextension")
+    public DirectedPoint getLocation()
     {
         if (this.zLocation == null)
         {
@@ -303,7 +304,8 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
 
     /** {@inheritDoc} */
     @Override
-    public final Bounds getBounds()
+    @SuppressWarnings("checkstyle:designforextension")
+    public Bounds getBounds()
     {
         return this.designLine.getBounds();
     }

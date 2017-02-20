@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.media.j3d.Bounds;
+import javax.vecmath.Point3d;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Direction;
@@ -1036,10 +1037,9 @@ public class OTSLine3D implements Locatable, Serializable
                 return mid;
             }
         }
-        throw new OTSGeometryException("Could not find position " + pos + " on line with length indexes: "
-                + this.lengthIndexedLine);
-        
-        
+        throw new OTSGeometryException(
+                "Could not find position " + pos + " on line with length indexes: " + this.lengthIndexedLine);
+
         // for (int i = 0; i < this.lengthIndexedLine.length - 2; i++)
         // {
         // if (pos > this.lengthIndexedLine[i] && pos <= this.lengthIndexedLine[i + 1])
@@ -1535,7 +1535,7 @@ public class OTSLine3D implements Locatable, Serializable
 
     /**
      * Calculate the centroid of this line, and the bounds, and cache for later use. Make sure the dx, dy and dz are at least
-     * 0.5 m wide.
+     * 0.5 m wide. XXX: For an OTSLine3D, coordinate systems are not guaranteed, so 0.5 m wide has NO MEANING.
      */
     private void calcCentroidBounds()
     {
@@ -1555,10 +1555,12 @@ public class OTSLine3D implements Locatable, Serializable
             maxZ = Math.max(maxZ, p.z);
         }
         this.centroid = new OTSPoint3D((maxX + minX) / 2, (maxY + minY) / 2, (maxZ + minZ) / 2);
-        double deltaX = Math.max(maxX - minX, 0.5);
-        double deltaY = Math.max(maxY - minY, 0.5);
-        double deltaZ = Math.max(maxZ - minZ, 0.5);
-        this.bounds = new BoundingBox(deltaX, deltaY, deltaZ);
+        double deltaX = maxX - minX; // XXX: was Math.max(maxX - minX, 0.5);
+        double deltaY = maxY - minY; // XXX: was Math.max(maxY - minY, 0.5);
+        double deltaZ = maxZ - minZ; // XXX: was Math.max(maxZ - minZ, 0.5);
+        // XXX: WRONG: this.bounds = new BoundingBox(deltaX, deltaY, deltaZ);
+        this.bounds =
+                new BoundingBox(new Point3d(-deltaX / 2.0, -deltaY / 2.0, -deltaZ / 2.0), new Point3d(deltaX, deltaY, deltaZ));
         this.envelope = new Envelope(minX, maxX, minY, maxY);
     }
 
