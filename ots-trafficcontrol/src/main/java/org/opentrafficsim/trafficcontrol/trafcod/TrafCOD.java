@@ -33,6 +33,12 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.object.InvisibleObjectInterface;
+import org.opentrafficsim.core.object.ObjectInterface;
 import org.opentrafficsim.road.network.lane.object.sensor.NonDirectionalOccupancySensor;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -150,12 +156,9 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
             final Set<TrafficLightSensor> sensors, final DEVSSimulator<Time, Duration, OTSSimTimeDouble> simulator,
             Container display) throws TrafficControlException, SimRuntimeException
     {
+        this(controllerName, simulator, display);
         Throw.whenNull(trafCodURL, "trafCodURL may not be null");
-        Throw.whenNull(controllerName, "controllerName may not be null");
         Throw.whenNull(trafficLights, "trafficLights may not be null");
-        Throw.whenNull(simulator, "simulator may not be null");
-        this.simulator = simulator;
-        this.controllerName = controllerName;
         try
         {
             parseTrafCODRules(trafCodURL, trafficLights, sensors);
@@ -215,6 +218,22 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
         this.simulator.scheduleEventRel(Duration.ZERO, this, this, "checkConsistency", null);
         // The first rule evaluation should occur at t=0.1s
         this.simulator.scheduleEventRel(EVALUATION_INTERVAL, this, this, "evalExprs", null);
+    }
+
+    /**
+     * @param controllerName String; name of this TrafCOD traffic light controller
+     * @param simulator DEVSSimulator&lt;Time, Duration, OTSSimTimeDouble&gt;; the simulation engine
+     * @param display Container; if non-null, a controller display is constructed and shown in the supplied container
+     * @throws TrafficControlException when a rule cannot be parsed
+     * @throws SimRuntimeException when scheduling the first evaluation event fails
+     */
+    private TrafCOD(String controllerName, final DEVSSimulator<Time, Duration, OTSSimTimeDouble> simulator, Container display)
+            throws TrafficControlException, SimRuntimeException
+    {
+        Throw.whenNull(controllerName, "controllerName may not be null");
+        Throw.whenNull(simulator, "simulator may not be null");
+        this.simulator = simulator;
+        this.controllerName = controllerName;
     }
 
     /**
@@ -1872,6 +1891,61 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
     {
         return this.controllerName;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final InvisibleObjectInterface clone(final OTSSimulatorInterface newSimulator, final Network newNetwork)
+            throws NetworkException
+    {
+        try
+        {
+            // TODO figure out how to provide a display for the clone
+            @SuppressWarnings("unchecked")
+            TrafCOD result = new TrafCOD(getId(), (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) newSimulator, null);
+            result.fireTimedEvent(TRAFFICCONTROL_CONTROLLER_CREATED, new Object[] { this.controllerName,
+                    TrafficController.BEING_CLONED }, newSimulator.getSimulatorTime());
+            // Clone the variables
+            for (Variable v : this.variablesInDefinitionOrder)
+            {
+                Variable clonedVariable = result.installVariable(v.getName(), v.getStream(), EnumSet.noneOf(Flags.class), null);
+                clonedVariable.setStartSource(v.getStartSource());
+                clonedVariable.setEndSource(v.getEndSource());
+                if (clonedVariable.isDetector())
+                {
+                    String detectorName = clonedVariable.toString(EnumSet.of(PrintFlags.ID));
+                    int detectorNumber = clonedVariable.getStream() * 10 + detectorName.charAt(detectorName.length() - 1) - '0';
+                    TrafficLightSensor clonedSensor = null;
+                    for (ObjectInterface oi : newNetwork.getObjectMap().values())
+                    {
+                        if (oi instanceof TrafficLightSensor)
+                        {
+                            TrafficLightSensor tls = (TrafficLightSensor) oi;
+                            if (tls.getId().endsWith(detectorName))
+                            {
+                                clonedSensor = tls;
+                            }
+                        }
+                    }
+                    if (null == clonedSensor)
+                    {
+                        throw new TrafficControlException("Cannot find detector " + detectorName + " with number "
+                                + detectorNumber + " among the provided sensors");
+                    }
+                    clonedVariable.subscribeToDetector(clonedSensor);
+                }
+                clonedVariable.cloneState(v, newNetwork); // also updates traffic lights
+                String key = variableKey(clonedVariable.getName(), clonedVariable.getStream());
+                result.variables.put(key, clonedVariable);
+            }
+            return result;
+        }
+        catch (TrafficControlException | SimRuntimeException tce)
+        {
+            throw new NetworkException(
+                    "Internal error; caught an unexpected TrafficControlException or SimRunTimeException in clone");
+        }
+    }
+
 }
 
 /**
@@ -2037,9 +2111,6 @@ class Variable implements EventListenerInterface
     /** Name of this variable (without the traffic stream). */
     final String name;
 
-    /** Position in the debugging list. */
-    char listPos;
-
     /** Traffic stream number */
     final short stream;
 
@@ -2060,6 +2131,37 @@ class Variable implements EventListenerInterface
 
     /** Letters that are used to distinguish conflict groups in the MRx variables. */
     private static String ROWLETTERS = "ABCDXYZUVW";
+
+    /**
+     * @param newNetwork OTSNetwork; the OTS Network in which the clone will exist
+     * @param newTrafCOD TrafCOD; the TrafCOD engine that will own the new Variable
+     * @return Variable; the clone of this variable in the new network
+     * @throws NetworkException when a traffic light or sensor is not present in newNetwork
+     * @throws TrafficControlException
+     */
+    final Variable clone(final OTSNetwork newNetwork, final TrafCOD newTrafCOD) throws NetworkException,
+            TrafficControlException
+    {
+        Variable result = new Variable(getName(), getStream(), newTrafCOD);
+        result.flags = EnumSet.copyOf(this.flags);
+        result.value = this.value;
+        result.timerMax10 = this.timerMax10;
+        result.color = this.color;
+        result.refCount = this.refCount;
+        result.updateTime10 = this.updateTime10;
+        result.startSource = this.startSource;
+        result.endSource = this.endSource;
+        for (TrafficLight tl : this.trafficLights)
+        {
+            ObjectInterface clonedTrafficLight = newNetwork.getObjectMap().get(tl.getId());
+            Throw.when(null == clonedTrafficLight, NetworkException.class,
+                    "Cannot find clone of traffic light %s in newNetwork", tl.getId());
+            Throw.when(!(clonedTrafficLight instanceof TrafficLight), NetworkException.class,
+                    "Object %s in newNetwork is not a TrafficLight", clonedTrafficLight);
+            result.addOutput((TrafficLight) clonedTrafficLight);
+        }
+        return result;
+    }
 
     /**
      * Construct a new Variable.
@@ -2257,6 +2359,42 @@ class Variable implements EventListenerInterface
         }
         this.value = newValue;
         return result;
+    }
+
+    /**
+     * Copy the state of this variable from another variable. Only used when cloning the TrafCOD engine.
+     * @param fromVariable Variable; the variable whose state is copied
+     * @param newNetwork Network; the Network that contains the new traffic control engine
+     * @throws NetworkException when the clone of a traffic light of fromVariable does not exist in newNetwork
+     */
+    public void cloneState(final Variable fromVariable, final Network newNetwork) throws NetworkException
+    {
+        this.value = fromVariable.value;
+        this.flags = EnumSet.copyOf(fromVariable.flags);
+        this.updateTime10 = fromVariable.updateTime10;
+        if (fromVariable.isOutput())
+        {
+            for (TrafficLight tl : fromVariable.trafficLights)
+            {
+                ObjectInterface clonedTrafficLight = newNetwork.getObjectMap().get(tl.getId());
+                if (null != clonedTrafficLight)
+                {
+                    throw new NetworkException("newNetwork does not contain a clone of traffic light " + tl.getId());
+                }
+                if (clonedTrafficLight instanceof TrafficLight)
+                {
+                    throw new NetworkException("newNetwork contains an object with name " + tl.getId() + " but this object is not a TrafficLight");
+                }
+                this.trafficLights.add((TrafficLight) clonedTrafficLight);
+            }
+        }
+        if (isOutput())
+        {
+            for (TrafficLight trafficLight : this.trafficLights)
+            {
+                trafficLight.setTrafficLightColor(this.color);
+            }
+        }
     }
 
     /**

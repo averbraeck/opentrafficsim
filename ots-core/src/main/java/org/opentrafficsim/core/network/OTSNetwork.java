@@ -14,16 +14,6 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.event.EventContext;
 
-import org.jgrapht.alg.DijkstraShortestPath;
-import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.perception.PerceivableContext;
-
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
@@ -32,6 +22,18 @@ import nl.tudelft.simulation.immutablecollections.Immutable;
 import nl.tudelft.simulation.immutablecollections.ImmutableHashMap;
 import nl.tudelft.simulation.immutablecollections.ImmutableMap;
 import nl.tudelft.simulation.naming.context.ContextUtil;
+
+import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.object.InvisibleObjectInterface;
+import org.opentrafficsim.core.object.ObjectInterface;
+import org.opentrafficsim.core.perception.PerceivableContext;
 
 /**
  * A Network consists of a set of links. Each link has, in its turn, a start node and an end node.
@@ -58,6 +60,12 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** Map of Links. */
     private Map<String, Link> linkMap = new HashMap<>();
+
+    /** Map of ObjectInterface. */
+    private Map<String, ObjectInterface> objectMap = new HashMap<>();
+
+    /** Map of InvisibleObjects. */
+    private Map<String, InvisibleObjectInterface> invisibleObjectMap = new HashMap<>();
 
     /** Map of Routes. */
     private Map<GTUType, Map<String, Route>> routeMap = new HashMap<>();
@@ -170,8 +178,8 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         }
         if (!containsNode(link.getStartNode()) || !containsNode(link.getEndNode()))
         {
-            throw new NetworkException(
-                    "Start node or end node of Link " + link.getId() + " not registered in network " + this.id);
+            throw new NetworkException("Start node or end node of Link " + link.getId() + " not registered in network "
+                    + this.id);
         }
         this.linkMap.put(link.getId(), link);
         fireEvent(Network.LINK_ADD_EVENT, link.getId());
@@ -240,6 +248,146 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     }
 
     /***************************************************************************************/
+    /************************ OBJECT INTERFACE IMPLEMENTING OBJECTS ************************/
+    /***************************************************************************************/
+
+    /** {@inheritDoc} */
+    @Override
+    public final ImmutableMap<String, ObjectInterface> getObjectMap()
+    {
+        return new ImmutableHashMap<String, ObjectInterface>(this.objectMap, Immutable.WRAP);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final ImmutableMap<String, ObjectInterface> getObjectMap(final Class<ObjectInterface> objectType)
+    {
+        Map<String, ObjectInterface> result = new HashMap<>();
+        for (String key : this.objectMap.keySet())
+        {
+            ObjectInterface o = this.objectMap.get(key);
+            if (objectType.isInstance(o))
+            {
+                result.put(key, o);
+            }
+        }
+        return new ImmutableHashMap<String, ObjectInterface>(result, Immutable.WRAP);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void addObject(final ObjectInterface object) throws NetworkException
+    {
+        if (containsObject(object))
+        {
+            throw new NetworkException("Object " + object + " already registered in network " + this.id);
+        }
+        if (containsObject(object.getId()))
+        {
+            throw new NetworkException("Object with name " + object.getId() + " already registered in network " + this.id);
+        }
+        this.objectMap.put(object.getId(), object);
+        fireEvent(Network.OBJECT_ADD_EVENT, object.getId());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void removeObject(final ObjectInterface object) throws NetworkException
+    {
+        if (!containsObject(object))
+        {
+            throw new NetworkException("Object " + object + " not registered in network " + this.id);
+        }
+        fireEvent(Network.OBJECT_REMOVE_EVENT, object.getId());
+        this.objectMap.remove(object.getId());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean containsObject(final ObjectInterface object)
+    {
+        return this.objectMap.containsKey(object.getId());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean containsObject(final String objectId)
+    {
+        return this.objectMap.containsKey(objectId);
+    }
+
+    /***************************************************************************************/
+    /********************************* INVISIBLE OBJECTS ***********************************/
+    /***************************************************************************************/
+
+    /** {@inheritDoc} */
+    @Override
+    public final ImmutableMap<String, InvisibleObjectInterface> getInvisibleObjectMap()
+    {
+        return new ImmutableHashMap<String, InvisibleObjectInterface>(this.invisibleObjectMap, Immutable.WRAP);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final ImmutableMap<String, InvisibleObjectInterface> getInvisibleObjectMap(
+            final Class<InvisibleObjectInterface> objectType)
+    {
+        Map<String, InvisibleObjectInterface> result = new HashMap<>();
+        for (String key : this.objectMap.keySet())
+        {
+            InvisibleObjectInterface o = this.invisibleObjectMap.get(key);
+            if (objectType.isInstance(o))
+            {
+                result.put(key, o);
+            }
+        }
+        return new ImmutableHashMap<String, InvisibleObjectInterface>(result, Immutable.WRAP);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void addInvisibleObject(final InvisibleObjectInterface object) throws NetworkException
+    {
+        if (containsInvisibleObject(object))
+        {
+            throw new NetworkException("InvisibleObject " + object + " already registered in network " + this.id);
+        }
+        if (containsInvisibleObject(object.getId()))
+        {
+            throw new NetworkException("InvisibleObject with name " + object.getId() + " already registered in network "
+                    + this.id);
+        }
+        this.invisibleObjectMap.put(object.getId(), object);
+        fireEvent(Network.INVISIBLE_OBJECT_ADD_EVENT, object.getId());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void removeInvisibleObject(final InvisibleObjectInterface object) throws NetworkException
+    {
+        if (!containsInvisibleObject(object))
+        {
+            throw new NetworkException("InvisibleObject " + object + " not registered in network " + this.id);
+        }
+        fireEvent(Network.INVISIBLE_OBJECT_REMOVE_EVENT, object.getId());
+        this.objectMap.remove(object.getId());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean containsInvisibleObject(final InvisibleObjectInterface object)
+    {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean containsInvisibleObject(final String objectId)
+    {
+        return false;
+    }
+
+    /***************************************************************************************/
     /*************************************** ROUTES ****************************************/
     /***************************************************************************************/
 
@@ -261,8 +409,8 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     {
         if (containsRoute(gtuType, route))
         {
-            throw new NetworkException(
-                    "Route " + route + " for GTUType " + gtuType + " already registered in network " + this.id);
+            throw new NetworkException("Route " + route + " for GTUType " + gtuType + " already registered in network "
+                    + this.id);
         }
         if (this.routeMap.containsKey(gtuType) && this.routeMap.get(gtuType).keySet().contains(route.getId()))
         {
@@ -432,8 +580,9 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     public final CompleteRoute getShortestRouteBetween(final GTUType gtuType, final Node nodeFrom, final Node nodeTo,
             final List<Node> nodesVia) throws NetworkException
     {
-        CompleteRoute route = new CompleteRoute(
-                "Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo + " via " + nodesVia.toString(), gtuType);
+        CompleteRoute route =
+                new CompleteRoute(
+                        "Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo + " via " + nodesVia.toString(), gtuType);
         SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = this.linkGraphs.get(gtuType);
         if (graph == null)
         {
@@ -531,7 +680,8 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     public final String toString()
     {
         return "OTSNetwork [id=" + this.id + ", nodeMapSize=" + this.nodeMap.size() + ", linkMapSize=" + this.linkMap.size()
-                + ", routeMapSize=" + this.routeMap.size() + ", gtuMapSize=" + this.gtuMap.size() + "]";
+                + ", objectMapSize=" + this.objectMap.size() + ", routeMapSize=" + this.routeMap.size() + ", gtuMapSize="
+                + this.gtuMap.size() + "]";
     }
 
     /***************************************************************************************/
@@ -597,7 +747,12 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             newRouteMap.put(gtuType, newRoutes);
         }
         newNetwork.routeMap = newRouteMap;
-
+        // clone the traffic lights
+        for (InvisibleObjectInterface io : getInvisibleObjectMap().values())
+        {
+            InvisibleObjectInterface clonedIO = io.clone(newSimulator, newNetwork);
+            newNetwork.addInvisibleObject(clonedIO);
+        }
         return newNetwork;
     }
 
@@ -723,4 +878,5 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             System.err.println("Error when destroying animation objects for class " + clazz.getSimpleName());
         }
     }
+
 }
