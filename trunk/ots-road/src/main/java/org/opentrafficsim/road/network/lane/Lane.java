@@ -571,6 +571,10 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             throw new NetworkException("Illegal position for sensor " + position + " valid range is 0.." + getLength().getSI());
         }
+        if (this.parentLink.getNetwork().containsObject(sensor.getId()))
+        {
+            throw new NetworkException("Network already contains an object with the name " + sensor.getId());
+        }
         List<SingleSensor> sensorList = this.sensors.get(position);
         if (null == sensorList)
         {
@@ -578,6 +582,7 @@ public class Lane extends CrossSectionElement implements Serializable
             this.sensors.put(position, sensorList);
         }
         sensorList.add(sensor);
+        this.parentLink.getNetwork().addObject(sensor);
         fireTimedEvent(Lane.SENSOR_ADD_EVENT, new Object[] { sensor.getId(), sensor },
                 sensor.getSimulator().getSimulatorTime());
     }
@@ -601,6 +606,7 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             this.sensors.remove(sensor.getLongitudinalPosition().si);
         }
+        this.parentLink.getNetwork().removeObject(sensor);
     }
 
     /**
@@ -793,6 +799,10 @@ public class Lane extends CrossSectionElement implements Serializable
             throw new NetworkException(
                     "Illegal position for laneBasedObject " + position + " valid range is 0.." + getLength().getSI());
         }
+        if (this.parentLink.getNetwork().containsObject(laneBasedObject.getId()))
+        {
+            throw new NetworkException("Network already contains an object with the name " + laneBasedObject.getId());
+        }
         List<LaneBasedObject> laneBasedObjectList = this.laneBasedObjects.get(position);
         if (null == laneBasedObjectList)
         {
@@ -800,6 +810,7 @@ public class Lane extends CrossSectionElement implements Serializable
             this.laneBasedObjects.put(position, laneBasedObjectList);
         }
         laneBasedObjectList.add(laneBasedObject);
+        this.parentLink.getNetwork().addObject(laneBasedObject);
         fireEvent(Lane.OBJECT_ADD_EVENT, new Object[] { laneBasedObject });
     }
 
@@ -822,6 +833,7 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             this.laneBasedObjects.remove(laneBasedObject.getLongitudinalPosition().doubleValue());
         }
+        this.parentLink.getNetwork().removeObject(laneBasedObject);
     }
 
     /**

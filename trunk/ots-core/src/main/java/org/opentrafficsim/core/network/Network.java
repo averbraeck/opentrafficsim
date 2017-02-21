@@ -6,6 +6,8 @@ import java.util.Set;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.object.InvisibleObjectInterface;
+import org.opentrafficsim.core.object.ObjectInterface;
 
 import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.immutablecollections.ImmutableMap;
@@ -136,6 +138,102 @@ public interface Network
     Link getLink(String nodeId1, String nodeId2) throws NetworkException;
 
     /***************************************************************************************/
+    /************************ OBJECT INTERFACE IMPLEMENTING OBJECTS ************************/
+    /***************************************************************************************/
+
+    /**
+     * Return an immutable map of all ObjectInterface implementing objects in the Network.
+     * @return ImmutableMap&lt;String, ObjectInterface&gt;; the immutable map of all ObjectInterface implementing objects in the
+     *         Network
+     */
+    ImmutableMap<String, ObjectInterface> getObjectMap();
+
+    /**
+     * Return an immutable map of all ObjectInterface implementing objects in the network that are of type objectType, or any
+     * sub type thereof.
+     * @param objectType ObjectInterface; the (sub-)type of ObjectInterface that the returned map is reduced to
+     * @return ImmutableMap&lt;String, ObjectInterface&gt;; the immutable map of all ObjectInterface implementing objects in the
+     *         Network that are of the type objectType, or any sub type thereof
+     */
+    ImmutableMap<String, ObjectInterface> getObjectMap(Class<ObjectInterface> objectType);
+
+    /**
+     * Add an ObjectInterface implementing object to the Network.
+     * @param object ObjectInterface; the object that implements ObjectInterface
+     * @throws NetworkException if link already exists in the network, if name of the object is not unique.
+     */
+    void addObject(ObjectInterface object) throws NetworkException;
+
+    /**
+     * Remove an ObjectInterface implementing object form the Network.
+     * @param object ObjectInterface; the object that implements ObjectInterface
+     * @throws NetworkException if the object does not exist in the network.
+     */
+    void removeObject(ObjectInterface object) throws NetworkException;
+
+    /**
+     * Test whether the object is present in the Network.
+     * @param object ObjectInterface; the object that is tested for presence
+     * @return boolean; whether the object is present in the Network
+     */
+    boolean containsObject(ObjectInterface object);
+
+    /**
+     * Test whether an object with the given id is present in the Network.
+     * @param objectId String; the id that is tested for presence
+     * @return boolean; whether an object with the given id is present in the Network
+     */
+    boolean containsObject(String objectId);
+
+    /***************************************************************************************/
+    /********************************* INVISIBLE OBJECTS ***********************************/
+    /***************************************************************************************/
+
+    /**
+     * Return an immutable map of all InvisibleObject implementing objects in the Network.
+     * @return ImmutableMap&lt;String, ObjectInterface&gt;; the immutable map of all ObjectInterface implementing objects in the
+     *         Network
+     */
+    ImmutableMap<String, InvisibleObjectInterface> getInvisibleObjectMap();
+
+    /**
+     * Return an immutable map of all InvisibleObject implementing objects in the network that are of type objectType, or any
+     * sub type thereof.
+     * @param objectType InvisibleObject; the (sub-)type of InvisibleObject that the returned map is reduced to
+     * @return ImmutableMap&lt;String, InvisibleObject&gt;; the immutable map of all InvisibleObject implementing objects in the
+     *         Network that are of the type objectType, or any sub type thereof
+     */
+    ImmutableMap<String, InvisibleObjectInterface> getInvisibleObjectMap(Class<InvisibleObjectInterface> objectType);
+
+    /**
+     * Add an ObjectInterface implementing object to the Network.
+     * @param object InvisibleObject; the object that implements ObjectInterface
+     * @throws NetworkException if link already exists in the network, if name of the object is not unique.
+     */
+    void addInvisibleObject(InvisibleObjectInterface object) throws NetworkException;
+
+    /**
+     * Remove an ObjectInterface implementing object form the Network.
+     * @param object ObjectInterface; the object that implements ObjectInterface
+     * @throws NetworkException if the object does not exist in the network.
+     */
+    void removeInvisibleObject(InvisibleObjectInterface object) throws NetworkException;
+
+    /**
+     * Test whether the invisible object is present in the Network.
+     * @param object InvisibleObject; the object that is tested for presence
+     * @return boolean; whether the invisible object is present in the Network
+     */
+    boolean containsInvisibleObject(InvisibleObjectInterface object);
+
+    /**
+     * Test whether an invisible object with the given id is present in the Network.
+     * @param objectId String; the id that is tested for presence
+     * @return boolean; whether an invisible object with the given id is present in the Network
+     */
+    boolean containsInvisibleObject(String objectId);
+
+    /***************************************************************************************/
     /*************************************** ROUTES ****************************************/
     /***************************************************************************************/
 
@@ -264,6 +362,32 @@ public interface Network
      * Payload: String linkId (not an array, just a String)
      */
     EventType LINK_REMOVE_EVENT = new EventType("LINK.REMOVE");
+
+    /**
+     * The (regular, not timed) event type for pub/sub indicating the addition of an ObjectInterface implementing object. <br>
+     * Payload: String ObjectId (not an array, just a String)
+     */
+    EventType OBJECT_ADD_EVENT = new EventType("OBJECT.ADD");
+
+    /**
+     * The (regular, not timed) event type for pub/sub indicating the removal of an ObjectInterface implementing object. <br>
+     * Payload: String objectId (not an array, just a String)
+     */
+    EventType OBJECT_REMOVE_EVENT = new EventType("OBJECT.REMOVE");
+
+    /**
+     * The (regular, not timed) event type for pub/sub indicating the addition of an InvisibleObjectInterface implementing
+     * object. <br>
+     * Payload: String ObjectId (not an array, just a String)
+     */
+    EventType INVISIBLE_OBJECT_ADD_EVENT = new EventType("INVISIBLE_OBJECT.ADD");
+
+    /**
+     * The (regular, not timed) event type for pub/sub indicating the removal of an InvisibleObjectInterface implementing
+     * object. <br>
+     * Payload: String objectId (not an array, just a String)
+     */
+    EventType INVISIBLE_OBJECT_REMOVE_EVENT = new EventType("INVISIBLE_OBJECT.REMOVE");
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the addition of a Route for a gtuType. <br>

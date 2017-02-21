@@ -4,6 +4,8 @@ import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.event.EventProducerInterface;
 import nl.tudelft.simulation.event.EventType;
 
+import org.opentrafficsim.core.object.InvisibleObjectInterface;
+
 /**
  * Interface for traffic light controllers.
  * <p>
@@ -15,7 +17,7 @@ import nl.tudelft.simulation.event.EventType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface TrafficController extends EventProducerInterface, EventListenerInterface
+public interface TrafficController extends EventProducerInterface, EventListenerInterface, InvisibleObjectInterface
 {
     /**
      * Retrieve the Id of the traffic light controller.
@@ -32,6 +34,9 @@ public interface TrafficController extends EventProducerInterface, EventListener
 
     /** Traffic controller is starting up. Particular traffic control programs may use additional states not listed here. */
     final String STARTING_UP = "starting up";
+
+    /** Traffic controller is being cloned. Particular traffic control programs may use additional states not listed here. */
+    final String BEING_CLONED = "being cloned";
 
     /** Traffic controller is running. */
     final String RUNNING = "running";
