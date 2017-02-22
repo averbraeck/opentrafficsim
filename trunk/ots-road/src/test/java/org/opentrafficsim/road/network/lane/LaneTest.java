@@ -220,7 +220,7 @@ public class LaneTest implements UNITS
                             for (int endWidth : new int[] { 2, 4, 6 })
                             {
                                 // Now we can construct a Lane
-                                // FIXME what overtaking conditions do we ant to test in this unit test?
+                                // FIXME what overtaking conditions do we want to test in this unit test?
                                 Lane lane = new Lane(link, "lane." + ++laneNum, new Length(startLateralOffset, METER),
                                         new Length(endLateralOffset, METER), new Length(startWidth, METER),
                                         new Length(endWidth, METER), laneType, directionalityMap, speedMap,
@@ -262,10 +262,10 @@ public class LaneTest implements UNITS
                                         yEnd + (endLateralOffset + endWidth / 2) * Math.cos(angle));
                                 cornerPoints[3] = new Point2D.Double(xEnd - (endLateralOffset - endWidth / 2) * Math.sin(angle),
                                         yEnd + (endLateralOffset - endWidth / 2) * Math.cos(angle));
-                                for (int i = 0; i < cornerPoints.length; i++)
-                                {
-                                    // System.out.println("p" + i + ": " + cornerPoints[i].x + "," + cornerPoints[i].y);
-                                }
+                                // for (int i = 0; i < cornerPoints.length; i++)
+                                // {
+                                // System.out.println("p" + i + ": " + cornerPoints[i].x + "," + cornerPoints[i].y);
+                                // }
                                 double minX = cornerPoints[0].getX();
                                 double maxX = cornerPoints[0].getX();
                                 double minY = cornerPoints[0].getY();
