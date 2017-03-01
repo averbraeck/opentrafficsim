@@ -72,8 +72,11 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     /** Save the runLength for restarting the simulation. */
     private Duration savedRunLength;
 
-    /** the model. */
+    /** The model. */
     private OTSModelInterface model;
+
+    /** Override the replication number by this value if non-null. */
+    private Integer replication = null;
 
     /**
      * Build the animator.
@@ -91,6 +94,26 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
             final OTSModelInterface otsModel) throws SimRuntimeException, NamingException, PropertyException
     {
         return new SimpleAnimator(startTime, warmupPeriod, runLength, otsModel);
+    }
+
+    /**
+     * Build the animator with the specified replication number.
+     * @param startTime Time; the start time
+     * @param warmupPeriod Duration; the warm up period
+     * @param runLength Duration; the duration of the simulation / animation
+     * @param otsModel OTSModelInterface; the simulation model
+     * @param replicationNumber int; the replication number
+     * @return SimpleAnimator; a newly constructed animator
+     * @throws SimRuntimeException on ???
+     * @throws NamingException when context for the animation cannot be created
+     * @throws PropertyException when one of the user modified properties has the empty string as key
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    protected SimpleAnimator buildSimpleAnimator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
+            final OTSModelInterface otsModel, final int replicationNumber) throws SimRuntimeException, NamingException,
+            PropertyException
+    {
+        return new SimpleAnimator(startTime, warmupPeriod, runLength, otsModel, replicationNumber);
     }
 
     /** {@inheritDoc} */
@@ -115,7 +138,9 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
             return null; // Happens when the user cancels the file open dialog in the OpenStreetMap demo.
         }
 
-        final SimpleAnimator simulator = buildSimpleAnimator(startTime, warmupPeriod, runLength, this.model);
+        final SimpleAnimator simulator =
+                null == this.replication ? buildSimpleAnimator(startTime, warmupPeriod, runLength, this.model)
+                        : buildSimpleAnimator(startTime, warmupPeriod, runLength, this.model, this.replication);
         try
         {
             this.panel = new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), simulator, this, colorer);
@@ -327,11 +352,11 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /** {@inheritDoc} */
     @Override
-    public final SimpleSimulatorInterface rebuildSimulator(final Rectangle rect)
-            throws SimRuntimeException, NetworkException, NamingException, OTSSimulationException, PropertyException
+    public final SimpleSimulatorInterface rebuildSimulator(final Rectangle rect) throws SimRuntimeException, NetworkException,
+            NamingException, OTSSimulationException, PropertyException
     {
-        return buildAnimator(this.savedStartTime, this.savedWarmupPeriod, this.savedRunLength, this.savedUserModifiedProperties,
-                rect, this.exitOnClose);
+        return buildAnimator(this.savedStartTime, this.savedWarmupPeriod, this.savedRunLength,
+                this.savedUserModifiedProperties, rect, this.exitOnClose);
     }
 
     /** {@inheritDoc} */
@@ -381,6 +406,12 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     public final int getTabCount()
     {
         return this.panel.getTabbedPane().getTabCount();
+    }
+
+    /** {@inheritDoc} */
+    public final void setNextReplication(final Integer nextReplication)
+    {
+        this.replication = nextReplication;
     }
 
 }
