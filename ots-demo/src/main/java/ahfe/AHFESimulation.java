@@ -48,11 +48,61 @@ public class AHFESimulation extends AbstractWrappableAnimation
 
     /**
      * Main program.
-     * @param args String[]; the command line arguments (not used)
+     * @param args String[]; the command line arguments
      * @throws SimRuntimeException should never happen
      */
     public static void main(final String[] args) throws SimRuntimeException
     {
+        boolean autorun = true;
+        Integer replication = null;
+
+        for (String arg : args)
+        {
+            int equalsPos = arg.indexOf("=");
+            if (equalsPos >= 0)
+            {
+                // set something
+                String key = arg.substring(0, equalsPos);
+                String value = arg.substring(equalsPos + 1);
+                if ("autorun".equalsIgnoreCase(key))
+                {
+                    if ("true".equalsIgnoreCase(value))
+                    {
+                        autorun = true;
+                    }
+                    else if ("false".equalsIgnoreCase(value))
+                    {
+                        autorun = false;
+                    }
+                    else
+                    {
+                        System.err.println("bad autorun value " + value + " (ignored)");
+                    }
+                }
+                else if ("replication".equalsIgnoreCase(key))
+                {
+                    try
+                    {
+                        replication = Integer.parseInt(value);
+                    }
+                    catch (NumberFormatException nfe)
+                    {
+                        System.err.println("Ignoring unparsable replication number \"" + value + "\"");
+                    }
+                }
+                else
+                {
+                    System.out.println("Ignoring unknown setting " + arg);
+                }
+            }
+            else
+            {
+                // not a flag
+                System.err.println("Ignoring argument " + arg);
+            }
+        }
+        final boolean finalAutoRun = autorun;
+        final Integer finalReplication = replication;
         SwingUtilities.invokeLater(new Runnable()
         {
             @Override
@@ -61,11 +111,42 @@ public class AHFESimulation extends AbstractWrappableAnimation
                 try
                 {
                     AHFESimulation model = new AHFESimulation();
+                    if (null != finalReplication)
+                    {
+                        System.out.println("Setting up replication " + finalReplication);
+                    }
+                    model.setNextReplication(finalReplication);
                     // 1 hour simulation run for testing
                     model.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, TimeUnit.MINUTE),
                             new ArrayList<Property<?>>(), null, true);
+                    if (finalAutoRun)
+                    {
+                        int lastReportedTime = -1;
+                        int reportTimeClick = 60;
+                        while (true)
+                        {
+                            int currentTime = (int) model.getSimulator().getSimulatorTime().getTime().si;
+                            if (currentTime >= lastReportedTime + reportTimeClick)
+                            {
+                                lastReportedTime = currentTime / reportTimeClick * reportTimeClick;
+                                System.out.println("time is " + model.getSimulator().getSimulatorTime().getTime());
+                            }
+                            try
+                            {
+                                model.getSimulator().step();
+                            }
+                            catch (SimRuntimeException sre)
+                            {
+                                System.out.println("Simulation ends; time is "
+                                        + model.getSimulator().getSimulatorTime().getTime());
+                                System.out.println("Not yet writing results to file(s)");
+                                System.exit(0);
+                                break;
+                            }
+                        }
+                    }
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException | RemoteException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -75,13 +156,6 @@ public class AHFESimulation extends AbstractWrappableAnimation
 
     /** The simulator. */
     private SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator;
-
-    /**
-     * 
-     */
-    public AHFESimulation()
-    {
-    }
 
     /** {@inheritDoc} */
     @Override
@@ -131,10 +205,12 @@ public class AHFESimulation extends AbstractWrappableAnimation
         private OTSNetwork network;
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
                 throws SimRuntimeException, RemoteException
         {
+            AHFESimulation.this.simulator = theSimulator;
             try
             {
                 URL url = URLResource.getResource("/AHFE/Network.xml");
@@ -163,6 +239,15 @@ public class AHFESimulation extends AbstractWrappableAnimation
             return this.network;
         }
 
+    }
+
+    /**
+     * Retrieve the simulator.
+     * @return SimulatorInterface&lt;Time, Duration, OTSSimTimeDouble&gt;; the simulator.
+     */
+    public final SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
+    {
+        return this.simulator;
     }
 
 }
