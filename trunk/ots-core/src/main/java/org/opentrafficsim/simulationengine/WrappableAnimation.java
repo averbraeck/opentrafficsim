@@ -90,4 +90,12 @@ public interface WrappableAnimation
      * Stop the timers and threads that are connected when disposing of this wrappable simulation.
      */
     void stopTimersThreads();
+
+    /**
+     * Set the number of the next spawned replication.
+     * @param nextReplication Integer; the next replication number, or null to use the built-in auto-incrementing replication
+     *            counter
+     */
+    void setNextReplication(Integer nextReplication);
+    
 }

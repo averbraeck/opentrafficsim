@@ -52,12 +52,31 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
         setPauseOnError(true);
         setAnimationDelay(20); // 50 Hz animation update
         initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime), warmupPeriod,
-            runLength, model), ReplicationMode.TERMINATING);
+                runLength, model), ReplicationMode.TERMINATING);
     }
 
     /**
-     * {@inheritDoc}
+     * Create a simulation engine with animation and prescribed replication number; the easy way. PauseOnError is set to true;
+     * @param startTime Time; the start time of the simulation
+     * @param warmupPeriod Duration; the warm up period of the simulation (use new Duration(0, SECOND) if you don't know what
+     *            this is)
+     * @param runLength Duration; the duration of the simulation
+     * @param model OTSModelInterface; the simulation to execute
+     * @param replication int; the replication number
+     * @throws SimRuntimeException on ???
+     * @throws NamingException when context for the animation cannot be created
+     * @throws PropertyException when one of the user modified properties has the empty string as key
      */
+    public SimpleAnimator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
+        final OTSModelInterface model, final int replication) throws SimRuntimeException, NamingException, PropertyException
+    {
+        setPauseOnError(true);
+        setAnimationDelay(20); // 50 Hz animation update
+        initialize(new OTSReplication("rep" + replication, new OTSSimTimeDouble(startTime), warmupPeriod,
+            runLength, model), ReplicationMode.TERMINATING);
+    }
+
+    /** {@inheritDoc} */
     public final SimEvent<OTSSimTimeDouble> scheduleEvent(final Time executionTime, final short priority,
         final Object source, final Object target, final String method, final Object[] args) throws SimRuntimeException
     {
@@ -67,5 +86,5 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
         scheduleEvent(result);
         return result;
     }
-
+    
 }
