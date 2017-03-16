@@ -24,6 +24,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -82,7 +83,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
      */
     public Toledo(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu)
     {
-        super(carFollowingModel, gtu);
+        super(carFollowingModel, gtu, new CategorialLanePerception(gtu));
     }
 
     /** {@inheritDoc} */

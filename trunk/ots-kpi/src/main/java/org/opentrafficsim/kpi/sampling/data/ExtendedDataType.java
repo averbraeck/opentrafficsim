@@ -50,6 +50,17 @@ public abstract class ExtendedDataType<T>
     public abstract T getValue(final GtuDataInterface gtu);
     
     /**
+     * Formats the value into a string. If the value is numeric, the default implementation is:
+     * <pre>
+     * String.format(format, value.si);
+     * </pre>
+     * @param format format
+     * @param value value
+     * @return formatted value
+     */
+    public abstract String formatValue(String format, T value);
+    
+    /**
      * Interpolate value between two measured values. The default implementation takes a linear interpolation over time for
      * {@link DoubleScalar}, {@link Double} and {@link Float}, or the closest value in time otherwise.
      * @param value0 first value

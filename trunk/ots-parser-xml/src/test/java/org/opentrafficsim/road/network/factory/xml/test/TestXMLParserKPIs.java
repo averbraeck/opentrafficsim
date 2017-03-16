@@ -42,7 +42,7 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalTravelDistance;
 import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.road.network.sampling.SpeedLimit;
+import org.opentrafficsim.road.network.sampling.data.SpeedLimit;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.xml.sax.SAXException;

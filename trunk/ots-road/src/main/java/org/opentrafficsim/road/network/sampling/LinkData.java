@@ -59,6 +59,13 @@ public class LinkData implements LinkDataInterface
     {
         return this.link.getLength();
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public String getId()
+    {
+        return this.link.getId();
+    }
 
     /** {@inheritDoc} */
     @Override

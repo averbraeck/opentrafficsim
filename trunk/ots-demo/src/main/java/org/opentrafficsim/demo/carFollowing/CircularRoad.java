@@ -64,6 +64,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.toledo.ToledoFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -190,8 +191,8 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                             new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2),
                             new Length(2.0, METER), new Duration(1.0, SECOND), 3));
 
-                    circularRoad.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND),
-                            propertyList, null, true);
+                    circularRoad.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), propertyList, null,
+                            true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -550,10 +551,12 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
                             // provide default parameters with the car-following model
                             BehavioralCharacteristics defaultBehavioralCFCharacteristics = new BehavioralCharacteristics();
                             defaultBehavioralCFCharacteristics.setDefaultParameters(AbstractIDM.class);
-                            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics));
-                            this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics));
+                            this.strategicalPlannerGeneratorCars =
+                                    new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(new IDMPlusFactory(),
+                                            defaultBehavioralCFCharacteristics, new DefaultLMRSPerceptionFactory()));
+                            this.strategicalPlannerGeneratorTrucks =
+                                    new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(new IDMPlusFactory(),
+                                            defaultBehavioralCFCharacteristics, new DefaultLMRSPerceptionFactory()));
                         }
                         else if ("Toledo".equals(tacticalPlannerName))
                         {

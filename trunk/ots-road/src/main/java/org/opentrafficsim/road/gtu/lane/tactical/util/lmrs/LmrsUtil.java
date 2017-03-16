@@ -145,7 +145,7 @@ public final class LmrsUtil
             final LinkedHashSet<VoluntaryIncentive> voluntaryIncentives)
             throws GTUException, NetworkException, ParameterException, OperationalPlanException
     {
-
+        
         // TODO this is a hack to prevent right lane changes of all vehicles on the left lane when placed in network at t=0
         if (startTime.si == 0.0)
         {
@@ -473,10 +473,14 @@ public final class LmrsUtil
         }
 
         // conflicts alongside?
-        if ((lat.isLeft() && perception.getPerceptionCategory(IntersectionPerception.class).isAlongsideConflictLeft())
-                || (lat.isRight() && perception.getPerceptionCategory(IntersectionPerception.class).isAlongsideConflictRight()))
+        if (perception.contains(IntersectionPerception.class))
         {
-            return false;
+            if ((lat.isLeft() && perception.getPerceptionCategory(IntersectionPerception.class).isAlongsideConflictLeft())
+                    || (lat.isRight()
+                            && perception.getPerceptionCategory(IntersectionPerception.class).isAlongsideConflictRight()))
+            {
+                return false;
+            }
         }
 
         // safe regarding neighbors?
@@ -614,12 +618,16 @@ public final class LmrsUtil
      * @param set set of GTUs
      * @param perception perception
      * @param relativeLane relative lane
-     * @return the input set
+     * @return the input set, for chained use
      * @throws OperationalPlanException if the {@code IntersectionPerception} category is not present
      */
     private static SortedSet<AbstractHeadwayGTU> removeAllUpstreamOfConflicts(final SortedSet<AbstractHeadwayGTU> set,
             final LanePerception perception, final RelativeLane relativeLane) throws OperationalPlanException
     {
+        if (!perception.contains(IntersectionPerception.class))
+        {
+            return set;
+        }
         for (HeadwayConflict conflict : perception.getPerceptionCategory(IntersectionPerception.class)
                 .getConflicts(relativeLane))
         {

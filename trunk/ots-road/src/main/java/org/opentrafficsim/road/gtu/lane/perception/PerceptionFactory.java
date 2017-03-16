@@ -1,21 +1,26 @@
-package org.opentrafficsim.kpi.interfaces;
+package org.opentrafficsim.road.gtu.lane.perception;
+
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
 /**
+ * Interface for perception initialization.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, initial version 12 okt. 2016 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version 14 feb. 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface NodeDataInterface
+public interface PerceptionFactory
 {
 
     /**
-     * @return id
+     * Generate perception.
+     * @param gtu GTU
+     * @return perception
      */
-    String getId();
-    
+    LanePerception generatePerception(LaneBasedGTU gtu);
+
 }

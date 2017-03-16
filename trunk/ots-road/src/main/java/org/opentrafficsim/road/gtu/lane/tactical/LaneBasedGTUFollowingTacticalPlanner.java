@@ -15,6 +15,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
@@ -51,7 +52,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
      */
     public LaneBasedGTUFollowingTacticalPlanner(final GTUFollowingModelOld carFollowingModel, final LaneBasedGTU gtu)
     {
-        super(carFollowingModel, gtu);
+        super(carFollowingModel, gtu, new CategorialLanePerception(gtu));
         getPerception().addPerceptionCategory(new DirectDefaultSimplePerception(getPerception()));
     }
 

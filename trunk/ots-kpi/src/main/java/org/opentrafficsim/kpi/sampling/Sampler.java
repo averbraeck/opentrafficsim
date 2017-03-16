@@ -1,11 +1,18 @@
 package org.opentrafficsim.kpi.sampling;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -179,8 +186,8 @@ public abstract class Sampler
      * @param time current time
      * @param gtu gtu
      */
-    public final void processGtuAddEvent(final KpiLaneDirection kpiLaneDirection, final Length position,
-            final Speed speed, final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
+    public final void processGtuAddEvent(final KpiLaneDirection kpiLaneDirection, final Length position, final Speed speed,
+            final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
     {
         Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
         Throw.whenNull(position, "Position may not be null.");
@@ -215,8 +222,8 @@ public abstract class Sampler
      * @param time current time
      * @param gtu gtu
      */
-    public final void processGtuMoveEvent(final KpiLaneDirection kpiLaneDirection, final Length position,
-            final Speed speed, final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
+    public final void processGtuMoveEvent(final KpiLaneDirection kpiLaneDirection, final Length position, final Speed speed,
+            final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
     {
         Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
         Throw.whenNull(position, "Position may not be null.");
@@ -240,8 +247,8 @@ public abstract class Sampler
      * @param time current time
      * @param gtu gtu
      */
-    public final void processGtuRemoveEvent(final KpiLaneDirection kpiLaneDirection, final Length position,
-            final Speed speed, final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
+    public final void processGtuRemoveEvent(final KpiLaneDirection kpiLaneDirection, final Length position, final Speed speed,
+            final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
     {
         processGtuMoveEvent(kpiLaneDirection, position, speed, acceleration, time, gtu);
         processGtuRemoveEvent(kpiLaneDirection, gtu);
@@ -305,6 +312,212 @@ public abstract class Sampler
     public final TrajectoryGroup getTrajectoryGroup(final KpiLaneDirection kpiLaneDirection)
     {
         return this.trajectories.get(kpiLaneDirection);
+    }
+
+    /**
+     * Write the contents of the sampler in to a file. By default this is zipped and numeric data is formated %.3f.
+     * @param file file
+     */
+    public final void writeToFile(final String file)
+    {
+        writeToFile(file, "%.3f", true);
+    }
+
+    /**
+     * Write the contents of the sampler in to a file.
+     * @param file file
+     * @param format number format, as used in {@code String.format()}
+     * @param zipped whether to zip the file
+     */
+    // TODO This returns all data, regardless of registered space-time regions. We need a query to have space-time regions.
+    public final void writeToFile(String file, final String format, final boolean zipped)
+    {
+        String name = null;
+        if (zipped)
+        {
+            File f = new File(file);
+            name = f.getName();
+            if (!file.endsWith(".zip"))
+            {
+                file += ".zip";
+            }
+        }
+        int counter = 0;
+        FileOutputStream fos = null;
+        ZipOutputStream zos = null;
+        OutputStreamWriter osw = null;
+        BufferedWriter bw = null;
+        try
+        {
+            fos = new FileOutputStream(file);
+            if (zipped)
+            {
+                zos = new ZipOutputStream(fos);
+                zos.putNextEntry(new ZipEntry(name));
+                osw = new OutputStreamWriter(zos);
+            }
+            else
+            {
+                osw = new OutputStreamWriter(fos);
+            }
+            bw = new BufferedWriter(osw);
+            // gather all meta data types for the header line
+            List<MetaDataType<?>> allMetaDataTypes = new ArrayList<>();
+            for (KpiLaneDirection kpiLaneDirection : this.trajectories.keySet())
+            {
+                for (Trajectory trajectory : this.trajectories.get(kpiLaneDirection).getTrajectories())
+                {
+                    for (MetaDataType<?> metaDataType : trajectory.getMetaDataTypes())
+                    {
+                        if (!allMetaDataTypes.contains(metaDataType))
+                        {
+                            allMetaDataTypes.add(metaDataType);
+                        }
+                    }
+                }
+            }
+            // gather all extended data types for the header line
+            List<ExtendedDataType<?>> allExtendedDataTypes = new ArrayList<>();
+            for (KpiLaneDirection kpiLaneDirection : this.trajectories.keySet())
+            {
+                for (Trajectory trajectory : this.trajectories.get(kpiLaneDirection).getTrajectories())
+                {
+                    for (ExtendedDataType<?> extendedDataType : trajectory.getExtendedDataTypes())
+                    {
+                        if (!allExtendedDataTypes.contains(extendedDataType))
+                        {
+                            allExtendedDataTypes.add(extendedDataType);
+                        }
+                    }
+                }
+            }
+            // create header line
+            StringBuilder str = new StringBuilder();
+            str.append("traj#,linkId,laneId&dir,gtuId,t,x,v,a");
+            for (MetaDataType<?> metaDataType : allMetaDataTypes)
+            {
+                str.append(",");
+                str.append(metaDataType.getId());
+            }
+            for (ExtendedDataType<?> extendedDataType : allExtendedDataTypes)
+            {
+                str.append(",");
+                str.append(extendedDataType.getId());
+            }
+            bw.write(str.toString());
+            bw.newLine();
+            for (KpiLaneDirection kpiLaneDirection : this.trajectories.keySet())
+            {
+                for (Trajectory trajectory : this.trajectories.get(kpiLaneDirection).getTrajectories())
+                {
+                    counter++;
+                    float[] t = trajectory.getT();
+                    float[] x = trajectory.getX();
+                    float[] v = trajectory.getV();
+                    float[] a = trajectory.getA();
+                    for (int i = 0; i < t.length; i++)
+                    {
+                        str = new StringBuilder();
+                        str.append(counter);
+                        str.append(",");
+                        if (i == 0)
+                        {
+                            str.append(kpiLaneDirection.getLaneData().getLinkData().getId());
+                            str.append(",");
+                            str.append(kpiLaneDirection.getLaneData().getId());
+                            str.append(kpiLaneDirection.getKpiDirection().isPlus() ? "+" : "-");
+                            str.append(",");
+                            str.append(trajectory.getGtuId());
+                            str.append(",");
+                        }
+                        else
+                        {
+                            // one trajectory is on the same lane and pertains to the same GTU, no need to repeat data
+                            str.append(",,,");
+                        }
+                        str.append(String.format(format, t[i]));
+                        str.append(",");
+                        str.append(String.format(format, x[i]));
+                        str.append(",");
+                        str.append(String.format(format, v[i]));
+                        str.append(",");
+                        str.append(String.format(format, a[i]));
+                        for (MetaDataType<?> metaDataType : allMetaDataTypes)
+                        {
+                            str.append(",");
+                            if (i == 0 && trajectory.contains(metaDataType))
+                            {
+                                // no need to repeat meta data
+                                str.append(metaDataType.formatValue(format, castValue(trajectory.getMetaData(metaDataType))));
+                            }
+                        }
+                        for (ExtendedDataType<?> extendedDataType : allExtendedDataTypes)
+                        {
+                            str.append(",");
+                            if (trajectory.contains(extendedDataType))
+                            {
+                                //
+                                try
+                                {
+                                    str.append(extendedDataType.formatValue(format,
+                                            castValue(trajectory.getExtendedData(extendedDataType).get(i))));
+                                }
+                                catch (SamplingException exception)
+                                {
+                                    // should not occur, we obtain the extended data types from the trajectory
+                                    throw new RuntimeException("Error while loading extended data type.", exception);
+                                }
+                            }
+                        }
+                        bw.write(str.toString());
+                        bw.newLine();
+                    }
+                }
+            }
+        }
+        catch (IOException exception)
+        {
+            throw new RuntimeException("Could not write to file.", exception);
+        }
+        // close file on fail
+        finally
+        {
+            try
+            {
+                if (bw != null)
+                {
+                    bw.close();
+                }
+                if (osw != null)
+                {
+                    osw.close();
+                }
+                if (zos != null)
+                {
+                    zos.close();
+                }
+                if (fos != null)
+                {
+                    fos.close();
+                }
+            }
+            catch (IOException ex)
+            {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Cast value to type.
+     * @param value value to casts
+     * @return cast value
+     */
+    @SuppressWarnings("unchecked")
+    private <T> T castValue(Object value)
+    {
+        // is only called on value directly taken from an ExtendedDataType
+        return (T) value;
     }
 
     /** {@inheritDoc} */

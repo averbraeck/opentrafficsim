@@ -59,6 +59,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationBusStop;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveBusStop;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
@@ -572,7 +573,8 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         @Override
         public final LMRS create(final LaneBasedGTU gtu) throws GTUException
         {
-            LMRS lmrs = new LMRS(new IDMPlus(), gtu);
+            DefaultLMRSPerceptionFactory pFac = new DefaultLMRSPerceptionFactory();
+            LMRS lmrs = new LMRS(new IDMPlus(), gtu, pFac.generatePerception(gtu));
             lmrs.setDefaultIncentives();
             if (gtu.getGTUType().isOfType(RoadGTUTypes.SCHEDULED_BUS))
             {

@@ -15,7 +15,7 @@ import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
 public class GtuTypeData implements GtuTypeDataInterface
 {
     /** type name. */
-    private final String  gtuTypeName;
+    private final String gtuTypeName;
 
     /**
      * @param gtuTypeName gtu type name
@@ -33,6 +33,13 @@ public class GtuTypeData implements GtuTypeDataInterface
         return this.gtuTypeName;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String getId()
+    {
+        return getGtuTypeName();
+    }
+    
     /** {@inheritDoc} */
     @Override
     public int hashCode()

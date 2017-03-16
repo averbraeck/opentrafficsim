@@ -24,7 +24,6 @@ import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
@@ -68,12 +67,14 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
      * Instantiates a tactical planner.
      * @param carFollowingModel car-following model
      * @param gtu GTU
+     * @param lanePerception perception
      */
-    public AbstractLaneBasedTacticalPlanner(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu)
+    public AbstractLaneBasedTacticalPlanner(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu,
+            final LanePerception lanePerception)
     {
         setCarFollowingModel(carFollowingModel);
         this.gtu = gtu;
-        this.lanePerception = new CategorialLanePerception(gtu);
+        this.lanePerception = lanePerception;
     }
 
     /** {@inheritDoc} */
@@ -669,11 +670,11 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         {
             LanePathInfo lanePathInfo = buildLanePathInfo(gtu, forwardHeadway);
             lanes = lanePathInfo.getLanes();
-            Length startPosition = lanePathInfo.getReferencePosition(); //gtu.getReferencePosition().getPosition();
+            Length startPosition = lanePathInfo.getReferencePosition(); // gtu.getReferencePosition().getPosition();
             try
             {
-                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, lanes, startPosition,
-                        startTime, gtu.getSpeed(), simplePlan.getAcceleration(), bc.getParameter(ParameterTypes.DT));
+                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, lanes, startPosition, startTime, gtu.getSpeed(),
+                        simplePlan.getAcceleration(), bc.getParameter(ParameterTypes.DT));
             }
             catch (OTSGeometryException exception)
             {

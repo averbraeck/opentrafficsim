@@ -48,6 +48,13 @@ public class NodeData implements NodeDataInterface
     {
         return this.position;
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public String getId()
+    {
+        return getNodeName();
+    }
 
     /** {@inheritDoc} */
     @Override

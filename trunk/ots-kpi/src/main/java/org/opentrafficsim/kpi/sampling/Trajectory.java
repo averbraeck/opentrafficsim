@@ -44,6 +44,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
+// TODO rather than a List<T> in extended data types, allow <Unit>Float arrays of DJUNITS, much more memory friendly
 public final class Trajectory
 {
 
@@ -336,6 +337,15 @@ public final class Trajectory
     {
         return this.metaData.get(metaDataType);
     }
+    
+    /**
+     * Returns the included meta data types.
+     * @return included meta data types
+     */
+    public Set<MetaDataType<?>> getMetaDataTypes()
+    {
+        return this.metaData.getMetaDataTypes();
+    }
 
     /**
      * @param extendedDataType extended data type
@@ -358,6 +368,15 @@ public final class Trajectory
         Throw.when(!this.extendedData.containsKey(extendedDataType), SamplingException.class,
                 "Extended data type %s is not in the trajectory.", extendedDataType);
         return (List<T>) this.extendedData.get(extendedDataType);
+    }
+    
+    /**
+     * Returns the included extended data types.
+     * @return included extended data types
+     */
+    public Set<ExtendedDataType<?>> getExtendedDataTypes()
+    {
+        return this.extendedData.keySet();
     }
 
     /**

@@ -2,7 +2,9 @@ package org.opentrafficsim.road.network.sampling;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -16,7 +18,6 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.Sampler;
@@ -54,6 +55,9 @@ public class RoadSampler extends Sampler implements EventListenerInterface
 
     /** Registration of sampling events of each GTU per lane, if interval based. */
     private final Map<String, Map<LaneDirection, SimEvent<OTSSimTimeDouble>>> eventPerGtu = new HashMap<>();
+    
+    /** List of lane the sampler is listening to for each GTU. Usually 1, could be 2 during a trajectory transition. */ 
+    private final Map<String, Set<LaneDirection>> listenersPerGtu = new HashMap();
 
     /**
      * Constructor which uses the operational plan updates of GTU's as sampling interval.
@@ -236,12 +240,18 @@ public class RoadSampler extends Sampler implements EventListenerInterface
             Speed speed = gtu.getSpeed();
             Acceleration acceleration = gtu.getAcceleration();
             processGtuAddEvent(laneDirection, position, speed, acceleration, now(), new GtuData(gtu));
+            LaneDirection lDirection = new LaneDirection(lane, GTUDirectionality.DIR_PLUS);
             if (isIntervalBased())
             {
-                scheduleSamplingEvent(gtu, new LaneDirection(lane, GTUDirectionality.DIR_PLUS));
+                scheduleSamplingEvent(gtu, lDirection);
             }
             else
             {
+                if (!this.listenersPerGtu.containsKey(gtu.getId()))
+                {
+                    this.listenersPerGtu.put(gtu.getId(), new HashSet<>());
+                }
+                this.listenersPerGtu.get(gtu.getId()).add(lDirection);
                 gtu.addListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT, true);
             }
         }
@@ -257,17 +267,18 @@ public class RoadSampler extends Sampler implements EventListenerInterface
             Speed speed = gtu.getSpeed();
             Acceleration acceleration = gtu.getAcceleration();
             processGtuRemoveEvent(kpiLaneDirection, position, speed, acceleration, now(), new GtuData(gtu));
+            LaneDirection lDirection = new LaneDirection(lane, GTUDirectionality.DIR_PLUS);
             if (isIntervalBased())
             {
                 String gtuId = (String) payload[0];
-                LaneDirection laneDirection = new LaneDirection(lane, GTUDirectionality.DIR_PLUS);
+                
                 if (this.eventPerGtu.get(gtuId) != null)
                 {
-                    if (this.eventPerGtu.get(gtuId).containsKey(laneDirection))
+                    if (this.eventPerGtu.get(gtuId).containsKey(lDirection))
                     {
-                        this.simulator.cancelEvent(this.eventPerGtu.get(gtuId).get(laneDirection));
+                        this.simulator.cancelEvent(this.eventPerGtu.get(gtuId).get(lDirection));
                     }
-                    this.eventPerGtu.get(gtuId).remove(laneDirection);
+                    this.eventPerGtu.get(gtuId).remove(lDirection);
                     if (this.eventPerGtu.get(gtuId).isEmpty())
                     {
                         this.eventPerGtu.remove(gtuId);
@@ -276,7 +287,13 @@ public class RoadSampler extends Sampler implements EventListenerInterface
             }
             else
             {
-                gtu.removeListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
+                // Should not remove if just added on other lane
+                this.listenersPerGtu.get(gtu.getId()).remove(lDirection);
+                if (this.listenersPerGtu.get(gtu.getId()).isEmpty())
+                {
+                    this.listenersPerGtu.remove(gtu.getId());
+                    gtu.removeListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
+                }
             }
         }
 

@@ -32,6 +32,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.toledo.ToledoFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
@@ -55,7 +56,8 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class GeneratorTag implements Serializable {
+class GeneratorTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150723L;
 
@@ -133,35 +135,42 @@ class GeneratorTag implements Serializable {
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseGenerator(final Node node, final VissimNetworkLaneParser parser, final LinkTag linkTag)
-        throws SAXException, NetworkException {
+            throws SAXException, NetworkException
+    {
         NamedNodeMap attributes = node.getAttributes();
         GeneratorTag generatorTag = new GeneratorTag();
 
-        if (attributes.getNamedItem("LANE") == null) {
+        if (attributes.getNamedItem("LANE") == null)
+        {
             throw new SAXException("GENERATOR: missing attribute LANE" + " for link " + linkTag.name);
         }
         String laneName = attributes.getNamedItem("LANE").getNodeValue().trim();
-        if (linkTag.roadLayoutTag == null) {
+        if (linkTag.roadLayoutTag == null)
+        {
             throw new NetworkException("GENERATOR: LANE " + laneName + " no ROADTYPE for link " + linkTag.name);
         }
         CrossSectionElementTag cseTag = linkTag.roadLayoutTag.cseTags.get(laneName);
-        if (cseTag == null) {
+        if (cseTag == null)
+        {
             throw new NetworkException("GENERATOR: LANE " + laneName + " not found in elements of link " + linkTag.name
-                + " - roadtype " + linkTag.roadLayoutTag.name);
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
         }
-        if (cseTag.elementType != ElementType.LANE) {
+        if (cseTag.elementType != ElementType.LANE)
+        {
             throw new NetworkException("GENERATOR: LANE " + laneName + " not a real GTU lane for link " + linkTag.name
-                + " - roadtype " + linkTag.roadLayoutTag.name);
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
         }
-        if (linkTag.generatorTags.containsKey(laneName)) {
+        if (linkTag.generatorTags.containsKey(laneName))
+        {
             throw new SAXException("GENERATOR for LANE with NAME " + laneName + " defined twice");
         }
         generatorTag.laneName = laneName;
 
         Node position = attributes.getNamedItem("POSITION");
-        if (position == null) {
+        if (position == null)
+        {
             throw new NetworkException("GENERATOR: POSITION element not found in elements of link " + linkTag.name
-                + " - roadtype " + linkTag.roadLayoutTag.name);
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
         }
         generatorTag.positionStr = position.getNodeValue().trim();
 
@@ -174,32 +183,38 @@ class GeneratorTag implements Serializable {
         generatorTag.gtuDirection = parseDirection(directionStr.getNodeValue().trim());
          */
 
-        if (attributes.getNamedItem("GTU") != null) {
+        if (attributes.getNamedItem("GTU") != null)
+        {
             String gtuName = attributes.getNamedItem("GTU").getNodeValue().trim();
-            if (!parser.getGtuTags().containsKey(gtuName)) {
-                throw new NetworkException("GENERATOR: LANE " + laneName + " GTU " + gtuName + " in link " + linkTag.name
-                    + " not defined");
+            if (!parser.getGtuTags().containsKey(gtuName))
+            {
+                throw new NetworkException(
+                        "GENERATOR: LANE " + laneName + " GTU " + gtuName + " in link " + linkTag.name + " not defined");
             }
             generatorTag.gtuTag = parser.getGtuTags().get(gtuName);
         }
 
-        if (attributes.getNamedItem("GTUMIX") != null) {
+        if (attributes.getNamedItem("GTUMIX") != null)
+        {
             String gtuMixName = attributes.getNamedItem("GTUMIX").getNodeValue().trim();
-            if (!parser.getGtuMixTags().containsKey(gtuMixName)) {
-                throw new NetworkException("GENERATOR: LANE " + laneName + " GTUMIX " + gtuMixName + " in link "
-                    + linkTag.name + " not defined");
+            if (!parser.getGtuMixTags().containsKey(gtuMixName))
+            {
+                throw new NetworkException(
+                        "GENERATOR: LANE " + laneName + " GTUMIX " + gtuMixName + " in link " + linkTag.name + " not defined");
             }
             generatorTag.gtuMixTag = parser.getGtuMixTags().get(gtuMixName);
         }
 
-        if (generatorTag.gtuTag == null && generatorTag.gtuMixTag == null) {
-            throw new SAXException("GENERATOR: missing attribute GTU or GTUMIX for Lane with NAME " + laneName + " of link "
-                + linkTag.name);
+        if (generatorTag.gtuTag == null && generatorTag.gtuMixTag == null)
+        {
+            throw new SAXException(
+                    "GENERATOR: missing attribute GTU or GTUMIX for Lane with NAME " + laneName + " of link " + linkTag.name);
         }
 
-        if (generatorTag.gtuTag != null && generatorTag.gtuMixTag != null) {
+        if (generatorTag.gtuTag != null && generatorTag.gtuMixTag != null)
+        {
             throw new SAXException("GENERATOR: both attribute GTU and GTUMIX defined for Lane with NAME " + laneName
-                + " of link " + linkTag.name);
+                    + " of link " + linkTag.name);
         }
 
         if (attributes.getNamedItem("TACTICALPLANNER") != null)
@@ -208,13 +223,15 @@ class GeneratorTag implements Serializable {
         }
 
         Node iat = attributes.getNamedItem("IAT");
-        if (iat == null) {
+        if (iat == null)
+        {
             throw new SAXException("GENERATOR: missing attribute IAT");
         }
         generatorTag.iatDist = Distributions.parseDurationDist(iat.getNodeValue());
 
         Node initialSpeed = attributes.getNamedItem("INITIALSPEED");
-        if (initialSpeed == null) {
+        if (initialSpeed == null)
+        {
             throw new SAXException("GENERATOR: missing attribute INITIALSPEED");
         }
         generatorTag.initialSpeedDist = Distributions.parseSpeedDist(initialSpeed.getNodeValue());
@@ -222,68 +239,81 @@ class GeneratorTag implements Serializable {
         Node maxGTU = attributes.getNamedItem("MAXGTU");
         generatorTag.maxGTUs = maxGTU == null ? Integer.MAX_VALUE : Integer.parseInt(maxGTU.getNodeValue().trim());
 
-        if (attributes.getNamedItem("STARTTIME") != null) {
+        if (attributes.getNamedItem("STARTTIME") != null)
+        {
             generatorTag.startTime = TimeUnits.parseTime(attributes.getNamedItem("STARTTIME").getNodeValue());
         }
 
-        if (attributes.getNamedItem("ENDTIME") != null) {
+        if (attributes.getNamedItem("ENDTIME") != null)
+        {
             generatorTag.endTime = TimeUnits.parseTime(attributes.getNamedItem("ENDTIME").getNodeValue());
         }
 
         int numberRouteTags = 0;
 
-        if (attributes.getNamedItem("ROUTE") != null) {
+        if (attributes.getNamedItem("ROUTE") != null)
+        {
             String routeName = attributes.getNamedItem("ROUTE").getNodeValue().trim();
-            if (!parser.getRouteTags().containsKey(routeName)) {
-                throw new NetworkException("GENERATOR: LANE " + laneName + " ROUTE " + routeName + " in link " + linkTag.name
-                    + " not defined");
+            if (!parser.getRouteTags().containsKey(routeName))
+            {
+                throw new NetworkException(
+                        "GENERATOR: LANE " + laneName + " ROUTE " + routeName + " in link " + linkTag.name + " not defined");
             }
             generatorTag.routeTag = parser.getRouteTags().get(routeName);
             numberRouteTags++;
         }
 
-        if (attributes.getNamedItem("ROUTEMIX") != null) {
+        if (attributes.getNamedItem("ROUTEMIX") != null)
+        {
             String routeMixName = attributes.getNamedItem("ROUTEMIX").getNodeValue().trim();
-            if (!parser.getRouteMixTags().containsKey(routeMixName)) {
+            if (!parser.getRouteMixTags().containsKey(routeMixName))
+            {
                 throw new NetworkException("GENERATOR: LANE " + laneName + " ROUTEMIX " + routeMixName + " in link "
-                    + linkTag.name + " not defined");
+                        + linkTag.name + " not defined");
             }
             generatorTag.routeMixTag = parser.getRouteMixTags().get(routeMixName);
             numberRouteTags++;
         }
 
-        if (attributes.getNamedItem("SHORTESTROUTE") != null) {
+        if (attributes.getNamedItem("SHORTESTROUTE") != null)
+        {
             String shortestRouteName = attributes.getNamedItem("SHORTESTROUTE").getNodeValue().trim();
-            if (!parser.getShortestRouteTags().containsKey(shortestRouteName)) {
-                throw new NetworkException("GENERATOR: LANE " + laneName + " SHORTESTROUTE " + shortestRouteName
-                    + " in link " + linkTag.name + " not defined");
+            if (!parser.getShortestRouteTags().containsKey(shortestRouteName))
+            {
+                throw new NetworkException("GENERATOR: LANE " + laneName + " SHORTESTROUTE " + shortestRouteName + " in link "
+                        + linkTag.name + " not defined");
             }
             generatorTag.shortestRouteTag = parser.getShortestRouteTags().get(shortestRouteName);
             numberRouteTags++;
         }
 
-        if (attributes.getNamedItem("SHORTESTROUTEMIX") != null) {
+        if (attributes.getNamedItem("SHORTESTROUTEMIX") != null)
+        {
             String shortestRouteMixName = attributes.getNamedItem("SHORTESTROUTEMIX").getNodeValue().trim();
-            if (!parser.getShortestRouteMixTags().containsKey(shortestRouteMixName)) {
+            if (!parser.getShortestRouteMixTags().containsKey(shortestRouteMixName))
+            {
                 throw new NetworkException("GENERATOR: LANE " + laneName + " SHORTESTROUTEMIX " + shortestRouteMixName
-                    + " in link " + linkTag.name + " not defined");
+                        + " in link " + linkTag.name + " not defined");
             }
             generatorTag.shortestRouteMixTag = parser.getShortestRouteMixTags().get(shortestRouteMixName);
             numberRouteTags++;
         }
 
-        if (numberRouteTags > 1) {
-            throw new SAXException("GENERATOR: multiple ROUTE tags defined for Lane with NAME " + laneName + " of link "
-                + linkTag.name);
+        if (numberRouteTags > 1)
+        {
+            throw new SAXException(
+                    "GENERATOR: multiple ROUTE tags defined for Lane with NAME " + laneName + " of link " + linkTag.name);
         }
 
-        if (numberRouteTags == 0) {
-            throw new SAXException("GENERATOR: no ROUTE tags defined for Lane with NAME " + laneName + " of link "
-                + linkTag.name);
+        if (numberRouteTags == 0)
+        {
+            throw new SAXException(
+                    "GENERATOR: no ROUTE tags defined for Lane with NAME " + laneName + " of link " + linkTag.name);
         }
 
         Node gtuColorerNode = attributes.getNamedItem("GTUCOLORER");
-        if (gtuColorerNode == null) {
+        if (gtuColorerNode == null)
+        {
             throw new SAXException("GENERATOR: missing attribute GTUCOLORER");
         }
         generatorTag.gtuColorer = GTUColorerTag.parseGTUColorer(gtuColorerNode.getNodeValue().trim(), parser.getGlobalTag());
@@ -301,8 +331,10 @@ class GeneratorTag implements Serializable {
      * @throws GTUException when construction of the Strategical Planner failed
      */
     static void makeGenerators(final LinkTag linkTag, final VissimNetworkLaneParser parser,
-        final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, NetworkException, GTUException {
-        for (GeneratorTag generatorTag : linkTag.generatorTags.values()) {
+            final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, NetworkException, GTUException
+    {
+        for (GeneratorTag generatorTag : linkTag.generatorTags.values())
+        {
             makeGenerator(generatorTag, parser, linkTag, simulator);
         }
     }
@@ -318,11 +350,13 @@ class GeneratorTag implements Serializable {
      * @throws GTUException when construction of the Strategical Planner failed
      */
     static void makeGenerator(final GeneratorTag generatorTag, final VissimNetworkLaneParser parser, final LinkTag linkTag,
-        final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, NetworkException, GTUException {
+            final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, NetworkException, GTUException
+    {
         Lane lane = linkTag.lanes.get(generatorTag.laneName);
         Class<?> gtuClass = LaneBasedIndividualGTU.class;
         List<org.opentrafficsim.core.network.Node> nodeList = new ArrayList<>();
-        for (NodeTag nodeTag : generatorTag.routeTag.routeNodeTags) {
+        for (NodeTag nodeTag : generatorTag.routeTag.routeNodeTags)
+        {
             nodeList.add(parser.getNodeTags().get(nodeTag.name).node);
         }
         RouteGenerator routeGenerator = new FixedRouteGenerator(new Route(generatorTag.laneName, nodeList));
@@ -372,7 +406,8 @@ class GeneratorTag implements Serializable {
             defaultBehavioralCFCharacteristics.setDefaultParameters(TrafficLightUtil.class);
             try
             {
-                return new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics);
+                return new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics,
+                        new DefaultLMRSPerceptionFactory());
             }
             catch (GTUException exception)
             {
@@ -387,16 +422,17 @@ class GeneratorTag implements Serializable {
                 + ", not one of: IDM|MOBIL/IDM|DIRECTION/IDM|LMRS|TOLEDO");
         return new LaneBasedGTUFollowingTacticalPlannerFactory(new IDMPlusOld());
     }
-    
+
     /** {@inheritDoc} */
     @Override
-    public final String toString() {
+    public final String toString()
+    {
         return "GeneratorTag [laneName=" + this.laneName + ", positionStr=" + this.positionStr + ", gtuDirection="
-            + this.gtuDirection + ", gtuTag=" + this.gtuTag + ", gtuMixTag=" + this.gtuMixTag + ", iatDist=" + this.iatDist
-            + ", initialSpeedDist=" + this.initialSpeedDist + ", maxGTUs=" + this.maxGTUs + ", startTime=" + this.startTime
-            + ", endTime=" + this.endTime + ", routeTag=" + this.routeTag + ", routeMixTag=" + this.routeMixTag
-            + ", shortestRouteTag=" + this.shortestRouteTag + ", shortestRouteMixTag=" + this.shortestRouteMixTag
-            + ", gtuColorer=" + this.gtuColorer + "]";
+                + this.gtuDirection + ", gtuTag=" + this.gtuTag + ", gtuMixTag=" + this.gtuMixTag + ", iatDist=" + this.iatDist
+                + ", initialSpeedDist=" + this.initialSpeedDist + ", maxGTUs=" + this.maxGTUs + ", startTime=" + this.startTime
+                + ", endTime=" + this.endTime + ", routeTag=" + this.routeTag + ", routeMixTag=" + this.routeMixTag
+                + ", shortestRouteTag=" + this.shortestRouteTag + ", shortestRouteMixTag=" + this.shortestRouteMixTag
+                + ", gtuColorer=" + this.gtuColorer + "]";
     }
 
 }

@@ -20,11 +20,11 @@ public class MetaDataOrigin extends MetaDataType<NodeDataInterface>
 {
 
     /**
-     * @param id id
+     * 
      */
-    public MetaDataOrigin(final String id)
+    public MetaDataOrigin()
     {
-        super(id);
+        super("origin");
     }
 
     /** {@inheritDoc} */
@@ -33,6 +33,13 @@ public class MetaDataOrigin extends MetaDataType<NodeDataInterface>
     {
         Throw.whenNull(gtu, "GTU may not be null.");
         return gtu.getOriginNodeData();
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public String formatValue(String format, NodeDataInterface value)
+    {
+        return value.getId();
     }
 
     /** {@inheritDoc} */

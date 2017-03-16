@@ -1,7 +1,10 @@
 package org.opentrafficsim.road.gtu.lane.perception.headway;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
@@ -24,8 +27,8 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
  * sharp bends. Therefore, algorithms implementing headway should only project the <i>reference point</i> of the reference GTU
  * on the center line of the adjacent lane, and then calculate the forward position and backward position on the adjacent lane
  * based on the reference point. Still, our human perception of what is parallel and what not, is not reflected by fractional
- * positions. See examples in <a href=
- * "http://simulation.tudelft.nl:8085/browse/OTS-113">http://simulation.tudelft.nl:8085/browse/OTS-113</a>.
+ * positions. See examples in
+ * <a href= "http://simulation.tudelft.nl:8085/browse/OTS-113">http://simulation.tudelft.nl:8085/browse/OTS-113</a>.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -49,9 +52,37 @@ public class HeadwayGTUReal extends AbstractHeadwayGTU
 
     /** stored speed limit info of the observed GTU. */
     private final SpeedLimitInfo speedLimitInfo;
-    
+
     /** stored route of the observed GTU. */
     private final Route route;
+
+    /**
+     * Private constructor for copies.
+     * @param id id
+     * @param gtuType GTU type
+     * @param distance distance
+     * @param length length
+     * @param speed speed
+     * @param acceleration acceleration
+     * @param carFollowingModel car-following model
+     * @param behavioralCharacteristics behavioral characteristics
+     * @param speedLimitInfo speed limit info
+     * @param route route
+     * @param gtuStatus gtu status
+     * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    private HeadwayGTUReal(final String id, final GTUType gtuType, final Length distance, final Length length,
+            final Speed speed, final Acceleration acceleration, final CarFollowingModel carFollowingModel,
+            final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedLimitInfo, final Route route,
+            final GTUStatus... gtuStatus) throws GTUException
+    {
+        super(id, gtuType, distance, true, length, speed, acceleration, gtuStatus);
+        this.carFollowingModel = carFollowingModel;
+        this.behavioralCharacteristics = behavioralCharacteristics;
+        this.speedLimitInfo = speedLimitInfo;
+        this.route = route;
+    }
 
     /**
      * Construct a new Headway information object, for a GTU ahead of us or behind us.
@@ -78,16 +109,16 @@ public class HeadwayGTUReal extends AbstractHeadwayGTU
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public HeadwayGTUReal(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap, final Length overlapRear)
-        throws GTUException
+            throws GTUException
     {
-        super(gtu.getId(), gtu.getGTUType(), overlapFront, overlap, overlapRear, true, gtu.getLength(), gtu.getSpeed(), gtu
-            .getAcceleration());
+        super(gtu.getId(), gtu.getGTUType(), overlapFront, overlap, overlapRear, true, gtu.getLength(), gtu.getSpeed(),
+                gtu.getAcceleration());
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
         this.behavioralCharacteristics = new BehavioralCharacteristics(gtu.getBehavioralCharacteristics());
         this.speedLimitInfo = getSpeedLimitInfo(gtu);
         this.route = gtu.getStrategicalPlanner().getRoute();
     }
-    
+
     /**
      * Creates speed limit prospect for given GTU.
      * @param gtu gtu to the the speed limit prospect for
@@ -100,8 +131,7 @@ public class HeadwayGTUReal extends AbstractHeadwayGTU
         sli.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, gtu.getMaximumSpeed());
         try
         {
-            sli.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN,
-                    gtu.getReferencePosition().getLane().getSpeedLimit(gtu.getGTUType()));
+            sli.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN, gtu.getReferencePosition().getLane().getSpeedLimit(gtu.getGTUType()));
         }
         catch (NetworkException | GTUException exception)
         {
@@ -137,5 +167,21 @@ public class HeadwayGTUReal extends AbstractHeadwayGTU
     {
         return this.route;
     }
-    
+
+    /** {@inheritDoc} */
+    @Override
+    public AbstractHeadwayGTU moved(final Length headway, final Speed speed, final Acceleration acceleration)
+    {
+        try
+        {
+            return new HeadwayGTUReal(getId(), getGtuType(), headway, getLength(), speed, acceleration, getCarFollowingModel(),
+                    getBehavioralCharacteristics(), getSpeedLimitInfo(), getRoute(), getGtuStatus());
+        }
+        catch (GTUException exception)
+        {
+            // input should be consistent
+            throw new RuntimeException("Exception while copying Headway GTU.", exception);
+        }
+    }
+
 }

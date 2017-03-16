@@ -79,6 +79,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.toledo.ToledoFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -525,10 +526,12 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                             // provide default parameters with the car-following model
                             BehavioralCharacteristics defaultBehavioralCFCharacteristics = new BehavioralCharacteristics();
                             defaultBehavioralCFCharacteristics.setDefaultParameters(AbstractIDM.class);
-                            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics));
-                            this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics));
+                            this.strategicalPlannerGeneratorCars =
+                                    new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(new IDMPlusFactory(),
+                                            defaultBehavioralCFCharacteristics, new DefaultLMRSPerceptionFactory()));
+                            this.strategicalPlannerGeneratorTrucks =
+                                    new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(new IDMPlusFactory(),
+                                            defaultBehavioralCFCharacteristics, new DefaultLMRSPerceptionFactory()));
                         }
                         else if ("Toledo".equals(tacticalPlannerName))
                         {
@@ -900,8 +903,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                 lane.getWidth(1), Speed.ZERO, this.simulator, (OTSNetwork) this.network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
                 new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, block), block);
-        block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
-                this.gtuColorer);
+        block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class, this.gtuColorer);
         return lane;
     }
 

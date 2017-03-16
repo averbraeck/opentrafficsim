@@ -41,7 +41,7 @@ public class SpaceTimeRegion
      * @param endTime end time
      * @throws IllegalArgumentException if start time is larger than end time
      */
-    SpaceTimeRegion(final KpiLaneDirection laneDirection, final Length startPosition, final Length endPosition,
+    public SpaceTimeRegion(final KpiLaneDirection laneDirection, final Length startPosition, final Length endPosition,
             final Time startTime, final Time endTime)
     {
         Throw.whenNull(startPosition, "Start position may not be null.");

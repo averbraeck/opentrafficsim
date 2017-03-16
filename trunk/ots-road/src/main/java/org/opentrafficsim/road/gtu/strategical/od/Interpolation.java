@@ -81,4 +81,20 @@ public enum Interpolation
      */
     abstract int integrate(Frequency frequency0, Duration time0, Frequency frequency1, Duration time1);
 
+    /**
+     * @return whether this is step-wise interpolation
+     */
+    public boolean isStepWise()
+    {
+        return this.equals(STEPWISE);
+    }
+    
+    /**
+     * @return whether this is linear interpolation
+     */
+    public boolean isLinear()
+    {
+        return this.equals(LINEAR);
+    }
+
 }

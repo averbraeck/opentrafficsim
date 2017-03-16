@@ -1,20 +1,14 @@
-package org.opentrafficsim.imb.demo.generators;
+package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.AbstractDoubleScalarRel;
 import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactory;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterType;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -37,7 +31,7 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
 
     /** {@inheritDoc} */
     @Override
-    public void setValues(BehavioralCharacteristics defaultCharacteristics, GTUType gtuType)
+    public void setValues(final BehavioralCharacteristics defaultCharacteristics, final GTUType gtuType)
     {
         if (this.map.containsKey(gtuType))
         {
@@ -52,6 +46,7 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
      * @param gtuType the gtu type
      * @param parameterType the parameter type
      * @param value the value of the parameter
+     * @param <T> type
      */
     public <T extends DoubleScalarInterface> void addParameter(final GTUType gtuType, final ParameterType<T> parameterType,
             final T value)
@@ -59,14 +54,13 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
         assureTypeInMap(gtuType);
         this.map.get(gtuType).add(new FixedEntry<>(parameterType, value));
     }
-    
+
     /**
      * @param gtuType the gtu type
      * @param parameterType the parameter type
      * @param value the value of the parameter
      */
-    public void addParameter(final GTUType gtuType, final ParameterTypeDouble parameterType,
-            final double value)
+    public void addParameter(final GTUType gtuType, final ParameterTypeDouble parameterType, final double value)
     {
         assureTypeInMap(gtuType);
         this.map.get(gtuType).add(new FixedEntryDouble(parameterType, value));
@@ -78,6 +72,8 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
      * @param mu mean
      * @param sig standard deviation
      * @param stream random number stream
+     * @param <U> unit
+     * @param <T> type
      */
     public <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>> void addGaussianParameter(final GTUType gtuType,
             final ParameterType<T> parameterType, final T mu, final T sig, final StreamInterface stream)
@@ -129,7 +125,7 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
          * Set value for parameter.
          * @param behavioralCharacteristics the behavioral characteristics
          */
-        void setValue(final BehavioralCharacteristics behavioralCharacteristics);
+        void setValue(BehavioralCharacteristics behavioralCharacteristics);
     }
 
     /**
@@ -163,7 +159,7 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
          * @param sig standard deviation
          * @param stream random number stream
          */
-        public GaussianEntry(final ParameterType<T> parameterType, final T mu, final T sig, final StreamInterface stream)
+        GaussianEntry(final ParameterType<T> parameterType, final T mu, final T sig, final StreamInterface stream)
         {
             this.parameterType = parameterType;
             this.mu = mu;
@@ -215,7 +211,7 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
          * @param sig standard deviation
          * @param stream random number stream
          */
-        public GaussianDoubleEntry(final ParameterTypeDouble parameterType, final double mu, final double sig,
+        GaussianDoubleEntry(final ParameterTypeDouble parameterType, final double mu, final double sig,
                 final StreamInterface stream)
         {
             this.parameterType = parameterType;
@@ -266,7 +262,7 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
          * @param parameterType the parameter type
          * @param value the fixed value
          */
-        public FixedEntry(final ParameterType<T> parameterType, final T value)
+        FixedEntry(final ParameterType<T> parameterType, final T value)
         {
             this.parameterType = parameterType;
             this.value = value;
@@ -288,10 +284,11 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
         }
 
     }
-    
+
     /**
      * <p>
-     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 30 nov. 2016 <br>
@@ -312,7 +309,7 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
          * @param parameterType the parameter type
          * @param value the fixed value
          */
-        public FixedEntryDouble(final ParameterTypeDouble parameterType, final double value)
+        FixedEntryDouble(final ParameterTypeDouble parameterType, final double value)
         {
             this.parameterType = parameterType;
             this.value = value;

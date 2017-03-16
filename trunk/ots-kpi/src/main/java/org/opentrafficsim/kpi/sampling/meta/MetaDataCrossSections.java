@@ -27,11 +27,11 @@ public class MetaDataCrossSections extends MetaDataType<CrossSection>
 {
 
     /**
-     * @param id id
+     * 
      */
-    public MetaDataCrossSections(final String id)
+    public MetaDataCrossSections()
     {
-        super(id);
+        super("crossSection");
     }
 
     /** {@inheritDoc} */
@@ -39,6 +39,25 @@ public class MetaDataCrossSections extends MetaDataType<CrossSection>
     public final CrossSection getValue(final GtuDataInterface gtu)
     {
         return null;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public String formatValue(String format, CrossSection value)
+    {
+        StringBuilder str = new StringBuilder();
+        str.append("[");
+        String delimiter = "";
+        for (KpiDirectedLanePosition kpiDirectedLanePosition : value.getDirectedLanePositions())
+        {
+            str.append(delimiter);
+            delimiter = "|";
+            str.append(kpiDirectedLanePosition.getLaneData().getId());
+            str.append(kpiDirectedLanePosition.getKpiGtuDirection().isPlus() ? "+" : "-");
+            str.append(String.format(format, kpiDirectedLanePosition.getPosition().si));
+        }
+        str.append("]");
+        return str.toString();
     }
 
     /**

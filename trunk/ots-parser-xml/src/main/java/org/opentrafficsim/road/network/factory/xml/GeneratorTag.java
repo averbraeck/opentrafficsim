@@ -35,6 +35,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.toledo.ToledoFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
@@ -397,7 +398,8 @@ class GeneratorTag implements Serializable
             defaultBehavioralCFCharacteristics.setDefaultParameters(TrafficLightUtil.class);
             try
             {
-                return new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics);
+                return new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics,
+                        new DefaultLMRSPerceptionFactory());
             }
             catch (GTUException exception)
             {

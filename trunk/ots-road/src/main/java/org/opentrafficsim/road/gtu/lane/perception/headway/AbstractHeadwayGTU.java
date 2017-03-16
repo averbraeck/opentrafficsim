@@ -216,6 +216,15 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadway
     {
         return this.gtuStatus.contains(GTUStatus.HONK);
     }
+    
+    /**
+     * For subclasses that create a copy of themselves. 
+     * @return set of gtu status
+     */
+    protected final GTUStatus[] getGtuStatus()
+    {
+        return this.gtuStatus.toArray(new GTUStatus[this.gtuStatus.size()]);
+    }
 
     /**
      * Many models that observe a GTU need to predict the imminent behavior of that GTU. Having a car following model of the
@@ -260,6 +269,15 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadway
      * @return route of gtu
      */
     public abstract Route getRoute();
+
+    /**
+     * Creates a copy with different headway, speed and possibly acceleration. It may not be alongside.
+     * @param headway headway
+     * @param speed speed
+     * @param acceleration acceleration
+     * @return copy with different headway, speed and possibly acceleration
+     */
+    public abstract AbstractHeadwayGTU moved(Length headway, Speed speed, Acceleration acceleration);
 
     /** {@inheritDoc} */
     @Override

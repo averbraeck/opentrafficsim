@@ -20,11 +20,11 @@ public class MetaDataDestination extends MetaDataType<NodeDataInterface>
 {
 
     /**
-     * @param id id
+     * 
      */
-    public MetaDataDestination(final String id)
+    public MetaDataDestination()
     {
-        super(id);
+        super("destination");
     }
 
     /** {@inheritDoc} */
@@ -33,6 +33,13 @@ public class MetaDataDestination extends MetaDataType<NodeDataInterface>
     {
         Throw.whenNull(gtu, "GTU may not be null.");
         return gtu.getDestinationNodeData();
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public String formatValue(String format, NodeDataInterface value)
+    {
+        return value.getId();
     }
 
     /** {@inheritDoc} */

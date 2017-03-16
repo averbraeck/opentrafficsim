@@ -90,13 +90,13 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
         this.firstLeaders.clear();
         this.firstFollowers.clear();
         this.gtuAlongside.clear();
-        if (getPerception().getLaneStructure().getRootLSR().getLeft() != null)
+        if (getPerception().getLaneStructure().getCrossSection().contains(RelativeLane.LEFT))
         {
             updateFirstLeaders(LateralDirectionality.LEFT);
             updateFirstFollowers(LateralDirectionality.LEFT);
             updateGtuAlongside(LateralDirectionality.LEFT);
         }
-        if (getPerception().getLaneStructure().getRootLSR().getRight() != null)
+        if (getPerception().getLaneStructure().getCrossSection().contains(RelativeLane.RIGHT))
         {
             updateFirstLeaders(LateralDirectionality.RIGHT);
             updateFirstFollowers(LateralDirectionality.RIGHT);
@@ -234,10 +234,19 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
         SortedSet<AbstractHeadwayGTU> headwaySet = new TreeSet<>();
         Map<LaneStructureRecord, Length> currentSet = new HashMap<>();
         Map<LaneStructureRecord, Length> prevSet = new HashMap<>();
+        LaneStructureRecord root = getPerception().getLaneStructure().getRootLSR();
         LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(new RelativeLane(lat, 1));
-        double fraction = getGtu().fractionalPosition(getPerception().getLaneStructure().getRootLSR().getLane(),
+        double fraction = getGtu().fractionalPosition(root.getLane(),
                 getGtu().getRelativePositions().get(egoRelativePosition));
-        Length pos = record.getLane().getLength().multiplyBy(fraction);
+        Length pos;
+        if (root.getLane().getParentLink().equals(record.getLane().getParentLink()))
+        { 
+            pos = record.getLane().getLength().multiplyBy(fraction);
+        }
+        else
+        {
+            pos = record.getStartDistance().neg();
+        }
         currentSet.put(record, pos.minus(record.getLane().getLength())); // adding lane length gets distance to prev's lane end
         // move upstream over branches as long as no vehicles are found
         while (!currentSet.isEmpty())
@@ -398,8 +407,8 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
                     LaneBasedGTU gtu = record.getLane().getGtuList().get(i);
                     Length distance =
                             record.getStartDistance().neg().minus(gtu.position(record.getLane(), gtu.getFront())).plus(dsRear);
-                    // only within lookback
-                    if (distance.le(lookback))
+                    // only within lookback, and ignore self
+                    if (distance.le(lookback) && !gtu.getId().equals(getGtu().getId()))
                     {
                         headwaySet.add(createHeadwayGtu(gtu, distance));
                     }

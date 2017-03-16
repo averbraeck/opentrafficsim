@@ -153,6 +153,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
         // TODO The above enterLane creates an event with speed = 0.0, while the below init creates a move event with speed at
         // the same time.
+        // TODO The above enterLane creates link/lane messages for GTU's that other software might not be aware of, as no 
+        // new/init message it given at that point. Problem: init event needs a referenceLane which is determined if the GTU
+        // is on the network, i.e. after the enterLane.
 
         // initiate the actual move
         super.init(strategicalPlanner, initialLocation, initialSpeed);
@@ -453,10 +456,13 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             System.err.println("GTU: " + getId() + " - getOperationalPlan().getAcceleration(Duration.ZERO).si < -10)");
             System.err.println("Lanes in current plan: " + this.lanesCurrentOperationalPlan.keySet());
-            DefaultSimplePerception p =
-                    getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class);
-            System.err.println("HeadwayGTU: " + p.getForwardHeadwayGTU());
-            System.err.println("HeadwayObject: " + p.getForwardHeadwayObject());
+            if (getTacticalPlanner().getPerception().contains(DefaultSimplePerception.class))
+            {
+                DefaultSimplePerception p =
+                        getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class);
+                System.err.println("HeadwayGTU: " + p.getForwardHeadwayGTU());
+                System.err.println("HeadwayObject: " + p.getForwardHeadwayObject());
+            }
         }
 
         // schedule triggers and determine when to enter lanes with front and leave lanes with rear

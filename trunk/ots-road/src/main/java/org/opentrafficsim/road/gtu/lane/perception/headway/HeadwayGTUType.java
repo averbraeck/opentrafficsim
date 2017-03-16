@@ -25,8 +25,8 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * sharp bends. Therefore, algorithms implementing headway should only project the <i>reference point</i> of the reference GTU
  * on the center line of the adjacent lane, and then calculate the forward position and backward position on the adjacent lane
  * based on the reference point. Still, our human perception of what is parallel and what not, is not reflected by fractional
- * positions. See examples in <a href=
- * "http://simulation.tudelft.nl:8085/browse/OTS-113">http://simulation.tudelft.nl:8085/browse/OTS-113</a>.
+ * positions. See examples in
+ * <a href= "http://simulation.tudelft.nl:8085/browse/OTS-113">http://simulation.tudelft.nl:8085/browse/OTS-113</a>.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -59,8 +59,8 @@ public class HeadwayGTUType extends AbstractHeadwayGTU
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public HeadwayGTUType(final String id, final GTUType gtuType, final GTUTypeAssumptions gtuTypeAssumptions,
-        final Length distance, final Length length, final Speed speed, final Acceleration acceleration,
-        final GTUStatus... gtuStatus) throws GTUException
+            final Length distance, final Length length, final Speed speed, final Acceleration acceleration,
+            final GTUStatus... gtuStatus) throws GTUException
     {
         super(id, gtuType, distance, true, length, speed, acceleration, gtuStatus);
         this.gtuTypeAssumptions = gtuTypeAssumptions;
@@ -76,7 +76,7 @@ public class HeadwayGTUType extends AbstractHeadwayGTU
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public HeadwayGTUType(final String id, final GTUType gtuType, final GTUTypeAssumptions gtuTypeAssumptions,
-        final Length distance, final Length length) throws GTUException
+            final Length distance, final Length length) throws GTUException
     {
         super(id, gtuType, distance, true, length);
         this.gtuTypeAssumptions = gtuTypeAssumptions;
@@ -97,8 +97,8 @@ public class HeadwayGTUType extends AbstractHeadwayGTU
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public HeadwayGTUType(final String id, final GTUType gtuType, final GTUTypeAssumptions gtuTypeAssumptions,
-        final Length overlapFront, final Length overlap, final Length overlapRear, final Length length, final Speed speed,
-        final Acceleration acceleration) throws GTUException
+            final Length overlapFront, final Length overlap, final Length overlapRear, final Length length, final Speed speed,
+            final Acceleration acceleration) throws GTUException
     {
         super(id, gtuType, overlapFront, overlap, overlapRear, true, length, speed, acceleration);
         this.gtuTypeAssumptions = gtuTypeAssumptions;
@@ -116,7 +116,7 @@ public class HeadwayGTUType extends AbstractHeadwayGTU
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public HeadwayGTUType(final String id, final GTUType gtuType, final GTUTypeAssumptions gtuTypeAssumptions,
-        final Length overlapFront, final Length overlap, final Length overlapRear, final Length length) throws GTUException
+            final Length overlapFront, final Length overlap, final Length overlapRear, final Length length) throws GTUException
     {
         super(id, gtuType, overlapFront, overlap, overlapRear, true, length);
         this.gtuTypeAssumptions = gtuTypeAssumptions;
@@ -148,6 +148,22 @@ public class HeadwayGTUType extends AbstractHeadwayGTU
     public final Route getRoute()
     {
         return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public AbstractHeadwayGTU moved(final Length headway, final Speed speed, final Acceleration acceleration)
+    {
+        try
+        {
+            return new HeadwayGTUType(getId(), getGtuType(), this.gtuTypeAssumptions, headway, getLength(), speed, acceleration,
+                    getGtuStatus());
+        }
+        catch (GTUException exception)
+        {
+            // input should be consistent
+            throw new RuntimeException("Exception while copying Headway GTU.", exception);
+        }
     }
 
 }

@@ -2,6 +2,7 @@ package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.NEGATIVE;
 import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.POSITIVE;
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.POSITIVEZERO;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
@@ -89,6 +90,9 @@ public class ParameterTypes
     /** Length of mental map ahead. */
     public static final ParameterTypeLength PERCEPTION;
 
+    /** Reaction time. */
+    public static final ParameterTypeDuration TR;
+    
     static
     {
 
@@ -192,6 +196,8 @@ public class ParameterTypes
         LCDUR = new ParameterTypeDuration("lcDur", "Regular lane change duration.", new Duration(3, TimeUnit.SI), POSITIVE);
         
         PERCEPTION = new ParameterTypeLength("mapLength", "Mental map length", new Length(2.0, LengthUnit.KILOMETER), POSITIVE);
+        
+        TR = new ParameterTypeDuration("Tr", "Reaction time.", Duration.createSI(0.5), POSITIVEZERO);
         
     }
 

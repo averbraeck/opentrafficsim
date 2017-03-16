@@ -1,12 +1,14 @@
-package org.opentrafficsim.road.network.sampling;
+package org.opentrafficsim.road.network.sampling.data;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.network.sampling.GtuData;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -20,7 +22,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class SpeedLimit extends ExtendedDataType<Speed>
+public class SpeedLimit extends ExtendedDataType<FloatSpeed>
 {
 
     /**
@@ -33,7 +35,7 @@ public class SpeedLimit extends ExtendedDataType<Speed>
 
     /** {@inheritDoc} */
     @Override
-    public final Speed getValue(final GtuDataInterface gtu)
+    public final FloatSpeed getValue(final GtuDataInterface gtu)
     {
         Throw.whenNull(gtu, "GTU may not be null.");
         Throw.when(!(gtu instanceof GtuData), IllegalArgumentException.class,
@@ -41,12 +43,20 @@ public class SpeedLimit extends ExtendedDataType<Speed>
         LaneBasedGTU laneGtu = ((GtuData) gtu).getGtu();
         try
         {
-            return laneGtu.getReferencePosition().getLane().getSpeedLimit(laneGtu.getGTUType());
+            return new FloatSpeed(laneGtu.getReferencePosition().getLane().getSpeedLimit(laneGtu.getGTUType()).si,
+                    SpeedUnit.SI);
         }
         catch (NetworkException | GTUException exception)
         {
             throw new RuntimeException("Could not obtain speed limit.", exception);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String formatValue(final String format, final FloatSpeed value)
+    {
+        return String.format(format, value.si);
     }
 
     /** {@inheritDoc} */

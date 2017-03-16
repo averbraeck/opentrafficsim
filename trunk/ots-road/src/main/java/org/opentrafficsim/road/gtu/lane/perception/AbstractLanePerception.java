@@ -68,7 +68,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
     {
         super(gtu);
     }
-
+    
     /** {@inheritDoc} */
     @Override
     public final LaneBasedGTU getGtu()

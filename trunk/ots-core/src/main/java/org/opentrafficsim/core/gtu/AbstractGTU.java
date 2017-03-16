@@ -247,9 +247,14 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
         // Add the odometer distance from the currently running operational plan.
         // Because a plan can be interrupted, we explicitly calculate the covered distance till 'now'
+        Length currentOdometer;
         if (this.operationalPlan != null)
         {
-            this.odometer = this.odometer.plus(this.operationalPlan.getTraveledDistance(now));
+            currentOdometer = this.odometer.plus(this.operationalPlan.getTraveledDistance(now));
+        }
+        else
+        {
+            currentOdometer = this.odometer;
         }
 
         // Do we have an operational plan?
@@ -264,6 +269,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         // System.out.println("Let op");
         // }
         this.operationalPlan = this.tacticalPlanner.generateOperationalPlan(now, fromLocation);
+        this.odometer = currentOdometer;
         if (getOperationalPlan().getAcceleration(Duration.ZERO).si < -10
                 && getOperationalPlan().getSpeed(Duration.ZERO).si > 2.5)
         {

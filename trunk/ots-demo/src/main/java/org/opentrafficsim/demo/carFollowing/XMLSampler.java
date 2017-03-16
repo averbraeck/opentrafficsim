@@ -92,6 +92,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.toledo.ToledoFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -132,15 +133,16 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
      */
     public XMLSampler()
     {
-        this.properties.add(new SelectionProperty("Network", "Network", "Network", new String[] { "Merge 1 plus 1 into 1",
-                "Merge 2 plus 1 into 2", "Merge 2 plus 2 into 4", "Split 1 into 1 plus 1", "Split 2 into 1 plus 2",
-                "Split 4 into 2 plus 2" }, 0, false, 0));
+        this.properties.add(new SelectionProperty(
+                "Network", "Network", "Network", new String[] { "Merge 1 plus 1 into 1", "Merge 2 plus 1 into 2",
+                        "Merge 2 plus 2 into 4", "Split 1 into 1 plus 1", "Split 2 into 1 plus 2", "Split 4 into 2 plus 2" },
+                0, false, 0));
         this.properties.add(new SelectionProperty("TacticalPlanner", "Tactical planner",
-                "<html>The tactical planner determines if a lane change is desired and possible.</html>", new String[] {
-                        "MOBIL/IDM", "DIRECTED/IDM", "LMRS", "Toledo" }, 0, false, 600));
+                "<html>The tactical planner determines if a lane change is desired and possible.</html>",
+                new String[] { "MOBIL/IDM", "DIRECTED/IDM", "LMRS", "Toledo" }, 0, false, 600));
         this.properties.add(new SelectionProperty("LaneChanging", "Lane changing",
-                "<html>The lane change friendliness (if used -- eg just for MOBIL.</html>", new String[] { "Egoistic",
-                        "Altruistic" }, 0, false, 600));
+                "<html>The lane change friendliness (if used -- eg just for MOBIL.</html>",
+                new String[] { "Egoistic", "Altruistic" }, 0, false, 600));
         this.properties.add(new ContinuousProperty("FlowPerInputLane", "Flow per input lane", "Traffic flow per input lane",
                 500d, 0d, 3000d, "%.0f veh/h", false, 1));
     }
@@ -178,9 +180,8 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
         TablePanel charts = new TablePanel(columns, rows);
         for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
         {
-            TrajectoryPlot tp =
-                    new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), new Duration(0.5, SECOND),
-                            this.model.getPath(graphIndex), simulator);
+            TrajectoryPlot tp = new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), new Duration(0.5, SECOND),
+                    this.model.getPath(graphIndex), simulator);
             tp.setTitle("Trajectory Graph");
             tp.setExtendedState(Frame.MAXIMIZED_BOTH);
             LaneBasedGTUSampler graph = tp;
@@ -505,32 +506,26 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
                         String tacticalPlannerName = sp.getValue();
                         if ("IDM".equals(tacticalPlannerName))
                         {
-                            this.strategicalPlannerGeneratorCars =
-                                    new LaneBasedStrategicalRoutePlannerFactory(
-                                            new LaneBasedGTUFollowingTacticalPlannerFactory(this.carFollowingModelCars));
-                            this.strategicalPlannerGeneratorTrucks =
-                                    new LaneBasedStrategicalRoutePlannerFactory(
-                                            new LaneBasedGTUFollowingTacticalPlannerFactory(this.carFollowingModelTrucks));
+                            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LaneBasedGTUFollowingTacticalPlannerFactory(this.carFollowingModelCars));
+                            this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LaneBasedGTUFollowingTacticalPlannerFactory(this.carFollowingModelTrucks));
                         }
                         else if ("MOBIL/IDM".equals(tacticalPlannerName))
                         {
-                            this.strategicalPlannerGeneratorCars =
-                                    new LaneBasedStrategicalRoutePlannerFactory(new LaneBasedCFLCTacticalPlannerFactory(
-                                            this.carFollowingModelCars, this.laneChangeModel));
+                            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LaneBasedCFLCTacticalPlannerFactory(this.carFollowingModelCars, this.laneChangeModel));
                             this.strategicalPlannerGeneratorTrucks =
                                     new LaneBasedStrategicalRoutePlannerFactory(new LaneBasedCFLCTacticalPlannerFactory(
                                             this.carFollowingModelTrucks, this.laneChangeModel));
                         }
                         else if ("DIRECTED/IDM".equals(tacticalPlannerName))
                         {
-                            this.strategicalPlannerGeneratorCars =
-                                    new LaneBasedStrategicalRoutePlannerFactory(
-                                            new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(
-                                                    this.carFollowingModelCars));
-                            this.strategicalPlannerGeneratorTrucks =
-                                    new LaneBasedStrategicalRoutePlannerFactory(
-                                            new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(
-                                                    this.carFollowingModelTrucks));
+                            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(this.carFollowingModelCars));
+                            this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(
+                                            this.carFollowingModelTrucks));
                         }
                         else if ("LMRS".equals(tacticalPlannerName))
                         {
@@ -539,10 +534,10 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
                             defaultBehavioralCFCharacteristics.setDefaultParameters(AbstractIDM.class);
                             this.strategicalPlannerGeneratorCars =
                                     new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(new IDMPlusFactory(),
-                                            defaultBehavioralCFCharacteristics));
+                                            defaultBehavioralCFCharacteristics, new DefaultLMRSPerceptionFactory()));
                             this.strategicalPlannerGeneratorTrucks =
                                     new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(new IDMPlusFactory(),
-                                            defaultBehavioralCFCharacteristics));
+                                            defaultBehavioralCFCharacteristics, new DefaultLMRSPerceptionFactory()));
                         }
                         else if ("Toledo".equals(tacticalPlannerName))
                         {
@@ -574,9 +569,8 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
                     {
                         this.averageHeadway = new Duration(3600.0 / contP.getValue(), SECOND);
                         this.minimumHeadway = new Duration(3, SECOND);
-                        this.headwayGenerator =
-                                new DistErlang(new MersenneTwister(1234), 4, DoubleScalar.minus(this.averageHeadway,
-                                        this.minimumHeadway).getSI());
+                        this.headwayGenerator = new DistErlang(new MersenneTwister(1234), 4,
+                                DoubleScalar.minus(this.averageHeadway, this.minimumHeadway).getSI());
                     }
                 }
                 else if (ap instanceof CompoundProperty)
@@ -640,14 +634,12 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
                         LongitudinalDirectionality.DIR_PLUS), laneType);
             }
 
-            Lane[] startLanes =
-                    LaneFactory.makeMultiLane(this.network, "From to FirstVia", from, firstVia, null, merge ? lanesOnMain
-                            : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator,
-                            LongitudinalDirectionality.DIR_PLUS);
+            Lane[] startLanes = LaneFactory.makeMultiLane(this.network, "From to FirstVia", from, firstVia, null,
+                    merge ? lanesOnMain : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator,
+                    LongitudinalDirectionality.DIR_PLUS);
             setupGenerator(startLanes);
-            Lane[] common =
-                    LaneFactory.makeMultiLane(this.network, "FirstVia to SecondVia", firstVia, secondVia, null, lanesOnCommon,
-                            laneType, this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
+            Lane[] common = LaneFactory.makeMultiLane(this.network, "FirstVia to SecondVia", firstVia, secondVia, null,
+                    lanesOnCommon, laneType, this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
             if (merge)
             {
                 for (int i = lanesOnCommonCompressed; i < lanesOnCommon; i++)
@@ -655,8 +647,8 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
                     setupBlock(common[i]);
                 }
             }
-            setupSink(LaneFactory.makeMultiLane(this.network, "SecondVia to end", secondVia, end, null, merge
-                    ? lanesOnCommonCompressed : lanesOnMain, laneType, this.speedLimit, this.simulator,
+            setupSink(LaneFactory.makeMultiLane(this.network, "SecondVia to end", secondVia, end, null,
+                    merge ? lanesOnCommonCompressed : lanesOnMain, laneType, this.speedLimit, this.simulator,
                     LongitudinalDirectionality.DIR_PLUS), laneType);
 
             for (int index = 0; index < lanesOnCommon; index++)
@@ -710,8 +702,8 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
      * @throws ProbabilityException when probability distribution is wrong
      * @throws ParameterException when a parameter is missing for the perception of the GTU
      */
-    private Lane[] setupGenerator(final Lane[] lanes) throws SimRuntimeException, GTUException, ProbabilityException,
-            ParameterException
+    private Lane[] setupGenerator(final Lane[] lanes)
+            throws SimRuntimeException, GTUException, ProbabilityException, ParameterException
     {
         for (Lane lane : lanes)
         {
@@ -733,8 +725,8 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
      * @throws ProbabilityException when probability distribution is wrong
      * @throws ParameterException when a parameter is missing for the perception of the GTU
      */
-    private LaneBasedGTUGenerator makeGenerator(final Lane lane) throws GTUException, SimRuntimeException,
-            ProbabilityException, ParameterException
+    private LaneBasedGTUGenerator makeGenerator(final Lane lane)
+            throws GTUException, SimRuntimeException, ProbabilityException, ParameterException
     {
         StreamInterface stream = new MersenneTwister(1234); // Use a fixed seed for the demos
         Distribution<LaneBasedTemplateGTUType> distribution = new Distribution<>(stream);
@@ -742,20 +734,20 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
 
-        LaneBasedTemplateGTUType template =
-                makeTemplate(stream, lane, new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(
-                        new DistUniform(stream, 3, 6), METER), new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(
-                        new DistUniform(stream, 1.6, 2.0), METER), new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(
-                        new DistUniform(stream, 140, 180), KM_PER_HOUR), new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(
-                        new DistUniform(stream, 100, 125), KM_PER_HOUR), initialPositions, this.strategicalPlannerGeneratorCars);
+        LaneBasedTemplateGTUType template = makeTemplate(stream, lane,
+                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(stream, 3, 6), METER),
+                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(stream, 1.6, 2.0), METER),
+                new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(stream, 140, 180), KM_PER_HOUR),
+                new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(stream, 100, 125), KM_PER_HOUR),
+                initialPositions, this.strategicalPlannerGeneratorCars);
         // System.out.println("Constructed template " + template);
         distribution.add(new FrequencyAndObject<>(this.carProbability, template));
-        template =
-                makeTemplate(stream, lane, new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(
-                        new DistUniform(stream, 8, 14), METER), new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(
-                        new DistUniform(stream, 2.0, 2.5), METER), new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(
-                        new DistUniform(stream, 100, 140), KM_PER_HOUR), new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(
-                        new DistUniform(stream, 80, 90), KM_PER_HOUR), initialPositions, this.strategicalPlannerGeneratorTrucks);
+        template = makeTemplate(stream, lane,
+                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(stream, 8, 14), METER),
+                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(stream, 2.0, 2.5), METER),
+                new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(stream, 100, 140), KM_PER_HOUR),
+                new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(stream, 80, 90), KM_PER_HOUR),
+                initialPositions, this.strategicalPlannerGeneratorTrucks);
         // System.out.println("Constructed template " + template);
         distribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, template));
         LaneBasedTemplateGTUTypeDistribution templateDistribution = new LaneBasedTemplateGTUTypeDistribution(distribution);
@@ -814,8 +806,7 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDistribution,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDistribution,
             final Set<DirectedLanePosition> initialPositions,
-            final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory)
-            throws GTUException
+            final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory) throws GTUException
     {
         return new LaneBasedTemplateGTUType(this.gtuType, this.idGenerator, new Generator<Length>()
         {
@@ -839,31 +830,31 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
                 return maximumSpeedDistribution.draw();
             }
         }, this.simulator,
-        /*-new Generator<LaneBasedStrategicalPlanner>()
-        {
-            public LaneBasedStrategicalPlanner draw() throws ProbabilityException, ParameterException
-            {
-                BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
-                behavioralCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, new Length(450.0, LengthUnit.METER));
-                try
+                /*-new Generator<LaneBasedStrategicalPlanner>()
                 {
-                    return new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, tacticalPlanner,
-                        SMLSamplerModel.this.routeGenerator.draw());
-                }
-                catch (GTUException exception)
+                    public LaneBasedStrategicalPlanner draw() throws ProbabilityException, ParameterException
+                    {
+                        BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
+                        behavioralCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, new Length(450.0, LengthUnit.METER));
+                        try
+                        {
+                            return new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, tacticalPlanner,
+                                SMLSamplerModel.this.routeGenerator.draw());
+                        }
+                        catch (GTUException exception)
+                        {
+                            throw new ParameterException(exception);
+                        }
+                    }
+                }*/
+                strategicalPlannerFactory, this.routeGenerator, initialPositions, new Generator<Speed>()
                 {
-                    throw new ParameterException(exception);
-                }
-            }
-        }*/
-        strategicalPlannerFactory, this.routeGenerator, initialPositions, new Generator<Speed>()
-        {
-            @Override
-            public Speed draw()
-            {
-                return initialSpeedDistribution.draw();
-            }
-        }, this.network);
+                    @Override
+                    public Speed draw()
+                    {
+                        return initialSpeedDistribution.draw();
+                    }
+                }, this.network);
 
     }
 
@@ -884,16 +875,14 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
         double endX = to.getPoint().x + (endLinkLength / link.getLength().getSI()) * (to.getPoint().x - from.getPoint().x);
         double endY = to.getPoint().y + (endLinkLength / link.getLength().getSI()) * (to.getPoint().y - from.getPoint().y);
         Node end = new OTSNode(this.network, link.getId() + "END", new OTSPoint3D(endX, endY, to.getPoint().z));
-        CrossSectionLink endLink =
-                LaneFactory.makeLink(this.network, link.getId() + "endLink", to, end, null,
-                        LongitudinalDirectionality.DIR_PLUS, this.simulator);
+        CrossSectionLink endLink = LaneFactory.makeLink(this.network, link.getId() + "endLink", to, end, null,
+                LongitudinalDirectionality.DIR_PLUS, this.simulator);
         for (Lane lane : lanes)
         {
             // Overtaking left and right allowed on the sinkLane
-            Lane sinkLane =
-                    new Lane(endLink, lane.getId() + "." + "sinkLane", lane.getLateralCenterPosition(1.0),
-                            lane.getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getWidth(1.0), laneType,
-                            LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.LeftAndRight());
+            Lane sinkLane = new Lane(endLink, lane.getId() + "." + "sinkLane", lane.getLateralCenterPosition(1.0),
+                    lane.getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getWidth(1.0), laneType,
+                    LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.LeftAndRight());
             new SinkSensor(sinkLane, new Length(10.0, METER), this.simulator);
         }
         return lanes;
@@ -909,8 +898,8 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
      * @throws GTUException when construction of the GTU (the block is a GTU) fails
      * @throws OTSGeometryException when the initial path is wrong
      */
-    private Lane setupBlock(final Lane lane) throws NamingException, NetworkException, SimRuntimeException, GTUException,
-            OTSGeometryException
+    private Lane setupBlock(final Lane lane)
+            throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
     {
         Length initialPosition = lane.getLength();
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
@@ -920,12 +909,10 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
         // TimeUnit.SI));
         // LaneChangeModel lcm = new FixedLaneChangeModel(null);
         BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
-        LaneBasedIndividualGTU block =
-                new LaneBasedIndividualGTU("999999", this.gtuType, new Length(1, METER), lane.getWidth(1), Speed.ZERO,
-                        this.simulator, (OTSNetwork) this.network);
-        LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedGTUFollowingTacticalPlanner(
-                        this.carFollowingModelCars, block), block);
+        LaneBasedIndividualGTU block = new LaneBasedIndividualGTU("999999", this.gtuType, new Length(1, METER),
+                lane.getWidth(1), Speed.ZERO, this.simulator, (OTSNetwork) this.network);
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, block), block);
         block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class, this.gtuColorer);
         return lane;
     }

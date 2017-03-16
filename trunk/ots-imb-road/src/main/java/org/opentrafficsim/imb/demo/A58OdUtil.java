@@ -29,6 +29,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactory;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactoryByType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
@@ -36,14 +37,13 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.RouteGenerator;
-import org.opentrafficsim.imb.demo.generators.BehavioralCharacteristicsFactoryByType;
-import org.opentrafficsim.imb.demo.generators.CharacteristicsGenerator;
-import org.opentrafficsim.imb.demo.generators.GTUTypeGenerator;
-import org.opentrafficsim.imb.demo.generators.HeadwayGeneratorDemand;
 import org.opentrafficsim.imb.demo.generators.IDMPlusOldFactory;
 import org.opentrafficsim.imb.demo.generators.RouteGeneratorProbability;
-import org.opentrafficsim.imb.demo.generators.SpeedGenerator;
+import org.opentrafficsim.road.gtu.generator.CharacteristicsGenerator;
+import org.opentrafficsim.road.gtu.generator.GTUTypeGenerator;
+import org.opentrafficsim.road.gtu.generator.HeadwayGeneratorDemand;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
+import org.opentrafficsim.road.gtu.generator.SpeedGenerator;
 import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlanner;
@@ -136,7 +136,7 @@ public class A58OdUtil
         Length lookAhead = new Length(1000.0, LengthUnit.SI);
         Length lookAheadStdev = new Length(250.0, LengthUnit.SI);
         Length perception = new Length(1.0, LengthUnit.KILOMETER);
-        Acceleration b = new Acceleration(3.5, AccelerationUnit.SI);
+        Acceleration b = new Acceleration(2.09, AccelerationUnit.SI);
         GTUType gtuType = new GTUType("car", CAR);
         bcFactory.addGaussianParameter(gtuType, ParameterTypes.FSPEED, 123.7 / 120, 12.0 / 120, streams.get("gtuClass"));
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
@@ -289,13 +289,15 @@ public class A58OdUtil
         sinks.add(endNode);
         for (Lane lane : ((CrossSectionLink) endNode.getLinks().iterator().next()).getLanes())
         {
+            System.out.println("Adding sink on lane " + lane + " to node " + endNode);
             try
             {
                 new SinkSensor(lane, lane.getLength().minus(new Length(30, LengthUnit.SI)), simulator);
             }
             catch (NetworkException exception)
             {
-                throw new RuntimeException("Length of lane " + lane + " incompatible with sink location.", exception);
+                //throw new RuntimeException(
+                //        "Length of lane " + lane + " incompatible with sink location, or sensor id already exists.", exception);
             }
         }
     }

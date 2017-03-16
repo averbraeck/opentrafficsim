@@ -1,4 +1,4 @@
-package org.opentrafficsim.imb.demo.generators;
+package org.opentrafficsim.road.gtu.generator;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -49,12 +49,12 @@ public class GTUTypeGenerator
     private final OTSSimulatorInterface simulator;
 
     /** Stream name of GTU class generation. */
-    private final static String GTU_CLASS_STREAM = "gtuClass";
+    private static final String GTU_CLASS_STREAM = "gtuClass";
 
     /**
      * @param simulator the simulator to use
      */
-    public GTUTypeGenerator(OTSSimulatorInterface simulator)
+    public GTUTypeGenerator(final OTSSimulatorInterface simulator)
     {
         Throw.whenNull(simulator, "Simulator may not be null.");
         try
@@ -76,7 +76,8 @@ public class GTUTypeGenerator
      * @param maximumSpeed maximum speed of the GTU
      * @param probability the probability to generate with these characteristics
      */
-    public void addType(Length length, Length width, GTUType gtuType, Generator<Speed> maximumSpeed, double probability)
+    public void addType(final Length length, final Length width, final GTUType gtuType, final Generator<Speed> maximumSpeed,
+            final double probability)
     {
         this.lengths.add(length);
         this.widths.add(width);
@@ -109,7 +110,8 @@ public class GTUTypeGenerator
         }
         try
         {
-            return new GTUTypeInfo(this.lengths.get(i), this.widths.get(i), this.gtuTypes.get(i), this.maximumSpeeds.get(i).draw());
+            return new GTUTypeInfo(this.lengths.get(i), this.widths.get(i), this.gtuTypes.get(i),
+                    this.maximumSpeeds.get(i).draw());
         }
         catch (ProbabilityException | ParameterException exception)
         {
@@ -149,7 +151,7 @@ public class GTUTypeGenerator
          * @param gtuType GTU type
          * @param maximumSpeed maximum speed of the GTU
          */
-        public GTUTypeInfo(Length length, Length width, GTUType gtuType, Speed maximumSpeed)
+        public GTUTypeInfo(final Length length, final Length width, final GTUType gtuType, final Speed maximumSpeed)
         {
             this.length = length;
             this.width = width;
