@@ -407,7 +407,7 @@ public class ModelControlA58 extends ModelStarter
 
         /** Connector to the IMB hub. */
         OTSIMBConnector imbConnector;
-
+        
         /**
          * @param imbConnection the connection to the IMB bus
          * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
@@ -463,6 +463,7 @@ public class ModelControlA58 extends ModelStarter
                 MetaDataSet metaDataSet;
                 Query query;
                 Set<GtuTypeDataInterface> gtuTypes;
+                MetaDataGtuType metaDataGtuType = new MetaDataGtuType();
 
                 query = getQuery(A58Model.this.network, sampler, new MetaDataSet(), "All");
                 new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(), query,
@@ -472,7 +473,7 @@ public class ModelControlA58 extends ModelStarter
                 gtuTypes = new HashSet<>();
                 gtuTypes.add(new GtuTypeData(new GTUType("car_equipped", CAR)));
                 gtuTypes.add(new GtuTypeData(new GTUType("truck_equipped", TRUCK)));
-                metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+                metaDataSet.put(metaDataGtuType, gtuTypes);
                 query = getQuery(A58Model.this.network, sampler, metaDataSet, "Equipped");
                 new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(), query,
                         new Duration(30, TimeUnit.SECOND));
@@ -481,7 +482,7 @@ public class ModelControlA58 extends ModelStarter
                 gtuTypes = new HashSet<>();
                 gtuTypes.add(new GtuTypeData(new GTUType("car", CAR)));
                 gtuTypes.add(new GtuTypeData(new GTUType("truck", TRUCK)));
-                metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+                metaDataSet.put(metaDataGtuType, gtuTypes);
                 query = getQuery(A58Model.this.network, sampler, metaDataSet, "Not equipped");
                 new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(), query,
                         new Duration(30, TimeUnit.SECOND));
@@ -518,7 +519,7 @@ public class ModelControlA58 extends ModelStarter
              new GisRenderable2D(this.simulator, gisURL, rdto0);
 
             A58OdUtil.createDemand(this.network, this.gtuColorer, this.simulator, ModelControlA58.this.getPenetrationRate());
-
+            
         }
 
         /**

@@ -12,5 +12,10 @@ package org.opentrafficsim.kpi.interfaces;
  */
 public interface GtuTypeDataInterface
 {
-    //
+
+    /**
+     * @return GTU type
+     */
+    String getId();
+    
 }

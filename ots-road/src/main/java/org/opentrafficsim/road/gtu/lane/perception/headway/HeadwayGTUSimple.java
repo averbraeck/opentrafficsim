@@ -138,5 +138,20 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
     {
         return null;
     }
-    
+
+    /** {@inheritDoc} */
+    @Override
+    public AbstractHeadwayGTU moved(final Length headway, final Speed speed, final Acceleration acceleration)
+    {
+        try
+        {
+            return new HeadwayGTUSimple(getId(), getGtuType(), headway, getLength(), speed, acceleration, getGtuStatus());
+        }
+        catch (GTUException exception)
+        {
+            // input should be consistent
+            throw new RuntimeException("Exception while copying Headway GTU.", exception);
+        }
+    }
+
 }

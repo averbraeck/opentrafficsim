@@ -1,4 +1,4 @@
-package org.opentrafficsim.imb.demo.generators;
+package org.opentrafficsim.road.gtu.generator;
 
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.distributions.Generator;

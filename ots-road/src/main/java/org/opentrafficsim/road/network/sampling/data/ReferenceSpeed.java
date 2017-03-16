@@ -57,4 +57,18 @@ public class ReferenceSpeed extends ExtendedDataType<FloatSpeed>
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String formatValue(final String format, final FloatSpeed value)
+    {
+        return String.format(format, value.si);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "Reference Speed";
+    }
+
 }

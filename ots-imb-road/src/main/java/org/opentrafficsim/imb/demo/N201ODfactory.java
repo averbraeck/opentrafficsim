@@ -237,7 +237,7 @@ public class N201ODfactory
         Set<GtuTypeDataInterface> gtuTypes = new HashSet<>();
         gtuTypes.add(new GtuTypeData(CAR));
         gtuTypes.add(new GtuTypeData(BUS));
-        metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+        metaDataSet.put(new MetaDataGtuType(), gtuTypes);
         Query query = new Query(sampler, "N201 both directions", metaDataSet, new Frequency(2.0, FrequencyUnit.PER_MINUTE));
         // addSpaceTimeRegions(query, network, northBound);
         addSpaceTimeRegions(query, network, southBound);

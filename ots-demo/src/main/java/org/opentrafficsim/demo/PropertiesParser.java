@@ -22,6 +22,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.toledo.ToledoFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
@@ -185,7 +186,8 @@ public final class PropertiesParser
                         defaultBehavioralCFCharacteristics.setDefaultParameters(AbstractIDM.class);
                         defaultBehavioralCFCharacteristics.setDefaultParameters(TrafficLightUtil.class);
                         return new LaneBasedStrategicalRoutePlannerFactory(
-                                new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics));
+                                new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics,
+                                        new DefaultLMRSPerceptionFactory()));
                     }
                     else if ("Toledo".equals(tacticalPlannerName))
                     {

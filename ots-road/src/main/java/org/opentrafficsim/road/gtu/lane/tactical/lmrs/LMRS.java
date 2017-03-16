@@ -8,17 +8,14 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectIntersectionPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectNeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DelayedNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
@@ -72,15 +69,17 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
      * Constructor setting the car-following model.
      * @param carFollowingModel Car-following model.
      * @param gtu GTU
+     * @param lanePerception perception
      */
-    public LMRS(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu)
+    public LMRS(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu, final LanePerception lanePerception)
     {
-        super(carFollowingModel, gtu);
-        getPerception().addPerceptionCategory(new DirectEgoPerception(getPerception()));
-        getPerception().addPerceptionCategory(new DirectDefaultSimplePerception(getPerception()));
-        getPerception().addPerceptionCategory(new DirectInfrastructurePerception(getPerception()));
-        getPerception().addPerceptionCategory(new DirectNeighborsPerception(getPerception()));
-        getPerception().addPerceptionCategory(new DirectIntersectionPerception(getPerception()));
+        super(carFollowingModel, gtu, lanePerception);
+        // new CategorialLanePerception(gtu)
+        // getPerception().addPerceptionCategory(new DirectEgoPerception(getPerception()));
+        // getPerception().addPerceptionCategory(new DirectDefaultSimplePerception(getPerception()));
+        // getPerception().addPerceptionCategory(new DirectInfrastructurePerception(getPerception()));
+        // getPerception().addPerceptionCategory(new DirectNeighborsPerception(getPerception()));
+        // getPerception().addPerceptionCategory(new DirectIntersectionPerception(getPerception()));
     }
 
     /**
@@ -162,6 +161,17 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
             for (RelativeLane lane : lanes)
             {
                 incentive.accelerate(simplePlan, lane, getGtu(), getPerception(), getCarFollowingModel(), speed, bc, sli);
+            }
+        }
+
+        // adjust lane based data in perception
+        // TODO make this automatic within the perception itself, e.g. by a lane change event from the tactical planner
+        if (simplePlan.isLaneChange())
+        {
+            if (getPerception().contains(DelayedNeighborsPerception.class))
+            {
+                getPerception().getPerceptionCategory(DelayedNeighborsPerception.class)
+                        .changeLane(simplePlan.getLaneChangeDirection());
             }
         }
 

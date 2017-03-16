@@ -32,16 +32,16 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
 {
 
     /** Speed limit adherence factor. */
-    public static final ParameterTypeDouble DELTA = new ParameterTypeDouble("delta",
-            "Acceleration flattening exponent towards desired speed.", 4.0, POSITIVE);
+    public static final ParameterTypeDouble DELTA =
+            new ParameterTypeDouble("delta", "Acceleration flattening exponent towards desired speed.", 4.0, POSITIVE);
 
     /** {@inheritDoc} */
     @Override
     public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedInfo)
             throws ParameterException
     {
-        Speed consideredSpeed =
-            SpeedLimitUtil.getLegalSpeedLimit(speedInfo).multiplyBy(behavioralCharacteristics.getParameter(ParameterTypes.FSPEED));
+        Speed consideredSpeed = SpeedLimitUtil.getLegalSpeedLimit(speedInfo)
+                .multiplyBy(behavioralCharacteristics.getParameter(ParameterTypes.FSPEED));
         Speed maxVehicleSpeed = SpeedLimitUtil.getMaximumVehicleSpeed(speedInfo);
         return consideredSpeed.le(maxVehicleSpeed) ? consideredSpeed : maxVehicleSpeed;
     }
@@ -51,8 +51,8 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
     public final Length desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
             throws ParameterException
     {
-        return behavioralCharacteristics.getParameter(ParameterTypes.S0).plus(
-                speed.multiplyBy(behavioralCharacteristics.getParameter(ParameterTypes.T)));
+        return behavioralCharacteristics.getParameter(ParameterTypes.S0)
+                .plus(speed.multiplyBy(behavioralCharacteristics.getParameter(ParameterTypes.T)));
     }
 
     /**
@@ -123,10 +123,15 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
          * Due to a power of 2 in the IDM, negative values of sStar are not allowed. A negative sStar means that the leader is
          * faster to such an extent, that the equilibrium headway (s0+vT) is completely compensated by the dynamic part in
          * sStar. This might occur if a much faster leader changes lane closely in front. The compensation is limited to the
-         * equilibrium headway (i.e. sStar = 0), which means the driver wants to follow with acceleration. Note that usually the
-         * free term determines acceleration in such cases.
+         * equilibrium headway minus the stopping distance (i.e. sStar > s0), which means the driver wants to follow with
+         * acceleration. Note that usually the free term determines acceleration in such cases.
          */
-        return new Length(sStar >= 0 ? sStar : 0, LengthUnit.SI);
+        Length s0 = behavioralCharacteristics.getParameter(ParameterTypes.S0);
+        /*
+         * Limit used to be 0, but the IDM is very sensitive there. With a decelerating leader, an ok acceleration in one time
+         * step, may results in acceleration < -10 in the next.
+         */
+        return new Length(sStar >= s0.si ? sStar : s0.si, LengthUnit.SI);
     }
 
     /**

@@ -37,6 +37,13 @@ public class NodeData implements NodeDataInterface
 
     /** {@inheritDoc} */
     @Override
+    public String getId()
+    {
+        return this.node.getId();
+    }
+    
+    /** {@inheritDoc} */
+    @Override
     public final int hashCode()
     {
         final int prime = 31;
@@ -82,5 +89,5 @@ public class NodeData implements NodeDataInterface
     {
         return "NodeData [node=" + this.node + "]";
     }
-    
+
 }

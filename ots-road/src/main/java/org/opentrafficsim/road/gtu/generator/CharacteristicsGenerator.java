@@ -1,4 +1,4 @@
-package org.opentrafficsim.imb.demo.generators;
+package org.opentrafficsim.road.gtu.generator;
 
 import java.util.Set;
 
@@ -11,7 +11,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.RouteGenerator;
-import org.opentrafficsim.imb.demo.generators.GTUTypeGenerator.GTUTypeInfo;
+import org.opentrafficsim.road.gtu.generator.GTUTypeGenerator.GTUTypeInfo;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
@@ -64,9 +64,10 @@ public class CharacteristicsGenerator implements LaneBasedGTUCharacteristicsGene
      * @param generationSpeed the initial speed
      * @param positions the positions for generation
      */
-    public CharacteristicsGenerator(LaneBasedStrategicalRoutePlannerFactory strategicalFactory, RouteGenerator routeGenerator,
-            IdGenerator idGenerator, OTSDEVSSimulatorInterface simulator, OTSNetwork network, GTUTypeGenerator gtuTypeGenerator,
-            Speed generationSpeed, Set<DirectedLanePosition> positions)
+    public CharacteristicsGenerator(final LaneBasedStrategicalRoutePlannerFactory strategicalFactory,
+            final RouteGenerator routeGenerator, final IdGenerator idGenerator, final OTSDEVSSimulatorInterface simulator,
+            final OTSNetwork network, final GTUTypeGenerator gtuTypeGenerator, final Speed generationSpeed,
+            final Set<DirectedLanePosition> positions)
     {
         this.strategicalFactory = strategicalFactory;
         this.routeGenerator = routeGenerator;

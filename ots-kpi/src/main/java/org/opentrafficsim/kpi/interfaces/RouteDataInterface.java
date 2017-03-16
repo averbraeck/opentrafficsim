@@ -12,5 +12,10 @@ package org.opentrafficsim.kpi.interfaces;
  */
 public interface RouteDataInterface
 {
-    //
+
+    /**
+     * @return id
+     */
+    String getId();
+    
 }

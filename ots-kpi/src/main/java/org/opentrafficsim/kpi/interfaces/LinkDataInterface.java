@@ -27,4 +27,9 @@ public interface LinkDataInterface
      */
     List<LaneDataInterface> getLaneDatas();
     
+    /**
+     * @return link id
+     */
+    String getId();
+    
 }

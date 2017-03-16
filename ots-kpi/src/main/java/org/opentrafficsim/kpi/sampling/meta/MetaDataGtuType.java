@@ -20,11 +20,11 @@ public class MetaDataGtuType extends MetaDataType<GtuTypeDataInterface>
 {
 
     /**
-     * @param id id
+     * 
      */
-    public MetaDataGtuType(final String id)
+    public MetaDataGtuType()
     {
-        super(id);
+        super("gtuType");
     }
 
     /** {@inheritDoc} */
@@ -33,6 +33,13 @@ public class MetaDataGtuType extends MetaDataType<GtuTypeDataInterface>
     {
         Throw.whenNull(gtu, "GTU may not be null.");
         return gtu.getGtuTypeData();
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public String formatValue(String format, GtuTypeDataInterface value)
+    {
+        return value.getId();
     }
     
     /** {@inheritDoc} */

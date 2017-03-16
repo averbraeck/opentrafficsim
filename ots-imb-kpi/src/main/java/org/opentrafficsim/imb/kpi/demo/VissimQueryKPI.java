@@ -166,7 +166,7 @@ public class VissimQueryKPI
         gtuTypes = new HashSet<>();
         gtuTypes.add(new GtuTypeData("car_equipped"));
         gtuTypes.add(new GtuTypeData("truck_equipped"));
-        metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+        metaDataSet.put(new MetaDataGtuType(), gtuTypes);
         makeQuery(sampler, id, queryDescription, metaDataSet, lanes, imbConnector);
         
         id = "Not equipped";
@@ -175,7 +175,7 @@ public class VissimQueryKPI
         gtuTypes = new HashSet<>();
         gtuTypes.add(new GtuTypeData("car"));
         gtuTypes.add(new GtuTypeData("truck"));
-        metaDataSet.put(new MetaDataGtuType("gtuType"), gtuTypes);
+        metaDataSet.put(new MetaDataGtuType(), gtuTypes);
         makeQuery(sampler, id, queryDescription, metaDataSet, lanes, imbConnector);
         
     }

@@ -25,4 +25,9 @@ public interface LaneDataInterface
      */
     LinkDataInterface getLinkData();
     
+    /**
+     * @return lane id
+     */
+    String getId();
+    
 }

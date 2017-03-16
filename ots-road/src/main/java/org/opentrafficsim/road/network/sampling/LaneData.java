@@ -53,6 +53,14 @@ public class LaneData implements LaneDataInterface
 
     /** {@inheritDoc} */
     @Override
+    public String getId()
+    {
+        return this.lane.getId();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public final int hashCode()
     {
         final int prime = 31;

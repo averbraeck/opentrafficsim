@@ -50,6 +50,17 @@ public abstract class MetaDataType<T>
     public abstract T getValue(final GtuDataInterface gtu);
     
     /**
+     * Formats the value into a string. If the value is numeric, the default implementation is:
+     * <pre>
+     * String.format(format, value.si);
+     * </pre>
+     * @param format format
+     * @param value value
+     * @return formatted value
+     */
+    public abstract String formatValue(String format, T value);
+    
+    /**
      * Determines for a set of {@code trajectory}'s from a single GTU, which may be accepted according to this meta data type.
      * As a single GTU may have several trajectories for a single {@code TrajectoryGroup} object, the specified
      * {@code TrajectoryGroup}'s may have duplicates. As the {@code trajectory}'s are from a single GTU, the meta data is equal

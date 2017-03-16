@@ -1,4 +1,4 @@
-package org.opentrafficsim.imb.demo.generators;
+package org.opentrafficsim.road.gtu.generator;
 
 import java.rmi.RemoteException;
 
@@ -13,6 +13,7 @@ import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -27,10 +28,11 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 // TODO Link this class to an OD
-// TODO Linear interpolated demand
-// TODO Move to ots-road
 public class HeadwayGeneratorDemand implements Generator<Duration>
 {
+
+    /** Interpolation of demand. */
+    private final Interpolation interpolation;
 
     /** Vector of time. */
     private final TimeVector timeVector;
@@ -40,21 +42,34 @@ public class HeadwayGeneratorDemand implements Generator<Duration>
 
     /** Simulator. */
     private final OTSSimulatorInterface simulator;
-    
+
     /** Stream name of headway generation. */
     private static final String HEADWAY_STREAM = "headwayGeneration";
 
     /**
      * @param timeVector a time vector
-     * @param demandVector teh corresponding demand vector
+     * @param demandVector the corresponding demand vector
      * @param simulator the simulator
      */
     public HeadwayGeneratorDemand(final TimeVector timeVector, final FrequencyVector demandVector,
             final OTSSimulatorInterface simulator)
     {
+        this(timeVector, demandVector, simulator, Interpolation.STEPWISE);
+    }
+
+    /**
+     * @param timeVector a time vector
+     * @param demandVector the corresponding demand vector
+     * @param simulator the simulator
+     * @param interpolation interpolation type
+     */
+    public HeadwayGeneratorDemand(final TimeVector timeVector, final FrequencyVector demandVector,
+            final OTSSimulatorInterface simulator, final Interpolation interpolation)
+    {
         Throw.whenNull(timeVector, "Time vector may not be null.");
         Throw.whenNull(demandVector, "Demand vector may not be null.");
         Throw.whenNull(simulator, "Simulator may not be null.");
+        Throw.whenNull(interpolation, "Interpolation may not be null.");
         try
         {
             Throw.whenNull(simulator.getReplication().getStream(HEADWAY_STREAM),
@@ -84,6 +99,7 @@ public class HeadwayGeneratorDemand implements Generator<Duration>
         this.timeVector = timeVector;
         this.demandVector = demandVector;
         this.simulator = simulator;
+        this.interpolation = interpolation;
     }
 
     /** {@inheritDoc} */
@@ -143,13 +159,21 @@ public class HeadwayGeneratorDemand implements Generator<Duration>
         if (this.demandVector.get(i).equals(Frequency.ZERO))
         {
             // after zero-demand, the next headway is a random fraction of a random headway as there is no previous arrival
-            return nextArrival(i + 1, Duration.ZERO,
-                    this.simulator.getReplication().getStream(HEADWAY_STREAM).nextDouble());
+            return nextArrival(i + 1, Duration.ZERO, this.simulator.getReplication().getStream(HEADWAY_STREAM).nextDouble());
         }
 
         // calculate headway from demand
-        double t = -Math.log(this.simulator.getReplication().getStream(HEADWAY_STREAM).nextDouble())
-                / this.demandVector.get(i).si;
+        Frequency demand;
+        if (this.interpolation.isStepWise())
+        {
+            demand = this.demandVector.get(i);
+        }
+        else
+        {
+            double f = start.si / (this.timeVector.get(i + 1).si - this.timeVector.get(i).si);
+            demand = Frequency.interpolate(this.demandVector.get(i), this.demandVector.get(i + 1), f);
+        }
+        double t = -Math.log(this.simulator.getReplication().getStream(HEADWAY_STREAM).nextDouble()) / demand.si;
 
         // calculate arrival
         Time arrival = new Time(this.timeVector.get(i).si + start.si + t * fractionRemaining, TimeUnit.SI);

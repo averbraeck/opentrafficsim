@@ -6,6 +6,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
@@ -36,19 +37,25 @@ public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Seria
     /** Default set of parameters for the car-following model. */
     private final BehavioralCharacteristics defaultCarFollowingBehavioralCharacteristics;
 
+    /** Factory for perception. */
+    private final PerceptionFactory perceptionFactory;
+
     /**
      * Constructor with car-following model class. The class should have an accessible empty constructor.
      * @param carFollowingModelFactory factory of the car-following model
      * @param defaultCarFollowingBehavioralCharacteristics default set of parameters for the car-following model
+     * @param perceptionFactory perception factory
      * @throws GTUException if the supplied car-following model does not have an accessible empty constructor
      */
     public LMRSFactory(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
-        final BehavioralCharacteristics defaultCarFollowingBehavioralCharacteristics) throws GTUException
+            final BehavioralCharacteristics defaultCarFollowingBehavioralCharacteristics,
+            final PerceptionFactory perceptionFactory) throws GTUException
     {
         this.carFollowingModelFactory = carFollowingModelFactory;
         this.defaultCarFollowingBehavioralCharacteristics = defaultCarFollowingBehavioralCharacteristics;
+        this.perceptionFactory = perceptionFactory;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final BehavioralCharacteristics getDefaultBehavioralCharacteristics()
@@ -66,11 +73,12 @@ public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Seria
     @Override
     public final LMRS create(final LaneBasedGTU gtu) throws GTUException
     {
-        LMRS lmrs = new LMRS(this.carFollowingModelFactory.generateCarFollowingModel(), gtu);
+        LMRS lmrs = new LMRS(this.carFollowingModelFactory.generateCarFollowingModel(), gtu,
+                this.perceptionFactory.generatePerception(gtu));
         lmrs.setDefaultIncentives();
         return lmrs;
     }
-    
+
     /** {@inheritDoc} */
     public final String toString()
     {
