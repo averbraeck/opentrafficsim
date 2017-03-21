@@ -172,7 +172,7 @@ public final class Trajectory
     {
         ExtendedDataType<T, ?, S> edt = (ExtendedDataType<T, ?, S>) extendedDataType;
         S in = (S) this.extendedData.get(edt);
-        S out = edt.setValue(in, this.size - 1, edt.getValue(gtu));
+        S out = edt.setValue(in, this.size, edt.getValue(gtu));
         if (in != out)
         {
             this.extendedData.put(edt, out);

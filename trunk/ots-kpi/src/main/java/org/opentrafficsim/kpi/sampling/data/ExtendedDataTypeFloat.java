@@ -38,7 +38,7 @@ public abstract class ExtendedDataTypeFloat<T extends AbstractFloatScalar<?, T>,
     public final float[] setValue(final float[] storage, final int i, final T value)
     {
         float[] out;
-        if (i - 1 == storage.length)
+        if (i == storage.length)
         {
             int cap = (i - 1) + ((i - 1) >> 1);
             out = Arrays.copyOf(storage, cap);
