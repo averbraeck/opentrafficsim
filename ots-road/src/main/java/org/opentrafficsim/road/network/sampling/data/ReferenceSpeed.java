@@ -5,7 +5,7 @@ import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
-import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
+import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeSpeed;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.sampling.GtuData;
 
@@ -21,8 +21,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
-public class ReferenceSpeed extends ExtendedDataType<FloatSpeed>
+public class ReferenceSpeed extends ExtendedDataTypeSpeed
 {
 
     /**
@@ -55,13 +54,6 @@ public class ReferenceSpeed extends ExtendedDataType<FloatSpeed>
         {
             throw new RuntimeException("Could not obtain reference speed from GTU " + gtuObj, exception);
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String formatValue(final String format, final FloatSpeed value)
-    {
-        return String.format(format, value.si);
     }
     
     /** {@inheritDoc} */

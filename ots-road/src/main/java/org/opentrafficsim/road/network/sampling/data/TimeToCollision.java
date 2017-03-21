@@ -4,18 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.scalar.FloatDuration;
-import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
-import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
+import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeDuration;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -33,8 +30,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
-public class TimeToCollision extends ExtendedDataType<FloatDuration>
+public class TimeToCollision extends ExtendedDataTypeDuration
 {
 
     /**
@@ -89,20 +85,13 @@ public class TimeToCollision extends ExtendedDataType<FloatDuration>
                     return new FloatDuration(dist.si / dv.si, TimeUnit.SI);
                 }
             }
-            return new FloatDuration(Double.NaN, TimeUnit.SI);
+            return new FloatDuration(Float.NaN, TimeUnit.SI);
         }
         catch (GTUException exception)
         {
             // GTU was destroyed and is without a reference location
-            return new FloatDuration(Double.NaN, TimeUnit.SI);
+            return new FloatDuration(Float.NaN, TimeUnit.SI);
         }
-    }
-    
-    /** {@inheritDoc} */
-    @Override
-    public String formatValue(final String format, final FloatDuration value)
-    {
-        return String.format(format, value.si);
     }
 
     /** {@inheritDoc} */
