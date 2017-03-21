@@ -8,8 +8,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djunits.value.vfloat.scalar.FloatSpeed;
-import org.djunits.value.vfloat.vector.FloatLengthVector;
+import org.djunits.value.vfloat.vector.FloatSpeedVector;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.Trajectory;
@@ -64,21 +63,29 @@ public class TotalDelayReference extends AbstractIndicator<Duration>
                     Throw.when(!trajectory.contains(REF_SPEED_TYPE), UnsupportedOperationException.class,
                             "TotalDelayReference can only work with trajectories that have %s extended data.",
                             REF_SPEED_TYPE.getId());
-                    List<FloatSpeed> refSpeed = trajectory.getExtendedData(REF_SPEED_TYPE);
+                    FloatSpeedVector refSpeed = trajectory.getExtendedData(REF_SPEED_TYPE);
                     float[] x = trajectory.getX();
-                    for (int i = 1; i < refSpeed.size(); i++)
+                    try
                     {
-                        double refV;
-                        if (!Double.isNaN(refSpeed.get(i).si))
+                        for (int i = 1; i < refSpeed.size(); i++)
                         {
-                            refV = refSpeed.get(i - 1).si;
+                            double refV;
+                            if (!Double.isNaN(refSpeed.get(i).si))
+                            {
+                                refV = refSpeed.get(i - 1).si;
+                            }
+                            else
+                            {
+                                refV = (refSpeed.get(i - 1).si + refSpeed.get(i).si) / 2.0;
+                            }
+                            double dx = x[i] - x[i - 1];
+                            sumRefTime = sumRefTime.plus(new Duration(dx / refV, TimeUnit.SI));
                         }
-                        else
-                        {
-                            refV = (refSpeed.get(i - 1).si + refSpeed.get(i).si) / 2.0;
-                        }
-                        double dx = x[i] - x[i - 1];
-                        sumRefTime = sumRefTime.plus(new Duration(dx / refV, TimeUnit.SI));
+                    }
+                    catch (ValueException exception)
+                    {
+                        // should not occur as we check the size of the vector
+                        throw new RuntimeException("Trying to obtain value outside of range.", exception);
                     }
                     gtuTimes.put(trajectory.getGtuId(), sumTime.plus(trajectory.getTotalDuration()));
                     gtuRefTimes.put(trajectory.getGtuId(), sumRefTime);

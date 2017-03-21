@@ -1,12 +1,11 @@
 package org.opentrafficsim.road.network.sampling.data;
 
 import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
-import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
+import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeSpeed;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.sampling.GtuData;
 
@@ -22,7 +21,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class SpeedLimit extends ExtendedDataType<FloatSpeed>
+public class SpeedLimit extends ExtendedDataTypeSpeed
 {
 
     /**
@@ -50,13 +49,6 @@ public class SpeedLimit extends ExtendedDataType<FloatSpeed>
         {
             throw new RuntimeException("Could not obtain speed limit.", exception);
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String formatValue(final String format, final FloatSpeed value)
-    {
-        return String.format(format, value.si);
     }
 
     /** {@inheritDoc} */

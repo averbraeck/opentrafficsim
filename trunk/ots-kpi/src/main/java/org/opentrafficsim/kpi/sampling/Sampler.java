@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -49,7 +50,7 @@ public abstract class Sampler
     private final Map<String, Map<KpiLaneDirection, Trajectory>> trajectoryPerGtu = new LinkedHashMap<>();
 
     /** Registration of included extended data types. */
-    private final Set<ExtendedDataType<?>> extendedDataTypes = new LinkedHashSet<>();
+    private final Set<ExtendedDataType<?, ?, ?>> extendedDataTypes = new LinkedHashSet<>();
 
     /** Set of registered meta data types. */
     private Set<MetaDataType<?>> registeredMetaDataTypes = new LinkedHashSet<>();
@@ -120,7 +121,7 @@ public abstract class Sampler
      * Registers extended data type that will be stored with the trajectories.
      * @param extendedDataType extended data type to register
      */
-    public final void registerExtendedDataType(final ExtendedDataType<?> extendedDataType)
+    public final void registerExtendedDataType(final ExtendedDataType<?, ?, ?> extendedDataType)
     {
         Throw.whenNull(extendedDataType, "ExtendedDataType may not be null.");
         this.extendedDataTypes.add(extendedDataType);
@@ -131,7 +132,7 @@ public abstract class Sampler
      * @param extendedDataType extended data type
      * @return whether this sampler has the given extended data type registered to it
      */
-    public boolean contains(final ExtendedDataType<?> extendedDataType)
+    public boolean contains(final ExtendedDataType<?, ?, ?> extendedDataType)
     {
         return this.extendedDataTypes.contains(extendedDataType);
     }
@@ -377,12 +378,12 @@ public abstract class Sampler
                 }
             }
             // gather all extended data types for the header line
-            List<ExtendedDataType<?>> allExtendedDataTypes = new ArrayList<>();
+            List<ExtendedDataType<?, ?, ?>> allExtendedDataTypes = new ArrayList<>();
             for (KpiLaneDirection kpiLaneDirection : this.trajectories.keySet())
             {
                 for (Trajectory trajectory : this.trajectories.get(kpiLaneDirection).getTrajectories())
                 {
-                    for (ExtendedDataType<?> extendedDataType : trajectory.getExtendedDataTypes())
+                    for (ExtendedDataType<?, ?, ?> extendedDataType : trajectory.getExtendedDataTypes())
                     {
                         if (!allExtendedDataTypes.contains(extendedDataType))
                         {
@@ -399,7 +400,7 @@ public abstract class Sampler
                 str.append(",");
                 str.append(metaDataType.getId());
             }
-            for (ExtendedDataType<?> extendedDataType : allExtendedDataTypes)
+            for (ExtendedDataType<?, ?, ?> extendedDataType : allExtendedDataTypes)
             {
                 str.append(",");
                 str.append(extendedDataType.getId());
@@ -415,6 +416,22 @@ public abstract class Sampler
                     float[] x = trajectory.getX();
                     float[] v = trajectory.getV();
                     float[] a = trajectory.getA();
+                    Map<ExtendedDataType<?, ?, ?>, Object> extendedData = new HashMap<>();
+                    for (ExtendedDataType<?, ?, ?> extendedDataType : allExtendedDataTypes)
+                    {
+                        if (trajectory.contains(extendedDataType))
+                        {
+                            try
+                            {
+                                extendedData.put(extendedDataType, trajectory.getExtendedData(extendedDataType));
+                            }
+                            catch (SamplingException exception)
+                            {
+                                // should not occur, we obtain the extended data types from the trajectory
+                                throw new RuntimeException("Error while loading extended data type.", exception);
+                            }
+                        }
+                    }
                     for (int i = 0; i < t.length; i++)
                     {
                         str = new StringBuilder();
@@ -451,16 +468,15 @@ public abstract class Sampler
                                 str.append(metaDataType.formatValue(format, castValue(trajectory.getMetaData(metaDataType))));
                             }
                         }
-                        for (ExtendedDataType<?> extendedDataType : allExtendedDataTypes)
+                        for (ExtendedDataType<?, ?, ?> extendedDataType : allExtendedDataTypes)
                         {
                             str.append(",");
                             if (trajectory.contains(extendedDataType))
                             {
-                                //
                                 try
                                 {
-                                    str.append(extendedDataType.formatValue(format,
-                                            castValue(trajectory.getExtendedData(extendedDataType).get(i))));
+                                    str.append(
+                                            extendedDataType.formatValue(format, castValue(extendedData, extendedDataType, i)));
                                 }
                                 catch (SamplingException exception)
                                 {
@@ -509,15 +525,31 @@ public abstract class Sampler
     }
 
     /**
-     * Cast value to type.
-     * @param value value to casts
+     * Cast value to type for meta data.
+     * @param value value object to cast
      * @return cast value
      */
     @SuppressWarnings("unchecked")
-    private <T> T castValue(Object value)
+    private <T> T castValue(final Object value)
     {
-        // is only called on value directly taken from an ExtendedDataType
         return (T) value;
+    }
+
+    /**
+     * Cast value to type for extended data.
+     * @param extendedData extended data of trajectory in output form
+     * @param extendedDataType extended data type
+     * @param i index of value to return
+     * @return cast value
+     * @throws SamplingException
+     */
+    @SuppressWarnings("unchecked")
+    private <T, O, S> T castValue(final Map<ExtendedDataType<?, ?, ?>, Object> extendedData,
+            final ExtendedDataType<?, ?, ?> extendedDataType, final int i) throws SamplingException
+    {
+        // is only called on value directly taken from an ExtendedDataType within range of trajectory
+        ExtendedDataType<T, O, S> edt = (ExtendedDataType<T, O, S>) extendedDataType;
+        return edt.getOutputValue((O) extendedData.get(edt), i);
     }
 
     /** {@inheritDoc} */

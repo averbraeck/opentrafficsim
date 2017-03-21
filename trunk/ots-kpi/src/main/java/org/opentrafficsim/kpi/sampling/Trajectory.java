@@ -1,9 +1,7 @@
 package org.opentrafficsim.kpi.sampling;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -76,7 +74,7 @@ public final class Trajectory
     private final MetaData metaData;
 
     /** Map of array data types and their values. */
-    private final Map<ExtendedDataType<?>, List<Object>> extendedData = new HashMap<>();
+    private final Map<ExtendedDataType<?, ?, ?>, Object> extendedData = new HashMap<>();
 
     /** Direction of travel. */
     private final KpiLaneDirection kpiLaneDirection;
@@ -87,7 +85,7 @@ public final class Trajectory
      * @param extendedData types of extended data
      * @param kpiLaneDirection direction of travel
      */
-    public Trajectory(final GtuDataInterface gtu, final MetaData metaData, final Set<ExtendedDataType<?>> extendedData,
+    public Trajectory(final GtuDataInterface gtu, final MetaData metaData, final Set<ExtendedDataType<?, ?, ?>> extendedData,
             final KpiLaneDirection kpiLaneDirection)
     {
         this(gtu == null ? null : gtu.getId(), metaData, extendedData, kpiLaneDirection);
@@ -100,7 +98,7 @@ public final class Trajectory
      * @param extendedData types of extended data
      * @param kpiLaneDirection direction of travel
      */
-    private Trajectory(final String gtuId, final MetaData metaData, final Set<ExtendedDataType<?>> extendedData,
+    private Trajectory(final String gtuId, final MetaData metaData, final Set<ExtendedDataType<?, ?, ?>> extendedData,
             final KpiLaneDirection kpiLaneDirection)
     {
         Throw.whenNull(gtuId, "GTU may not be null.");
@@ -109,9 +107,9 @@ public final class Trajectory
         Throw.whenNull(kpiLaneDirection, "Lane direction may not be null.");
         this.gtuId = gtuId;
         this.metaData = new MetaData(metaData);
-        for (ExtendedDataType<?> dataType : extendedData)
+        for (ExtendedDataType<?, ?, ?> dataType : extendedData)
         {
-            this.extendedData.put(dataType, new ArrayList<>());
+            this.extendedData.put(dataType, dataType.initializeStorage());
         }
         this.kpiLaneDirection = kpiLaneDirection;
     }
@@ -158,20 +156,26 @@ public final class Trajectory
         this.v[this.size] = (float) speed.si;
         this.a[this.size] = (float) acceleration.si;
         this.t[this.size] = (float) time.si;
-        this.size++;
-        if (gtu != null)
+        for (ExtendedDataType<?, ?, ?> extendedDataType : this.extendedData.keySet())
         {
-            for (ExtendedDataType<?> extendedDataType : this.extendedData.keySet())
-            {
-                this.extendedData.get(extendedDataType).add(this.size - 1, extendedDataType.getValue(gtu));
-            }
+            appendValue(extendedDataType, gtu);
         }
-        else
+        this.size++;
+    }
+
+    /**
+     * @param extendedDataType extended data type
+     * @param gtu gtu
+     */
+    @SuppressWarnings("unchecked")
+    private <T, S> void appendValue(final ExtendedDataType<?, ?, ?> extendedDataType, final GtuDataInterface gtu)
+    {
+        ExtendedDataType<T, ?, S> edt = (ExtendedDataType<T, ?, S>) extendedDataType;
+        S in = (S) this.extendedData.get(edt);
+        S out = edt.setValue(in, this.size - 1, edt.getValue(gtu));
+        if (in != out)
         {
-            for (ExtendedDataType<?> extendedDataType : this.extendedData.keySet())
-            {
-                this.extendedData.get(extendedDataType).add(this.size - 1, null);
-            }
+            this.extendedData.put(edt, out);
         }
     }
 
@@ -337,7 +341,7 @@ public final class Trajectory
     {
         return this.metaData.get(metaDataType);
     }
-    
+
     /**
      * Returns the included meta data types.
      * @return included meta data types
@@ -351,30 +355,31 @@ public final class Trajectory
      * @param extendedDataType extended data type
      * @return whether the trajectory contains the extended data of give type
      */
-    public boolean contains(final ExtendedDataType<?> extendedDataType)
+    public boolean contains(final ExtendedDataType<?, ?, ?> extendedDataType)
     {
         return this.extendedData.containsKey(extendedDataType);
     }
 
     /**
      * @param extendedDataType extended data type to return
-     * @param <T> value type of the extended data type
+     * @param <O> output type
+     * @param <S> storage type
      * @return values of extended data type
      * @throws SamplingException if the extended data type is not in the trajectory
      */
     @SuppressWarnings("unchecked")
-    public <T> List<T> getExtendedData(final ExtendedDataType<T> extendedDataType) throws SamplingException
+    public <O, S> O getExtendedData(final ExtendedDataType<?, O, S> extendedDataType) throws SamplingException
     {
         Throw.when(!this.extendedData.containsKey(extendedDataType), SamplingException.class,
                 "Extended data type %s is not in the trajectory.", extendedDataType);
-        return (List<T>) this.extendedData.get(extendedDataType);
+        return extendedDataType.convert((S) this.extendedData.get(extendedDataType), this.size);
     }
-    
+
     /**
      * Returns the included extended data types.
      * @return included extended data types
      */
-    public Set<ExtendedDataType<?>> getExtendedDataTypes()
+    public Set<ExtendedDataType<?, ?, ?>> getExtendedDataTypes()
     {
         return this.extendedData.keySet();
     }
@@ -522,10 +527,11 @@ public final class Trajectory
      * Copies the trajectory but with a subset of the data. Data is taken from position (from + fFrom) to (to + fTo).
      * @param bounds boundaries
      * @param <T> type of underlying extended data value
+     * @param <S> storage type
      * @return subset of the trajectory
      */
     @SuppressWarnings("unchecked")
-    private <T> Trajectory subSet(final Boundaries bounds)
+    private <T, S> Trajectory subSet(final Boundaries bounds)
     {
         Trajectory out = new Trajectory(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLaneDirection);
         if (bounds.from < bounds.to) // otherwise empty, no data in the subset
@@ -556,23 +562,39 @@ public final class Trajectory
                 out.t[n - 1] = (float) (this.t[bounds.to] * (1 - bounds.fTo) + this.t[bounds.to + 1] * bounds.fTo);
             }
             out.size = n;
-            for (ExtendedDataType<?> extendedDataType : this.extendedData.keySet())
+            for (ExtendedDataType<?, ?, ?> extendedDataType : this.extendedData.keySet())
             {
-                List<Object> fromList = this.extendedData.get(extendedDataType);
-                List<Object> toList = new ArrayList<>();
-                if (nBefore == 1)
+                int j = 0;
+                ExtendedDataType<T, ?, S> edt = (ExtendedDataType<T, ?, S>) extendedDataType;
+                S fromList = (S) this.extendedData.get(extendedDataType);
+                S toList = edt.initializeStorage();
+                try
                 {
-                    toList.add(((ExtendedDataType<T>) extendedDataType).interpolate((T) fromList.get(bounds.from),
-                            (T) fromList.get(bounds.from + 1), bounds.fFrom));
+                    if (nBefore == 1)
+                    {
+                        edt.setValue(toList, j,
+                                ((ExtendedDataType<T, ?, ?>) extendedDataType).interpolate(
+                                        edt.getStorageValue(fromList, bounds.from),
+                                        edt.getStorageValue(fromList, bounds.from + 1), bounds.fFrom));
+                        j++;
+                    }
+                    for (int i = bounds.from + 1; i < bounds.to; i++)
+                    {
+                        edt.setValue(toList, j, edt.getStorageValue(fromList, i));
+                        j++;
+                    }
+                    if (nAfter == 1)
+                    {
+                        edt.setValue(toList, j,
+                                ((ExtendedDataType<T, ?, ?>) extendedDataType).interpolate(
+                                        edt.getStorageValue(fromList, bounds.to), edt.getStorageValue(fromList, bounds.to + 1),
+                                        bounds.fTo));
+                    }
                 }
-                for (int i = bounds.from + 1; i < bounds.to; i++)
+                catch (SamplingException se)
                 {
-                    toList.add(fromList.get(i));
-                }
-                if (nAfter == 1)
-                {
-                    toList.add(((ExtendedDataType<T>) extendedDataType).interpolate((T) fromList.get(bounds.to),
-                            (T) fromList.get(bounds.to + 1), bounds.fTo));
+                    // should not happen as bounds are determined internally
+                    throw new RuntimeException("Error while obtaining subset of trajectory.", se);
                 }
                 out.extendedData.put(extendedDataType, toList);
             }
@@ -627,7 +649,7 @@ public final class Trajectory
         {
             return false;
         }
-        if (this.size > 0) 
+        if (this.size > 0)
         {
             if (this.t[0] != other.t[0])
             {
