@@ -541,7 +541,7 @@ public abstract class Sampler
      * @param extendedDataType extended data type
      * @param i index of value to return
      * @return cast value
-     * @throws SamplingException
+     * @throws SamplingException when the found index is out of bounds
      */
     @SuppressWarnings("unchecked")
     private <T, O, S> T castValue(final Map<ExtendedDataType<?, ?, ?>, Object> extendedData,
