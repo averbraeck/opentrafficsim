@@ -2137,7 +2137,7 @@ class Variable implements EventListenerInterface
      * @param newTrafCOD TrafCOD; the TrafCOD engine that will own the new Variable
      * @return Variable; the clone of this variable in the new network
      * @throws NetworkException when a traffic light or sensor is not present in newNetwork
-     * @throws TrafficControlException
+     * @throws TrafficControlException when the output for the cloned traffic light cannot be created
      */
     final Variable clone(final OTSNetwork newNetwork, final TrafCOD newTrafCOD) throws NetworkException,
             TrafficControlException

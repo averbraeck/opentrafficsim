@@ -20,6 +20,10 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
@@ -233,6 +237,14 @@ public class CCOL extends EventProducer implements TrafficController
         // FIXME: format of messages is TBD
         String message = String.format("DET %s %s", detectorId, detectingGTU);
         this.ccolWriter.print(message);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public InvisibleObjectInterface clone(OTSSimulatorInterface newSimulator, Network newNetwork) throws NetworkException
+    {
+        // FIXME: implement the clone() for CCOL
+        return null;
     }
 
 }
