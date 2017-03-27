@@ -23,9 +23,8 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructure.Entry;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUReal;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayStopLine;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -69,13 +68,18 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
 
     /** Conflicts alongside right. */
     private TimeStampedObject<Boolean> alongsideConflictRight;
+    
+    /** Headway GTU type that should be used. */
+    private final HeadwayGtuType headwayGtuType;
 
     /**
      * @param perception perception
+     * @param headwayGtuType type of headway gtu to generate
      */
-    public DirectIntersectionPerception(final LanePerception perception)
+    public DirectIntersectionPerception(final LanePerception perception, final HeadwayGtuType headwayGtuType)
     {
         super(perception);
+        this.headwayGtuType = headwayGtuType;
     }
 
     /** {@inheritDoc} */
@@ -169,7 +173,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                 Length position = otherConflict.getLongitudinalPosition();
                 Length initDistance =
                         conflictingDirection.isPlus() ? conflictingLane.getLength().minus(position).neg() : position.neg();
-                SortedSet<AbstractHeadwayGTU> upstreamConflictingGTUs = new TreeSet<>();
+                SortedSet<HeadwayGTU> upstreamConflictingGTUs = new TreeSet<>();
                 Set<LaneInfo> currentLanes = new HashSet<>();
                 currentLanes.add(new LaneInfo(conflictingLane, conflictingDirection, initDistance, position,
                         otherConflict.getGtuType()));
@@ -226,7 +230,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                                 if (!next.getId().equals(getGtu().getId()))
                                 {
                                     // do not add self
-                                    upstreamConflictingGTUs.add(new HeadwayGTUReal(next, nextDistance));
+                                    upstreamConflictingGTUs.add(this.headwayGtuType.createHeadwayGtu(next, nextDistance));
                                 }
                                 next = laneInfo.getLane().getGtuBehind(next.position(laneInfo.getLane(), next.getRear()),
                                         laneInfo.getDirection(), RelativePosition.FRONT, getTimestamp());
@@ -244,7 +248,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                 // DOWNSTREAM GTU'S
                 initDistance =
                         conflictingDirection.isPlus() ? position.neg() : conflictingLane.getLength().minus(position).neg();
-                SortedSet<AbstractHeadwayGTU> downstreamConflictingGTUs = new TreeSet<>();
+                SortedSet<HeadwayGTU> downstreamConflictingGTUs = new TreeSet<>();
                 currentLanes = new HashSet<>();
                 currentLanes.add(new LaneInfo(conflictingLane, conflictingDirection, initDistance, position,
                         otherConflict.getGtuType()));
@@ -265,10 +269,10 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                             {
                                 // TODO also other HeadwayGTU type (i.e. not real)
                                 // TODO GTU status (blinkers)
-                                AbstractHeadwayGTU gtu;
+                                HeadwayGTU gtu;
                                 if (nextDistance.ge(otherConflict.getLength()))
                                 {
-                                    gtu = new HeadwayGTUReal(next, nextDistance.minus(otherConflict.getLength()));
+                                    gtu = this.headwayGtuType.createHeadwayGtu(next, nextDistance.minus(otherConflict.getLength()));
                                 }
                                 else
                                 {
@@ -284,7 +288,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                                     {
                                         overlap = overlap.minus(overlapRear); // subtract rear being past the conflict start
                                     }
-                                    gtu = new HeadwayGTUReal(next, overlapFront, overlap, overlapRear);
+                                    gtu = this.headwayGtuType.createHeadwayGtu(next, overlapFront, overlap, overlapRear);
                                 }
                                 if (!next.getId().equals(getGtu().getId()))
                                 {

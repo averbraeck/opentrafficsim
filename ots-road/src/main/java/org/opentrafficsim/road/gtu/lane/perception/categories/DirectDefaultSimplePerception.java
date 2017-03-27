@@ -25,7 +25,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
-import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU.GTUStatus;
+import org.opentrafficsim.road.gtu.lane.perception.headway.GTUStatus;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayDistance;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;

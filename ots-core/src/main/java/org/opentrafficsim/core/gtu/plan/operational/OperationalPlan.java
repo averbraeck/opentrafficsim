@@ -501,9 +501,10 @@ public class OperationalPlan implements Serializable
      */
     public final double getTraveledDistanceSI(final Duration duration) throws OperationalPlanException
     {
-        Time absTime = duration.plus(this.startTime);
-        SegmentProgress sp = getSegmentProgress(absTime);
-        return sp.getSegmentStartPosition().si + sp.getSegment().distanceSI(absTime.minus(sp.getSegmentStartTime()).si);
+        return getTraveledDistanceSI(this.startTime.plus(duration));
+        // Time absTime = duration.plus(this.startTime);
+        // SegmentProgress sp = getSegmentProgress(absTime);
+        // return sp.getSegmentStartPosition().si + sp.getSegment().distanceSI(absTime.minus(sp.getSegmentStartTime()).si);
     }
 
     /**
@@ -526,7 +527,12 @@ public class OperationalPlan implements Serializable
      */
     public final double getTraveledDistanceSI(final Time time) throws OperationalPlanException
     {
-        return getTraveledDistanceSI(time.minus(this.startTime));
+        if (this.operationalPlanSegmentList.size() == 1)
+        {
+            return this.operationalPlanSegmentList.get(0).distanceSI(time.si - this.startTime.si);
+        }
+        SegmentProgress sp = getSegmentProgress(time);
+        return sp.getSegmentStartPosition().si + sp.getSegment().distanceSI(time.minus(sp.getSegmentStartTime()).si);
     }
 
     /**

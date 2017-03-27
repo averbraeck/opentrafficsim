@@ -7,10 +7,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
  * Container for a reference to information about a (lane based) GTU and a headway. The Headway can store information about GTUs
@@ -36,7 +32,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractHeadwayGTU extends AbstractHeadway
+public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements HeadwayGTU
 {
     /** */
     private static final long serialVersionUID = 20160410L;
@@ -46,25 +42,6 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadway
 
     /** Whether the GTU is facing the same direction. */
     private final boolean facingSameDirection;
-
-    /** Observable characteristics of a GTU. */
-    public enum GTUStatus
-    {
-        /** Braking lights are on when observing the headway. */
-        BRAKING_LIGHTS,
-
-        /** Left turn indicator was on when observing the headway. */
-        LEFT_TURNINDICATOR,
-
-        /** Right turn indicator was on when observing the headway. */
-        RIGHT_TURNINDICATOR,
-
-        /** Alarm lights are on. */
-        EMERGENCY_LIGHTS,
-
-        /** GTU was honking (car) or ringing a bell (cyclist) when observing the headway. */
-        HONK;
-    }
 
     /** The observable characteristics of the GTU. */
     private final EnumSet<GTUStatus> gtuStatus = EnumSet.noneOf(GTUStatus.class);
@@ -225,59 +202,6 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadway
     {
         return this.gtuStatus.toArray(new GTUStatus[this.gtuStatus.size()]);
     }
-
-    /**
-     * Many models that observe a GTU need to predict the imminent behavior of that GTU. Having a car following model of the
-     * observed GTU can help with that. The car following model that is returned can be on a continuum between the actual car
-     * following model of the observed GTU and the own car following model of the observing GTU, not making any assumptions
-     * about the observed GTU. When successive observations of the GTU take place, parameters about its behavior can be
-     * estimated more accurately. Another interesting easy-to-implement solution is to return a car following model per GTU
-     * type, where the following model of a truck can differ from that of a car.
-     * @return a car following model that represents the expected behavior of the observed GTU
-     */
-    public abstract CarFollowingModel getCarFollowingModel();
-
-    /**
-     * Many models that observe a GTU need to predict the imminent behavior of that GTU. Having an estimate of the behavioral
-     * characteristics of the observed GTU can help with that. The behavioral characteristics that are returned can be on a
-     * continuum between the actual behavioral characteristics of the observed GTU and the own behavioral characteristics of the
-     * observing GTU, not making any assumptions about the observed GTU. When successive observations of the GTU take place,
-     * parameters about its behavior can be estimated more accurately. Another interesting easy-to-implement solution is to
-     * return a set of behavioral characteristics per GTU type, where the behavioral characteristics of a truck can differ from
-     * that of a car.
-     * @return the behavioral characteristics that represent the expected behavior of the observed GTU
-     */
-    public abstract BehavioralCharacteristics getBehavioralCharacteristics();
-
-    /**
-     * Many models that observe a GTU need to predict the imminent behavior of that GTU. Having a model of the speed info
-     * profile for the observed GTU can help with predicting its future behavior. The speed limit info that is returned can be
-     * on a continuum between the actual speed limit model of the observed GTU and the own speed limit model of the observing
-     * GTU, not making any assumptions about the observed GTU. When successive observations of the GTU take place, parameters
-     * about its behavior, such as the maximum speed it accepts, can be estimated more accurately. Another interesting
-     * easy-to-implement solution is to return a speed limit info object per GTU type, where the returned information of a truck
-     * -- with a maximum allowed speed on 80 km/h -- can differ from that of a car -- which can have a maximum allowed speed of
-     * 100 km/h on the same road.
-     * @return a speed limit model that helps in determining the expected behavior of the observed GTU
-     */
-    public abstract SpeedLimitInfo getSpeedLimitInfo();
-
-    /**
-     * Models responding to other GTU may assume a route of the vehicle, for instance at intersections. The route may be short,
-     * i.e. only over the next intersection. Implementations may return anything from the actual route, a route based on
-     * indicators and other assumptions, or {@code null} if simply not known/estimated.
-     * @return route of gtu
-     */
-    public abstract Route getRoute();
-
-    /**
-     * Creates a copy with different headway, speed and possibly acceleration. It may not be alongside.
-     * @param headway headway
-     * @param speed speed
-     * @param acceleration acceleration
-     * @return copy with different headway, speed and possibly acceleration
-     */
-    public abstract AbstractHeadwayGTU moved(Length headway, Speed speed, Acceleration acceleration);
 
     /** {@inheritDoc} */
     @Override

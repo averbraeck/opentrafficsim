@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -20,7 +19,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -90,7 +89,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
     public AbstractDelayedNeighborsPerception(final LanePerception perception)
     {
         super(perception);
-        this.direct = new DirectNeighborsPerception(perception);
+        this.direct = new DirectNeighborsPerception(perception, HeadwayGtuType.COPY);
     }
 
     /** {@inheritDoc} */
@@ -196,14 +195,14 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
      * @param currentSet current set
      * @return whether there is a gtu in the current set that is not present in the delayed set
      */
-    private boolean newFirstLeaderOrFollower(final Set<AbstractHeadwayGTU> delayedSet, final Set<AbstractHeadwayGTU> currentSet)
+    private boolean newFirstLeaderOrFollower(final Set<HeadwayGTU> delayedSet, final Set<HeadwayGTU> currentSet)
     {
         Set<String> set = new HashSet<>();
-        for (AbstractHeadwayGTU gtu : delayedSet)
+        for (HeadwayGTU gtu : delayedSet)
         {
             set.add(gtu.getId());
         }
-        for (AbstractHeadwayGTU gtu : currentSet)
+        for (HeadwayGTU gtu : currentSet)
         {
             if (!set.contains(gtu.getId()) && gtu.getDistance().si < 50)
             {
@@ -353,13 +352,13 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
          * @return info type
          */
         @SuppressWarnings("unchecked")
-        public static NeighborsInfoType<SortedSet<AbstractHeadwayGTU>> getSortedSetType(final String id)
+        public static NeighborsInfoType<SortedSet<HeadwayGTU>> getSortedSetType(final String id)
         {
             if (!LANEINFOTYPES.containsKey(id))
             {
-                LANEINFOTYPES.put(id, new NeighborsInfoType<SortedSet<AbstractHeadwayGTU>>(id));
+                LANEINFOTYPES.put(id, new NeighborsInfoType<SortedSet<HeadwayGTU>>(id));
             }
-            return (NeighborsInfoType<SortedSet<AbstractHeadwayGTU>>) LANEINFOTYPES.get(id);
+            return (NeighborsInfoType<SortedSet<HeadwayGTU>>) LANEINFOTYPES.get(id);
         }
 
         /**
@@ -372,7 +371,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
         {
             if (!LANEINFOTYPES.containsKey(id))
             {
-                LANEINFOTYPES.put(id, new NeighborsInfoType<SortedSet<AbstractHeadwayGTU>>(id));
+                LANEINFOTYPES.put(id, new NeighborsInfoType<SortedSet<HeadwayGTU>>(id));
             }
             return (NeighborsInfoType<Boolean>) LANEINFOTYPES.get(id);
         }

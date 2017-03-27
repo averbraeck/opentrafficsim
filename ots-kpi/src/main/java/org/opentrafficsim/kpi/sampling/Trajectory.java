@@ -42,7 +42,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-// TODO rather than a List<T> in extended data types, allow <Unit>Float arrays of DJUNITS, much more memory friendly
+// TODO some trajectories have the first time stamp twice, with possibly different values for acceleration (and TTC)
 public final class Trajectory
 {
 

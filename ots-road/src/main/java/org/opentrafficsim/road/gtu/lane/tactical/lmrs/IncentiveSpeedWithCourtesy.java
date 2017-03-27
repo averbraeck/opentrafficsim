@@ -23,9 +23,9 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.DirectIntersection
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
@@ -160,7 +160,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
         // leaders with right indicators on left lane of considered lane
         if (perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection().contains(lane.getLeft()))
         {
-            for (AbstractHeadwayGTU headwayGTU : perception.getPerceptionCategory(NeighborsPerception.class)
+            for (HeadwayGTU headwayGTU : perception.getPerceptionCategory(NeighborsPerception.class)
                     .getLeaders(lane.getLeft()))
             {
                 // leaders on the current lane with indicator to an adjacent lane are not considered
@@ -174,7 +174,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
         // leaders with left indicators on right lane of considered lane
         if (perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection().contains(lane.getRight()))
         {
-            for (AbstractHeadwayGTU headwayGTU : perception.getPerceptionCategory(NeighborsPerception.class)
+            for (HeadwayGTU headwayGTU : perception.getPerceptionCategory(NeighborsPerception.class)
                     .getLeaders(lane.getRight()))
             {
                 // leaders on the current lane with indicator to an adjacent lane are not considered
@@ -186,7 +186,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
         }
 
         // leaders in the considered lane
-        for (AbstractHeadwayGTU headwayGTU : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane))
+        for (HeadwayGTU headwayGTU : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane))
         {
             anticipationSpeed = anticipateSingle(anticipationSpeed, desiredSpeed, x0, headwayGTU);
         }
@@ -199,18 +199,18 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
             {
                 Length vehicleLength = perception.getPerceptionCategory(EgoPerception.class).getLength();
                 Speed speed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
-                SortedSet<AbstractHeadwayGTU> leaders =
+                SortedSet<HeadwayGTU> leaders =
                         perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
                 if (!headwayConflict.getConflictType().isCrossing())
                 {
                     // consider first downstream vehicle on split or merge (ignore others)
-                    SortedSet<AbstractHeadwayGTU> conflictVehicles = headwayConflict.getDownstreamConflictingGTUs();
+                    SortedSet<HeadwayGTU> conflictVehicles = headwayConflict.getDownstreamConflictingGTUs();
                     if (!conflictVehicles.isEmpty() && conflictVehicles.first().isParallel())
                     {
-                        AbstractHeadwayGTU conflictingGtu = conflictVehicles.first();
+                        HeadwayGTU conflictingGtu = conflictVehicles.first();
                         Length distance = headwayConflict.getDistance().plus(headwayConflict.getLength())
                                 .plus(conflictingGtu.getOverlapRear());
-                        AbstractHeadwayGTU leadingGtu;
+                        HeadwayGTU leadingGtu;
                         try
                         {
                             leadingGtu = new HeadwayGTUSimple(conflictingGtu.getId(), conflictingGtu.getGtuType(), distance,

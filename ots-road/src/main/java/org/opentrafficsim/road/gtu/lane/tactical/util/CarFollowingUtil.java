@@ -10,7 +10,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -47,10 +47,10 @@ public final class CarFollowingUtil
      */
     public static Acceleration followLeaders(final CarFollowingModel carFollowingModel,
             final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final SpeedLimitInfo speedLimitInfo,
-            final SortedSet<AbstractHeadwayGTU> leaders) throws ParameterException
+            final SortedSet<HeadwayGTU> leaders) throws ParameterException
     {
         SortedMap<Length, Speed> leaderMap = new TreeMap<>();
-        for (AbstractHeadwayGTU headwayGTU : leaders)
+        for (HeadwayGTU headwayGTU : leaders)
         {
             leaderMap.put(headwayGTU.getDistance(), headwayGTU.getSpeed());
         }

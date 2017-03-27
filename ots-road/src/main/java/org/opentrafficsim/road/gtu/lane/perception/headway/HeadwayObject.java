@@ -29,7 +29,7 @@ import org.opentrafficsim.core.gtu.GTUException;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class HeadwayObject extends AbstractHeadway
+public class HeadwayObject extends AbstractHeadwayCopy
 {
     /** */
     private static final long serialVersionUID = 20160410L;

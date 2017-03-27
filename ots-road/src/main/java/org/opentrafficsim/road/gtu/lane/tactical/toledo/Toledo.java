@@ -29,7 +29,7 @@ import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
@@ -351,10 +351,10 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             if (perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).size() > 1)
             {
                 // two leaders
-                Iterator<AbstractHeadwayGTU> it =
+                Iterator<HeadwayGTU> it =
                     perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).iterator();
                 it.next();
-                AbstractHeadwayGTU leader = it.next();
+                HeadwayGTU leader = it.next();
                 leaderDist = leader.getDistance();
                 leaderSpeed = leader.getSpeed();
                 putativeLength =
@@ -423,10 +423,10 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             if (perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).size() > 1)
             {
                 // two followers
-                Iterator<AbstractHeadwayGTU> it =
+                Iterator<HeadwayGTU> it =
                     perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).iterator();
                 it.next();
-                AbstractHeadwayGTU follower = it.next();
+                HeadwayGTU follower = it.next();
                 followerDist = follower.getDistance();
                 followerSpeed = follower.getSpeed();
                 putativeLength =
