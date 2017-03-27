@@ -17,6 +17,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.road.gtu.lane.perception.headway.GTUStatus;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
 
@@ -66,22 +67,22 @@ public class HeadwayGTUTest
         verifyFields(hg2, acceleration2, null, gtuType2, id2, Headway.ObjectType.GTU, overlap, overlapFront, overlapRear,
                 speed2, false, false, false, false, false, false, false, true);
         // Test all combinations of two GTUStatus values.
-        for (HeadwayGTUSimple.GTUStatus gtuStatus1 : HeadwayGTUSimple.GTUStatus.values())
+        for (GTUStatus gtuStatus1 : GTUStatus.values())
         {
-            for (HeadwayGTUSimple.GTUStatus gtuStatus2 : HeadwayGTUSimple.GTUStatus.values())
+            for (GTUStatus gtuStatus2 : GTUStatus.values())
             {
                 hg2 = new HeadwayGTUSimple(id2, gtuType2, distance2, Length.ZERO, speed2, acceleration2, gtuStatus1,
                         gtuStatus2);
                 boolean honking =
-                        HeadwayGTUSimple.GTUStatus.HONK == gtuStatus1 || HeadwayGTUSimple.GTUStatus.HONK == gtuStatus2;
-                boolean braking = HeadwayGTUSimple.GTUStatus.BRAKING_LIGHTS == gtuStatus1
-                        || HeadwayGTUSimple.GTUStatus.BRAKING_LIGHTS == gtuStatus2;
-                boolean leftIndicator = HeadwayGTUSimple.GTUStatus.LEFT_TURNINDICATOR == gtuStatus1
-                        || HeadwayGTUSimple.GTUStatus.LEFT_TURNINDICATOR == gtuStatus2;
-                boolean rightIndicator = HeadwayGTUSimple.GTUStatus.RIGHT_TURNINDICATOR == gtuStatus1
-                        || HeadwayGTUSimple.GTUStatus.RIGHT_TURNINDICATOR == gtuStatus2;
-                boolean hazardLights = HeadwayGTUSimple.GTUStatus.EMERGENCY_LIGHTS == gtuStatus1
-                        || HeadwayGTUSimple.GTUStatus.EMERGENCY_LIGHTS == gtuStatus2;
+                        GTUStatus.HONK == gtuStatus1 || GTUStatus.HONK == gtuStatus2;
+                boolean braking = GTUStatus.BRAKING_LIGHTS == gtuStatus1
+                        || GTUStatus.BRAKING_LIGHTS == gtuStatus2;
+                boolean leftIndicator = GTUStatus.LEFT_TURNINDICATOR == gtuStatus1
+                        || GTUStatus.LEFT_TURNINDICATOR == gtuStatus2;
+                boolean rightIndicator = GTUStatus.RIGHT_TURNINDICATOR == gtuStatus1
+                        || GTUStatus.RIGHT_TURNINDICATOR == gtuStatus2;
+                boolean hazardLights = GTUStatus.EMERGENCY_LIGHTS == gtuStatus1
+                        || GTUStatus.EMERGENCY_LIGHTS == gtuStatus2;
                 verifyFields(hg2, acceleration2, distance2, gtuType2, id2, Headway.ObjectType.GTU, null, null, null, speed2,
                         true, false, braking, hazardLights, honking, leftIndicator, rightIndicator, false);
 

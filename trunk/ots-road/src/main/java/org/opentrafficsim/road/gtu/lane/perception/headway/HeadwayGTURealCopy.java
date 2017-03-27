@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.perception.headway;
 
-import java.util.EnumSet;
-
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -41,34 +39,65 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
+public class HeadwayGTURealCopy extends AbstractHeadwayGTU
 {
     /** */
-    private static final long serialVersionUID = 20170324L;
+    private static final long serialVersionUID = 20160527L;
 
-    /** Stored speed limit info of the observed GTU. */
+    /** stored car following model of the observed GTU. */
+    private final CarFollowingModel carFollowingModel;
+
+    /** stored behavioral characteristics of the observed GTU. */
+    private final BehavioralCharacteristics behavioralCharacteristics;
+
+    /** stored speed limit info of the observed GTU. */
     private final SpeedLimitInfo speedLimitInfo;
 
-    /** Wrapped GTU. */
-    private final LaneBasedGTU gtu;
+    /** stored route of the observed GTU. */
+    private final Route route;
 
-    /** Whether the GTU is facing the same direction. */
-    private final boolean facingSameDirection;
+    /**
+     * Private constructor for copies.
+     * @param id id
+     * @param gtuType GTU type
+     * @param distance distance
+     * @param length length
+     * @param speed speed
+     * @param acceleration acceleration
+     * @param carFollowingModel car-following model
+     * @param behavioralCharacteristics behavioral characteristics
+     * @param speedLimitInfo speed limit info
+     * @param route route
+     * @param gtuStatus gtu status
+     * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
+     */
+    @SuppressWarnings("checkstyle:parameternumber") 
+    HeadwayGTURealCopy(final String id, final GTUType gtuType, final Length distance, final Length length,
+            final Speed speed, final Acceleration acceleration, final CarFollowingModel carFollowingModel,
+            final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedLimitInfo, final Route route,
+            final GTUStatus... gtuStatus) throws GTUException
+    {
+        super(id, gtuType, distance, true, length, speed, acceleration, gtuStatus);
+        this.carFollowingModel = carFollowingModel;
+        this.behavioralCharacteristics = behavioralCharacteristics;
+        this.speedLimitInfo = speedLimitInfo;
+        this.route = route;
+    }
 
     /**
      * Construct a new Headway information object, for a GTU ahead of us or behind us.
      * @param gtu the observed GTU, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
-     * @param facingSameDirection whether the GTU is facing the same direction.
+     * @param gtuStatus the observable characteristics of the GTU.
      * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
      */
-    public HeadwayGTUReal(final LaneBasedGTU gtu, final Length distance, final boolean facingSameDirection)
-            throws GTUException
+    public HeadwayGTURealCopy(final LaneBasedGTU gtu, final Length distance, final GTUStatus... gtuStatus) throws GTUException
     {
-        super(distance);
-        this.gtu = gtu;
-        this.facingSameDirection = facingSameDirection;
+        super(gtu.getId(), gtu.getGTUType(), distance, true, gtu.getLength(), gtu.getSpeed(), gtu.getAcceleration(), gtuStatus);
+        this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
+        this.behavioralCharacteristics = new BehavioralCharacteristics(gtu.getBehavioralCharacteristics());
         this.speedLimitInfo = getSpeedLimitInfo(gtu);
+        this.route = gtu.getStrategicalPlanner().getRoute();
     }
 
     /**
@@ -77,32 +106,32 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
      * @param overlapFront the front-front distance to the other GTU; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other GTU; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
-     * @param facingSameDirection whether the GTU is facing the same direction.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public HeadwayGTUReal(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap,
-            final Length overlapRear, final boolean facingSameDirection) throws GTUException
+    public HeadwayGTURealCopy(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap, final Length overlapRear)
+            throws GTUException
     {
-        super(overlapFront, overlap, overlapRear);
-        this.gtu = gtu;
-        this.facingSameDirection = facingSameDirection;
+        super(gtu.getId(), gtu.getGTUType(), overlapFront, overlap, overlapRear, true, gtu.getLength(), gtu.getSpeed(),
+                gtu.getAcceleration());
+        this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
+        this.behavioralCharacteristics = new BehavioralCharacteristics(gtu.getBehavioralCharacteristics());
         this.speedLimitInfo = getSpeedLimitInfo(gtu);
+        this.route = gtu.getStrategicalPlanner().getRoute();
     }
 
     /**
      * Creates speed limit prospect for given GTU.
-     * @param wrappedGtu gtu to the the speed limit prospect for
+     * @param gtu gtu to the the speed limit prospect for
      * @return speed limit prospect for given GTU
      */
     // TODO this is a simple fix
-    private SpeedLimitInfo getSpeedLimitInfo(final LaneBasedGTU wrappedGtu)
+    private SpeedLimitInfo getSpeedLimitInfo(final LaneBasedGTU gtu)
     {
         SpeedLimitInfo sli = new SpeedLimitInfo();
-        sli.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, wrappedGtu.getMaximumSpeed());
+        sli.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, gtu.getMaximumSpeed());
         try
         {
-            sli.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN,
-                    wrappedGtu.getReferencePosition().getLane().getSpeedLimit(wrappedGtu.getGTUType()));
+            sli.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN, gtu.getReferencePosition().getLane().getSpeedLimit(gtu.getGTUType()));
         }
         catch (NetworkException | GTUException exception)
         {
@@ -115,14 +144,14 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
     @Override
     public final CarFollowingModel getCarFollowingModel()
     {
-        return this.gtu.getTacticalPlanner().getCarFollowingModel();
+        return this.carFollowingModel;
     }
 
     /** {@inheritDoc} */
     @Override
     public final BehavioralCharacteristics getBehavioralCharacteristics()
     {
-        return this.gtu.getBehavioralCharacteristics();
+        return this.behavioralCharacteristics;
     }
 
     /** {@inheritDoc} */
@@ -136,16 +165,12 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
     @Override
     public final Route getRoute()
     {
-        return this.gtu.getStrategicalPlanner().getRoute();
+        return this.route;
     }
 
-    /**
-     * {@inheritDoc} <br><br>
-     * <b>Note: when moving a {@code HeadwayGTURealDirect}, only headway, speed and acceleration may be considered to be delayed
-     * and anticipated. Other information is taken from the actual GTU at the time {@code moved()} is called.</b>
-     */
+    /** {@inheritDoc} */
     @Override
-    public HeadwayGTU moved(final Length headway, final Speed speed, final Acceleration acceleration)
+    public AbstractHeadwayGTU moved(final Length headway, final Speed speed, final Acceleration acceleration)
     {
         try
         {
@@ -157,122 +182,6 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
             // input should be consistent
             throw new RuntimeException("Exception while copying Headway GTU.", exception);
         }
-    }
-
-    /**
-     * Returns an array with GTU status.
-     * @return array with GTU status
-     */
-    private GTUStatus[] getGtuStatus()
-    {
-        EnumSet<GTUStatus> gtuStatus = EnumSet.noneOf(GTUStatus.class);
-        if (isLeftTurnIndicatorOn())
-        {
-            gtuStatus.add(GTUStatus.LEFT_TURNINDICATOR);
-        }
-        if (isRightTurnIndicatorOn())
-        {
-            gtuStatus.add(GTUStatus.RIGHT_TURNINDICATOR);
-        }
-        if (isBrakingLightsOn())
-        {
-            gtuStatus.add(GTUStatus.BRAKING_LIGHTS);
-        }
-        if (isEmergencyLightsOn())
-        {
-            gtuStatus.add(GTUStatus.EMERGENCY_LIGHTS);
-        }
-        if (isHonking())
-        {
-            gtuStatus.add(GTUStatus.HONK);
-        }
-        return gtuStatus.toArray(new GTUStatus[gtuStatus.size()]);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getId()
-    {
-        return this.gtu.getId();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Length getLength()
-    {
-        return this.gtu.getLength();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Speed getSpeed()
-    {
-        return this.gtu.getSpeed();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ObjectType getObjectType()
-    {
-        return ObjectType.GTU;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Acceleration getAcceleration()
-    {
-        return this.gtu.getAcceleration();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public GTUType getGtuType()
-    {
-        return this.gtu.getGTUType();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isFacingSameDirection()
-    {
-        return this.facingSameDirection;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isBrakingLightsOn()
-    {
-        // TODO
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isLeftTurnIndicatorOn()
-    {
-        return this.gtu.getTurnIndicatorStatus().isLeft();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isRightTurnIndicatorOn()
-    {
-        return this.gtu.getTurnIndicatorStatus().isRight();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isEmergencyLightsOn()
-    {
-        return this.gtu.getTurnIndicatorStatus().isHazard();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isHonking()
-    {
-        // TODO
-        return false;
     }
 
 }

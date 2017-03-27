@@ -17,6 +17,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
@@ -26,15 +27,17 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -145,7 +148,7 @@ public final class LmrsUtil
             final LinkedHashSet<VoluntaryIncentive> voluntaryIncentives)
             throws GTUException, NetworkException, ParameterException, OperationalPlanException
     {
-        
+
         // TODO this is a hack to prevent right lane changes of all vehicles on the left lane when placed in network at t=0
         if (startTime.si == 0.0)
         {
@@ -160,7 +163,7 @@ public final class LmrsUtil
 
         // regular car-following
         Speed speed = gtu.getSpeed();
-        SortedSet<AbstractHeadwayGTU> leaders =
+        SortedSet<HeadwayGTU> leaders =
                 perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
         if (!leaders.isEmpty() && lmrsData.isNewLeader(leaders.first()))
         {
@@ -210,7 +213,7 @@ public final class LmrsUtil
         {
             RelativeLane secondLane = laneChange.getSecondLane(gtu);
             initiatedLaneChange = LateralDirectionality.NONE;
-            SortedSet<AbstractHeadwayGTU> secondLeaders =
+            SortedSet<HeadwayGTU> secondLeaders =
                     perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(secondLane);
             Acceleration aSecond = CarFollowingUtil.followLeaders(carFollowingModel, bc, speed, sli, secondLeaders);
             if (!secondLeaders.isEmpty() && lmrsData.isNewLeader(secondLeaders.first()))
@@ -340,7 +343,7 @@ public final class LmrsUtil
      * @param leader leader
      * @throws ParameterException if DLC is not present
      */
-    private static void initHeadwayRelaxation(final BehavioralCharacteristics bc, final AbstractHeadwayGTU leader)
+    private static void initHeadwayRelaxation(final BehavioralCharacteristics bc, final HeadwayGTU leader)
             throws ParameterException
     {
         if (leader.getBehavioralCharacteristics().contains(DLC))
@@ -458,9 +461,9 @@ public final class LmrsUtil
             final SpeedLimitInfo sli, final CarFollowingModel cfm, final double desire, final Speed ownSpeed,
             final LateralDirectionality lat) throws ParameterException, OperationalPlanException
     {
-        // is there a lane?
-        if ((lat.isLeft() && perception.getLaneStructure().getRootLSR().getLeft() == null)
-                || (lat.isRight() && perception.getLaneStructure().getRootLSR().getRight() == null))
+
+        // check whether there is a lane
+        if (!perception.getLaneStructure().canChange(lat, perception))
         {
             return false;
         }
@@ -489,20 +492,28 @@ public final class LmrsUtil
             // gtu alongside
             return false;
         }
+
         Acceleration b = bc.getParameter(ParameterTypes.B);
+
         Acceleration aFollow = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-        for (AbstractHeadwayGTU follower : perception.getPerceptionCategory(NeighborsPerception.class).getFirstFollowers(lat))
+        for (
+
+        HeadwayGTU follower : perception.getPerceptionCategory(NeighborsPerception.class).getFirstFollowers(lat))
         {
             Acceleration a = singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed, desire,
                     follower.getBehavioralCharacteristics(), follower.getSpeedLimitInfo(), follower.getCarFollowingModel());
             aFollow = Acceleration.min(aFollow, a);
         }
+
         Acceleration aSelf = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-        for (AbstractHeadwayGTU leader : perception.getPerceptionCategory(NeighborsPerception.class).getFirstLeaders(lat))
+        for (
+
+        HeadwayGTU leader : perception.getPerceptionCategory(NeighborsPerception.class).getFirstLeaders(lat))
         {
             Acceleration a = singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, bc, sli, cfm);
             aSelf = Acceleration.min(aSelf, a);
         }
+
         Acceleration threshold = b.multiplyBy(-desire);
         return aFollow.ge(threshold) && aSelf.ge(threshold);
     }
@@ -556,14 +567,30 @@ public final class LmrsUtil
         }
         Acceleration b = bc.getParameter(ParameterTypes.B);
         Acceleration a = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
+        double dCoop = bc.getParameter(DCOOP);
         RelativeLane relativeLane = new RelativeLane(lat, 1);
-        SortedSet<AbstractHeadwayGTU> set = removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
+        SortedSet<HeadwayGTU> set = removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
                 perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception, relativeLane),
                 perception, RelativeLane.CURRENT);
-        if (!set.isEmpty())
+        HeadwayGTU leader = null;
+        if (desire >= dCoop && !set.isEmpty())
         {
-            Acceleration aSingle =
-                    singleAcceleration(set.first().getDistance(), ownSpeed, set.first().getSpeed(), desire, bc, sli, cfm);
+            leader = set.first();
+        }
+        else
+        {
+            for (HeadwayGTU gtu : set)
+            {
+                if (gtu.getSpeed().gt0())
+                {
+                    leader = gtu;
+                    break;
+                }
+            }
+        }
+        if (leader != null)
+        {
+            Acceleration aSingle = singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, bc, sli, cfm);
             a = Acceleration.min(a, aSingle);
         }
         return Acceleration.max(a, b.neg());
@@ -594,7 +621,7 @@ public final class LmrsUtil
         Acceleration a = new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
         double dCoop = bc.getParameter(DCOOP);
         RelativeLane relativeLane = new RelativeLane(lat, 1);
-        for (AbstractHeadwayGTU leader : removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
+        for (HeadwayGTU leader : removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
                 perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception, relativeLane),
                 perception, RelativeLane.CURRENT))
         {
@@ -621,7 +648,7 @@ public final class LmrsUtil
      * @return the input set, for chained use
      * @throws OperationalPlanException if the {@code IntersectionPerception} category is not present
      */
-    private static SortedSet<AbstractHeadwayGTU> removeAllUpstreamOfConflicts(final SortedSet<AbstractHeadwayGTU> set,
+    private static SortedSet<HeadwayGTU> removeAllUpstreamOfConflicts(final SortedSet<HeadwayGTU> set,
             final LanePerception perception, final RelativeLane relativeLane) throws OperationalPlanException
     {
         if (!perception.contains(IntersectionPerception.class))
@@ -633,9 +660,9 @@ public final class LmrsUtil
         {
             if (conflict.isCrossing() || conflict.isMerge())
             {
-                for (AbstractHeadwayGTU conflictGtu : conflict.getUpstreamConflictingGTUs())
+                for (HeadwayGTU conflictGtu : conflict.getUpstreamConflictingGTUs())
                 {
-                    for (AbstractHeadwayGTU gtu : set)
+                    for (HeadwayGTU gtu : set)
                     {
                         if (conflictGtu.getId().equals(gtu.getId()))
                         {
@@ -702,7 +729,7 @@ public final class LmrsUtil
          * @param gtu gtu to check
          * @return whether the gtu is a new leader
          */
-        public boolean isNewLeader(final AbstractHeadwayGTU gtu)
+        public boolean isNewLeader(final HeadwayGTU gtu)
         {
             this.tempLeaders.add(gtu.getId());
             return !this.leaders.contains(gtu.getId());

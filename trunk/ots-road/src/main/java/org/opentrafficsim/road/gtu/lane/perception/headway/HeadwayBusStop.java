@@ -19,7 +19,7 @@ import nl.tudelft.simulation.immutablecollections.ImmutableSet;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class HeadwayBusStop extends AbstractHeadway
+public class HeadwayBusStop extends AbstractHeadwayCopy
 {
 
     /** */

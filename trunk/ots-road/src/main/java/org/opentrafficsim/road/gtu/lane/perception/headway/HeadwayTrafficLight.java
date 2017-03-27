@@ -18,7 +18,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class HeadwayTrafficLight extends AbstractHeadway
+public class HeadwayTrafficLight extends AbstractHeadwayCopy
 {
     /** */
     private static final long serialVersionUID = 20160410L;

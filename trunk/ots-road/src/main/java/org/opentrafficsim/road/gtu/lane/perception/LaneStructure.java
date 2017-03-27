@@ -14,7 +14,11 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
@@ -410,6 +414,55 @@ public class LaneStructure implements Serializable
             }
             getUpstreamObjectsRecursive(set, prev, clazz, ds);
         }
+    }
+
+    /**
+     * Check whether the lane structure allows a lane change. There needs to be a lane, and the nose needs to be able to arrive
+     * on an accessible lane, should it be past the current lane length. This method is only suitable for instantaneous lane
+     * changes, or lane changes at zero speed. For lane changes that progress longitudinally, additional check are required.
+     * @param lat direction of lane change
+     * @param perception perception
+     * @return whether the lane structure allows a lane change
+     * @throws OperationalPlanException when GTU or lane could not be obtained
+     */
+    public boolean canChange(final LateralDirectionality lat, final LanePerception perception) throws OperationalPlanException
+    {
+        // is there a lane?
+        if ((lat.isLeft() && this.rootLSR.getLeft() == null) || (lat.isRight() && this.rootLSR.getRight() == null))
+        {
+            return false;
+        }
+
+        // nose ok?
+        try
+        {
+            Length nose = perception.getGtu().getFront().getDx();
+
+            if (!this.rootLSR.getNext().isEmpty() && this.rootLSR.getNext().get(0).getStartDistance().lt(nose))
+            {
+                Route route = perception.getGtu().getStrategicalPlanner().getRoute();
+                GTUType gtuType = perception.getGtu().getGTUType();
+                boolean noseOk = false;
+                for (LaneStructureRecord next : this.rootLSR.getNext())
+                {
+                    if ((lat.isLeft() && next.getLeft() != null && next.getLeft().allowsRoute(route, gtuType))
+                            || (lat.isRight() && next.getRight() != null && next.getRight().allowsRoute(route, gtuType)))
+                    {
+                        noseOk = true;
+                    }
+                }
+                if (!noseOk)
+                {
+                    return false;
+                }
+            }
+        }
+        catch (GTUException | NetworkException exception)
+        {
+            throw new OperationalPlanException("Could not obtain GTU or lane to check nose for lane change.", exception);
+        }
+
+        return true;
     }
 
     /** {@inheritDoc} */

@@ -8,7 +8,7 @@ import org.opentrafficsim.core.gtu.perception.PerceptionCategory;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
 /**
  * <p>
@@ -100,7 +100,7 @@ public interface NeighborsPerception extends PerceptionCategory
      * @throws NullPointerException if {@code lat} is {@code null}
      * @throws IllegalArgumentException if {@code lat} is {@code NONE}
      */
-    SortedSet<AbstractHeadwayGTU> getFirstLeaders(LateralDirectionality lat)
+    SortedSet<HeadwayGTU> getFirstLeaders(LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException;
 
     /**
@@ -126,7 +126,7 @@ public interface NeighborsPerception extends PerceptionCategory
      * @throws NullPointerException if {@code lat} is {@code null}
      * @throws IllegalArgumentException if {@code lat} is {@code NONE}
      */
-    SortedSet<AbstractHeadwayGTU> getFirstFollowers(LateralDirectionality lat)
+    SortedSet<HeadwayGTU> getFirstFollowers(LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException;
 
     /**
@@ -145,7 +145,7 @@ public interface NeighborsPerception extends PerceptionCategory
      * @param lane relative lateral lane
      * @return set of leaders on a lane, including adjacent GTU's who's FRONT is ahead of the own vehicle FRONT
      */
-    SortedSet<AbstractHeadwayGTU> getLeaders(RelativeLane lane);
+    SortedSet<HeadwayGTU> getLeaders(RelativeLane lane);
 
     /**
      * Set of followers on a lane, including adjacent GTU's who's FRONT is back of the own vehicle FRONT. Follower are are
@@ -153,6 +153,6 @@ public interface NeighborsPerception extends PerceptionCategory
      * @param lane relative lateral lane
      * @return set of followers on a lane, including adjacent GTU's who's REAR is back of the own vehicle REAR
      */
-    SortedSet<AbstractHeadwayGTU> getFollowers(RelativeLane lane);
+    SortedSet<HeadwayGTU> getFollowers(RelativeLane lane);
 
 }
