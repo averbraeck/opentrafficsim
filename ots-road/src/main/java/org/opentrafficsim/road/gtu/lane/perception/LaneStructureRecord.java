@@ -459,6 +459,15 @@ public class LaneStructureRecord implements Serializable
     {
         return this.cutOffStart;
     }
+    
+    /**
+     * Returns whether the record forms a dead-end.
+     * @return whether the record forms a dead-end
+     */
+    public final boolean isDeadEnd()
+    {
+        return this.cutOffEnd == null && this.nextList.isEmpty();
+    }
 
     /**
      * @return the lane of the LSR

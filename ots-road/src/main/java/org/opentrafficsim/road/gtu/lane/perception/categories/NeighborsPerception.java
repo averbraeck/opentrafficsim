@@ -151,7 +151,7 @@ public interface NeighborsPerception extends PerceptionCategory
      * Set of followers on a lane, including adjacent GTU's who's FRONT is back of the own vehicle FRONT. Follower are are
      * sorted by distance.
      * @param lane relative lateral lane
-     * @return set of followers on a lane, including adjacent GTU's who's REAR is back of the own vehicle REAR
+     * @return set of followers on a lane, including adjacent GTU's who's FRONT is back of the own vehicle FRONT
      */
     SortedSet<HeadwayGTU> getFollowers(RelativeLane lane);
 

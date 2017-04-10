@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -102,7 +104,8 @@ public interface InfrastructurePerception extends PerceptionCategory
     SpeedLimitProspect getSpeedLimitProspect(RelativeLane lane);
 
     /**
-     * Returns the distance over which a lane change remains legally possible.
+     * Returns the distance over which a lane change remains legally possible. Negative values indicate the distance over which
+     * a lane change is legally not possible.
      * @param fromLane lane from which the lane change possibility is requested
      * @param lat LEFT or RIGHT, null not allowed
      * @return distance over which a lane change remains possible
@@ -111,7 +114,8 @@ public interface InfrastructurePerception extends PerceptionCategory
     Length getLegalLaneChangePossibility(RelativeLane fromLane, LateralDirectionality lat);
 
     /**
-     * Returns the distance over which a lane change remains physically possible.
+     * Returns the distance over which a lane change remains physically possible. Negative values indicate the distance over
+     * which a lane change is physically not possible.
      * @param fromLane lane from which the lane change possibility is requested
      * @param lat LEFT or RIGHT, null not allowed
      * @return distance over which a lane change remains possible
@@ -139,6 +143,9 @@ public interface InfrastructurePerception extends PerceptionCategory
             updatePhysicalLaneChangePossibility(lane, LateralDirectionality.LEFT);
             updatePhysicalLaneChangePossibility(lane, LateralDirectionality.RIGHT);
         }
+        Set<RelativeLane> lanes = new HashSet<>(getCrossSection());
+        lanes.add(RelativeLane.LEFT);
+        lanes.add(RelativeLane.RIGHT);
     }
-    
+
 }

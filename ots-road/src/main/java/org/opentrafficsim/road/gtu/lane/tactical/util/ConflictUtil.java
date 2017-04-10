@@ -62,10 +62,8 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
+// TODO do not ignore vehicles upstream of conflict if they have green
 // TODO conflict over multiple lanes (longitudinal in own direction)
-// TODO stop length depending on speed?
-// TODO vehicle generation at speed in T-junction demo
-// TODO turbo roundabout demo
 // TODO a) yielding while having priority happens only when leaders is standing still on conflict (then its useless...)
 // b) two vehicles can remain upstream of merge if vehicle stands on merge but leaves some space to move
 // probably 1 is yielding, and 1 is courtesy yielding as the other stands still
@@ -232,7 +230,7 @@ public final class ConflictUtil
                     {
                         // note, at this point prevStarts contains one more conflict than prevEnds
                         if (prevStarts.get(i + 1).minus(prevEnds.get(i))
-                                .gt(passableDistance(Speed.ZERO, vehicleLength, behavioralCharacteristics)))
+                                .gt(passableDistance(vehicleLength, behavioralCharacteristics)))
                         {
                             j = i + 1;
                             break;
@@ -328,6 +326,7 @@ public final class ConflictUtil
         Length virtualHeadway = conflict.getDistance().plus(c.getOverlapRear());
         if (virtualHeadway.le0() && conflict.getDistance().le0())
         {
+            // TODO what about long conflicts where we need to follow the second conflicting downstream vehicle?
             // conflict GTU downstream of start of conflict, but upstream of us
             return Acceleration.POS_MAXVALUE;
         }
@@ -466,99 +465,34 @@ public final class ConflictUtil
             final ConflictPlans yieldPlans) throws ParameterException
     {
 
-        if (false)
-        {
-            // TODO fix courtesy yielding behavior
-            return false;
-        }
-
         if (leaders.isEmpty() || conflict.getUpstreamConflictingGTUs().isEmpty())
         {
             // no leader, or no conflicting vehicle
             return false;
         }
 
-        // Attempt: stop as long as some leader is standing still, and leader is not leaving sufficient space yet
-        if (true)
-        {
-
-            Length mergeCorrection = conflict.isCrossing() ? conflict.getLength() : Length.ZERO;
-            Length distance = conflict.getDistance().minus(leaders.first().getDistance())
-                    .plus(passableDistance(Speed.ZERO, vehicleLength, behavioralCharacteristics)).plus(mergeCorrection);
-            // Leader still has distance to cover
-            if (distance.gt0())
-            {
-                Length required = conflict.getDistance().plus(mergeCorrection)
-                        .plus(passableDistance(Speed.ZERO, vehicleLength, behavioralCharacteristics));
-                for (HeadwayGTU leader : leaders)
-                {
-                    if (leader.getSpeed().eq0())
-                    {
-                        // first stand-still leader is not fully upstream of the conflict (in that case, ignore), and does not
-                        // allow sufficient space for all vehicles in between
-                        return leader.getDistance().ge(conflict.getDistance()) && required.ge(leader.getDistance());
-                    }
-                    required = required
-                            .plus(passableDistance(Speed.ZERO, leader.getLength(), leader.getBehavioralCharacteristics()));
-                }
-            }
-            return false;
-        }
-
-        // Consider factors where we don't yield, even if this was our plan before
+        // Stop as long as some leader is standing still, and leader is not leaving sufficient space yet
+        // use start of conflict on merge, end of conflict on crossing
+        Length typeCorrection = conflict.isCrossing() ? conflict.getLength() : Length.ZERO;
+        // distance leader has to cover before we can pass the conflict
         Length distance = conflict.getDistance().minus(leaders.first().getDistance())
-                .plus(passableDistance(speed, vehicleLength, behavioralCharacteristics));
-        if (conflict.isCrossing())
+                .plus(passableDistance(vehicleLength, behavioralCharacteristics)).plus(typeCorrection);
+        if (distance.gt0())
         {
-            // Merge is cleared at start, crossing at end
-            distance = distance.plus(conflict.getLength());
-        }
-        AnticipationInfo ttpD =
-                AnticipationInfo.anticipateMovement(distance, leaders.first().getSpeed(), leaders.first().getAcceleration());
-        HeadwayGTU first = conflict.getUpstreamConflictingGTUs().first();
-        boolean conflictGtuCanReachConflict =
-                first.getDistance().lt(behavioralCharacteristics.getParameter(STOP_AREA)) || first.getSpeed().gt0();
-        boolean leaderStandsOnConflict = leaders.first().getSpeed().eq0() && !leaders.first().isAhead();
-        // Do not courtesy yield, even if this was the plan, if:
-        // 1) Leader leaves conflict passable now
-        // 2) Leader stands still on conflict (no point in yielding, conflict is blocked anyway)
-        // 3) Conflict vehicle stand still away from conflict (i.e. blocked by something else)
-        if (ttpD.getDuration().eq0() || leaderStandsOnConflict || !conflictGtuCanReachConflict)
-        {
-            return false;
-        }
-
-        // If yielding was the plan, keep yielding
-        if (yieldPlans.isYieldPlan(conflict, first))
-        {
-            yieldPlans.setYieldPlan(conflict, first); // this makes sure the plan is not cleared
-            return true;
-        }
-
-        // Check factors to initiate a courtesy yield plan (in parts, to not calculate it all if not needed)
-        // 1) Conflict vehicle does not stand still away from conflict (i.e. might recht conflict)
-        // 2) Leader is ahead of conflict or still moving
-        if (conflictGtuCanReachConflict && !leaderStandsOnConflict)
-        {
-            AnticipationInfo ttcC = AnticipationInfo.anticipateMovementFreeAcceleration(
-                    first.getDistance().plus(conflict.getConflictingLength()).plus(first.getLength()), first.getSpeed(),
-                    first.getBehavioralCharacteristics(), first.getCarFollowingModel(), first.getSpeedLimitInfo(), TIME_STEP);
-            // 3) Conflict vehicle will pass conflict before leader makes it passable, we may courtesy yield without loss
-            if (ttpD.getDuration().ge(ttcC.getDuration()))// .multiplyBy(behavioralCharacteristics.getParameter(TIME_FACTOR))
-            // .plus(behavioralCharacteristics.getParameter(MIN_GAP))))
+            Length required = conflict.getDistance().plus(typeCorrection)
+                    .plus(passableDistance(vehicleLength, behavioralCharacteristics)); // for ourselves
+            for (HeadwayGTU leader : leaders)
             {
-                // 4) Acceleration (constant) is comfortable (at initialization of courtesy yield)
-                Acceleration b = behavioralCharacteristics.getParameter(ParameterTypes.B);
-                Acceleration bReq = new Acceleration(.5 * speed.si * speed.si / conflict.getDistance().si, AccelerationUnit.SI);
-                if (bReq.lt(b))
+                if (leader.getSpeed().eq0())
                 {
-                    yieldPlans.setYieldPlan(conflict, first);
-                    return true;
+                    // first stand-still leader is not fully upstream of the conflict (in that case, ignore), and does not
+                    // allow sufficient space for all vehicles in between
+                    return leader.getDistance().ge(conflict.getDistance()) && required.ge(leader.getDistance());
                 }
+                required = required // add required distance for leaders
+                        .plus(passableDistance(leader.getLength(), leader.getBehavioralCharacteristics()));
             }
         }
-
-        // No initialization of courtesy yield plan
         return false;
 
     }
@@ -615,7 +549,7 @@ public final class ConflictUtil
             if (!leaders.isEmpty())
             {
                 distance = conflict.getDistance().minus(leaders.first().getDistance()).plus(conflict.getLength())
-                        .plus(passableDistance(Speed.ZERO, vehicleLength, behavioralCharacteristics));
+                        .plus(passableDistance(vehicleLength, behavioralCharacteristics));
                 ttpDz = AnticipationInfo.anticipateMovement(distance, leaders.first().getSpeed(), Acceleration.ZERO);
                 ttpDs = AnticipationInfo.anticipateMovement(distance, leaders.first().getSpeed(), b);
             }
@@ -814,17 +748,15 @@ public final class ConflictUtil
 
     /**
      * Returns a speed dependent distance needed behind the leader to completely pass the conflict.
-     * @param speed speed
      * @param vehicleLength vehicle length
      * @param behavioralCharacteristics behavioral characteristics
      * @return speed dependent distance needed behind the leader to completely pass the conflict
      * @throws ParameterException if parameter is not available
      */
-    private static Length passableDistance(final Speed speed, final Length vehicleLength,
+    private static Length passableDistance(final Length vehicleLength,
             final BehavioralCharacteristics behavioralCharacteristics) throws ParameterException
     {
-        return behavioralCharacteristics.getParameter(ParameterTypes.S0).plus(vehicleLength)
-                .plus(behavioralCharacteristics.getParameter(ParameterTypes.T).multiplyBy(speed));
+        return behavioralCharacteristics.getParameter(ParameterTypes.S0).plus(vehicleLength);
     }
 
     /**
@@ -849,12 +781,6 @@ public final class ConflictUtil
         /** */
         private static final long serialVersionUID = 20160811L;
 
-        /** Set of current plans. */
-        private final Map<String, String> yieldPlans = new HashMap<>();
-
-        /** Set of conflicts that are still actively considered for a yield plan. */
-        private final Set<String> activeYieldPlans = new HashSet<>();
-
         /** Phases of navigating an all-stop intersection per intersection. */
         private final HashMap<String, StopPhase> stopPhases = new HashMap<>();
 
@@ -868,44 +794,10 @@ public final class ConflictUtil
         private Length indicatorObjectDistance = null;
 
         /**
-         * Returns whether a plan exists for yielding at the conflict for the given conflict GTU.
-         * @param conflict conflict
-         * @param gtu conflicting GTU
-         * @return whether a plan exists for yielding at the conflict for the given conflict GTU
-         */
-        boolean isYieldPlan(final HeadwayConflict conflict, final HeadwayGTU gtu)
-        {
-            return this.yieldPlans.containsKey(conflict.getId()) && this.yieldPlans.get(conflict.getId()).equals(gtu.getId());
-        }
-
-        /**
-         * Sets or maintains the plan to yield at the conflict for the given conflict RSU.
-         * @param conflict conflict to yield at
-         * @param gtu conflicting GTU
-         */
-        void setYieldPlan(final HeadwayConflict conflict, final HeadwayGTU gtu)
-        {
-            this.yieldPlans.put(conflict.getId(), gtu.getId());
-            this.activeYieldPlans.add(conflict.getId());
-        }
-
-        /**
          * Clean any yield plan that was no longer kept active in the last evaluation of conflicts.
          */
         void cleanPlans()
         {
-            // remove any plan not represented in activePlans
-            Iterator<String> iterator = this.yieldPlans.keySet().iterator();
-            while (iterator.hasNext())
-            {
-                String conflictId = iterator.next();
-                if (!this.activeYieldPlans.contains(conflictId))
-                {
-                    iterator.remove();
-                }
-            }
-            // clear the activePlans for the next consideration of conflicts
-            this.activeYieldPlans.clear();
             this.indicatorIntent = TurnIndicatorIntent.NONE;
             this.indicatorObjectDistance = null;
         }

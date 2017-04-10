@@ -29,21 +29,27 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
     /** Remaining distance to perform required lane changes. */
     private final Length remainingDistance;
 
+    /** Whether this reason to change lane is due to a dead-end. */
+    private final boolean deadEnd;
+
     /**
      * Constructor.
      * @param requiredNumberOfLaneChanges required number of lane changes
      * @param remainingDistance remaining distance to perform required lane changes
+     * @param deadEnd whether this reason to change lane is due to a dead-end
      * @throws IllegalArgumentException if required number of lane changes or remaining distance is negative
      * @throws NullPointerException if remaining distance is null
      */
-    public InfrastructureLaneChangeInfo(final int requiredNumberOfLaneChanges, final Length remainingDistance)
+    public InfrastructureLaneChangeInfo(final int requiredNumberOfLaneChanges, final Length remainingDistance,
+            final boolean deadEnd)
     {
         Throw.when(requiredNumberOfLaneChanges < 0, IllegalArgumentException.class,
-            "Required number of lane changes may not be negative.");
+                "Required number of lane changes may not be negative.");
         Throw.whenNull(remainingDistance, "Remaining distance may not be null.");
         Throw.when(remainingDistance.si < 0, IllegalArgumentException.class, "Remaining distance may not be negative.");
         this.requiredNumberOfLaneChanges = requiredNumberOfLaneChanges;
         this.remainingDistance = remainingDistance;
+        this.deadEnd = deadEnd;
     }
 
     /**
@@ -62,13 +68,21 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
         return this.remainingDistance;
     }
 
+    /**
+     * @return whether this reason to change lane is due to a dead-end.
+     */
+    public boolean isDeadEnd()
+    {
+        return this.deadEnd;
+    }
+
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
     public String toString()
     {
         return "InfrastructureLaneChangeInfo [requiredNumberOfLaneChanges=" + this.requiredNumberOfLaneChanges
-            + ", remainingDistance=" + this.remainingDistance + "]";
+                + ", remainingDistance=" + this.remainingDistance + "]";
     }
 
     /** {@inheritDoc} */

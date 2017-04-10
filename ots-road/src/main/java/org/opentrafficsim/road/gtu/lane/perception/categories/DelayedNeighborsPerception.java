@@ -379,7 +379,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
         rearrangeNeighbors();
-        return emptyOnNull(this.firstLeaders.get(lat));
+        return this.firstLeaders.get(lat);
     }
 
     /** {@inheritDoc} */
@@ -388,7 +388,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
         rearrangeNeighbors();
-        return emptyOnNull(this.firstFollowers.get(lat));
+        return this.firstFollowers.get(lat);
     }
 
     /** {@inheritDoc} */
@@ -415,7 +415,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
     public SortedSet<HeadwayGTU> getLeaders(final RelativeLane lane)
     {
         rearrangeNeighbors();
-        return emptyOnNull(this.leaders.get(lane));
+        return this.leaders.get(lane);
     }
 
     /** {@inheritDoc} */
@@ -423,21 +423,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
     public SortedSet<HeadwayGTU> getFollowers(final RelativeLane lane)
     {
         rearrangeNeighbors();
-        return emptyOnNull(this.followers.get(lane));
-    }
-
-    /**
-     * Returns an empty set if the input is {@code null}, or the set itself.
-     * @param set set
-     * @return empty set if the input is {@code null}, or the set itself
-     */
-    private SortedSet<HeadwayGTU> emptyOnNull(final SortedSet<HeadwayGTU> set)
-    {
-        if (set == null)
-        {
-            return new TreeSet<>();
-        }
-        return set;
+        return this.followers.get(lane);
     }
 
     /**

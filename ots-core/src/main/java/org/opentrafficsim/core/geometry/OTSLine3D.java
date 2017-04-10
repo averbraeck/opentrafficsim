@@ -110,8 +110,8 @@ public class OTSLine3D implements Locatable, Serializable
         {
             if (pts[i - 1].x == pts[i].x && pts[i - 1].y == pts[i].y && pts[i - 1].z == pts[i].z)
             {
-                throw new OTSGeometryException("Degenerate OTSLine3D; point " + (i - 1) + " has the same x, y and z as point "
-                        + i);
+                throw new OTSGeometryException(
+                        "Degenerate OTSLine3D; point " + (i - 1) + " has the same x, y and z as point " + i);
             }
             this.lengthIndexedLine[i] = this.lengthIndexedLine[i - 1] + pts[i - 1].distanceSI(pts[i]);
         }
@@ -265,12 +265,10 @@ public class OTSLine3D implements Locatable, Serializable
             // The largest deviation is larger than epsilon.
             // Split the polyLine at the point with the maximum deviation. Process each sub list recursively and concatenate the
             // results
-            OTSLine3D first =
-                    new OTSLine3D(Arrays.copyOfRange(this.points, 0, splitIndex + 1)).noiseFilterRamerDouglasPeuker(epsilon,
-                            useHorizontalDistance);
-            OTSLine3D second =
-                    new OTSLine3D(Arrays.copyOfRange(this.points, splitIndex, this.points.length))
-                            .noiseFilterRamerDouglasPeuker(epsilon, useHorizontalDistance);
+            OTSLine3D first = new OTSLine3D(Arrays.copyOfRange(this.points, 0, splitIndex + 1))
+                    .noiseFilterRamerDouglasPeuker(epsilon, useHorizontalDistance);
+            OTSLine3D second = new OTSLine3D(Arrays.copyOfRange(this.points, splitIndex, this.points.length))
+                    .noiseFilterRamerDouglasPeuker(epsilon, useHorizontalDistance);
             return concatenate(epsilon, first, second);
         }
         catch (OTSGeometryException exception)
@@ -316,12 +314,10 @@ public class OTSLine3D implements Locatable, Serializable
         final double tooClose = 0.05; // 5 cm
         while (firstIndex < firstCoordinates.length && secondIndex < secondCoordinates.length)
         {
-            double firstRatio =
-                    firstIndex < firstCoordinates.length ? first.indexOf(firstCoordinates[firstIndex]) / firstLength
-                            : Double.MAX_VALUE;
-            double secondRatio =
-                    secondIndex < secondCoordinates.length ? second.indexOf(secondCoordinates[secondIndex]) / secondLength
-                            : Double.MAX_VALUE;
+            double firstRatio = firstIndex < firstCoordinates.length ? first.indexOf(firstCoordinates[firstIndex]) / firstLength
+                    : Double.MAX_VALUE;
+            double secondRatio = secondIndex < secondCoordinates.length
+                    ? second.indexOf(secondCoordinates[secondIndex]) / secondLength : Double.MAX_VALUE;
             double ratio;
             if (firstRatio < secondRatio)
             {
@@ -335,9 +331,8 @@ public class OTSLine3D implements Locatable, Serializable
             }
             Coordinate firstCoordinate = first.extractPoint(ratio * firstLength);
             Coordinate secondCoordinate = second.extractPoint(ratio * secondLength);
-            Coordinate resultCoordinate =
-                    new Coordinate((1 - ratio) * firstCoordinate.x + ratio * secondCoordinate.x, (1 - ratio)
-                            * firstCoordinate.y + ratio * secondCoordinate.y);
+            Coordinate resultCoordinate = new Coordinate((1 - ratio) * firstCoordinate.x + ratio * secondCoordinate.x,
+                    (1 - ratio) * firstCoordinate.y + ratio * secondCoordinate.y);
             if (null == prevCoordinate || resultCoordinate.distance(prevCoordinate) > tooClose)
             {
                 out.add(resultCoordinate);
@@ -390,12 +385,10 @@ public class OTSLine3D implements Locatable, Serializable
             int secondIndex = 0;
             while (firstIndex < firstCoordinates.length && secondIndex < secondCoordinates.length)
             {
-                double firstRatio =
-                        firstIndex < firstCoordinates.length ? first.indexOf(firstCoordinates[firstIndex]) / firstLength
-                                : Double.MAX_VALUE;
-                double secondRatio =
-                        secondIndex < secondCoordinates.length ? second.indexOf(secondCoordinates[secondIndex]) / secondLength
-                                : Double.MAX_VALUE;
+                double firstRatio = firstIndex < firstCoordinates.length
+                        ? first.indexOf(firstCoordinates[firstIndex]) / firstLength : Double.MAX_VALUE;
+                double secondRatio = secondIndex < secondCoordinates.length
+                        ? second.indexOf(secondCoordinates[secondIndex]) / secondLength : Double.MAX_VALUE;
                 double ratio;
                 if (firstRatio < secondRatio)
                 {
@@ -409,9 +402,8 @@ public class OTSLine3D implements Locatable, Serializable
                 }
                 Coordinate firstCoordinate = first.extractPoint(ratio * firstLength);
                 Coordinate secondCoordinate = second.extractPoint(ratio * secondLength);
-                Coordinate resultCoordinate =
-                        new Coordinate((1 - ratio) * firstCoordinate.x + ratio * secondCoordinate.x, (1 - ratio)
-                                * firstCoordinate.y + ratio * secondCoordinate.y);
+                Coordinate resultCoordinate = new Coordinate((1 - ratio) * firstCoordinate.x + ratio * secondCoordinate.x,
+                        (1 - ratio) * firstCoordinate.y + ratio * secondCoordinate.y);
                 if (null == prevCoordinate || resultCoordinate.distance(prevCoordinate) > tooClose)
                 {
                     out.add(resultCoordinate);
@@ -494,9 +486,9 @@ public class OTSLine3D implements Locatable, Serializable
         {
             if (lines[i - 1].getLast().distance(lines[i].getFirst()).si > toleranceSI)
             {
-                throw new OTSGeometryException("Lines are not connected: " + lines[i - 1].getLast() + " to "
-                        + lines[i].getFirst() + " distance is " + lines[i - 1].getLast().distance(lines[i].getFirst()).si
-                        + " > " + toleranceSI);
+                throw new OTSGeometryException(
+                        "Lines are not connected: " + lines[i - 1].getLast() + " to " + lines[i].getFirst() + " distance is "
+                                + lines[i - 1].getLast().distance(lines[i].getFirst()).si + " > " + toleranceSI);
             }
             size += lines[i].size() - 1;
         }
@@ -579,8 +571,8 @@ public class OTSLine3D implements Locatable, Serializable
     {
         if (Double.isNaN(start) || Double.isNaN(end) || start < 0 || start >= end || end > getLengthSI())
         {
-            throw new OTSGeometryException("Bad interval (" + start + ".." + end + "; length of this OTSLine3D is "
-                    + this.getLengthSI() + ")");
+            throw new OTSGeometryException(
+                    "Bad interval (" + start + ".." + end + "; length of this OTSLine3D is " + this.getLengthSI() + ")");
         }
         double cumulativeLength = 0;
         double nextCumulativeLength = 0;
@@ -638,8 +630,13 @@ public class OTSLine3D implements Locatable, Serializable
         }
         else
         {
-            pointList.add(OTSPoint3D.interpolate((end - cumulativeLength) / segmentLength, this.points[index - 1],
-                    this.points[index]));
+            OTSPoint3D point = OTSPoint3D.interpolate((end - cumulativeLength) / segmentLength, this.points[index - 1],
+                    this.points[index]);
+            // can be the same due to rounding
+            if (!point.equals(pointList.get(pointList.size() - 1)))
+            {
+                pointList.add(point);
+            }
         }
         try
         {
@@ -677,8 +674,8 @@ public class OTSLine3D implements Locatable, Serializable
     {
         if (points.length < 2)
         {
-            throw new OTSGeometryException("Degenerate OTSLine3D; has " + points.length + " point"
-                    + (points.length != 1 ? "s" : ""));
+            throw new OTSGeometryException(
+                    "Degenerate OTSLine3D; has " + points.length + " point" + (points.length != 1 ? "s" : ""));
         }
         return createAndCleanOTSLine3D(new ArrayList<>(Arrays.asList(points)));
     }
@@ -941,8 +938,8 @@ public class OTSLine3D implements Locatable, Serializable
             double fraction = len / (this.lengthIndexedLine[1] - this.lengthIndexedLine[0]);
             OTSPoint3D p1 = this.points[0];
             OTSPoint3D p2 = this.points[1];
-            return new DirectedPoint(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y), p1.z + fraction
-                    * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+            return new DirectedPoint(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y),
+                    p1.z + fraction * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
         }
 
         // position beyond end point -- extrapolate
@@ -952,8 +949,8 @@ public class OTSLine3D implements Locatable, Serializable
         double fraction = len / (this.lengthIndexedLine[n1] - this.lengthIndexedLine[n2]);
         OTSPoint3D p1 = this.points[n2];
         OTSPoint3D p2 = this.points[n1];
-        return new DirectedPoint(p2.x + fraction * (p2.x - p1.x), p2.y + fraction * (p2.y - p1.y), p2.z + fraction
-                * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+        return new DirectedPoint(p2.x + fraction * (p2.x - p1.x), p2.y + fraction * (p2.y - p1.y),
+                p2.z + fraction * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
     }
 
     /**
@@ -1045,8 +1042,8 @@ public class OTSLine3D implements Locatable, Serializable
                 return mid;
             }
         }
-        throw new OTSGeometryException("Could not find position " + pos + " on line with length indexes: "
-                + this.lengthIndexedLine);
+        throw new OTSGeometryException(
+                "Could not find position " + pos + " on line with length indexes: " + this.lengthIndexedLine);
 
         // for (int i = 0; i < this.lengthIndexedLine.length - 2; i++)
         // {
@@ -1117,8 +1114,8 @@ public class OTSLine3D implements Locatable, Serializable
         double fraction = remainder / (this.lengthIndexedLine[index + 1] - this.lengthIndexedLine[index]);
         OTSPoint3D p1 = this.points[index];
         OTSPoint3D p2 = this.points[index + 1];
-        return new DirectedPoint(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y), p1.z + fraction
-                * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+        return new DirectedPoint(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y),
+                p1.z + fraction * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
     }
 
     /**
@@ -1148,9 +1145,8 @@ public class OTSLine3D implements Locatable, Serializable
         double fraction = remainder / (this.lengthIndexedLine[index + 1] - this.lengthIndexedLine[index]);
         OTSPoint3D p1 = this.points[index];
         OTSPoint3D p2 = this.points[index + 1];
-        OTSPoint3D newLastPoint =
-                new OTSPoint3D(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y), p1.z + fraction
-                        * (p2.z - p1.z));
+        OTSPoint3D newLastPoint = new OTSPoint3D(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y),
+                p1.z + fraction * (p2.z - p1.z));
         OTSPoint3D[] coords = new OTSPoint3D[index + 2];
         for (int i = 0; i <= index; i++)
         {
@@ -1436,14 +1432,12 @@ public class OTSLine3D implements Locatable, Serializable
                 OTSPoint3D parStartPoint;
                 try
                 {
-                    parStartPoint =
-                            OTSPoint3D.intersectionOfLines(prevOfsSeg.get(0), prevOfsSeg.get(1), nextOfsSeg.get(0),
-                                    nextOfsSeg.get(1));
+                    parStartPoint = OTSPoint3D.intersectionOfLines(prevOfsSeg.get(0), prevOfsSeg.get(1), nextOfsSeg.get(0),
+                            nextOfsSeg.get(1));
                     if (parStartPoint == null)
                     {
-                        parStartPoint =
-                                new OTSPoint3D((prevOfsSeg.get(1).x + nextOfsSeg.get(0).x) / 2,
-                                        (prevOfsSeg.get(1).y + nextOfsSeg.get(0).y) / 2);
+                        parStartPoint = new OTSPoint3D((prevOfsSeg.get(1).x + nextOfsSeg.get(0).x) / 2,
+                                (prevOfsSeg.get(1).y + nextOfsSeg.get(0).y) / 2);
                     }
                 }
                 catch (OTSGeometryException oge)
@@ -1461,14 +1455,12 @@ public class OTSLine3D implements Locatable, Serializable
                     OTSPoint3D parEndPoint;
                     try
                     {
-                        parEndPoint =
-                                OTSPoint3D.intersectionOfLines(prevOfsSeg.get(0), prevOfsSeg.get(1), nextOfsSeg.get(0),
-                                        nextOfsSeg.get(1));
+                        parEndPoint = OTSPoint3D.intersectionOfLines(prevOfsSeg.get(0), prevOfsSeg.get(1), nextOfsSeg.get(0),
+                                nextOfsSeg.get(1));
                         if (parEndPoint == null)
                         {
-                            parEndPoint =
-                                    new OTSPoint3D((prevOfsSeg.get(1).x + nextOfsSeg.get(0).x) / 2,
-                                            (prevOfsSeg.get(1).y + nextOfsSeg.get(0).y) / 2);
+                            parEndPoint = new OTSPoint3D((prevOfsSeg.get(1).x + nextOfsSeg.get(0).x) / 2,
+                                    (prevOfsSeg.get(1).y + nextOfsSeg.get(0).y) / 2);
                         }
                     }
                     catch (OTSGeometryException oge)
@@ -1572,9 +1564,8 @@ public class OTSLine3D implements Locatable, Serializable
         double deltaY = maxY - minY; // XXX: was Math.max(maxY - minY, 0.5);
         double deltaZ = maxZ - minZ; // XXX: was Math.max(maxZ - minZ, 0.5);
         // XXX: WRONG: this.bounds = new BoundingBox(deltaX, deltaY, deltaZ);
-        this.bounds =
-                new BoundingBox(new Point3d(-deltaX / 2.0, -deltaY / 2.0, -deltaZ / 2.0), new Point3d(deltaX / 2, deltaY / 2,
-                        deltaZ / 2));
+        this.bounds = new BoundingBox(new Point3d(-deltaX / 2.0, -deltaY / 2.0, -deltaZ / 2.0),
+                new Point3d(deltaX / 2, deltaY / 2, deltaZ / 2));
         this.envelope = new Envelope(minX, maxX, minY, maxY);
     }
 
@@ -1683,18 +1674,15 @@ public class OTSLine3D implements Locatable, Serializable
      */
     public static void main(final String[] args) throws OTSGeometryException
     {
-        OTSLine3D line =
-                new OTSLine3D(new OTSPoint3D(-263.811, -86.551, 1.180), new OTSPoint3D(-262.945, -84.450, 1.180),
-                        new OTSPoint3D(-261.966, -82.074, 1.180), new OTSPoint3D(-260.890, -79.464, 1.198), new OTSPoint3D(
-                                -259.909, -76.955, 1.198), new OTSPoint3D(-258.911, -74.400, 1.198), new OTSPoint3D(-257.830,
-                                -71.633, 1.234));
+        OTSLine3D line = new OTSLine3D(new OTSPoint3D(-263.811, -86.551, 1.180), new OTSPoint3D(-262.945, -84.450, 1.180),
+                new OTSPoint3D(-261.966, -82.074, 1.180), new OTSPoint3D(-260.890, -79.464, 1.198),
+                new OTSPoint3D(-259.909, -76.955, 1.198), new OTSPoint3D(-258.911, -74.400, 1.198),
+                new OTSPoint3D(-257.830, -71.633, 1.234));
         System.out.println(line.toExcel());
-        double[] relativeFractions =
-                new double[] { 0.0, 0.19827228089475762, 0.30549496392494213, 0.5824753163948581, 0.6815307752261827,
-                        0.7903990449840241, 0.8942375145295614, 1.0 };
-        double[] offsets =
-                new double[] { 2.9779999256134, 4.6029999256134, 3.886839156071996, 2.3664845198627207, 1.7858981925396709,
-                        1.472348149010167, 2.0416709053157285, 2.798692100483229 };
+        double[] relativeFractions = new double[] { 0.0, 0.19827228089475762, 0.30549496392494213, 0.5824753163948581,
+                0.6815307752261827, 0.7903990449840241, 0.8942375145295614, 1.0 };
+        double[] offsets = new double[] { 2.9779999256134, 4.6029999256134, 3.886839156071996, 2.3664845198627207,
+                1.7858981925396709, 1.472348149010167, 2.0416709053157285, 2.798692100483229 };
         System.out.println(line.offsetLine(relativeFractions, offsets).toExcel());
     }
 }

@@ -79,7 +79,6 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             return;
         }
         updateCrossSection();
-        checkLaneIsInCrossSection(lane);
 
         // start at requested lane
         SortedSet<InfrastructureLaneChangeInfo> resultSet = new TreeSet<>();
@@ -88,7 +87,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         {
             if (!record.allowsRoute(getGtu().getStrategicalPlanner().getRoute(), getGtu().getGTUType()))
             {
-                resultSet.add(new InfrastructureLaneChangeInfo(1, Length.ZERO));
+                resultSet.add(new InfrastructureLaneChangeInfo(1, Length.ZERO, record.isDeadEnd()));
                 this.infrastructureLaneChangeInfo.put(lane, new TimeStampedObject<>(resultSet, getTimestamp()));
                 return;
             }
@@ -99,8 +98,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         }
         Map<LaneStructureRecord, InfrastructureLaneChangeInfo> currentSet = new HashMap<>();
         Map<LaneStructureRecord, InfrastructureLaneChangeInfo> nextSet = new HashMap<>();
-        currentSet.put(record,
-                new InfrastructureLaneChangeInfo(0, record.getLane().getLength().plus(record.getStartDistance())));
+        currentSet.put(record, new InfrastructureLaneChangeInfo(0, record.getLane().getLength().plus(record.getStartDistance()),
+                record.isDeadEnd()));
         while (!currentSet.isEmpty())
         {
             // move lateral
@@ -111,7 +110,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
                 {
                     InfrastructureLaneChangeInfo info =
                             new InfrastructureLaneChangeInfo(nextSet.get(laneRecord).getRequiredNumberOfLaneChanges() + 1,
-                                    laneRecord.getStartDistance().plus(laneRecord.getLane().getLength()));
+                                    laneRecord.getStartDistance().plus(laneRecord.getLane().getLength()),
+                                    laneRecord.getLeft().isDeadEnd());
                     nextSet.put(laneRecord.getLeft(), info);
                     laneRecord = laneRecord.getLeft();
                 }
@@ -122,7 +122,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
                 {
                     InfrastructureLaneChangeInfo info =
                             new InfrastructureLaneChangeInfo(nextSet.get(laneRecord).getRequiredNumberOfLaneChanges() + 1,
-                                    laneRecord.getStartDistance().plus(laneRecord.getLane().getLength()));
+                                    laneRecord.getStartDistance().plus(laneRecord.getLane().getLength()),
+                                    laneRecord.getRight().isDeadEnd());
                     nextSet.put(laneRecord.getRight(), info);
                     laneRecord = laneRecord.getRight();
                 }
@@ -150,7 +151,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
                     {
                         InfrastructureLaneChangeInfo info =
                                 new InfrastructureLaneChangeInfo(currentSet.get(laneRecord).getRequiredNumberOfLaneChanges(),
-                                        currentSet.get(laneRecord).getRemainingDistance().plus(next.getLane().getLength()));
+                                        currentSet.get(laneRecord).getRemainingDistance().plus(next.getLane().getLength()),
+                                        next.isDeadEnd());
                         nextSet.put(next, info);
                     }
                     // take best ok
@@ -293,11 +295,25 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         checkLaneIsInCrossSection(lane);
         LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(lane);
         Length dist = Length.ZERO;
-        while (record != null && ((lat.isLeft() && record.getLeft() != null) || (lat.isRight() && record.getRight() != null)))
+        if ((lat.isLeft() && record.getLeft() != null) || (lat.isRight() && record.getRight() != null))
         {
-            dist = record.getStartDistance().plus(record.getLane().getLength());
-            // TODO splits
-            record = record.getNext().isEmpty() ? null : record.getNext().get(0);
+            while (record != null
+                    && ((lat.isLeft() && record.getLeft() != null) || (lat.isRight() && record.getRight() != null)))
+            {
+                dist = record.getStartDistance().plus(record.getLane().getLength());
+                // TODO splits
+                record = record.getNext().isEmpty() ? null : record.getNext().get(0);
+            }
+        }
+        else
+        {
+            while (record != null
+                    && ((lat.isLeft() && record.getLeft() == null) || (lat.isRight() && record.getRight() == null)))
+            {
+                dist = record.getStartDistance().plus(record.getLane().getLength()).neg();
+                // TODO splits
+                record = record.getNext().isEmpty() ? null : record.getNext().get(0);
+            }
         }
         if (this.legalLaneChangePossibility.get(lane) == null)
         {

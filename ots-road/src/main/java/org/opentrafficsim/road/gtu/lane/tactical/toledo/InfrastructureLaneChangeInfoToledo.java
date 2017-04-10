@@ -31,23 +31,13 @@ public class InfrastructureLaneChangeInfoToledo extends InfrastructureLaneChange
     /**
      * @param requiredNumberOfLaneChanges number of lane changes
      * @param remainingDistance remaining distance
-     */
-    public InfrastructureLaneChangeInfoToledo(final int requiredNumberOfLaneChanges, final Length remainingDistance)
-    {
-        super(requiredNumberOfLaneChanges, remainingDistance);
-        this.splitNumber = 0;
-    }
-
-    /**
-     * @param requiredNumberOfLaneChanges number of lane changes
-     * @param remainingDistance remaining distance
      * @param splitNumber number of the split along the road
      * @throws GTUException if the split number is below 1
      */
     public InfrastructureLaneChangeInfoToledo(final int requiredNumberOfLaneChanges, final Length remainingDistance,
         final int splitNumber) throws GTUException
     {
-        super(requiredNumberOfLaneChanges, remainingDistance);
+        super(requiredNumberOfLaneChanges, remainingDistance, splitNumber > 0);
         Throw.when(splitNumber <= 0, GTUException.class, "Split number should be at least 1.");
         this.splitNumber = splitNumber;
     }

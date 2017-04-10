@@ -138,17 +138,18 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     @Override
     public final void updateGtuAlongside(final LateralDirectionality lat) throws GTUException, ParameterException
     {
+
         checkLateralDirectionality(lat);
         // check if any GTU is downstream of the rear, within the vehicle length
         SortedSet<HeadwayGTU> headwaySet = getFirstDownstreamGTUs(lat, RelativePosition.REAR, RelativePosition.FRONT);
-        if (!headwaySet.isEmpty() && headwaySet.first().getDistance().le(getGtu().getLength()))
+        if (!headwaySet.isEmpty() && headwaySet.first().getDistance().le0())
         {
             this.gtuAlongside.put(lat, new TimeStampedObject<>(true, getTimestamp()));
             return;
         }
         // check if any GTU is upstream of the front, within the vehicle length
         headwaySet = getFirstUpstreamGTUs(lat, RelativePosition.FRONT, RelativePosition.REAR);
-        if (!headwaySet.isEmpty() && headwaySet.first().getDistance().le(getGtu().getLength()))
+        if (!headwaySet.isEmpty() && headwaySet.first().getDistance().le0())
         {
             this.gtuAlongside.put(lat, new TimeStampedObject<>(true, getTimestamp()));
             return;
@@ -173,22 +174,19 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
             throws GTUException, ParameterException
     {
         SortedSet<HeadwayGTU> headwaySet = new TreeSet<>();
-        Map<LaneStructureRecord, Length> currentSet = new HashMap<>();
-        Map<LaneStructureRecord, Length> nextSet = new HashMap<>();
+        Set<LaneStructureRecord> currentSet = new HashSet<>();
+        Set<LaneStructureRecord> nextSet = new HashSet<>();
         LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(new RelativeLane(lat, 1));
-        double fraction = getGtu().fractionalPosition(getPerception().getLaneStructure().getRootLSR().getLane(),
-                getGtu().getRelativePositions().get(egoRelativePosition));
-        Length pos = record.getLane().getLength().multiplyBy(fraction);
-        currentSet.put(record, pos.neg()); // by later adding lane length, we get distance to start of next lane
+        Length dxSearch = getGtu().getRelativePositions().get(egoRelativePosition).getDx();
+        Length dxHeadway = getGtu().getFront().getDx();
+        branchUpstream(record, dxSearch, currentSet);
         // move downstream over branches as long as no vehicles are found
         while (!currentSet.isEmpty())
         {
-            Iterator<LaneStructureRecord> iterator = currentSet.keySet().iterator();
+            Iterator<LaneStructureRecord> iterator = currentSet.iterator();
             while (iterator.hasNext())
             {
                 record = iterator.next();
-                // we search downstream of "minus current distance to start of lane" (is pos in first loop)
-                // in this way, GTU's are found who's rear is not on the lane of its reference point
                 /*-
                  *                                             _ _ _ ______________________ _ _ _
                  *                                                             _|___    |
@@ -196,28 +194,50 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
                  *                                             _ _ _ ___________|_______|__ _ _ _ 
                  *                                                     (--------) negative distance
                  */
-                LaneBasedGTU down = record.getLane().getGtuAhead(currentSet.get(record).neg(), record.getDirection(),
-                        otherRelativePosition, getTimestamp());
+                LaneBasedGTU down = record.getLane().getGtuAhead(record.getStartDistance().neg().plus(dxSearch),
+                        record.getDirection(), otherRelativePosition, getTimestamp());
                 if (down != null)
                 {
                     // GTU found, add to set
                     headwaySet.add(this.headwayGtuType.createHeadwayGtu(down,
-                            currentSet.get(record).plus(down.position(record.getLane(), down.getRear()))));
+                            record.getStartDistance().plus(down.position(record.getLane(), down.getRear())).minus(dxHeadway)));
                 }
                 else
                 {
                     // no GTU found, search on next lanes in next loop and maintain cumulative length
-                    Length length = currentSet.get(record).plus(record.getLane().getLength());
                     for (LaneStructureRecord next : record.getNext())
                     {
-                        nextSet.put(next, length);
+                        nextSet.add(next);
                     }
                 }
             }
             currentSet = nextSet;
-            nextSet = new HashMap<>();
+            nextSet = new HashSet<>();
         }
         return headwaySet;
+    }
+
+    /**
+     * Returns a set of lanes to start from for a downstream search, upstream of the reference lane if the tail is before this
+     * lane.
+     * @param record start record
+     * @param dx distance between reference point and point to search from
+     * @param set set of lanes that is recursively built up, starting with the reference record
+     */
+    private void branchUpstream(final LaneStructureRecord record, final Length dx, final Set<LaneStructureRecord> set)
+    {
+        Length pos = record.getStartDistance().neg().minus(dx);
+        if (pos.lt0())
+        {
+            for (LaneStructureRecord prev : record.getPrev())
+            {
+                branchUpstream(prev, dx, set);
+            }
+        }
+        else
+        {
+            set.add(record);
+        }
     }
 
     /**
@@ -235,30 +255,19 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
             throws GTUException, ParameterException
     {
         SortedSet<HeadwayGTU> headwaySet = new TreeSet<>();
-        Map<LaneStructureRecord, Length> currentSet = new HashMap<>();
-        Map<LaneStructureRecord, Length> prevSet = new HashMap<>();
-        LaneStructureRecord root = getPerception().getLaneStructure().getRootLSR();
+        Set<LaneStructureRecord> currentSet = new HashSet<>();
+        Set<LaneStructureRecord> prevSet = new HashSet<>();
         LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(new RelativeLane(lat, 1));
-        double fraction = getGtu().fractionalPosition(root.getLane(), getGtu().getRelativePositions().get(egoRelativePosition));
-        Length pos;
-        if (root.getLane().getParentLink().equals(record.getLane().getParentLink()))
-        {
-            pos = record.getLane().getLength().multiplyBy(fraction);
-        }
-        else
-        {
-            pos = record.getStartDistance().neg();
-        }
-        currentSet.put(record, pos.minus(record.getLane().getLength())); // adding lane length gets distance to prev's lane end
+        Length dxSearch = getGtu().getRelativePositions().get(egoRelativePosition).getDx();
+        Length dxHeadway = getGtu().getRear().getDx();
+        branchDownstream(record, dxSearch, currentSet);
         // move upstream over branches as long as no vehicles are found
         while (!currentSet.isEmpty())
         {
-            Iterator<LaneStructureRecord> iterator = currentSet.keySet().iterator();
+            Iterator<LaneStructureRecord> iterator = currentSet.iterator();
             while (iterator.hasNext())
             {
                 record = iterator.next();
-                // we search upstream of "distance to end of lane + lane length" (is pos in first loop)
-                // in this way, GTU's are found who's front is not on the lane of its reference point
                 /*-
                  * _ _ _ ______________________ _ _ _ 
                  *         |    ___|_   
@@ -266,28 +275,50 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
                  * _ _ _ __|_______|___________ _ _ _ 
                  *         (----------------) distance
                  */
-                LaneBasedGTU up = record.getLane().getGtuBehind(currentSet.get(record).plus(record.getLane().getLength()),
+                LaneBasedGTU up = record.getLane().getGtuBehind(record.getStartDistance().neg().plus(dxSearch),
                         record.getDirection(), otherRelativePosition, getTimestamp());
                 if (up != null)
                 {
                     // GTU found, add to set
-                    Length distFromEnd = record.getLane().getLength().minus(up.position(record.getLane(), up.getFront()));
-                    headwaySet.add(this.headwayGtuType.createHeadwayGtu(up, currentSet.get(record).plus(distFromEnd)));
+                    headwaySet.add(this.headwayGtuType.createHeadwayGtu(up, record.getStartDistance().neg()
+                            .minus(up.position(record.getLane(), up.getFront())).plus(dxHeadway)));
                 }
                 else
                 {
                     // no GTU found, search on next lanes in next loop and maintain cumulative length
-                    Length length = currentSet.get(record).plus(record.getLane().getLength());
                     for (LaneStructureRecord prev : record.getPrev())
                     {
-                        prevSet.put(prev, length);
+                        prevSet.add(prev);
                     }
                 }
             }
             currentSet = prevSet;
-            prevSet = new HashMap<>();
+            prevSet = new HashSet<>();
         }
         return headwaySet;
+    }
+
+    /**
+     * Returns a set of lanes to start from for an upstream search, downstream of the reference lane if the front is after this
+     * lane.
+     * @param record start record
+     * @param dx distance between reference point and point to search from
+     * @param set set of lanes that is recursively built up, starting with the reference record
+     */
+    private void branchDownstream(final LaneStructureRecord record, final Length dx, final Set<LaneStructureRecord> set)
+    {
+        Length pos = record.getStartDistance().neg().plus(dx);
+        if (pos.gt(record.getLane().getLength()))
+        {
+            for (LaneStructureRecord next : record.getNext())
+            {
+                branchDownstream(next, dx, set);
+            }
+        }
+        else
+        {
+            set.add(record);
+        }
     }
 
     /** {@inheritDoc} */
@@ -444,7 +475,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
         checkLateralDirectionality(lat);
-        return this.firstFollowers.get(lat).getObject();
+        return getObjectOrNull(this.firstFollowers.get(lat));
     }
 
     /** {@inheritDoc} */
@@ -453,21 +484,21 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
         checkLateralDirectionality(lat);
-        return this.gtuAlongside.get(lat).getObject();
+        return getObjectOrNull(this.gtuAlongside.get(lat));
     }
 
     /** {@inheritDoc} */
     @Override
     public final SortedSet<HeadwayGTU> getLeaders(final RelativeLane lane)
     {
-        return this.leaders.get(lane).getObject();
+        return getObjectOrNull(this.leaders.get(lane));
     }
 
     /** {@inheritDoc} */
     @Override
     public final SortedSet<HeadwayGTU> getFollowers(final RelativeLane lane)
     {
-        return this.followers.get(lane).getObject();
+        return getObjectOrNull(this.followers.get(lane));
     }
 
     /**

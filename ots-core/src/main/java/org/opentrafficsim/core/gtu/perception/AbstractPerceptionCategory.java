@@ -3,6 +3,7 @@ package org.opentrafficsim.core.gtu.perception;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.Type;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -70,4 +71,19 @@ public abstract class AbstractPerceptionCategory extends Type<AbstractPerception
         return getGtu().getSimulator().getSimulatorTime().getTime();
     }
 
+    /**
+     * Returns the object inside a time stamped object, or {@code null} if it's null.
+     * @param object time stamped object
+     * @param <T> type of time stamped object
+     * @return the object inside a time stamped object, or {@code null} if it's null
+     */
+    protected final <T> T getObjectOrNull(final TimeStampedObject<T> object)
+    {
+        if (object == null)
+        {
+            return null;
+        }
+        return object.getObject();
+    }
+    
 }
