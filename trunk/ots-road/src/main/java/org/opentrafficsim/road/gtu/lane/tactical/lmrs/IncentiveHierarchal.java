@@ -1,11 +1,20 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import java.util.SortedSet;
+
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 
 /**
@@ -19,16 +28,54 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
+// TODO keep left or right rules
 public class IncentiveHierarchal implements VoluntaryIncentive
 {
 
     /** {@inheritDoc} */
     @Override
     public final Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics,
-        final LanePerception perception, final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
-        final Desire voluntaryDesire) throws ParameterException, OperationalPlanException
+            final LanePerception perception, final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
+            final Desire voluntaryDesire) throws ParameterException, OperationalPlanException
     {
-        return new Desire(0, 0); // XXXXX STUB
+        double dLeft = 0;
+        double dRight = 0;
+        double hierarchy = behavioralCharacteristics.getParameter(LmrsParameters.HIERARCHY);
+        NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
+        Speed vDes = carFollowingModel.desiredSpeed(behavioralCharacteristics,
+                perception.getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(RelativeLane.CURRENT)
+                        .getSpeedLimitInfo(Length.ZERO));
+        // change right to get out of the way
+        if (mandatoryDesire.getRight() >= 0.0)
+        {
+            SortedSet<HeadwayGTU> followers = neighbors.getFollowers(RelativeLane.CURRENT);
+            if (!followers.isEmpty())
+            {
+                HeadwayGTU follower = followers.first();
+                Speed vDesFollower = follower.getCarFollowingModel().desiredSpeed(follower.getBehavioralCharacteristics(),
+                        follower.getSpeedLimitInfo());
+                if (vDes.lt(vDesFollower))
+                {
+                    dRight = hierarchy;
+                }
+            }
+        }
+        // stay right to keep out of the way
+        if (mandatoryDesire.getLeft() <= 0.0)
+        {
+            SortedSet<HeadwayGTU> followers = neighbors.getFollowers(RelativeLane.LEFT);
+            if (!followers.isEmpty())
+            {
+                HeadwayGTU follower = followers.first();
+                Speed vDesFollower = follower.getCarFollowingModel().desiredSpeed(follower.getBehavioralCharacteristics(),
+                        follower.getSpeedLimitInfo());
+                if (vDes.lt(vDesFollower))
+                {
+                    dLeft = -hierarchy;
+                }
+            }
+        }
+        return new Desire(dLeft, dRight); // XXXXX STUB
     }
 
     /** {@inheritDoc} */

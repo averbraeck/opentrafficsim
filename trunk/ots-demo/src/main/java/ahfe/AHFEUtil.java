@@ -70,7 +70,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -230,9 +231,8 @@ public final class AHFEUtil
 
         TimeVector timeVector = new TimeVector(new double[] { 0, 360, 1560, 2160, 3960 }, TimeUnit.SI, StorageType.DENSE);
         double leftLeft = leftDemand.si * leftFraction;
-        FrequencyVector leftLeftDemandPattern =
-                new FrequencyVector(new double[] { leftLeft * 0.5, leftLeft * 0.5, leftLeft, leftLeft, 0.0 },
-                        FrequencyUnit.SI, StorageType.DENSE);
+        FrequencyVector leftLeftDemandPattern = new FrequencyVector(
+                new double[] { leftLeft * 0.5, leftLeft * 0.5, leftLeft, leftLeft, 0.0 }, FrequencyUnit.SI, StorageType.DENSE);
         double leftRight = leftDemand.si * (1 - leftFraction);
         FrequencyVector leftRightDemandPattern =
                 new FrequencyVector(new double[] { leftRight * 0.5, leftRight * 0.5, leftRight, leftRight, 0.0 },
@@ -242,9 +242,9 @@ public final class AHFEUtil
                 new FrequencyVector(new double[] { rightLeft * 0.5, rightLeft * 0.5, rightLeft, rightLeft, 0.0 },
                         FrequencyUnit.SI, StorageType.DENSE);
         double rightRight = rightDemand.si * (1 - leftFraction);
-        FrequencyVector rightRightDemandPattern = new FrequencyVector(
-                new double[] { rightRight * 0.5, rightRight * 0.5, rightRight, rightRight, 0.0 }, FrequencyUnit.SI,
-                StorageType.DENSE);
+        FrequencyVector rightRightDemandPattern =
+                new FrequencyVector(new double[] { rightRight * 0.5, rightRight * 0.5, rightRight, rightRight, 0.0 },
+                        FrequencyUnit.SI, StorageType.DENSE);
         // This defaults to stepwise interpolation, should have been linear.
         HeadwayGeneratorDemand leftLeftHeadways = new HeadwayGeneratorDemand(timeVector, leftLeftDemandPattern, simulator);
         HeadwayGeneratorDemand leftRightHeadways = new HeadwayGeneratorDemand(timeVector, leftRightDemandPattern, simulator);
@@ -374,8 +374,7 @@ public final class AHFEUtil
         {
             BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
             behavioralCharacteristics.setDefaultParameters(ParameterTypes.class);
-            behavioralCharacteristics.setDefaultParameters(LmrsUtil.class);
-            behavioralCharacteristics.setDefaultParameters(IncentiveSpeedWithCourtesy.class);
+            behavioralCharacteristics.setDefaultParameters(LmrsParameters.class);
             behavioralCharacteristics.setAll(this.defaultCarFollowingBehavioralCharacteristics);
             return behavioralCharacteristics;
         }
@@ -385,7 +384,7 @@ public final class AHFEUtil
         public final LMRS create(final LaneBasedGTU gtu) throws GTUException
         {
             LMRS lmrs = new LMRS(this.carFollowingModelFactory.generateCarFollowingModel(), gtu,
-                    this.perceptionFactory.generatePerception(gtu));
+                    this.perceptionFactory.generatePerception(gtu), Synchronization.PASSIVE);
             lmrs.addMandatoryIncentive(new IncentiveRoute());
             lmrs.addVoluntaryIncentive(new IncentiveSpeedWithCourtesy());
             if (gtu.getGTUType().getId().equals("car"))

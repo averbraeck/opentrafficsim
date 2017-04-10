@@ -3,16 +3,13 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 import java.util.SortedSet;
 
 import org.djunits.unit.DimensionlessUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeSpeed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -31,6 +28,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.ConflictPlans;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -59,11 +57,6 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
 {
 
-    /** Anticipation speed difference at full lane change desired. */
-    public static final ParameterTypeSpeed VGAIN =
-            new ParameterTypeSpeed("vGain", "Anticipation speed difference at " + "full lane change desired.",
-                    new Speed(69.6, SpeedUnit.KM_PER_HOUR), AbstractParameterType.Check.POSITIVE);
-
     /** {@inheritDoc} */
     @Override
     public final Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics,
@@ -82,7 +75,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
 
         // gather some info
         Speed vCur = anticipationSpeed(RelativeLane.CURRENT, behavioralCharacteristics, perception, carFollowingModel);
-        Speed vGain = behavioralCharacteristics.getParameter(VGAIN);
+        Speed vGain = behavioralCharacteristics.getParameter(LmrsParameters.VGAIN);
 
         // calculate aGain (default 1; lower as acceleration is higher than 0)
         Dimensionless aGain;

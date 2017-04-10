@@ -20,6 +20,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
@@ -177,8 +178,12 @@ public class LaneStructure implements Serializable
             this.relativeLaneMap.put(relativeLane, new HashSet<>());
         }
         this.relativeLaneMap.get(relativeLane).add(lsr);
-        if (lsr.getStartDistance().le0() && lsr.getStartDistance().plus(lsr.getLane().getLength()).ge0()
-                && !this.crossSectionRecords.containsKey(relativeLane))
+        if (lsr.getStartDistance().le0() && lsr.getStartDistance().plus(lsr.getLane().getLength()).gt0())
+        {
+            this.crossSectionRecords.put(relativeLane, lsr);
+        }
+        if (lsr.getStartDistance().gt0() && (!this.crossSectionRecords.containsKey(relativeLane)
+                || this.crossSectionRecords.get(relativeLane).getStartDistance().gt(lsr.getStartDistance())))
         {
             this.crossSectionRecords.put(relativeLane, lsr);
         }
@@ -417,9 +422,10 @@ public class LaneStructure implements Serializable
     }
 
     /**
-     * Check whether the lane structure allows a lane change. There needs to be a lane, and the nose needs to be able to arrive
-     * on an accessible lane, should it be past the current lane length. This method is only suitable for instantaneous lane
-     * changes, or lane changes at zero speed. For lane changes that progress longitudinally, additional check are required.
+     * Check whether the lane structure allows a lane change. There needs to be a lane, and the nose and tail need to be able to
+     * arrive on an accessible lane, should it be past or before the current lane length. This method is only suitable for
+     * instantaneous lane changes, or lane changes at zero speed. For lane changes that progress longitudinally, additional
+     * check are required.
      * @param lat direction of lane change
      * @param perception perception
      * @return whether the lane structure allows a lane change
@@ -427,6 +433,7 @@ public class LaneStructure implements Serializable
      */
     public boolean canChange(final LateralDirectionality lat, final LanePerception perception) throws OperationalPlanException
     {
+        
         // is there a lane?
         if ((lat.isLeft() && this.rootLSR.getLeft() == null) || (lat.isRight() && this.rootLSR.getRight() == null))
         {
@@ -452,6 +459,35 @@ public class LaneStructure implements Serializable
                     }
                 }
                 if (!noseOk)
+                {
+                    return false;
+                }
+            }
+        }
+        catch (GTUException | NetworkException exception)
+        {
+            throw new OperationalPlanException("Could not obtain GTU or lane to check nose for lane change.", exception);
+        }
+
+        // tail ok?
+        try
+        {
+            Length tail = perception.getGtu().getRear().getDx();
+
+            if (!this.rootLSR.getPrev().isEmpty() && this.rootLSR.getStartDistance().gt(tail))
+            {
+                Route route = perception.getGtu().getStrategicalPlanner().getRoute();
+                GTUType gtuType = perception.getGtu().getGTUType();
+                boolean tailOk = false;
+                for (LaneStructureRecord prev : this.rootLSR.getPrev())
+                {
+                    if ((lat.isLeft() && prev.getLeft() != null && prev.getLeft().allowsRoute(route, gtuType))
+                            || (lat.isRight() && prev.getRight() != null && prev.getRight().allowsRoute(route, gtuType)))
+                    {
+                        tailOk = true;
+                    }
+                }
+                if (!tailOk)
                 {
                     return false;
                 }

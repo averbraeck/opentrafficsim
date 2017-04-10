@@ -7,7 +7,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 
 /**
@@ -37,7 +37,7 @@ public class IncentiveKeep implements VoluntaryIncentive
             return new Desire(0, 0);
         }
         // keep right with dFree
-        return new Desire(0, behavioralCharacteristics.getParameter(LmrsUtil.DFREE));
+        return new Desire(0, behavioralCharacteristics.getParameter(LmrsParameters.DFREE));
     }
 
     /** {@inheritDoc} */

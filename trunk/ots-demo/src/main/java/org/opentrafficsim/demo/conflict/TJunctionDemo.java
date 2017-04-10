@@ -24,7 +24,6 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;

@@ -21,9 +21,10 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuil
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsData;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil.LmrsData;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
@@ -54,7 +55,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     private final LaneChange laneChange = new LaneChange();
 
     /** LMRS data. */
-    private final LmrsData lmrsData = new LmrsData();
+    private final LmrsData lmrsData;
 
     /** Set of mandatory lane change incentives. */
     private final LinkedHashSet<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
@@ -70,16 +71,13 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
      * @param carFollowingModel Car-following model.
      * @param gtu GTU
      * @param lanePerception perception
+     * @param synchronization type of synchronization
      */
-    public LMRS(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu, final LanePerception lanePerception)
+    public LMRS(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu, final LanePerception lanePerception,
+            final Synchronization synchronization)
     {
         super(carFollowingModel, gtu, lanePerception);
-        // new CategorialLanePerception(gtu)
-        // getPerception().addPerceptionCategory(new DirectEgoPerception(getPerception()));
-        // getPerception().addPerceptionCategory(new DirectDefaultSimplePerception(getPerception()));
-        // getPerception().addPerceptionCategory(new DirectInfrastructurePerception(getPerception()));
-        // getPerception().addPerceptionCategory(new DirectNeighborsPerception(getPerception()));
-        // getPerception().addPerceptionCategory(new DirectIntersectionPerception(getPerception()));
+        this.lmrsData = new LmrsData(synchronization);
     }
 
     /**
@@ -127,6 +125,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
         this.voluntaryIncentives.clear();
         this.accelerationIncentives.clear();
         this.mandatoryIncentives.add(new IncentiveRoute());
+        this.mandatoryIncentives.add(new IncentiveGetInLane());
         this.voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
         this.voluntaryIncentives.add(new IncentiveKeep());
         this.accelerationIncentives.add(new AccelerationSpeedLimitTransition());

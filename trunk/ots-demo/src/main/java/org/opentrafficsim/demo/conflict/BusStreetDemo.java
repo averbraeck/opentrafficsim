@@ -61,11 +61,11 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationBusStop;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveBusStop;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
 import org.opentrafficsim.road.gtu.lane.tactical.pt.BusSchedule;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
@@ -562,8 +562,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         {
             BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
             behavioralCharacteristics.setDefaultParameters(ParameterTypes.class);
-            behavioralCharacteristics.setDefaultParameters(LmrsUtil.class);
-            behavioralCharacteristics.setDefaultParameters(IncentiveSpeedWithCourtesy.class);
+            behavioralCharacteristics.setDefaultParameters(LmrsParameters.class);
             behavioralCharacteristics.setDefaultParameters(ConflictUtil.class);
             behavioralCharacteristics.setDefaultParameters(AbstractIDM.class);
             return behavioralCharacteristics;
@@ -574,7 +573,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         public final LMRS create(final LaneBasedGTU gtu) throws GTUException
         {
             DefaultLMRSPerceptionFactory pFac = new DefaultLMRSPerceptionFactory();
-            LMRS lmrs = new LMRS(new IDMPlus(), gtu, pFac.generatePerception(gtu));
+            LMRS lmrs = new LMRS(new IDMPlus(), gtu, pFac.generatePerception(gtu), Synchronization.PASSIVE);
             lmrs.setDefaultIncentives();
             if (gtu.getGTUType().isOfType(RoadGTUTypes.SCHEDULED_BUS))
             {
@@ -615,8 +614,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             defaultCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, new Length(100.0, LengthUnit.METER));
             if (gtuType.isOfType(RoadGTUTypes.CAR))
             {
-                defaultCharacteristics.setParameter(IncentiveSpeedWithCourtesy.VGAIN,
-                        new Speed(3.0, SpeedUnit.METER_PER_SECOND));
+                defaultCharacteristics.setParameter(LmrsParameters.VGAIN, new Speed(3.0, SpeedUnit.METER_PER_SECOND));
             }
             else if (gtuType.isOfType(RoadGTUTypes.SCHEDULED_BUS))
             {

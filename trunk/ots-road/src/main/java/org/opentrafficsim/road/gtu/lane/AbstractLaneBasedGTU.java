@@ -626,6 +626,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @SuppressWarnings("checkstyle:designforextension")
     protected void scheduleEnterLeaveTriggers() throws NetworkException, SimRuntimeException, GTUException
     {
+        
         /*
          * Move the vehicle into any new lanes with the front, and schedule entrance during this time step and calculate the
          * current position based on the fractional position, because THE POSITION METHOD DOES NOT WORK FOR THIS. IT CALCULATES
