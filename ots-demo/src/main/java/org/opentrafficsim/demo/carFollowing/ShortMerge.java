@@ -148,7 +148,7 @@ public class ShortMerge extends AbstractWrappableAnimation
 
     /**
      * Main method.
-     * @param args
+     * @param args args for main program
      */
     public static void main(final String args[])
     {
