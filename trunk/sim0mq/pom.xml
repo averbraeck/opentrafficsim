@@ -24,7 +24,7 @@
     <sonar.scm.disabled>true</sonar.scm.disabled>
 
     <sim0mq.version>${project.version}</sim0mq.version>
-    <djunits.version>2.01.00</djunits.version>
+    <djunits.version>2.02.00</djunits.version>
     <dsol.version>3.01.04</dsol.version>
     <jeromq.version>0.3.6</jeromq.version>
     <junit.version>4.11</junit.version>
@@ -622,6 +622,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.djunits</groupId>
+      <artifactId>djunits</artifactId>
+      <version>${djunits.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.zeromq</groupId>
       <artifactId>jeromq</artifactId>
       <version>${jeromq.version}</version>
@@ -633,7 +639,7 @@
 
   <repositories>
     <repository>
-      <name>DJUNIT Repository</name>
+      <name>sim0mq repository</name>
       <id>sim0mq</id>
       <url>http://sim0mq.org/maven</url>
     </repository>
