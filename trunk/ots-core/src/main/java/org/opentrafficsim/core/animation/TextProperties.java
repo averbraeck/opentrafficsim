@@ -3,6 +3,7 @@ package org.opentrafficsim.core.animation;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.font.TextAttribute;
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -18,8 +19,11 @@ import java.util.Map;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TextProperties
+public class TextProperties implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20170400L;
+
     /** the text alignment (LEFT, CENTER or RIGHT). */
     private final TextAlignment textAlignment;
 

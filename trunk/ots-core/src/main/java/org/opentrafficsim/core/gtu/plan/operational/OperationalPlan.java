@@ -20,6 +20,7 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.math.Solver;
 
+import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -527,6 +528,10 @@ public class OperationalPlan implements Serializable
      */
     public final double getTraveledDistanceSI(final Time time) throws OperationalPlanException
     {
+        Throw.when(time.lt(this.getStartTime()), OperationalPlanException.class,
+                "getTravelDistance exception: requested traveled distance before start of plan");
+        Throw.when(time.gt(this.getEndTime()), OperationalPlanException.class,
+                "getTravelDistance exception: requested traveled distance beyond end of plan");
         if (this.operationalPlanSegmentList.size() == 1)
         {
             return this.operationalPlanSegmentList.get(0).distanceSI(time.si - this.startTime.si);

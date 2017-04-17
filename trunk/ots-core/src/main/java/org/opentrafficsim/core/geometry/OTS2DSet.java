@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.geometry;
 
 import java.awt.geom.Rectangle2D;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,8 +31,11 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class OTS2DSet implements Set<OTSShape>
+public class OTS2DSet implements Set<OTSShape>, Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20170400L;
+
     /** Set of all shapes used for iterators, etc. */
     private final Set<OTSShape> allShapes = new HashSet<OTSShape>();
 
@@ -269,8 +273,11 @@ public class OTS2DSet implements Set<OTSShape>
     /**
      * Iterator for quad tree. Shall iterate over the local set of shapes and the (up to four) non-null leave nodes.
      */
-    class QuadTreeIterator implements Iterator<OTSShape>
+    class QuadTreeIterator implements Iterator<OTSShape>, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20170400L;
+
         /** Underlying iterator that traverses the allShapes Set. */
         @SuppressWarnings("synthetic-access")
         private final Iterator<OTSShape> theIterator = OTS2DSet.this.allShapes.iterator();
@@ -317,8 +324,11 @@ public class OTS2DSet implements Set<OTSShape>
     /**
      * Spatial-aware storage for a set of OTSShape objects.
      */
-    class QuadTreeNode
+    class QuadTreeNode implements Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20170400L;
+
         /** The OTSShapes stored at this node. */
         private Set<OTSShape> shapes = new HashSet<OTSShape>();
 

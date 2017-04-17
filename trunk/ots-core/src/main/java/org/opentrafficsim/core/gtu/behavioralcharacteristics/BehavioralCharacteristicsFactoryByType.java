@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -108,6 +109,13 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "BehavioralCharacteristicsFactoryByType [map=" + this.map + "]";
+    }
+
     /**
      * <p>
      * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
@@ -141,8 +149,11 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
      * @param <U> unit
      * @param <T> value type
      */
-    private static class GaussianEntry<U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>> implements ParameterEntry
+    private static class GaussianEntry<U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>>
+            implements ParameterEntry, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20170400L;
 
         /** Parameter type. */
         private final ParameterType<T> parameterType;
@@ -183,6 +194,13 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
             }
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "GaussianEntry [parameterType=" + this.parameterType + ", mu=" + this.mu + ", dist=" + this.dist + "]";
+        }
+
     }
 
     /**
@@ -196,8 +214,10 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    private static class GaussianDoubleEntry implements ParameterEntry
+    private static class GaussianDoubleEntry implements ParameterEntry, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20170400L;
 
         /** Parameter type. */
         private final ParameterTypeDouble parameterType;
@@ -235,6 +255,13 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
             }
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "GaussianDoubleEntry [parameterType=" + this.parameterType + ", dist=" + this.dist + "]";
+        }
+
     }
 
     /**
@@ -249,8 +276,10 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      * @param <T> value type
      */
-    private final class FixedEntry<T extends DoubleScalarInterface> implements ParameterEntry
+    private final class FixedEntry<T extends DoubleScalarInterface> implements ParameterEntry, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20170400L;
 
         /** Parameter type. */
         private final ParameterType<T> parameterType;
@@ -283,6 +312,13 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
             }
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "FixedEntry [parameterType=" + this.parameterType + ", value=" + this.value + "]";
+        }
+
     }
 
     /**
@@ -296,8 +332,10 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    private final class FixedEntryDouble implements ParameterEntry
+    private final class FixedEntryDouble implements ParameterEntry, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20170400L;
 
         /** Parameter type. */
         private final ParameterTypeDouble parameterType;
@@ -328,6 +366,13 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
                 throw new RuntimeException("Trying to set value " + this.value + " for parameter " + this.parameterType
                         + ", which is out of range.", exception);
             }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "FixedEntryDouble [parameterType=" + this.parameterType + ", value=" + this.value + "]";
         }
 
     }
