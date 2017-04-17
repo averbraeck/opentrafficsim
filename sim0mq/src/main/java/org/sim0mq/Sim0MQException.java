@@ -9,7 +9,7 @@ package org.sim0mq;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @version Oct 21, 2016
  */
-public class ZeroMQException extends Exception
+public class Sim0MQException extends Exception
 {
     /** */
     private static final long serialVersionUID = 30100L;
@@ -17,7 +17,7 @@ public class ZeroMQException extends Exception
     /**
      * Create a ZeroMQ Exception.
      */
-    public ZeroMQException()
+    public Sim0MQException()
     {
         super();
     }
@@ -26,7 +26,7 @@ public class ZeroMQException extends Exception
      * Create a ZeroMQ Exception.
      * @param message the message
      */
-    public ZeroMQException(final String message)
+    public Sim0MQException(final String message)
     {
         super(message);
     }
@@ -35,7 +35,7 @@ public class ZeroMQException extends Exception
      * Create a ZeroMQ Exception.
      * @param cause the exception that caused the ZeroMQ exception
      */
-    public ZeroMQException(final Throwable cause)
+    public Sim0MQException(final Throwable cause)
     {
         super(cause);
     }
@@ -45,7 +45,7 @@ public class ZeroMQException extends Exception
      * @param message the message
      * @param cause the exception that caused the ZeroMQ exception
      */
-    public ZeroMQException(final String message, final Throwable cause)
+    public Sim0MQException(final String message, final Throwable cause)
     {
         super(message, cause);
     }
@@ -57,7 +57,7 @@ public class ZeroMQException extends Exception
      * @param enableSuppression to enable suppressions or not
      * @param writableStackTrace to have a writable stack trace or not
      */
-    public ZeroMQException(final String message, final Throwable cause, final boolean enableSuppression,
+    public Sim0MQException(final String message, final Throwable cause, final boolean enableSuppression,
             final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);
