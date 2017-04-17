@@ -99,9 +99,11 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     private Color baseColor = null;
 
     /** aligned or not. */
+    // TODO: should be indicated with a Parameter
     public static boolean ALIGNED = true;
     
     /** aligned schedule count. */
+    // TODO: can be removed after testing period
     public static int ALIGN_COUNT = 0;
 
     /**
@@ -489,9 +491,11 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         this.maximumDeceleration = maximumDeceleration;
     }
 
-    private Time t = new Time(Double.NaN, TimeUnit.SI);
+    /** cache time. */
+    private Time cacheLocationTime = new Time(Double.NaN, TimeUnit.SI);
 
-    private DirectedPoint l = null;
+    /** caced position at time. */
+    private DirectedPoint cacheLocation = null;
 
     /** {@inheritDoc} */
     @Override
@@ -507,12 +511,12 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         try
         {
             // cache
-            if (t.si != this.simulator.getSimulatorTime().getTime().si)
+            if (this.cacheLocationTime.si != this.simulator.getSimulatorTime().getTime().si)
             {
-                t = this.simulator.getSimulatorTime().getTime();
-                l = this.operationalPlan.getLocation(t);
+                this.cacheLocationTime = this.simulator.getSimulatorTime().getTime();
+                this.cacheLocation = this.operationalPlan.getLocation(this.cacheLocationTime);
             }
-            return l;
+            return this.cacheLocation;
         }
         catch (OperationalPlanException exception)
         {
