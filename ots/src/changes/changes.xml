@@ -48,6 +48,9 @@
         OTS-267. Researched parallelization of the gtu's move() method and provided options
         for synchronized update of the GTU's positions as well as position caching.
       </action>
+      <action type="update">
+        Updated to DJUNITS version 2.02.00 and DSOL version 3.01.05.
+      </action>
     </release>
 
     <release version="0.13.04" date="2017-01-16" description="Intermediate Release 0.13.04">
