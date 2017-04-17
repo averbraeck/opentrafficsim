@@ -275,4 +275,12 @@ public class SynchronizedRedBlackTree<T extends SimTime<?, ?, T>> implements Eve
     {
         this.tree.clear();
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "SynchronizedRedBlackTree [" + this.tree.size() + " events]";
+    }
+    
 }

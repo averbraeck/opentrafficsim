@@ -52,6 +52,7 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
         POSITIVE("Value of parameter '%s' must be above zero.")
         {
             /** {@inheritDoc} */
+            @Override
             boolean fails(final double value)
             {
                 return value <= 0.0;
@@ -62,6 +63,7 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
         NEGATIVE("Value of parameter '%s' must be below zero.")
         {
             /** {@inheritDoc} */
+            @Override
             boolean fails(final double value)
             {
                 return value >= 0.0;
@@ -72,6 +74,7 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
         POSITIVEZERO("Value of parameter '%s' may not be below zero.")
         {
             /** {@inheritDoc} */
+            @Override
             boolean fails(final double value)
             {
                 return value < 0.0;
@@ -82,6 +85,7 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
         NEGATIVEZERO("Value of parameter '%s' may not be above zero.")
         {
             /** {@inheritDoc} */
+            @Override
             boolean fails(final double value)
             {
                 return value > 0.0;
@@ -92,6 +96,7 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
         NONZERO("Value of parameter '%s' may not be zero.")
         {
             /** {@inheritDoc} */
+            @Override
             boolean fails(final double value)
             {
                 return value == 0.0;
@@ -102,6 +107,7 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
         UNITINTERVAL("Value of parameter '%s' must be in range [0...1]")
         {
             /** {@inheritDoc} */
+            @Override
             boolean fails(final double value)
             {
                 return value < 0.0 || value > 1.0;
@@ -112,6 +118,7 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
         ATLEASTONE("Value of parameter '%s' may not be below one.")
         {
             /** {@inheritDoc} */
+            @Override
             boolean fails(final double value)
             {
                 return value < 1.0;
