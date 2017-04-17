@@ -2,7 +2,6 @@ package org.opentrafficsim.core.gtu;
 
 import java.io.Serializable;
 
-import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 
 /**
@@ -53,8 +52,11 @@ public class RelativePosition implements Serializable
     public static final TYPE CONTOUR = new TYPE("CONTOUR");
 
     /** The reference position (always 0, 0, 0). */
-    public static final RelativePosition REFERENCE_POSITION = new RelativePosition(new Length(0.0d, LengthUnit.SI),
-        new Length(0.0d, LengthUnit.SI), new Length(0.0d, LengthUnit.SI), RelativePosition.REFERENCE);
+    public static final RelativePosition REFERENCE_POSITION =
+            new RelativePosition(Length.ZERO, Length.ZERO, Length.ZERO, RelativePosition.REFERENCE);
+
+    /** the cached hash code. */
+    private final int hash;
 
     /**
      * @param dx positive x is in the normal direction of movement.
@@ -69,6 +71,8 @@ public class RelativePosition implements Serializable
         this.dy = dy;
         this.dz = dz;
         this.type = type;
+
+        this.hash = calcHashCode();
     }
 
     /**
@@ -81,6 +85,8 @@ public class RelativePosition implements Serializable
         this.dy = p.getDy();
         this.dz = p.getDz();
         this.type = p.getType();
+
+        this.hash = calcHashCode();
     }
 
     /**
@@ -122,10 +128,11 @@ public class RelativePosition implements Serializable
         return "(" + this.dx + ", " + this.dy + ", " + this.dz + "): " + this.type;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public int hashCode()
+    /**
+     * Calculate the hash code once.
+     * @return the hash code.
+     */
+    public final int calcHashCode()
     {
         final int prime = 31;
         int result = 1;
@@ -138,7 +145,15 @@ public class RelativePosition implements Serializable
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    @SuppressWarnings("checkstyle:designforextension")
+    public int hashCode()
+    {
+        return this.hash;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
     public boolean equals(final Object obj)
     {
         if (this == obj)
@@ -199,6 +214,9 @@ public class RelativePosition implements Serializable
         /** The type name. */
         private final String name;
 
+        /** the cached hashcode. */
+        private final int hash;
+        
         /**
          * @param name the type name.
          */
@@ -206,6 +224,7 @@ public class RelativePosition implements Serializable
         {
             super();
             this.name = name;
+            this.hash = 31 + ((this.name == null) ? 0 : this.name.hashCode());
         }
 
         /**
@@ -228,15 +247,12 @@ public class RelativePosition implements Serializable
         @SuppressWarnings("checkstyle:designforextension")
         public int hashCode()
         {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
-            return result;
+            return this.hash;
         }
 
         /** {@inheritDoc} */
         @Override
-        @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+        @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
         public boolean equals(final Object obj)
         {
             if (this == obj)

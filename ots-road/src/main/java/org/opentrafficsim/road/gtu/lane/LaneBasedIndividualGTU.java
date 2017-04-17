@@ -3,8 +3,8 @@ package org.opentrafficsim.road.gtu.lane;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -59,10 +59,16 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
     private Renderable2D animation;
 
     /** Sensing positions. */
-    private final Map<RelativePosition.TYPE, RelativePosition> relativePositions = new LinkedHashMap<>(4);
+    private final Map<RelativePosition.TYPE, RelativePosition> relativePositions = new HashMap<>();
+
+    /** cached front. */
+    private final RelativePosition frontPos;
+
+    /** cached rear. */
+    private final RelativePosition rearPos;
 
     /** contour points. */
-    private final Set<RelativePosition> contourPoints = new HashSet<>(4);
+    private final Set<RelativePosition> contourPoints = new HashSet<>();
 
     /**
      * Construct a new LaneBasedIndividualCar.
@@ -88,10 +94,10 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         // of the Car away from the reference point in the positive (driving) X-direction.
         Length dx2 = new Length(getLength().getSI() / 2.0, LengthUnit.METER);
         Length dy2 = new Length(getWidth().getSI() / 2.0, LengthUnit.METER);
-        this.relativePositions.put(RelativePosition.FRONT,
-                new RelativePosition(dx2, Length.ZERO, Length.ZERO, RelativePosition.FRONT));
-        this.relativePositions.put(RelativePosition.REAR,
-                new RelativePosition(dx2.neg(), Length.ZERO, Length.ZERO, RelativePosition.REAR));
+        this.frontPos = new RelativePosition(dx2, Length.ZERO, Length.ZERO, RelativePosition.FRONT);
+        this.relativePositions.put(RelativePosition.FRONT, this.frontPos);
+        this.rearPos = new RelativePosition(dx2.neg(), Length.ZERO, Length.ZERO, RelativePosition.REAR);
+        this.relativePositions.put(RelativePosition.REAR, this.rearPos);
         this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
         this.relativePositions.put(RelativePosition.CENTER,
                 new RelativePosition(Length.ZERO, Length.ZERO, Length.ZERO, RelativePosition.CENTER));
@@ -160,14 +166,14 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
     @Override
     public final RelativePosition getFront()
     {
-        return this.relativePositions.get(RelativePosition.FRONT);
+        return this.frontPos;
     }
 
     /** {@inheritDoc} */
     @Override
     public final RelativePosition getRear()
     {
-        return this.relativePositions.get(RelativePosition.REAR);
+        return this.rearPos;
     }
 
     /** {@inheritDoc} */

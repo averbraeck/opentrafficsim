@@ -835,7 +835,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             }
             System.out.println("setSpeedfactor: factor is " + factor + ", best slider value is " + bestStep
                     + " current value is " + this.slider.getValue());
-            if (this.slider.getValue() != bestStep)
+            if (this.slider.getValue() != bestStep && factor < 1.0E6)
             {
                 this.slider.setValue(bestStep);
             }

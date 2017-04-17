@@ -57,7 +57,8 @@ public abstract class AbstractProperty<T> implements Property<T>, Serializable
      * Finalize the readOnly flag.
      * @param readOnlyValue the readonly property value to set
      */
-    protected final void setReadOnly(final boolean readOnlyValue)
+    // XXX Made this method public to allow changes in e.g., tests
+    public final void setReadOnly(final boolean readOnlyValue)
     {
         this.readOnly = readOnlyValue;
     }

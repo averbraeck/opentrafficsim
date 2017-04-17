@@ -43,6 +43,9 @@ import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.immutablecollections.Immutable;
+import nl.tudelft.simulation.immutablecollections.ImmutableArrayList;
+import nl.tudelft.simulation.immutablecollections.ImmutableList;
 import nl.tudelft.simulation.language.Throw;
 
 /**
@@ -953,23 +956,43 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final int addGTU(final LaneBasedGTU gtu, final double fractionalPosition) throws GTUException
     {
-        // figure out the rank for the new GTU
         int index;
-        for (index = 0; index < this.gtuList.size(); index++)
+        // check if we are the first
+        if (this.gtuList.size() == 0)
         {
-            LaneBasedGTU otherGTU = this.gtuList.get(index);
-            if (gtu == otherGTU)
+            this.gtuList.add(gtu);
+            index = 0;
+        }
+        else
+        {
+            // check if we can add at the end
+            LaneBasedGTU lastGTU = this.gtuList.get(this.gtuList.size() - 1);
+            if (fractionalPosition > lastGTU.fractionalPosition(this, lastGTU.getFront()))
             {
-                throw new GTUException(gtu + " already registered on Lane " + this + " [registered lanes: "
-                        + gtu.positions(gtu.getFront()).keySet() + "] locations: " + gtu.positions(gtu.getFront()).values()
-                        + " time: " + gtu.getSimulator().getSimulatorTime().getTime());
+                this.gtuList.add(gtu);
+                index = this.gtuList.size() - 1;
             }
-            if (otherGTU.fractionalPosition(this, otherGTU.getFront()) >= fractionalPosition)
+            else
             {
-                break;
+                // figure out the rank for the new GTU
+                for (index = 0; index < this.gtuList.size(); index++)
+                {
+                    LaneBasedGTU otherGTU = this.gtuList.get(index);
+                    if (gtu == otherGTU)
+                    {
+                        throw new GTUException(gtu + " already registered on Lane " + this + " [registered lanes: "
+                                + gtu.positions(gtu.getFront()).keySet() + "] locations: "
+                                + gtu.positions(gtu.getFront()).values() + " time: "
+                                + gtu.getSimulator().getSimulatorTime().getTime());
+                    }
+                    if (otherGTU.fractionalPosition(this, otherGTU.getFront()) >= fractionalPosition)
+                    {
+                        break;
+                    }
+                }
+                this.gtuList.add(index, gtu);
             }
         }
-        this.gtuList.add(index, gtu);
         fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size() },
                 gtu.getSimulator().getSimulatorTime());
         getParentLink().addGTU(gtu);
@@ -995,7 +1018,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param removeFromParentLink when the GTU leaves the last lane of the parentLink of this Lane
      * @param position Length; last position of the GTU
      */
-    public final void removeGTU(final LaneBasedGTU gtu, final boolean removeFromParentLink, Length position)
+    public final void removeGTU(final LaneBasedGTU gtu, final boolean removeFromParentLink, final Length position)
     {
         this.gtuList.remove(gtu);
         fireTimedEvent(Lane.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size(), position },
@@ -1007,14 +1030,60 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
-     * Get the first GTU where the relativePosition is in front of a certain position on the lane, in a driving direction on
-     * this lane, compared to the DESIGN LINE.
-     * @param position Length; the position after which the relative position of a GTU will be searched.
+     * Get the last GTU on the lane, relative to a driving direction on this lane.
+     * @param direction GTUDirectionality; whether we are looking in the the design line direction or against the center line
+     *            direction.
+     * @return LaneBasedGTU; the last GTU on this lane in the given direction, or null if no GTU could be found.
+     * @throws GTUException when there is a problem with the position of the GTUs on the lane.
+     */
+    public final LaneBasedGTU getLastGtu(final GTUDirectionality direction) throws GTUException
+    {
+        if (this.gtuList.size() == 0)
+        {
+            return null;
+        }
+        if (direction.equals(GTUDirectionality.DIR_PLUS))
+        {
+            return this.gtuList.get(this.gtuList.size() - 1);
+        }
+        else
+        {
+            return this.gtuList.get(0);
+        }
+    }
+
+    /**
+     * Get the first GTU on the lane, relative to a driving direction on this lane.
+     * @param direction GTUDirectionality; whether we are looking in the the design line direction or against the center line
+     *            direction.
+     * @return LaneBasedGTU; the first GTU on this lane in the given direction, or null if no GTU could be found.
+     * @throws GTUException when there is a problem with the position of the GTUs on the lane.
+     */
+    public final LaneBasedGTU getFirstGtu(final GTUDirectionality direction) throws GTUException
+    {
+        if (this.gtuList.size() == 0)
+        {
+            return null;
+        }
+        if (direction.equals(GTUDirectionality.DIR_PLUS))
+        {
+            return this.gtuList.get(0);
+        }
+        else
+        {
+            return this.gtuList.get(this.gtuList.size() - 1);
+        }
+    }
+
+    /**
+     * Get the first GTU where the relativePosition is in front of another GTU on the lane, in a driving direction on this lane,
+     * compared to the DESIGN LINE.
+     * @param position Length; the position before which the relative position of a GTU will be searched.
      * @param direction GTUDirectionality; whether we are looking in the the center line direction or against the center line
      *            direction.
      * @param relativePosition RelativePosition.TYPE; the relative position we want to compare against
      * @param when Time; the time for which to evaluate the positions.
-     * @return LaneBasedGTU; the first GTU after a position on this lane in the given direction, or null if no GTU could be
+     * @return LaneBasedGTU; the first GTU before a position on this lane in the given direction, or null if no GTU could be
      *         found.
      * @throws GTUException when there is a problem with the position of the GTUs on the lane.
      */
@@ -1025,7 +1094,8 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             for (LaneBasedGTU gtu : this.gtuList)
             {
-                if (gtu.position(this, gtu.getRelativePositions().get(relativePosition), when).gt(position))
+                Length gtuPos = gtu.position(this, gtu.getRelativePositions().get(relativePosition), when);
+                if (gtuPos.gt(position))
                 {
                     return gtu;
                 }
@@ -1052,8 +1122,8 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param position Length; the position after which the relative position of an object will be searched.
      * @param direction GTUDirectionality; whether we are looking in the the center line direction or against the center line
      *            direction.
-     * @return List&lt;LaneBasedObject&gt;; the first object(s) after a position on this lane in the given direction, or null if
-     *         no object could be found.
+     * @return List&lt;LaneBasedObject&gt;; the first object(s) before a position on this lane in the given direction, or null
+     *         if no object could be found.
      */
     public final List<LaneBasedObject> getObjectAhead(final Length position, final GTUDirectionality direction)
     {
@@ -1081,7 +1151,7 @@ public class Lane extends CrossSectionElement implements Serializable
         }
         return null;
     }
-    
+
     /**
      * Get the first object where the relativePosition is behind of a certain position on the lane, in a driving direction on
      * this lane, compared to the DESIGN LINE. Perception should iterate over results from this method to see what is most
@@ -1109,7 +1179,7 @@ public class Lane extends CrossSectionElement implements Serializable
      *            direction.
      * @param relativePosition RelativePosition.TYPE; the relative position of the GTU we are looking for.
      * @param when Time; the time for which to evaluate the positions.
-     * @return LaneBasedGTU; the first GTU before a position on this lane in the given direction, or null if no GTU could be
+     * @return LaneBasedGTU; the first GTU after a position on this lane in the given direction, or null if no GTU could be
      *         found.
      * @throws GTUException when there is a problem with the position of the GTUs on the lane.
      */
@@ -1120,7 +1190,7 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             return getGtuAhead(position, GTUDirectionality.DIR_MINUS, relativePosition, when);
         }
-        return getGtuAhead(position, direction, relativePosition, when);
+        return getGtuAhead(position, GTUDirectionality.DIR_PLUS, relativePosition, when);
     }
 
     /*
@@ -1542,9 +1612,10 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * @return gtuList.
      */
-    public final List<LaneBasedGTU> getGtuList()
+    public final ImmutableList<LaneBasedGTU> getGtuList()
     {
-        return this.gtuList == null ? new ArrayList<>() : this.gtuList;
+        return this.gtuList == null ? new ImmutableArrayList<>(new ArrayList<>())
+                : new ImmutableArrayList<>(this.gtuList, Immutable.WRAP);
     }
 
     /** {@inheritDoc} */
