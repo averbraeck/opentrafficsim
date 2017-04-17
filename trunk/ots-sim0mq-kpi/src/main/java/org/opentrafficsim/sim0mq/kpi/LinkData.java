@@ -98,6 +98,13 @@ public class LinkData implements LinkDataInterface
 
     /** {@inheritDoc} */
     @Override
+    public String getId()
+    {
+        return this.linkName;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public int hashCode()
     {
         final int prime = 31;

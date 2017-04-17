@@ -62,6 +62,13 @@ public class RouteData implements RouteDataInterface
 
     /** {@inheritDoc} */
     @Override
+    public String getId()
+    {
+        return this.routeName;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public int hashCode()
     {
         final int prime = 31;

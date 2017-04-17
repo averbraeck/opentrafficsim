@@ -60,6 +60,13 @@ public class LaneData implements LaneDataInterface
         return this.laneName;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String getId()
+    {
+        return this.laneName;
+    }
+
     /**
      * @param linkData set linkData
      */
