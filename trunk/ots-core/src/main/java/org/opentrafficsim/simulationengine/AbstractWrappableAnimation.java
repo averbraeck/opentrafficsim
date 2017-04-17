@@ -409,6 +409,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     }
 
     /** {@inheritDoc} */
+    @Override
     public final void setNextReplication(final Integer nextReplication)
     {
         this.replication = nextReplication;

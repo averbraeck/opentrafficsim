@@ -939,13 +939,13 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
                                 Math.min(1.0, gtuFractionRef + otherGTU.getRear().getDx().si / lane.getLength().si);
                         double gtuMin = Math.min(gtuFractionFront, gtuFractionRear);
                         double gtuMax = Math.max(gtuFractionFront, gtuFractionRear);
-                        // TODO calculate real overlaps
-                        Length overlapFront = new Length(1.0, LengthUnit.SI);
-                        Length overlap = new Length(1.0, LengthUnit.SI);
-                        Length overlapRear = new Length(1.0, LengthUnit.SI);
                         if ((gtuMin >= posMin && gtuMin <= posMax) || (gtuMax >= posMin && gtuMax <= posMax)
                                 || (posMin >= gtuMin && posMin <= gtuMax) || (posMax >= gtuMin && posMax <= gtuMax))
                         {
+                            // TODO calculate real overlaps
+                            Length overlapFront = new Length(1.0, LengthUnit.SI);
+                            Length overlap = new Length(1.0, LengthUnit.SI);
+                            Length overlapRear = new Length(1.0, LengthUnit.SI);
                             headwayCollection.add(new HeadwayGTUSimple(otherGTU.getId(), otherGTU.getGTUType(), overlapFront,
                                     overlap, overlapRear, otherGTU.getLength(), otherGTU.getSpeed(), otherGTU.getAcceleration(),
                                     getGtuStatus(otherGTU)));

@@ -155,7 +155,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
      * Headways that are causing the dead-lock.
      */
     private Collection<Headway> blockingHeadways = new HashSet<>();
-
+    
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:methodlength")
@@ -189,7 +189,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             simplePerception.updateAccessibleAdjacentLanesLeft();
             simplePerception.updateAccessibleAdjacentLanesRight();
             simplePerception.updateSpeedLimit();
-
+            
             // find out where we are going
             Length forwardHeadway = behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD);
             LanePathInfo lanePathInfo = buildLanePathInfo(laneBasedGTU, forwardHeadway);

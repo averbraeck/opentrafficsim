@@ -98,6 +98,12 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     /** The cached base color. */
     private Color baseColor = null;
 
+    /** aligned or not. */
+    public static boolean ALIGNED = true;
+    
+    /** aligned schedule count. */
+    public static int ALIGN_COUNT = 0;
+
     /**
      * @param id String; the id of the GTU
      * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
@@ -152,8 +158,8 @@ public abstract class AbstractGTU extends EventProducer implements GTU
      *             waiting path fails
      */
     @SuppressWarnings({ "checkstyle:hiddenfield", "hiding", "checkstyle:designforextension" })
-    public void init(final StrategicalPlanner strategicalPlanner, final DirectedPoint initialLocation,
-            final Speed initialSpeed) throws SimRuntimeException, GTUException
+    public void init(final StrategicalPlanner strategicalPlanner, final DirectedPoint initialLocation, final Speed initialSpeed)
+            throws SimRuntimeException, GTUException
     {
         Throw.when(strategicalPlanner == null, GTUException.class, "strategicalPlanner is null for GTU with id %s", this.id);
         Throw.whenNull(initialLocation, "Initial location of GTU cannot be null");
@@ -264,10 +270,6 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             // Tell the strategical planner to provide a tactical planner
             this.tacticalPlanner = this.strategicalPlanner.generateTacticalPlanner();
         }
-        // if (getId().endsWith("3") && getSimulator().getSimulatorTime().getTime().si >= 20 * 60 + 47.9)
-        // {
-        // System.out.println("Let op");
-        // }
         this.operationalPlan = this.tacticalPlanner.generateOperationalPlan(now, fromLocation);
         this.odometer = currentOdometer;
         if (getOperationalPlan().getAcceleration(Duration.ZERO).si < -10
@@ -277,10 +279,24 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             // this.tacticalPlanner.generateOperationalPlan(now, fromLocation);
         }
 
-        // schedule the next move at the end of the current operational plan
-        // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
-        this.nextMoveEvent = new SimEvent<>(new OTSSimTimeDouble(now.plus(this.operationalPlan.getTotalDuration())), this, this,
-                "move", new Object[] { this.operationalPlan.getEndLocation() });
+        if (ALIGNED && this.operationalPlan.getTotalDuration().si == 0.5)
+        {
+            // schedule the next move at exactly 0.5 seconds on the clock
+            // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
+            double tNext = Math.floor(2.0 * now.si + 1.0) / 2.0;
+            DirectedPoint p = (tNext - now.si < 0.5) ? this.operationalPlan.getEndLocation()
+                    : this.operationalPlan.getLocation(new Duration(tNext - now.si, TimeUnit.SI));
+            this.nextMoveEvent =
+                    new SimEvent<>(new OTSSimTimeDouble(new Time(tNext, TimeUnit.SI)), this, this, "move", new Object[] { p });
+            ALIGN_COUNT++;
+        }
+        else
+        {
+            // schedule the next move at the end of the current operational plan
+            // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
+            this.nextMoveEvent = new SimEvent<>(new OTSSimTimeDouble(now.plus(this.operationalPlan.getTotalDuration())), this,
+                    this, "move", new Object[] { this.operationalPlan.getEndLocation() });
+        }
         this.simulator.scheduleEvent(this.nextMoveEvent);
 
         fireTimedEvent(GTU.MOVE_EVENT,
@@ -405,6 +421,8 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         catch (OperationalPlanException ope)
         {
             // this should not happen at all...
+            System.err.println("t = " + this.simulator.getSimulatorTime().getTime());
+            System.err.println("op.validity = " + this.operationalPlan.getEndTime());
             throw new RuntimeException("getSpeed() could not derive a valid speed for the current operationalPlan", ope);
         }
     }
@@ -471,6 +489,10 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         this.maximumDeceleration = maximumDeceleration;
     }
 
+    private Time t = new Time(Double.NaN, TimeUnit.SI);
+
+    private DirectedPoint l = null;
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
@@ -484,7 +506,13 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         }
         try
         {
-            return this.operationalPlan.getLocation(this.simulator.getSimulatorTime().getTime());
+            // cache
+            if (t.si != this.simulator.getSimulatorTime().getTime().si)
+            {
+                t = this.simulator.getSimulatorTime().getTime();
+                l = this.operationalPlan.getLocation(t);
+            }
+            return l;
         }
         catch (OperationalPlanException exception)
         {
@@ -548,7 +576,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({"designforextension", "needbraces"})
+    @SuppressWarnings({ "designforextension", "needbraces" })
     public boolean equals(final Object obj)
     {
         if (this == obj)

@@ -126,5 +126,5 @@ public interface OTSDEVSSimulatorInterface
      * @throws SimRuntimeException whenever starting fails. Possible occasions include starting a started simulator
      */
     @Override
-    void runUpTo(final Time when) throws SimRuntimeException;
+    void runUpTo(Time when) throws SimRuntimeException;
 }

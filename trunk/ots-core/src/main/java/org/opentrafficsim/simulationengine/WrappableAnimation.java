@@ -43,9 +43,9 @@ public interface WrappableAnimation
      *             fails
      * @throws PropertyException when one of the user modified properties has the empty string as key
      */
-    SimpleSimulatorInterface buildAnimator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            List<Property<?>> properties, Rectangle rect, boolean exitOnClose) throws SimRuntimeException, NetworkException,
-            NamingException, OTSSimulationException, PropertyException;
+    SimpleSimulatorInterface buildAnimator(Time startTime, Duration warmupPeriod, Duration runLength,
+            List<Property<?>> properties, Rectangle rect, boolean exitOnClose)
+            throws SimRuntimeException, NetworkException, NamingException, OTSSimulationException, PropertyException;
 
     /**
      * Restart (rebuild) the simulation.
@@ -57,8 +57,8 @@ public interface WrappableAnimation
      * @throws OTSSimulationException when the (re)construction of the simulation model fails
      * @throws PropertyException when one of the user modified properties has the empty string as key
      */
-    SimpleSimulatorInterface rebuildSimulator(Rectangle rect) throws SimRuntimeException, NetworkException, NamingException,
-            OTSSimulationException, PropertyException;
+    SimpleSimulatorInterface rebuildSimulator(Rectangle rect)
+            throws SimRuntimeException, NetworkException, NamingException, OTSSimulationException, PropertyException;
 
     /**
      * Return a very short description of the simulation.
@@ -97,5 +97,5 @@ public interface WrappableAnimation
      *            counter
      */
     void setNextReplication(Integer nextReplication);
-    
+
 }

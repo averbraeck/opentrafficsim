@@ -77,6 +77,7 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
     }
 
     /** {@inheritDoc} */
+    @Override
     public final SimEvent<OTSSimTimeDouble> scheduleEvent(final Time executionTime, final short priority,
         final Object source, final Object target, final String method, final Object[] args) throws SimRuntimeException
     {

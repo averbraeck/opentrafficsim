@@ -370,7 +370,7 @@ public abstract class AbstractGTUGenerator implements Serializable
     private Headway headwayRecursiveBackwardSI(final Lane theLane, final double lanePositionSI, final double cumDistanceSI,
             final double maxDistanceSI, final Time when) throws GTUException
     {
-        // TODO: THIS METHOD IS ALSO IN PERCEPTION -- DON'T DUPLICATE; ALSO, THIS VERSION IS RONG.
+        // TODO: THIS METHOD IS ALSO IN PERCEPTION -- DON'T DUPLICATE; ALSO, THIS VERSION IS WRONG.
         LaneBasedGTU otherGTU = theLane.getGtuBehind(new Length(lanePositionSI, LengthUnit.METER), GTUDirectionality.DIR_PLUS,
                 RelativePosition.FRONT, when);
         if (otherGTU != null)

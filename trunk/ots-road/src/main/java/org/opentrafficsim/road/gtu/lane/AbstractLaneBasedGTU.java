@@ -34,7 +34,6 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
@@ -104,6 +103,15 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @SuppressWarnings("checkstyle:visibilitymodifier")
     public static Length initialLocationThresholdDifference = new Length(1.0, LengthUnit.MILLIMETER);
 
+    /** Caching on or off. */
+    public static boolean CACHING = true;
+
+    /** cached position count. */
+    public static int CACHED_POSITION = 0;
+
+    /** cached position count. */
+    public static int NON_CACHED_POSITION = 0;
+
     /**
      * Construct a Lane Based GTU.
      * @param id the id of the GTU
@@ -153,7 +161,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
         // TODO The above enterLane creates an event with speed = 0.0, while the below init creates a move event with speed at
         // the same time.
-        // TODO The above enterLane creates link/lane messages for GTU's that other software might not be aware of, as no 
+        // TODO The above enterLane creates link/lane messages for GTU's that other software might not be aware of, as no
         // new/init message it given at that point. Problem: init event needs a referenceLane which is determined if the GTU
         // is on the network, i.e. after the enterLane.
 
@@ -181,8 +189,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public void enterLane(final Lane lane, final Length position, final GTUDirectionality gtuDirection)
-            throws GTUException
+    public void enterLane(final Lane lane, final Length position, final GTUDirectionality gtuDirection) throws GTUException
     {
         if (lane == null || gtuDirection == null || position == null)
         {
@@ -235,7 +242,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                     boolean result = getSimulator().cancelEvent(event);
                     if (!result && event.getAbsoluteExecutionTime().get().ne(getSimulator().getSimulatorTime().get()))
                     {
-                        System.err.println("leaveLane, trying to remove event: NOTHING REMOVED");
+                        System.err.println("leaveLane, trying to remove event: NOTHING REMOVED -- result=" + result
+                                + ", simTime=" + getSimulator().getSimulatorTime().get() + ", eventTime="
+                                + event.getAbsoluteExecutionTime().get());
                     }
                 }
             }
@@ -281,7 +290,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         // store the new positions, and sample statistics
         // start with current link position, these will be overwritten, except if from a lane no adjacent lane is found, i.e.
         // changing over a continuous line when probably the reference point is past the line
-        Map<Link, Double> newLinkPositions = new HashMap<>(this.fractionalLinkPositions);
+        Map<Link, Double> newLinkPositionsLC = new HashMap<>(this.fractionalLinkPositions);
 
         for (Lane lane : lanesCopy.keySet())
         {
@@ -294,7 +303,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                     Length pos = adjacentLane.position(lane.fraction(position(lane, getReference())));
                     Length adjustedStart =
                             pos.minus(getOperationalPlan().getTraveledDistance(getSimulator().getSimulatorTime().getTime()));
-                    newLinkPositions.put(lane.getParentLink(), adjustedStart.si / adjacentLane.getLength().si);
+                    newLinkPositionsLC.put(lane.getParentLink(), adjustedStart.si / adjacentLane.getLength().si);
                 }
                 catch (OperationalPlanException exception)
                 {
@@ -308,7 +317,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         }
 
         // update the positions on the lanes we are registered on
-        this.fractionalLinkPositions = newLinkPositions;
+        this.fractionalLinkPositions = newLinkPositionsLC;
 
         for (Lane lane : lanesToBeRemoved)
         {
@@ -435,10 +444,6 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             newLinkPositions.put(lane.getParentLink(), lane.fraction(position(lane, getReference())));
         }
 
-        // if (getId().endsWith("58") && getSimulator().getSimulatorTime().getTime().si >= 1 * 60 + 31.9)
-        // {
-        // System.out.println("Let op");
-        // }
         // generate the next operational plan and carry it out
         super.move(fromLocation);
 
@@ -544,6 +549,12 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         throw new GTUException(this + " is not on any lane of Link " + link);
     }
 
+    /** caching of time field for last stored position(s). */
+    private double cacheTime = Double.NaN;
+
+    /** caching of last stored position(s). */
+    private Map<Integer, Length> cachedPositions = new HashMap<>();
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
@@ -553,6 +564,24 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             throw new GTUException("lane is null");
         }
+
+        int cacheIndex = 0;
+        if (CACHING)
+        {
+            cacheIndex = 17 * lane.hashCode() + relativePosition.hashCode();
+            if (when.si == this.cacheTime && this.cachedPositions.containsKey(cacheIndex))
+            {
+                CACHED_POSITION++;
+                return this.cachedPositions.get(cacheIndex);
+            }
+            if (when.si != this.cacheTime)
+            {
+                this.cachedPositions.clear();
+                this.cacheTime = when.si;
+            }
+        }
+        NON_CACHED_POSITION++;
+
         synchronized (this.lock)
         {
             if (!this.lanesCurrentOperationalPlan.containsKey(lane))
@@ -593,7 +622,12 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             {
                 System.out.println("loc is NaN");
             }
-            return new Length(loc, LengthUnit.SI);
+            Length length = new Length(loc, LengthUnit.SI);
+            if (CACHING)
+            {
+                this.cachedPositions.put(cacheIndex, length);
+            }
+            return length;
         }
     }
 
@@ -626,7 +660,6 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @SuppressWarnings("checkstyle:designforextension")
     protected void scheduleEnterLeaveTriggers() throws NetworkException, SimRuntimeException, GTUException
     {
-        
         /*
          * Move the vehicle into any new lanes with the front, and schedule entrance during this time step and calculate the
          * current position based on the fractional position, because THE POSITION METHOD DOES NOT WORK FOR THIS. IT CALCULATES

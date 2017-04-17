@@ -117,8 +117,8 @@ public class XMLNetworkGeneratorTest implements UNITS
                         throw this.triggerError;
                     }
                     Set<LaneBasedGTU> gtus = new HashSet<>();
-                    gtus.addAll(lane12.getGtuList());
-                    gtus.addAll(lane23.getGtuList());
+                    gtus.addAll(lane12.getGtuList().toList());
+                    gtus.addAll(lane23.getGtuList().toList());
                     for (LaneBasedGTU gtu : gtus)
                     {
                         // check that all vehicles drive 10 m/s and never have to break
