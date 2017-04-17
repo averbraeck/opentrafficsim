@@ -22,7 +22,7 @@
 
     <dependency>
       <groupId>dsol</groupId>
-      <artifactId>dsol-event</artifactId>
+      <artifactId>dsol-core</artifactId>
     </dependency>
 
     <dependency>
