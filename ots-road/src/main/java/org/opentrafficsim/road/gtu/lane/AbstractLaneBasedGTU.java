@@ -104,12 +104,15 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     public static Length initialLocationThresholdDifference = new Length(1.0, LengthUnit.MILLIMETER);
 
     /** Caching on or off. */
+    // TODO: should be indicated with a Parameter
     public static boolean CACHING = true;
 
     /** cached position count. */
+    // TODO: can be removed after testing period
     public static int CACHED_POSITION = 0;
 
     /** cached position count. */
+    // TODO: can be removed after testing period
     public static int NON_CACHED_POSITION = 0;
 
     /**
@@ -550,7 +553,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     }
 
     /** caching of time field for last stored position(s). */
-    private double cacheTime = Double.NaN;
+    private double cachePositionsTime = Double.NaN;
 
     /** caching of last stored position(s). */
     private Map<Integer, Length> cachedPositions = new HashMap<>();
@@ -569,15 +572,15 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         if (CACHING)
         {
             cacheIndex = 17 * lane.hashCode() + relativePosition.hashCode();
-            if (when.si == this.cacheTime && this.cachedPositions.containsKey(cacheIndex))
+            if (when.si == this.cachePositionsTime && this.cachedPositions.containsKey(cacheIndex))
             {
                 CACHED_POSITION++;
                 return this.cachedPositions.get(cacheIndex);
             }
-            if (when.si != this.cacheTime)
+            if (when.si != this.cachePositionsTime)
             {
                 this.cachedPositions.clear();
-                this.cacheTime = when.si;
+                this.cachePositionsTime = when.si;
             }
         }
         NON_CACHED_POSITION++;
