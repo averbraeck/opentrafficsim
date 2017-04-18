@@ -53,7 +53,7 @@ class SinkTag implements Serializable
         if (cseTag.elementType != ElementType.LANE)
             throw new NetworkException("SINK: LANE " + laneName + " not a real GTU lane for link " + linkTag.name
                 + " - roadtype " + linkTag.roadLayoutTag.name);
-        if (linkTag.generatorTags.containsKey(laneName))
+        if (linkTag.sinkTags.containsKey(laneName))
             throw new SAXException("SINK for LANE with NAME " + laneName + " defined twice");
 
         Node position = attributes.getNamedItem("POSITION");
