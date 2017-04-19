@@ -66,7 +66,7 @@ public class SimulationMessage
         simulationContent[4] = messageTypeId;
         simulationContent[5] = messageId;
         simulationContent[6] = new Byte(messageStatus.getStatus());
-        simulationContent[7] = new Integer(content.length);
+        simulationContent[7] = new Short((short) content.length);
         for (int i = 0; i < content.length; i++)
         {
             simulationContent[i + 8] = content[i];
@@ -108,7 +108,7 @@ public class SimulationMessage
         s.append("3. receiver id      : " + message[3] + "\n");
         s.append("4. message type id  : " + message[4] + "\n");
         s.append("5. message id       : " + message[5] + "\n");
-        s.append("6. message status   : " + MessageStatus.values()[(byte) message[6]] + "\n");
+        s.append("6. message status   : " + MessageStatus.getTypes().get((int)(byte)message[6]) + "\n");
         s.append("7. number of fields : " + message[7] + "\n");
         int nr = ((Number) message[7]).intValue();
         if (message.length != nr + 8)
@@ -125,4 +125,30 @@ public class SimulationMessage
         }
         return s.toString();
     }
+    
+    /**
+     * Return a printable line with the payload of the message, e.g. for debugging purposes.
+     * @param message the message to parse
+     * @return a string representation of the message
+     */
+    public static String listPayload(final Object[] message)
+    {
+        StringBuffer s = new StringBuffer();
+        s.append('|');
+        int nr = ((Number) message[7]).intValue();
+        if (message.length != nr + 8)
+        {
+            s.append("Error - number of fields not matched by message structure");
+        }
+        else
+        {
+            for (int i = 0; i < nr; i++)
+            {
+                s.append(message[8 + i] + " (" + message[8 + i].getClass().getSimpleName()
+                        + ") | ");
+            }
+        }
+        return s.toString();
+    }
+
 }

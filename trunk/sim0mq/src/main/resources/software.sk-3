@@ -1,0 +1,15 @@
+java=/opt/jdk1.8.0_74/bin/java
+java7=/opt/jdk1.8.0_74/bin/java
+java8=/opt/jdk1.8.0_74/bin/java
+java7+=/opt/jdk1.8.0_74/bin/java
+java8+=/opt/jdk1.8.0_74/bin/java
+javax86=/opt/jdk1.8.0_74/bin/java
+java7x86=/opt/jdk1.8.0_74/bin/java
+java8x86=/opt/jdk1.8.0_74/bin/java
+java7x86+=/opt/jdk1.8.0_74/bin/java
+java8x86+=/opt/jdk1.8.0_74/bin/java
+javax64=/opt/jdk1.8.0_74/bin/java
+java7x64=/opt/jdk1.8.0_74/bin/java
+java8x64=/opt/jdk1.8.0_74/bin/java
+java7x64+=/opt/jdk1.8.0_74/bin/java
+java8x64+=/opt/jdk1.8.0_74/bin/java

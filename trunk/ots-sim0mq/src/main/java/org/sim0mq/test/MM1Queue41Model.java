@@ -54,17 +54,29 @@ public class MM1Queue41Model implements DSOLModel.TimeDouble
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Utilization uN;
     
+    public double iat = Double.NaN;
+    public double serviceTime = Double.NaN;
+    
     /** {@inheritDoc} */
     @Override
     public final void constructModel(final SimulatorInterface<Double, Double, SimTimeDouble> simulator)
             throws SimRuntimeException, RemoteException
     {
+        if (Double.isNaN(this.iat))
+        {
+            throw new SimRuntimeException("Parameter iat not defined for model");
+        }
+        if (Double.isNaN(this.serviceTime))
+        {
+            throw new SimRuntimeException("Parameter servicetime not defined for model");
+        }
+        
         this.devsSimulator = (DEVSSimulatorInterface.TimeDouble) simulator;
         StreamInterface defaultStream = new MersenneTwister();
 
         // The Generator
         Generator.TimeDouble generator = new Generator.TimeDouble(this.devsSimulator, Object.class, null);
-        generator.setInterval(new DistContinuousTime.TimeDouble(new DistExponential(defaultStream, 1.0)));
+        generator.setInterval(new DistContinuousTime.TimeDouble(new DistExponential(defaultStream, this.iat)));
         generator.setStartTime(new DistContinuousSimTime.TimeDouble(new DistConstant(defaultStream, 0.0)));
         generator.setBatchSize(new DistDiscreteConstant(defaultStream, 1));
         generator.setMaxNumber(1000);
@@ -78,7 +90,7 @@ public class MM1Queue41Model implements DSOLModel.TimeDouble
 
         // The server
         DistContinuousTime.TimeDouble serviceTime =
-                new DistContinuousTime.TimeDouble(new DistExponential(defaultStream, 0.5));
+                new DistContinuousTime.TimeDouble(new DistExponential(defaultStream, this.serviceTime));
         StationInterface server = new Delay.TimeDouble(this.devsSimulator, serviceTime);
 
         // The flow

@@ -29,14 +29,24 @@ public class FederationManager
     {
         ZMQ.Context fmContext = ZMQ.context(1);
         ZMQ.Socket fmSocket = fmContext.socket(ZMQ.REQ);
-        
-        // Start model e:/MM1/mmm1.jar
-        byte[] fm1Message = SimulationMessage.encode(federationName, "FM", "FS", "FM.1", 1L, MessageStatus.NEW, "MM1.1", "java8+", "",
-                "-jar", "e:/MM1/mm1.jar", "5502", "e:/MM1", (short) 5502, "", "e:/MM1/out.txt", "e:/MM1/err.txt", false, false, false);
-        
-        fmSocket.connect("tcp://127.0.0.1:" + fsPort);
+
+         // Start model e:/MM1/mmm1.jar
+//         byte[] fm1Message = SimulationMessage.encode(federationName, "FM", "FS", "FM.1", 1L, MessageStatus.NEW, "MM1.1",
+//         "java8+", 
+//         "-jar", "e:/MM1/mm1.jar", "5502", "e:/MM1", (short) 5502, "", "e:/MM1/out.txt", "e:/MM1/err.txt", false, false,
+//         false);
+//        
+//         fmSocket.connect("tcp://127.0.0.1:" + fsPort);
+
+        byte[] fm1Message = SimulationMessage.encode(federationName, "FM", "FS", "FM.1", 1L, MessageStatus.NEW, "MM1.1",
+                "java8+", "-jar", "/home/alexandv/sim0mq/MM1/mm1.jar", "5502", "/home/alexandv/sim0mq/MM1",
+                (short) 5502, "", "/home/alexandv/sim0mq/MM1/out.txt", "/home/alexandv/sim0mq/MM1/err.txt",
+                false, false, false);
+
+        fmSocket.connect("tcp://130.161.3.179:" + fsPort);
+
         fmSocket.send(fm1Message);
-        
+
         byte[] reply = fmSocket.recv(0);
         Object[] replyMessage = SimulationMessage.decode(reply);
         System.out.println("Received\n" + SimulationMessage.print(replyMessage));
@@ -51,7 +61,7 @@ public class FederationManager
      */
     public static void main(String[] args) throws Sim0MQException
     {
-        if (args.length < 2)
+        if (args.length < 3)
         {
             System.err.println("Use as FederationManager federationName federationManagerPortNumber federateStarterPortNumber");
             System.exit(-1);

@@ -1,5 +1,11 @@
 package org.sim0mq.message;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import nl.tudelft.simulation.immutablecollections.Immutable;
+import nl.tudelft.simulation.immutablecollections.ImmutableHashMap;
+
 /**
  * Message status names and corresponding values when serialized.
  * <p>
@@ -24,6 +30,9 @@ public enum MessageStatus
     /** the status code, 1, 2, or 3. */
     protected final byte status;
 
+    /** the types for retrieval. */
+    private static ImmutableHashMap<Integer, MessageStatus> types = null;
+
     /**
      * @param status the status code, 1, 2, or 3.
      */
@@ -38,6 +47,25 @@ public enum MessageStatus
     public final byte getStatus()
     {
         return this.status;
+    }
+
+    /**
+     * make the types after initialization.
+     * @return the map of message status codes
+     */
+    public static ImmutableHashMap<Integer, MessageStatus> getTypes()
+    {
+        Map<Integer, MessageStatus> t = new HashMap<>();
+        if (types == null)
+        {
+            for (int i = 0; i < values().length; i++)
+            {
+                MessageStatus ms = values()[i];
+                t.put((int) ms.getStatus(), ms);
+            }
+            types = new ImmutableHashMap<>(t, Immutable.WRAP);
+        }
+        return types;
     }
 
 }
