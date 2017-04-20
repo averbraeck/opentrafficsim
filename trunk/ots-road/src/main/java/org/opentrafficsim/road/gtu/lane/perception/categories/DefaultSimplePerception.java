@@ -61,6 +61,16 @@ public interface DefaultSimplePerception extends PerceptionCategory
     void updateBackwardHeadway() throws GTUException, ParameterException, NetworkException;
 
     /**
+     * Update the accessible adjacent lanes.
+     * @throws GTUException when the GTU was not yet initialized
+     */
+    default void updateAccessibleAdjacentLanes() throws GTUException
+    {
+        updateAccessibleAdjacentLanesLeft();
+        updateAccessibleAdjacentLanesRight();
+    }
+    
+    /**
      * Update the accessible adjacent lanes on the left.
      * @throws GTUException when the GTU was not yet initialized
      */

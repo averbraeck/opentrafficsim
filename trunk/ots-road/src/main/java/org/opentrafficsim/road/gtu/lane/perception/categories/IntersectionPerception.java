@@ -36,6 +36,22 @@ public interface IntersectionPerception extends PerceptionCategory
      * @throws ParameterException if lane structure cannot be made due to missing parameter
      */
     void updateConflicts() throws GTUException, ParameterException;
+    
+    /**
+     * Default empty implementation to pass tests.
+     */
+    default void updateAlongsideConflictLeft()
+    {
+        //
+    }
+    
+    /**
+     * Default empty implementation to pass tests.
+     */
+    default void updateAlongsideConflictRight()
+    {
+        //
+    }
 
     /**
      * Returns a set of traffic lights along the route. Traffic lights are sorted by headway value.

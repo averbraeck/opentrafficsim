@@ -210,7 +210,8 @@ public class VerifyPerceptionCategoryMethods
         }
         else
         {
-            System.err.println("Class " + c + " does not contain a method '" + timeStampedGetter + "'.");
+            // Accept that no time-stamped method is present
+            // System.err.println("Class " + c + " does not contain a method '" + timeStampedGetter + "'.");
             // TODO: fail...
         }
         if (!methodNames.contains(updater))

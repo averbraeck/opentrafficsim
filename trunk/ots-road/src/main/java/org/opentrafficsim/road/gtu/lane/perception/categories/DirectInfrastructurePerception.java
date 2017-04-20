@@ -14,6 +14,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
@@ -72,6 +73,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
     @Override
     public final void updateInfrastructureLaneChangeInfo(final RelativeLane lane) throws GTUException, ParameterException
     {
+
         if (this.infrastructureLaneChangeInfo.containsKey(lane)
                 && this.infrastructureLaneChangeInfo.get(lane).getTimestamp().equals(getTimestamp()))
         {
@@ -133,6 +135,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             nextSet = new HashMap<>();
             InfrastructureLaneChangeInfo bestOk = null;
             InfrastructureLaneChangeInfo bestNotOk = null;
+            boolean deadEnd = false;
             for (LaneStructureRecord laneRecord : currentSet.keySet())
             {
                 boolean anyOk;
@@ -165,6 +168,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
                 else
                 {
                     // take best not ok
+                    deadEnd = deadEnd || currentSet.get(laneRecord).isDeadEnd();
                     if (bestNotOk == null || currentSet.get(laneRecord).getRequiredNumberOfLaneChanges() < bestNotOk
                             .getRequiredNumberOfLaneChanges())
                     {
@@ -191,7 +195,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             // if there are lanes that are not okay and only -further- lanes that are ok, we need to change to one of the ok's
             if (bestNotOk != null && bestOk.getRequiredNumberOfLaneChanges() > bestNotOk.getRequiredNumberOfLaneChanges())
             {
-                resultSet.add(bestOk);
+                resultSet.add(new InfrastructureLaneChangeInfo(bestOk.getRequiredNumberOfLaneChanges(),
+                        bestOk.getRemainingDistance(), deadEnd));
             }
             currentSet = nextSet;
             nextSet = new HashMap<>();
@@ -293,7 +298,38 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
     {
         updateCrossSection();
         checkLaneIsInCrossSection(lane);
+        if (this.legalLaneChangePossibility.get(lane) == null)
+        {
+            this.legalLaneChangePossibility.put(lane, new HashMap<>());
+        }
         LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(lane);
+        // check tail
+        Length tail = getPerception().getGtu().getRear().getDx();
+        while (record != null && record.getStartDistance().plus(record.getLane().getLength()).gt(tail))
+        {
+            // TODO merge
+            if ((lat.isLeft() && record.getLeft() != null) || (lat.isRight() && record.getRight() != null))
+            {
+                if (record.getPrev().isEmpty())
+                {
+                    break;
+                }
+                record = record.getPrev().isEmpty() ? null : record.getPrev().get(0);
+            }
+            else if (!record.equals(getPerception().getLaneStructure().getLaneLSR(lane)))
+            {
+                // tail needs to be passed the end of this record
+                this.legalLaneChangePossibility.get(lane).put(lat,
+                        new TimeStampedObject<>(record.getStartDistance().plus(record.getLane().getLength()), getTimestamp()));
+                return;
+            }
+            else
+            {
+                // can not change on current lane
+                break;
+            }
+        }
+        record = getPerception().getLaneStructure().getLaneLSR(lane);
         Length dist = Length.ZERO;
         if ((lat.isLeft() && record.getLeft() != null) || (lat.isRight() && record.getRight() != null))
         {
@@ -314,10 +350,6 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
                 // TODO splits
                 record = record.getNext().isEmpty() ? null : record.getNext().get(0);
             }
-        }
-        if (this.legalLaneChangePossibility.get(lane) == null)
-        {
-            this.legalLaneChangePossibility.put(lane, new HashMap<>());
         }
         this.legalLaneChangePossibility.get(lane).put(lat, new TimeStampedObject<>(dist, getTimestamp()));
     }
