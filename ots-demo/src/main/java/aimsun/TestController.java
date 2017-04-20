@@ -12,8 +12,6 @@ import java.util.stream.Collectors;
 
 import nl.tudelft.simulation.language.io.URLResource;
 
-import org.sim0mq.Sim0MQException;
-
 /**
  * Test client for AimsunController.
  * <p>
