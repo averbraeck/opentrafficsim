@@ -35,7 +35,7 @@ public class AccelerationGTUColorer implements GTUColorer, Serializable
     private final Acceleration maximumAcceleration;
 
     /** Negative scale part of the range of colors (excluding the zero value). */
-    private static Color[] decelerationColors = { Color.RED, Color.ORANGE, Color.YELLOW };
+    private static Color[] decelerationColors = { Color.MAGENTA, Color.RED, Color.ORANGE, Color.YELLOW };
 
     /** Positive scale part of the range of colors (including the zero value). */
     private static Color[] accelerationColors = { Color.YELLOW, Color.GREEN, Color.BLUE };
@@ -50,7 +50,7 @@ public class AccelerationGTUColorer implements GTUColorer, Serializable
     {
         this.maximumDeceleration = maximumDeceleration;
         this.maximumAcceleration = maximumAcceleration;
-        this.legend = new ArrayList<LegendEntry>(5);
+        this.legend = new ArrayList<>(6);
         for (int index = 0; index < decelerationColors.length - 1; index++)
         {
             double ratio = index * 1.0 / (decelerationColors.length - 1);

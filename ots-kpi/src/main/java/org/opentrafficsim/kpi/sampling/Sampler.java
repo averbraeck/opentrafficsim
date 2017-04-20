@@ -331,6 +331,7 @@ public abstract class Sampler
      * @param zipped whether to zip the file
      */
     // TODO This returns all data, regardless of registered space-time regions. We need a query to have space-time regions.
+    // TODO Zip enum: bzip2, remove "omit repeated value", but add as compression option
     public final void writeToFile(String file, final String format, final boolean zipped)
     {
         String name = null;

@@ -23,7 +23,7 @@ public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer implements
 {
     /** */
     private static final long serialVersionUID = 20150000L;
-    
+
     /** The initial set of GTU colorers in the default list. */
     private static final GTUColorer[] COLORERS;
 
@@ -32,9 +32,7 @@ public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer implements
         COLORERS = new GTUColorer[3];
         COLORERS[0] = new IDGTUColorer();
         COLORERS[1] = new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR));
-        COLORERS[2] =
-            new AccelerationGTUColorer(new Acceleration(-4, AccelerationUnit.METER_PER_SECOND_2), new Acceleration(2,
-                AccelerationUnit.METER_PER_SECOND_2));
+        COLORERS[2] = new AccelerationGTUColorer(Acceleration.createSI(-6.0), Acceleration.createSI(2));
     }
 
     /**

@@ -706,6 +706,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
         Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
         LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), gtuType, vehicleLength,
                 new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, this.network);
+        gtu.setNoLaneChangeDistance(Length.ZERO);
 
         // strategical planner
         LaneBasedStrategicalPlanner strategicalPlanner;

@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
+import java.util.Set;
 import java.util.SortedSet;
 
 import org.djunits.unit.AccelerationUnit;
@@ -40,8 +41,8 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 public enum Synchronization implements LmrsParameters
 {
 
-    /** Synchronization where current leaders are taken. */
-    PASSIVE
+    /** Synchronization that only includes stopping for a dead-end. */
+    NONE
     {
 
         @Override
@@ -49,41 +50,83 @@ public enum Synchronization implements LmrsParameters
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
                 throws ParameterException, OperationalPlanException
         {
-            Acceleration a = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-            double dCoop = bc.getParameter(DCOOP);
-            RelativeLane relativeLane = new RelativeLane(lat, 1);
-            SortedSet<HeadwayGTU> set = removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
-                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
-                    relativeLane), perception, RelativeLane.CURRENT);
-            HeadwayGTU leader = null;
-            if (desire >= dCoop && !set.isEmpty())
+
+            Acceleration a = Acceleration.POSITIVE_INFINITY;
+            // stop for end
+            Length remainingDist = null;
+            for (InfrastructureLaneChangeInfo ili : perception.getPerceptionCategory(InfrastructurePerception.class)
+                    .getInfrastructureLaneChangeInfo(RelativeLane.CURRENT))
             {
-                leader = set.first();
-            }
-            else
-            {
-                for (HeadwayGTU gtu : set)
+                if (remainingDist == null || remainingDist.gt(ili.getRemainingDistance()))
                 {
-                    if (gtu.getSpeed().gt0())
+                    remainingDist = ili.getRemainingDistance();
+                }
+            }
+            if (remainingDist != null)
+            {
+                Speed speed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
+                Acceleration bCrit = bc.getParameter(ParameterTypes.BCRIT);
+                try
+                {
+                    remainingDist = remainingDist.minus(bc.getParameter(ParameterTypes.S0))
+                            .minus(perception.getGtu().getFront().getDx());
+                }
+                catch (GTUException exception)
+                {
+                    throw new OperationalPlanException("Could not obtain GTU from perception.", exception);
+                }
+                // TODO replace this hack with something that properly accounts for overshoot
+                remainingDist = remainingDist.minus(Length.createSI(10));
+                if (remainingDist.le0())
+                {
+                    if (speed.gt0())
                     {
-                        leader = gtu;
-                        break;
+                        a = Acceleration.min(a, bCrit.neg());
+                    }
+                    else
+                    {
+                        a = Acceleration.min(a, Acceleration.ZERO);
+                    }
+                }
+                else
+                {
+                    Acceleration bMin = new Acceleration(.5 * speed.si * speed.si / remainingDist.si, AccelerationUnit.SI);
+                    if (bMin.ge(bCrit))
+                    {
+                        a = Acceleration.min(a, bMin.neg());
                     }
                 }
             }
-            if (leader != null)
-            {
-                Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
-                Acceleration aSingle =
-                        LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, bc, sli, cfm);
-                a = Acceleration.min(a, aSingle);
-            }
-            return gentleUrgency(a, desire, bc);
+
+            return a;
         }
 
         @Override
         Acceleration cooperate(final LanePerception perception, final BehavioralCharacteristics bc, final SpeedLimitInfo sli,
-                final CarFollowingModel cfm, final LateralDirectionality lat)
+                final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
+                throws ParameterException, OperationalPlanException
+        {
+            return Acceleration.POSITIVE_INFINITY;
+        }
+
+    },
+
+    /** Synchronization that only includes stopping for a dead-end and simple cooperation. */
+    COOPERATION
+    {
+
+        @Override
+        Acceleration synchronize(final LanePerception perception, final BehavioralCharacteristics bc, final SpeedLimitInfo sli,
+                final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
+                throws ParameterException, OperationalPlanException
+        {
+            // stop for dead-end
+            return NONE.synchronize(perception, bc, sli, cfm, desire, lat, lmrsData);
+        }
+
+        @Override
+        Acceleration cooperate(final LanePerception perception, final BehavioralCharacteristics bc, final SpeedLimitInfo sli,
+                final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
                 throws ParameterException, OperationalPlanException
         {
             if ((lat.isLeft() && !perception.getLaneStructure().getCrossSection().contains(RelativeLane.LEFT))
@@ -116,6 +159,66 @@ public enum Synchronization implements LmrsParameters
 
     },
 
+    /** Synchronization where current leaders are taken. */
+    PASSIVE
+    {
+
+        @Override
+        Acceleration synchronize(final LanePerception perception, final BehavioralCharacteristics bc, final SpeedLimitInfo sli,
+                final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
+                throws ParameterException, OperationalPlanException
+        {
+            Acceleration a = Acceleration.POSITIVE_INFINITY;
+            double dCoop = bc.getParameter(DCOOP);
+            RelativeLane relativeLane = new RelativeLane(lat, 1);
+            SortedSet<HeadwayGTU> set = removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
+                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
+                    relativeLane), perception, RelativeLane.CURRENT);
+            HeadwayGTU leader = null;
+            if (set != null)
+            {
+                if (desire >= dCoop && !set.isEmpty())
+                {
+                    leader = set.first();
+                }
+                else
+                {
+                    for (HeadwayGTU gtu : set)
+                    {
+                        if (gtu.getSpeed().gt0())
+                        {
+                            leader = gtu;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (leader != null)
+            {
+                Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
+                Acceleration aSingle =
+                        LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, bc, sli, cfm);
+                a = Acceleration.min(a, aSingle);
+            }
+            a = gentleUrgency(a, desire, bc);
+
+            // dead end
+            a = Acceleration.min(a, NONE.synchronize(perception, bc, sli, cfm, desire, lat, lmrsData));
+
+            return a;
+
+        }
+
+        @Override
+        Acceleration cooperate(final LanePerception perception, final BehavioralCharacteristics bc, final SpeedLimitInfo sli,
+                final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
+                throws ParameterException, OperationalPlanException
+        {
+            return COOPERATION.cooperate(perception, bc, sli, cfm, lat, ownDesire);
+        }
+
+    },
+
     /** Synchronization where a suitable leader is actively targeted, in relation to infrastructure. */
     ACTIVE
     {
@@ -127,7 +230,6 @@ public enum Synchronization implements LmrsParameters
         {
 
             Acceleration b = bc.getParameter(ParameterTypes.B);
-            Acceleration bCrit = bc.getParameter(ParameterTypes.BCRIT);
             Duration tMin = bc.getParameter(ParameterTypes.TMIN);
             Duration tMax = bc.getParameter(ParameterTypes.TMAX);
             Speed vCong = bc.getParameter(ParameterTypes.VCONG);
@@ -153,19 +255,20 @@ public enum Synchronization implements LmrsParameters
             SortedSet<InfrastructureLaneChangeInfo> info = infra.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT);
             Length xMerge = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, lat).minus(dx);
             xMerge = xMerge.lt0() ? xMerge.neg() : Length.ZERO; // zero, or positive value where lane change is not possible
-            int nCur;
-            Length xCur;
-            if (info.isEmpty())
+            int nCur = 0;
+            Length xCur = Length.POSITIVE_INFINITY;
+            for (InfrastructureLaneChangeInfo lcInfo : info)
             {
-                nCur = 0;
-                xCur = Length.createSI(Double.POSITIVE_INFINITY);
+                int nCurTmp = lcInfo.getRequiredNumberOfLaneChanges();
+                // subtract minimum lane change distance per lane change
+                Length xCurTmp = lcInfo.getRemainingDistance().minus(ownLength.multiplyBy(2.0 * nCurTmp)).minus(dx);
+                if (xCurTmp.lt(xCur))
+                {
+                    nCur = nCurTmp;
+                    xCur = xCurTmp;
+                }
             }
-            else
-            {
-                nCur = info.first().getRequiredNumberOfLaneChanges();
-                // subtract minimum lane change distance per lane changes
-                xCur = info.first().getRemainingDistance().minus(ownLength.multiplyBy(2.0 * nCur)).minus(dx);
-            }
+
             // for short ramps, include braking distance, i.e. we -do- select a gap somewhat upstream of the merge point;
             // should we abandon this gap, we still have braking distance and minimum lane change distance left
             Length xMergeSync = xCur.minus(Length.createSI(.5 * ownSpeed.si * ownSpeed.si / b.si));
@@ -185,15 +288,23 @@ public enum Synchronization implements LmrsParameters
             }
 
             // if there is no sync vehicle, select the first one to which current deceleration < b (it may become larger later)
-            if (syncVehicle == null)
+            if (leaders != null && syncVehicle == null)
             {
                 Length maxDistance = Length.min(x0, xCur);
                 for (HeadwayGTU leader : leaders)
                 {
-                    if ((leader.getDistance().lt(maxDistance) || leader.getSpeed().gt(vCong))
-                            && tagAlongAcceleration(leader, ownSpeed, ownLength, tagSpeed, desire, bc, sli, cfm).gt(b.neg()))
+                    if (leader.getDistance().lt(maxDistance))
                     {
-                        syncVehicle = leader;
+                        if ((leader.getDistance().gt(xMergeSync) || leader.getSpeed().gt(vCong))
+                                && tagAlongAcceleration(leader, ownSpeed, ownLength, tagSpeed, desire, bc, sli, cfm)
+                                        .gt(b.neg()))
+                        {
+                            syncVehicle = leader;
+                            break;
+                        }
+                    }
+                    else
+                    {
                         break;
                     }
                 }
@@ -204,7 +315,7 @@ public enum Synchronization implements LmrsParameters
             SortedSet<HeadwayGTU> followers =
                     removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(neighbors.getFollowers(lane), perception, lane),
                             perception, RelativeLane.CURRENT);
-            HeadwayGTU follower = followers.isEmpty() ? null
+            HeadwayGTU follower = followers == null || followers.isEmpty() ? null
                     : followers.first().moved(
                             followers.first().getDistance().plus(ownLength).plus(followers.first().getLength()).neg(),
                             followers.first().getSpeed(), followers.first().getAcceleration());
@@ -220,10 +331,10 @@ public enum Synchronization implements LmrsParameters
                 upOk = up == null ? false
                         : tagAlongAcceleration(up, ownSpeed, ownLength, tagSpeed, desire, bc, sli, cfm).gt(b.neg());
             }
-            while (syncVehicle != null && up != null
-                    && (upOk || (!canBeAhead(up, xCur, nCur, ownSpeed, ownLength, tagSpeed, dCoop, bCrit, tMin, tMax, x0, t0,
-                            lc, desire) && desire > dCoop))
-                    && (up.getDistance().plus(up.getLength()).gt(xMergeSync) || up.getSpeed().gt(vCong)))
+            while (syncVehicle != null
+                    && up != null && (upOk || (!canBeAhead(up, xCur, nCur, ownSpeed, ownLength, tagSpeed, dCoop, b, tMin, tMax,
+                            x0, t0, lc, desire) && desire > dCoop))
+                    && (up.getDistance().gt(xMergeSync) || up.getSpeed().gt(vCong)))
             {
                 if (up.equals(follower))
                 {
@@ -237,6 +348,7 @@ public enum Synchronization implements LmrsParameters
                 upOk = up == null ? false
                         : tagAlongAcceleration(up, ownSpeed, ownLength, tagSpeed, desire, bc, sli, cfm).gt(b.neg());
             }
+            lmrsData.setSyncVehicle(syncVehicle);
 
             // actual synchronization
             Acceleration a = Acceleration.POSITIVE_INFINITY;
@@ -245,19 +357,21 @@ public enum Synchronization implements LmrsParameters
                 a = gentleUrgency(tagAlongAcceleration(syncVehicle, ownSpeed, ownLength, tagSpeed, desire, bc, sli, cfm),
                         desire, bc);
             }
-            else if (follower != null)
+            else if (nCur > 0 && (follower != null || (leaders != null && !leaders.isEmpty())))
             {
                 // no gap to synchronize with, but there is a follower to account for
-                if (!canBeAhead(follower, xCur, nCur, ownSpeed, ownLength, tagSpeed, dCoop, bCrit, tMin, tMax, x0, t0, lc,
-                        desire))
+                if (follower != null && !canBeAhead(follower, xCur, nCur, ownSpeed, ownLength, tagSpeed, dCoop, b, tMin, tMax,
+                        x0, t0, lc, desire))
                 {
                     // get behind follower
-                    double c = requiredBufferSpace(follower.getSpeed(), nCur, x0, t0, lc, dCoop).si;
+                    double c = requiredBufferSpace(ownSpeed, nCur, x0, t0, lc, dCoop).si;
                     double t = (xCur.si - follower.getDistance().si - c) / follower.getSpeed().si;
-                    Acceleration acc = Acceleration.createSI(2 * (xCur.si - c - ownSpeed.si * t) / (t * t));
+                    double xGap = ownSpeed.si * (tMin.si + desire * (tMax.si - tMin.si));
+                    Acceleration acc = Acceleration.createSI(2 * (xCur.si - c - ownSpeed.si * t - xGap) / (t * t));
                     if (follower.getSpeed().eq0() || acc.si < -ownSpeed.si / t || t < 0)
                     {
                         // inappropriate to get behind
+                        // note: if minimum lane change space is more than infrastructure, deceleration will simply be limited
                         a = stopForEnd(xCur, xMerge, bc, ownSpeed, cfm, sli);
                     }
                     else
@@ -265,36 +379,20 @@ public enum Synchronization implements LmrsParameters
                         a = gentleUrgency(acc, desire, bc);
                     }
                 }
-                else
+                else if (!LmrsUtil.acceptGapNeighbors(perception, bc, sli, cfm, desire, ownSpeed, lat))
                 {
-                    // check gap acceptance based on accelerations
-                    boolean acceptFollower;
-                    if (followers.first().getDistance().gt0()) // obtain with unadjusted distance
+                    a = stopForEnd(xCur, xMerge, bc, ownSpeed, cfm, sli);
+                    // but no stronger than getting behind the leader
+                    if (leaders != null && !leaders.isEmpty())
                     {
-                        BehavioralCharacteristics bcFollower = follower.getBehavioralCharacteristics();
-                        LmrsUtil.setDesiredHeadway(bc, desire);
-                        acceptFollower = LmrsUtil.singleAcceleration(followers.first().getDistance(), follower.getSpeed(),
-                                ownSpeed, desire, bcFollower, follower.getSpeedLimitInfo(),
-                                follower.getCarFollowingModel()).si > -b.si * desire;
-                    }
-                    else
-                    {
-                        acceptFollower = false;
-                    }
-                    boolean acceptSelf;
-                    if (!leaders.isEmpty() && leaders.first().getDistance().gt0())
-                    {
-                        acceptSelf = LmrsUtil.singleAcceleration(leaders.first().getDistance(), ownSpeed,
-                                leaders.first().getSpeed(), desire, bc, sli, cfm).si > -b.si * desire;
-                    }
-                    else
-                    {
-                        acceptSelf = false;
-                    }
-                    if (!acceptFollower || !acceptSelf)
-                    {
-                        // can be ahead of follower, but no suitable leader for synchronization
-                        a = stopForEnd(xCur, xMerge, bc, ownSpeed, cfm, sli);
+                        double c = requiredBufferSpace(ownSpeed, nCur, x0, t0, lc, dCoop).si;
+                        double t = (xCur.si - leaders.first().getDistance().si - c) / leaders.first().getSpeed().si;
+                        double xGap = ownSpeed.si * (tMin.si + desire * (tMax.si - tMin.si));
+                        Acceleration acc = Acceleration.createSI(2 * (xCur.si - c - ownSpeed.si * t - xGap) / (t * t));
+                        if (!(leaders.first().getSpeed().eq0() || acc.si < -ownSpeed.si / t || t < 0))
+                        {
+                            a = Acceleration.max(a, acc);
+                        }
                     }
                 }
             }
@@ -302,30 +400,18 @@ public enum Synchronization implements LmrsParameters
             // slow down to have sufficient time for further lane changes
             if (nCur > 1)
             {
-                if (xMerge.lt0())
+                if (xMerge.gt0())
                 {
                     // achieve speed to have sufficient time as soon as a lane change becomes possible (infrastructure)
-                    Speed vMerge = xCur.minus(xMerge).divideBy(t0.multiplyBy((1 - dCoop) * (nCur - 1)).plus(lc));
-                    vMerge = Speed.min(vMerge, x0.divideBy(t0));
+                    Speed vMerge = xCur.lt(xMerge) ? Speed.ZERO
+                            : xCur.minus(xMerge).divideBy(t0.multiplyBy((1 - dCoop) * (nCur - 1)).plus(lc));
+                    vMerge = Speed.max(vMerge, x0.divideBy(t0));
                     a = Acceleration.min(a, CarFollowingUtil.approachTargetSpeed(cfm, bc, ownSpeed, sli, xMerge, vMerge));
                 }
                 else
                 {
                     // slow down by b if our speed is too high beyond the merge point
-                    Speed speed;
-                    if (up != null)
-                    {
-                        speed = up.getSpeed();
-                    }
-                    else if (syncVehicle != null)
-                    {
-                        speed = syncVehicle.getSpeed();
-                    }
-                    else
-                    {
-                        speed = ownSpeed;
-                    }
-                    Length c = requiredBufferSpace(speed, nCur, x0, t0, lc, dCoop);
+                    Length c = requiredBufferSpace(ownSpeed, nCur, x0, t0, lc, dCoop);
                     if (xCur.lt(c))
                     {
                         a = Acceleration.min(a, b.neg());
@@ -338,25 +424,19 @@ public enum Synchronization implements LmrsParameters
 
         @Override
         Acceleration cooperate(final LanePerception perception, final BehavioralCharacteristics bc, final SpeedLimitInfo sli,
-                final CarFollowingModel cfm, final LateralDirectionality lat)
+                final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
                 throws ParameterException, OperationalPlanException
         {
+
             if ((lat.isLeft() && !perception.getLaneStructure().getCrossSection().contains(RelativeLane.LEFT))
                     || (lat.isRight() && !perception.getLaneStructure().getCrossSection().contains(RelativeLane.RIGHT)))
             {
                 return new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
             }
-            Acceleration b = bc.getParameter(ParameterTypes.B);
             Acceleration a = new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
             double dCoop = bc.getParameter(DCOOP);
-            Length x0 = bc.getParameter(ParameterTypes.LOOKAHEAD);
-            Duration t0 = bc.getParameter(ParameterTypes.T0);
-            Speed tagSpeed = x0.divideBy(t0);
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
-            Length ownLength = perception.getPerceptionCategory(EgoPerception.class).getLength();
             RelativeLane relativeLane = new RelativeLane(lat, 1);
-            SortedSet<HeadwayGTU> targetLeaders =
-                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
             for (HeadwayGTU leader : removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
                     perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
                     relativeLane), perception, RelativeLane.CURRENT))
@@ -364,36 +444,14 @@ public enum Synchronization implements LmrsParameters
                 BehavioralCharacteristics bc2 = leader.getBehavioralCharacteristics();
                 double desire = lat.equals(LateralDirectionality.LEFT) && bc2.contains(DRIGHT) ? bc2.getParameter(DRIGHT)
                         : lat.equals(LateralDirectionality.RIGHT) && bc2.contains(DLEFT) ? bc2.getParameter(DLEFT) : 0;
-                if (desire >= dCoop && (perception.getPerceptionCategory(EgoPerception.class).getSpeed().gt0()
-                        || leader.getSpeed().gt0() || leader.getDistance().gt0()))
+                if (desire >= dCoop && leader.getDistance().gt0())
                 {
-                    Acceleration aSingle;
-                    if (leader.getSpeed().eq0())
-                    {
-                        HeadwayGTU targetLeader = getTargetLeader(leader, targetLeaders);
-                        if (targetLeader == null || LmrsUtil.singleAcceleration(
-                                targetLeader.getDistance().minus(leader.getDistance()).minus(leader.getLength()),
-                                leader.getSpeed(), targetLeader.getSpeed(), desire, leader.getBehavioralCharacteristics(),
-                                leader.getSpeedLimitInfo(), leader.getCarFollowingModel()).gt(b.neg()))
-                        {
-                            // cooperate without tagging along, adjacent vehicle stands still due to remaining space
-                            aSingle = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, bc,
-                                    sli, cfm);
-                        }
-                        else
-                        {
-                            aSingle = tagAlongAcceleration(leader, ownSpeed, ownLength, tagSpeed, desire, bc, sli, cfm);
-                        }
-                    }
-                    else
-                    {
-                        aSingle = tagAlongAcceleration(leader, ownSpeed, ownLength, tagSpeed, desire, bc, sli, cfm);
-                    }
-                    a = Acceleration.min(a, aSingle);
+                    Acceleration aSingle = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(),
+                            desire, bc, sli, cfm);
+                    a = Acceleration.min(a, gentleUrgency(aSingle, desire, bc));
                 }
             }
-
-            return Acceleration.max(a, b.neg());
+            return a;
         }
 
     };
@@ -422,12 +480,14 @@ public enum Synchronization implements LmrsParameters
      * @param sli speed limit info
      * @param cfm car-following model
      * @param lat lateral direction for cooperation
+     * @param ownDesire own lane change desire
      * @return acceleration for synchronization
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
      */
     abstract Acceleration cooperate(LanePerception perception, BehavioralCharacteristics bc, SpeedLimitInfo sli,
-            CarFollowingModel cfm, LateralDirectionality lat) throws ParameterException, OperationalPlanException;
+            CarFollowingModel cfm, LateralDirectionality lat, Desire ownDesire)
+            throws ParameterException, OperationalPlanException;
 
     /**
      * Removes all GTUs from the set, that are found upstream on the conflicting lane of a conflict in the current lane.
@@ -444,19 +504,23 @@ public enum Synchronization implements LmrsParameters
         {
             return set;
         }
-        for (HeadwayConflict conflict : perception.getPerceptionCategory(IntersectionPerception.class)
-                .getConflicts(relativeLane))
+        Set<HeadwayConflict> conflicts =
+                perception.getPerceptionCategory(IntersectionPerception.class).getConflicts(relativeLane);
+        if (conflicts != null)
         {
-            if (conflict.isCrossing() || conflict.isMerge())
+            for (HeadwayConflict conflict : conflicts)
             {
-                for (HeadwayGTU conflictGtu : conflict.getUpstreamConflictingGTUs())
+                if (conflict.isCrossing() || conflict.isMerge())
                 {
-                    for (HeadwayGTU gtu : set)
+                    for (HeadwayGTU conflictGtu : conflict.getUpstreamConflictingGTUs())
                     {
-                        if (conflictGtu.getId().equals(gtu.getId()))
+                        for (HeadwayGTU gtu : set)
                         {
-                            set.remove(gtu);
-                            break;
+                            if (conflictGtu.getId().equals(gtu.getId()))
+                            {
+                                set.remove(gtu);
+                                break;
+                            }
                         }
                     }
                 }
@@ -529,6 +593,7 @@ public enum Synchronization implements LmrsParameters
      * @return acceleration by following an adjacent vehicle including tagging along
      * @throws ParameterException if a parameter is not present
      */
+    @SuppressWarnings("checkstyle:parameternumber")
     static Acceleration tagAlongAcceleration(final HeadwayGTU leader, final Speed followerSpeed, final Length followerLength,
             final Speed tagSpeed, final double desire, final BehavioralCharacteristics bc, final SpeedLimitInfo sli,
             final CarFollowingModel cfm) throws ParameterException
@@ -537,6 +602,7 @@ public enum Synchronization implements LmrsParameters
         double tagV = followerSpeed.lt(tagSpeed) ? 1.0 - followerSpeed.si / tagSpeed.si : 0.0;
         double tagD = desire <= dCoop ? 1.0 : 1.0 - (desire - dCoop) / (1.0 - dCoop);
         double tagExtent = tagV < tagD ? tagV : tagD;
+
         /*-
          * Maximum extent is half a vehicle length, being the minimum of the own vehicle or adjacent vehicle length. At
          * standstill we get: 
@@ -563,7 +629,7 @@ public enum Synchronization implements LmrsParameters
      * @param ownLength own length
      * @param tagSpeed maximum tag along speed
      * @param dCoop cooperation threshold
-     * @param bCrit critical deceleration
+     * @param b critical deceleration
      * @param tMin minimum headway
      * @param tMax normal headway
      * @param x0 anticipation distance
@@ -574,20 +640,19 @@ public enum Synchronization implements LmrsParameters
      * @throws ParameterException if parameter is not defined
      */
     static boolean canBeAhead(final HeadwayGTU adjacentVehicle, final Length xCur, final int nCur, final Speed ownSpeed,
-            final Length ownLength, final Speed tagSpeed, final double dCoop, final Acceleration bCrit, final Duration tMin,
+            final Length ownLength, final Speed tagSpeed, final double dCoop, final Acceleration b, final Duration tMin,
             final Duration tMax, final Length x0, final Duration t0, final Duration lc, final double desire)
             throws ParameterException
     {
+
         // always true if adjacent vehicle is behind and i) both vehicles very slow, or ii) cooperation assumed and possible
-        if (adjacentVehicle
-                .getDistance().gt(
-                        adjacentVehicle.getLength()
-                                .neg())
-                && ((desire > dCoop && LmrsUtil.singleAcceleration(
-                        adjacentVehicle.getDistance().neg().minus(adjacentVehicle.getLength()).minus(ownLength),
+        boolean tmp = LmrsUtil
+                .singleAcceleration(adjacentVehicle.getDistance().neg().minus(adjacentVehicle.getLength()).minus(ownLength),
                         adjacentVehicle.getSpeed(), ownSpeed, desire, adjacentVehicle.getBehavioralCharacteristics(),
-                        adjacentVehicle.getSpeedLimitInfo(), adjacentVehicle.getCarFollowingModel()).gt(bCrit.neg()))
-                        || (ownSpeed.lt(tagSpeed) && adjacentVehicle.getSpeed().lt(tagSpeed))))
+                        adjacentVehicle.getSpeedLimitInfo(), adjacentVehicle.getCarFollowingModel())
+                .gt(b.neg());
+        if (adjacentVehicle.getDistance().lt(ownLength.neg())
+                && ((desire > dCoop && tmp) || (ownSpeed.lt(tagSpeed) && adjacentVehicle.getSpeed().lt(tagSpeed))))
         {
             return true;
         }
@@ -604,7 +669,7 @@ public enum Synchronization implements LmrsParameters
          *            (----------------------------------) x should cover this distance before
          *                    (-------------) b covers this distance; then we can be ahead (otherwise, follow b)
          */
-        Length c = requiredBufferSpace(adjacentVehicle.getSpeed(), nCur, x0, t0, lc, dCoop);
+        Length c = requiredBufferSpace(ownSpeed, nCur, x0, t0, lc, dCoop);
         double t = (xCur.si - c.si) / ownSpeed.si;
         double xGap = adjacentVehicle.getSpeed().si * (tMin.si + desire * (tMax.si - tMin.si));
         return 0.0 < t && t < (xCur.si - adjacentVehicle.getDistance().si - ownLength.si - adjacentVehicle.getLength().si - c.si
@@ -643,12 +708,18 @@ public enum Synchronization implements LmrsParameters
     static Acceleration stopForEnd(final Length xCur, final Length xMerge, final BehavioralCharacteristics bc,
             final Speed ownSpeed, final CarFollowingModel cfm, final SpeedLimitInfo sli) throws ParameterException
     {
+        if (xCur.lt0())
+        {
+            // missed our final lane change spot, but space remains
+            return Acceleration.max(bc.getParameter(ParameterTypes.BCRIT).neg(),
+                    CarFollowingUtil.stop(cfm, bc, ownSpeed, sli, xMerge));
+        }
         LmrsUtil.setDesiredHeadway(bc, 1.0);
         Acceleration a = CarFollowingUtil.stop(cfm, bc, ownSpeed, sli, xCur);
         if (a.lt0())
         {
             // decelerate even more if still comfortable, leaving space for acceleration later
-            a = Acceleration.max(a, bc.getParameter(ParameterTypes.B).neg());
+            a = Acceleration.min(a, bc.getParameter(ParameterTypes.B).neg());
             // but never decelerate such that stand-still is reached within xMerge
             if (xMerge.gt0())
             {

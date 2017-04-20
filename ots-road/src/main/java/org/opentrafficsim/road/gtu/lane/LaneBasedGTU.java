@@ -204,6 +204,18 @@ public interface LaneBasedGTU extends GTU
      * @param event SimeEvent&lt;OTSSimTimeDouble&gt; the event
      */
     void addTrigger(Lane lane, SimEvent<OTSSimTimeDouble> event);
+    
+    /**
+     * Set distance over which the GTU should not change lane after being created.
+     * @param distance distance over which the GTU should not change lane after being created
+     */
+    void setNoLaneChangeDistance(Length distance);
+    
+    /**
+     * Returns whether a lane change is allowed.
+     * @return whether a lane change is allowed
+     */
+    boolean laneChangeAllowed();
 
     /**
      * The lane-based event type for pub/sub indicating the initialization of a new GTU. <br>

@@ -75,7 +75,7 @@ public class IncentiveRoute implements MandatoryIncentive
      * @throws ParameterException in case of a parameter exception
      * @throws OperationalPlanException in case of perception exceptions
      */
-    private double getDesireToLeave(final BehavioralCharacteristics bc, final LanePerception perception,
+    private static double getDesireToLeave(final BehavioralCharacteristics bc, final LanePerception perception,
             final RelativeLane lane) throws ParameterException, OperationalPlanException
     {
         Speed v = perception.getPerceptionCategory(EgoPerception.class).getSpeed();

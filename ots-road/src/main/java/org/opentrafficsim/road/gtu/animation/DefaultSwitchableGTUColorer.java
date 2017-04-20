@@ -22,6 +22,7 @@ import org.opentrafficsim.core.gtu.animation.SpeedGTUColorer;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
+// TODO same class name as in core, w\o additional functionality, while the core one is used in AbstractWrappableAnimation
 public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer
 {
     /** The initial set of GTU colorers in the default list. */
@@ -32,9 +33,7 @@ public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer
         COLORERS = new GTUColorer[4];
         COLORERS[0] = new IDGTUColorer();
         COLORERS[1] = new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR));
-        COLORERS[2] =
-            new AccelerationGTUColorer(new Acceleration(-4, AccelerationUnit.METER_PER_SECOND_2), new Acceleration(2,
-                AccelerationUnit.METER_PER_SECOND_2));
+        COLORERS[2] = new AccelerationGTUColorer(Acceleration.createSI(-6.0), Acceleration.createSI(2));
         // TODO LaneChangeUrgeGTUColorer
         // COLORERS[3] =
         // new LaneChangeUrgeGTUColorer(new Length(10, LengthUnit.METER), new Length(1000, LengthUnit.METER));

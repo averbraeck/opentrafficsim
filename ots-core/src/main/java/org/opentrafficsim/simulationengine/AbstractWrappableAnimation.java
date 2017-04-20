@@ -130,7 +130,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         this.savedWarmupPeriod = warmupPeriod;
         this.savedRunLength = runLength;
 
-        GTUColorer colorer = new DefaultSwitchableGTUColorer();
+        GTUColorer colorer = getColorer();
         this.model = makeModel(colorer);
 
         if (null == this.model)
@@ -168,6 +168,15 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         return simulator;
     }
 
+    /**
+     * Overrridable method to return GTU colorer.
+     * @return GTU colorer
+     */
+    protected GTUColorer getColorer()
+    {
+        return new DefaultSwitchableGTUColorer();
+    }
+    
     /**
      * Make additional tabs in the main simulation window.
      * @param simulator SimpleSimulatorInterface; the simulator

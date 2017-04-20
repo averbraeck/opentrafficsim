@@ -17,7 +17,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface VoluntaryIncentive
+public interface VoluntaryIncentive extends Incentive
 {
 
     /**
@@ -31,8 +31,8 @@ public interface VoluntaryIncentive
      * @throws ParameterException if a parameter is not given or out of bounds
      * @throws OperationalPlanException in case of a perception exception
      */
-    Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics, final LanePerception perception,
-        final CarFollowingModel carFollowingModel, Desire mandatoryDesire, Desire voluntaryDesire)
+    Desire determineDesire(BehavioralCharacteristics behavioralCharacteristics, LanePerception perception,
+        CarFollowingModel carFollowingModel, Desire mandatoryDesire, Desire voluntaryDesire)
         throws ParameterException, OperationalPlanException;
 
 }

@@ -212,14 +212,20 @@ public class LaneStructureRecord implements Serializable
     private boolean allowsRoute(final Route route, final GTUType gtuType, final boolean end) throws NetworkException
     {
 
+        // driving without route
+        if (route == null)
+        {
+            return true;
+        }
+        
         // start with simple check
         int from = route.indexOf(this.getFromNode());
         int to = route.indexOf(this.getToNode());
         if (from == -1 || to == -1 || from != to - 1)
         {
-            return false;
+            return leadsToRoute(route, gtuType, null);
         }
-        
+
         // link is on the route, but lane markings may still prevent the route from being followed
         Set<LaneStructureRecord> currentSet = new HashSet<>();
         Set<LaneStructureRecord> nextSet = new HashSet<>();
@@ -301,6 +307,37 @@ public class LaneStructureRecord implements Serializable
         }
 
         // never reached our destination or a link with all lanes accessible
+        return false;
+    }
+
+    /**
+     * Returns whether continuing on this lane will allow the route to be followed, while the lane itself is not on the route.
+     * @param route Route; the route to follow
+     * @param gtuType GTUType; gtu type
+     * @param source LaneStructureRecord; source record, should be {@code null} to prevent loop recognition on first iteration
+     * @return whether continuing on this lane will allow the route to be followed
+     * @throws NetworkException if no destination node
+     */
+    private boolean leadsToRoute(final Route route, final GTUType gtuType, final LaneStructureRecord source)
+            throws NetworkException
+    {
+        if (source == this)
+        {
+            return false; // stop loop
+        }
+        if (source != null && allowsRoute(route, gtuType))
+        {
+            return true;
+        }
+        // move downstream until we are at the route
+        for (LaneStructureRecord record : getNext())
+        {
+            boolean leadsTo = record.leadsToRoute(route, gtuType, source == null ? this : source);
+            if (leadsTo)
+            {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -459,7 +496,7 @@ public class LaneStructureRecord implements Serializable
     {
         return this.cutOffStart;
     }
-    
+
     /**
      * Returns whether the record forms a dead-end.
      * @return whether the record forms a dead-end

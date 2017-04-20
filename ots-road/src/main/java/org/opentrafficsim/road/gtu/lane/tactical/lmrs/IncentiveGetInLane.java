@@ -7,7 +7,6 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacter
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -41,72 +40,73 @@ public class IncentiveGetInLane implements MandatoryIncentive
             throws ParameterException, OperationalPlanException
     {
 
-        Break.on(perception, "472", 28 * 60, true);
-
         Speed vCong = behavioralCharacteristics.getParameter(ParameterTypes.VCONG);
         double hierarchy = behavioralCharacteristics.getParameter(LmrsParameters.HIERARCHY);
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
         SortedSet<InfrastructureLaneChangeInfo> info = infra.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT);
+        double dCur = info.isEmpty() ? Double.POSITIVE_INFINITY
+                : info.first().getRemainingDistance().si / info.first().getRequiredNumberOfLaneChanges();
         double left = 0;
         double right = 0;
         double vCur = Double.POSITIVE_INFINITY;
+
         for (RelativeLane lane : new RelativeLane[] { RelativeLane.LEFT, RelativeLane.RIGHT })
         {
             if (infra.getCrossSection().contains(lane))
             {
                 SortedSet<InfrastructureLaneChangeInfo> adjInfo = infra.getInfrastructureLaneChangeInfo(lane);
-                if (!info.isEmpty() && !info.first().isDeadEnd())
+                double dAdj = adjInfo.isEmpty() ? Double.POSITIVE_INFINITY
+                        : adjInfo.first().getRemainingDistance().si / adjInfo.first().getRequiredNumberOfLaneChanges();
+                if (!info.isEmpty() && !info.first().isDeadEnd() && dCur < dAdj)
                 {
-                    if (adjInfo.isEmpty()
-                            || (adjInfo.first().getRemainingDistance().le(info.first().getRemainingDistance()) && adjInfo
-                                    .first().getRequiredNumberOfLaneChanges() <= info.first().getRequiredNumberOfLaneChanges()))
+                    double v = Double.POSITIVE_INFINITY;
+                    for (HeadwayGTU neighbor : neighbors.getLeaders(lane))
                     {
-                        double v = Double.POSITIVE_INFINITY;
-                        for (HeadwayGTU neighbor : neighbors.getLeaders(lane))
-                        {
-                            v = Math.min(v, neighbor.getSpeed().si);
-                        }
-                        if (lane.isLeft())
-                        {
-                            double d = Math.max(0.0, 1.0 - v / vCong.si);
-                            left += d;
-                            right -= d;
-                        }
-                        else
-                        {
-                            double d = Math.max(0.0, 1.0 - v / vCong.si);
-                            right += d;
-                            left -= d;
-                        }
+                        v = Math.min(v, neighbor.getSpeed().si);
+                    }
+                    if (lane.isLeft())
+                    {
+                        double d = Math.max(0.0, 1.0 - v / vCong.si);
+                        left += d;
+                        // right -= d;
+                    }
+                    else
+                    {
+                        double d = Math.max(0.0, 1.0 - v / vCong.si);
+                        right += d;
+                        // left -= d;
                     }
                 }
-                if (!adjInfo.isEmpty() && !adjInfo.first().isDeadEnd())
+                if (!adjInfo.isEmpty() && !adjInfo.first().isDeadEnd()
+                        && (info.isEmpty() || (!info.isEmpty() && !info.first().isDeadEnd())) && dCur > dAdj)
                 {
-                    if (info.isEmpty()
-                            || (info.first().getRemainingDistance().le(adjInfo.first().getRemainingDistance()) && info.first()
-                                    .getRequiredNumberOfLaneChanges() <= adjInfo.first().getRequiredNumberOfLaneChanges()))
+                    if (Double.isInfinite(vCur))
                     {
-                        if (Double.isInfinite(vCur))
+                        for (HeadwayGTU neighbor : neighbors.getLeaders(RelativeLane.CURRENT))
                         {
-                            for (HeadwayGTU neighbor : neighbors.getLeaders(RelativeLane.CURRENT))
-                            {
-                                vCur = Math.min(vCur, neighbor.getSpeed().si);
-                            }
+                            vCur = Math.min(vCur, neighbor.getSpeed().si);
                         }
-                        if (lane.isLeft())
-                        {
-                            left -= Math.max(0.0, 1.0 - vCur / vCong.si);
-                        }
-                        else
-                        {
-                            right -= Math.max(0.0, 1.0 - vCur / vCong.si);
-                        }
+                    }
+                    if (lane.isLeft())
+                    {
+                        left -= Math.max(0.0, 1.0 - vCur / vCong.si);
+                    }
+                    else
+                    {
+                        right -= Math.max(0.0, 1.0 - vCur / vCong.si);
                     }
                 }
             }
         }
         return new Desire(left * hierarchy, right * hierarchy);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "IncentiveGetInLane";
     }
 
 }

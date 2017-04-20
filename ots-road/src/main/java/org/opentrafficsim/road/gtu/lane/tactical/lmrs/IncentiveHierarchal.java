@@ -6,13 +6,16 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
@@ -45,8 +48,12 @@ public class IncentiveHierarchal implements VoluntaryIncentive
         Speed vDes = carFollowingModel.desiredSpeed(behavioralCharacteristics,
                 perception.getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(RelativeLane.CURRENT)
                         .getSpeedLimitInfo(Length.ZERO));
+        Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
+        InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
+        boolean leftLane = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).si > 0.0;
+        boolean rightLane = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si > 0.0;
         // change right to get out of the way
-        if (mandatoryDesire.getRight() >= 0.0)
+        if (rightLane && mandatoryDesire.getRight() >= 0.0)
         {
             SortedSet<HeadwayGTU> followers = neighbors.getFollowers(RelativeLane.CURRENT);
             if (!followers.isEmpty())
@@ -54,28 +61,36 @@ public class IncentiveHierarchal implements VoluntaryIncentive
                 HeadwayGTU follower = followers.first();
                 Speed vDesFollower = follower.getCarFollowingModel().desiredSpeed(follower.getBehavioralCharacteristics(),
                         follower.getSpeedLimitInfo());
-                if (vDes.lt(vDesFollower))
+                if (vDes.lt(vDesFollower)
+                        && CarFollowingUtil
+                                .followSingleLeader(follower.getCarFollowingModel(), follower.getBehavioralCharacteristics(),
+                                        follower.getSpeed(), follower.getSpeedLimitInfo(), follower.getDistance(), ownSpeed)
+                                .le0())
                 {
                     dRight = hierarchy;
                 }
             }
         }
         // stay right to keep out of the way
-        if (mandatoryDesire.getLeft() <= 0.0)
+        if (leftLane && mandatoryDesire.getLeft() <= 0.0)
         {
             SortedSet<HeadwayGTU> followers = neighbors.getFollowers(RelativeLane.LEFT);
-            if (!followers.isEmpty())
+            if (followers != null && !followers.isEmpty())
             {
                 HeadwayGTU follower = followers.first();
                 Speed vDesFollower = follower.getCarFollowingModel().desiredSpeed(follower.getBehavioralCharacteristics(),
                         follower.getSpeedLimitInfo());
-                if (vDes.lt(vDesFollower))
+                if (vDes.lt(vDesFollower)
+                        && CarFollowingUtil
+                                .followSingleLeader(follower.getCarFollowingModel(), follower.getBehavioralCharacteristics(),
+                                        follower.getSpeed(), follower.getSpeedLimitInfo(), follower.getDistance(), ownSpeed)
+                                .le0())
                 {
                     dLeft = -hierarchy;
                 }
             }
         }
-        return new Desire(dLeft, dRight); // XXXXX STUB
+        return new Desire(dLeft, dRight);
     }
 
     /** {@inheritDoc} */
