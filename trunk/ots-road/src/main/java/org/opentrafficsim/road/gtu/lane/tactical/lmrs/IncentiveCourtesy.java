@@ -1,13 +1,19 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import java.util.Set;
+
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
+import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -15,6 +21,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
+import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
  * Determines lane change desire for courtesy lane changes, which are performed to supply space for other drivers. In case
@@ -39,77 +46,119 @@ public class IncentiveCourtesy implements VoluntaryIncentive, LmrsParameters
             final LanePerception perception, final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
             final Desire voluntaryDesire) throws ParameterException, OperationalPlanException
     {
+
         double dLeftYes = 0;
         double dRightYes = 0;
         double dLeftNo = 0;
         double dRightNo = 0;
         double courtesy = behavioralCharacteristics.getParameter(COURTESY);
-        Length x0 = behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD);
+        Acceleration b = behavioralCharacteristics.getParameter(ParameterTypes.B);
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
+        Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
+        InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
+        SpeedLimitInfo sli = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
+        boolean leftLane = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).si > 0.0;
+        boolean rightLane = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si > 0.0;
         for (LateralDirectionality dir : new LateralDirectionality[] { LateralDirectionality.LEFT,
                 LateralDirectionality.RIGHT })
         {
-            for (HeadwayGTU leader : neighbors.getLeaders(new RelativeLane(dir, 1)))
+            Set<HeadwayGTU> leaders = neighbors.getLeaders(new RelativeLane(dir, 1));
+            if (leaders != null)
             {
-                BehavioralCharacteristics bc = leader.getBehavioralCharacteristics();
-                double desire = dir.isLeft() ? bc.getParameter(DRIGHT) : bc.getParameter(DLEFT);
-                if (desire > 0)
+                for (HeadwayGTU leader : leaders)
                 {
-                    double d = (1 - leader.getDistance().si / x0.si) * desire;
-                    if (dir.isLeft())
-                    {
-                        dLeftYes = dLeftYes > d ? dLeftYes : d;
-                    }
-                    else
-                    {
-                        dRightYes = dRightYes > d ? dRightYes : d;
-                    }
-                }
-            }
-            for (HeadwayGTU follower : neighbors.getFollowers(new RelativeLane(dir, 2)))
-            {
-                if (follower.getDistance().lt0())
-                {
-                    BehavioralCharacteristics bc = follower.getBehavioralCharacteristics();
+                    BehavioralCharacteristics bc = leader.getBehavioralCharacteristics();
                     double desire = dir.isLeft() ? bc.getParameter(DRIGHT) : bc.getParameter(DLEFT);
                     if (desire > 0)
                     {
-                        if (dir.isLeft())
+                        Acceleration a = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire,
+                                bc, sli, carFollowingModel);
+                        if (a.lt0())
                         {
-                            dLeftNo = dLeftNo > desire ? dLeftNo : desire;
-                        }
-                        else
-                        {
-                            dRightNo = dRightNo > desire ? dRightNo : desire;
+                            double d = desire * Math.min(-a.si / b.si, 1.0);
+                            if (dir.isLeft() && rightLane)
+                            {
+                                // leader in left lane wants to change right, so we change right
+                                dRightYes = dRightYes > d ? dRightYes : d;
+                            }
+                            else if (leftLane)
+                            {
+                                // leader in right lane wants to change left, so we change left
+                                dLeftYes = dLeftYes > d ? dLeftYes : d;
+                            }
                         }
                     }
                 }
-                else
-                {
-                    break;
-                }
             }
-            for (HeadwayGTU leader : neighbors.getLeaders(new RelativeLane(dir, 2)))
+            // consider close followers on 2 lanes away
+            Set<HeadwayGTU> followers = neighbors.getFollowers(new RelativeLane(dir, 2));
+            if (followers != null)
             {
-                BehavioralCharacteristics bc = leader.getBehavioralCharacteristics();
-                double desire = dir.isLeft() ? bc.getParameter(DRIGHT) : bc.getParameter(DLEFT);
-                if (desire > 0)
+                for (HeadwayGTU follower : followers)
                 {
-                    double d = (1 - leader.getDistance().si / x0.si) * desire;
-                    if (dir.isLeft())
+                    BehavioralCharacteristics bc = follower.getBehavioralCharacteristics();
+                    double desire = dir.isLeft() ? bc.getParameter(DRIGHT) : bc.getParameter(DLEFT);
+                    Acceleration a = follower.getDistance().lt0() ? b.neg()
+                            : LmrsUtil.singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed, desire, bc,
+                                    follower.getSpeedLimitInfo(), follower.getCarFollowingModel());
+                    if (a.lt0())
                     {
-                        dLeftNo = dLeftNo > d ? dLeftNo : d;
+                        if (desire > 0)
+                        {
+                            double d = desire * Math.min(-a.si / b.si, 1.0);
+                            if (dir.isLeft() && leftLane)
+                            {
+                                // follower in second left lane wants to change right, so we do not change left
+                                dLeftNo = dLeftNo > desire ? dLeftNo : d;
+                            }
+                            else if (rightLane)
+                            {
+                                // follower in second right lane wants to change left, so we do not change right
+                                dRightNo = dRightNo > desire ? dRightNo : d;
+                            }
+                        }
                     }
                     else
                     {
-                        dRightNo = dRightNo > d ? dRightNo : d;
+                        // ignore further followers
+                        break;
+                    }
+                }
+            }
+            leaders = neighbors.getLeaders(new RelativeLane(dir, 2));
+            if (leaders != null)
+            {
+                for (HeadwayGTU leader : leaders)
+                {
+                    BehavioralCharacteristics bc = leader.getBehavioralCharacteristics();
+                    double desire = dir.isLeft() ? bc.getParameter(DRIGHT) : bc.getParameter(DLEFT);
+                    if (desire > 0)
+                    {
+                        Acceleration a = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire,
+                                bc, sli, carFollowingModel);
+                        if (a.lt0())
+                        {
+                            double d = desire * Math.min(-a.si / b.si, 1.0); // (1 - leader.getDistance().si / x0.si) * desire;
+                            if (dir.isLeft() && leftLane)
+                            {
+                                // leader in second left lane wants to change right, so we do not change left
+                                dLeftNo = dLeftNo > d ? dLeftNo : d;
+                            }
+                            else if (rightLane)
+                            {
+                                // leader in second right lane wants to change left, so we do not change right
+                                dRightNo = dRightNo > d ? dRightNo : d;
+                            }
+                        }
                     }
                 }
             }
         }
+        // note: noLeft and noRight weighted with 1 always
         dLeftYes *= courtesy;
         dRightYes *= courtesy;
         return new Desire(dLeftYes - dLeftNo, dRightYes - dRightNo);
+
     }
 
     /** {@inheritDoc} */

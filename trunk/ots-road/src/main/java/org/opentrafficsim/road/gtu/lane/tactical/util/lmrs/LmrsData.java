@@ -67,7 +67,7 @@ public final class LmrsData
      */
     void setSyncVehicle(final HeadwayGTU gtu)
     {
-        this.syncVehicle = gtu.getId();
+        this.syncVehicle = gtu == null ? null : gtu.getId();
     }
 
     /**
@@ -77,16 +77,7 @@ public final class LmrsData
      */
     boolean isSyncVehicle(final HeadwayGTU gtu)
     {
-        return gtu.getId().equals(this.syncVehicle);
-    }
-    
-    /**
-     * Returns the id of the vehicle that is synchronized to.
-     * @return id of the vehicle that is synchronized to
-     */
-    String getSyncVehicleId()
-    {
-        return this.syncVehicle;
+        return this.syncVehicle == null ? false : gtu.getId().equals(this.syncVehicle);
     }
     
     /**

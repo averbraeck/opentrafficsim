@@ -49,4 +49,13 @@ public enum LateralDirectionality
         return this.equals(NONE);
     }
 
+    /**
+     * Returns the other direction.
+     * @return other direction
+     */
+    public LateralDirectionality flip()
+    {
+        return this.equals(NONE) ? NONE : this.equals(LEFT) ? RIGHT : LEFT;
+    }
+
 }

@@ -1,9 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
-import java.util.TreeMap;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.TimeUnit;
@@ -17,12 +17,11 @@ import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
+import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.Break;
-import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
@@ -32,7 +31,6 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveGetInLane;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
@@ -68,6 +66,7 @@ public final class LmrsUtil implements LmrsParameters
      * @param perception perception
      * @param mandatoryIncentives set of mandatory lane change incentives
      * @param voluntaryIncentives set of voluntary lane change incentives
+     * @param desireMap map where calculated desires are stored in
      * @return simple operational plan
      * @throws GTUException gtu exception
      * @throws NetworkException network exception
@@ -78,14 +77,15 @@ public final class LmrsUtil implements LmrsParameters
     public static SimpleOperationalPlan determinePlan(final LaneBasedGTU gtu, final Time startTime,
             final CarFollowingModel carFollowingModel, final LaneChange laneChange, final LmrsData lmrsData,
             final LanePerception perception, final LinkedHashSet<MandatoryIncentive> mandatoryIncentives,
-            final LinkedHashSet<VoluntaryIncentive> voluntaryIncentives)
+            final LinkedHashSet<VoluntaryIncentive> voluntaryIncentives,
+            final Map<Class<? extends Incentive>, Desire> desireMap)
             throws GTUException, NetworkException, ParameterException, OperationalPlanException
     {
 
         // TODO this is a hack to prevent right lane changes of all vehicles on the left lane when placed in network at t=0
         if (startTime.si == 0.0)
         {
-            return new SimpleOperationalPlan(Acceleration.ZERO, LateralDirectionality.NONE);
+            //return new SimpleOperationalPlan(Acceleration.ZERO, LateralDirectionality.NONE);
         }
 
         // obtain objects to get info
@@ -95,7 +95,7 @@ public final class LmrsUtil implements LmrsParameters
         BehavioralCharacteristics bc = gtu.getBehavioralCharacteristics();
 
         // regular car-following
-        Speed speed = gtu.getSpeed();
+        Speed speed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
         SortedSet<HeadwayGTU> leaders =
                 perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
         if (!leaders.isEmpty() && lmrsData.isNewLeader(leaders.first()))
@@ -131,42 +131,6 @@ public final class LmrsUtil implements LmrsParameters
             a = CarFollowingUtil.followLeaders(carFollowingModel, bc, speed, sli, leaders);
         }
 
-        // stop for end
-        // TODO remove or move, should not be needed with new form of synchronization
-        Length remainingDist = null;
-        for (InfrastructureLaneChangeInfo ili : perception.getPerceptionCategory(InfrastructurePerception.class)
-                .getInfrastructureLaneChangeInfo(RelativeLane.CURRENT))
-        {
-            if (remainingDist == null || remainingDist.gt(ili.getRemainingDistance()))
-            {
-                remainingDist = ili.getRemainingDistance();
-            }
-        }
-        if (remainingDist != null)
-        {
-            Acceleration bCrit = bc.getParameter(ParameterTypes.BCRIT);
-            remainingDist = remainingDist.minus(bc.getParameter(ParameterTypes.S0)).minus(gtu.getFront().getDx());
-            if (remainingDist.le0())
-            {
-                if (speed.gt0())
-                {
-                    a = Acceleration.min(a, bCrit.neg());
-                }
-                else
-                {
-                    a = Acceleration.min(a, Acceleration.ZERO);
-                }
-            }
-            else
-            {
-                Acceleration bMin = new Acceleration(.5 * speed.si * speed.si / remainingDist.si, AccelerationUnit.SI);
-                if (bMin.ge(bCrit))
-                {
-                    a = Acceleration.min(a, bMin.neg());
-                }
-            }
-        }
-
         // during a lane change, both leaders are followed
         LateralDirectionality initiatedLaneChange;
         TurnIndicatorIntent turnIndicatorStatus = TurnIndicatorIntent.NONE;
@@ -187,7 +151,8 @@ public final class LmrsUtil implements LmrsParameters
         {
 
             // determine lane change desire based on incentives
-            Desire desire = getLaneChangeDesire(bc, perception, carFollowingModel, mandatoryIncentives, voluntaryIncentives);
+            Desire desire =
+                    getLaneChangeDesire(bc, perception, carFollowingModel, mandatoryIncentives, voluntaryIncentives, desireMap);
 
             // gap acceptance
             boolean acceptLeft =
@@ -278,10 +243,11 @@ public final class LmrsUtil implements LmrsParameters
             }
 
             // cooperate
-            aSync = lmrsData.getSynchronization().cooperate(perception, bc, sli, carFollowingModel, LateralDirectionality.LEFT);
+            aSync = lmrsData.getSynchronization().cooperate(perception, bc, sli, carFollowingModel, LateralDirectionality.LEFT,
+                    desire);
             a = Acceleration.min(a, aSync);
-            aSync = lmrsData.getSynchronization().cooperate(perception, bc, sli, carFollowingModel,
-                    LateralDirectionality.RIGHT);
+            aSync = lmrsData.getSynchronization().cooperate(perception, bc, sli, carFollowingModel, LateralDirectionality.RIGHT,
+                    desire);
             a = Acceleration.min(a, aSync);
 
             // relaxation
@@ -342,6 +308,7 @@ public final class LmrsUtil implements LmrsParameters
      * @param carFollowingModel car-following model
      * @param mandatoryIncentives mandatory incentives
      * @param voluntaryIncentives voluntary incentives
+     * @param desireMap map where calculated desires are stored in
      * @return lane change desire for gtu
      * @throws ParameterException if a parameter is not defined
      * @throws GTUException if there is no mandatory incentive, the model requires at least one
@@ -350,7 +317,8 @@ public final class LmrsUtil implements LmrsParameters
     private static Desire getLaneChangeDesire(final BehavioralCharacteristics behavioralCharacteristics,
             final LanePerception perception, final CarFollowingModel carFollowingModel,
             final LinkedHashSet<MandatoryIncentive> mandatoryIncentives,
-            final LinkedHashSet<VoluntaryIncentive> voluntaryIncentives)
+            final LinkedHashSet<VoluntaryIncentive> voluntaryIncentives,
+            final Map<Class<? extends Incentive>, Desire> desireMap)
             throws ParameterException, GTUException, OperationalPlanException
     {
 
@@ -364,10 +332,7 @@ public final class LmrsUtil implements LmrsParameters
         for (MandatoryIncentive incentive : mandatoryIncentives)
         {
             Desire d = incentive.determineDesire(behavioralCharacteristics, perception, carFollowingModel, mandatoryDesire);
-            if (incentive instanceof IncentiveGetInLane && d.getLeft() >= 1.0 && d.getRight() >= 1.0)
-            {
-                incentive.determineDesire(behavioralCharacteristics, perception, carFollowingModel, mandatoryDesire);
-            }
+            desireMap.put(incentive.getClass(), d);
             dLeftMandatory = Math.abs(d.getLeft()) > Math.abs(dLeftMandatory) ? d.getLeft() : dLeftMandatory;
             dRightMandatory = Math.abs(d.getRight()) > Math.abs(dRightMandatory) ? d.getRight() : dRightMandatory;
             mandatoryDesire = new Desire(dLeftMandatory, dRightMandatory);
@@ -381,6 +346,7 @@ public final class LmrsUtil implements LmrsParameters
         {
             Desire d = incentive.determineDesire(behavioralCharacteristics, perception, carFollowingModel, mandatoryDesire,
                     voluntaryDesire);
+            desireMap.put(incentive.getClass(), d);
             dLeftVoluntary += d.getLeft();
             dRightVoluntary += d.getRight();
             voluntaryDesire = new Desire(dLeftVoluntary, dRightVoluntary);
@@ -388,28 +354,29 @@ public final class LmrsUtil implements LmrsParameters
 
         // Total desire
         double thetaLeft = 0;
-        if (dLeftMandatory <= dSync || dLeftMandatory * dLeftVoluntary >= 0)
+        double dLeftMandatoryAbs = Math.abs(dLeftMandatory);
+        double dRightMandatoryAbs = Math.abs(dRightMandatory);
+        if (dLeftMandatoryAbs <= dSync || dLeftMandatory * dLeftVoluntary >= 0)
         {
             // low mandatory desire, or same sign
             thetaLeft = 1;
         }
-        else if (dSync < dLeftMandatory && dLeftMandatory < dCoop && dLeftMandatory * dLeftVoluntary < 0)
+        else if (dSync < dLeftMandatoryAbs && dLeftMandatoryAbs < dCoop && dLeftMandatory * dLeftVoluntary < 0)
         {
             // linear from 1 at dSync to 0 at dCoop
-            thetaLeft = (dCoop - Math.abs(dLeftMandatory)) / (dCoop - dSync);
+            thetaLeft = (dCoop - dLeftMandatoryAbs) / (dCoop - dSync);
         }
         double thetaRight = 0;
-        if (dRightMandatory <= dSync || dRightMandatory * dRightVoluntary >= 0)
+        if (dRightMandatoryAbs <= dSync || dRightMandatory * dRightVoluntary >= 0)
         {
             // low mandatory desire, or same sign
             thetaRight = 1;
         }
-        else if (dSync < dRightMandatory && dRightMandatory < dCoop && dRightMandatory * dRightVoluntary < 0)
+        else if (dSync < dRightMandatoryAbs && dRightMandatoryAbs < dCoop && dRightMandatory * dRightVoluntary < 0)
         {
             // linear from 1 at dSync to 0 at dCoop
-            thetaRight = (dCoop - Math.abs(dRightMandatory)) / (dCoop - dSync);
+            thetaRight = (dCoop - dRightMandatoryAbs) / (dCoop - dSync);
         }
-
         return new Desire(dLeftMandatory + thetaLeft * dLeftVoluntary, dRightMandatory + thetaRight * dRightVoluntary);
 
     }
@@ -431,11 +398,18 @@ public final class LmrsUtil implements LmrsParameters
             final SpeedLimitInfo sli, final CarFollowingModel cfm, final double desire, final Speed ownSpeed,
             final LateralDirectionality lat) throws ParameterException, OperationalPlanException
     {
-
-        // check whether there is a lane
-        if (!perception.getLaneStructure().canChange(lat, perception))
+        
+        // beyond start distance
+        try
         {
-            return false;
+            if (!perception.getGtu().laneChangeAllowed())
+            {
+                return false;
+            }
+        }
+        catch (GTUException exception)
+        {
+            throw new RuntimeException("Cannot obtain GTU.", exception);
         }
 
         // legal?
@@ -457,19 +431,54 @@ public final class LmrsUtil implements LmrsParameters
         }
 
         // safe regarding neighbors?
+        return acceptGapNeighbors(perception, bc, sli, cfm, desire, ownSpeed, lat);
+    }
+
+    /**
+     * Determine whether a gap is acceptable.
+     * @param perception perception
+     * @param bc behavioral characteristics
+     * @param sli speed limit info
+     * @param cfm car-following model
+     * @param desire level of lane change desire
+     * @param ownSpeed own speed
+     * @param lat lateral direction for synchronization
+     * @return whether a gap is acceptable
+     * @throws ParameterException if a parameter is not defined
+     * @throws OperationalPlanException perception exception
+     */
+    static boolean acceptGapNeighbors(final LanePerception perception, final BehavioralCharacteristics bc,
+            final SpeedLimitInfo sli, final CarFollowingModel cfm, final double desire, final Speed ownSpeed,
+            final LateralDirectionality lat) throws ParameterException, OperationalPlanException
+    {
+
         if (perception.getPerceptionCategory(NeighborsPerception.class).isGtuAlongside(lat))
         {
             // gtu alongside
             return false;
         }
 
+        // TODO
+        /*-
+         * Followers and are accepted if the acceleration and speed is 0, a leader is accepted if the ego speed is 0. This is in
+         * place as vehicles that provide courtesy, will decelerate for us and overshoot the stand-still distance. As a 
+         * consequence, they will cease cooperation as they are too close. A pattern will arise where followers slow down to
+         * (near) stand-still, and accelerate again, before we could ever accept the gap.
+         * 
+         * By accepting the gap in the moment that they reach stand-still, this vehicle can at least accept the gap at some 
+         * point. All of this is only a problem if the own vehicle is standing still. Otherwise the stand-still distance is not
+         * important and movement of our own will create an acceptable situation.
+         * 
+         * What needs to be done, is to find a better way to deal with the cooperation and gap-acceptance, such that this hack 
+         * is not required.
+         */
         Acceleration b = bc.getParameter(ParameterTypes.B);
         Acceleration aFollow = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
         for (
 
         HeadwayGTU follower : perception.getPerceptionCategory(NeighborsPerception.class).getFirstFollowers(lat))
         {
-            if (follower.getSpeed().gt0())
+            if (follower.getSpeed().gt0() || follower.getAcceleration().gt0())
             {
                 Acceleration a = singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed, desire,
                         follower.getBehavioralCharacteristics(), follower.getSpeedLimitInfo(), follower.getCarFollowingModel());
@@ -530,16 +539,14 @@ public final class LmrsUtil implements LmrsParameters
      * @return acceleration from car-following
      * @throws ParameterException if a parameter is not defined
      */
-    static Acceleration singleAcceleration(final Length distance, final Speed followerSpeed, final Speed leaderSpeed,
+    public static Acceleration singleAcceleration(final Length distance, final Speed followerSpeed, final Speed leaderSpeed,
             final double desire, final BehavioralCharacteristics bc, final SpeedLimitInfo sli, final CarFollowingModel cfm)
             throws ParameterException
     {
         // set T
         setDesiredHeadway(bc, desire);
         // calculate acceleration
-        SortedMap<Length, Speed> leaders = new TreeMap<>();
-        leaders.put(distance, leaderSpeed);
-        Acceleration a = cfm.followingAcceleration(bc, followerSpeed, sli, leaders);
+        Acceleration a = CarFollowingUtil.followSingleLeader(cfm, bc, followerSpeed, sli, distance, leaderSpeed);
         // reset T
         resetDesiredHeadway(bc);
         return a;

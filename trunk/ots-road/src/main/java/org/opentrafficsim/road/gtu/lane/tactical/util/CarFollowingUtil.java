@@ -61,6 +61,26 @@ public final class CarFollowingUtil
     }
 
     /**
+     * Follow a set of headway GTUs.
+     * @param carFollowingModel car-following model
+     * @param behavioralCharacteristics behavioral characteristics
+     * @param speed current speed
+     * @param speedLimitInfo speed limit info
+     * @param distance distance
+     * @param leaderSpeed speed of the leader
+     * @return acceleration for following the leader
+     * @throws ParameterException if a parameter is not given or out of bounds
+     */
+    public static Acceleration followSingleLeader(final CarFollowingModel carFollowingModel,
+            final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final SpeedLimitInfo speedLimitInfo,
+            final Length distance, final Speed leaderSpeed) throws ParameterException
+    {
+        SortedMap<Length, Speed> leaders = new TreeMap<>();
+        leaders.put(distance, leaderSpeed);
+        return carFollowingModel.followingAcceleration(behavioralCharacteristics, speed, speedLimitInfo, leaders);
+    }
+
+    /**
      * Stop within given distance.
      * @param carFollowingModel car-following model
      * @param behavioralCharacteristics behavioral characteristics
@@ -113,7 +133,7 @@ public final class CarFollowingUtil
         SortedMap<Length, Speed> leaderMap = new TreeMap<>();
         return carFollowingModel.followingAcceleration(behavioralCharacteristics, speed, speedLimitInfo, leaderMap);
     }
-    
+
     /**
      * Returns an acceleration based on the car-following model in order to adjust the speed to a given value at some location
      * ahead. This is done by placing a virtual vehicle somewhere near the location. Both the location and speed of this virtual
@@ -170,8 +190,8 @@ public final class CarFollowingUtil
      * @throws IllegalArgumentException if the distance or target speed is not at least 0
      */
     public static Acceleration approachTargetSpeed(final CarFollowingModel carFollowingModel,
-        final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final SpeedLimitInfo speedLimitInfo,
-        final Length distance, final Speed targetSpeed) throws ParameterException
+            final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final SpeedLimitInfo speedLimitInfo,
+            final Length distance, final Speed targetSpeed) throws ParameterException
     {
         Throw.whenNull(behavioralCharacteristics, "Behavioral characteristics may not be null.");
         Throw.whenNull(speed, "Speed may not be null.");

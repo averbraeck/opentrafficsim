@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -31,6 +32,7 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -41,6 +43,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacter
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -49,6 +52,7 @@ import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.road.animation.AnimationToggles;
+import org.opentrafficsim.road.gtu.animation.LmrsSwitchableColorer;
 import org.opentrafficsim.road.gtu.generator.CharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.generator.GTUTypeGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
@@ -60,15 +64,29 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationConflicts;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationSpeedLimitTransition;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationTrafficLights;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveGetInLane;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveHierarchal;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 
@@ -90,6 +108,27 @@ import nl.tudelft.simulation.language.io.URLResource;
  */
 public class ShortMerge extends AbstractWrappableAnimation
 {
+
+    /** Network. */
+    static final String NETWORK = "shortMerge";
+
+    /** Truck fraction. */
+    static final double TRUCK_FRACTION = 0.15;
+
+    /** Left traffic fraction. */
+    static final double LEFT_FRACTION = 0.6;
+
+    /** Main demand. */
+    static final Frequency MAIN_DEMAND = new Frequency(1200, FrequencyUnit.PER_HOUR);
+
+    /** Ramp demand. */
+    static final Frequency RAMP_DEMAND = new Frequency(0, FrequencyUnit.PER_HOUR);
+
+    /** Synchronization. */
+    static final Synchronization SYNCHRONIZATION = Synchronization.ACTIVE;
+
+    /** Use additional incentives. */
+    static final boolean ADDITIONAL_INCENTIVES = true;
 
     /** Simulation time. */
     public static final Time SIMTIME = Time.createSI(3600);
@@ -121,6 +160,14 @@ public class ShortMerge extends AbstractWrappableAnimation
         AnimationToggles.setTextAnimationTogglesFull(this);
         this.toggleAnimationClass(OTSLink.class);
         this.toggleAnimationClass(OTSNode.class);
+        showAnimationClass(SpeedSign.class);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected GTUColorer getColorer()
+    {
+        return new LmrsSwitchableColorer();
     }
 
     /** {@inheritDoc} */
@@ -214,7 +261,7 @@ public class ShortMerge extends AbstractWrappableAnimation
 
             try
             {
-                InputStream stream = URLResource.getResourceAsStream("/lmrs/shortMerge.xml");
+                InputStream stream = URLResource.getResourceAsStream("/lmrs/" + NETWORK + ".xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) simulator);
                 this.network = new OTSNetwork("ShortMerge");
                 nlp.build(stream, this.network);
@@ -269,22 +316,44 @@ public class ShortMerge extends AbstractWrappableAnimation
             BehavioralCharacteristics bc = new BehavioralCharacteristics();
             bc.setDefaultParameter(AbstractIDM.DELTA);
 
+            Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
+            Set<VoluntaryIncentive> voluntaryIncentives = new LinkedHashSet<>();
+            Set<AccelerationIncentive> accelerationIncentives = new LinkedHashSet<>();
+            mandatoryIncentives.add(new IncentiveRoute());
+            if (ADDITIONAL_INCENTIVES)
+            {
+                mandatoryIncentives.add(new IncentiveGetInLane());
+            }
+            voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
+            voluntaryIncentives.add(new IncentiveKeep());
+            if (ADDITIONAL_INCENTIVES)
+            {
+                voluntaryIncentives.add(new IncentiveCourtesy());
+                voluntaryIncentives.add(new IncentiveHierarchal());
+            }
+            accelerationIncentives.add(new AccelerationSpeedLimitTransition());
+            accelerationIncentives.add(new AccelerationTrafficLights());
+            accelerationIncentives.add(new AccelerationConflicts());
             LaneBasedTacticalPlannerFactory<LMRS> tacticalFactory =
-                    new LMRSFactory(idmPlusFactory, bc, new DefaultLMRSPerceptionFactory());
+                    new LMRSFactory(idmPlusFactory, bc, new DefaultLMRSPerceptionFactory(), SYNCHRONIZATION,
+                            mandatoryIncentives, voluntaryIncentives, accelerationIncentives);
 
             GTUType car = new GTUType("car", CAR);
             GTUType truck = new GTUType("truck", TRUCK);
             Route routeAE = this.network.getShortestRouteBetween(car, this.network.getNode("A"), this.network.getNode("E"));
-            Route routeAG = this.network.getShortestRouteBetween(car, this.network.getNode("A"), this.network.getNode("G"));
+            Route routeAG = !NETWORK.equals("shortWeave") ? null
+                    : this.network.getShortestRouteBetween(car, this.network.getNode("A"), this.network.getNode("G"));
             Route routeFE = this.network.getShortestRouteBetween(car, this.network.getNode("F"), this.network.getNode("E"));
-            Route routeFG = this.network.getShortestRouteBetween(car, this.network.getNode("F"), this.network.getNode("G"));
+            Route routeFG = !NETWORK.equals("shortWeave") ? null
+                    : this.network.getShortestRouteBetween(car, this.network.getNode("F"), this.network.getNode("G"));
 
+            double leftFraction = NETWORK.equals("shortWeave") ? LEFT_FRACTION : 0.0;
             List<FrequencyAndObject<Route>> routesA = new ArrayList<>();
-            routesA.add(new FrequencyAndObject<>(0.2, routeAE));
-            routesA.add(new FrequencyAndObject<>(0.8, routeAG));
+            routesA.add(new FrequencyAndObject<>(1.0 - leftFraction, routeAE));
+            routesA.add(new FrequencyAndObject<>(leftFraction, routeAG));
             List<FrequencyAndObject<Route>> routesF = new ArrayList<>();
-            routesF.add(new FrequencyAndObject<>(0.2, routeFE));
-            routesF.add(new FrequencyAndObject<>(0.8, routeFG));
+            routesF.add(new FrequencyAndObject<>(1.0 - leftFraction, routeFE));
+            routesF.add(new FrequencyAndObject<>(leftFraction, routeFG));
             RouteGenerator routeGeneratorA = new ProbabilisticRouteGenerator(routesA, stream);
             RouteGenerator routeGeneratorF = new ProbabilisticRouteGenerator(routesF, stream);
 
@@ -292,7 +361,7 @@ public class ShortMerge extends AbstractWrappableAnimation
             Speed speedF = new Speed(20.0, SpeedUnit.KM_PER_HOUR);
 
             CrossSectionLink linkA = (CrossSectionLink) this.network.getLink("AB");
-            CrossSectionLink linkF = (CrossSectionLink) this.network.getLink("FB");
+            CrossSectionLink linkF = (CrossSectionLink) this.network.getLink("FF2");
 
             BehavioralCharacteristicsFactoryByType bcFactory = new BehavioralCharacteristicsFactoryByType();
             bcFactory.addGaussianParameter(car, ParameterTypes.FSPEED, 123.7 / 120, 12.0 / 120, stream);
@@ -300,10 +369,10 @@ public class ShortMerge extends AbstractWrappableAnimation
             bcFactory.addParameter(truck, ParameterTypes.A, new Acceleration(0.8, AccelerationUnit.SI));
             bcFactory.addGaussianParameter(truck, LmrsParameters.HIERARCHY, 0.5, 0.1, stream);
 
-            Generator<Duration> headwaysA1 = new HeadwayGenerator(new Frequency(400, FrequencyUnit.PER_HOUR));
-            Generator<Duration> headwaysA2 = new HeadwayGenerator(new Frequency(400, FrequencyUnit.PER_HOUR));
-            Generator<Duration> headwaysA3 = new HeadwayGenerator(new Frequency(400, FrequencyUnit.PER_HOUR));
-            Generator<Duration> headwaysF = new HeadwayGenerator(new Frequency(600, FrequencyUnit.PER_HOUR));
+            Generator<Duration> headwaysA1 = new HeadwayGenerator(MAIN_DEMAND);
+            Generator<Duration> headwaysA2 = new HeadwayGenerator(MAIN_DEMAND);
+            Generator<Duration> headwaysA3 = new HeadwayGenerator(MAIN_DEMAND);
+            Generator<Duration> headwaysF = new HeadwayGenerator(RAMP_DEMAND);
 
             SpeedGenerator speedCar = new SpeedGenerator(new Speed(160.0, SpeedUnit.KM_PER_HOUR),
                     new Speed(200.0, SpeedUnit.KM_PER_HOUR), stream);
@@ -315,22 +384,38 @@ public class ShortMerge extends AbstractWrappableAnimation
             gtuTypeAllCar.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI), new GTUType("car", CAR),
                     speedCar, 1.0);
             gtuType1Lane.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI), new GTUType("car", CAR),
-                    speedCar, 0.9);
+                    speedCar, 1.0 - TRUCK_FRACTION);
             gtuType1Lane.addType(new Length(15.0, LengthUnit.SI), new Length(2.5, LengthUnit.SI), new GTUType("truck", TRUCK),
-                    speedTruck, 0.1);
+                    speedTruck, TRUCK_FRACTION);
             gtuType3rdLane.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI), new GTUType("car", CAR),
-                    speedCar, 0.7);
+                    speedCar, 1.0 - 3 * TRUCK_FRACTION);
             gtuType3rdLane.addType(new Length(15.0, LengthUnit.SI), new Length(2.5, LengthUnit.SI), new GTUType("truck", TRUCK),
-                    speedTruck, 0.3);
+                    speedTruck, 3 * TRUCK_FRACTION);
 
             makeGenerator(getLane(linkA, "FORWARD1"), speedA, "gen1", routeGeneratorA, idGenerator, gtuTypeAllCar, headwaysA1,
                     this.colorer, roomChecker, bcFactory, tacticalFactory, SIMTIME);
-            makeGenerator(getLane(linkA, "FORWARD2"), speedA, "gen2", routeGeneratorA, idGenerator, gtuTypeAllCar, headwaysA2,
-                    this.colorer, roomChecker, bcFactory, tacticalFactory, SIMTIME);
-            makeGenerator(getLane(linkA, "FORWARD3"), speedA, "gen3", routeGeneratorA, idGenerator, gtuType3rdLane, headwaysA3,
-                    this.colorer, roomChecker, bcFactory, tacticalFactory, SIMTIME);
+            if (NETWORK.equals("shortWeave"))
+            {
+                makeGenerator(getLane(linkA, "FORWARD2"), speedA, "gen2", routeGeneratorA, idGenerator, gtuTypeAllCar,
+                        headwaysA2, this.colorer, roomChecker, bcFactory, tacticalFactory, SIMTIME);
+                makeGenerator(getLane(linkA, "FORWARD3"), speedA, "gen3", routeGeneratorA, idGenerator, gtuType3rdLane,
+                        headwaysA3, this.colorer, roomChecker, bcFactory, tacticalFactory, SIMTIME);
+            }
+            else
+            {
+                GTUTypeGenerator gtuType2ndLane = new GTUTypeGenerator(ShortMerge.this.getSimulator());
+                gtuType2ndLane.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI), new GTUType("car", CAR),
+                        speedCar, 1.0 - 2 * TRUCK_FRACTION);
+                gtuType2ndLane.addType(new Length(15.0, LengthUnit.SI), new Length(2.5, LengthUnit.SI),
+                        new GTUType("truck", TRUCK), speedTruck, 2 * TRUCK_FRACTION);
+                makeGenerator(getLane(linkA, "FORWARD2"), speedA, "gen2", routeGeneratorA, idGenerator, gtuType2ndLane,
+                        headwaysA2, this.colorer, roomChecker, bcFactory, tacticalFactory, SIMTIME);
+            }
             makeGenerator(getLane(linkF, "FORWARD1"), speedF, "gen4", routeGeneratorF, idGenerator, gtuType1Lane, headwaysF,
                     this.colorer, roomChecker, bcFactory, tacticalFactory, SIMTIME);
+
+            new SpeedSign("sign1", getLane(linkA, "FORWARD1"), LongitudinalDirectionality.DIR_PLUS, Length.createSI(10),
+                    (OTSSimulatorInterface) this.getSimulator(), new Speed(130.0, SpeedUnit.KM_PER_HOUR));
 
         }
 
@@ -342,14 +427,7 @@ public class ShortMerge extends AbstractWrappableAnimation
          */
         private Lane getLane(final CrossSectionLink link, final String id)
         {
-            for (Lane lane : link.getLanes())
-            {
-                if (lane.getId().equals(id))
-                {
-                    return lane;
-                }
-            }
-            throw new RuntimeException("Could not find lane " + id + " on link " + link.getId());
+            return (Lane) link.getCrossSectionElement(id);
         }
 
         /**
@@ -376,6 +454,7 @@ public class ShortMerge extends AbstractWrappableAnimation
                 final BehavioralCharacteristicsFactory bcFactory, final LaneBasedTacticalPlannerFactory<?> tacticalFactory,
                 final Time simulationTime) throws SimRuntimeException, ProbabilityException, GTUException, ParameterException
         {
+
             Set<DirectedLanePosition> initialLongitudinalPositions = new HashSet<>();
             // TODO DIR_MINUS
             initialLongitudinalPositions

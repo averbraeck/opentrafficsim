@@ -1,6 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -21,6 +23,8 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuil
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsData;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
@@ -62,6 +66,9 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
 
     /** Set of voluntary lane change incentives. */
     private final LinkedHashSet<VoluntaryIncentive> voluntaryIncentives = new LinkedHashSet<>();
+
+    /** Latest desire value for visualization. */
+    private final Map<Class<? extends Incentive>, Desire> desireMap = new HashMap<>();
 
     /** Set of acceleration incentives. */
     private final LinkedHashSet<AccelerationIncentive> accelerationIncentives = new LinkedHashSet<>();
@@ -148,7 +155,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
 
         // LMRS
         SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(getGtu(), startTime, getCarFollowingModel(), this.laneChange,
-                this.lmrsData, getPerception(), this.mandatoryIncentives, this.voluntaryIncentives);
+                this.lmrsData, getPerception(), this.mandatoryIncentives, this.voluntaryIncentives, this.desireMap);
 
         // Lower acceleration from additional sources
         Speed speed = getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
@@ -182,6 +189,16 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
 
     }
 
+    /**
+     * Returns the desire of the given incentive.
+     * @param incentiveClass class of incentive
+     * @return desire of the given incentive
+     */
+    public Desire getLatestDesire(final Class<? extends Incentive> incentiveClass)
+    {
+        return this.desireMap.get(incentiveClass);
+    }
+
     /** {@inheritDoc} */
     @Override
     public final String toString()
@@ -199,5 +216,5 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
         }
         return "LMRS [" + mandatory + voluntary + "]";
     }
-
+    
 }

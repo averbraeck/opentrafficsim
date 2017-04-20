@@ -32,6 +32,9 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
 
     /** The maximum speed of the GTU (in the driving direction). */
     private final Speed maximumSpeed;
+    
+    /** Distance over which the GTU should not change lane after being created. */
+    private Length noLaneChangeDistance;
 
     /**
      * Construct a new AbstractLaneBasedIndividualGTU.
@@ -78,5 +81,21 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
     {
         return this.maximumSpeed;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void setNoLaneChangeDistance(final Length distance)
+    {
+        this.noLaneChangeDistance = distance;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean laneChangeAllowed()
+    {
+        return this.noLaneChangeDistance == null ? true : getOdometer().gt(this.noLaneChangeDistance);
+    }
+    
+    
 
 }
