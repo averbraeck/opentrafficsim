@@ -35,6 +35,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.SimpleAnimator;
 
 /**
  * <p>
@@ -110,6 +111,8 @@ public class AimsunControl extends AbstractWrappableAnimation
             Socket clientSocket = serverSocket.accept();
             System.out.println("Client connected; closing server socket");
             serverSocket.close(); // don't accept any other connections
+            System.out.println("Socket time out is " + clientSocket.getSoTimeout());
+            clientSocket.setSoTimeout(0);
             System.out.println("Entering command loop");
             AimsunControl aimsunControl = new AimsunControl();
             aimsunControl.commandLoop(clientSocket);
@@ -132,9 +135,28 @@ public class AimsunControl extends AbstractWrappableAnimation
         OutputStream outputStream = socket.getOutputStream();
         while (true)
         {
+            // byte[] in = new byte[1];
+            // inputStream.read(in);
+            // System.out.println(String.format("Got byte %02x", in[0]));
+            // if (true)
+            // {
+            // continue;
+            // }
             try
             {
-                AimsunControlProtoBuf.OTSMessage message = AimsunControlProtoBuf.OTSMessage.parseDelimitedFrom(inputStream);
+                byte[] sizeBytes = new byte[4];
+                // inputStream.read(sizeBytes);
+                fillBuffer(inputStream, sizeBytes);
+                int size =
+                        ((sizeBytes[0] & 0xff) << 24) + ((sizeBytes[1] & 0xff) << 16) + ((sizeBytes[2] & 0xff) << 8)
+                                + (sizeBytes[3] & 0xff);
+                System.out.println("expecting " + size + " bytes");
+                byte[] buffer = new byte[size];
+                // inputStream.read(buffer);
+                fillBuffer(inputStream, buffer);
+                AimsunControlProtoBuf.OTSMessage message = AimsunControlProtoBuf.OTSMessage.parseFrom(buffer);
+
+                // AimsunControlProtoBuf.OTSMessage message = AimsunControlProtoBuf.OTSMessage.parseDelimitedFrom(inputStream);
                 if (null == message)
                 {
                     System.out.println("Connection terminated; exiting");
@@ -146,17 +168,27 @@ public class AimsunControl extends AbstractWrappableAnimation
                         System.out.println("Received CREATESIMULATION message");
                         AimsunControlProtoBuf.CreateSimulation createSimulation = message.getCreateSimulation();
                         this.networkXML = createSimulation.getNetworkXML();
+                        // String network = null; // IOUtils.toString(URLResource.getResource("/aimsun/singleRoad.xml"));
+                        // URLConnection conn = URLResource.getResource("/aimsun/singleRoad.xml").openConnection();
+                        // try (BufferedReader reader =
+                        // new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)))
+                        // {
+                        // network = reader.lines().collect(Collectors.joining("\n"));
+                        // }
+                        // this.networkXML = network;
                         Duration runDuration = new Duration(createSimulation.getRunTime(), TimeUnit.SECOND);
                         Duration warmupDuration = new Duration(createSimulation.getWarmUpTime(), TimeUnit.SECOND);
                         try
                         {
-                            buildAnimator(Time.ZERO, warmupDuration, runDuration, new ArrayList<Property<?>>(), null, true);
+                            SimpleAnimator animator =
+                                    buildAnimator(Time.ZERO, warmupDuration, runDuration, new ArrayList<Property<?>>(), null,
+                                            true);
+                            animator.setSpeedFactor(Double.MAX_VALUE, true);
                         }
                         catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception1)
                         {
                             exception1.printStackTrace();
                         }
-
                         break;
 
                     case SIMULATEUNTIL:
@@ -169,6 +201,7 @@ public class AimsunControl extends AbstractWrappableAnimation
                         }
                         AimsunControlProtoBuf.SimulateUntil simulateUntil = message.getSimulateUntil();
                         Time stopTime = new Time(simulateUntil.getTime(), TimeUnit.SECOND);
+                        System.out.println("Simulate until " + stopTime);
                         DEVSSimulator<Time, ?, ?> simulator = (DEVSSimulator<Time, ?, ?>) this.model.getSimulator();
                         try
                         {
@@ -203,8 +236,17 @@ public class AimsunControl extends AbstractWrappableAnimation
                                     AimsunControlProtoBuf.OTSMessage.newBuilder();
                             resultBuilder.setGtuPositions(gtuPositions);
                             AimsunControlProtoBuf.OTSMessage result = resultBuilder.build();
-                            // System.out.println("About to transmit " + result.toString());
-                            result.writeDelimitedTo(outputStream);
+                            System.out.println("About to transmit " + result.toString());
+                            size = result.getSerializedSize();
+                            sizeBytes[0] = (byte) ((size >> 24) & 0xff);
+                            sizeBytes[1] = (byte) ((size >> 16) & 0xff);
+                            sizeBytes[2] = (byte) ((size >> 8) & 0xff);
+                            sizeBytes[3] = (byte) (size & 0xff);
+                            outputStream.write(sizeBytes);
+                            buffer = new byte[size];
+                            buffer = result.toByteArray();
+                            outputStream.write(buffer);
+                            // result.writeDelimitedTo(outputStream);
                         }
                         catch (SimRuntimeException | OperationalPlanException exception)
                         {
@@ -220,8 +262,8 @@ public class AimsunControl extends AbstractWrappableAnimation
 
                     case MSG_NOT_SET:
                         System.out.println("Received MSG_NOT_SET message SHOULD NOT HAPPEN");
-                        // We'll ignore that - for now
-                        break;
+                        socket.close();
+                        return;
 
                     default:
                         System.out.println("Received unknown message SHOULD NOT HAPPEN");
@@ -233,6 +275,38 @@ public class AimsunControl extends AbstractWrappableAnimation
             {
                 exception.printStackTrace();
                 break;
+            }
+        }
+    }
+
+    /**
+     * Fill a buffer from a stream; retry until the buffer is entirely filled.
+     * @param in InputStream; the input stream for the data
+     * @param buffer byte[]; the buffer
+     */
+    static void fillBuffer(final InputStream in, final byte[] buffer)
+    {
+        int offset = 0;
+        while (true)
+        {
+            try
+            {
+                System.out.println("Trying to read " + (buffer.length - offset) + " (more) bytes");
+                int bytesRead = in.read(buffer, offset, buffer.length - offset);
+                if (-1 == bytesRead)
+                {
+                    break;
+                }
+                offset += bytesRead;
+                if (offset >= buffer.length)
+                {
+                    System.out.println("Got all " + buffer.length + " requested bytes");
+                    break;
+                }
+            }
+            catch (Exception exception)
+            {
+                exception.printStackTrace();
             }
         }
     }
