@@ -203,7 +203,7 @@ public class BusStop extends AbstractLaneBasedObject
     public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
             final boolean animation) throws NetworkException
     {
-        BusStop busStop = new BusStop(getId(), getLane(), getLongitudinalPosition(), this.name, newSimulator);
+        BusStop busStop = new BusStop(getId(), (Lane) newCSE, getLongitudinalPosition(), this.name, newSimulator);
         busStop.setLines(this.lines);
         return busStop;
     }

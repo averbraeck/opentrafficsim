@@ -2,6 +2,7 @@ package org.opentrafficsim.road.network.animation;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
