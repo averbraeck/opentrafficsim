@@ -68,7 +68,7 @@ public class MM1Queue41Application
     protected MM1Queue41Application(final String modelId, final int port)
             throws SimRuntimeException, RemoteException, NamingException, Sim0MQException
     {
-        this.modelId = modelId;
+        this.modelId = modelId.trim();
         this.model = new MM1Queue41Model();
         this.simulator = new DEVSSimulator.TimeDouble();
         startListener(port);
@@ -139,7 +139,7 @@ public class MM1Queue41Application
             {
                 // wrong receiver
                 System.err.println(
-                        "Received message not intended for " + this.modelId + " but for " + senderId + " -- not processed: ");
+                        "Received message not intended for " + this.modelId + " but for " + receiverId + " -- not processed: ");
             }
         }
     }
