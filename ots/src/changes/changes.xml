@@ -2,6 +2,12 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="xx" date="xx" description="xx">
+      <action issue="OTS-126" type="add">
+        OTS-126. Add class for a speed sign.
+      </action>
+    </release>
+
     <release version="0.14.00" date="2017-04-17" description="Release 0.14.00">
       <action issue="OTS-269" type="update">
         OTS-269. Settable deletion of GTU's if in trouble.
@@ -43,6 +49,9 @@
       </action>
       <action issue="OTS-278" type="add">
         OTS-278. Scheduled busses and bus stops.
+      </action>
+      <action issue="OTS-316" type="update">
+        OTS-316. Allow non default GTU colorers in visualization.
       </action>
       <action issue="OTS-267" type="update">
         OTS-267. Researched parallelization of the gtu's move() method and provided options
