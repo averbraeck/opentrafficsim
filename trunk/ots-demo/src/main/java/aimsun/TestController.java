@@ -47,9 +47,46 @@ public final class TestController
      */
     public static void main(final String[] args) throws IOException
     {
+        String ip = null;
+        Integer port = null;
+
+        for (String arg : args)
+        {
+            int equalsPos = arg.indexOf("=");
+            if (equalsPos < 0)
+            {
+                System.err.println("Unhandled argument \"" + arg + "\"");
+            }
+            String key = arg.substring(0, equalsPos);
+            String value = arg.substring(equalsPos + 1);
+            switch (key.toUpperCase())
+            {
+                case "IP":
+                    ip = value;
+                    break;
+                case "PORT":
+                    try
+                    {
+                        port = Integer.parseInt(value);
+                    }
+                    catch (NumberFormatException exception)
+                    {
+                        System.err.println("Bad port number \"" + value + "\"");
+                        System.exit(1);
+                    }
+                    break;
+                default:
+                    System.err.println("Unhandled argument \"" + arg + "\"");
+            }
+        }
+        if (null == ip || null == port)
+        {
+            System.err.println("Missing required argument(s) ip=<ip-number_or_hostname> port=<port-number>");
+            System.exit(1);
+        }
         // Socket to talk to server
         System.out.println("Connecting to server...");
-        Socket socket = new Socket("localhost", 3333);
+        Socket socket = new Socket(ip, port);
         System.out.println("Connected");
         OutputStream outputStream = socket.getOutputStream();
         InputStream inputStream = socket.getInputStream();
