@@ -1,17 +1,24 @@
 package aimsun;
 
-import java.net.URL;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.language.io.URLResource;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -21,15 +28,13 @@ import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.sim0mq.Sim0MQException;
-import org.sim0mq.message.MessageStatus;
-import org.sim0mq.message.SimulationMessage;
-import org.zeromq.ZMQ;
 
 /**
  * <p>
@@ -47,17 +52,11 @@ public class AimsunControl extends AbstractWrappableAnimation
     /** */
     private static final long serialVersionUID = 20160418L;
 
-    /** The network. */
-    final URL networkURL;
+    /** XML description of the network. */
+    String networkXML = null;
 
-    /**
-     * Construct a new Aimsun controlled simulation.
-     * @param networkURL URL; the network
-     */
-    AimsunControl(final URL networkURL)
-    {
-        this.networkURL = networkURL;
-    }
+    /** Currently active Aimsun model. */
+    AimsunModel model = null;
 
     /**
      * Program entry point.
@@ -102,55 +101,140 @@ public class AimsunControl extends AbstractWrappableAnimation
             System.err.println("Missing required argument(s) ip=<ip-number_or_hostname> port=<port-number>");
             System.exit(1);
         }
-        ZMQ.Context context = ZMQ.context(1);
-
-        // Socket to talk to clients
-        ZMQ.Socket responder = context.socket(ZMQ.PAIR);
-        String address = String.format("tcp://*:%d", port);
-        responder.bind(address);
-
-        URL url = URLResource.getResource("/aimsun/singleRoad.xml");
-
-        AimsunControl ac = new AimsunControl(url);
         try
         {
-            ac.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0,
-                    TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+            System.out.println("Creating server socket for port " + port);
+            ServerSocket serverSocket = new ServerSocket(port);
+            serverSocket.setReuseAddress(true); // Ensure we can be restarted without the normal delay
+            System.out.println("Waiting for client to connect");
+            Socket clientSocket = serverSocket.accept();
+            System.out.println("Client connected; closing server socket");
+            serverSocket.close(); // don't accept any other connections
+            System.out.println("Entering command loop");
+            AimsunControl aimsunControl = new AimsunControl();
+            aimsunControl.commandLoop(clientSocket);
         }
-        catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception1)
+        catch (IOException exception)
         {
-            exception1.printStackTrace();
+            exception.printStackTrace();
         }
+        System.exit(0);
+    }
 
-        System.out.println("Waiting for incoming connection on port " + port);
-        while (!Thread.currentThread().isInterrupted())
+    /**
+     * Process incoming commands.
+     * @param socket Socket; the communications channel to Aimsun
+     * @throws IOException when communication with Aimsun fails
+     */
+    private void commandLoop(final Socket socket) throws IOException
+    {
+        InputStream inputStream = socket.getInputStream();
+        OutputStream outputStream = socket.getOutputStream();
+        while (true)
         {
-            // Wait for next request from the client
-            byte[] request = responder.recv(0);
-            // this will stop even ouw own reply from getting through: responder.unbind(address);
-            Object[] message;
             try
             {
-                message = SimulationMessage.decode(request);
-                System.out.println("AimsunControl received " + SimulationMessage.print(message));
-                if (message[8].equals("shutdown"))
+                AimsunControlProtoBuf.OTSMessage message = AimsunControlProtoBuf.OTSMessage.parseDelimitedFrom(inputStream);
+                if (null == message)
                 {
-                    System.out.println("received shutdown request");
+                    System.out.println("Connection terminated; exiting");
                     break;
                 }
-                // send a reply
-                Object[] reply = new Object[] { true, -28.2, 77000, "AimsunControl" };
-                responder.send(
-                        SimulationMessage.encode("IDVV14.2", "MC.1", "MM1.4", "TEST.2", 1201L, MessageStatus.NEW, reply), 0);
+                switch (message.getMsgCase())
+                {
+                    case CREATESIMULATION:
+                        System.out.println("Received CREATESIMULATION message");
+                        AimsunControlProtoBuf.CreateSimulation createSimulation = message.getCreateSimulation();
+                        this.networkXML = createSimulation.getNetworkXML();
+                        Duration runDuration = new Duration(createSimulation.getRunTime(), TimeUnit.SECOND);
+                        Duration warmupDuration = new Duration(createSimulation.getWarmUpTime(), TimeUnit.SECOND);
+                        try
+                        {
+                            buildAnimator(Time.ZERO, warmupDuration, runDuration, new ArrayList<Property<?>>(), null, true);
+                        }
+                        catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception1)
+                        {
+                            exception1.printStackTrace();
+                        }
+
+                        break;
+
+                    case SIMULATEUNTIL:
+                        System.out.println("Received SIMULATEUNTIL message");
+                        if (null == this.model)
+                        {
+                            System.err.println("No model active");
+                            socket.close();
+                            break;
+                        }
+                        AimsunControlProtoBuf.SimulateUntil simulateUntil = message.getSimulateUntil();
+                        Time stopTime = new Time(simulateUntil.getTime(), TimeUnit.SECOND);
+                        DEVSSimulator<Time, ?, ?> simulator = (DEVSSimulator<Time, ?, ?>) this.model.getSimulator();
+                        try
+                        {
+                            simulator.runUpTo(stopTime);
+                            while (simulator.isRunning())
+                            {
+                                try
+                                {
+                                    Thread.sleep(10);
+                                }
+                                catch (InterruptedException ie)
+                                {
+                                    ie = null; // ignore
+                                }
+                            }
+                            AimsunControlProtoBuf.GTUPositions.Builder builder =
+                                    AimsunControlProtoBuf.GTUPositions.newBuilder();
+                            for (GTU gtu : this.model.getNetwork().getGTUs())
+                            {
+                                AimsunControlProtoBuf.GTUPositions.GTUPosition.Builder gpb =
+                                        AimsunControlProtoBuf.GTUPositions.GTUPosition.newBuilder();
+                                gpb.setGtuId(gtu.getId());
+                                DirectedPoint dp = gtu.getOperationalPlan().getLocation(stopTime);
+                                gpb.setX(dp.x);
+                                gpb.setY(dp.y);
+                                gpb.setZ(dp.z);
+                                gpb.setAngle(dp.getRotZ());
+                                builder.addGtuPos(gpb.build());
+                            }
+                            AimsunControlProtoBuf.GTUPositions gtuPositions = builder.build();
+                            AimsunControlProtoBuf.OTSMessage.Builder resultBuilder =
+                                    AimsunControlProtoBuf.OTSMessage.newBuilder();
+                            resultBuilder.setGtuPositions(gtuPositions);
+                            AimsunControlProtoBuf.OTSMessage result = resultBuilder.build();
+                            // System.out.println("About to transmit " + result.toString());
+                            result.writeDelimitedTo(outputStream);
+                        }
+                        catch (SimRuntimeException | OperationalPlanException exception)
+                        {
+                            System.out.println("Error in runUpTo");
+                            exception.printStackTrace();
+                        }
+                        break;
+
+                    case GTUPOSITIONS:
+                        System.out.println("Received GTUPOSITIONS message SHOULD NOT HAPPEN");
+                        socket.close();
+                        return;
+
+                    case MSG_NOT_SET:
+                        System.out.println("Received MSG_NOT_SET message SHOULD NOT HAPPEN");
+                        // We'll ignore that - for now
+                        break;
+
+                    default:
+                        System.out.println("Received unknown message SHOULD NOT HAPPEN");
+                        socket.close();
+                        break;
+                }
             }
-            catch (Sim0MQException exception)
+            catch (IOException exception)
             {
                 exception.printStackTrace();
+                break;
             }
-
         }
-        responder.close();
-        context.term();
     }
 
     /** {@inheritDoc} */
@@ -171,7 +255,8 @@ public class AimsunControl extends AbstractWrappableAnimation
     @Override
     protected final OTSModelInterface makeModel(final GTUColorer colorer) throws OTSSimulationException
     {
-        return new AimsunModel();
+        this.model = new AimsunModel();
+        return this.model;
     }
 
     /**
@@ -197,9 +282,10 @@ public class AimsunControl extends AbstractWrappableAnimation
             try
             {
                 this.simulator = theSimulator;
-                URL url = URLResource.getResource("/aimsun/singleRoad.xml");
+                // URL url = URLResource.getResource("/aimsun/singleRoad.xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
-                this.network = nlp.build(url);
+                String xml = AimsunControl.this.networkXML;
+                this.network = nlp.build(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
             }
             catch (Exception exception)
             {

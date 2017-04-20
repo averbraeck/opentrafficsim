@@ -1,9 +1,18 @@
 package aimsun;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
+
+import nl.tudelft.simulation.language.io.URLResource;
+
 import org.sim0mq.Sim0MQException;
-import org.sim0mq.message.MessageStatus;
-import org.sim0mq.message.SimulationMessage;
-import org.zeromq.ZMQ;
 
 /**
  * Test client for AimsunController.
@@ -36,50 +45,67 @@ public final class TestController
      */
     /**
      * @param args command line arguments
-     * @throws Sim0MQException on error
+     * @throws IOException when communication fails
      */
-    public static void main(final String[] args) throws Sim0MQException
+    public static void main(final String[] args) throws IOException
     {
-        ZMQ.Context context = ZMQ.context(1);
-
         // Socket to talk to server
         System.out.println("Connecting to server...");
-
-        ZMQ.Socket requester = context.socket(ZMQ.PAIR);
-        requester.connect("tcp://localhost:3333");
-
-        // Send a request
+        Socket socket = new Socket("localhost", 3333);
+        System.out.println("Connected");
+        OutputStream outputStream = socket.getOutputStream();
+        InputStream inputStream = socket.getInputStream();
+        // Send a build network command
         System.out.println("Sending 1st test message");
-        Object[] request = new Object[] { "test message", new Double(14.2), new Float(-28.4), new Short((short) 10) };
-        requester.send(SimulationMessage.encode("IDVV14.2", "MC.1", "MM1.4", "TEST.2", 1201L, MessageStatus.NEW, request), 0);
+        AimsunControlProtoBuf.CreateSimulation.Builder createSimulationBuilder =
+                AimsunControlProtoBuf.CreateSimulation.newBuilder();
+        createSimulationBuilder.setRunTime(3600d);
+        createSimulationBuilder.setWarmUpTime(0d);
+        // String network = URLResource.getResource("/aimsun/singleRoad.xml").toString(); // wrong; fix later
+        String network = null; // IOUtils.toString(URLResource.getResource("/aimsun/singleRoad.xml"));
+        URLConnection conn = URLResource.getResource("/aimsun/singleRoad.xml").openConnection();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)))
+        {
+            network = reader.lines().collect(Collectors.joining("\n"));
+        }
 
+        createSimulationBuilder.setNetworkXML(network);
+        AimsunControlProtoBuf.OTSMessage command =
+                AimsunControlProtoBuf.OTSMessage.newBuilder().setCreateSimulation(createSimulationBuilder.build()).build();
+        // for (byte b : command.toByteArray())
+        // {
+        // System.out.print(String.format("%02x ", b));
+        // }
+        // System.out.println("");
+        command.writeDelimitedTo(outputStream);
+        // Send a simulate until command with time 0 to retrieve the initial gtu positions
+        System.out.println("Sending simulate until 0 command to retrieve the initial GTU positions");
+        AimsunControlProtoBuf.SimulateUntil simulateUntil =
+                AimsunControlProtoBuf.SimulateUntil.newBuilder().setTime(0d).build();
+        command = AimsunControlProtoBuf.OTSMessage.newBuilder().setSimulateUntil(simulateUntil).build();
+        command.writeDelimitedTo(outputStream);
         // Receive a reply
-        byte[] reply = requester.recv(0);
-        Object[] replyMessage = SimulationMessage.decode(reply);
-        System.out.println("TestController received 1st reply\n" + SimulationMessage.print(replyMessage));
+        System.out.println("Waiting for / reading reply");
+        AimsunControlProtoBuf.OTSMessage reply = AimsunControlProtoBuf.OTSMessage.parseDelimitedFrom(inputStream);
+        System.out.println("Received " + reply);
+        for (int step = 1; step <= 20; step++)
+        {
+            simulateUntil = AimsunControlProtoBuf.SimulateUntil.newBuilder().setTime(0.5d * step).build();
+            System.out.println("Simulate step " + step);
+            command = AimsunControlProtoBuf.OTSMessage.newBuilder().setSimulateUntil(simulateUntil).build();
+            command.writeDelimitedTo(outputStream);
+            System.out.println("Waiting for / reading reply");
+            reply = AimsunControlProtoBuf.OTSMessage.parseDelimitedFrom(inputStream);
+            System.out.println("Received " + reply);
+        }
         try
         {
-            Thread.sleep(9999);
+            Thread.sleep(5000);
         }
         catch (InterruptedException exception)
         {
             exception.printStackTrace();
         }
-        // Send a request
-        System.out.println("Sending 2nd test message");
-        Object[] request2 = new Object[] { "test message 2", new Double(14.2), new Float(-28.4), new Short((short) 10) };
-        requester
-                .send(SimulationMessage.encode("IDVV14.2", "MC.1", "MM1.4", "TEST.222", 1201L, MessageStatus.NEW, request2), 0);
-
-        // Receive a reply
-        byte[] reply2 = requester.recv(0);
-        Object[] replyMessage2 = SimulationMessage.decode(reply2);
-        System.out.println("TestController received 2nd reply\n" + SimulationMessage.print(replyMessage2));
-
-        Object[] stopRequest = new Object[] { "shutdown" };
-        requester.send(
-                SimulationMessage.encode("IDVV14.2", "MC.1", "MM1.4", "TEST.222", 1201L, MessageStatus.NEW, stopRequest), 0);
-        requester.close();
-        context.term();
+        socket.close();
     }
 }
