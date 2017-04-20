@@ -19,6 +19,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
@@ -29,6 +30,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LanePathInfo;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 
@@ -338,10 +340,6 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
         {
             for (LaneStructureRecord record : currentSet)
             {
-                if (!record.allowsRoute(getGtu().getStrategicalPlanner().getRoute(), getGtu().getGTUType()))
-                {
-                    continue;
-                }
                 int first;
                 Length loc = record.getStartDistance().neg().plus(ds);
                 if (lane.getLateralDirectionality().isLeft())
@@ -366,9 +364,9 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
                 for (int i = first; i < record.getLane().getGtuList().size(); i++)
                 {
                     LaneBasedGTU gtu = record.getLane().getGtuList().get(i);
-                    if (gtu.position(record.getLane(), gtu.getRear()).lt0())
+                    if (gtu.position(record.getLane(), gtu.getRear()).lt0() && !record.equals(initRecord))
                     {
-                        // rear still on previous lane; it is either already found there, or merge conflict should deal with it
+                        // rear still on previous lane; it is found there
                         continue;
                     }
                     Length distance = record.getStartDistance().plus(gtu.position(record.getLane(), gtu.getRear())).minus(ds);

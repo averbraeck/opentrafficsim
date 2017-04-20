@@ -562,28 +562,28 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
     @Override
     public final SortedSet<HeadwayTrafficLight> getTrafficLights(final RelativeLane lane)
     {
-        return this.trafficLights.get(lane).getObject();
+        return getObjectOrNull(this.trafficLights.get(lane));
     }
 
     /** {@inheritDoc} */
     @Override
     public final SortedSet<HeadwayConflict> getConflicts(final RelativeLane lane)
     {
-        return this.conflicts.get(lane).getObject();
+        return getObjectOrNull(this.conflicts.get(lane));
     }
 
     /** {@inheritDoc} */
     @Override
     public final boolean isAlongsideConflictLeft()
     {
-        return this.alongsideConflictLeft.getObject();
+        return this.alongsideConflictLeft == null ? false : this.alongsideConflictLeft.getObject();
     }
 
     /** {@inheritDoc} */
     @Override
     public final boolean isAlongsideConflictRight()
     {
-        return this.alongsideConflictRight.getObject();
+        return this.alongsideConflictRight == null ? false : this.alongsideConflictRight.getObject();
     }
 
     /**
