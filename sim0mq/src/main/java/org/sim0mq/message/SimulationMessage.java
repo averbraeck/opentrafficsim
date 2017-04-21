@@ -75,6 +75,47 @@ public class SimulationMessage
     }
 
     /**
+     * Encode the object array into a message.
+     * @param identity the identity of the federate to which this is the reply
+     * @param simulationRunId the Simulation run ids can be provided in different types. Examples are two 64-bit longs
+     *            indicating a UUID, or a String with a UUID number, a String with meaningful identification, or a short or an
+     *            int with a simulation run number.
+     * @param senderId The sender id can be used to send back a message to the sender at some later time.
+     * @param receiverId The receiver id can be used to check whether the message is meant for us, or should be discarded (or an
+     *            error can be sent if we receive a message not meant for us).
+     * @param messageTypeId Message type ids can be defined per type of simulation, and can be provided in different types.
+     *            Examples are a String with a meaningful identification, or a short or an int with a message type number.
+     * @param messageId The unique message number is meant to confirm with a callback that the message has been received
+     *            correctly. The number is unique for the sender, so not globally within the federation.
+     * @param messageStatus Three different status messages are defined: 1 for new, 2 for change, and 3 for delete. This field
+     *            is coded as a byte.
+     * @param content the objects to encode
+     * @return the zeroMQ message to send as a byte array
+     * @throws Sim0MQException on unknown data type
+     */
+    public static byte[] encodeReply(final String identity, final Object simulationRunId, final Object senderId, final Object receiverId,
+            final Object messageTypeId, final long messageId, final MessageStatus messageStatus, final Object... content)
+            throws Sim0MQException
+    {
+        Object[] simulationContent = new Object[content.length + 10];
+        simulationContent[0] = identity;
+        simulationContent[1] = new byte[] {0}; 
+        simulationContent[2] = TypedMessage.version;
+        simulationContent[3] = simulationRunId;
+        simulationContent[4] = senderId;
+        simulationContent[5] = receiverId;
+        simulationContent[6] = messageTypeId;
+        simulationContent[7] = messageId;
+        simulationContent[8] = new Byte(messageStatus.getStatus());
+        simulationContent[9] = new Short((short) content.length);
+        for (int i = 0; i < content.length; i++)
+        {
+            simulationContent[i + 10] = content[i];
+        }
+        return TypedMessage.encode(simulationContent);
+    }
+
+    /**
      * Decode the message into an object array. Note that the message fields are coded as follows:<br>
      * 0 = magic number, equal to the String "SIM##" where ## stands for the version number of the protocol.<br>
      * 1 = simulation run id, could be String, int, Object, ...<br>

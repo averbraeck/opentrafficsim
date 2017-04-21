@@ -9,6 +9,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.MessageStatus;
 import org.sim0mq.message.SimulationMessage;
+import org.sim0mq.message.TypedMessage;
 import org.zeromq.ZMQ;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -40,7 +41,7 @@ public class MM1Queue41Application
 
     /** the context. */
     private ZMQ.Context fsContext;
-    
+
     /** federation run id. */
     private Object federationRunId;
 
@@ -83,13 +84,17 @@ public class MM1Queue41Application
     {
         this.fsContext = ZMQ.context(1);
 
-        this.fsSocket = this.fsContext.socket(ZMQ.REP);
+        this.fsSocket = this.fsContext.socket(ZMQ.ROUTER);
         this.fsSocket.bind("tcp://*:" + port);
 
         while (!Thread.currentThread().isInterrupted())
         {
-            // Wait for next request from the client
+            // Wait for next request from the client -- first the identity (String) and the delimiter (#0)
+            String identity = this.fsSocket.recvStr();
+            this.fsSocket.recvStr();
+
             byte[] request = this.fsSocket.recv(0);
+            System.out.println(TypedMessage.printBytes(request));
             Object[] fields = SimulationMessage.decode(request);
 
             System.out.println("Received " + SimulationMessage.print(fields));
@@ -107,23 +112,23 @@ public class MM1Queue41Application
                 {
                     case "FS.1":
                     case "FM.5":
-                        processRequestStatus(senderId, uniqueId);
+                        processRequestStatus(identity, senderId, uniqueId);
                         break;
 
                     case "FM.2":
-                        processSimRunControl(senderId, uniqueId, fields);
+                        processSimRunControl(identity, senderId, uniqueId, fields);
                         break;
 
                     case "FM.3":
-                        processSetParameter(senderId, uniqueId, fields);
+                        processSetParameter(identity, senderId, uniqueId, fields);
                         break;
 
                     case "FM.4":
-                        processSimStart(senderId, uniqueId);
+                        processSimStart(identity, senderId, uniqueId);
                         break;
 
                     case "FM.6":
-                        processRequestStatistics(senderId, uniqueId, fields);
+                        processRequestStatistics(identity, senderId, uniqueId, fields);
                         break;
 
                     case "FS.3":
@@ -146,25 +151,33 @@ public class MM1Queue41Application
 
     /**
      * Process FS.1 message and send MC.1 message back.
+     * @param identity reply id for REQ-ROUTER pattern
      * @param receiverId the receiver of the response
      * @param replyToMessageId the message to which this is the reply
      * @throws Sim0MQException on error
      */
-    private void processRequestStatus(final String receiverId, final long replyToMessageId) throws Sim0MQException
+    private void processRequestStatus(final String identity, final String receiverId, final long replyToMessageId)
+            throws Sim0MQException
     {
         String status = "started";
         if (this.simulator.isRunning())
         {
             status = "running";
         }
-        else if (this.simulator.getSimulatorTime().ge(this.simulator.getReplication().getTreatment().getEndTime()))
+        else if (this.simulator.getSimulatorTime() != null && this.simulator.getReplication() != null
+                && this.simulator.getReplication().getTreatment() != null)
         {
-            status = "ended";
+            if (this.simulator.getSimulatorTime().ge(this.simulator.getReplication().getTreatment().getEndTime()))
+            {
+                status = "ended";
+            }
+            else
+            {
+                status = "error";
+            }
         }
-        else
-        {
-            status = "error";
-        }
+        this.fsSocket.sendMore(identity);
+        this.fsSocket.sendMore("");
         byte[] mc1Message = SimulationMessage.encode(this.federationRunId, this.modelId, receiverId, "MC.1",
                 ++this.messageCount, MessageStatus.NEW, replyToMessageId, status, "");
         this.fsSocket.send(mc1Message, 0);
@@ -172,13 +185,14 @@ public class MM1Queue41Application
 
     /**
      * Process FM.2 message and send MC.2 message back.
+     * @param identity reply id for REQ-ROUTER pattern
      * @param receiverId the receiver of the response
      * @param replyToMessageId the message to which this is the reply
      * @param fields the message
      * @throws Sim0MQException on error
      */
-    private void processSimRunControl(final String receiverId, final long replyToMessageId, final Object[] fields)
-            throws Sim0MQException
+    private void processSimRunControl(final String identity, final String receiverId, final long replyToMessageId,
+            final Object[] fields) throws Sim0MQException
     {
         boolean status = true;
         String error = "";
@@ -219,16 +233,20 @@ public class MM1Queue41Application
         }
         byte[] mc2Message = SimulationMessage.encode(this.federationRunId, this.modelId, receiverId, "MC.2",
                 ++this.messageCount, MessageStatus.NEW, replyToMessageId, status, error);
+        this.fsSocket.sendMore(identity);
+        this.fsSocket.sendMore("");
         this.fsSocket.send(mc2Message, 0);
     }
 
     /**
      * Process FM.3 message and send MC.2 message back.
+     * @param identity reply id for REQ-ROUTER pattern
      * @param receiverId the receiver of the response
      * @param replyToMessageId the message to which this is the reply
      * @throws Sim0MQException on error
      */
-    private void processSimStart(final String receiverId, final long replyToMessageId) throws Sim0MQException
+    private void processSimStart(final String identity, final String receiverId, final long replyToMessageId)
+            throws Sim0MQException
     {
         boolean status = true;
         String error = "";
@@ -249,18 +267,21 @@ public class MM1Queue41Application
 
         byte[] mc2Message = SimulationMessage.encode(this.federationRunId, this.modelId, receiverId, "MC.2",
                 ++this.messageCount, MessageStatus.NEW, replyToMessageId, status, error);
+        this.fsSocket.sendMore(identity);
+        this.fsSocket.sendMore("");
         this.fsSocket.send(mc2Message, 0);
     }
 
     /**
      * Process FM.4 message and send MC.2 message back.
+     * @param identity reply id for REQ-ROUTER pattern
      * @param receiverId the receiver of the response
      * @param replyToMessageId the message to which this is the reply
      * @param fields the message
      * @throws Sim0MQException on error
      */
-    private void processSetParameter(final String receiverId, final long replyToMessageId, final Object[] fields)
-            throws Sim0MQException
+    private void processSetParameter(final String identity, final String receiverId, final long replyToMessageId,
+            final Object[] fields) throws Sim0MQException
     {
         boolean status = true;
         String error = "";
@@ -293,18 +314,21 @@ public class MM1Queue41Application
 
         byte[] mc2Message = SimulationMessage.encode(this.federationRunId, this.modelId, receiverId, "MC.2",
                 ++this.messageCount, MessageStatus.NEW, replyToMessageId, status, error);
+        this.fsSocket.sendMore(identity);
+        this.fsSocket.sendMore("");
         this.fsSocket.send(mc2Message, 0);
     }
 
     /**
      * Process FM.5 message and send MC.3 or MC.4 message back.
+     * @param identity reply id for REQ-ROUTER pattern
      * @param receiverId the receiver of the response
      * @param replyToMessageId the message to which this is the reply
      * @param fields the message
      * @throws Sim0MQException on error
      */
-    private void processRequestStatistics(final String receiverId, final long replyToMessageId, final Object[] fields)
-            throws Sim0MQException
+    private void processRequestStatistics(final String identity, final String receiverId, final long replyToMessageId,
+            final Object[] fields) throws Sim0MQException
     {
         boolean ok = true;
         String error = "";
@@ -348,12 +372,16 @@ public class MM1Queue41Application
         {
             byte[] mc3Message = SimulationMessage.encode(this.federationRunId, this.modelId, receiverId, "MC.3",
                     ++this.messageCount, MessageStatus.NEW, replyToMessageId, variableName, variableValue);
+            this.fsSocket.sendMore(identity);
+            this.fsSocket.sendMore("");
             this.fsSocket.send(mc3Message, 0);
         }
         else
         {
             byte[] mc4Message = SimulationMessage.encode(this.federationRunId, this.modelId, receiverId, "MC.4",
                     ++this.messageCount, MessageStatus.NEW, replyToMessageId, ok, error);
+            this.fsSocket.sendMore(identity);
+            this.fsSocket.sendMore("");
             this.fsSocket.send(mc4Message, 0);
         }
     }

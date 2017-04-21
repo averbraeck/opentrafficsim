@@ -284,6 +284,58 @@ public final class EndianUtil
     }
 
     /**
+     * Return a long encoded as a byte array.
+     * @param v the long variable to encode
+     * @return the byte array.
+     */
+    public static byte[] longToByteArray(final long v)
+    {
+        byte[] message = new byte[8];
+        int pointer = 0;
+        encodeLong(v, message, pointer);
+        return message;
+    }
+    
+    /**
+     * Return an int encoded as a byte array.
+     * @param v the int variable to encode
+     * @return the byte array.
+     */
+    public static byte[] intToByteArray(final int v)
+    {
+        byte[] message = new byte[4];
+        int pointer = 0;
+        encodeInt(v, message, pointer);
+        return message;
+    }
+    
+    /**
+     * Return a double encoded as a byte array.
+     * @param v the double variable to encode
+     * @return the byte array.
+     */
+    public static byte[] doubleToByteArray(final double v)
+    {
+        byte[] message = new byte[8];
+        int pointer = 0;
+        encodeDouble(v, message, pointer);
+        return message;
+    }
+    
+    /**
+     * Return a float encoded as a byte array.
+     * @param v the float variable to encode
+     * @return the byte array.
+     */
+    public static byte[] floatToByteArray(final float v)
+    {
+        byte[] message = new byte[4];
+        int pointer = 0;
+        encodeFloat(v, message, pointer);
+        return message;
+    }
+    
+    /**
      * @return defaultBigEndian
      */
     public static final boolean isDefaultBigEndian()
