@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.MessageStatus;
@@ -51,8 +52,10 @@ public class FederationManager
     {
         this.fmContext = ZMQ.context(1);
         this.modelSocket = this.fmContext.socket(ZMQ.REQ);
+        this.modelSocket.setIdentity(UUID.randomUUID().toString().getBytes());
         this.fsSocket = this.fmContext.socket(ZMQ.REQ);
-
+        this.fsSocket.setIdentity(UUID.randomUUID().toString().getBytes());
+        
         this.state = ModelState.NOT_STARTED;
         boolean ready = false;
         while (!ready)
