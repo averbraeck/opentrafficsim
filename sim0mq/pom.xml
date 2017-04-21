@@ -651,6 +651,12 @@
     </repository>
 
     <repository>
+      <name>djunits Public Repository</name>
+      <id>djunits</id>
+      <url>http://djunits.org/maven</url>
+    </repository>
+
+    <repository>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
