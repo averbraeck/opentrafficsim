@@ -1,6 +1,7 @@
-package org.sim0mq.message;
+package org.sim0mq.message.util;
 
 import org.sim0mq.Sim0MQException;
+import org.sim0mq.message.MessageStatus;
 
 /**
  * The message structure of a typical typed Sim0MQ simulation message looks as follows:<br>
@@ -19,8 +20,8 @@ import org.sim0mq.Sim0MQException;
  * reading past the end. The number of fields can be encoded using any length type (byte, short, int, long).<br>
  * Frame 5-n. Payload, where each field has a 1-byte prefix denoting the type of field.
  * <p>
- * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * Copyright (c) 2016-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://sim0mq.org/docs/current/license.html">Sim0MQ License</a>.
  * </p>
  * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
  * initial version Mar 3, 2017 <br>

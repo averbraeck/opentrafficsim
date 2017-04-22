@@ -17,6 +17,21 @@
 
   <inceptionYear>2016</inceptionYear>
 
+  <profiles>
+    <!-- select profiles with -P option, e.g. "mvn install -P all" -->
+    <profile>
+      <id>all</id>
+      <activation>
+        <property>
+          <name>all</name>
+        </property>
+      </activation>
+      <modules>
+        <module>../sim0mq-demo</module>
+      </modules>
+    </profile>
+  </profiles>
+
   <properties>
     <jdk.version>1.8</jdk.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,7 +40,7 @@
 
     <sim0mq.version>${project.version}</sim0mq.version>
     <djunits.version>2.02.00</djunits.version>
-    <dsol.version>3.01.04</dsol.version>
+    <dsol.version>3.01.05</dsol.version>
     <jeromq.version>0.3.6</jeromq.version>
     <junit.version>4.11</junit.version>
 

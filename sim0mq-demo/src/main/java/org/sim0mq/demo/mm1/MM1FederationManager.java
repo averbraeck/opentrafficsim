@@ -1,4 +1,4 @@
-package org.sim0mq.federationmanager;
+package org.sim0mq.demo.mm1;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,22 +7,22 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.sim0mq.Sim0MQException;
+import org.sim0mq.federationmanager.ModelState;
 import org.sim0mq.message.MessageStatus;
-import org.sim0mq.message.SimulationMessage;
+import org.sim0mq.message.util.SimulationMessage;
 import org.zeromq.ZMQ;
 
 /**
+ * Example implementation of a FederationManager to start the MM1Queue41Application DSOL model.
  * <p>
- * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * Copyright (c) 2016-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://sim0mq.org/docs/current/license.html">Sim0MQ License</a>.
  * </p>
  * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
- * initial version Apr 11, 2017 <br>
+ * initial version April 10, 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class FederationManager
+public class MM1FederationManager
 {
     /** the state of the started model. */
     private ModelState state;
@@ -47,7 +47,7 @@ public class FederationManager
      * @param localSk3 local/sk-3 to indicate where the federate starter and model can be found
      * @throws Sim0MQException on error
      */
-    public FederationManager(final String federationName, final int fmPort, final int fsPort, final String localSk3)
+    public MM1FederationManager(final String federationName, final int fmPort, final int fsPort, final String localSk3)
             throws Sim0MQException
     {
         this.fmContext = ZMQ.context(1);
@@ -444,7 +444,7 @@ public class FederationManager
             System.exit(-1);
         }
 
-        new FederationManager(federationName, fmPort, fsPort, localSk3);
+        new MM1FederationManager(federationName, fmPort, fsPort, localSk3);
 
     }
 

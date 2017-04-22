@@ -1,0 +1,51 @@
+                   -----------------------
+                   SIM0MQ-DEMO
+                   -----------------------
+                   April, 2017
+                   -----------------------
+                   
+Sim0MQ Message Bus for Java
+
+	The Sim0MQ message bus is a fast messaging protocol to create loosely coupled simulations.
+
+    * Sim0MQ uses the 0MQ protocol as its basis, enabling up to 2 million messages per second.
+
+    * Sim0MQ provides low-level binary messages for fast message exchange.
+    
+    * Sim0MQ provides structured binary messages for more controlled message exchange.
+    
+    * Sim0MQ will be enabled with an IDL-type feature to generate message stubs automatically.
+    
+    * Sim0MQ can be used with any language that 0MQ supports: Java, C, C++, C#, Python, and a few dozen  more. 
+    
+    * Sim0MQ works in a brokerless fashion due to the nature of the underlying 0MQ protocol.
+    
+    * Sim0MQ uses DJUNITS for a strongly typed unit system for values. A length scalar cannot be added to a time scalar; if 
+      length is divided by time, a speed variable results. This is all checked at compile time rather than at run time.
+      
+    * Sim0MQ can be linked to DSOL as the underlying, powerful simulation platform. DSOL takes care of time advance mechanisms, 
+      discrete-event and continuous simulation, random streams, probability distribution functions, experiment management, etc..
+    
+    []
+
+======
+
+	SIM0MQ-DEMO contains the demo classes for the Sim0MQ project.
+		
+	* SIM0MQ-DEMO provides a reference implementation of a Federation Manager.
+	
+	* SIM0MQ-DEMO provides a reference implementation of a model that can be used in a federated manner.
+	
+	[]
+	
+======
+
+	Sim0MQ has an open source BSD 3-clause license.
+
+    * Third party components used in OpenTrafficSim can not have a license that is more restrictive than BSD, Apache, MIT, LGPL, Eclipse.
+
+    * Sim0MQ can be incorporated in part or in full in other products for any use (educational, commercial, whatever).
+
+    * Sim0MQ may be extended, evolved by anyone into anything else for any purpose.
+	
+	[]
