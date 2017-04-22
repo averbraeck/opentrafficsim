@@ -1,4 +1,4 @@
-package org.sim0mq.message.util;
+package org.sim0mq.message;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -13,6 +13,7 @@ import org.djunits.value.vdouble.scalar.MoneyPerVolume;
 import org.djunits.value.vfloat.scalar.AbstractFloatScalar;
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.types.Sim0MQTypes;
+import org.sim0mq.message.util.EndianUtil;
 
 import nl.tudelft.simulation.language.Throw;
 

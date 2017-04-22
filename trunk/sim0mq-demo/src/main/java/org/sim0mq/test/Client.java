@@ -2,7 +2,7 @@ package org.sim0mq.test;
 
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.MessageStatus;
-import org.sim0mq.message.util.SimulationMessage;
+import org.sim0mq.message.SimulationMessage;
 import org.zeromq.ZMQ;
 
 /**

@@ -3,7 +3,7 @@ package org.sim0mq.message.federatestarter;
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.MessageStatus;
 import org.sim0mq.message.Sim0MQMessage;
-import org.sim0mq.message.util.SimulationMessage;
+import org.sim0mq.message.SimulationMessage;
 
 /**
  * RequestStatus, FS.1. This message is sent by the Federate Starter to the Model until a “started” response is received from
