@@ -8,8 +8,8 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.MessageStatus;
-import org.sim0mq.message.util.SimulationMessage;
-import org.sim0mq.message.util.TypedMessage;
+import org.sim0mq.message.SimulationMessage;
+import org.sim0mq.message.TypedMessage;
 import org.zeromq.ZMQ;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;

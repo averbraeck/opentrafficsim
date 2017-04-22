@@ -1,7 +1,6 @@
-package org.sim0mq.message.util;
+package org.sim0mq.message;
 
 import org.sim0mq.Sim0MQException;
-import org.sim0mq.message.MessageStatus;
 
 /**
  * The message structure of a typical typed Sim0MQ simulation message looks as follows:<br>

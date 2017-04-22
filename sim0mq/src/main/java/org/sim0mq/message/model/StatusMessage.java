@@ -3,7 +3,7 @@ package org.sim0mq.message.model;
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.MessageStatus;
 import org.sim0mq.message.Sim0MQMessage;
-import org.sim0mq.message.util.SimulationMessage;
+import org.sim0mq.message.SimulationMessage;
 
 import nl.tudelft.simulation.language.Throw;
 
