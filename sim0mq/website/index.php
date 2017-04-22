@@ -53,8 +53,8 @@
     <p>In November 2016 it became obvious that the simulation message bus developed for the Open Traffic Simulator were sufficiently mature to be used in
       other projects.</p>
     <p>
-      The main authors/contributors of the SIM0MQ project are <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>, <a
-        href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>, Wouter Schakel, and Sibel Eker.
+      The main authors/contributors of the SIM0MQ project are <a href="http://www.tbm.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>, <a
+        href="http://www.tudelft.nl/pknoppers" target="_blank">Peter Knoppers</a>, Wouter Schakel, and Sibel Eker.
     </p>
 
     <h2>Manual</h2>
@@ -62,9 +62,14 @@
       The latest version of the manual can be found here: <a href="sim0mq-manual.pdf">Sim0MQ Manual</a> (PDF document).
     </p>
 
-    <h2>Mode information about 0MQ / ZeroMQ</h2>
+    <h2>Documentation</h2>
     <p>
-      More information about ZeroMQ can be found on the <a href="http://zeromq.org">0MQ Website</a>.
+      Documentation can be found at <a href="http://sim0mq.org/docs/current" target="_blank">http://sim0mq.org/docs/current</a>.
+    </p>
+
+    <h2>More information about 0MQ / ZeroMQ</h2>
+    <p>
+      More information about ZeroMQ can be found on the <a href="http://zeromq.org" target="_blank">0MQ Website</a>.
     </p>
 
 

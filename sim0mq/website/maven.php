@@ -29,7 +29,7 @@
     <h2>Maven use</h2>
     <p>
       Maven is one of the easiest ways to include SIM0MQ in a Java project. The Maven files for SIM0MQ reside at 
-      <a href="http://sim0mq.org/maven">http://sim0mq.org/maven</a>.
+      <a href="http://sim0mq.org/maven" target="_blank">http://sim0mq.org/maven</a>.
       When a POM-file is created for the project, the following snippet needs to be included to include SIM0MQ:
     </p>
 
