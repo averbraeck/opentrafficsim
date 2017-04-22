@@ -1,0 +1,20 @@
+<document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
+  <body>
+
+    <release version="0.01.00" date="2017-04-22" description="First version of the Sim0MQ Simulation Message Bus">
+      <action dev="averbraeck" type="add">
+        First version of type structure and message structure.
+      </action>
+      <action dev="averbraeck" type="add">
+        First version of the major messages of the Federation Manager, Federate
+        Starter and Model.
+      </action>
+      <action dev="averbraeck" type="add">
+        First version of the abstract versions of Federation Manager, as well as
+        model implementations of the Federate Starter and Model.
+      </action>
+    </release>
+
+  </body>
+</document>

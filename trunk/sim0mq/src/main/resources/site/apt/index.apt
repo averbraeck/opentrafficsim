@@ -1,0 +1,37 @@
+                   -----------------------
+                   SIM0MQ
+                   -----------------------
+                   April, 2017
+                   -----------------------
+                   
+OTS - Open Traffic Simulation
+
+	Sim0MQ makes use of the ØMQ (or 0MQ or ZMQ) message bus, and contains a layer of simulation-specific components and messages 
+	to aid in creating distributed simulation execution. 
+
+    * Sim0MQ is built on top of the fast and extendible 0MQ message bus.
+
+    * Sim0MQ builds on top of DJUNITS and DSOL, but can be used for any federated simulation.
+    
+    * Sim0MQ uses DJUNITS for a strongly typed unit system for values. A length scalar cannot be added to a time scalar; if 
+      length is divided by time, a speed variable results. This is all checked at compile time rather than at run time.
+      
+    * Sim0MQ uses DSOL as the underlying, powerful simulation platform. DSOL takes care of time advance mechanisms, discrete-event
+      and continuous simulation, random streams, probability distribution functions, experiment management, etc..
+    
+    * Sim0MQ has prototype implementations for Federation Managers and Federate Starters, helping with the development of
+      large-scale distributed simulations using many cores and/or many computers.
+    
+    []
+
+======
+
+	Sim0MQ has an open source BSD 3-clause license.
+
+    * Third party components used in Sim0MQ can not have a license that is more restrictive than BSD, Apache, MIT, LGPL, Eclipse.
+
+    * Sim0MQ can be incorporated in part or in full in other products for any use (educational, commercial, whatever).
+
+    * Sim0MQ may be extended, evolved by anyone into anything else for any purpose.
+	
+	[]
