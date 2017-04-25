@@ -54,10 +54,10 @@ public class AimsunControl extends AbstractWrappableAnimation
     private static final long serialVersionUID = 20160418L;
 
     /** XML description of the network. */
-    String networkXML = null;
+    private String networkXML = null;
 
     /** Currently active Aimsun model. */
-    AimsunModel model = null;
+    private AimsunModel model = null;
 
     /**
      * Program entry point.
@@ -123,6 +123,34 @@ public class AimsunControl extends AbstractWrappableAnimation
         }
         System.exit(0);
     }
+    
+    /**
+     * Create a nice hex dump of a bunch of bytes.
+     * @param bytes byte[]; the bytes
+     * @return String; the hex dump
+     */
+    public static String hexDump(final byte[] bytes)
+    {
+        StringBuilder result = new StringBuilder();
+        int pos = 0;
+        for (byte b : bytes)
+        {
+            result.append(String.format("%02x", b));
+            if (pos % 16 == 0)
+            {
+                result.append("\r\n");
+            }
+            else if (pos % 8 == 0)
+            {
+                result.append("  ");
+            }
+            else
+            {
+                result.append(" ");
+            }
+        }
+        return result.toString();
+    }
 
     /**
      * Process incoming commands.
@@ -138,10 +166,6 @@ public class AimsunControl extends AbstractWrappableAnimation
             // byte[] in = new byte[1];
             // inputStream.read(in);
             // System.out.println(String.format("Got byte %02x", in[0]));
-            // if (true)
-            // {
-            // continue;
-            // }
             try
             {
                 byte[] sizeBytes = new byte[4];
@@ -286,12 +310,12 @@ public class AimsunControl extends AbstractWrappableAnimation
      */
     static void fillBuffer(final InputStream in, final byte[] buffer)
     {
+        System.out.println("Need to read " + buffer.length + " bytes");
         int offset = 0;
         while (true)
         {
             try
             {
-                System.out.println("Trying to read " + (buffer.length - offset) + " (more) bytes");
                 int bytesRead = in.read(buffer, offset, buffer.length - offset);
                 if (-1 == bytesRead)
                 {
@@ -303,6 +327,7 @@ public class AimsunControl extends AbstractWrappableAnimation
                     System.out.println("Got all " + buffer.length + " requested bytes");
                     break;
                 }
+                System.out.println("Now got " + offset + " bytes; need to read " + (buffer.length - offset) + " more bytes");
             }
             catch (Exception exception)
             {
