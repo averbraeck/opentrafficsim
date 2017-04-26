@@ -168,14 +168,13 @@ public final class Trajectory
      * @param gtu gtu
      */
     @SuppressWarnings("unchecked")
-    private <T, S> void appendValue(final ExtendedDataType<?, ?, ?> extendedDataType, final GtuDataInterface gtu)
+    private <T, S> void appendValue(final ExtendedDataType<T, ?, S> extendedDataType, final GtuDataInterface gtu)
     {
-        ExtendedDataType<T, ?, S> edt = (ExtendedDataType<T, ?, S>) extendedDataType;
-        S in = (S) this.extendedData.get(edt);
-        S out = edt.setValue(in, this.size, edt.getValue(gtu));
+        S in = (S) this.extendedData.get(extendedDataType);
+        S out = extendedDataType.setValue(in, this.size, extendedDataType.getValue(gtu));
         if (in != out)
         {
-            this.extendedData.put(edt, out);
+            this.extendedData.put(extendedDataType, out);
         }
     }
 

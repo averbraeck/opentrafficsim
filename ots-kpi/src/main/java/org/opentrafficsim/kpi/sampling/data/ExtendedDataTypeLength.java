@@ -17,7 +17,7 @@ import org.djunits.value.vfloat.vector.FloatLengthVector;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class ExtendedDataTypeLength extends ExtendedDataTypeFloat<FloatLength, FloatLengthVector>
+public abstract class ExtendedDataTypeLength extends ExtendedDataTypeFloat<LengthUnit, FloatLength, FloatLengthVector>
 {
 
     /**
