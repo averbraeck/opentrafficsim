@@ -15,8 +15,6 @@ import javax.swing.filechooser.FileFilter;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.event.EventProducer;
 
 import org.djunits.unit.TimeUnit;
@@ -57,13 +55,13 @@ public class LoadXML extends AbstractWrappableAnimation
     private String xml = null;
 
     /**
-     * Load a network from an XML file.
+     * Load a network from an XML file;  program entry point.
      * @param args String[]; the command line arguments (currently not used)
      * @throws IOException when the file could not be read
-     * @throws PropertyException ...
-     * @throws OTSSimulationException ...
-     * @throws NamingException ...
-     * @throws SimRuntimeException ...
+     * @throws PropertyException should never happen
+     * @throws OTSSimulationException when an error occurs during simulation
+     * @throws NamingException when a name collision is detected
+     * @throws SimRuntimeException should never happen
      */
     public static void main(final String[] args) throws IOException, SimRuntimeException, NamingException,
             OTSSimulationException, PropertyException
@@ -115,7 +113,7 @@ public class LoadXML extends AbstractWrappableAnimation
     @Override
     public final String description()
     {
-        return this.fileName;
+        return "OTS network from " + this.fileName;
     }
 
     /** Currently active XML model. */
@@ -132,7 +130,7 @@ public class LoadXML extends AbstractWrappableAnimation
     /**
      * The network.
      */
-    class XMLModel extends EventProducer implements OTSModelInterface, EventListenerInterface
+    class XMLModel extends EventProducer implements OTSModelInterface
     {
 
         /** */
@@ -159,6 +157,7 @@ public class LoadXML extends AbstractWrappableAnimation
             catch (Exception exception)
             {
                 exception.printStackTrace();
+                // TODO show error in a dialog and then exit the program.
             }
         }
 
@@ -167,13 +166,6 @@ public class LoadXML extends AbstractWrappableAnimation
         public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
         {
             return this.simulator;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void notify(final EventInterface event) throws RemoteException
-        {
-            // WIP
         }
 
         /** {@inheritDoc} */
