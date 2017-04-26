@@ -11,7 +11,9 @@ import java.util.ArrayList;
 
 import javax.naming.NamingException;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
+import javax.xml.parsers.ParserConfigurationException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -25,11 +27,15 @@ import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.xml.sax.SAXException;
 
 /**
  * Select a OTS-network XML file, load it and run it.
@@ -55,7 +61,7 @@ public class LoadXML extends AbstractWrappableAnimation
     private String xml = null;
 
     /**
-     * Load a network from an XML file;  program entry point.
+     * Load a network from an XML file; program entry point.
      * @param args String[]; the command line arguments (currently not used)
      * @throws IOException when the file could not be read
      * @throws PropertyException should never happen
@@ -98,8 +104,16 @@ public class LoadXML extends AbstractWrappableAnimation
         LoadXML loadXML = new LoadXML();
         loadXML.fileName = fileChooser.getSelectedFile().getAbsolutePath();
         loadXML.xml = new String(Files.readAllBytes(Paths.get(loadXML.fileName)));
-        loadXML.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600, TimeUnit.SI), new ArrayList<Property<?>>(), null,
-                true);
+        try
+        {
+            loadXML.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600, TimeUnit.SI), new ArrayList<Property<?>>(),
+                    null, true);
+        }
+        catch (SimRuntimeException sre)
+        {
+            JOptionPane.showMessageDialog(null, sre.getMessage(), "Exception occured", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }
     }
 
     /** {@inheritDoc} */
@@ -148,16 +162,19 @@ public class LoadXML extends AbstractWrappableAnimation
         public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
                 throws SimRuntimeException, RemoteException
         {
+            this.simulator = theSimulator;
+            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
             try
             {
-                this.simulator = theSimulator;
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
                 this.network = nlp.build(new ByteArrayInputStream(LoadXML.this.xml.getBytes(StandardCharsets.UTF_8)));
             }
-            catch (Exception exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
+                    | GTUException | OTSGeometryException exception)
             {
                 exception.printStackTrace();
-                // TODO show error in a dialog and then exit the program.
+                // Abusing the SimRuntimeException to propagate the message to the main method (the problem could actually be a
+                // SAXException)
+                throw new SimRuntimeException(exception.getMessage());
             }
         }
 
