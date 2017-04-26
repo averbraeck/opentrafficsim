@@ -17,7 +17,7 @@ import org.djunits.value.vfloat.vector.FloatSpeedVector;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class ExtendedDataTypeSpeed extends ExtendedDataTypeFloat<FloatSpeed, FloatSpeedVector>
+public abstract class ExtendedDataTypeSpeed extends ExtendedDataTypeFloat<SpeedUnit, FloatSpeed, FloatSpeedVector>
 {
 
     /**

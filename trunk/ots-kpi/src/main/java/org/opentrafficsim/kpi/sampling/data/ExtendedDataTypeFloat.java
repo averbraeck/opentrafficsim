@@ -2,6 +2,7 @@ package org.opentrafficsim.kpi.sampling.data;
 
 import java.util.Arrays;
 
+import org.djunits.unit.Unit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vfloat.scalar.AbstractFloatScalar;
 import org.djunits.value.vfloat.vector.AbstractFloatVector;
@@ -18,10 +19,11 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @param <U> unit
  * @param <T> type in vector
  * @param <O> vector type
  */
-public abstract class ExtendedDataTypeFloat<T extends AbstractFloatScalar<?, T>, O extends AbstractFloatVector<?, O>>
+public abstract class ExtendedDataTypeFloat<U extends Unit<U>, T extends AbstractFloatScalar<U, T>, O extends AbstractFloatVector<U, O>>
         extends ExtendedDataType<T, O, float[]>
 {
     /**
@@ -87,7 +89,7 @@ public abstract class ExtendedDataTypeFloat<T extends AbstractFloatScalar<?, T>,
         Throw.when(i < 0 || i >= storage.length, SamplingException.class, "Index %d out of range.", i);
         return convertValue(storage[i]);
     }
-    
+
     /**
      * Convert float to typed value.
      * @param value float value
@@ -109,7 +111,7 @@ public abstract class ExtendedDataTypeFloat<T extends AbstractFloatScalar<?, T>,
             throw new RuntimeException("Could not create typed vector from float array.", exception);
         }
     }
-    
+
     /**
      * Convert float array to typed array.
      * @param storage float array storage
@@ -117,5 +119,5 @@ public abstract class ExtendedDataTypeFloat<T extends AbstractFloatScalar<?, T>,
      * @throws ValueException when float array cannot be converted
      */
     protected abstract O convert(final float[] storage) throws ValueException;
-    
+
 }

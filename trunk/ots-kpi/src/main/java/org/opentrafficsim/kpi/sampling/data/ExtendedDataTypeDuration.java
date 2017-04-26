@@ -17,7 +17,7 @@ import org.djunits.value.vfloat.vector.FloatDurationVector;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class ExtendedDataTypeDuration extends ExtendedDataTypeFloat<FloatDuration, FloatDurationVector>
+public abstract class ExtendedDataTypeDuration extends ExtendedDataTypeFloat<TimeUnit, FloatDuration, FloatDurationVector>
 {
 
     /**
