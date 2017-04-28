@@ -16,7 +16,7 @@ import nl.tudelft.simulation.language.Throw;
  * Extension of ODMatrix where all input and output can be given in number of trips. All data that is defined in number of trips
  * has Interpolation.STEPWISE.
  * <p>
- * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Sep 28, 2016 <br>

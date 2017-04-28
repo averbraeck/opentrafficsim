@@ -10,7 +10,7 @@ import nl.tudelft.simulation.language.Throw;
  * information. One exception to this is {@link AbstractHeadwayCopy} (and all it's sub classes), which contains such information
  * directly, and is a super class for delayed and/or erroneous perception.
  * <p>
- * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 24 mrt. 2017 <br>
