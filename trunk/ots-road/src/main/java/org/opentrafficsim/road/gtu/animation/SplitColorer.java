@@ -169,8 +169,8 @@ public class SplitColorer implements GTUColorer
 
     /**
      * Returns the angle between two points.
-     * @param from
-     * @param to
+     * @param from from point
+     * @param to to point
      * @return angle between two points
      */
     private final double getAngle(final OTSPoint3D from, final OTSPoint3D to)
