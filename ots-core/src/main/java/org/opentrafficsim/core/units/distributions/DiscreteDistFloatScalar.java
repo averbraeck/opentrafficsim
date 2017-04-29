@@ -119,13 +119,13 @@ public interface DiscreteDistFloatScalar
         {
             switch (getUnit().getClass().getSimpleName())
             {
-                case "AngleUnit":
+                case "DirectionUnit":
                     return (T) new FloatDirection((float) getDistribution().draw(), (DirectionUnit) getUnit());
 
-                case "LengthUnit":
+                case "PositionUnit":
                     return (T) new FloatPosition((float) getDistribution().draw(), (PositionUnit) getUnit());
 
-                case "TemperatureUnit":
+                case "AbsoluteTemperatureUnit":
                     return (T) new FloatAbsoluteTemperature((float) getDistribution().draw(),
                             (AbsoluteTemperatureUnit) getUnit());
 
@@ -200,6 +200,9 @@ public interface DiscreteDistFloatScalar
                 case "DimensionlessUnit":
                     return (T) new FloatDimensionless(getDistribution().draw(), (DimensionlessUnit) getUnit());
 
+                case "DurationUnit":
+                    return (T) new FloatDuration((float) getDistribution().draw(), (DurationUnit) getUnit());
+
                 case "ElectricalChargeUnit":
                     return (T) new FloatElectricalCharge((float) getDistribution().draw(), (ElectricalChargeUnit) getUnit());
 
@@ -249,9 +252,6 @@ public interface DiscreteDistFloatScalar
 
                 case "TemperatureUnit":
                     return (T) new FloatTemperature((float) getDistribution().draw(), (TemperatureUnit) getUnit());
-
-                case "TimeUnit":
-                    return (T) new FloatDuration((float) getDistribution().draw(), (DurationUnit) getUnit());
 
                 case "TorqueUnit":
                     return (T) new FloatTorque((float) getDistribution().draw(), (TorqueUnit) getUnit());

@@ -184,7 +184,7 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
     @Override
     protected final void addAnimationToggles()
     {
-        AnimationToggles.setIconAnimationTogglesStandard(this);
+        AnimationToggles.setTextAnimationTogglesStandard(this);
     }
 
     /** {@inheritDoc} */
@@ -358,7 +358,6 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
                                     new Object[] { lane });
                             SimpleTrafficLight tl = new SimpleTrafficLight(lane.getId() + "_TL", lane,
                                     new Length(lane.getLength().minus(new Length(10.0, LengthUnit.METER))), this.simulator);
-                            lane.addLaneBasedObject(tl);
                             trafficLights.put(lane, tl);
                             if (i == 0 || i == 2)
                             {

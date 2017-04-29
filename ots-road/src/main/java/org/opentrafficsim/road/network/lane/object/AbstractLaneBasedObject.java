@@ -73,9 +73,10 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
         DirectedPoint p = lane.getCenterLine().getLocationExtended(this.longitudinalPosition);
         this.location = new DirectedPoint(p.x, p.y, p.z + 0.01, p.getRotX(), p.getRotY(), p.getRotZ());
 
+        // OTS-218: sensors register themselves.
         if (!(this instanceof SingleSensor))
         {
-            this.lane.addLaneBasedObject(this); // implements OTS-218
+           this.lane.addLaneBasedObject(this); // implements OTS-218
         }
     }
 
@@ -129,12 +130,20 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
 
     /** {@inheritDoc} */
     @Override
+    public final String getFullId()
+    {
+        return getLane().getFullId() + "." + super.getId();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public final Lane getLane()
     {
         return this.lane;
     }
 
     /** {@inheritDoc} */
+    @Override
     public final LongitudinalDirectionality getDirection()
     {
         return this.direction;
@@ -163,6 +172,14 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
         throw new NetworkException("LaneBasedObjects should be cloned with the clone(lane, simulator, animation) method");
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "LaneBasedObject[" + getId() + "]";
+    }
+
     /**
      * Clone the LaneBasedObject for e.g., copying a network.
      * @param newCSE CrossSectionElement; the new cross section element to which the clone belongs
@@ -172,7 +189,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public abstract AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
-            final boolean animation) throws NetworkException;
+    public abstract AbstractLaneBasedObject clone(CrossSectionElement newCSE, OTSSimulatorInterface newSimulator,
+            boolean animation) throws NetworkException;
 
 }

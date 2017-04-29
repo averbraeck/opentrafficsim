@@ -60,7 +60,7 @@ public class SinkSensor extends AbstractSensor
      * @param simulator the simulator to enable animation.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
-    public SinkSensor(String dummy1, final Lane lane, final Length position, RelativePosition.TYPE dummy2,
+    public SinkSensor(final String dummy1, final Lane lane, final Length position, final RelativePosition.TYPE dummy2,
             final OTSDEVSSimulatorInterface simulator) throws NetworkException
     {
         super("SINK@" + lane.toString(), lane, position, RelativePosition.FRONT, simulator);

@@ -25,4 +25,7 @@ public interface ObjectInterface extends Locatable, Identifyable, EventProducerI
 
     /** @return the height of the object (can be Length.ZERO). */
     Length getHeight();
+    
+    /** @return the full id that makes the id unique in the network. */
+    String getFullId();
 }

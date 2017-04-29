@@ -232,6 +232,13 @@ public class CCOL extends EventProducer implements TrafficController
 
     /** {@inheritDoc} */
     @Override
+    public String getFullId()
+    {
+        return this.id;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public void updateDetector(final String detectorId, final boolean detectingGTU)
     {
         // FIXME: format of messages is TBD

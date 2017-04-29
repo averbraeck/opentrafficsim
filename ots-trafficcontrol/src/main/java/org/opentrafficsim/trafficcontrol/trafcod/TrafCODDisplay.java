@@ -358,6 +358,13 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
 
     /** {@inheritDoc} */
     @Override
+    public String getFullId()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public boolean addListener(EventListenerInterface listener, EventType eventType) throws RemoteException
     {
         return false;

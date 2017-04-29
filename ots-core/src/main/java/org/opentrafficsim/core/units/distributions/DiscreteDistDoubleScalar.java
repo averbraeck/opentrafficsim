@@ -119,13 +119,13 @@ public interface DiscreteDistDoubleScalar
         {
             switch (getUnit().getClass().getSimpleName())
             {
-                case "AngleUnit":
+                case "DirectionUnit":
                     return (T) new Direction(getDistribution().draw(), (DirectionUnit) getUnit());
 
-                case "LengthUnit":
+                case "PositionhUnit":
                     return (T) new Position(getDistribution().draw(), (PositionUnit) getUnit());
 
-                case "TemperatureUnit":
+                case "AbsoluteTemperatureUnit":
                     return (T) new AbsoluteTemperature(getDistribution().draw(), (AbsoluteTemperatureUnit) getUnit());
 
                 case "TimeUnit":
@@ -200,6 +200,9 @@ public interface DiscreteDistDoubleScalar
                 case "DimensionlessUnit":
                     return (T) new Dimensionless(getDistribution().draw(), (DimensionlessUnit) getUnit());
 
+                case "DurationUnit":
+                    return (T) new Duration(getDistribution().draw(), (DurationUnit) getUnit());
+
                 case "ElectricalChargeUnit":
                     return (T) new ElectricalCharge(getDistribution().draw(), (ElectricalChargeUnit) getUnit());
 
@@ -247,9 +250,6 @@ public interface DiscreteDistDoubleScalar
 
                 case "TemperatureUnit":
                     return (T) new Temperature(getDistribution().draw(), (TemperatureUnit) getUnit());
-
-                case "TimeUnit":
-                    return (T) new Duration(getDistribution().draw(), (DurationUnit) getUnit());
 
                 case "TorqueUnit":
                     return (T) new Torque(getDistribution().draw(), (TorqueUnit) getUnit());

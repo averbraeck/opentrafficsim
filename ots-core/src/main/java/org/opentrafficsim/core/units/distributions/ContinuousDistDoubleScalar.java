@@ -200,6 +200,9 @@ public interface ContinuousDistDoubleScalar
                 case "DimensionlessUnit":
                     return (T) new Dimensionless(getDistribution().draw(), (DimensionlessUnit) getUnit());
 
+                case "DurationUnit":
+                    return (T) new Duration(getDistribution().draw(), (DurationUnit) getUnit());
+
                 case "ElectricalChargeUnit":
                     return (T) new ElectricalCharge(getDistribution().draw(), (ElectricalChargeUnit) getUnit());
 
@@ -247,9 +250,6 @@ public interface ContinuousDistDoubleScalar
 
                 case "TemperatureUnit":
                     return (T) new Temperature(getDistribution().draw(), (TemperatureUnit) getUnit());
-
-                case "TimeUnit":
-                    return (T) new Duration(getDistribution().draw(), (DurationUnit) getUnit());
 
                 case "TorqueUnit":
                     return (T) new Torque(getDistribution().draw(), (TorqueUnit) getUnit());

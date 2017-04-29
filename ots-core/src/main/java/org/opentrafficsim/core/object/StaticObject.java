@@ -91,6 +91,14 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
+    public String getFullId()
+    {
+        return this.id;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
     public DirectedPoint getLocation()
     {
         return this.geometry.getLocation();
