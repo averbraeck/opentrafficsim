@@ -14,6 +14,22 @@
       <action issue="OTS-126" type="add">
         OTS-126. Add class for a speed sign.
       </action>
+      <action issue="OTS-319" type="add">
+        OTS-319. Alignment with DJUNITS 3.00. Units for absolute and relative values have been separated. 
+        They are truly different and should never have been mixed. As an example, an AbsoluteTemperature 
+        of 10 degrees Celsius has an offset of 283.15 Kelvin from absolute zero. A relative temperature of
+        10 degrees Celsius, however, is equivalent to 10 Kelvin, and does not have any offset. The same
+        holds for Direction, Time, and Position. This has quite some effects on the code, as TimeUnits in
+        Durations had to be replaced with a DurationUnit. Same for Directions that now have their own
+        DirectionUnit (e.g., NORTH_RADIANS: radians relative to NORTH, or EAST_DEGREES:degrees relative 
+        to EAST). Time can be stated relative to the POSIX Epoch (1-1-1970), AD 1, or the J2000.1 Epoch.
+      </action>
+      <action issue="OTS-329" type="fix">
+        OTS-329. N201 XML Parser demo throws error. All sensor, trafficlight, and sensor objects in XML files 
+        have to be globally unique in the network. N201v8.xml in the ots-parser-xml project test has been
+        updated to make the names of Lane objects unique.
+      </action>
+      
     </release>
   
     <release version="0.14.00" date="2017-04-17" description="Release 0.14.00">
