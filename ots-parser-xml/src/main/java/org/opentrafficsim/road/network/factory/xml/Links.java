@@ -157,7 +157,7 @@ final class Links
                             CartesianPoint coordinate = new CartesianPoint(linkTag.nodeStartTag.node.getLocation().getX(),
                                     linkTag.nodeStartTag.node.getLocation().getY(),
                                     linkTag.nodeStartTag.node.getLocation().getZ());
-                            double angle = linkTag.nodeStartTag.node.getDirection().getSI();
+                            double angle = linkTag.nodeStartTag.node.getDirection().getInUnit();
                             double slope = linkTag.nodeStartTag.node.getSlope().getSI();
                             coordinate.x += lengthSI * Math.cos(angle);
                             coordinate.y += lengthSI * Math.sin(angle);
@@ -173,7 +173,7 @@ final class Links
                         {
                             CartesianPoint coordinate = new CartesianPoint(linkTag.nodeEndTag.node.getLocation().getX(),
                                     linkTag.nodeEndTag.node.getLocation().getY(), linkTag.nodeEndTag.node.getLocation().getZ());
-                            double angle = linkTag.nodeEndTag.node.getDirection().getSI();
+                            double angle = linkTag.nodeEndTag.node.getDirection().getInUnit();
                             double slope = linkTag.nodeEndTag.node.getSlope().getSI();
                             coordinate.x -= lengthSI * Math.cos(angle);
                             coordinate.y -= lengthSI * Math.sin(angle);
@@ -189,13 +189,13 @@ final class Links
                     else if (linkTag.arcTag != null)
                     {
                         double radiusSI = linkTag.arcTag.radius.getSI();
-                        double angle = linkTag.arcTag.angle.getSI();
+                        double angle = linkTag.arcTag.angle.getInUnit();
                         ArcDirection direction = linkTag.arcTag.direction;
 
                         if (linkTag.nodeEndTag.node == null)
                         {
                             CartesianPoint coordinate = new CartesianPoint(0.0, 0.0, 0.0);
-                            double startAngle = linkTag.nodeStartTag.node.getDirection().getSI();
+                            double startAngle = linkTag.nodeStartTag.node.getDirection().getInUnit();
                             double slope = linkTag.nodeStartTag.node.getSlope().getSI();
                             double lengthSI = radiusSI * angle;
                             NodeTag nodeTag = linkTag.nodeEndTag;
@@ -238,7 +238,7 @@ final class Links
                         {
                             CartesianPoint coordinate = new CartesianPoint(linkTag.nodeEndTag.node.getLocation().getX(),
                                     linkTag.nodeEndTag.node.getLocation().getY(), linkTag.nodeEndTag.node.getLocation().getZ());
-                            double endAngle = linkTag.nodeEndTag.node.getDirection().getSI();
+                            double endAngle = linkTag.nodeEndTag.node.getDirection().getInUnit();
                             double slope = linkTag.nodeEndTag.node.getSlope().getSI();
                             double lengthSI = radiusSI * angle;
                             NodeTag nodeTag = linkTag.nodeStartTag;
@@ -332,7 +332,7 @@ final class Links
     {
         NodeTag from = linkTag.nodeStartTag;
         OTSPoint3D startPoint = new OTSPoint3D(from.coordinate);
-        double startAngle = from.angle.si;
+        double startAngle = from.angle.getInUnit();
         if (linkTag.offsetStart != null && linkTag.offsetStart.si != 0.0)
         {
             // shift the start point perpendicular to the node direction or read from tag
@@ -345,7 +345,7 @@ final class Links
 
         NodeTag to = linkTag.nodeEndTag;
         OTSPoint3D endPoint = new OTSPoint3D(to.coordinate);
-        double endAngle = to.angle.si;
+        double endAngle = to.angle.getInUnit();
         if (linkTag.offsetEnd != null && linkTag.offsetEnd.si != 0.0)
         {
             // shift the start point perpendicular to the node direction or read from tag
@@ -415,7 +415,7 @@ final class Links
                     from.coordinate.y + Math.sin(sa) * offsetStart, from.coordinate.z);
             coordinates[coordinates.length - 1] = new OTSPoint3D(to.coordinate.x + Math.cos(ea) * offsetEnd,
                     to.coordinate.y + Math.sin(ea) * offsetEnd, to.coordinate.z);
-            double angleStep = linkTag.arcTag.angle.getSI() / points;
+            double angleStep = linkTag.arcTag.angle.getInUnit() / points;
             double slopeStep = (to.coordinate.z - from.coordinate.z) / points;
 
             if (linkTag.arcTag.direction.equals(ArcDirection.RIGHT))
