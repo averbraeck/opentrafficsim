@@ -1,10 +1,10 @@
 package org.opentrafficsim.trafficcontrol;
 
+import org.opentrafficsim.core.object.InvisibleObjectInterface;
+
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.event.EventProducerInterface;
 import nl.tudelft.simulation.event.EventType;
-
-import org.opentrafficsim.core.object.InvisibleObjectInterface;
 
 /**
  * Interface for traffic light controllers.
@@ -84,7 +84,8 @@ public interface TrafficController extends EventProducerInterface, EventListener
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the creation of a traffic control program variable. <br>
-     * Listeners to this event can send <code>TRAFFICCONTROL_SET_TRACE</code> messages to set the tracing level of a variable.<br>
+     * Listeners to this event can send <code>TRAFFICCONTROL_SET_TRACE</code> messages to set the tracing level of a
+     * variable.<br>
      * Payload: Object[] {String trafficControllerId, String variableId, Integer trafficStream, Double initialValue}
      */
     EventType TRAFFICCONTROL_VARIABLE_CREATED = new EventType("TRAFFICCONTROL.VARIABLE_CREATED");
@@ -92,7 +93,8 @@ public interface TrafficController extends EventProducerInterface, EventListener
     /**
      * The <b>timed</b> event type that instruct a traffic controller to change the tracing level of a variable. <br>
      * Payload: Object[] { String trafficControllerId, String variableId, Integer trafficStream, Boolean trace } <br>
-     * Remark 1: an empty string for the variableId sets or clears tracing for all variables associated with the traffic stream. <br>
+     * Remark 1: an empty string for the variableId sets or clears tracing for all variables associated with the traffic stream.
+     * <br>
      * Remark 2: The stream number <code>NO_STREAM</code> selects variable(s) that are not associated with a particular traffic
      * stream. <br>
      * Remark 3: setting the tracing level of a variable changes the amount of

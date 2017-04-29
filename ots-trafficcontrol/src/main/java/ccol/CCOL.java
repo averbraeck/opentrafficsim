@@ -9,14 +9,7 @@ import java.net.Socket;
 import java.rmi.RemoteException;
 import java.util.Set;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.event.EventType;
-
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -28,6 +21,13 @@ import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.trafficcontrol.TrafficController;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.event.EventType;
 
 /**
  * Communication link with a CCOL traffic control program.
@@ -55,7 +55,7 @@ public class CCOL extends EventProducer implements TrafficController
     static int PORT = 4321;
 
     /** The evaluation interval of a CCOL controller. */
-    final static Duration EVALUATION_INTERVAL = new Duration(0.1, TimeUnit.SECOND);
+    final static Duration EVALUATION_INTERVAL = new Duration(0.1, DurationUnit.SECOND);
 
     /** Socket used to listen for the incoming connection from the CCOL controller. */
     ServerSocket serverSocket;

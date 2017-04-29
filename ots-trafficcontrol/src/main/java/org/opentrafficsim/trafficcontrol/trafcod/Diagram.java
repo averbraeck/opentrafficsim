@@ -25,10 +25,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import nl.tudelft.simulation.language.Throw;
-
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightException;
 import org.opentrafficsim.trafficcontrol.TrafficController;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Functions that can draw a schematic diagram of an intersection given the list of traffic streams. The traffic stream numbers
@@ -131,7 +131,7 @@ public class Diagram
         // System.out.print(String.format(" %02d", stream));
         // }
         // System.out.println("");
-        
+
         // Primary car streams
         //@formatter:off
         for (short stream = 1; stream <= 12; stream += 3)
@@ -430,8 +430,10 @@ public class Diagram
          */
         public RouteStep(final int x, final int y, final Command command) throws TrafficLightException
         {
-            Throw.when(Command.STOP_LINE != command && Command.NO_OP != command && Command.ICON != command
-                    && Command.STOP_LINE_AND_ICON != command, TrafficLightException.class,
+            Throw.when(
+                    Command.STOP_LINE != command && Command.NO_OP != command && Command.ICON != command
+                            && Command.STOP_LINE_AND_ICON != command,
+                    TrafficLightException.class,
                     "X and Y should only be provided with a NO_OP, STOP_LINE, ICON, or STOP_LINE_AND_ICON command; not with "
                             + command);
             this.x = x;
