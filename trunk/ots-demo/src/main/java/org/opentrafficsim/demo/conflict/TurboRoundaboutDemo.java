@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
@@ -63,8 +63,8 @@ public class TurboRoundaboutDemo extends AbstractWrappableAnimation
     protected final void addAnimationToggles()
     {
         AnimationToggles.setIconAnimationTogglesFull(this);
-//        addToggleAnimationButtonText("Block", LaneBlock.class, "Show/hide Blocks", false);
-//        addToggleAnimationButtonText("BlockId", LaneBlockAnimation.Text.class, "Show/hide Block Ids", false);
+        // addToggleAnimationButtonText("Block", LaneBlock.class, "Show/hide Blocks", false);
+        // addToggleAnimationButtonText("BlockId", LaneBlockAnimation.Text.class, "Show/hide Block Ids", false);
     }
 
     /** {@inheritDoc} */
@@ -120,15 +120,15 @@ public class TurboRoundaboutDemo extends AbstractWrappableAnimation
                     trafficLight.setTrafficLightColor(TrafficLightColor.RED);
                     changePhase(trafficLight);
                 }
-                
+
                 // test for ignoring conflicting GTU's upstream of traffic light
-//                for (Lane lane : ((CrossSectionLink) this.network.getLink("SBEA")).getLanes())
-//                {
-//                    SimpleTrafficLight trafficLight = new SimpleTrafficLight("light" + lane.getId(), lane,
-//                            new Length(10.0, LengthUnit.SI), this.simulator);
-//                    trafficLight.setTrafficLightColor(TrafficLightColor.GREEN);
-//                }
-                
+                // for (Lane lane : ((CrossSectionLink) this.network.getLink("SBEA")).getLanes())
+                // {
+                // SimpleTrafficLight trafficLight = new SimpleTrafficLight("light" + lane.getId(), lane,
+                // new Length(10.0, LengthUnit.SI), this.simulator);
+                // trafficLight.setTrafficLightColor(TrafficLightColor.GREEN);
+                // }
+
             }
             catch (Exception exception)
             {
@@ -148,21 +148,21 @@ public class TurboRoundaboutDemo extends AbstractWrappableAnimation
                 case RED:
                 {
                     trafficLight.setTrafficLightColor(TrafficLightColor.GREEN);
-                    this.simulator.scheduleEventRel(new Duration(15.0, TimeUnit.SECOND), this, this, "changePhase",
+                    this.simulator.scheduleEventRel(new Duration(15.0, DurationUnit.SECOND), this, this, "changePhase",
                             new Object[] { trafficLight });
                     break;
                 }
                 case YELLOW:
                 {
                     trafficLight.setTrafficLightColor(TrafficLightColor.RED);
-                    this.simulator.scheduleEventRel(new Duration(56.0, TimeUnit.SECOND), this, this, "changePhase",
+                    this.simulator.scheduleEventRel(new Duration(56.0, DurationUnit.SECOND), this, this, "changePhase",
                             new Object[] { trafficLight });
                     break;
                 }
                 case GREEN:
                 {
                     trafficLight.setTrafficLightColor(TrafficLightColor.YELLOW);
-                    this.simulator.scheduleEventRel(new Duration(4.0, TimeUnit.SECOND), this, this, "changePhase",
+                    this.simulator.scheduleEventRel(new Duration(4.0, DurationUnit.SECOND), this, this, "changePhase",
                             new Object[] { trafficLight });
                     break;
                 }
@@ -205,8 +205,8 @@ public class TurboRoundaboutDemo extends AbstractWrappableAnimation
                 {
                     TurboRoundaboutDemo animation = new TurboRoundaboutDemo();
                     // 1 hour simulation run for testing
-                    animation.buildAnimator(Time.ZERO, Duration.ZERO,
-                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    animation.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
+                            new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {

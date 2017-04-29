@@ -14,18 +14,7 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.jstats.distributions.DistContinuous;
-import nl.tudelft.simulation.jstats.distributions.DistErlang;
-import nl.tudelft.simulation.jstats.distributions.DistUniform;
-import nl.tudelft.simulation.jstats.streams.MersenneTwister;
-import nl.tudelft.simulation.jstats.streams.StreamInterface;
-
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -109,6 +98,18 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.jstats.distributions.DistContinuous;
+import nl.tudelft.simulation.jstats.distributions.DistErlang;
+import nl.tudelft.simulation.jstats.distributions.DistUniform;
+import nl.tudelft.simulation.jstats.streams.MersenneTwister;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * <p>
@@ -680,7 +681,7 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
                     lane = lane.nextLanes(this.gtuType).keySet().iterator().next();
                 }
             }
-            this.simulator.scheduleEventAbs(new Time(0.999, SECOND), this, this, "drawGraphs", null);
+            this.simulator.scheduleEventAbs(new Time(0.999, TimeUnit.BASE_SECOND), this, this, "drawGraphs", null);
             this.simulator.scheduleEventRel(SAMPLEINTERVAL, this, this, "sampleGTUs", null);
         }
         catch (NamingException | NetworkException | GTUException | OTSGeometryException | ProbabilityException
@@ -691,7 +692,7 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
     }
 
     /** Sample interval for our trajectories. */
-    static final Duration SAMPLEINTERVAL = new Duration(0.1, TimeUnit.SECOND);
+    static final Duration SAMPLEINTERVAL = new Duration(0.1, DurationUnit.SECOND);
 
     /**
      * Add a generator to an array of Lane.
@@ -757,9 +758,9 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
             @Override
             public Duration draw()
             {
-                return new Duration(XMLSamplerModel.this.headwayGenerator.draw(), TimeUnit.SECOND);
+                return new Duration(XMLSamplerModel.this.headwayGenerator.draw(), DurationUnit.SI);
             }
-        }, Long.MAX_VALUE, new Time(0, TimeUnit.SI), new Time(Double.MAX_VALUE, TimeUnit.SI), this.gtuColorer,
+        }, Long.MAX_VALUE, new Time(0, TimeUnit.BASE_SECOND), new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND), this.gtuColorer,
                 templateDistribution, initialPositions, (OTSNetwork) this.network,
                 /*-
                 new LaneBasedGTUGenerator.RoomChecker()
@@ -929,8 +930,8 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
         // Re schedule this method
         try
         {
-            this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().get().getSI() + 1, SECOND), this, this,
-                    "drawGraphs", null);
+            this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().get().getSI() + 1, TimeUnit.BASE_SECOND),
+                    this, this, "drawGraphs", null);
         }
         catch (SimRuntimeException exception)
         {

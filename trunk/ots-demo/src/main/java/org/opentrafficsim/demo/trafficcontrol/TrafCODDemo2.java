@@ -23,6 +23,7 @@ import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.language.io.URLResource;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -82,7 +83,7 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
                     TrafCODDemo2 model = new TrafCODDemo2();
                     // 1 hour simulation run for testing
                     model.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0,
-                            TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                            DurationUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {

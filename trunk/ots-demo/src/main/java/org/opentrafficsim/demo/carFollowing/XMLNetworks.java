@@ -14,6 +14,7 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -674,7 +675,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                     lane = lane.nextLanes(this.gtuType).keySet().iterator().next();
                 }
             }
-            this.simulator.scheduleEventAbs(new Time(0.999, SECOND), this, this, "drawGraphs", null);
+            this.simulator.scheduleEventAbs(new Time(0.999, TimeUnit.BASE_SECOND), this, this, "drawGraphs", null);
         }
         catch (NamingException | NetworkException | GTUException | OTSGeometryException | ProbabilityException
                 | PropertyException | ParameterException exception1)
@@ -747,9 +748,9 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             @Override
             public Duration draw()
             {
-                return new Duration(XMLNetworkModel.this.headwayGenerator.draw(), TimeUnit.SECOND);
+                return new Duration(XMLNetworkModel.this.headwayGenerator.draw(), DurationUnit.SECOND);
             }
-        }, Long.MAX_VALUE, new Time(0, TimeUnit.SI), new Time(Double.MAX_VALUE, TimeUnit.SI), this.gtuColorer,
+        }, Long.MAX_VALUE, new Time(0, TimeUnit.BASE_SECOND), new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND), this.gtuColorer,
                 templateDistribution, initialPositions, (OTSNetwork) this.network,
                 /*-
                 new LaneBasedGTUGenerator.RoomChecker()
@@ -919,7 +920,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         // Re schedule this method
         try
         {
-            this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().get().getSI() + 1, SECOND), this, this,
+            this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().get().getSI() + 1, TimeUnit.BASE_SECOND), this, this,
                     "drawGraphs", null);
         }
         catch (SimRuntimeException exception)

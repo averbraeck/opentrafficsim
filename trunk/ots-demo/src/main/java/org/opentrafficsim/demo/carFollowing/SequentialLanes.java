@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -479,7 +480,7 @@ class SequentialModel implements OTSModelInterface, UNITS
         // Schedule regular updates of the graphs
         for (int t = 1; t <= 1800; t++)
         {
-            this.simulator.scheduleEventAbs(new Time(t - 0.001, SECOND), this, this, "drawGraphs", null);
+            this.simulator.scheduleEventAbs(new Time(t - 0.001, TimeUnit.BASE_SECOND), this, this, "drawGraphs", null);
         }
         try
         {

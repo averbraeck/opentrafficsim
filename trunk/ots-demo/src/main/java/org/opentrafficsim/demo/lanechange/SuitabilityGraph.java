@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -132,8 +133,8 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
     protected final void drawPlots()
             throws NamingException, NetworkException, SimRuntimeException, OTSGeometryException, GTUException
     {
-        SimpleSimulator simulator = new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI),
-                new Duration(99999, TimeUnit.SI), this);
+        SimpleSimulator simulator = new SimpleSimulator(new Time(0, TimeUnit.BASE_SECOND), new Duration(0, DurationUnit.SI),
+                new Duration(99999, DurationUnit.SI), this);
         final int rows = SPEEDLIMITS.length;
         final int columns = TARGETLANES.length;
         for (int row = 0; row < rows; row++)

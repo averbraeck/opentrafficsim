@@ -15,6 +15,7 @@ import java.util.Set;
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 
+import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -655,7 +656,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
                 }
             }
             // Schedule regular updates of the graph
-            this.simulator.scheduleEventAbs(new Time(9.999, SECOND), this, this, "drawGraphs", null);
+            this.simulator.scheduleEventAbs(new Time(9.999, TimeUnit.BASE_SECOND), this, this, "drawGraphs", null);
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException
                 | PropertyException exception)
@@ -676,7 +677,8 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
         // Re schedule this method
         try
         {
-            this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().get().getSI() + 10, SECOND), this, this,
+            this.simulator.scheduleEventAbs(
+                    new Time(this.simulator.getSimulatorTime().get().getSI() + 10, TimeUnit.BASE_SECOND), this, this,
                     "drawGraphs", null);
         }
         catch (SimRuntimeException exception)

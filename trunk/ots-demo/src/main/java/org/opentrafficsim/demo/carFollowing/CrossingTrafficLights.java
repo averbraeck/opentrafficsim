@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo.carFollowing;
 
 import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.URL;
@@ -18,16 +19,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.jstats.distributions.DistTriangular;
-import nl.tudelft.simulation.jstats.streams.MersenneTwister;
-import nl.tudelft.simulation.jstats.streams.StreamInterface;
-
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -73,6 +67,13 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColo
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.jstats.distributions.DistTriangular;
+import nl.tudelft.simulation.jstats.streams.MersenneTwister;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
+
 /**
  * Demonstration of a crossing with traffic lights.
  * <p>
@@ -90,15 +91,15 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
 
     /** The model. */
     private CrossingTrafficLightstModel model;
-    
+
     /** Fixed green time. */
-    protected static final Duration TGREEN = new Duration(39.0, TimeUnit.SI); 
-    
+    protected static final Duration TGREEN = new Duration(39.0, DurationUnit.SI);
+
     /** Fixed yellow time. */
-    protected static final Duration TYELLOW = new Duration(6.0, TimeUnit.SI); 
-    
+    protected static final Duration TYELLOW = new Duration(6.0, DurationUnit.SI);
+
     /** Fixed red time. */
-    protected static final Duration TRED = new Duration(45.0, TimeUnit.SI); 
+    protected static final Duration TRED = new Duration(45.0, DurationUnit.SI);
 
     /**
      * Create a CrossingTrafficLights simulation.
@@ -157,16 +158,17 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
                                     + "the acceleration that a vehicle will make taking into account "
                                     + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
                                     + "curvature of the road) capabilities of the vehicle and personality "
-                                    + "of the driver.</html>", new String[] { "IDM", "IDM+" }, 1, false, 1));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car", new Acceleration(1.0,
-                            METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length(2.0, METER),
-                            new Duration(1.0, SECOND), 2));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck", new Acceleration(0.5,
-                            METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER),
-                            new Duration(1.0, SECOND), 3));
+                                    + "of the driver.</html>",
+                            new String[] { "IDM", "IDM+" }, 1, false, 1));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car",
+                            new Acceleration(1.0, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
+                            new Length(2.0, METER), new Duration(1.0, SECOND), 2));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck",
+                            new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2),
+                            new Length(2.0, METER), new Duration(1.0, SECOND), 3));
 
-                    crossingTrafficLights.buildAnimator(Time.ZERO, Duration.ZERO,
-                            new Duration(3600.0, SECOND), localProperties, null, true);
+                    crossingTrafficLights.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), localProperties,
+                            null, true);
 
                     crossingTrafficLights.panel.getTabbedPane().addTab("info", crossingTrafficLights.makeInfoPane());
                 }
@@ -177,7 +179,7 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
             }
         });
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected final void addAnimationToggles()
@@ -265,8 +267,8 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
     private StreamInterface stream = new MersenneTwister(555);
 
     /** The headway (inter-vehicle time) distribution. */
-    private ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> headwayDistribution =
-            new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(this.stream, 7, 9, 15), TimeUnit.SECOND);
+    private ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> headwayDistribution =
+            new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(this.stream, 7, 9, 15), DurationUnit.SECOND);
 
     /** The speed distribution. */
     private ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedDistribution =
@@ -360,8 +362,7 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
                             trafficLights.put(lane, tl);
                             if (i == 0 || i == 2)
                             {
-                                this.simulator.scheduleEventRel(Duration.ZERO, this, this, "changeTL",
-                                        new Object[] { tl });
+                                this.simulator.scheduleEventRel(Duration.ZERO, this, this, "changeTL", new Object[] { tl });
                             }
                             else
                             {
@@ -382,8 +383,8 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
 
             this.carFollowingModel = PropertiesParser.parseGTUFollowingModelOld(this.properties, "Car");
             this.laneChangeModel = PropertiesParser.parseLaneChangeModel(this.properties);
-            this.strategicalPlannerFactory =
-                    PropertiesParser.parseStrategicalPlannerFactory(this.properties, this.carFollowingModel, this.laneChangeModel);
+            this.strategicalPlannerFactory = PropertiesParser.parseStrategicalPlannerFactory(this.properties,
+                    this.carFollowingModel, this.laneChangeModel);
         }
         catch (SimRuntimeException | NamingException | NetworkException | OTSGeometryException | PropertyException
                 | GTUException exception)
@@ -449,7 +450,7 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
     {
         return this.simulator;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public OTSNetwork getNetwork()

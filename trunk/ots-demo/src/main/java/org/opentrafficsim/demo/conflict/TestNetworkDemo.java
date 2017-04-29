@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
@@ -105,14 +105,14 @@ public class TestNetworkDemo extends AbstractWrappableAnimation
                 this.network = nlp.build(url);
 
                 LaneCombinationList ignoreList = new LaneCombinationList();
-//                ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("L_D3b-D3a"),
-//                        (CrossSectionLink) this.network.getLink("L_B3a-A3b"));
-//                ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("L_A3a-D3a"),
-//                        (CrossSectionLink) this.network.getLink("L_C3b-B3b"));
-//                ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("L_H3b-H3a"),
-//                        (CrossSectionLink) this.network.getLink("L_F3a-E3b"));
-//                ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("L_E3a-H3a"),
-//                        (CrossSectionLink) this.network.getLink("L_G3b-F3b"));
+                // ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("L_D3b-D3a"),
+                // (CrossSectionLink) this.network.getLink("L_B3a-A3b"));
+                // ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("L_A3a-D3a"),
+                // (CrossSectionLink) this.network.getLink("L_C3b-B3b"));
+                // ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("L_H3b-H3a"),
+                // (CrossSectionLink) this.network.getLink("L_F3a-E3b"));
+                // ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("L_E3a-H3a"),
+                // (CrossSectionLink) this.network.getLink("L_G3b-F3b"));
                 LaneCombinationList permittedList = new LaneCombinationList();
                 permittedList.addLinkCombination((CrossSectionLink) this.network.getLink("L_D3b-D3a"),
                         (CrossSectionLink) this.network.getLink("L_B3a-A3b"));
@@ -166,8 +166,8 @@ public class TestNetworkDemo extends AbstractWrappableAnimation
                 {
                     TestNetworkDemo animation = new TestNetworkDemo();
                     // 1 hour simulation run for testing
-                    animation.buildAnimator(Time.ZERO, Duration.ZERO,
-                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    animation.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
+                            new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {

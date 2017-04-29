@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
@@ -138,21 +138,21 @@ public class TJunctionDemo extends AbstractWrappableAnimation
                 case RED:
                 {
                     trafficLight.setTrafficLightColor(TrafficLightColor.GREEN);
-                    this.simulator.scheduleEventRel(new Duration(30.0, TimeUnit.SECOND), this, this, "changePhase",
+                    this.simulator.scheduleEventRel(new Duration(30.0, DurationUnit.SECOND), this, this, "changePhase",
                             new Object[] { trafficLight });
                     break;
                 }
                 case YELLOW:
                 {
                     trafficLight.setTrafficLightColor(TrafficLightColor.RED);
-                    this.simulator.scheduleEventRel(new Duration(56.0, TimeUnit.SECOND), this, this, "changePhase",
+                    this.simulator.scheduleEventRel(new Duration(56.0, DurationUnit.SECOND), this, this, "changePhase",
                             new Object[] { trafficLight });
                     break;
                 }
                 case GREEN:
                 {
                     trafficLight.setTrafficLightColor(TrafficLightColor.YELLOW);
-                    this.simulator.scheduleEventRel(new Duration(4.0, TimeUnit.SECOND), this, this, "changePhase",
+                    this.simulator.scheduleEventRel(new Duration(4.0, DurationUnit.SECOND), this, this, "changePhase",
                             new Object[] { trafficLight });
                     break;
                 }
@@ -195,8 +195,8 @@ public class TJunctionDemo extends AbstractWrappableAnimation
                 {
                     TJunctionDemo animation = new TJunctionDemo();
                     // 1 hour simulation run for testing
-                    animation.buildAnimator(Time.ZERO, Duration.ZERO,
-                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    animation.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
+                            new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {

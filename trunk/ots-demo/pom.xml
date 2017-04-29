@@ -36,10 +36,6 @@
       <groupId>org.geotools</groupId>
       <artifactId>gt-shapefile</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.google.protobuf</groupId>
-      <artifactId>protobuf-java</artifactId>
-    <version>3.2.0</version>
-</dependency>
   </dependencies>
+
 </project>

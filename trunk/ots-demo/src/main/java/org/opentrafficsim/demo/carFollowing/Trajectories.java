@@ -14,6 +14,7 @@ import java.util.Set;
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 
+import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -358,13 +359,13 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
             // Schedule creation of the first car (this will re-schedule itself one headway later, etc.).
             this.simulator.scheduleEventAbs(Time.ZERO, this, this, "generateCar", null);
             // Create a block at t = 5 minutes
-            this.simulator.scheduleEventAbs(new Time(300, SECOND), this, this, "createBlock", null);
+            this.simulator.scheduleEventAbs(new Time(300, TimeUnit.BASE_SECOND), this, this, "createBlock", null);
             // Remove the block at t = 7 minutes
-            this.simulator.scheduleEventAbs(new Time(420, SECOND), this, this, "removeBlock", null);
+            this.simulator.scheduleEventAbs(new Time(420, TimeUnit.BASE_SECOND), this, this, "removeBlock", null);
             // Schedule regular updates of the graph
             for (int t = 1; t <= 1800; t++)
             {
-                this.simulator.scheduleEventAbs(new Time(t - 0.001, SECOND), this, this, "drawGraph", null);
+                this.simulator.scheduleEventAbs(new Time(t - 0.001, TimeUnit.BASE_SECOND), this, this, "drawGraph", null);
             }
         }
         catch (SimRuntimeException exception)
