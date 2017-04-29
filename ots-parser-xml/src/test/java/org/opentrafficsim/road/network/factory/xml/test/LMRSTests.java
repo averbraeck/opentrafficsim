@@ -23,6 +23,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
@@ -98,6 +99,13 @@ public class LMRSTests extends AbstractWrappableAnimation
     protected final OTSModelInterface makeModel(final GTUColorer colorer)
     {
         return new TestXMLModel();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void addAnimationToggles()
+    {
+        AnimationToggles.setTextAnimationTogglesStandard(this);
     }
 
     /** {@inheritDoc} */
