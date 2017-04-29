@@ -166,17 +166,17 @@
   <LINK NAME="L2_T2" NODESTART="N2" NODEEND="N3" ROADLAYOUT="RT_1ln_3m_50km/h">
     <STRAIGHT />
     <!-- SENSOR NAME="10.1" LANE="A1" POSITION="END-5m" CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
-    <TRAFFICLIGHT NAME="10.1" LANE="A1" POSITION="END-5m" CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
-    <SENSOR NAME="11.1" LANE="A2" POSITION="END-5m" CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
-    <TRAFFICLIGHT NAME="11.1" LANE="A2" POSITION="END-5m" CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
-    <SENSOR NAME="11.2" LANE="A3" POSITION="END-5m" CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
-    <TRAFFICLIGHT NAME="11.2" LANE="A3" POSITION="END-5m" CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
-    <SENSOR NAME="12.1" LANE="A4" POSITION="END-5m" CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
-    <TRAFFICLIGHT NAME="12.1" LANE="A4" POSITION="END-5m" CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
-    <SENSOR NAME="10.2" LANE="A1" POSITION="END-80m" CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
-    <TRAFFICLIGHT NAME="10.2" LANE="A1" POSITION="END-80m" CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
-    <SENSOR NAME="11.3" LANE="A2" POSITION="END-80m" CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
-    <TRAFFICLIGHT NAME="11.3" LANE="A2" POSITION="END-80m" CLASS="nl.grontmij.smarttraffic.model.TrafficLight" / -->
+    <TRAFFICLIGHT NAME="T10.1" LANE="A1" POSITION="END-5m" CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
+    <SENSOR NAME="S11.1" LANE="A2" POSITION="END-5m" CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
+    <TRAFFICLIGHT NAME="T11.1" LANE="A2" POSITION="END-5m" CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
+    <SENSOR NAME="S11.2" LANE="A3" POSITION="END-5m" CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
+    <TRAFFICLIGHT NAME="T11.2" LANE="A3" POSITION="END-5m" CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
+    <SENSOR NAME="S12.1" LANE="A4" POSITION="END-5m" CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
+    <TRAFFICLIGHT NAME="T12.1" LANE="A4" POSITION="END-5m" CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
+    <SENSOR NAME="S10.2" LANE="A1" POSITION="END-80m" CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
+    <TRAFFICLIGHT NAME="T10.2" LANE="A1" POSITION="END-80m" CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
+    <SENSOR NAME="S11.3" LANE="A2" POSITION="END-80m" CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
+    <TRAFFICLIGHT NAME="T11.3" LANE="A2" POSITION="END-80m" CLASS="nl.grontmij.smarttraffic.model.TrafficLight" / -->
   </LINK>
   <LINK NAME="L3_A2" NODESTART="N4" NODEEND="N5" ROADLAYOUT="RT_1ln_3m_50km/h">
     <STRAIGHT />
