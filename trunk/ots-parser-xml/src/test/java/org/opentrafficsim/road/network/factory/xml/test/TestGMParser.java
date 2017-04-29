@@ -41,6 +41,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
@@ -137,6 +138,13 @@ public class TestGMParser extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
+    protected void addAnimationToggles()
+    {
+        AnimationToggles.setTextAnimationTogglesStandard(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected final Double makeAnimationRectangle()
     {
         return new Rectangle2D.Double(0, 2900, 1400, 1200);
@@ -178,7 +186,7 @@ public class TestGMParser extends AbstractWrappableAnimation
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
-            URL url = URLResource.getResource("/networkv2_90km_V5i2.xml");
+            URL url = URLResource.getResource("/networkv2_90km_V5i.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
             {

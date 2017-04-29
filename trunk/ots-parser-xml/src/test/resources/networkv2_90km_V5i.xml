@@ -406,19 +406,19 @@
     <SENSOR NAME="S225_01.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T225_01.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S225_02.1" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T225_02.1" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S225_02.2" LANE="A3" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T225_02.2" LANE="A3" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S225_03.1" LANE="A4" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T225_03.1" LANE="A4" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
   </LINK>
   <LINK NAME="L3a" NODESTART="N3a" NODEEND="N4a" ROADLAYOUT="RT2ln_ref0">
     <BEZIER />
@@ -445,15 +445,15 @@
     <SENSOR NAME="S231_01.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T231_01.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S231_02.1" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T231_02.1" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S231_02.2" LANE="A3" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T231_02.2" LANE="A3" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
   </LINK>
   <LINK NAME="L8a" NODESTART="N8a" NODEEND="N10a" ROADLAYOUT="RT2ln_ref0">
     <BEZIER />
@@ -469,19 +469,19 @@
     <SENSOR NAME="S234_02.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T234_02.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S234_02.2" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T234_02.2" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S234_03.1" LANE="A3" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T234_03.1" LANE="A3" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S234_03.2" LANE="A4" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T234_03.2" LANE="A4" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
   </LINK>
   <LINK NAME="L13a" NODESTART="N13a" NODEEND="N15a" ROADLAYOUT="RT2ln_ref0">
     <BEZIER />
@@ -501,19 +501,19 @@
     <SENSOR NAME="S239_01.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T239_01.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S239_02.1" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T239_02.1" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S239_02.2" LANE="A3" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T239_02.2" LANE="A3" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S239_02.3" LANE="A4" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T239_02.3" LANE="A4" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S239_01.3" LANE="A1" POSITION="END-60m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <SENSOR NAME="S239_02.7" LANE="A2" POSITION="END-80m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
@@ -543,19 +543,19 @@
     <SENSOR NAME="S245_01.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T245_01.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S245_02.1" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T245_02.1" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S245_02.2" LANE="A3" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T245_02.2" LANE="A3" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S245_02.3" LANE="A4" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T245_02.3" LANE="A4" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
   </LINK>
   <LINK NAME="L23a" NODESTART="N23a" NODEEND="N25a" ROADLAYOUT="RT3ln_ref0">
     <BEZIER />
@@ -571,23 +571,23 @@
     <SENSOR NAME="S249_01.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T249_01.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S249_02.1" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T249_02.1" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S249_02.2" LANE="A3" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T249_02.2" LANE="A3" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S249_02.3" LANE="A4" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T249_02.3" LANE="A4" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S249_03.1" LANE="A5" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T249_03.1" LANE="A5" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S249_01.3" LANE="A1" POSITION="END-60m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <SENSOR NAME="S249_02.7" LANE="A2" POSITION="END-80m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
@@ -682,19 +682,19 @@
     <SENSOR NAME="S291_01.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T291_01.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S291_02.1" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T291_02.1" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S291_02.2" LANE="A3" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T291_02.2" LANE="A3" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S291_02.3" LANE="A4" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T291_02.3" LANE="A4" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
   </LINK>
   <LINK NAME="L47a" NODESTART="N47a" NODEEND="N49a" ROADLAYOUT="RT3ln_ref0">
     <BEZIER />
@@ -720,19 +720,19 @@
     <SENSOR NAME="S291_08.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T291_08.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S291_08.2" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T291_08.2" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S291_09.1" LANE="A3" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T291_09.1" LANE="A3" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S291_09.2" LANE="A4" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T291_09.2" LANE="A4" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
   </LINK>
   <LINK NAME="L48b" NODESTART="N49b" NODEEND="N48b" ROADLAYOUT="RT2ln_ref0">
     <BEZIER />
@@ -811,23 +811,23 @@
     <SENSOR NAME="S249_07.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T249_07.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S249_08.1" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T249_08.1" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S249_08.2" LANE="A3" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T249_08.2" LANE="A3" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S249_09.1" LANE="A4" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T249_09.1" LANE="A4" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S249_09.2" LANE="A5" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T249_09.2" LANE="A5" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S249_07.3" LANE="A1" POSITION="END-60m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <SENSOR NAME="S249_08.5" LANE="A2" POSITION="END-80m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
@@ -863,15 +863,15 @@
     <SENSOR NAME="S245_08.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T245_08.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S245_08.2" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T245_08.2" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S245_09.1" LANE="A3" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T245_09.1" LANE="A3" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S245_08.7" LANE="A1" POSITION="END-120m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <SENSOR NAME="S245_08.8" LANE="A2" POSITION="END-120m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
@@ -894,19 +894,19 @@
     <SENSOR NAME="S239_08.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T239_08.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S239_08.2" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T239_08.2" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S239_09.1" LANE="A3" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T239_09.1" LANE="A3" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S239_09.2" LANE="A4" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T239_09.2" LANE="A4" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S239_08.5" LANE="A1" POSITION="END-80m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <SENSOR NAME="S239_08.6" LANE="A2" POSITION="END-80m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
@@ -933,19 +933,19 @@
     <SENSOR NAME="S234_07.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T234_07.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S234_07.2" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T234_07.2" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S234_08.1" LANE="A3" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T234_08.1" LANE="A3" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S234_08.2" LANE="A4" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T234_08.2" LANE="A4" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
   </LINK>
   <LINK NAME="L14b" NODESTART="N15b" NODEEND="N14b" ROADLAYOUT="RT2ln_ref0">
     <BEZIER />
@@ -968,19 +968,19 @@
     <SENSOR NAME="S231_08.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T231_08.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S231_08.2" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T231_08.2" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S231_09.1" LANE="A3" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T231_09.1" LANE="A3" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S231_09.2" LANE="A4" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T231_09.2" LANE="A4" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S231_08.7" LANE="A1" POSITION="END-120m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <SENSOR NAME="S231_08.8" LANE="A2" POSITION="END-120m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
@@ -1003,19 +1003,19 @@
     <SENSOR NAME="S225_07.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T225_07.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S225_08.1" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T225_08.1" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S225_08.2" LANE="A3" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T225_08.2" LANE="A3" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S225_09.1" LANE="A4" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T225_09.1" LANE="A4" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S225_07.3" LANE="A1" POSITION="END-60m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <SENSOR NAME="S225_08.5" LANE="A2" POSITION="END-80m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
@@ -1182,7 +1182,7 @@
     <SENSOR NAME="S231_12.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T231_12.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
   </LINK>
   <LINK NAME="L225a_inR" NODESTART="N225a_in" NODEEND="N5a" ROADLAYOUT="RT1ln_ref0">
     <BEZIER />
@@ -1192,7 +1192,7 @@
     <SENSOR NAME="S225_10.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T225_10.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
   </LINK>
   <LINK NAME="L231a_inR" NODESTART="N231a_in" NODEEND="N10a" ROADLAYOUT="RT2ln_ref0">
     <BEZIER />
@@ -1202,11 +1202,11 @@
     <SENSOR NAME="S231_10.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T231_10.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S231_10.2" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T231_10.2" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
   </LINK>
   <LINK NAME="L234a_inL" NODESTART="N234b_in" NODEEND="N15a" ROADLAYOUT="RT2ln_ref0">
     <BEZIER />
@@ -1216,11 +1216,11 @@
     <SENSOR NAME="S234_06.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T234_06.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S234_06.2" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T234_06.2" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
   </LINK>
   <LINK NAME="L239a_inR" NODESTART="N239a_in" NODEEND="N20a" ROADLAYOUT="RT2ln_ref0">
     <BEZIER />
@@ -1230,11 +1230,11 @@
     <SENSOR NAME="S239_10.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T239_10.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S239_10.2" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T239_10.2" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
   </LINK>
   <LINK NAME="L245a_inR" NODESTART="N245a_in" NODEEND="N25a" ROADLAYOUT="RT1ln_ref0">
     <BEZIER />
@@ -1256,11 +1256,11 @@
     <SENSOR NAME="S249_10.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T249_10.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S249_10.2" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T249_10.2" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
   </LINK>
   <LINK NAME="L249a_inL" NODESTART="N249a_in" NODEEND="N28b" ROADLAYOUT="RT1ln_ref-1">
     <BEZIER />
@@ -1276,11 +1276,11 @@
     <SENSOR NAME="S291_10.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T291_10.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S291_10.2" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T291_10.2" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
   </LINK>
   <LINK NAME="L291a_inL" NODESTART="N291a_in" NODEEND="N47b" ROADLAYOUT="RT1ln_ref-1">
     <BEZIER />
@@ -1297,7 +1297,7 @@
     <SENSOR NAME="S291_04.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T291_04.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
   </LINK>
 
 
@@ -1309,11 +1309,11 @@
     <SENSOR NAME="S249_12.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T249_12.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S249_12.2" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T249_12.2" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
   </LINK>
   <LINK NAME="L245b_inR" NODESTART="N245b_in" NODEEND="N23b" ROADLAYOUT="RT1ln_ref0">
     <BEZIER />
@@ -1335,11 +1335,11 @@
     <SENSOR NAME="S239_12.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T239_12.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     <SENSOR NAME="S239_12.2" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T239_12.2" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
   </LINK>
   <LINK NAME="L234b_inR" NODESTART="N234b_in" NODEEND="N13b" ROADLAYOUT="RT1ln_ref0">
     <BEZIER />
@@ -1349,7 +1349,7 @@
     <SENSOR NAME="S234_04.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T234_04.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
   </LINK>
   <LINK NAME="L231b_inL" NODESTART="N231a_in" NODEEND="N8b" ROADLAYOUT="RT1ln_ref-1">
     <BEZIER />
@@ -1362,7 +1362,7 @@
     <SENSOR NAME="S225_5.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor"
       TRIGGER="FRONT" />
     <TRAFFICLIGHT NAME="T225_11.2" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
   </LINK>
 
 </NETWORK>

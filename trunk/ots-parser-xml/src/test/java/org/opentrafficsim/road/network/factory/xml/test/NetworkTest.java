@@ -83,13 +83,6 @@ public class NetworkTest extends AbstractWrappableAnimation
     @Override
     protected void addAnimationToggles()
     {
-        // hideAnimationClass(OTSLink.class);
-        // hideAnimationClass(Shoulder.class);
-
-        // addToggleAnimationButton("Link", OTSLink.class, "Show/hide Links", false);
-        // addToggleAnimationButton("Shoulder", Shoulder.class, "Show/hide Shoulders", true);
-        // addToggleAnimationButton("Lane", Lane.class, "Show/hide Lanes", true);
-
         AnimationToggles.setTextAnimationTogglesStandard(this);
     }
 
