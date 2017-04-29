@@ -320,7 +320,7 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
     {
         return null;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public LongitudinalDirectionality getDirection()
