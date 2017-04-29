@@ -29,7 +29,11 @@
         have to be globally unique in the network. N201v8.xml in the ots-parser-xml project test has been
         updated to make the names of Lane objects unique.
       </action>
-      
+      <action issue="OTS-330" type="fix">
+        Directions not interpreted correctly when parsing. This was caused by the fact that the DirectionUnit 
+        uses NORTH_RADIANS as the BASE, and EAST_RADIANS is -90 degrees rotated with respect to NORTH_RADIANS. 
+        Instead of using getSI() or .si for the direction, getInUnit() should be used in Links.java.
+      </action>
     </release>
   
     <release version="0.14.00" date="2017-04-17" description="Release 0.14.00">
