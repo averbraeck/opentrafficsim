@@ -99,10 +99,10 @@ public abstract class ContourPlot extends AbstractOTSPlot
     protected static final int STANDARDINITIALDISTANCEGRANULARITYINDEX = 3;
 
     /** Initial lower bound for the time scale. */
-    protected static final Time INITIALLOWERTIMEBOUND = new Time(0, TimeUnit.SECOND);
+    protected static final Time INITIALLOWERTIMEBOUND = new Time(0, TimeUnit.BASE);
 
     /** Initial upper bound for the time scale. */
-    protected static final Time INITIALUPPERTIMEBOUND = new Time(300, TimeUnit.SECOND);
+    protected static final Time INITIALUPPERTIMEBOUND = new Time(300, TimeUnit.BASE);
 
     /** The cumulative lengths of the elements of path. */
     private final LengthVector cumulativeLengths;
@@ -616,9 +616,9 @@ public abstract class ContourPlot extends AbstractOTSPlot
         else
         {
             // move events can be given for adjacent lanes during lane changes
-            return; 
+            return;
             // error -- silently ignore for now. Graphs should not cause errors.
-            //System.err.println("ContourPlot: GTU " + gtu.getId() + " is not registered on lane " + lane.toString());
+            // System.err.println("ContourPlot: GTU " + gtu.getId() + " is not registered on lane " + lane.toString());
         }
 
         try
@@ -671,12 +671,12 @@ public abstract class ContourPlot extends AbstractOTSPlot
                 }
                 double binDistanceStart = (gtu
                         .position(lane, gtu.getRear(),
-                                new Time(relativeFromTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND))
+                                new Time(relativeFromTime * this.getXAxis().getGranularities()[0], TimeUnit.BASE))
                         .getSI() - this.getYAxis().getMinimumValue().getSI() + lengthOffset)
                         / this.getYAxis().getGranularities()[0];
                 double binDistanceEnd = (gtu
                         .position(lane, gtu.getRear(),
-                                new Time(binEndTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND))
+                                new Time(binEndTime * this.getXAxis().getGranularities()[0], TimeUnit.BASE))
                         .getSI() - this.getYAxis().getMinimumValue().getSI() + lengthOffset)
                         / this.getYAxis().getGranularities()[0];
 

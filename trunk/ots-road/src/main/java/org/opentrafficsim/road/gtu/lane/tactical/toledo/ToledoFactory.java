@@ -50,11 +50,11 @@ public class ToledoFactory implements LaneBasedTacticalPlannerFactory<Toledo>
     {
         return new Toledo(new ToledoCarFollowing(), gtu);
     }
-    
+
     /** {@inheritDoc} */
     public final String toString()
     {
         return "ToledoFactory";
     }
-    
+
 }

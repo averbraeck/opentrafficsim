@@ -561,6 +561,6 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public abstract CrossSectionElement clone(final CrossSectionLink newParentLink,
-            final OTSSimulatorInterface newSimulator, final boolean animation) throws NetworkException;
+    public abstract CrossSectionElement clone(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator,
+            final boolean animation) throws NetworkException;
 }

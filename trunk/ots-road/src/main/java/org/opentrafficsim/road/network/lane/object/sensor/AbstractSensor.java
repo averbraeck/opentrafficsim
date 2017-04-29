@@ -3,11 +3,6 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 import java.util.HashSet;
 import java.util.Set;
 
-import nl.tudelft.simulation.immutablecollections.ImmutableHashSet;
-import nl.tudelft.simulation.immutablecollections.ImmutableSet;
-import nl.tudelft.simulation.language.Throw;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -21,6 +16,11 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
+
+import nl.tudelft.simulation.immutablecollections.ImmutableHashSet;
+import nl.tudelft.simulation.immutablecollections.ImmutableSet;
+import nl.tudelft.simulation.language.Throw;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -195,8 +195,8 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     @Override
     public final void trigger(final LaneBasedGTU gtu)
     {
-        fireTimedEvent(SingleSensor.SENSOR_TRIGGER_EVENT, new Object[] { getId(), this, gtu, this.positionType }, getSimulator()
-                .getSimulatorTime());
+        fireTimedEvent(SingleSensor.SENSOR_TRIGGER_EVENT, new Object[] { getId(), this, gtu, this.positionType },
+                getSimulator().getSimulatorTime());
         triggerResponse(gtu);
     }
 
@@ -261,8 +261,8 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
         }
         else if (!this.getLane().equals(other.getLane()))
             return false;
-        if (Double.doubleToLongBits(this.getLongitudinalPosition().si) != Double.doubleToLongBits(other
-                .getLongitudinalPosition().si))
+        if (Double.doubleToLongBits(this.getLongitudinalPosition().si) != Double
+                .doubleToLongBits(other.getLongitudinalPosition().si))
             return false;
         if (this.positionType == null)
         {

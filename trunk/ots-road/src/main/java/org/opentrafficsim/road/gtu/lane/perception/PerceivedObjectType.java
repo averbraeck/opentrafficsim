@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.opentrafficsim.core.gtu.GTU;
 
 /**
- * Defines a type of object that can be observed in perception. 
+ * Defines a type of object that can be observed in perception.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -15,7 +15,7 @@ import org.opentrafficsim.core.gtu.GTU;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
- * @param <T> the type of the perceived object 
+ * @param <T> the type of the perceived object
  */
 public class PerceivedObjectType<T> implements Serializable
 {
@@ -23,11 +23,11 @@ public class PerceivedObjectType<T> implements Serializable
     private static final long serialVersionUID = 20160505L;
 
     private final String id;
-    
+
     public static final PerceivedObjectType<GTU> PERCEIVED_GTU = new PerceivedObjectType<>("gtu");
-    
+
     /**
-     * @param id the id to 
+     * @param id the id to
      */
     public PerceivedObjectType(final String id)
     {
@@ -35,7 +35,7 @@ public class PerceivedObjectType<T> implements Serializable
     }
 
     /**
-     * @return the id of the perceivable object type. 
+     * @return the id of the perceivable object type.
      */
     public final String getId()
     {
@@ -51,4 +51,3 @@ public class PerceivedObjectType<T> implements Serializable
     }
 
 }
-

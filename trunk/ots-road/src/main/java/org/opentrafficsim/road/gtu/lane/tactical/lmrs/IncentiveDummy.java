@@ -23,8 +23,8 @@ public class IncentiveDummy implements MandatoryIncentive
     /** {@inheritDoc} */
     @Override
     public final Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics,
-        final LanePerception perception, final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)
-        throws ParameterException, OperationalPlanException
+            final LanePerception perception, final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)
+            throws ParameterException, OperationalPlanException
     {
         return new Desire(0, 0);
     }

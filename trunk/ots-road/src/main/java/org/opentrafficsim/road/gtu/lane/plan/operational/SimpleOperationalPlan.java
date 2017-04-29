@@ -38,8 +38,8 @@ public class SimpleOperationalPlan implements Serializable
 
     /** Indicator intent. */
     private TurnIndicatorIntent indicatorIntent = TurnIndicatorIntent.NONE;
-    
-    /** Distance to object causing turn  indicator intent. */
+
+    /** Distance to object causing turn indicator intent. */
     private Length indicatorObjectDistance = null;
 
     /**
@@ -154,7 +154,7 @@ public class SimpleOperationalPlan implements Serializable
             this.indicatorIntent = TurnIndicatorIntent.RIGHT;
         }
     }
-    
+
     /**
      * Set left indicator intent. Intent with smallest provided distance has priority.
      * @param distance distance to object pertaining to the turn indicator intent
@@ -173,7 +173,7 @@ public class SimpleOperationalPlan implements Serializable
         {
             this.indicatorIntent = TurnIndicatorIntent.LEFT;
         }
-        
+
     }
 
     /**
@@ -195,7 +195,7 @@ public class SimpleOperationalPlan implements Serializable
             this.indicatorIntent = TurnIndicatorIntent.RIGHT;
         }
     }
-    
+
     /**
      * Compares distances and returns whether the given distance (and intent) can be ignored.
      * @param distance distance to object of intent

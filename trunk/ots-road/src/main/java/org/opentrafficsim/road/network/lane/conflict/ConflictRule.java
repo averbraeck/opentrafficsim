@@ -22,12 +22,12 @@ public interface ConflictRule
      * @return priority for the given conflict
      */
     ConflictPriority determinePriority(Conflict conflict);
-    
+
     /**
      * Creates a clone of the conflict rule.
      * @param newSimulator new simulator
      * @return clone of the conflict rule
      */
     ConflictRule clone(OTSSimulatorInterface newSimulator);
-    
+
 }

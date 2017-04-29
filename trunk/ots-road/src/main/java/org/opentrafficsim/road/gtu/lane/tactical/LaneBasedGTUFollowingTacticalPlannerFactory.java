@@ -22,13 +22,13 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class LaneBasedGTUFollowingTacticalPlannerFactory implements
-    LaneBasedTacticalPlannerFactory<LaneBasedGTUFollowingTacticalPlanner>, Serializable
+public class LaneBasedGTUFollowingTacticalPlannerFactory
+        implements LaneBasedTacticalPlannerFactory<LaneBasedGTUFollowingTacticalPlanner>, Serializable
 {
 
     /** */
     private static final long serialVersionUID = 20160811L;
-    
+
     /** The car following model. */
     private GTUFollowingModelOld carFollowingModel;
 
@@ -45,7 +45,7 @@ public class LaneBasedGTUFollowingTacticalPlannerFactory implements
     @Override
     public final BehavioralCharacteristics getDefaultBehavioralCharacteristics()
     {
-        BehavioralCharacteristics bc =  new BehavioralCharacteristics().setDefaultParameters(ParameterTypes.class);
+        BehavioralCharacteristics bc = new BehavioralCharacteristics().setDefaultParameters(ParameterTypes.class);
         try
         {
             bc.setParameter(ParameterTypes.LOOKAHEAD, new Length(250, LengthUnit.SI));
@@ -70,5 +70,5 @@ public class LaneBasedGTUFollowingTacticalPlannerFactory implements
     {
         return "LaneBasedGTUFollowingTacticalPlanner [car-following=" + this.carFollowingModel + "]";
     }
-    
+
 }

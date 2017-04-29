@@ -17,7 +17,7 @@ import org.opentrafficsim.core.network.NetworkException;
  */
 public interface PerceptionCategory
 {
-    
+
     /**
      * Update all information in the perception category.
      * @throws GTUException if the GTU was not initialized

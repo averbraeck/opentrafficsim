@@ -24,17 +24,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
+import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.opentrafficsim.simulationengine.WrappableAnimation;
+
 import nl.javel.gisbeans.map.MapInterface;
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
-
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.simulationengine.SimpleAnimator;
-import org.opentrafficsim.simulationengine.WrappableAnimation;
 
 /**
  * Animation panel with various controls.

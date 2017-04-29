@@ -23,14 +23,13 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner
      * @return car following model
      */
     CarFollowingModel getCarFollowingModel();
-    
+
     /** {@inheritDoc} */
     @Override
     LanePerception getPerception();
-    
+
     /** {@inheritDoc} */
     @Override
     LaneBasedGTU getGtu();
-    
-}
 
+}

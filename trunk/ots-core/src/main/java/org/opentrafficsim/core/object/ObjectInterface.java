@@ -22,7 +22,7 @@ public interface ObjectInterface extends Locatable, Identifyable, EventProducerI
 {
     /** @return the outline geometry of the object. */
     OTSLine3D getGeometry();
-    
+
     /** @return the height of the object (can be Length.ZERO). */
     Length getHeight();
 }

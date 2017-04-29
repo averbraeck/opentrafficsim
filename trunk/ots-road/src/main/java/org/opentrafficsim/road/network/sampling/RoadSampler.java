@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
@@ -55,9 +55,9 @@ public class RoadSampler extends Sampler implements EventListenerInterface
 
     /** Registration of sampling events of each GTU per lane, if interval based. */
     private final Map<String, Map<LaneDirection, SimEvent<OTSSimTimeDouble>>> eventPerGtu = new HashMap<>();
-    
-    /** List of lane the sampler is listening to for each GTU. Usually 1, could be 2 during a trajectory transition. */ 
-    private final Map<String, Set<LaneDirection>> listenersPerGtu = new HashMap();
+
+    /** List of lane the sampler is listening to for each GTU. Usually 1, could be 2 during a trajectory transition. */
+    private final Map<String, Set<LaneDirection>> listenersPerGtu = new HashMap<>();
 
     /**
      * Constructor which uses the operational plan updates of GTU's as sampling interval.
@@ -85,7 +85,7 @@ public class RoadSampler extends Sampler implements EventListenerInterface
         Throw.when(frequency.le(Frequency.ZERO), IllegalArgumentException.class,
                 "Negative or zero sampling frequency is not permitted.");
         this.simulator = simulator;
-        this.samplingInterval = new Duration(1.0 / frequency.si, TimeUnit.SI);
+        this.samplingInterval = new Duration(1.0 / frequency.si, DurationUnit.SI);
     }
 
     /** {@inheritDoc} */
@@ -271,7 +271,7 @@ public class RoadSampler extends Sampler implements EventListenerInterface
             if (isIntervalBased())
             {
                 String gtuId = (String) payload[0];
-                
+
                 if (this.eventPerGtu.get(gtuId) != null)
                 {
                     if (this.eventPerGtu.get(gtuId).containsKey(lDirection))

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -142,7 +141,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
     {
         return this.secondLaneList;
     }
-    
+
     /**
      * @return lastLaneIndex.
      */

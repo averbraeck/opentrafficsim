@@ -275,7 +275,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
 
         /** Priority according to all-stop rules. */
         ALL_STOP,
-        
+
         /** Priority at bus stop, i.e. bus has right of way if it wants to leave the bus stop. */
         BUS_STOP;
 
@@ -314,7 +314,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
         {
             return this.equals(ALL_STOP);
         }
-        
+
         /**
          * Returns whether this is bus stop.
          * @return whether this is bus stop

@@ -69,7 +69,7 @@ public interface DefaultSimplePerception extends PerceptionCategory
         updateAccessibleAdjacentLanesLeft();
         updateAccessibleAdjacentLanesRight();
     }
-    
+
     /**
      * Update the accessible adjacent lanes on the left.
      * @throws GTUException when the GTU was not yet initialized
@@ -145,7 +145,7 @@ public interface DefaultSimplePerception extends PerceptionCategory
      * @return LanePathInfo
      */
     LanePathInfo getLanePathInfo();
-    
+
     /**
      * @return forwardHeadway, the forward headway and first object (GTU) in front
      */
@@ -259,5 +259,5 @@ public interface DefaultSimplePerception extends PerceptionCategory
      *         not match.
      */
     Lane bestAccessibleAdjacentLane(Lane currentLane, LateralDirectionality lateralDirection, Length longitudinalPosition);
-    
+
 }

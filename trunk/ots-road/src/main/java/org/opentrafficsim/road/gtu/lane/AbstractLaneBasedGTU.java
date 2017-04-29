@@ -431,7 +431,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     protected void move(final DirectedPoint fromLocation)
             throws SimRuntimeException, GTUException, OperationalPlanException, NetworkException, ParameterException
     {
-        
+
         // Only carry out move() if we still have lane(s) to drive on.
         // Note: a (Sink) trigger can have 'destroyed' us between the previous evaluation step and this one.
         if (this.lanesCurrentOperationalPlan.isEmpty())

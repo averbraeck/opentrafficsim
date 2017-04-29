@@ -16,12 +16,11 @@ public enum TextAlignment
 {
     /** left. */
     LEFT,
-    
+
     /** center. */
     CENTER,
-    
+
     /** right. */
     RIGHT,
 
 }
-

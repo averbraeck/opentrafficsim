@@ -6,7 +6,7 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -85,7 +85,7 @@ public final class LmrsUtil implements LmrsParameters
         // TODO this is a hack to prevent right lane changes of all vehicles on the left lane when placed in network at t=0
         if (startTime.si == 0.0)
         {
-            //return new SimpleOperationalPlan(Acceleration.ZERO, LateralDirectionality.NONE);
+            // return new SimpleOperationalPlan(Acceleration.ZERO, LateralDirectionality.NONE);
         }
 
         // obtain objects to get info
@@ -398,7 +398,7 @@ public final class LmrsUtil implements LmrsParameters
             final SpeedLimitInfo sli, final CarFollowingModel cfm, final double desire, final Speed ownSpeed,
             final LateralDirectionality lat) throws ParameterException, OperationalPlanException
     {
-        
+
         // beyond start distance
         try
         {
@@ -514,7 +514,7 @@ public final class LmrsUtil implements LmrsParameters
         double tDes = limitedDesire * bc.getParameter(ParameterTypes.TMIN).si
                 + (1 - limitedDesire) * bc.getParameter(ParameterTypes.TMAX).si;
         double t = bc.getParameter(ParameterTypes.T).si;
-        bc.setParameter(ParameterTypes.T, new Duration(tDes < t ? tDes : t, TimeUnit.SI));
+        bc.setParameter(ParameterTypes.T, new Duration(tDes < t ? tDes : t, DurationUnit.SI));
     }
 
     /**

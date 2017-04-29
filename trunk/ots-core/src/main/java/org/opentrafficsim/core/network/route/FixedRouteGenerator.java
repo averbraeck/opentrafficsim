@@ -18,7 +18,7 @@ public class FixedRouteGenerator implements RouteGenerator, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;
-    
+
     /** The route that is returned on every call to generateRoute. */
     private final Route route;
 

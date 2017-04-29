@@ -3,6 +3,7 @@ package org.opentrafficsim.core.network;
 import java.io.Serializable;
 import java.util.Set;
 
+import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -40,7 +41,7 @@ public interface Node extends Locatable, Serializable
     Direction getDirection();
 
     /** @return the slope as an angle. Horizontal is 0 degrees. */
-    Direction getSlope();
+    Angle getSlope();
 
     /**
      * Add a link to this Node.

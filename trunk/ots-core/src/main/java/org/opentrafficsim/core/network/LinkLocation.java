@@ -93,7 +93,7 @@ public class LinkLocation implements Serializable
     /** {@inheritDoc} */
     public final String toString()
     {
-        return String.format("%s %.3f%s", getLink(), getLongitudinalPosition().getInUnit(), getLongitudinalPosition()
-            .getUnit());
+        return String.format("%s %.3f%s", getLink(), getLongitudinalPosition().getInUnit(),
+                getLongitudinalPosition().getUnit());
     }
 }

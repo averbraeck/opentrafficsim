@@ -39,14 +39,14 @@ public class SpeedGTUColorer implements GTUColorer, Serializable
     {
         this.maximumSpeed = maximumSpeed;
         this.legend = new ArrayList<LegendEntry>(4);
-        Color[] colorTable = {Color.RED, Color.YELLOW, Color.GREEN};
+        Color[] colorTable = { Color.RED, Color.YELLOW, Color.GREEN };
         Speed zeroValue = new Speed(0, maximumSpeed.getUnit());
         for (int index = 0; index < colorTable.length; index++)
         {
             double ratio = index * 1.0 / (colorTable.length - 1);
             Speed speed = Speed.interpolate(zeroValue, maximumSpeed, ratio);
-            this.legend.add(new LegendEntry(colorTable[index], speed.toString(), index == 0 ? "stationary" : "driving "
-                + speed.toString()));
+            this.legend.add(new LegendEntry(colorTable[index], speed.toString(),
+                    index == 0 ? "stationary" : "driving " + speed.toString()));
         }
     }
 
@@ -66,8 +66,8 @@ public class SpeedGTUColorer implements GTUColorer, Serializable
         }
         // Interpolate
         int floor = (int) Math.floor(ratio);
-        return ColorInterpolator.interpolateColor(this.legend.get(floor).getColor(), this.legend.get(floor + 1)
-            .getColor(), ratio - floor);
+        return ColorInterpolator.interpolateColor(this.legend.get(floor).getColor(), this.legend.get(floor + 1).getColor(),
+                ratio - floor);
     }
 
     /** {@inheritDoc} */

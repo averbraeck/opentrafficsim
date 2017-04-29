@@ -62,14 +62,14 @@ public abstract class AbstractOTSPlot extends JFrame
 
     /** The graph. */
     private JFreeChart chart;
-    
+
     /** The series of Lanes that provide the data for this TrajectoryPlot. */
     private final ImmutableList<Lane> path;
 
     /**
      * Construct a new AbstractOTSPlot.
      * @param caption String; the caption of the graph window
-     * @param path List&lt;Lane&gt; the lanes for which the plot is made  
+     * @param path List&lt;Lane&gt; the lanes for which the plot is made
      */
     public AbstractOTSPlot(final String caption, final List<Lane> path)
     {
@@ -152,16 +152,16 @@ public abstract class AbstractOTSPlot extends JFrame
     {
         return this.caption;
     }
-    
+
     /**
      * Provide a unique ID for this graph. In this case based on a generated UUID.
-     * @return String; a unique ID. 
+     * @return String; a unique ID.
      */
     public final String getId()
     {
         return this.uniqueId.toString();
     }
-    
+
     /**
      * @return path List&lt;Lane&gt; the path
      */

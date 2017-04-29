@@ -25,7 +25,7 @@ import nl.tudelft.simulation.language.reflection.ClassUtil;
  */
 public class BehavioralCharacteristics implements Serializable
 {
-    
+
     /** */
     private static final long serialVersionUID = 20160400L;
 
@@ -33,7 +33,7 @@ public class BehavioralCharacteristics implements Serializable
      * Object to recognize that no value was set previously.
      */
     private static final Empty EMPTY = new Empty();
-    
+
     /** Whether to copy internal data on write. */
     private boolean copyOnWrite = false;
 
@@ -51,7 +51,7 @@ public class BehavioralCharacteristics implements Serializable
         this.parameters = new HashMap<>();
         this.previous = new HashMap<>();
     }
-    
+
     /**
      * Constructor which creates a copy of the input set.
      * @param behavioralCharacteristics input set
@@ -63,7 +63,7 @@ public class BehavioralCharacteristics implements Serializable
         this.copyOnWrite = true;
         behavioralCharacteristics.copyOnWrite = true;
     }
-    
+
     /**
      * Set parameter value of given parameter type.
      * @param parameterType Parameter type.
@@ -71,8 +71,8 @@ public class BehavioralCharacteristics implements Serializable
      * @param <T> Class of value.
      * @throws ParameterException If the value does not comply with value type constraints.
      */
-    public final <T extends DoubleScalarInterface> void setParameter(final ParameterType<T> parameterType,
-            final T value) throws ParameterException
+    public final <T extends DoubleScalarInterface> void setParameter(final ParameterType<T> parameterType, final T value)
+            throws ParameterException
     {
         Throw.when(value == null, ParameterException.class,
                 "Parameter of type '%s' was assigned a null value, this is not allowed.", parameterType.getId());
@@ -129,8 +129,8 @@ public class BehavioralCharacteristics implements Serializable
      * @param <T> Class of the value.
      * @throws ParameterException If the value does not comply with constraints.
      */
-    private <T extends DoubleScalarInterface> void saveSetParameter(
-            final AbstractParameterType<T> parameterType, final T value) throws ParameterException
+    private <T extends DoubleScalarInterface> void saveSetParameter(final AbstractParameterType<T> parameterType, final T value)
+            throws ParameterException
     {
         parameterType.checkCheck(value);
         checkCopyOnWrite();
@@ -167,7 +167,7 @@ public class BehavioralCharacteristics implements Serializable
         }
         this.previous.remove(parameterType); // prevent consecutive resets
     }
-    
+
     /**
      * Check if internal data needs to be copied.
      */
@@ -189,8 +189,7 @@ public class BehavioralCharacteristics implements Serializable
      * @throws ParameterException If parameter was never set.
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public <T extends DoubleScalarInterface> T getParameter(final ParameterType<T> parameterType)
-            throws ParameterException
+    public <T extends DoubleScalarInterface> T getParameter(final ParameterType<T> parameterType) throws ParameterException
     {
         checkContains(parameterType);
         @SuppressWarnings("unchecked")
@@ -321,8 +320,7 @@ public class BehavioralCharacteristics implements Serializable
      * @return this set of behavioral characteristics (for method chaining)
      */
     @SuppressWarnings("unchecked")
-    private <T extends DoubleScalarInterface> BehavioralCharacteristics setDefaultParametersLocal(
-            final Class<?> clazz)
+    private <T extends DoubleScalarInterface> BehavioralCharacteristics setDefaultParametersLocal(final Class<?> clazz)
     {
         // set all default values using reflection
         Set<Field> fields = ClassUtil.getAllFields(clazz);
@@ -384,7 +382,7 @@ public class BehavioralCharacteristics implements Serializable
             this.parameters.put(key, behavioralCharacteristics.parameters.get(key));
         }
     }
-    
+
     /** {@inheritDoc} */
     public final String toString()
     {

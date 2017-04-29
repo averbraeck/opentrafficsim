@@ -193,9 +193,9 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
     {
         return this.gtuStatus.contains(GTUStatus.HONK);
     }
-    
+
     /**
-     * For subclasses that create a copy of themselves. 
+     * For subclasses that create a copy of themselves.
      * @return set of gtu status
      */
     protected final GTUStatus[] getGtuStatus()

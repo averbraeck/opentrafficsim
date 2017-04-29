@@ -141,7 +141,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
         Length maximumReverseHeadway = getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACKOLD);
         this.backwardHeadway = new TimeStampedObject<>(backwardHeadway(maximumReverseHeadway), timestamp);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final void updateAccessibleAdjacentLanesLeft() throws GTUException

@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -81,7 +82,7 @@ public class CarTest implements UNITS
     public final void carTest()
             throws NetworkException, SimRuntimeException, NamingException, GTUException, OTSGeometryException
     {
-        Time initialTime = new Time(0, SECOND);
+        Time initialTime = new Time(0, TimeUnit.BASE_SECOND);
         GTUType gtuType = CAR;
         Set<GTUType> compatibility = new HashSet<GTUType>();
         compatibility.add(gtuType);
@@ -119,8 +120,8 @@ public class CarTest implements UNITS
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
         Model model = new Model();
         Experiment<Time, Duration, OTSSimTimeDouble> exp = new Experiment<Time, Duration, OTSSimTimeDouble>();
-        Treatment<Time, Duration, OTSSimTimeDouble> tr = new Treatment<>(exp, "tr1", new OTSSimTimeDouble(new Time(0, SECOND)),
-                new Duration(0, SECOND), new Duration(3600.0, SECOND));
+        Treatment<Time, Duration, OTSSimTimeDouble> tr = new Treatment<>(exp, "tr1",
+                new OTSSimTimeDouble(new Time(0, TimeUnit.BASE_SECOND)), new Duration(0, SECOND), new Duration(3600.0, SECOND));
         exp.setTreatment(tr);
         exp.setModel(model);
         Replication<Time, Duration, OTSSimTimeDouble> rep = new Replication<>(exp);

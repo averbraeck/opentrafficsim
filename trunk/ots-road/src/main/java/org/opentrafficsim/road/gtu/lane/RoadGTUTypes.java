@@ -28,7 +28,7 @@ public final class RoadGTUTypes
 
     /** Super type for trucks. */
     public static final GTUType TRUCK;
-    
+
     /** Super type for scheduled busses. */
     public static final GTUType SCHEDULED_BUS;
 

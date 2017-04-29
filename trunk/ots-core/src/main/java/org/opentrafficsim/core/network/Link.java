@@ -45,7 +45,7 @@ public interface Link extends Locatable, Serializable
 
     /** @return the design line. */
     OTSLine3D getDesignLine();
-    
+
     /** @return the simulator. */
     OTSSimulatorInterface getSimulator();
 
@@ -114,7 +114,7 @@ public interface Link extends Locatable, Serializable
      * @return int; the number of GTUs on this link
      */
     int getGTUCount();
-    
+
     /**
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the link. <br>
      * Payload: Object[] {String gtuId, GTU gtu, int count_after_addition}

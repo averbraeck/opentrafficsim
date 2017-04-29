@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.AngleUnit;
+import org.djunits.unit.DirectionUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -92,8 +92,8 @@ public class Acceleration3DTest
         double theta = Math.PI * 0.4;
         double phi = Math.PI * 0.3;
         double length = 10;
-        a3d = new Acceleration3D(new Acceleration(length, AccelerationUnit.SI), new Direction(theta, AngleUnit.RADIAN),
-                new Direction(phi, AngleUnit.RADIAN));
+        a3d = new Acceleration3D(new Acceleration(length, AccelerationUnit.SI),
+                new Direction(theta, DirectionUnit.NORTH_RADIAN), new Direction(phi, DirectionUnit.NORTH_RADIAN));
         checkAcceleration(a3d, length * Math.cos(phi) * Math.sin(theta), length * Math.sin(phi) * Math.sin(theta),
                 length * Math.cos(theta));
         assertTrue("toString output contains the class name", a3d.toString().contains("Acceleration3D"));

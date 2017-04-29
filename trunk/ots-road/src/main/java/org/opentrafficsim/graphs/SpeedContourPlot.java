@@ -3,7 +3,7 @@ package org.opentrafficsim.graphs;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.djunits.unit.LengthUnit;
+import org.djunits.unit.PositionUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
@@ -36,9 +36,10 @@ public class SpeedContourPlot extends ContourPlot
      */
     public SpeedContourPlot(final String caption, final List<Lane> path) throws OTSSimulationException
     {
-        super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
-                STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), path, 0d, 40d, 150d,
-                "speed %.1f km/h", "%.1f km/h", 20d);
+        super(caption,
+                new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
+                        STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"),
+                path, 0d, 40d, 150d, "speed %.1f km/h", "%.1f km/h", 20d);
     }
 
     /** {@inheritDoc} */
@@ -70,17 +71,16 @@ public class SpeedContourPlot extends ContourPlot
             this.cumulativeTimes = new ArrayList<MutableTimeVector>();
             this.cumulativeLengths = new ArrayList<MutablePositionVector>();
         }
-        int highestBinNeeded =
-                (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit) * this.getXAxis().getCurrentGranularity()
-                        / this.getXAxis().getGranularities()[0]);
+        int highestBinNeeded = (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit)
+                * this.getXAxis().getCurrentGranularity() / this.getXAxis().getGranularities()[0]);
         while (highestBinNeeded >= this.cumulativeTimes.size())
         {
             try
             {
-                this.cumulativeTimes.add(new MutableTimeVector(new double[this.getYAxis().getBinCount()], TimeUnit.SECOND,
-                        StorageType.DENSE));
+                this.cumulativeTimes.add(
+                        new MutableTimeVector(new double[this.getYAxis().getBinCount()], TimeUnit.BASE, StorageType.DENSE));
                 this.cumulativeLengths.add(new MutablePositionVector(new double[this.getYAxis().getBinCount()],
-                        LengthUnit.METER, StorageType.DENSE));
+                        PositionUnit.METER, StorageType.DENSE));
             }
             catch (ValueException exception)
             {

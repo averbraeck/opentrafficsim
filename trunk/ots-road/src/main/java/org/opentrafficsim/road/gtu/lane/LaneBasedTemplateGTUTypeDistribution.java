@@ -32,15 +32,14 @@ public class LaneBasedTemplateGTUTypeDistribution implements LaneBasedGTUCharact
      * @param distributionOfLanebasedTemplateGTUType the distribution of LaneBasedTemplateGTUTypes
      */
     public LaneBasedTemplateGTUTypeDistribution(
-        final Distribution<LaneBasedTemplateGTUType> distributionOfLanebasedTemplateGTUType)
+            final Distribution<LaneBasedTemplateGTUType> distributionOfLanebasedTemplateGTUType)
     {
         this.distribution = distributionOfLanebasedTemplateGTUType;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException,
-        GTUException
+    public final LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException, GTUException
     {
         return this.distribution.draw().draw();
     }

@@ -40,7 +40,7 @@ public final class SpeedLimitUtil
 
     /** Maximum comfortable acceleration in the lateral direction. */
     public static final ParameterTypeAcceleration A_LAT = new ParameterTypeAcceleration("aLat",
-        "Maximum comfortable lateral acceleration", new Acceleration(1.0, AccelerationUnit.SI));
+            "Maximum comfortable lateral acceleration", new Acceleration(1.0, AccelerationUnit.SI));
 
     /**
      * Returns the minimum speed of the applicable speed limit types MAX_LEGAL_VEHICLE_SPEED, ROAD_CLASS, FIXED_SIGN and
@@ -55,16 +55,15 @@ public final class SpeedLimitUtil
         Throw.whenNull(speedLimitInfo, "Speed limit info may not be null.");
         SpeedLimitTypeSpeedLegal[] speedLimitTypes;
         if (speedLimitInfo.containsType(SpeedLimitTypes.FIXED_SIGN)
-            || speedLimitInfo.containsType(SpeedLimitTypes.DYNAMIC_SIGN))
+                || speedLimitInfo.containsType(SpeedLimitTypes.DYNAMIC_SIGN))
         {
-            speedLimitTypes =
-                new SpeedLimitTypeSpeedLegal[] {SpeedLimitTypes.MAX_LEGAL_VEHICLE_SPEED, SpeedLimitTypes.FIXED_SIGN,
-                    SpeedLimitTypes.DYNAMIC_SIGN};
+            speedLimitTypes = new SpeedLimitTypeSpeedLegal[] { SpeedLimitTypes.MAX_LEGAL_VEHICLE_SPEED,
+                    SpeedLimitTypes.FIXED_SIGN, SpeedLimitTypes.DYNAMIC_SIGN };
         }
         else
         {
             speedLimitTypes =
-                new SpeedLimitTypeSpeedLegal[] {SpeedLimitTypes.MAX_LEGAL_VEHICLE_SPEED, SpeedLimitTypes.ROAD_CLASS};
+                    new SpeedLimitTypeSpeedLegal[] { SpeedLimitTypes.MAX_LEGAL_VEHICLE_SPEED, SpeedLimitTypes.ROAD_CLASS };
         }
         Speed result = Speed.POSITIVE_INFINITY;
         for (SpeedLimitTypeSpeedLegal lsl : speedLimitTypes)
@@ -103,21 +102,20 @@ public final class SpeedLimitUtil
      * @throws ParameterException if a required parameter is not found
      */
     public static Acceleration considerSpeedLimitTransitions(final BehavioralCharacteristics behavioralCharacteristics,
-        final Speed speed, final SpeedLimitProspect speedLimitProspect, final CarFollowingModel carFollowingModel)
-        throws ParameterException
+            final Speed speed, final SpeedLimitProspect speedLimitProspect, final CarFollowingModel carFollowingModel)
+            throws ParameterException
     {
         Acceleration out = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
         SpeedLimitInfo currentSpeedLimitInfo = speedLimitProspect.getSpeedLimitInfo(Length.ZERO);
 
         // decelerate for curves and speed bumps
-        for (SpeedLimitType<?> speedLimitType : new SpeedLimitType[] {SpeedLimitTypes.CURVATURE, SpeedLimitTypes.SPEED_BUMP})
+        for (SpeedLimitType<?> speedLimitType : new SpeedLimitType[] { SpeedLimitTypes.CURVATURE, SpeedLimitTypes.SPEED_BUMP })
         {
             for (Length distance : speedLimitProspect.getDownstreamDistances(speedLimitType))
             {
                 SpeedLimitInfo speedLimitInfo = speedLimitProspect.buildSpeedLimitInfo(distance, speedLimitType);
                 Speed targetSpeed = carFollowingModel.desiredSpeed(behavioralCharacteristics, speedLimitInfo);
-                Acceleration a =
-                    CarFollowingUtil.approachTargetSpeed(carFollowingModel, behavioralCharacteristics, speed,
+                Acceleration a = CarFollowingUtil.approachTargetSpeed(carFollowingModel, behavioralCharacteristics, speed,
                         currentSpeedLimitInfo, distance, targetSpeed);
                 if (a.lt(out))
                 {
@@ -132,5 +130,5 @@ public final class SpeedLimitUtil
 
         return out;
     }
-    
+
 }

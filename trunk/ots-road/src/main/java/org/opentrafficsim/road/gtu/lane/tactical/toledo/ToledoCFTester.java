@@ -3,9 +3,9 @@ package org.opentrafficsim.road.gtu.lane.tactical.toledo;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -40,7 +40,7 @@ public class ToledoCFTester
         ToledoCarFollowing cf = new ToledoCarFollowing();
 
         Speed desiredSpeed = new Speed(120, SpeedUnit.KM_PER_HOUR);
-        Duration dt = new Duration(0.5, TimeUnit.SECOND);
+        Duration dt = new Duration(0.5, DurationUnit.SECOND);
         Time t = Time.ZERO;
 
         Speed speed = Speed.ZERO;

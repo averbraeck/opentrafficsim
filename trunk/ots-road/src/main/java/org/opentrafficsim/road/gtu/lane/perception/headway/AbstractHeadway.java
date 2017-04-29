@@ -83,8 +83,8 @@ public abstract class AbstractHeadway implements Headway
      * @param overlapRear the rear-rear distance to the other object
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    protected AbstractHeadway(final Length distance, final Length overlapFront, final Length overlap,
-            final Length overlapRear) throws GTUException
+    protected AbstractHeadway(final Length distance, final Length overlapFront, final Length overlap, final Length overlapRear)
+            throws GTUException
     {
         Throw.when(distance != null && (overlap != null || overlapFront != null || overlapRear != null), GTUException.class,
                 "overlap parameter cannot be null for front / rear headway");

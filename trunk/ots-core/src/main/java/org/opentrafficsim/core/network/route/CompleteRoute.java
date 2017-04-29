@@ -107,7 +107,7 @@ public class CompleteRoute extends Route
     {
         return "CompleteRoute [gtuType=" + this.gtuType + ", nodes=" + super.getNodes() + "]";
     }
-    
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")

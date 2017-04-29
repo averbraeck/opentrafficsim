@@ -69,7 +69,7 @@ public class IDMPlusTest implements UNITS
     {
         // Test 1. Check a car standing still with no leaders accelerates with maximum acceleration
         // cars have #10 and up
-        SimpleSimulator simulator = new SimpleSimulator(new Time(0, SECOND), new Duration(0, SECOND),
+        SimpleSimulator simulator = new SimpleSimulator(new Time(0, TimeUnit.BASE_SECOND), new Duration(0, SECOND),
                 new Duration(3600, SECOND), new IDMPlusTestModel());
         Length s0 = new Length(2, METER);
         GTUFollowingModelOld carFollowingModel = new IDMPlusOld(new Acceleration(1.25, METER_PER_SECOND_2),
@@ -79,7 +79,7 @@ public class IDMPlusTest implements UNITS
         compatibility.add(gtuType);
         LaneType laneType = new LaneType("CarLane", compatibility);
         Lane lane = CarTest.makeLane(this.network, laneType);
-        Time initialTime = new Time(0, SECOND);
+        Time initialTime = new Time(0, TimeUnit.BASE_SECOND);
         Length initialPosition = new Length(123.456, METER);
         Speed initialSpeed = new Speed(0, KM_PER_HOUR);
         Length length = new Length(5.0, METER);
@@ -313,7 +313,7 @@ public class IDMPlusTest implements UNITS
         leaderCar41.getTacticalPlanner().getPerception().perceive();
         for (int timeStep = 0; timeStep < 200; timeStep++)
         {
-            Time simulateUntil = new Time(0.1 * timeStep, TimeUnit.SI);
+            Time simulateUntil = new Time(0.1 * timeStep, TimeUnit.BASE_SECOND);
             simulator.runUpTo(simulateUntil);
             while (simulator.isRunning())
             {

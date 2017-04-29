@@ -29,10 +29,10 @@ public class DataSampler implements EventListenerInterface
 {
     /** The (ordered) set of observed lanes. */
     private final List<Lane> lanes;
-    
+
     /** The OTS Network that knows about all the GTUs and Lanes. */
     private final OTSNetwork network;
-    
+
     /** The GTUs currently in the network. */
     private final Set<String> gtus = new HashSet<>();
 
@@ -48,7 +48,7 @@ public class DataSampler implements EventListenerInterface
         network.addListener(this, Network.GTU_ADD_EVENT);
         network.addListener(this, Network.GTU_REMOVE_EVENT);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final void notify(final EventInterface event) throws RemoteException

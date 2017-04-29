@@ -55,15 +55,15 @@ public class AccelerationGTUColorer implements GTUColorer, Serializable
         {
             double ratio = index * 1.0 / (decelerationColors.length - 1);
             Acceleration acceleration = Acceleration.interpolate(this.maximumDeceleration, Acceleration.ZERO, ratio);
-            this.legend.add(new LegendEntry(decelerationColors[index], acceleration.toString(), "deceleration"
-                    + acceleration.toString()));
+            this.legend.add(new LegendEntry(decelerationColors[index], acceleration.toString(),
+                    "deceleration" + acceleration.toString()));
         }
         for (int index = 0; index < accelerationColors.length; index++)
         {
             double ratio = index * 1.0 / (accelerationColors.length - 1);
             Acceleration acceleration = Acceleration.interpolate(Acceleration.ZERO, this.maximumAcceleration, ratio);
-            this.legend.add(new LegendEntry(accelerationColors[index], acceleration.toString(), "acceleration"
-                    + acceleration.toString()));
+            this.legend.add(new LegendEntry(accelerationColors[index], acceleration.toString(),
+                    "acceleration" + acceleration.toString()));
         }
     }
 
@@ -75,15 +75,13 @@ public class AccelerationGTUColorer implements GTUColorer, Serializable
         double ratio;
         if (acceleration.getSI() < 0)
         {
-            ratio =
-                    decelerationColors.length - 1 - acceleration.getSI() / this.maximumDeceleration.getSI()
-                            * (decelerationColors.length - 1);
+            ratio = decelerationColors.length - 1
+                    - acceleration.getSI() / this.maximumDeceleration.getSI() * (decelerationColors.length - 1);
         }
         else
         {
-            ratio =
-                    acceleration.getSI() / this.maximumAcceleration.getSI() * (accelerationColors.length - 1)
-                            + decelerationColors.length - 1;
+            ratio = acceleration.getSI() / this.maximumAcceleration.getSI() * (accelerationColors.length - 1)
+                    + decelerationColors.length - 1;
         }
         if (ratio <= 0)
         {

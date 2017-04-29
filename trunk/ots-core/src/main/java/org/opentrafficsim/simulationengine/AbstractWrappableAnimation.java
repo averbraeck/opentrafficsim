@@ -110,8 +110,8 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
      */
     @SuppressWarnings("checkstyle:designforextension")
     protected SimpleAnimator buildSimpleAnimator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OTSModelInterface otsModel, final int replicationNumber) throws SimRuntimeException, NamingException,
-            PropertyException
+            final OTSModelInterface otsModel, final int replicationNumber)
+            throws SimRuntimeException, NamingException, PropertyException
     {
         return new SimpleAnimator(startTime, warmupPeriod, runLength, otsModel, replicationNumber);
     }
@@ -176,7 +176,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     {
         return new DefaultSwitchableGTUColorer();
     }
-    
+
     /**
      * Make additional tabs in the main simulation window.
      * @param simulator SimpleSimulatorInterface; the simulator
@@ -361,11 +361,11 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /** {@inheritDoc} */
     @Override
-    public final SimpleSimulatorInterface rebuildSimulator(final Rectangle rect) throws SimRuntimeException, NetworkException,
-            NamingException, OTSSimulationException, PropertyException
+    public final SimpleSimulatorInterface rebuildSimulator(final Rectangle rect)
+            throws SimRuntimeException, NetworkException, NamingException, OTSSimulationException, PropertyException
     {
-        return buildAnimator(this.savedStartTime, this.savedWarmupPeriod, this.savedRunLength,
-                this.savedUserModifiedProperties, rect, this.exitOnClose);
+        return buildAnimator(this.savedStartTime, this.savedWarmupPeriod, this.savedRunLength, this.savedUserModifiedProperties,
+                rect, this.exitOnClose);
     }
 
     /** {@inheritDoc} */

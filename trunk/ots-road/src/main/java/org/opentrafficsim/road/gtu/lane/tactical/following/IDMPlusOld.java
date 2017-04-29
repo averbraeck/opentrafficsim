@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.SortedMap;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -56,7 +56,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
      * Default step size used by IDMPlus (not defined in the paper, but 0.5s is a reasonable trade-off between computational
      * speed and accuracy).
      */
-    private static final Duration DEFAULT_STEP_SIZE = new Duration(0.5, TimeUnit.SECOND);
+    private static final Duration DEFAULT_STEP_SIZE = new Duration(0.5, DurationUnit.SECOND);
 
     /**
      * Construct a new IDM+ car following model with reasonable values (reasonable for passenger cars). <br>
@@ -69,7 +69,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
         this.a = new Acceleration(1.56, AccelerationUnit.METER_PER_SECOND_2);
         this.b = new Acceleration(2.09, AccelerationUnit.METER_PER_SECOND_2);
         this.s0 = new Length(3, LengthUnit.METER);
-        this.tSafe = new Duration(1.2, TimeUnit.SECOND);
+        this.tSafe = new Duration(1.2, DurationUnit.SECOND);
         this.delta = 1d;
     }
 
@@ -219,7 +219,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
     public final Length desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
             throws ParameterException
     {
-       throw new UnsupportedOperationException("Old car-following model does not support desired headway.");
+        throw new UnsupportedOperationException("Old car-following model does not support desired headway.");
     }
 
     /** {@inheritDoc} */

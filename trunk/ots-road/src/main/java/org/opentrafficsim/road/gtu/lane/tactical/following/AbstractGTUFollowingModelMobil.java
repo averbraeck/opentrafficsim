@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.following;
 import java.util.Collection;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -35,7 +36,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
     /** Prohibitive deceleration used to construct the TOODANGEROUS result below. */
     private static final AccelerationStep PROHIBITIVEACCELERATIONSTEP =
             new AccelerationStep(new Acceleration(Double.NEGATIVE_INFINITY, AccelerationUnit.SI),
-                    new Time(Double.NaN, TimeUnit.SI), new Duration(Double.NaN, TimeUnit.SI));
+                    new Time(Double.NaN, TimeUnit.BASE), new Duration(Double.NaN, DurationUnit.SI));
 
     /** Return value if lane change causes immediate collision. */
     public static final DualAccelerationStep TOODANGEROUS =
@@ -254,5 +255,5 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
         Length result = new Length(Math.min((minimumSI + maximumSI) / 2, maxDistance.si), LengthUnit.SI);
         return result;
     }
-    
+
 }

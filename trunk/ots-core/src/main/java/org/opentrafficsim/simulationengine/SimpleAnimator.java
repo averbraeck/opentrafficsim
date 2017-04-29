@@ -47,12 +47,12 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
      * @throws PropertyException when one of the user modified properties has the empty string as key
      */
     public SimpleAnimator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-        final OTSModelInterface model) throws SimRuntimeException, NamingException, PropertyException
+            final OTSModelInterface model) throws SimRuntimeException, NamingException, PropertyException
     {
         setPauseOnError(true);
         setAnimationDelay(20); // 50 Hz animation update
-        initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime), warmupPeriod,
-                runLength, model), ReplicationMode.TERMINATING);
+        initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime), warmupPeriod, runLength,
+                model), ReplicationMode.TERMINATING);
     }
 
     /**
@@ -68,24 +68,23 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
      * @throws PropertyException when one of the user modified properties has the empty string as key
      */
     public SimpleAnimator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-        final OTSModelInterface model, final int replication) throws SimRuntimeException, NamingException, PropertyException
+            final OTSModelInterface model, final int replication) throws SimRuntimeException, NamingException, PropertyException
     {
         setPauseOnError(true);
         setAnimationDelay(20); // 50 Hz animation update
-        initialize(new OTSReplication("rep" + replication, new OTSSimTimeDouble(startTime), warmupPeriod,
-            runLength, model), ReplicationMode.TERMINATING);
+        initialize(new OTSReplication("rep" + replication, new OTSSimTimeDouble(startTime), warmupPeriod, runLength, model),
+                ReplicationMode.TERMINATING);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final SimEvent<OTSSimTimeDouble> scheduleEvent(final Time executionTime, final short priority,
-        final Object source, final Object target, final String method, final Object[] args) throws SimRuntimeException
+    public final SimEvent<OTSSimTimeDouble> scheduleEvent(final Time executionTime, final short priority, final Object source,
+            final Object target, final String method, final Object[] args) throws SimRuntimeException
     {
-        SimEvent<OTSSimTimeDouble> result =
-            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time(executionTime.getSI(), TimeUnit.SECOND)),
-                priority, source, target, method, args);
+        SimEvent<OTSSimTimeDouble> result = new SimEvent<OTSSimTimeDouble>(
+                new OTSSimTimeDouble(new Time(executionTime.getSI(), TimeUnit.BASE)), priority, source, target, method, args);
         scheduleEvent(result);
         return result;
     }
-    
+
 }

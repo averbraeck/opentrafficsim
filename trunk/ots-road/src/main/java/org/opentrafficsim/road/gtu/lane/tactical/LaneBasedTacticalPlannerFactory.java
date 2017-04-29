@@ -25,7 +25,7 @@ public interface LaneBasedTacticalPlannerFactory<T extends LaneBasedTacticalPlan
      * @return set of behavioral characteristics with default values for the next tactical planner that will be generated
      */
     BehavioralCharacteristics getDefaultBehavioralCharacteristics();
-    
+
     /**
      * Creates a new tactical planner for the given GTU.
      * @param gtu GTU
@@ -33,5 +33,5 @@ public interface LaneBasedTacticalPlannerFactory<T extends LaneBasedTacticalPlan
      * @throws GTUException if the gtu is not suitable in any way for the creation of the tactical planner
      */
     T create(LaneBasedGTU gtu) throws GTUException;
-    
+
 }

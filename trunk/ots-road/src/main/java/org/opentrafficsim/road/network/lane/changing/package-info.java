@@ -18,4 +18,3 @@
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 package org.opentrafficsim.road.network.lane.changing;
-

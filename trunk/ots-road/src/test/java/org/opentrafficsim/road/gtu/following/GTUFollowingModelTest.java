@@ -109,8 +109,8 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         assertNotNull("minimum headway at speed 0 should be non null", minimumHeadway);
         assertTrue("minimum headway at speed 0 hould have value >= 0", 0 <= minimumHeadway.getSI());
         // System.out.println("minimum headway at speed " + speed + " is " + minimumHeadway);
-        SimpleSimulator simulator =
-                new SimpleSimulator(new Time(0, SECOND), new Duration(0, SECOND), new Duration(1800, SECOND), this);
+        SimpleSimulator simulator = new SimpleSimulator(new Time(0, TimeUnit.BASE_SECOND), new Duration(0, SECOND),
+                new Duration(1800, SECOND), this);
         GTUType carType = CAR;
         Set<GTUType> compatibility = new HashSet<GTUType>();
         compatibility.add(carType);
@@ -182,7 +182,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         Collection<Headway> otherGTUs = new ArrayList<Headway>();
         DualAccelerationStep asEmpty = gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);
         // System.out.println("asEmpty: [" + asEmpty[0] + ", " + asEmpty[1] + "]");
-        Time expectedValidUntil = new Time(stepSize.getSI(), TimeUnit.SI);
+        Time expectedValidUntil = new Time(stepSize.getSI(), TimeUnit.BASE_SECOND);
         checkAccelerationStep("Empty collection", asEmpty, noLeader.getAcceleration(), noLeader.getAcceleration(),
                 expectedValidUntil);
         otherGTUs.add(new HeadwayGTUSimple(gtu.getId(), gtu.getGTUType(), new Length(Double.NaN, LengthUnit.SI),

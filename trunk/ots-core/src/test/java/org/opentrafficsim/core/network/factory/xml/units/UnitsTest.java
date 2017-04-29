@@ -159,17 +159,19 @@ public class UnitsTest
     @Test
     public final void testPosition() throws NetworkException
     {
-        checkUnitAndValue(LengthUnits.parseLengthUnit("123456mm"), LengthUnits.parsePosition("123456mm").si, "mm", 123.456);
-        checkUnitAndValue(LengthUnits.parseLengthUnit("123456cm"), LengthUnits.parsePosition("123456cm").si, "cm", 1234.56);
-        checkUnitAndValue(LengthUnits.parseLengthUnit("123456dm"), LengthUnits.parsePosition("123456dm").si, "dm", 12345.6);
-        checkUnitAndValue(LengthUnits.parseLengthUnit("123.456dam"), LengthUnits.parsePosition("123.456dam").si, "dam", 1234.56);
-        checkUnitAndValue(LengthUnits.parseLengthUnit("123.456hm"), LengthUnits.parsePosition("123.456hm").si, "hm", 12345.6);
-        checkUnitAndValue(LengthUnits.parseLengthUnit("123.456m"), LengthUnits.parsePosition("123.456m").si, "m", 123.456);
-        checkUnitAndValue(LengthUnits.parseLengthUnit("123.456km"), LengthUnits.parsePosition("123.456km").si, "km", 123456);
-        checkUnitAndValue(LengthUnits.parseLengthUnit("123.456mi"), LengthUnits.parsePosition("123.456mi").si, "mi",
+        checkUnitAndValue(LengthUnits.parseLengthUnit("123456mm"), PositionUnits.parsePosition("123456mm").si, "mm", 123.456);
+        checkUnitAndValue(LengthUnits.parseLengthUnit("123456cm"), PositionUnits.parsePosition("123456cm").si, "cm", 1234.56);
+        checkUnitAndValue(LengthUnits.parseLengthUnit("123456dm"), PositionUnits.parsePosition("123456dm").si, "dm", 12345.6);
+        checkUnitAndValue(LengthUnits.parseLengthUnit("123.456dam"), PositionUnits.parsePosition("123.456dam").si, "dam",
+                1234.56);
+        checkUnitAndValue(LengthUnits.parseLengthUnit("123.456hm"), PositionUnits.parsePosition("123.456hm").si, "hm", 12345.6);
+        checkUnitAndValue(LengthUnits.parseLengthUnit("123.456m"), PositionUnits.parsePosition("123.456m").si, "m", 123.456);
+        checkUnitAndValue(LengthUnits.parseLengthUnit("123.456km"), PositionUnits.parsePosition("123.456km").si, "km", 123456);
+        checkUnitAndValue(LengthUnits.parseLengthUnit("123.456mi"), PositionUnits.parsePosition("123.456mi").si, "mi",
                 198683.172864);
-        checkUnitAndValue(LengthUnits.parseLengthUnit("123456y"), LengthUnits.parsePosition("123456y").si, "y", 112888.1664);
-        checkUnitAndValue(LengthUnits.parseLengthUnit("123456ft"), LengthUnits.parsePosition("123456ft").si, "ft", 37629.3888);
+        checkUnitAndValue(LengthUnits.parseLengthUnit("123456y"), PositionUnits.parsePosition("123456y").si, "y", 112888.1664);
+        checkUnitAndValue(LengthUnits.parseLengthUnit("123456ft"), PositionUnits.parsePosition("123456ft").si, "ft",
+                37629.3888);
         try
         {
             // FIXME: "123 m/s" is accepted by the parser
@@ -182,7 +184,7 @@ public class UnitsTest
         }
         try
         {
-            LengthUnits.parsePosition("123.34.56 m");
+            PositionUnits.parsePosition("123.34.56 m");
             fail("badly formatted number should have thrown a ... NetworkException");
         }
         catch (NetworkException ne)
@@ -282,15 +284,17 @@ public class UnitsTest
     @Test
     public final void testDurationUnits() throws NetworkException
     {
-        checkUnitAndValue(TimeUnits.parseTimeUnit("123456ms"), TimeUnits.parseDuration("123456ms").si, "ms", 123.456);
-        checkUnitAndValue(TimeUnits.parseTimeUnit("123456s"), TimeUnits.parseDuration("123456s").si, "s", 123456);
-        checkUnitAndValue(TimeUnits.parseTimeUnit("123.456m"), TimeUnits.parseDuration("123.456m").si, "m", 7407.36);
-        checkUnitAndValue(TimeUnits.parseTimeUnit("123.456min"), TimeUnits.parseDuration("123.456min").si, "min", 7407.36);
-        checkUnitAndValue(TimeUnits.parseTimeUnit("123.456h"), TimeUnits.parseDuration("123.456h").si, "h", 444441.6);
-        checkUnitAndValue(TimeUnits.parseTimeUnit("123.456hr"), TimeUnits.parseDuration("123.456hr").si, "hr", 444441.6);
-        checkUnitAndValue(TimeUnits.parseTimeUnit("1.23456 day"), TimeUnits.parseDuration("1.23456 day").si, "day", 106665.984);
-        checkUnitAndValue(TimeUnits.parseTimeUnit("1.23456 wk"), TimeUnits.parseDuration("1.23456 wk").si, "wk", 746661.888);
-        checkUnitAndValue(TimeUnits.parseTimeUnit("1.23456 week"), TimeUnits.parseDuration("1.23456 week").si, "week",
+        checkUnitAndValue(TimeUnits.parseTimeUnit("123456ms"), DurationUnits.parseDuration("123456ms").si, "ms", 123.456);
+        checkUnitAndValue(TimeUnits.parseTimeUnit("123456s"), DurationUnits.parseDuration("123456s").si, "s", 123456);
+        checkUnitAndValue(TimeUnits.parseTimeUnit("123.456m"), DurationUnits.parseDuration("123.456m").si, "m", 7407.36);
+        checkUnitAndValue(TimeUnits.parseTimeUnit("123.456min"), DurationUnits.parseDuration("123.456min").si, "min", 7407.36);
+        checkUnitAndValue(TimeUnits.parseTimeUnit("123.456h"), DurationUnits.parseDuration("123.456h").si, "h", 444441.6);
+        checkUnitAndValue(TimeUnits.parseTimeUnit("123.456hr"), DurationUnits.parseDuration("123.456hr").si, "hr", 444441.6);
+        checkUnitAndValue(TimeUnits.parseTimeUnit("1.23456 day"), DurationUnits.parseDuration("1.23456 day").si, "day",
+                106665.984);
+        checkUnitAndValue(TimeUnits.parseTimeUnit("1.23456 wk"), DurationUnits.parseDuration("1.23456 wk").si, "wk",
+                746661.888);
+        checkUnitAndValue(TimeUnits.parseTimeUnit("1.23456 week"), DurationUnits.parseDuration("1.23456 week").si, "week",
                 746661.888);
         try
         {
@@ -304,7 +308,7 @@ public class UnitsTest
         }
         try
         {
-            TimeUnits.parseDuration("123.34.56 s");
+            DurationUnits.parseDuration("123.34.56 s");
             fail("badly formatted number should have thrown a ... NetworkException");
         }
         catch (NetworkException ne)
@@ -320,22 +324,27 @@ public class UnitsTest
     @Test
     public final void testFrequencyUnits() throws NetworkException
     {
-        checkUnitAndValue(TimeUnits.parseFrequencyUnit("123.456/ms"), TimeUnits.parseFrequency("123.456/ms").si, "/ms", 123456);
-        checkUnitAndValue(TimeUnits.parseFrequencyUnit("123456/s"), TimeUnits.parseFrequency("123456/s").si, "/s", 123456);
-        checkUnitAndValue(TimeUnits.parseFrequencyUnit("123.456/m"), TimeUnits.parseFrequency("123.456/m").si, "/m", 2.0576);
-        checkUnitAndValue(TimeUnits.parseFrequencyUnit("123.456/min"), TimeUnits.parseFrequency("123.456/min").si, "/min",
+        checkUnitAndValue(DurationUnits.parseFrequencyUnit("123.456/ms"), DurationUnits.parseFrequency("123.456/ms").si, "/ms",
+                123456);
+        checkUnitAndValue(DurationUnits.parseFrequencyUnit("123456/s"), DurationUnits.parseFrequency("123456/s").si, "/s",
+                123456);
+        checkUnitAndValue(DurationUnits.parseFrequencyUnit("123.456/m"), DurationUnits.parseFrequency("123.456/m").si, "/m",
                 2.0576);
-        checkUnitAndValue(TimeUnits.parseFrequencyUnit("123.456/h"), TimeUnits.parseFrequency("123.456/h").si, "/h", 0.03429);
-        checkUnitAndValue(TimeUnits.parseFrequencyUnit("123.456/hr"), TimeUnits.parseFrequency("123.456/hr").si, "/hr", 0.03429);
-        checkUnitAndValue(TimeUnits.parseFrequencyUnit("123456 /day"), TimeUnits.parseFrequency("123456 /day").si, "/day",
-                1.42888888);
-        checkUnitAndValue(TimeUnits.parseFrequencyUnit("123456 /wk"), TimeUnits.parseFrequency("123456 /wk").si, "/wk",
+        checkUnitAndValue(DurationUnits.parseFrequencyUnit("123.456/min"), DurationUnits.parseFrequency("123.456/min").si,
+                "/min", 2.0576);
+        checkUnitAndValue(DurationUnits.parseFrequencyUnit("123.456/h"), DurationUnits.parseFrequency("123.456/h").si, "/h",
+                0.03429);
+        checkUnitAndValue(DurationUnits.parseFrequencyUnit("123.456/hr"), DurationUnits.parseFrequency("123.456/hr").si, "/hr",
+                0.03429);
+        checkUnitAndValue(DurationUnits.parseFrequencyUnit("123456 /day"), DurationUnits.parseFrequency("123456 /day").si,
+                "/day", 1.42888888);
+        checkUnitAndValue(DurationUnits.parseFrequencyUnit("123456 /wk"), DurationUnits.parseFrequency("123456 /wk").si, "/wk",
                 0.20412698);
-        checkUnitAndValue(TimeUnits.parseFrequencyUnit("123456 /week"), TimeUnits.parseFrequency("123456 /week").si, "/week",
-                0.20412698);
+        checkUnitAndValue(DurationUnits.parseFrequencyUnit("123456 /week"), DurationUnits.parseFrequency("123456 /week").si,
+                "/week", 0.20412698);
         try
         {
-            TimeUnits.parseFrequencyUnit("123 kg");
+            DurationUnits.parseFrequencyUnit("123 kg");
             fail("non-frequency unit should have thrown a ... NetworkException");
         }
         catch (NetworkException ne)
@@ -344,7 +353,7 @@ public class UnitsTest
         }
         try
         {
-            TimeUnits.parseFrequency("123.34.56 /s");
+            DurationUnits.parseFrequency("123.34.56 /s");
             fail("badly formatted number should have thrown a ... NetworkException");
         }
         catch (NetworkException ne)
@@ -364,7 +373,8 @@ public class UnitsTest
                 34.29333333);
         checkUnitAndValue(SpeedUnits.parseSpeedUnit("123.456mi/h"), SpeedUnits.parseSpeed("123.456mi/h").si, "mi/h", 55.18977);
         checkUnitAndValue(SpeedUnits.parseSpeedUnit("123456 m/s"), SpeedUnits.parseSpeed("123456 m/s").si, "m/s", 123456);
-        checkUnitAndValue(SpeedUnits.parseSpeedUnit("123.456ft/s"), SpeedUnits.parseSpeed("123.456ft/s").si, "ft/s", 37.6293888);
+        checkUnitAndValue(SpeedUnits.parseSpeedUnit("123.456ft/s"), SpeedUnits.parseSpeed("123.456ft/s").si, "ft/s",
+                37.6293888);
         try
         {
             SpeedUnits.parseSpeedUnit("123 s");

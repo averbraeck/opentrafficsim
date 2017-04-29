@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.naming.NamingException;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -79,7 +80,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
      */
     private static OTSDEVSSimulator makeSimulator() throws SimRuntimeException, NamingException
     {
-        return new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(1, TimeUnit.HOUR), new OTSModelInterface()
+        return new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), new OTSModelInterface()
         {
 
             /** */
@@ -260,7 +261,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create();
                 LaneChangeModel laneChangeModel = new Egoistic();
                 GTUFollowingModelOld gtuFollowingModel = new FixedAccelerationModel(
-                        new Acceleration(0, AccelerationUnit.METER_PER_SECOND_2), new Duration(10, TimeUnit.SECOND));
+                        new Acceleration(0, AccelerationUnit.METER_PER_SECOND_2), new Duration(10, DurationUnit.SECOND));
                 LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
                         new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
                 Speed initialSpeed = new Speed(10, SpeedUnit.METER_PER_SECOND);
@@ -282,7 +283,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                         // this.loggedEvents.size());
                     }
                 }
-                Time stopTime = new Time(100, TimeUnit.SECOND);
+                Time stopTime = new Time(100, TimeUnit.BASE_SECOND);
                 while (simulator.getSimulatorTime().get().lt(stopTime))
                 {
                     // System.out.println("simulation time is now " + simulator);

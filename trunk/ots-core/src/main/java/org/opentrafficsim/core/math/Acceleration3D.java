@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Locale;
 
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.AngleUnit;
+import org.djunits.unit.DirectionUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -34,7 +34,7 @@ public class Acceleration3D implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;
-    
+
     /** The acceleration in 3D (XYZ coded). */
     private final AccelerationVector acceleration;
 
@@ -63,7 +63,7 @@ public class Acceleration3D implements Serializable
     public Acceleration3D(final Acceleration x, final Acceleration y, final Acceleration z) throws ValueException
     {
         super();
-        this.acceleration = new AccelerationVector(new Acceleration[]{x, y, z}, StorageType.DENSE);
+        this.acceleration = new AccelerationVector(new Acceleration[] { x, y, z }, StorageType.DENSE);
     }
 
     /**
@@ -74,11 +74,10 @@ public class Acceleration3D implements Serializable
      * @param unit the unit of the xyz parameters
      * @throws ValueException in case the units are incorrect
      */
-    public Acceleration3D(final double x, final double y, final double z, final AccelerationUnit unit)
-        throws ValueException
+    public Acceleration3D(final double x, final double y, final double z, final AccelerationUnit unit) throws ValueException
     {
         super();
-        this.acceleration = new AccelerationVector(new double[]{x, y, z}, unit, StorageType.DENSE);
+        this.acceleration = new AccelerationVector(new double[] { x, y, z }, unit, StorageType.DENSE);
     }
 
     /**
@@ -88,8 +87,7 @@ public class Acceleration3D implements Serializable
      * @param phi Direction; the projected angle in the xy-plane from the x direction
      * @throws ValueException in case the vector does not have exactly three elements
      */
-    public Acceleration3D(final Acceleration acceleration, final Direction theta, final Direction phi)
-        throws ValueException
+    public Acceleration3D(final Acceleration acceleration, final Direction theta, final Direction phi) throws ValueException
     {
         super();
         double[] xyz = Scalar3D.polarToCartesian(acceleration.getInUnit(), theta.si, phi.si);
@@ -109,8 +107,9 @@ public class Acceleration3D implements Serializable
         catch (ValueException exception)
         {
             // should be impossible as we constructed the vector always with three elements
-            throw new RuntimeException("getX() gave an exception; apparently vector " + this.acceleration
-                + " was not constructed right", exception);
+            throw new RuntimeException(
+                    "getX() gave an exception; apparently vector " + this.acceleration + " was not constructed right",
+                    exception);
         }
     }
 
@@ -127,8 +126,9 @@ public class Acceleration3D implements Serializable
         catch (ValueException exception)
         {
             // should be impossible as we constructed the vector always with three elements
-            throw new RuntimeException("getY() gave an exception; apparently vector " + this.acceleration
-                + " was not constructed right", exception);
+            throw new RuntimeException(
+                    "getY() gave an exception; apparently vector " + this.acceleration + " was not constructed right",
+                    exception);
         }
     }
 
@@ -145,8 +145,9 @@ public class Acceleration3D implements Serializable
         catch (ValueException exception)
         {
             // should be impossible as we constructed the vector always with three elements
-            throw new RuntimeException("getZ() gave an exception; apparently vector " + this.acceleration
-                + " was not constructed right", exception);
+            throw new RuntimeException(
+                    "getZ() gave an exception; apparently vector " + this.acceleration + " was not constructed right",
+                    exception);
         }
     }
 
@@ -178,11 +179,12 @@ public class Acceleration3D implements Serializable
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
-        return String.format(Locale.US, "Acceleration3D %s (%s, theta %s, phi %s)", this.acceleration,
-            getAcceleration(), new Direction(getTheta().getInUnit(AngleUnit.DEGREE), AngleUnit.DEGREE), new Direction(
-                getPhi().getInUnit(AngleUnit.DEGREE), AngleUnit.DEGREE));
+        return String.format(Locale.US, "Acceleration3D %s (%s, theta %s, phi %s)", this.acceleration, getAcceleration(),
+                new Direction(getTheta().getInUnit(DirectionUnit.NORTH_DEGREE), DirectionUnit.NORTH_DEGREE),
+                new Direction(getPhi().getInUnit(DirectionUnit.NORTH_DEGREE), DirectionUnit.NORTH_DEGREE));
     }
 
 }

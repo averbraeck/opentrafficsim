@@ -81,8 +81,8 @@ public abstract class AbstractTrafficLight extends AbstractLaneBasedObject imple
     public final void setTrafficLightColor(final TrafficLightColor trafficLightColor)
     {
         this.trafficLightColor = trafficLightColor;
-        fireTimedEvent(TRAFFICLIGHT_CHANGE_EVENT, new Object[] { getId(), this, trafficLightColor }, this.simulator
-                .getSimulatorTime().get());
+        fireTimedEvent(TRAFFICLIGHT_CHANGE_EVENT, new Object[] { getId(), this, trafficLightColor },
+                this.simulator.getSimulatorTime().get());
     }
 
 }

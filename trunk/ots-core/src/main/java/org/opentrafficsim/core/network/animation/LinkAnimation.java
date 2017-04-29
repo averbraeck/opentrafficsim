@@ -122,7 +122,7 @@ public class LinkAnimation extends Renderable2D implements ClonableRenderable2DI
         {
             super(source, text, dx, dy, textPlacement, color, simulator);
         }
-        
+
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")

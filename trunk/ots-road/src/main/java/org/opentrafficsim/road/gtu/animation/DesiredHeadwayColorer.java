@@ -27,22 +27,22 @@ public class DesiredHeadwayColorer implements GTUColorer, Serializable
 
     /** */
     private static final long serialVersionUID = 20170420L;
-    
+
     /** The legend. */
     private static final List<LegendEntry> LEGEND;
-    
+
     /** Low color. */
     private static final Color LOW = Color.RED;
-    
+
     /** Middle color. */
     private static final Color MIDDLE = Color.YELLOW;
-    
+
     /** High color. */
     private static final Color HIGH = Color.GREEN;
-    
+
     /** Unknown color. */
     protected static final Color UNKNOWN = Color.WHITE;
-    
+
     static
     {
         LEGEND = new ArrayList<>(4);
@@ -94,7 +94,7 @@ public class DesiredHeadwayColorer implements GTUColorer, Serializable
     {
         return LEGEND;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String toString()

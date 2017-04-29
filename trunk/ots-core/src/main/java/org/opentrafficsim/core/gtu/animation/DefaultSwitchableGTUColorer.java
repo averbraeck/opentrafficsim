@@ -2,7 +2,6 @@ package org.opentrafficsim.core.gtu.animation;
 
 import java.io.Serializable;
 
-import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Speed;

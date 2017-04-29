@@ -34,7 +34,8 @@ public class SpeedSign extends AbstractLaneBasedObject
     private static final long serialVersionUID = 20170420L;
 
     /** End of day. */
-    private static final Time ENDOFDAY = new Time(24, TimeUnit.HOUR);
+    // TODO: 24 hours is the end of day 1, but not the end of day 2, 3, 4, ... of the simulation.
+    private static final Time ENDOFDAY = new Time(24, TimeUnit.BASE_HOUR);
 
     /** Speed limit. */
     private final Speed speed;
@@ -71,7 +72,7 @@ public class SpeedSign extends AbstractLaneBasedObject
         this.gtuType = gtuType;
         this.startTime = startTime;
         this.endTime = endTime;
-        
+
         try
         {
             new SpeedSignAnimation(this, simulator);
@@ -133,6 +134,7 @@ public class SpeedSign extends AbstractLaneBasedObject
     public SpeedSign(final String id, final Lane lane, final LongitudinalDirectionality direction,
             final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed) throws NetworkException
     {
+        // TODO Time.ZERO, ENDOFDAY only works for the first day in the simulation -- in the EPOCH year...
         this(id, lane, direction, longitudinalPosition, simulator, speed, GTUType.ALL, Time.ZERO, ENDOFDAY);
     }
 
@@ -249,5 +251,5 @@ public class SpeedSign extends AbstractLaneBasedObject
         return "SpeedSign [speed=" + this.speed + ", gtuType=" + this.gtuType + ", startTime=" + this.startTime + ", endTime="
                 + this.endTime + "]";
     }
-    
+
 }

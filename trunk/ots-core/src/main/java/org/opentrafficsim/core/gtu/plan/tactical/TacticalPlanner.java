@@ -37,13 +37,13 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  */
 public interface TacticalPlanner
 {
-    
+
     /**
      * Returns the GTU.
      * @return GTU
      */
     GTU getGtu();
-    
+
     /**
      * generate an operational plan, for now or for in the future.
      * @param startTime the time from which the new operational plan has to be operational
@@ -58,7 +58,7 @@ public interface TacticalPlanner
             throws OperationalPlanException, GTUException, NetworkException, ParameterException;
 
     /** @return the perception unit belonging to this tactical planner. */
-   Perception getPerception();
+    Perception getPerception();
 
     // TODO InitialXVT generateInitialXVT(GTUState gtu, DirectedPoint initialLocation, Speed desiredSpeed, GenerationPolicy
     // generationPolicy)

@@ -28,7 +28,7 @@ public final class FixCaption
      */
     static void fixCaption(final JFreeChart chart)
     {
-        chart.setTitle(new org.jfree.chart.title.TextTitle(chart.getTitle().getText(), new java.awt.Font("SansSerif",
-            java.awt.Font.BOLD, 16)));
+        chart.setTitle(new org.jfree.chart.title.TextTitle(chart.getTitle().getText(),
+                new java.awt.Font("SansSerif", java.awt.Font.BOLD, 16)));
     }
 }

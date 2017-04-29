@@ -7,4 +7,3 @@
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 package org.opentrafficsim.core.network.factory.xml.units;
-

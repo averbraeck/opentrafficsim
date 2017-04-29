@@ -3,8 +3,8 @@ package org.opentrafficsim.road.modelproperties;
 import java.util.ArrayList;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -57,8 +57,8 @@ public final class IDMPropertySet
                 10.0, "distance headway %.2fm", false, 2));
         subProperties.add(new ContinuousProperty(key + "tSafe", "tSafe", "time headway", tSafe.doubleValue(), 0.5, 1.5,
                 "time headway %.2fs", false, 3));
-        return new CompoundProperty(key, "IDM/IDM+ " + carType + " params", "Parameters for the " + carType
-                + " car following parameters", subProperties, true, displayPriority);
+        return new CompoundProperty(key, "IDM/IDM+ " + carType + " params",
+                "Parameters for the " + carType + " car following parameters", subProperties, true, displayPriority);
     }
 
     /**
@@ -98,7 +98,7 @@ public final class IDMPropertySet
      */
     public static Duration getTSafe(final CompoundProperty set)
     {
-        return new Duration(findSubProperty(set.getKey() + "tSafe", set), TimeUnit.SECOND);
+        return new Duration(findSubProperty(set.getKey() + "tSafe", set), DurationUnit.SECOND);
     }
 
     /**

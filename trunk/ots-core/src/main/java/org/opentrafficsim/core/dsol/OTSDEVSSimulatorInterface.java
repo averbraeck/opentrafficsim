@@ -115,7 +115,7 @@ public interface OTSDEVSSimulatorInterface
     /** {@inheritDoc} */
     @Override
     void setEventList(EventListInterface<OTSSimTimeDouble> eventList) throws SimRuntimeException;
-    
+
     /** {@inheritDoc} */
     @Override
     Replication<Time, Duration, OTSSimTimeDouble> getReplication();

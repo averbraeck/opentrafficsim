@@ -25,25 +25,25 @@ public enum TrafficLightColor
 
     /** Traffic light is not working. */
     BLACK;
-    
+
     /** @return whether the light is red. */
     public final boolean isRed()
     {
         return this.equals(RED);
     }
-    
+
     /** @return whether the light is yellow. */
     public final boolean isYellow()
     {
         return this.equals(YELLOW);
     }
-    
+
     /** @return whether the light is green. */
     public final boolean isGreen()
     {
         return this.equals(GREEN);
     }
-    
+
     /** @return whether the light is black (off). */
     public final boolean isBlack()
     {
@@ -51,4 +51,3 @@ public enum TrafficLightColor
     }
 
 }
-

@@ -6,9 +6,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -73,7 +73,7 @@ public abstract class AbstractGTUGenerator implements Serializable
     private final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist;
 
     /** Distribution of the interarrival time. */
-    private final ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> interarrivelTimeDist;
+    private final ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> interarrivelTimeDist;
 
     /** Generated number of GTUs. */
     private long generatedGTUs = 0;
@@ -104,7 +104,7 @@ public abstract class AbstractGTUGenerator implements Serializable
 
     /** Route generator. */
     private final RouteGenerator routeGenerator;
-    
+
     /** The network. */
     private final OTSNetwork network;
 
@@ -137,7 +137,7 @@ public abstract class AbstractGTUGenerator implements Serializable
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
             final Class<?> gtuClass, final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
-            final ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> interarrivelTimeDist, final long maxGTUs,
+            final ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> interarrivelTimeDist, final long maxGTUs,
             final Time startTime, final Time endTime, final Lane lane, final Length position, final GTUDirectionality direction,
             final GTUColorer gtuColorer,
             final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory,
@@ -217,7 +217,7 @@ public abstract class AbstractGTUGenerator implements Serializable
                 if (this.carBuilderList.size() == 1)
                 {
                     // first entry in list - start the watch thread
-                    getSimulator().scheduleEventRel(new Duration(0.1, TimeUnit.SECOND), this, this, "checkCarBuilderList",
+                    getSimulator().scheduleEventRel(new Duration(0.1, DurationUnit.SECOND), this, this, "checkCarBuilderList",
                             null);
                 }
             }
@@ -475,7 +475,7 @@ public abstract class AbstractGTUGenerator implements Serializable
         // only reschedule if list not empty
         if (!this.carBuilderList.isEmpty())
         {
-            getSimulator().scheduleEventRel(new Duration(0.1, TimeUnit.SECOND), this, this, "checkCarBuilderList", null);
+            getSimulator().scheduleEventRel(new Duration(0.1, DurationUnit.SECOND), this, this, "checkCarBuilderList", null);
         }
     }
 
@@ -526,7 +526,7 @@ public abstract class AbstractGTUGenerator implements Serializable
     /**
      * @return interarrivelTimeDist.
      */
-    public final ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> getInterarrivelTimeDist()
+    public final ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> getInterarrivelTimeDist()
     {
         return this.interarrivelTimeDist;
     }

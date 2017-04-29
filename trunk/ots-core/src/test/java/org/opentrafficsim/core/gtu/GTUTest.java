@@ -11,6 +11,7 @@ import java.rmi.RemoteException;
 import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -72,15 +73,14 @@ public class GTUTest implements OTSModelInterface
      * @throws OTSGeometryException should not happen uncaught; if it does the test has failed
      */
     @Test
-    public final void testAbstractGTU() throws GTUException, SimRuntimeException, NetworkException, NamingException,
-            RemoteException, OTSGeometryException
+    public final void testAbstractGTU()
+            throws GTUException, SimRuntimeException, NetworkException, NamingException, RemoteException, OTSGeometryException
     {
         TestGTU firstGTU = null;
         TestGTU lastGTU = null;
         OTSNetwork perceivableContext = new OTSNetwork("network");
-        OTSDEVSSimulatorInterface simulator =
-                new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI), new Duration(9999, TimeUnit.SI),
-                        this);
+        OTSDEVSSimulatorInterface simulator = new SimpleSimulator(new Time(0, TimeUnit.BASE), new Duration(0, DurationUnit.SI),
+                new Duration(9999, DurationUnit.SI), this);
         StrategicalPlanner strategicalPlanner = new StrategicalPlanner()
         {
 
@@ -339,7 +339,7 @@ class TestGTU extends AbstractGTU
      */
     TestGTU(final String id, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
 
-    final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
+            final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
     {
         super(id, gtuType, simulator, perceivableContext);
     }
@@ -354,7 +354,7 @@ class TestGTU extends AbstractGTU
      */
     TestGTU(final IdGenerator idGenerator, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
 
-    final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
+            final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
     {
         super(idGenerator, gtuType, simulator, perceivableContext);
     }

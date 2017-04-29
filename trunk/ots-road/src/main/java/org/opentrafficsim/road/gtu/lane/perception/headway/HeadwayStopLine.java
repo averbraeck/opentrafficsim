@@ -36,5 +36,5 @@ public final class HeadwayStopLine extends AbstractHeadwayCopy
     {
         return super.toString();
     }
-    
+
 }

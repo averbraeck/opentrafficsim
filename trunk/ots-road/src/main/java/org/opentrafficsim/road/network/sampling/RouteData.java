@@ -15,7 +15,7 @@ import org.opentrafficsim.kpi.interfaces.RouteDataInterface;
  */
 public class RouteData implements RouteDataInterface
 {
-    
+
     /** Route. */
     private final Route route;
 
@@ -34,7 +34,7 @@ public class RouteData implements RouteDataInterface
     {
         return this.route;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String getId()
@@ -89,5 +89,5 @@ public class RouteData implements RouteDataInterface
     {
         return "RouteData [route=" + this.route + "]";
     }
-    
+
 }

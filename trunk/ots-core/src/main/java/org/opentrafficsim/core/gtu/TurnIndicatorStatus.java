@@ -14,16 +14,16 @@ public enum TurnIndicatorStatus
 {
     /** None. */
     NONE,
-    
+
     /** Left. */
     LEFT,
-    
+
     /** Right. */
     RIGHT,
-    
+
     /** Hazard warning. */
     HAZARD,
-    
+
     /** Does not have a turn indicator. */
     NOTPRESENT;
 
@@ -34,7 +34,7 @@ public enum TurnIndicatorStatus
     {
         return this.equals(NONE);
     }
-    
+
     /**
      * @return whether left turn indicator is on
      */
@@ -58,7 +58,7 @@ public enum TurnIndicatorStatus
     {
         return this.equals(RIGHT);
     }
-    
+
     /**
      * @return whether right turn indicator or hazard light is on
      */
@@ -76,4 +76,3 @@ public enum TurnIndicatorStatus
     }
 
 }
-

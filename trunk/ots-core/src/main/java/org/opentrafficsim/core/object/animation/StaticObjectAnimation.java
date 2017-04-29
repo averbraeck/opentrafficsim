@@ -49,7 +49,7 @@ public class StaticObjectAnimation extends Renderable2D implements Serializable
      * @throws RemoteException on communication failure
      */
     public StaticObjectAnimation(final StaticObject source, final OTSSimulatorInterface simulator, final float width,
-        final Color color, final boolean fill) throws NamingException, RemoteException
+            final Color color, final boolean fill) throws NamingException, RemoteException
     {
         super(source, simulator);
         this.width = width;
@@ -66,7 +66,7 @@ public class StaticObjectAnimation extends Renderable2D implements Serializable
             Stroke oldStroke = graphics.getStroke();
             graphics.setStroke(new BasicStroke(this.width));
             PaintPolygons.paintMultiPolygon(graphics, this.color, getSource().getLocation(),
-                ((StaticObject) getSource()).getGeometry(), this.fill);
+                    ((StaticObject) getSource()).getGeometry(), this.fill);
             graphics.setStroke(oldStroke);
         }
     }

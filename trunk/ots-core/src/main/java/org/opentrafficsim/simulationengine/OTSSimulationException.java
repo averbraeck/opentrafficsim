@@ -1,6 +1,5 @@
 package org.opentrafficsim.simulationengine;
 
-
 /**
  * Exception for the operational plan, e.g. when a request is given outside the plan's validity.
  * <p>

@@ -2,6 +2,21 @@ package org.opentrafficsim.core.network.factory.xml.units;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+
+import org.djunits.unit.DurationUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.PositionUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Position;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
+import org.junit.Test;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+
 import nl.tudelft.simulation.jstats.distributions.DistBeta;
 import nl.tudelft.simulation.jstats.distributions.DistConstant;
 import nl.tudelft.simulation.jstats.distributions.DistErlang;
@@ -14,18 +29,6 @@ import nl.tudelft.simulation.jstats.distributions.DistPearson6;
 import nl.tudelft.simulation.jstats.distributions.DistTriangular;
 import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.distributions.DistWeibull;
-
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Position;
-import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
-import org.junit.Test;
-import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 
 /**
  * Test the Distributions parser.
@@ -52,14 +55,16 @@ public class DistributionsTest
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist = Distributions.parseLengthDist("UNIFORM(1, 3) m");
         assertEquals("unit is length", LengthUnit.METER, lengthDist.getUnit());
         assertEquals("distribution is uniform", DistUniform.class, lengthDist.getDistribution().getClass());
-        ContinuousDistDoubleScalar.Abs<Position, LengthUnit> positionDist = Distributions.parsePositionDist("UNIFORM(1, 3) m");
-        assertEquals("unit is length", LengthUnit.METER, positionDist.getUnit());
+        ContinuousDistDoubleScalar.Abs<Position, PositionUnit, LengthUnit> positionDist =
+                Distributions.parsePositionDist("UNIFORM(1, 3) m");
+        assertEquals("unit is position", PositionUnit.METER, positionDist.getUnit());
         assertEquals("distribution is uniform", DistUniform.class, positionDist.getDistribution().getClass());
-        ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> durationDist = Distributions.parseDurationDist("UNIFORM(1, 3) s");
-        assertEquals("unit is time", TimeUnit.SECOND, durationDist.getUnit());
+        ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> durationDist =
+                Distributions.parseDurationDist("UNIFORM(1, 3) s");
+        assertEquals("unit is duration", DurationUnit.SI, durationDist.getUnit());
         assertEquals("distribution is uniform", DistUniform.class, durationDist.getDistribution().getClass());
-        ContinuousDistDoubleScalar.Abs<Time, TimeUnit> timeDist = Distributions.parseTimeDist("UNIFORM(1, 3) s");
-        assertEquals("unit is time", TimeUnit.SECOND, timeDist.getUnit());
+        ContinuousDistDoubleScalar.Abs<Time, TimeUnit, DurationUnit> timeDist = Distributions.parseTimeDist("UNIFORM(1, 3) s");
+        assertEquals("unit is time", TimeUnit.BASE, timeDist.getUnit());
         assertEquals("distribution is uniform", DistUniform.class, positionDist.getDistribution().getClass());
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedDist = Distributions.parseSpeedDist("UNIFORM(1, 3) m/s");
         assertEquals("unit is speed", SpeedUnit.METER_PER_SECOND, speedDist.getUnit());

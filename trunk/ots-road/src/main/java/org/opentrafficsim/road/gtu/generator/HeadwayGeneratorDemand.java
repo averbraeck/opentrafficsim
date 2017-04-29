@@ -152,7 +152,7 @@ public class HeadwayGeneratorDemand implements Generator<Duration>
         // escape if beyond specified time by infinite next arrival (= no traffic)
         if (i == this.timeVector.size() - 1)
         {
-            return new Time(Double.POSITIVE_INFINITY, TimeUnit.SI);
+            return new Time(Double.POSITIVE_INFINITY, TimeUnit.BASE);
         }
 
         // skip zero-demand periods
@@ -176,7 +176,7 @@ public class HeadwayGeneratorDemand implements Generator<Duration>
         double t = -Math.log(this.simulator.getReplication().getStream(HEADWAY_STREAM).nextDouble()) / demand.si;
 
         // calculate arrival
-        Time arrival = new Time(this.timeVector.get(i).si + start.si + t * fractionRemaining, TimeUnit.SI);
+        Time arrival = new Time(this.timeVector.get(i).si + start.si + t * fractionRemaining, TimeUnit.BASE);
 
         // go to next period if arrival is beyond current period
         if (arrival.gt(this.timeVector.get(i + 1)))

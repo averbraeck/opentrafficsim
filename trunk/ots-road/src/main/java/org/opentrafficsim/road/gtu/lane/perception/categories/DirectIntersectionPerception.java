@@ -68,7 +68,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
 
     /** Conflicts alongside right. */
     private TimeStampedObject<Boolean> alongsideConflictRight;
-    
+
     /** Headway GTU type that should be used. */
     private final HeadwayGtuType headwayGtuType;
 
@@ -272,7 +272,8 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                                 HeadwayGTU gtu;
                                 if (nextDistance.ge(otherConflict.getLength()))
                                 {
-                                    gtu = this.headwayGtuType.createHeadwayGtu(next, nextDistance.minus(otherConflict.getLength()));
+                                    gtu = this.headwayGtuType.createHeadwayGtu(next,
+                                            nextDistance.minus(otherConflict.getLength()));
                                 }
                                 else
                                 {

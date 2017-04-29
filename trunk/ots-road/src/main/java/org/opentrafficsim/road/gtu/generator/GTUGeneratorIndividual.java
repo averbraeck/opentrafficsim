@@ -2,9 +2,9 @@ package org.opentrafficsim.road.gtu.generator;
 
 import java.io.Serializable;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -74,19 +74,18 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public GTUGeneratorIndividual(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
-        final Class<?> gtuClass, final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
-        final ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> interarrivelTimeDist,
-        final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist,
-        final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDist,
-        final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist, final long maxGTUs,
-        final Time startTime, final Time endTime, final Lane lane, final Length position,
-        final GTUDirectionality direction, final GTUColorer gtuColorer,
-        final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory,
-        final RouteGenerator routeGenerator,
-        final OTSNetwork network) throws SimRuntimeException
+            final Class<?> gtuClass, final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
+            final ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> interarrivelTimeDist,
+            final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist,
+            final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDist,
+            final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist, final long maxGTUs, final Time startTime,
+            final Time endTime, final Lane lane, final Length position, final GTUDirectionality direction,
+            final GTUColorer gtuColorer,
+            final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory,
+            final RouteGenerator routeGenerator, final OTSNetwork network) throws SimRuntimeException
     {
-        super(name, simulator, gtuType, gtuClass, initialSpeedDist, interarrivelTimeDist, maxGTUs, startTime, endTime,
-            lane, position, direction, gtuColorer, strategicalPlannerFactory, routeGenerator, network);
+        super(name, simulator, gtuType, gtuClass, initialSpeedDist, interarrivelTimeDist, maxGTUs, startTime, endTime, lane,
+                position, direction, gtuColorer, strategicalPlannerFactory, routeGenerator, network);
         this.simulator = simulator;
         this.lengthDist = lengthDist;
         this.widthDist = widthDist;
@@ -128,8 +127,8 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
     @Override
     public final String toString()
     {
-        return "GTUGeneratorIndividual [lengthDist=" + this.lengthDist + ", widthDist=" + this.widthDist
-                + ", maximumSpeedDist=" + this.maximumSpeedDist + "]";
+        return "GTUGeneratorIndividual [lengthDist=" + this.lengthDist + ", widthDist=" + this.widthDist + ", maximumSpeedDist="
+                + this.maximumSpeedDist + "]";
     }
 
 }

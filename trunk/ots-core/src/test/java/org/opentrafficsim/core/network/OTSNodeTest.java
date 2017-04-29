@@ -12,10 +12,9 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
-import mockit.MockUp;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.unit.AngleUnit;
+import org.djunits.unit.DirectionUnit;
+import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -24,6 +23,9 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
+
+import mockit.MockUp;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Test the OTSNode class.
@@ -48,8 +50,8 @@ public class OTSNodeTest
     public final void testOTSNode() throws NetworkException, OTSGeometryException
     {
         Network network = new OTSNetwork("Node test network");
-        Direction direction = new Direction(2.3, AngleUnit.RADIAN);
-        Direction slope = new Direction(10, AngleUnit.PERCENT);
+        Direction direction = new Direction(2.3, DirectionUnit.NORTH_RADIAN);
+        Angle slope = new Angle(10, AngleUnit.PERCENT);
         OTSPoint3D point1 = new OTSPoint3D(20, 40, 60);
         OTSNode node1 = new OTSNode(network, "node 1", point1, direction, slope);
         assertEquals("network matches", network, node1.getNetwork());
@@ -65,7 +67,7 @@ public class OTSNodeTest
         assertEquals("name matches", "node 2", node2.getId());
         assertEquals("point matches", point2, node2.getPoint());
         assertEquals("direction matches", Direction.ZERO, node2.getDirection());
-        assertEquals("slope matches", Direction.ZERO, node2.getSlope());
+        assertEquals("slope matches", Angle.ZERO, node2.getSlope());
         assertTrue("Node 1 matches itself", node1.equals(node1));
         assertFalse("Node 1 does not match null", node1.equals(null));
         assertFalse("Node 1 does not match some String", node1.equals("Hello World!"));

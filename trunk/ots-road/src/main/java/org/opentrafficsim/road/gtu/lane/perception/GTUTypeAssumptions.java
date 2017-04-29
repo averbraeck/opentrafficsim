@@ -141,9 +141,8 @@ public class GTUTypeAssumptions implements Serializable
     {
         final int prime = 31;
         int result = 1;
-        result =
-                prime * result
-                        + ((this.behavioralCharacteristicsMap == null) ? 0 : this.behavioralCharacteristicsMap.hashCode());
+        result = prime * result
+                + ((this.behavioralCharacteristicsMap == null) ? 0 : this.behavioralCharacteristicsMap.hashCode());
         result = prime * result + ((this.carFollowingModelMap == null) ? 0 : this.carFollowingModelMap.hashCode());
         result = prime * result + ((this.laneTypeSpeedMap == null) ? 0 : this.laneTypeSpeedMap.hashCode());
         return result;

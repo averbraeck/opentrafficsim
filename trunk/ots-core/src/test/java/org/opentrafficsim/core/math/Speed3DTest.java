@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.djunits.unit.AngleUnit;
+import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
@@ -92,8 +92,8 @@ public class Speed3DTest
         double theta = Math.PI * 0.4;
         double phi = Math.PI * 0.3;
         double length = 10;
-        s3d = new Speed3D(Speed.createSI(length), new Direction(theta, AngleUnit.RADIAN),
-                new Direction(phi, AngleUnit.RADIAN));
+        s3d = new Speed3D(Speed.createSI(length), new Direction(theta, DirectionUnit.NORTH_RADIAN),
+                new Direction(phi, DirectionUnit.NORTH_RADIAN));
         checkSpeed(s3d, length * Math.cos(phi) * Math.sin(theta), length * Math.sin(phi) * Math.sin(theta),
                 length * Math.cos(theta));
         assertTrue("toString output contains class name", s3d.toString().contains("Speed3D"));

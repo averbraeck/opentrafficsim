@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
@@ -79,7 +79,7 @@ public class TotalDelayReference extends AbstractIndicator<Duration>
                                 refV = (refSpeed.get(i - 1).si + refSpeed.get(i).si) / 2.0;
                             }
                             double dx = x[i] - x[i - 1];
-                            sumRefTime = sumRefTime.plus(new Duration(dx / refV, TimeUnit.SI));
+                            sumRefTime = sumRefTime.plus(new Duration(dx / refV, DurationUnit.SI));
                         }
                     }
                     catch (ValueException exception)

@@ -79,8 +79,8 @@ public class ParameterTypeDouble extends AbstractParameterType<Dimensionless> im
     private ParameterTypeDouble(final String id, final String description, final double defaultValue, final Check check,
             final boolean hasDefaultValue)
     {
-        super(id, description, Dimensionless.class, hasDefaultValue ? new Dimensionless(defaultValue, DimensionlessUnit.SI)
-                : null, check, hasDefaultValue);
+        super(id, description, Dimensionless.class,
+                hasDefaultValue ? new Dimensionless(defaultValue, DimensionlessUnit.SI) : null, check, hasDefaultValue);
         try
         {
             // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of

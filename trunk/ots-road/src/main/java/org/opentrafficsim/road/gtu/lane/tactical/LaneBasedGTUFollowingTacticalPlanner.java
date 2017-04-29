@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
@@ -68,7 +68,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
         if (laneBasedGTU.getMaximumSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
         {
-            return new OperationalPlan(getGtu(), locationAtStartTime, startTime, new Duration(1.0, TimeUnit.SECOND));
+            return new OperationalPlan(getGtu(), locationAtStartTime, startTime, new Duration(1.0, DurationUnit.SECOND));
         }
 
         // perceive every time step... This is the 'classical' way of tactical planning.

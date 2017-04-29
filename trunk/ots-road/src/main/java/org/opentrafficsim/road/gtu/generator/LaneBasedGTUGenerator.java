@@ -8,8 +8,8 @@ import java.util.Set;
 import javax.naming.NamingException;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -77,7 +77,7 @@ public class LaneBasedGTUGenerator implements Serializable
     private long generatedGTUs = 0;
 
     /** Retry interval for checking if a GTU can be placed. */
-    Duration reTryInterval = new Duration(0.1, TimeUnit.SI);
+    Duration reTryInterval = new Duration(0.1, DurationUnit.SI);
 
     /** The location and initial direction of the generated GTUs. */
     final Set<DirectedLanePosition> initialLongitudinalPositions;

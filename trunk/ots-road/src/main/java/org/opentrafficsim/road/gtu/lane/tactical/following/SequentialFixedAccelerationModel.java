@@ -49,7 +49,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
      * @param maximumSafeDeceleration specified maximum safe deceleration
      */
     public SequentialFixedAccelerationModel(final OTSDEVSSimulatorInterface simulator,
-        final Acceleration maximumSafeDeceleration)
+            final Acceleration maximumSafeDeceleration)
     {
         this.simulator = simulator;
         this.maximumSafeDeceleration = maximumSafeDeceleration;
@@ -62,7 +62,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
      * @param steps Set&lt;FixedAccelerationModel&gt;; the list of FixedAccelerationModel steps.
      */
     public SequentialFixedAccelerationModel(final OTSDEVSSimulatorInterface simulator,
-        final Acceleration maximumSafeDeceleration, final Set<FixedAccelerationModel> steps)
+            final Acceleration maximumSafeDeceleration, final Set<FixedAccelerationModel> steps)
     {
         this(simulator, maximumSafeDeceleration);
         this.steps.addAll(steps);
@@ -105,7 +105,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
      */
     public final Time timeAfterCompletionOfStep(final int index)
     {
-        Time sum = new Time(0, TimeUnit.SI);
+        Time sum = new Time(0, TimeUnit.BASE);
         for (int i = 0; i <= index; i++)
         {
             sum = sum.plus(this.steps.get(i).getDuration());
@@ -142,7 +142,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
     /** {@inheritDoc} */
     @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
-        final Speed leaderSpeed, final Length headway, final Speed speedLimit)
+            final Speed leaderSpeed, final Length headway, final Speed speedLimit)
     {
         return getAccelerationModel().getAcceleration();
     }
@@ -150,7 +150,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
     /** {@inheritDoc} */
     @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
-        final Speed leaderSpeed, final Length headway, final Speed speedLimit, final Duration stepSize)
+            final Speed leaderSpeed, final Length headway, final Speed speedLimit, final Duration stepSize)
     {
         // TODO incorporate stepSize
         return getAccelerationModel().getAcceleration();
@@ -183,7 +183,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
     {
         return "Fixed sequential acceleration model";
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final void setA(final Acceleration a)
@@ -197,7 +197,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
     {
         //
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final void setFspeed(final double fSpeed)
@@ -210,7 +210,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
     /** {@inheritDoc} */
     @Override
     public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedInfo)
-        throws ParameterException
+            throws ParameterException
     {
         return null;
     }
@@ -218,7 +218,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
     /** {@inheritDoc} */
     @Override
     public final Length desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
-        throws ParameterException
+            throws ParameterException
     {
         return null;
     }
@@ -226,7 +226,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
     /** {@inheritDoc} */
     @Override
     public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
-        final Speed speed, final SpeedLimitInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
+            final Speed speed, final SpeedLimitInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
         return null;
     }
@@ -236,7 +236,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
     public final String toString()
     {
         return "SequentialFixedAccelerationModel [steps=" + this.steps + ", maximumSafeDeceleration="
-            + this.maximumSafeDeceleration + "]";
+                + this.maximumSafeDeceleration + "]";
     }
 
 }

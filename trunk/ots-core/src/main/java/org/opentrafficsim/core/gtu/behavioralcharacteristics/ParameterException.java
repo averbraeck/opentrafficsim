@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
-
 /**
  * Throwable for exceptions regarding parameters.
  * <p>

@@ -2,9 +2,8 @@ package org.opentrafficsim.road.gtu.lane.tactical.util;
 
 import java.io.Serializable;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -73,8 +72,7 @@ public final class AnticipationInfo implements Serializable
     public static AnticipationInfo anticipateMovement(final Length distance, final Speed initialSpeed,
             final Acceleration acceleration)
     {
-        return anticipateMovementSpeedLimited(distance, initialSpeed, acceleration,
-                Speed.POSITIVE_INFINITY);
+        return anticipateMovementSpeedLimited(distance, initialSpeed, acceleration, Speed.POSITIVE_INFINITY);
     }
 
     /**
@@ -100,17 +98,17 @@ public final class AnticipationInfo implements Serializable
                 return new AnticipationInfo(distance.divideBy(initialSpeed), initialSpeed);
             }
             // stand-still, so infinite
-            return new AnticipationInfo(new Duration(Double.POSITIVE_INFINITY, TimeUnit.SI), Speed.ZERO);
+            return new AnticipationInfo(new Duration(Double.POSITIVE_INFINITY, DurationUnit.SI), Speed.ZERO);
         }
         // solve parabolic movement
         double tmp = initialSpeed.si * initialSpeed.si + 2.0 * acceleration.si * distance.si;
         if (tmp < 0)
         {
             // will never cover distance due to deceleration
-            return new AnticipationInfo(new Duration(Double.POSITIVE_INFINITY, TimeUnit.SI), Speed.ZERO);
+            return new AnticipationInfo(new Duration(Double.POSITIVE_INFINITY, DurationUnit.SI), Speed.ZERO);
         }
         // parabolic solution
-        Duration d = new Duration((Math.sqrt(tmp) - initialSpeed.si) / acceleration.si, TimeUnit.SI);
+        Duration d = new Duration((Math.sqrt(tmp) - initialSpeed.si) / acceleration.si, DurationUnit.SI);
         // check max speed
         Speed endSpeed = initialSpeed.plus(acceleration.multiplyBy(d));
         if (endSpeed.le(maxSpeed))
@@ -172,7 +170,7 @@ public final class AnticipationInfo implements Serializable
                 }
                 else
                 {
-                    timeInStep = new Duration(tmp / a.si, TimeUnit.SI);
+                    timeInStep = new Duration(tmp / a.si, DurationUnit.SI);
                     speed = speed.plus(a.multiplyBy(timeInStep));
                 }
                 out = out.plus(timeInStep);

@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.strategical.od;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 
@@ -25,7 +25,7 @@ public enum Interpolation
         /** {@inheritDoc} */
         @Override
         Frequency interpolate(final Frequency frequency0, final Duration time0, final Frequency frequency1,
-            final Duration time1, final Duration time)
+                final Duration time1, final Duration time)
         {
             return frequency0;
         }
@@ -34,8 +34,8 @@ public enum Interpolation
         @Override
         int integrate(final Frequency frequency0, final Duration time0, final Frequency frequency1, final Duration time1)
         {
-            return (int) (frequency0.getInUnit(FrequencyUnit.PER_HOUR) * (time1.getInUnit(TimeUnit.HOUR) - time0
-                .getInUnit(TimeUnit.HOUR)));
+            return (int) (frequency0.getInUnit(FrequencyUnit.PER_HOUR)
+                    * (time1.getInUnit(DurationUnit.HOUR) - time0.getInUnit(DurationUnit.HOUR)));
         }
     },
 
@@ -45,7 +45,7 @@ public enum Interpolation
         /** {@inheritDoc} */
         @Override
         Frequency interpolate(final Frequency frequency0, final Duration time0, final Frequency frequency1,
-            final Duration time1, final Duration time)
+                final Duration time1, final Duration time)
         {
             return Frequency.interpolate(frequency0, frequency1, (time.si - time0.si) / (time1.si - time0.si));
         }
@@ -54,8 +54,8 @@ public enum Interpolation
         @Override
         int integrate(final Frequency frequency0, final Duration time0, final Frequency frequency1, final Duration time1)
         {
-            return (int) (0.5 * (frequency0.getInUnit(FrequencyUnit.PER_HOUR) + frequency1.getInUnit(FrequencyUnit.PER_HOUR)) * (time1
-                .getInUnit(TimeUnit.HOUR) - time0.getInUnit(TimeUnit.HOUR)));
+            return (int) (0.5 * (frequency0.getInUnit(FrequencyUnit.PER_HOUR) + frequency1.getInUnit(FrequencyUnit.PER_HOUR))
+                    * (time1.getInUnit(DurationUnit.HOUR) - time0.getInUnit(DurationUnit.HOUR)));
         }
     };
 
@@ -68,8 +68,7 @@ public enum Interpolation
      * @param time {@code time0} &le; {@code time} &lt; {@code time1}
      * @return interpolated frequency
      */
-    abstract Frequency
-        interpolate(Frequency frequency0, Duration time0, Frequency frequency1, Duration time1, Duration time);
+    abstract Frequency interpolate(Frequency frequency0, Duration time0, Frequency frequency1, Duration time1, Duration time);
 
     /**
      * Integrates to the number of trips in given period.
@@ -88,7 +87,7 @@ public enum Interpolation
     {
         return this.equals(STEPWISE);
     }
-    
+
     /**
      * @return whether this is linear interpolation
      */

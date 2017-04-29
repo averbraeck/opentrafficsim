@@ -22,7 +22,7 @@ public class IDMPlusMultiFactory implements CarFollowingModelFactory<IDMPlusMult
     {
         return this.idmPlusMulti;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -131,7 +132,7 @@ public class OperationalPlan implements Serializable
         {
             throw new OperationalPlanException(exception);
         }
-        this.totalDuration = new Duration(durationSI, TimeUnit.SI);
+        this.totalDuration = new Duration(durationSI, DurationUnit.SI);
         this.totalLength = new Length(distanceSI, LengthUnit.SI);
         this.endSpeed = v0;
 
@@ -374,7 +375,7 @@ public class OperationalPlan implements Serializable
             if (this.startTime.si + this.segmentStartTimesRelSI[i + 1] >= time.si)
             {
                 return new SegmentProgress(this.operationalPlanSegmentList.get(i),
-                        new Time(this.startTime.si + this.segmentStartTimesRelSI[i], TimeUnit.SI),
+                        new Time(this.startTime.si + this.segmentStartTimesRelSI[i], TimeUnit.BASE),
                         new Length(cumulativeDistance, LengthUnit.SI));
             }
             cumulativeDistance += this.operationalPlanSegmentList.get(i).distanceSI();
@@ -399,12 +400,12 @@ public class OperationalPlan implements Serializable
             {
                 return new Time(
                         timeAtStartOfSegment + segment.timeAtDistance(new Length(remainingDistanceSI, LengthUnit.SI)).si,
-                        TimeUnit.SI);
+                        TimeUnit.BASE);
             }
             remainingDistanceSI -= distanceOfSegment;
             timeAtStartOfSegment += segment.getDurationSI();
         }
-        return new Time(Double.NaN, TimeUnit.SI);
+        return new Time(Double.NaN, TimeUnit.BASE);
     }
 
     /**
@@ -868,7 +869,7 @@ public class OperationalPlan implements Serializable
             {
                 if (solution >= 0 && solution <= this.duration.si)
                 {
-                    return new Duration(solution, TimeUnit.SI);
+                    return new Duration(solution, DurationUnit.SI);
                 }
             }
             System.err.println("AccelerationSegment " + this + " timeAtDistance( " + distance + ") failed");
@@ -952,7 +953,7 @@ public class OperationalPlan implements Serializable
             double[] solution = Solver.solve(this.v0.si, -distance.si);
             if (solution.length > 0 && solution[0] >= 0 && solution[0] <= getDurationSI())
             {
-                return new Duration(solution[0], TimeUnit.SI);
+                return new Duration(solution[0], DurationUnit.SI);
             }
             System.err.println("SpeedSegment " + this + " timeAtDistance( " + distance + ") failed");
             return null; // No valid solution

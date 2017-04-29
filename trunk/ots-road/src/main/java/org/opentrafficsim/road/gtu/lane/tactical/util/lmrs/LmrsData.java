@@ -8,8 +8,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 /**
  * Keeps data for LMRS for a specific GTU.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
- * <br>
+ * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 8 nov. 2016 <br>
@@ -79,10 +78,10 @@ public final class LmrsData
     {
         return this.syncVehicle == null ? false : gtu.getId().equals(this.syncVehicle);
     }
-    
+
     /**
-     * Returns the gtu from the set that is the current sync vehicle, or {@code null} of there is no sync vehicle or it is
-     * not in the set.
+     * Returns the gtu from the set that is the current sync vehicle, or {@code null} of there is no sync vehicle or it is not
+     * in the set.
      * @param adjLeaders leaders in adjacent lane
      * @return gtu from the set that is the current sync vehicle
      */

@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.gtu;
 
-import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 import static org.junit.Assert.assertTrue;
+import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 
 import org.junit.Test;
 

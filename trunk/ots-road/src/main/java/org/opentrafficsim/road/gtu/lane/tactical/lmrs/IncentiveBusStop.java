@@ -74,16 +74,16 @@ public class IncentiveBusStop implements MandatoryIncentive
             double d = -IncentiveRoute.getDesireToLeave(behavioralCharacteristics, firstStop.getDistance(), 1, speed);
             return new Desire(d, d);
         }
-        
+
         int n = firstStop.getRelativeLane().getNumLanes();
-        
+
         double dNotGood = -IncentiveRoute.getDesireToLeave(behavioralCharacteristics, firstStop.getDistance(), n + 1, speed);
         double dGood = IncentiveRoute.getDesireToLeave(behavioralCharacteristics, firstStop.getDistance(), n, speed);
         return firstStop.getRelativeLane().getLateralDirectionality().isRight() ? new Desire(dNotGood, dGood)
                 : new Desire(dGood, dNotGood);
 
     }
-    
+
     @Override
     public final String toString()
     {

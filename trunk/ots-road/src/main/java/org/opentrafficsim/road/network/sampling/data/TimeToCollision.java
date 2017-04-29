@@ -3,7 +3,7 @@ package org.opentrafficsim.road.network.sampling.data;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -76,21 +76,21 @@ public class TimeToCollision extends ExtendedDataTypeDuration
                     // gtu found, calculate TTC
                     if (next.getSpeed().ge(gtuObj.getSpeed()))
                     {
-                        return new FloatDuration(Double.NaN, TimeUnit.SI);
+                        return new FloatDuration(Double.NaN, DurationUnit.SI);
                     }
                     Length ownPos = gtuObj.position(ref.getLane(), gtuObj.getFront());
                     Length nextPos = next.position(lane, next.getRear());
                     Length dist = nextPos.minus(ownPos).plus(cumulDist);
                     Speed dv = gtuObj.getSpeed().minus(next.getSpeed());
-                    return new FloatDuration(dist.si / dv.si, TimeUnit.SI);
+                    return new FloatDuration(dist.si / dv.si, DurationUnit.SI);
                 }
             }
-            return new FloatDuration(Float.NaN, TimeUnit.SI);
+            return new FloatDuration(Float.NaN, DurationUnit.SI);
         }
         catch (GTUException exception)
         {
             // GTU was destroyed and is without a reference location
-            return new FloatDuration(Float.NaN, TimeUnit.SI);
+            return new FloatDuration(Float.NaN, DurationUnit.SI);
         }
     }
 

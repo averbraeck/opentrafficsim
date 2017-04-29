@@ -33,31 +33,31 @@ public interface HeadwayGTU extends Headway
      */
     boolean isFacingSameDirection();
 
-    /** 
-     * @return were the braking lights on? 
+    /**
+     * @return were the braking lights on?
      */
     boolean isBrakingLightsOn();
 
-    /** 
-     * @return was the left turn indicator on? 
+    /**
+     * @return was the left turn indicator on?
      */
     boolean isLeftTurnIndicatorOn();
 
-    /** 
-     * @return was the right turn indicator on? 
+    /**
+     * @return was the right turn indicator on?
      */
     boolean isRightTurnIndicatorOn();
 
-    /** 
-     * @return were the emergency lights on? 
+    /**
+     * @return were the emergency lights on?
      */
     boolean isEmergencyLightsOn();
 
-    /** 
-     * @return was the vehicle honking or ringing its bell when being observed for the headway? 
+    /**
+     * @return was the vehicle honking or ringing its bell when being observed for the headway?
      */
     boolean isHonking();
-    
+
     /**
      * Creates a copy with different headway, speed and possibly acceleration. It may not be alongside. This method is used to
      * anticipate movement of a neighboring GTU.
@@ -67,7 +67,7 @@ public interface HeadwayGTU extends Headway
      * @return copy with different headway, speed and possibly acceleration
      */
     HeadwayGTU moved(Length headway, Speed speed, Acceleration acceleration);
-    
+
     /**
      * Many models that observe a GTU need to predict the imminent behavior of that GTU. Having a car following model of the
      * observed GTU can help with that. The car following model that is returned can be on a continuum between the actual car
@@ -111,5 +111,5 @@ public interface HeadwayGTU extends Headway
      * @return route of gtu
      */
     Route getRoute();
-    
+
 }

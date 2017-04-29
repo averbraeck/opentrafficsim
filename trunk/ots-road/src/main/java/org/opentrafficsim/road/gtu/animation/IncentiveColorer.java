@@ -23,7 +23,7 @@ public class IncentiveColorer extends DesireColorer
 
     /** */
     private static final long serialVersionUID = 20170414L;
-    
+
     /** Incentive class. */
     private Class<? extends Incentive> incentiveClass;
 
@@ -50,12 +50,12 @@ public class IncentiveColorer extends DesireColorer
         }
         return NA;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
         return this.incentiveClass.getSimpleName();
     }
-    
+
 }

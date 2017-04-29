@@ -25,19 +25,19 @@ import org.opentrafficsim.core.network.route.Route;
  */
 public interface StrategicalPlanner
 {
-    
+
     /**
      * Returns the GTU.
      * @return GTU
      */
     GTU getGtu();
-    
+
     /**
      * Returns the route.
      * @return route, may be null
      */
     Route getRoute();
-    
+
     /**
      * Generate a new tactical planner for the GTU.
      * @return a new tactical planner

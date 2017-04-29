@@ -45,23 +45,22 @@ public class SimpleSimulator extends OTSDEVSSimulator implements SimpleSimulator
      * @throws NamingException when the context for the replication cannot be created
      */
     public SimpleSimulator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-        final OTSModelInterface model) throws SimRuntimeException, NamingException
+            final OTSModelInterface model) throws SimRuntimeException, NamingException
     {
         setPauseOnError(true);
-        initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime), warmupPeriod,
-            runLength, model), ReplicationMode.TERMINATING);
+        initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime), warmupPeriod, runLength,
+                model), ReplicationMode.TERMINATING);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final SimEvent<OTSSimTimeDouble> scheduleEvent(final Time executionTime, final short priority,
-        final Object source, final Object target, final String method, final Object[] args) throws SimRuntimeException
+    public final SimEvent<OTSSimTimeDouble> scheduleEvent(final Time executionTime, final short priority, final Object source,
+            final Object target, final String method, final Object[] args) throws SimRuntimeException
     {
-        SimEvent<OTSSimTimeDouble> result =
-            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time(executionTime.getSI(), TimeUnit.SECOND)),
-                priority, source, target, method, args);
+        SimEvent<OTSSimTimeDouble> result = new SimEvent<OTSSimTimeDouble>(
+                new OTSSimTimeDouble(new Time(executionTime.getSI(), TimeUnit.BASE)), priority, source, target, method, args);
         scheduleEvent(result);
         return result;
     }

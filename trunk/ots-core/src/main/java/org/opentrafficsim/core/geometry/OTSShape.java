@@ -254,8 +254,8 @@ public class OTSShape extends OTSLine3D
     {
         if (points.length < 2)
         {
-            throw new OTSGeometryException("Degenerate OTSLine3D; has " + points.length + " point"
-                    + (points.length != 1 ? "s" : ""));
+            throw new OTSGeometryException(
+                    "Degenerate OTSLine3D; has " + points.length + " point" + (points.length != 1 ? "s" : ""));
         }
         return createAndCleanOTSShape(new ArrayList<>(Arrays.asList(points)));
     }

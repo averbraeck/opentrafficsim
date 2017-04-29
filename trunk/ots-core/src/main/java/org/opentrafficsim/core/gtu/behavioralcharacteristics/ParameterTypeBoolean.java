@@ -53,8 +53,9 @@ public class ParameterTypeBoolean extends AbstractParameterType<Dimensionless> i
     public ParameterTypeBoolean(final String id, final String description, final boolean defaultValue,
             final boolean hasDefaultValue)
     {
-        super(id, description, Dimensionless.class, hasDefaultValue ? new Dimensionless(defaultValue ? 1.0 : 0.0,
-                DimensionlessUnit.SI) : null, null, hasDefaultValue);
+        super(id, description, Dimensionless.class,
+                hasDefaultValue ? new Dimensionless(defaultValue ? 1.0 : 0.0, DimensionlessUnit.SI) : null, null,
+                hasDefaultValue);
     }
 
     /** {@inheritDoc} */

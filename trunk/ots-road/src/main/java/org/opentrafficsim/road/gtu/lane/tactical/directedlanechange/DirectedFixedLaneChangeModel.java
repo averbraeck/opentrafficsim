@@ -39,13 +39,15 @@ public class DirectedFixedLaneChangeModel implements DirectedLaneChangeModel
                 (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner()).getCarFollowingModel();
         if (null == direction)
         {
-            return new DirectedLaneMovementStep(gtuFollowingModel.computeDualAccelerationStep(gtu, sameLaneTraffic,
-                    maxDistance, speedLimit).getLeaderAccelerationStep(), null);
+            return new DirectedLaneMovementStep(gtuFollowingModel
+                    .computeDualAccelerationStep(gtu, sameLaneTraffic, maxDistance, speedLimit).getLeaderAccelerationStep(),
+                    null);
         }
         else
         {
-            return new DirectedLaneMovementStep(gtuFollowingModel.computeDualAccelerationStep(gtu, otherLaneTraffic,
-                    maxDistance, speedLimit).getLeaderAccelerationStep(), direction);
+            return new DirectedLaneMovementStep(gtuFollowingModel
+                    .computeDualAccelerationStep(gtu, otherLaneTraffic, maxDistance, speedLimit).getLeaderAccelerationStep(),
+                    direction);
         }
     }
 

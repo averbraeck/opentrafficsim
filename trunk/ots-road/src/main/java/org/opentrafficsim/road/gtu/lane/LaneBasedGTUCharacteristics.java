@@ -5,7 +5,6 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUCharacteristics;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
@@ -29,7 +28,7 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
 
     /** Route. */
     private final Route route;
-    
+
     /** The maximum speed of the GTU. */
     private final Speed speed;
 
@@ -64,7 +63,6 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
     {
         return this.strategicalPlannerFactory;
     }
-    
 
     /**
      * @return Route; route

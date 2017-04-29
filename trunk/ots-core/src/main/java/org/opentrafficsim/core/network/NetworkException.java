@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.network;
 
-
 /**
  * Exception thrown when network topology is inconsistent.
  * <p>

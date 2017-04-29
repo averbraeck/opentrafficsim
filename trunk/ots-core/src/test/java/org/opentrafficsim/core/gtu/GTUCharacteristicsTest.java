@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -58,10 +59,10 @@ public class GTUCharacteristicsTest implements OTSModelInterface
         Length widthB = new Length(2.5, LengthUnit.METER);
         Speed maximumSpeedA = new Speed(180, SpeedUnit.KM_PER_HOUR);
         Speed maximumSpeedB = new Speed(130, SpeedUnit.KM_PER_HOUR);
-        OTSDEVSSimulatorInterface simulatorA = new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI),
-                new Duration(1000, TimeUnit.SECOND), this);
-        OTSDEVSSimulatorInterface simulatorB = new SimpleSimulator(new Time(0, TimeUnit.SI), new Duration(0, TimeUnit.SI),
-                new Duration(1000, TimeUnit.SECOND), this);
+        OTSDEVSSimulatorInterface simulatorA = new SimpleSimulator(new Time(0, TimeUnit.BASE), new Duration(0, DurationUnit.SI),
+                new Duration(1000, DurationUnit.SI), this);
+        OTSDEVSSimulatorInterface simulatorB = new SimpleSimulator(new Time(0, TimeUnit.BASE), new Duration(0, DurationUnit.SI),
+                new Duration(1000, DurationUnit.SI), this);
         OTSNetwork networkA = new OTSNetwork("testGTUCharacteristics A");
         OTSNetwork networkB = new OTSNetwork("testGTUCharacteristics B");
         GTUCharacteristics gtucA =

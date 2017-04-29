@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.gtu;
 
-
 /**
  * Exception thrown when GTU encounters a problem.
  * <p>

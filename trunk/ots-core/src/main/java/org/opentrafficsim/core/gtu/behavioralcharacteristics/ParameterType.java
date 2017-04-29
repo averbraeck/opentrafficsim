@@ -17,8 +17,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> Class of the value.
  */
-public class ParameterType<T extends DoubleScalarInterface> extends AbstractParameterType<T>
-        implements Serializable
+public class ParameterType<T extends DoubleScalarInterface> extends AbstractParameterType<T> implements Serializable
 {
 
     /** */

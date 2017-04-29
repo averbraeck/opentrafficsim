@@ -30,7 +30,7 @@ public enum HeadwayGtuType
         {
             return new HeadwayGTUReal(gtu, distance, true);
         }
-        
+
         @Override
         public HeadwayGTU createHeadwayGtu(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap,
                 final Length overlapRear) throws GTUException

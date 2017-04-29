@@ -2,12 +2,16 @@ package org.opentrafficsim.core.units.distributions;
 
 import java.io.Serializable;
 
+import org.djunits.unit.AbsoluteLinearUnit;
+import org.djunits.unit.AbsoluteTemperatureUnit;
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.AngleSolidUnit;
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.AreaUnit;
 import org.djunits.unit.DensityUnit;
 import org.djunits.unit.DimensionlessUnit;
+import org.djunits.unit.DirectionUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.ElectricalChargeUnit;
 import org.djunits.unit.ElectricalCurrentUnit;
 import org.djunits.unit.ElectricalPotentialUnit;
@@ -20,6 +24,7 @@ import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.MassUnit;
+import org.djunits.unit.PositionUnit;
 import org.djunits.unit.PowerUnit;
 import org.djunits.unit.PressureUnit;
 import org.djunits.unit.SpeedUnit;
@@ -79,10 +84,11 @@ public interface ContinuousDistDoubleScalar
     /**
      * Absolute value.
      * @param <T> The absolute DoubleScalar type
-     * @param <U> The unit type used
+     * @param <AU> The absolute unit type used
+     * @param <RU> The relative unit type belonging to AU
      */
-    class Abs<T extends AbstractDoubleScalarAbs<U, T, ?>, U extends Unit<U>> extends AbstractContinuousDistScalar
-            implements Absolute, Serializable
+    class Abs<T extends AbstractDoubleScalarAbs<AU, T, RU, ?>, AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>>
+            extends AbstractContinuousDistScalar implements Absolute, Serializable
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -91,7 +97,7 @@ public interface ContinuousDistDoubleScalar
          * @param distribution the wrapped distribution function.
          * @param unit the unit.
          */
-        public Abs(final DistContinuous distribution, final U unit)
+        public Abs(final DistContinuous distribution, final AU unit)
         {
             super(distribution, unit);
         }
@@ -100,7 +106,7 @@ public interface ContinuousDistDoubleScalar
          * @param constant the constant value.
          * @param unit the unit.
          */
-        public Abs(final double constant, final U unit)
+        public Abs(final double constant, final AU unit)
         {
             super(constant, unit);
         }
@@ -113,20 +119,20 @@ public interface ContinuousDistDoubleScalar
         {
             switch (getUnit().getClass().getSimpleName())
             {
-                case "AngleUnit":
-                    return (T) new Direction(getDistribution().draw(), (AngleUnit) getUnit());
+                case "DirectionUnit":
+                    return (T) new Direction(getDistribution().draw(), (DirectionUnit) getUnit());
 
-                case "LengthUnit":
-                    return (T) new Position(getDistribution().draw(), (LengthUnit) getUnit());
+                case "PositionUnit":
+                    return (T) new Position(getDistribution().draw(), (PositionUnit) getUnit());
 
-                case "TemperatureUnit":
-                    return (T) new AbsoluteTemperature(getDistribution().draw(), (TemperatureUnit) getUnit());
+                case "AbsoluteTemperatureUnit":
+                    return (T) new AbsoluteTemperature(getDistribution().draw(), (AbsoluteTemperatureUnit) getUnit());
 
                 case "TimeUnit":
                     return (T) new Time(getDistribution().draw(), (TimeUnit) getUnit());
 
                 default:
-                    return (T) new DoubleScalar.Abs(getDistribution().draw(), getUnit());
+                    return (T) new DoubleScalar.Abs(getDistribution().draw(), (AU) getUnit());
             }
         }
 
@@ -243,7 +249,7 @@ public interface ContinuousDistDoubleScalar
                     return (T) new Temperature(getDistribution().draw(), (TemperatureUnit) getUnit());
 
                 case "TimeUnit":
-                    return (T) new Duration(getDistribution().draw(), (TimeUnit) getUnit());
+                    return (T) new Duration(getDistribution().draw(), (DurationUnit) getUnit());
 
                 case "TorqueUnit":
                     return (T) new Torque(getDistribution().draw(), (TorqueUnit) getUnit());

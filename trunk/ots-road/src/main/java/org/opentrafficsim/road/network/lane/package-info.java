@@ -41,4 +41,3 @@
  * possibility of such damage.
  */
 package org.opentrafficsim.road.network.lane;
-

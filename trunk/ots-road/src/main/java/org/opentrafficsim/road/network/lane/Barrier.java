@@ -37,5 +37,5 @@ public abstract class Barrier extends RoadMarkerAlong
     {
         super(parentLink, beginCenterPosition, endCenterPosition, beginWidth, endWidth);
     }
-    
+
 }

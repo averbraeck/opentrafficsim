@@ -8,11 +8,11 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.animation.PaintPolygons;
 import org.opentrafficsim.road.network.lane.Shoulder;
+
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 /**
  * <p>
@@ -27,7 +27,7 @@ public class ShoulderAnimation extends Renderable2D<Shoulder> implements Seriali
 {
     /** */
     private static final long serialVersionUID = 20141017L;
-    
+
     /** The animation color. */
     private final Color color;
 
@@ -39,7 +39,7 @@ public class ShoulderAnimation extends Renderable2D<Shoulder> implements Seriali
      * @throws RemoteException on communication failure
      */
     public ShoulderAnimation(final Shoulder source, final OTSSimulatorInterface simulator, final Color color)
-        throws NamingException, RemoteException
+            throws NamingException, RemoteException
     {
         super(source, simulator);
         this.color = color;

@@ -171,9 +171,12 @@ public enum Synchronization implements LmrsParameters
             Acceleration a = Acceleration.POSITIVE_INFINITY;
             double dCoop = bc.getParameter(DCOOP);
             RelativeLane relativeLane = new RelativeLane(lat, 1);
-            SortedSet<HeadwayGTU> set = removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
-                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
-                    relativeLane), perception, RelativeLane.CURRENT);
+            SortedSet<
+                    HeadwayGTU> set =
+                            removeAllUpstreamOfConflicts(
+                                    removeAllUpstreamOfConflicts(perception.getPerceptionCategory(NeighborsPerception.class)
+                                            .getLeaders(relativeLane), perception, relativeLane),
+                                    perception, RelativeLane.CURRENT);
             HeadwayGTU leader = null;
             if (set != null)
             {

@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.math;
 
-import org.djunits.unit.AngleUnit;
+import org.djunits.unit.DirectionUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 
 /**
@@ -37,7 +37,7 @@ public final class Scalar3D
         double msp = Math.sin(phi);
         double mct = Math.sqrt(1.0 - mst * mst);
         double mcp = Math.sqrt(1.0 - msp * msp);
-        return new double[]{r * mst * mcp, r * mst * msp, r * mct};
+        return new double[] { r * mst * mcp, r * mst * msp, r * mct };
     }
 
     /**
@@ -62,7 +62,7 @@ public final class Scalar3D
     public static Direction cartesianToTheta(final double x, final double y, final double z)
     {
         double r = Math.sqrt(x * x + y * y + z * z);
-        return new Direction(Math.acos(z / r), AngleUnit.SI);
+        return new Direction(Math.acos(z / r), DirectionUnit.NORTH_RADIAN);
     }
 
     /**
@@ -73,7 +73,7 @@ public final class Scalar3D
      */
     public static Direction cartesianToPhi(final double x, final double y)
     {
-        return new Direction(Math.atan2(y, x), AngleUnit.SI);
+        return new Direction(Math.atan2(y, x), DirectionUnit.NORTH_RADIAN);
     }
 
 }

@@ -36,9 +36,10 @@ public class AccelerationContourPlot extends ContourPlot
      */
     public AccelerationContourPlot(final String caption, final List<Lane> path) throws OTSSimulationException
     {
-        super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
-                STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), path, -5d, 0d, 3d,
-                "acceleration %.1f m/s/s", "%.1f m/s/s", 1d);
+        super(caption,
+                new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
+                        STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"),
+                path, -5d, 0d, 3d, "acceleration %.1f m/s/s", "%.1f m/s/s", 1d);
     }
 
     /** {@inheritDoc} */
@@ -70,15 +71,14 @@ public class AccelerationContourPlot extends ContourPlot
             this.cumulativeTimes = new ArrayList<MutableTimeVector>();
             this.cumulativeAccelerations = new ArrayList<MutableAccelerationVector>();
         }
-        int highestBinNeeded =
-                (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit) * this.getXAxis().getCurrentGranularity()
-                        / this.getXAxis().getGranularities()[0]);
+        int highestBinNeeded = (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit)
+                * this.getXAxis().getCurrentGranularity() / this.getXAxis().getGranularities()[0]);
         while (highestBinNeeded >= this.cumulativeTimes.size())
         {
             try
             {
-                this.cumulativeTimes.add(new MutableTimeVector(new double[this.getYAxis().getBinCount()], TimeUnit.SECOND,
-                        StorageType.DENSE));
+                this.cumulativeTimes.add(
+                        new MutableTimeVector(new double[this.getYAxis().getBinCount()], TimeUnit.BASE, StorageType.DENSE));
                 this.cumulativeAccelerations.add(new MutableAccelerationVector(new double[this.getYAxis().getBinCount()],
                         AccelerationUnit.METER_PER_SECOND_2, StorageType.DENSE));
             }
@@ -157,8 +157,8 @@ public class AccelerationContourPlot extends ContourPlot
     @Override
     public final String toString()
     {
-        return "AccelerationContourPlot [cumulativeTimes.size" + this.cumulativeTimes.size()
-                + ", cumulativeAccelerations.size=" + this.cumulativeAccelerations.size() + "]";
+        return "AccelerationContourPlot [cumulativeTimes.size" + this.cumulativeTimes.size() + ", cumulativeAccelerations.size="
+                + this.cumulativeAccelerations.size() + "]";
     }
 
 }

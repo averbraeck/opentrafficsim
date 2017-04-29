@@ -602,8 +602,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
          * @param simulator simulator to allow animation
          * @throws NetworkException on network inconsistency
          */
-        FundamentalDiagramSensor(final Lane lane, final Length longitudinalPosition,
-                final OTSDEVSSimulatorInterface simulator) throws NetworkException
+        FundamentalDiagramSensor(final Lane lane, final Length longitudinalPosition, final OTSDEVSSimulatorInterface simulator)
+                throws NetworkException
         {
             super("FUNDAMENTAL_DIAGRAM_SENSOR@" + lane.toString(), lane, longitudinalPosition, RelativePosition.REFERENCE,
                     simulator);

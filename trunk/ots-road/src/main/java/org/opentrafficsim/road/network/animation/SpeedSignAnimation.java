@@ -37,7 +37,7 @@ public class SpeedSignAnimation extends Renderable2D<SpeedSign> implements Seria
 
     /** Radius in meters. */
     private static final double EDGE = 0.8;
-    
+
     /** Scaling for text. */
     private static final double TEXT_SCALE = 0.14;
 

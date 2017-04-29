@@ -77,8 +77,8 @@ public class ParameterTypeInteger extends AbstractParameterType<Dimensionless> i
     private ParameterTypeInteger(final String id, final String description, final int defaultValue, final Check check,
             final boolean hasDefaultValue)
     {
-        super(id, description, Dimensionless.class, hasDefaultValue ? new Dimensionless(defaultValue, DimensionlessUnit.SI)
-                : null, check, hasDefaultValue);
+        super(id, description, Dimensionless.class,
+                hasDefaultValue ? new Dimensionless(defaultValue, DimensionlessUnit.SI) : null, check, hasDefaultValue);
         try
         {
             // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of
