@@ -23,7 +23,7 @@ public class Category implements Serializable
 
     /** Empty category. */
     public static final Category UNCATEGORIZED = new Category(Categorization.UNCATEGORIZED);
-    
+
     /** */
     private static final long serialVersionUID = 20160921L;
 
@@ -41,7 +41,7 @@ public class Category implements Serializable
         Throw.whenNull(categorization, "Categorization may not be null.");
         this.categorization = categorization;
     }
-    
+
     /**
      * @param categorization categorization
      * @param object1 1st object
@@ -53,17 +53,17 @@ public class Category implements Serializable
     {
         this(categorization);
         Throw.when(categorization.size() != objects.length + 1, IllegalArgumentException.class,
-            "Objects do not comply with the categorization; bad number of objects.");
+                "Objects do not comply with the categorization; bad number of objects.");
         Throw.whenNull(object1, "Objects may not be null.");
         Throw.when(!categorization.get(0).isAssignableFrom(object1.getClass()), IllegalArgumentException.class,
-            "Objects do not comply with the categorization; object 1 is of type %s, should be %s.", object1
-                .getClass(), categorization.get(0));
+                "Objects do not comply with the categorization; object 1 is of type %s, should be %s.", object1.getClass(),
+                categorization.get(0));
         for (int i = 1; i < categorization.size(); i++)
         {
             Throw.whenNull(objects[i - 1], "Objects may not be null.");
             Throw.when(!categorization.get(i).isAssignableFrom(objects[i - 1].getClass()), IllegalArgumentException.class,
-                "Objects do not comply with the categorization; object %d is of type %s, should be %s.", i + 1, objects[i - 1]
-                    .getClass(), categorization.get(i));
+                    "Objects do not comply with the categorization; object %d is of type %s, should be %s.", i + 1,
+                    objects[i - 1].getClass(), categorization.get(i));
         }
         this.objects.add(object1);
         for (Object object : objects)
@@ -81,7 +81,7 @@ public class Category implements Serializable
     public final Object get(final int i)
     {
         Throw.when(i < 0 || i >= this.objects.size(), IndexOutOfBoundsException.class,
-            "Index %d is out of range for categorization of size %d", i, this.objects.size());
+                "Index %d is out of range for categorization of size %d", i, this.objects.size());
         return this.objects.get(i);
     }
 

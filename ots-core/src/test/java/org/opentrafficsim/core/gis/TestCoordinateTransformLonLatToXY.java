@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.gis;
 
-import org.opentrafficsim.core.gis.CoordinateTransformLonLatToXY;
-
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
 
 /**

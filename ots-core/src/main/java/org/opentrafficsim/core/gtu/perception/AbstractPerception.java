@@ -27,12 +27,11 @@ public abstract class AbstractPerception implements Perception
     private static final long serialVersionUID = 20160729L;
 
     /** Set of available perception categories. */
-    private final Map<Class<? extends PerceptionCategory>, PerceptionCategory> perceptionCategories =
-        new LinkedHashMap<>();
-    
+    private final Map<Class<? extends PerceptionCategory>, PerceptionCategory> perceptionCategories = new LinkedHashMap<>();
+
     /** GTU. */
     private GTU gtu;
-    
+
     /**
      * Construct perception.
      * @param gtu GTU
@@ -41,7 +40,7 @@ public abstract class AbstractPerception implements Perception
     {
         this.gtu = gtu;
     }
-    
+
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     public GTU getGtu()
@@ -75,8 +74,7 @@ public abstract class AbstractPerception implements Perception
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
-    public final <T extends PerceptionCategory> T getPerceptionCategory(final Class<T> category)
-        throws OperationalPlanException
+    public final <T extends PerceptionCategory> T getPerceptionCategory(final Class<T> category) throws OperationalPlanException
     {
         for (Class<?> clazz : this.perceptionCategories.keySet())
         {
@@ -89,7 +87,7 @@ public abstract class AbstractPerception implements Perception
         }
         throw new OperationalPlanException("Perception category" + category + " is not present.");
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final void removePerceptionCategory(final PerceptionCategory perceptionCategory)
@@ -115,7 +113,7 @@ public abstract class AbstractPerception implements Perception
             category.updateAll();
         }
     }
-    
+
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
@@ -131,5 +129,5 @@ public abstract class AbstractPerception implements Perception
         s.append("]");
         return s.toString();
     }
-    
+
 }

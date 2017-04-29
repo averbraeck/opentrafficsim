@@ -71,9 +71,9 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
      * @param gtuStatus gtu status
      * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
      */
-    @SuppressWarnings("checkstyle:parameternumber") 
-    HeadwayGTURealCopy(final String id, final GTUType gtuType, final Length distance, final Length length,
-            final Speed speed, final Acceleration acceleration, final CarFollowingModel carFollowingModel,
+    @SuppressWarnings("checkstyle:parameternumber")
+    HeadwayGTURealCopy(final String id, final GTUType gtuType, final Length distance, final Length length, final Speed speed,
+            final Acceleration acceleration, final CarFollowingModel carFollowingModel,
             final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedLimitInfo, final Route route,
             final GTUStatus... gtuStatus) throws GTUException
     {
@@ -174,8 +174,8 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
     {
         try
         {
-            return new HeadwayGTURealCopy(getId(), getGtuType(), headway, getLength(), speed, acceleration, getCarFollowingModel(),
-                    getBehavioralCharacteristics(), getSpeedLimitInfo(), getRoute(), getGtuStatus());
+            return new HeadwayGTURealCopy(getId(), getGtuType(), headway, getLength(), speed, acceleration,
+                    getCarFollowingModel(), getBehavioralCharacteristics(), getSpeedLimitInfo(), getRoute(), getGtuStatus());
         }
         catch (GTUException exception)
         {

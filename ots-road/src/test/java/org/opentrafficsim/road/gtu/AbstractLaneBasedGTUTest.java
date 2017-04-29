@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -213,7 +214,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         double step = 0.01d;
         for (int i = 0;; i++)
         {
-            Time stepTime = new Time(i * step, SECOND);
+            Time stepTime = new Time(i * step, TimeUnit.BASE_SECOND);
             if (stepTime.getSI() > validFor.getSI())
             {
                 break;

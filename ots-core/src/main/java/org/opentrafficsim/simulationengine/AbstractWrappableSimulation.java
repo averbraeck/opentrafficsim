@@ -54,8 +54,8 @@ public abstract class AbstractWrappableSimulation implements WrappableSimulation
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public SimpleSimulator buildSimulator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final ArrayList<AbstractProperty<?>> userModifiedProperties) throws SimRuntimeException, NamingException,
-            OTSSimulationException, PropertyException
+            final ArrayList<AbstractProperty<?>> userModifiedProperties)
+            throws SimRuntimeException, NamingException, OTSSimulationException, PropertyException
     {
         OTSModelInterface model = makeModel();
         final SimpleSimulator simulator = buildSimpleSimulator(startTime, warmupPeriod, runLength, model);

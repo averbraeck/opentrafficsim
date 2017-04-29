@@ -147,8 +147,8 @@ public class DirectedLanePosition implements Serializable
     @Override
     public String toString()
     {
-        return "DirectedLanePosition [lane=" + this.lane + ", position=" + this.position + ", gtuDirection="
-                + this.gtuDirection + "]";
+        return "DirectedLanePosition [lane=" + this.lane + ", position=" + this.position + ", gtuDirection=" + this.gtuDirection
+                + "]";
     }
 
 }

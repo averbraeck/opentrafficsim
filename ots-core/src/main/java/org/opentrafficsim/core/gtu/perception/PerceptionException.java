@@ -60,5 +60,5 @@ public class PerceptionException extends Exception
     {
         super(message, cause, enableSuppression, writableStackTrace);
     }
-    
+
 }

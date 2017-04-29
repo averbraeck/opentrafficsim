@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.distributions;
 
-
 /**
  * Exception thrown when provided probabilities or frequencies are invalid. Negative probabilities or frequencies are invalid. A
  * set of probabilities or frequencies that adds up to 0 causes this exception when the draw method is called.

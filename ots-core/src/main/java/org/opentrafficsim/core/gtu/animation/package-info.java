@@ -13,4 +13,3 @@
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
 package org.opentrafficsim.core.gtu.animation;
-

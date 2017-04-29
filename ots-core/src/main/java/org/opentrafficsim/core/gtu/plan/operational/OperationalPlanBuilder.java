@@ -3,8 +3,8 @@ package org.opentrafficsim.core.gtu.plan.operational;
 import java.util.ArrayList;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -103,16 +103,16 @@ public final class OperationalPlanBuilder
                 if (acceleration.si < 0.0 && acceleration.lt(maxDeceleration))
                 {
                     acceleration = maxDeceleration;
-                    // duration = new Duration(abc(acceleration.si / 2, startSpeed.si, -length.si), TimeUnit.SI);
+                    // duration = new Duration(abc(acceleration.si / 2, startSpeed.si, -length.si), DurationUnit.SI);
                     duration = new Duration(Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -length.si),
-                            TimeUnit.SI);
+                            DurationUnit.SI);
                 }
                 if (acceleration.si > 0.0 && acceleration.gt(maxAcceleration))
                 {
                     acceleration = maxAcceleration;
-                    // duration = new Duration(abc(acceleration.si / 2, startSpeed.si, -length.si), TimeUnit.SI);
+                    // duration = new Duration(abc(acceleration.si / 2, startSpeed.si, -length.si), DurationUnit.SI);
                     duration = new Duration(Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -length.si),
-                            TimeUnit.SI);
+                            DurationUnit.SI);
                 }
             }
             catch (ValueException exception)
@@ -182,9 +182,10 @@ public final class OperationalPlanBuilder
                     if (x.ge(length))
                     {
                         // we cannot reach the end speed in the given distance with the given acceleration
-                        // Duration duration = new Duration(abc(acceleration.si / 2, startSpeed.si, -length.si), TimeUnit.SI);
+                        // Duration duration = new Duration(abc(acceleration.si / 2, startSpeed.si, -length.si),
+                        // DurationUnit.SI);
                         Duration duration = new Duration(
-                                Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -length.si), TimeUnit.SI);
+                                Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -length.si), DurationUnit.SI);
                         segmentList.add(new OperationalPlan.AccelerationSegment(duration, acceleration));
                     }
                     else
@@ -202,9 +203,10 @@ public final class OperationalPlanBuilder
                     if (x.ge(length))
                     {
                         // we cannot reach the end speed in the given distance with the given deceleration
-                        // Duration duration = new Duration(abc(deceleration.si / 2, startSpeed.si, -length.si), TimeUnit.SI);
+                        // Duration duration = new Duration(abc(deceleration.si / 2, startSpeed.si, -length.si),
+                        // DurationUnit.SI);
                         Duration duration = new Duration(
-                                Solver.firstSolutionAfter(0, deceleration.si / 2, startSpeed.si, -length.si), TimeUnit.SI);
+                                Solver.firstSolutionAfter(0, deceleration.si / 2, startSpeed.si, -length.si), DurationUnit.SI);
                         segmentList.add(new OperationalPlan.AccelerationSegment(duration, deceleration));
                     }
                     else

@@ -55,9 +55,8 @@ public class GTUCharacteristics implements Serializable
      * @param simulator OTSDEVSSimulatorInterface; the simulator that controls the (not yet constructed) GTU
      * @param network OTSNetwork; the network that will contain the GTU
      */
-    public GTUCharacteristics(final GTUType gtuType, final IdGenerator idGenerator, final Length length,
-            final Length width, final Speed maximumSpeed, final OTSDEVSSimulatorInterface simulator,
-            final OTSNetwork network)
+    public GTUCharacteristics(final GTUType gtuType, final IdGenerator idGenerator, final Length length, final Length width,
+            final Speed maximumSpeed, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network)
     {
         this.gtuType = gtuType;
         this.idGenerator = idGenerator;

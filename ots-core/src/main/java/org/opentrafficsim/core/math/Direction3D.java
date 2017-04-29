@@ -3,7 +3,7 @@ package org.opentrafficsim.core.math;
 import java.io.Serializable;
 import java.util.Locale;
 
-import org.djunits.unit.AngleUnit;
+import org.djunits.unit.DirectionUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Direction;
@@ -61,7 +61,7 @@ public class Direction3D implements Serializable
      * @param unit the unit of the RPY parameters
      * @throws ValueException in case the units are incorrect
      */
-    public Direction3D(final double roll, final double pitch, final double yaw, final AngleUnit unit) throws ValueException
+    public Direction3D(final double roll, final double pitch, final double yaw, final DirectionUnit unit) throws ValueException
     {
         this.rotation = new DirectionVector(new double[] { roll, pitch, yaw }, unit, StorageType.DENSE);
     }
@@ -78,8 +78,9 @@ public class Direction3D implements Serializable
         catch (ValueException exception)
         {
             // should be impossible as we constructed the vector always with three elements
-            throw new RuntimeException("getRoll() gave an exception; apparently vector " + this.rotation
-                    + " was not constructed right", exception);
+            throw new RuntimeException(
+                    "getRoll() gave an exception; apparently vector " + this.rotation + " was not constructed right",
+                    exception);
         }
     }
 
@@ -95,8 +96,9 @@ public class Direction3D implements Serializable
         catch (ValueException exception)
         {
             // should be impossible as we constructed the vector always with three elements
-            throw new RuntimeException("getPitch() gave an exception; apparently vector " + this.rotation
-                    + " was not constructed right", exception);
+            throw new RuntimeException(
+                    "getPitch() gave an exception; apparently vector " + this.rotation + " was not constructed right",
+                    exception);
         }
     }
 
@@ -112,12 +114,13 @@ public class Direction3D implements Serializable
         catch (ValueException exception)
         {
             // should be impossible as we constructed the vector always with three elements
-            throw new RuntimeException("getYaw() gave an exception; apparently vector " + this.rotation
-                    + " was not constructed right", exception);
+            throw new RuntimeException(
+                    "getYaw() gave an exception; apparently vector " + this.rotation + " was not constructed right", exception);
         }
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return String.format(Locale.US, "Rotation3D.Abs roll %s, pitch %s, yaw %s", getRoll(), getPitch(), getYaw());

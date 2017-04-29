@@ -217,7 +217,7 @@ public class LaneStructureRecord implements Serializable
         {
             return true;
         }
-        
+
         // start with simple check
         int from = route.indexOf(this.getFromNode());
         int to = route.indexOf(this.getToNode());

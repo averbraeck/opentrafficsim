@@ -276,8 +276,8 @@ public class DistributionTest
         double expectedIn0 = (dist.get(0).getFrequency() + badFrequency) / badTotal * 10000;
         // System.out.println("Observed frequencies: [" + observed[0] + ", " + observed[1] + "]; expected in 0 " + expectedIn0);
         assertEquals("Total number of draws should add up to 10000", 10000, observed[0] + observed[1]);
-        assertTrue("observed frequency of to should be about " + expectedIn0, expectedIn0 - 500 < observed[0]
-                && observed[0] < expectedIn0 + 500);
+        assertTrue("observed frequency of to should be about " + expectedIn0,
+                expectedIn0 - 500 < observed[0] && observed[0] < expectedIn0 + 500);
         // When frequency of element 0 is 0; the draw method should never return it; even if the cumulativeTotal is wrong
         dist.modifyFrequency(0, 0);
         try

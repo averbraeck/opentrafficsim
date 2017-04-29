@@ -70,10 +70,10 @@ public class HeadwayConflict extends AbstractHeadwayCopy
 
     /** Distance of traffic light upstream on conflicting lane. */
     private Length conflictingTrafficLightDistance = null;
-    
+
     /** Whether the conflict is permitted by the traffic light. */
     private boolean permitted = false;
-    
+
     /**
      * Constructor.
      * @param conflictType conflict type
@@ -141,10 +141,9 @@ public class HeadwayConflict extends AbstractHeadwayCopy
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public HeadwayConflict(final ConflictType conflictType, final ConflictPriority conflictPriority, 
-            final Class<? extends ConflictRule> conflictRuleType, final String id,
-            final Length distance, final Length length, final Length conflictingLength,
-            final SortedSet<HeadwayGTU> upstreamConflictingGTUs,
+    public HeadwayConflict(final ConflictType conflictType, final ConflictPriority conflictPriority,
+            final Class<? extends ConflictRule> conflictRuleType, final String id, final Length distance, final Length length,
+            final Length conflictingLength, final SortedSet<HeadwayGTU> upstreamConflictingGTUs,
             final SortedSet<HeadwayGTU> downstreamConflictingGTUs, final Length conflictingVisibility,
             final Speed conflictingSpeedLimit, final CrossSectionLink conflictingLink) throws GTUException
     {
@@ -272,7 +271,7 @@ public class HeadwayConflict extends AbstractHeadwayCopy
     {
         return this.conflictingStopLine;
     }
-    
+
     /**
      * Returns the conflict rule type.
      * @return conflict rule type
@@ -281,7 +280,7 @@ public class HeadwayConflict extends AbstractHeadwayCopy
     {
         return this.conflictRuleType;
     }
-    
+
     /**
      * Returns the distance of a traffic light upstream on the conflicting lane.
      * @return distance of a traffic light upstream on the conflicting lane.
@@ -290,7 +289,7 @@ public class HeadwayConflict extends AbstractHeadwayCopy
     {
         return this.conflictingTrafficLightDistance;
     }
-    
+
     /**
      * Whether the conflict is permitted by the traffic light.
      * @return whether the conflict is permitted by the traffic light

@@ -8,9 +8,9 @@ import java.util.Set;
 import javax.naming.NamingException;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -75,16 +75,13 @@ public class CurveTest
         OTSNode curveStart = new OTSNode(network, "curveStart", new OTSPoint3D(100, 10, 0));
         OTSNode curveEnd = new OTSNode(network, "curveEnd", new OTSPoint3D(150, 60, 0));
         OTSNode destination = new OTSNode(network, "destination", new OTSPoint3D(150, 150, 0));
-        Lane[] straight1 =
-                LaneFactory.makeMultiLane(network, "straight1", origin, curveStart, null, laneCount, laneType, speedLimit,
-                        simulator, LongitudinalDirectionality.DIR_PLUS);
-        Lane[] straight2 =
-                LaneFactory.makeMultiLane(network, "straight2", curveEnd, destination, null, laneCount, laneType, speedLimit,
-                        simulator, LongitudinalDirectionality.DIR_PLUS);
+        Lane[] straight1 = LaneFactory.makeMultiLane(network, "straight1", origin, curveStart, null, laneCount, laneType,
+                speedLimit, simulator, LongitudinalDirectionality.DIR_PLUS);
+        Lane[] straight2 = LaneFactory.makeMultiLane(network, "straight2", curveEnd, destination, null, laneCount, laneType,
+                speedLimit, simulator, LongitudinalDirectionality.DIR_PLUS);
         OTSLine3D curveLine = LaneFactory.makeBezier(origin, curveStart, curveEnd, destination);
-        Lane[] curve =
-                LaneFactory.makeMultiLane(network, "bezier", curveStart, curveEnd, curveLine.getPoints(), laneCount,
-                        laneType, speedLimit, simulator, LongitudinalDirectionality.DIR_PLUS);
+        Lane[] curve = LaneFactory.makeMultiLane(network, "bezier", curveStart, curveEnd, curveLine.getPoints(), laneCount,
+                laneType, speedLimit, simulator, LongitudinalDirectionality.DIR_PLUS);
         Lane[][] laneSets = new Lane[][] { straight1, curve, straight2 };
         Length initialPosition = new Length(5, LengthUnit.METER);
         Speed speed = new Speed(10, SpeedUnit.SI);
@@ -99,10 +96,10 @@ public class CurveTest
                 System.out.println("lane " + set[lane] + " length is " + set[lane].getLength()
                         + " time for reference to get to end " + timeAtEnd);
             }
-            LaneBasedIndividualGTU car =
-                    CarTest.makeReferenceCar("car", gtuType, straight1[lane], initialPosition, speed,
-                            (OTSDEVSSimulator) simulator, new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI),
-                                    new Duration(25, TimeUnit.SI)), new FixedLaneChangeModel(null), (OTSNetwork) network);
+            LaneBasedIndividualGTU car = CarTest.makeReferenceCar("car", gtuType, straight1[lane], initialPosition, speed,
+                    (OTSDEVSSimulator) simulator,
+                    new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Duration(25, DurationUnit.SI)),
+                    new FixedLaneChangeModel(null), (OTSNetwork) network);
             printEventList(simulator);
             System.out.println("STEP");
             simulator.step();

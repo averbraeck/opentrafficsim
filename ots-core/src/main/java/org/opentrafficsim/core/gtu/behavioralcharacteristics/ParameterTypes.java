@@ -5,9 +5,9 @@ import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractPara
 import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.POSITIVEZERO;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -36,7 +36,7 @@ public class ParameterTypes
 
     /** Fixed model time step. */
     public static final ParameterTypeDuration DT =
-            new ParameterTypeDuration("dt", "Fixed model time step.", new Duration(0.5, TimeUnit.SI), POSITIVE);
+            new ParameterTypeDuration("dt", "Fixed model time step.", new Duration(0.5, DurationUnit.SI), POSITIVE);
 
     /** Car-following stopping distance. */
     public static final ParameterTypeLength S0;
@@ -92,7 +92,7 @@ public class ParameterTypes
 
     /** Reaction time. */
     public static final ParameterTypeDuration TR;
-    
+
     static
     {
 
@@ -148,9 +148,9 @@ public class ParameterTypes
                 }
             };
 
-        T = new ParameterTypeDuration("T", "Current car-following headway.", new Duration(1.2, TimeUnit.SI), POSITIVE);
+        T = new ParameterTypeDuration("T", "Current car-following headway.", new Duration(1.2, DurationUnit.SI), POSITIVE);
 
-        TMIN = new ParameterTypeDuration("Tmin", "Minimum car-following headway.", new Duration(0.56, TimeUnit.SI), POSITIVE)
+        TMIN = new ParameterTypeDuration("Tmin", "Minimum car-following headway.", new Duration(0.56, DurationUnit.SI), POSITIVE)
             {
                 /** */
                 private static final long serialVersionUID = 20160400L;
@@ -163,7 +163,7 @@ public class ParameterTypes
                 }
             };
 
-        TMAX = new ParameterTypeDuration("Tmax", "Maximum car-following headway.", new Duration(1.2, TimeUnit.SI), POSITIVE)
+        TMAX = new ParameterTypeDuration("Tmax", "Maximum car-following headway.", new Duration(1.2, DurationUnit.SI), POSITIVE)
         {
             /** */
             private static final long serialVersionUID = 20160400L;
@@ -176,9 +176,9 @@ public class ParameterTypes
             }
         };
 
-        TAU = new ParameterTypeDuration("tau", "Headway relaxation time.", new Duration(25.0, TimeUnit.SI), POSITIVE);
+        TAU = new ParameterTypeDuration("tau", "Headway relaxation time.", new Duration(25.0, DurationUnit.SI), POSITIVE);
 
-        T0 = new ParameterTypeDuration("t0", "Look-ahead time for mandatory lane changes.", new Duration(43.0, TimeUnit.SI),
+        T0 = new ParameterTypeDuration("t0", "Look-ahead time for mandatory lane changes.", new Duration(43.0, DurationUnit.SI),
                 POSITIVE);
 
         LOOKAHEAD = new ParameterTypeLength("Look-ahead", "Look-ahead distance.", new Length(295.0, LengthUnit.SI), POSITIVE);
@@ -193,7 +193,7 @@ public class ParameterTypes
         VCONG = new ParameterTypeSpeed("vCong", "Speed threshold below which traffic is considered congested.", 
             new Speed(60, SpeedUnit.KM_PER_HOUR), POSITIVE);
 
-        LCDUR = new ParameterTypeDuration("lcDur", "Regular lane change duration.", new Duration(3, TimeUnit.SI), POSITIVE);
+        LCDUR = new ParameterTypeDuration("lcDur", "Regular lane change duration.", new Duration(3, DurationUnit.SI), POSITIVE);
         
         PERCEPTION = new ParameterTypeLength("mapLength", "Mental map length", new Length(2.0, LengthUnit.KILOMETER), POSITIVE);
         

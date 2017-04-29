@@ -104,5 +104,5 @@ public class LaneDirection implements Serializable
         }
         return true;
     }
-    
+
 }

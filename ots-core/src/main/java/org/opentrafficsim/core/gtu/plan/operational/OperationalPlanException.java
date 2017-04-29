@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.gtu.plan.operational;
 
-
 /**
  * Exception for the operational plan, e.g. when a request is given outside the plan's validity.
  * <p>

@@ -85,5 +85,5 @@ public abstract class AbstractPerceptionCategory extends Type<AbstractPerception
         }
         return object.getObject();
     }
-    
+
 }

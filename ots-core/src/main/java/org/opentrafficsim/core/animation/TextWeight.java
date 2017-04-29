@@ -18,13 +18,13 @@ public enum TextWeight
 {
     /** The lightest predefined weight. */
     WEIGHT_EXTRA_LIGHT(TextAttribute.WEIGHT_EXTRA_LIGHT),
-    
+
     /** The standard light weight. */
     WEIGHT_LIGHT(TextAttribute.WEIGHT_LIGHT),
-    
+
     /** An intermediate weight between WEIGHT_LIGHT and WEIGHT_STANDARD. */
     WEIGHT_DEMILIGHT(TextAttribute.WEIGHT_DEMILIGHT),
-    
+
     /** The standard weight. */
     WEIGHT_REGULAR(TextAttribute.WEIGHT_REGULAR),
 
@@ -67,6 +67,5 @@ public enum TextWeight
     {
         return this.value;
     }
-    
-}
 
+}

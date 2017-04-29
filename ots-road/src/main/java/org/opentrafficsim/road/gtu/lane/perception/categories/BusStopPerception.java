@@ -34,7 +34,7 @@ public interface BusStopPerception extends PerceptionCategory
      * @return bus stops
      */
     SortedSet<HeadwayBusStop> getBusStops();
-    
+
     /** {@inheritDoc} */
     @Override
     default void updateAll() throws GTUException, NetworkException, ParameterException

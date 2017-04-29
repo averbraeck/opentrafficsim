@@ -11,8 +11,6 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -32,6 +30,8 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * Generate GTUs at times prescribed in a text file.
@@ -99,9 +99,9 @@ public class ListGTUGenerator implements Serializable
      * @throws NetworkException on
      */
     public ListGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
-        final Speed initialSpeed, final Lane lane, final Length position, final GTUDirectionality direction,
-        final GTUColorer gtuColorer, final LaneBasedStrategicalPlanner strategicalPlanner, final OTSNetwork network,
-        final String fileName) throws SimRuntimeException, NetworkException
+            final Speed initialSpeed, final Lane lane, final Length position, final GTUDirectionality direction,
+            final GTUColorer gtuColorer, final LaneBasedStrategicalPlanner strategicalPlanner, final OTSNetwork network,
+            final String fileName) throws SimRuntimeException, NetworkException
     {
         if (null == lane)
         {
@@ -144,7 +144,7 @@ public class ListGTUGenerator implements Serializable
             }
             while (line.equals("")); // ignore blank lines
             double when = Double.parseDouble(line);
-            this.simulator.scheduleEventAbs(new Time(when, TimeUnit.SI), this, this, "generateCar", null);
+            this.simulator.scheduleEventAbs(new Time(when, TimeUnit.BASE), this, this, "generateCar", null);
         }
         catch (NumberFormatException exception)
         {
@@ -174,11 +174,10 @@ public class ListGTUGenerator implements Serializable
         {
             initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
             Length vehicleLength = new Length(4, LengthUnit.METER);
-            LaneBasedIndividualGTU gtu =
-                new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength, new Length(1.8,
-                    LengthUnit.METER), new Speed(200, SpeedUnit.KM_PER_HOUR), this.simulator, this.network);
+            LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
+                    new Length(1.8, LengthUnit.METER), new Speed(200, SpeedUnit.KM_PER_HOUR), this.simulator, this.network);
             gtu.initWithAnimation(this.strategicalPlanner, initialPositions, this.initialSpeed, DefaultCarAnimation.class,
-                this.gtuColorer);
+                    this.gtuColorer);
             scheduleNextVehicle();
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
@@ -191,8 +190,8 @@ public class ListGTUGenerator implements Serializable
     @Override
     public String toString()
     {
-        return "ListGTUGenerator [name=" + this.name + ", lane=" + this.lane + ", gtuType=" + this.gtuType
-            + ", initialSpeed=" + this.initialSpeed + ", carsCreated=" + this.carsCreated + "]";
+        return "ListGTUGenerator [name=" + this.name + ", lane=" + this.lane + ", gtuType=" + this.gtuType + ", initialSpeed="
+                + this.initialSpeed + ", carsCreated=" + this.carsCreated + "]";
     }
 
 }

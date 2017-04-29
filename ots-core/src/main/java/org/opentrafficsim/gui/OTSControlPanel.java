@@ -44,6 +44,13 @@ import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 import javax.swing.text.MaskFormatter;
 
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.simulationengine.WrappableAnimation;
+
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
@@ -54,13 +61,6 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.language.io.URLResource;
-
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.simulationengine.WrappableAnimation;
 
 /**
  * Peter's improved simulation control panel.
@@ -73,8 +73,8 @@ import org.opentrafficsim.simulationengine.WrappableAnimation;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class OTSControlPanel extends JPanel implements ActionListener, PropertyChangeListener, WindowListener,
-        EventListenerInterface
+public class OTSControlPanel extends JPanel
+        implements ActionListener, PropertyChangeListener, WindowListener, EventListenerInterface
 {
     /** */
     private static final long serialVersionUID = 20150617L;
@@ -137,7 +137,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
         buttonPanel.add(makeButton("resetButton", "/Undo.png", "Reset", "Reset the simulation", false));
         this.clockPanel = new ClockPanel();
         buttonPanel.add(this.clockPanel);
-        this.timeEdit = new TimeEdit(new Time(0, TimeUnit.SECOND));
+        this.timeEdit = new TimeEdit(new Time(0, TimeUnit.BASE));
         this.timeEdit.addPropertyChangeListener("value", this);
         buttonPanel.add(this.timeEdit);
         this.add(buttonPanel);
@@ -208,8 +208,8 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             final Object eventTarget, final String method, final Object[] args) throws SimRuntimeException
     {
         SimEvent<OTSSimTimeDouble> simEvent =
-                new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time(executionTime.getSI(), TimeUnit.SECOND)),
-                        priority, source, eventTarget, method, args);
+                new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time(executionTime.getSI(), TimeUnit.BASE)), priority,
+                        source, eventTarget, method, args);
         this.simulator.scheduleEvent(simEvent);
         return simEvent;
     }
@@ -317,9 +317,8 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                 // System.out.println("now is " + now);
                 try
                 {
-                    this.stopAtEvent =
-                            scheduleEvent(new Time(now, TimeUnit.SI), SimEventInterface.MIN_PRIORITY, this, this,
-                                    "autoPauseSimulator", null);
+                    this.stopAtEvent = scheduleEvent(new Time(now, TimeUnit.BASE), SimEventInterface.MIN_PRIORITY, this, this,
+                            "autoPauseSimulator", null);
                 }
                 catch (SimRuntimeException exception)
                 {
@@ -472,9 +471,8 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                 // System.out.println("Re-Scheduling at " + nextTick);
                 try
                 {
-                    this.stopAtEvent =
-                            scheduleEvent(new Time(nextTick, TimeUnit.SI), SimEventInterface.MAX_PRIORITY, this, this,
-                                    "autoPauseSimulator", null);
+                    this.stopAtEvent = scheduleEvent(new Time(nextTick, TimeUnit.BASE), SimEventInterface.MAX_PRIORITY, this,
+                            this, "autoPauseSimulator", null);
                     getSimulator().start();
                 }
                 catch (SimRuntimeException exception)
@@ -549,9 +547,8 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
         {
             try
             {
-                this.stopAtEvent =
-                        scheduleEvent(new Time(stopTime, TimeUnit.SECOND), SimEventInterface.MAX_PRIORITY, this, this,
-                                "autoPauseSimulator", null);
+                this.stopAtEvent = scheduleEvent(new Time(stopTime, TimeUnit.BASE), SimEventInterface.MAX_PRIORITY, this, this,
+                        "autoPauseSimulator", null);
             }
             catch (SimRuntimeException exception)
             {
@@ -899,9 +896,8 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                 double now = Math.round(getSimulator().getSimulatorTime().getTime().getSI() * 1000) / 1000d;
                 int seconds = (int) Math.floor(now);
                 int fractionalSeconds = (int) Math.floor(1000 * (now - seconds));
-                getClockLabel().setText(
-                        String.format("  %02d:%02d:%02d.%03d  ", seconds / 3600, seconds / 60 % 60, seconds % 60,
-                                fractionalSeconds));
+                getClockLabel().setText(String.format("  %02d:%02d:%02d.%03d  ", seconds / 3600, seconds / 60 % 60,
+                        seconds % 60, fractionalSeconds));
                 getClockLabel().repaint();
             }
 

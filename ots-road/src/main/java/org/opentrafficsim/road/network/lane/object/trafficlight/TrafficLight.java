@@ -26,7 +26,7 @@ public interface TrafficLight extends Locatable, LaneBasedObject
      * @param trafficLightColor set the trafficLightColor
      */
     void setTrafficLightColor(TrafficLightColor trafficLightColor);
-    
+
     /**
      * The <b>timed</b> event type for pub/sub indicating the change of color of a traffic light. <br>
      * Payload: Object[] {String trafficLightId, TrafficLight trafficLight, TrafficLightColor newColor}
@@ -34,4 +34,3 @@ public interface TrafficLight extends Locatable, LaneBasedObject
     EventType TRAFFICLIGHT_CHANGE_EVENT = new EventType("TRAFFICLIGHT.CHANGE");
 
 }
-

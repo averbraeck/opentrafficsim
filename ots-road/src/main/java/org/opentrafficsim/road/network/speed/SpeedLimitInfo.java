@@ -74,8 +74,10 @@ public class SpeedLimitInfo implements Serializable
     public final <T> T getSpeedInfo(final SpeedLimitType<T> speedLimitType)
     {
         Throw.whenNull(speedLimitType, "Speed limit type may not be null.");
-        Throw.when(!containsType(speedLimitType), IllegalStateException.class, "The speed limit type '%s' "
-            + "is not present in the speed limit info. Use SpeedLimitInfo.containsType() to check.", speedLimitType.getId());
+        Throw.when(!containsType(speedLimitType), IllegalStateException.class,
+                "The speed limit type '%s' "
+                        + "is not present in the speed limit info. Use SpeedLimitInfo.containsType() to check.",
+                speedLimitType.getId());
         return (T) this.speedInfoMap.get(speedLimitType);
     }
 

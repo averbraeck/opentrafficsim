@@ -68,7 +68,7 @@ public interface EgoPerception extends PerceptionCategory
      * @return width
      */
     Length getWidth();
-    
+
     /** {@inheritDoc} */
     @Override
     default void updateAll() throws GTUException, NetworkException, ParameterException

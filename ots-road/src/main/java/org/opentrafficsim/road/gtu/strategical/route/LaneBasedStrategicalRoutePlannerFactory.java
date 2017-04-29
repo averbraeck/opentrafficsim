@@ -68,7 +68,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
     public final LaneBasedStrategicalPlanner create(final LaneBasedGTU gtu, final Route route) throws GTUException
     {
         BehavioralCharacteristics behavioralCharacteristics = this.tacticalPlannerFactory.getDefaultBehavioralCharacteristics();
-        try 
+        try
         {
             this.behavioralCharacteristicsFactory.setValues(behavioralCharacteristics, gtu.getGTUType());
         }

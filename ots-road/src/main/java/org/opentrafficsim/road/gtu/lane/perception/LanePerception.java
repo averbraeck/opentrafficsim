@@ -23,11 +23,11 @@ public interface LanePerception extends Perception
     /** {@inheritDoc} */
     @Override
     LaneBasedGTU getGtu() throws GTUException;
-    
+
     /**
-     * @return lane structure to perform perception 
-     * @throws ParameterException if parameter is not defined 
+     * @return lane structure to perform perception
+     * @throws ParameterException if parameter is not defined
      */
     LaneStructure getLaneStructure() throws ParameterException;
-    
+
 }

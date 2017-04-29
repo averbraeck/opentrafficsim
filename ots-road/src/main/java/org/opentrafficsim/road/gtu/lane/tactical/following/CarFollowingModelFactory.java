@@ -14,7 +14,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.following;
 
 public interface CarFollowingModelFactory<T extends CarFollowingModel>
 {
-    
+
     /**
      * Returns a new instance of a car-following model.
      * @return new instance of a car-following model

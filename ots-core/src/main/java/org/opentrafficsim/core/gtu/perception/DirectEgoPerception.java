@@ -77,7 +77,7 @@ public class DirectEgoPerception extends AbstractPerceptionCategory implements E
     {
         return this.acceleration.getObject();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final Speed getSpeed()

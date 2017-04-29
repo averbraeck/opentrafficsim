@@ -56,7 +56,7 @@ public class SinkSensor extends AbstractSensor
      * @param dummy1 dummy
      * @param lane the lane that triggers the deletion of the GTU.
      * @param position the position of the sensor
-     * @param dummy2 dummy 
+     * @param dummy2 dummy
      * @param simulator the simulator to enable animation.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */

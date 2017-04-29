@@ -32,7 +32,7 @@ public interface LaneBasedObject extends ObjectInterface
 
     /** @return Longitudinal direction. */
     LongitudinalDirectionality getDirection();
-    
+
     /** @return the position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane. */
     Length getLongitudinalPosition();
 

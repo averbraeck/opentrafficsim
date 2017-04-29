@@ -2,11 +2,11 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 
 import java.io.Serializable;
 
-import nl.tudelft.simulation.event.EventType;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
+
+import nl.tudelft.simulation.event.EventType;
 
 /**
  * An occupancy sensor is a lane-based object that can be triggered by a relative position of the GTU (e.g., front, back) when
@@ -51,8 +51,8 @@ public interface NonDirectionalOccupancySensor extends Serializable
      * Payload: Object[] {String sensorId, NonDirectionalOccupancySensor sensor, LaneBasedGTU gtu, RelativePosition.TYPE
      * relativePosition}
      */
-    EventType NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT = new EventType(
-            "NONDIRECTIONALOCCUPANCYSENSOR.TRIGGER.ENTRY");
+    EventType NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT =
+            new EventType("NONDIRECTIONALOCCUPANCYSENSOR.TRIGGER.ENTRY");
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of the exit of an NonDirectionalOccupancySensor. <br>
@@ -62,5 +62,5 @@ public interface NonDirectionalOccupancySensor extends Serializable
     EventType NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT = new EventType("NONDIRECTIONALOCCUPANCYSENSOR.TRIGGER.EXIT");
 
     // TODO enforce clone method
-    
+
 }

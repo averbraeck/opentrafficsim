@@ -10,6 +10,7 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
+import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -51,11 +52,11 @@ public class OTSNode implements Node, Locatable, Serializable
     private final Direction direction;
 
     /** The slope as an angle. Horizontal is 0 degrees. */
-    private final Direction slope;
+    private final Angle slope;
 
     /** The links connected to the Node. */
     private final Set<Link> links = new HashSet<Link>();
-    
+
     /** The cached immutable set of links to return. */
     private ImmutableSet<Link> cachedLinks = null;
 
@@ -76,8 +77,8 @@ public class OTSNode implements Node, Locatable, Serializable
      * @param slope the slope as an angle. Horizontal is 0 degrees.
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
-    public OTSNode(final Network network, final String id, final OTSPoint3D point, final Direction direction,
-            final Direction slope) throws NetworkException
+    public OTSNode(final Network network, final String id, final OTSPoint3D point, final Direction direction, final Angle slope)
+            throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
@@ -103,7 +104,7 @@ public class OTSNode implements Node, Locatable, Serializable
      */
     public OTSNode(final Network network, final String id, final OTSPoint3D point) throws NetworkException
     {
-        this(network, id, point, Direction.ZERO, Direction.ZERO);
+        this(network, id, point, Direction.ZERO, Angle.ZERO);
     }
 
     /** {@inheritDoc} */
@@ -358,7 +359,7 @@ public class OTSNode implements Node, Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final Direction getSlope()
+    public final Angle getSlope()
     {
         return this.slope;
     }
@@ -428,8 +429,7 @@ public class OTSNode implements Node, Locatable, Serializable
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public OTSNode clone1(final Network newNetwork, final OTSSimulatorInterface newSimulator)
-            throws NetworkException
+    public OTSNode clone1(final Network newNetwork, final OTSSimulatorInterface newSimulator) throws NetworkException
     {
         return new OTSNode(newNetwork, this.id, this.point, this.direction, this.slope);
     }

@@ -73,8 +73,8 @@ public class Distribution<O> implements Generator<O>, Serializable
         for (FrequencyAndObject<O> generator : this.generators)
         {
             double frequency = generator.getFrequency();
-            Throw.when(frequency < 0, ProbabilityException.class, "Negative frequency or probability is not allowed (got "
-                    + frequency + ")");
+            Throw.when(frequency < 0, ProbabilityException.class,
+                    "Negative frequency or probability is not allowed (got " + frequency + ")");
             this.cumulativeTotal += frequency;
         }
     }
@@ -129,8 +129,8 @@ public class Distribution<O> implements Generator<O>, Serializable
      */
     public final Distribution<O> add(final int index, final FrequencyAndObject<O> generator) throws ProbabilityException
     {
-        Throw.when(generator.getFrequency() < 0, ProbabilityException.class, "frequency (or probability) must be >= 0 (got "
-                + generator.getFrequency() + ")");
+        Throw.when(generator.getFrequency() < 0, ProbabilityException.class,
+                "frequency (or probability) must be >= 0 (got " + generator.getFrequency() + ")");
         this.generators.add(index, generator);
         fixProbabilities();
         return this;
@@ -159,8 +159,8 @@ public class Distribution<O> implements Generator<O>, Serializable
      */
     public final Distribution<O> set(final int index, final FrequencyAndObject<O> generator) throws ProbabilityException
     {
-        Throw.when(generator.getFrequency() < 0, ProbabilityException.class, "frequency (or probability) must be >= 0 (got "
-                + generator.getFrequency() + ")");
+        Throw.when(generator.getFrequency() < 0, ProbabilityException.class,
+                "frequency (or probability) must be >= 0 (got " + generator.getFrequency() + ")");
         try
         {
             this.generators.set(index, generator);

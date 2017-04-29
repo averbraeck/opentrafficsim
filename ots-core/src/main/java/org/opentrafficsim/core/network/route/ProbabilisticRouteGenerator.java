@@ -24,7 +24,7 @@ public class ProbabilisticRouteGenerator implements RouteGenerator, Serializable
 
     /** */
     private static final long serialVersionUID = 20150000L;
-    
+
     /** The Distribution from which routes are drawn. */
     private final Distribution<Route> distribution;
 

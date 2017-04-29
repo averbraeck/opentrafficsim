@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -73,8 +74,7 @@ public class SensorTest implements UNITS
         LaneType laneType = new LaneType("CarLane", compatibility);
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModelForSensorTest();
-        final SimpleSimulator simulator =
-                new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
+        final SimpleSimulator simulator = new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
         Lane[] lanesA = LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator, LongitudinalDirectionality.DIR_PLUS);
         Lane[] lanesB = LaneFactory.makeMultiLane(network, "B", nodeATo, nodeBTo, null, 3, laneType,
@@ -115,7 +115,7 @@ public class SensorTest implements UNITS
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
                 new LaneBasedGTUFollowingTacticalPlanner(fas, car), car);
         car.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
-        simulator.runUpTo(new Time(1, SECOND));
+        simulator.runUpTo(new Time(1, TimeUnit.BASE_SECOND));
         if (!simulator.isRunning())
         {
             simulator.start();

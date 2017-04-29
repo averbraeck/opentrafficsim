@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.lane.conflict;
 
 /**
- * Priority of conflict. This tells a GTU how to respond to the conflict. Whether a GTU has priority or not may come from any 
+ * Priority of conflict. This tells a GTU how to respond to the conflict. Whether a GTU has priority or not may come from any
  * conflict rule. This only represents the resulting priority.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -25,10 +25,10 @@ public enum ConflictPriority
 
     /** All-way stop. */
     ALL_STOP,
-    
+
     /** Split. */
     SPLIT;
-    
+
     /**
      * Returns whether this is a priority conflict.
      * @return whether this is a priority conflict

@@ -3,12 +3,12 @@ package org.opentrafficsim.core.network.factory.xml.units;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.unit.PositionUnit;
+import org.djunits.value.vdouble.scalar.Position;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
- * Parser for times and frequencies with unit.
+ * Parser for position with unit.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -17,27 +17,27 @@ import org.opentrafficsim.core.network.NetworkException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public final class TimeUnits
+public final class PositionUnits
 {
-    /** The time units. */
-    public static final Map<String, TimeUnit> TIME_UNITS = new HashMap<>();
+    /** The position units. */
+    public static final Map<String, PositionUnit> POSITION_UNITS = new HashMap<>();
 
     static
     {
-        TIME_UNITS.put("ms", TimeUnit.EPOCH_MILLISECOND);
-        TIME_UNITS.put("s", TimeUnit.EPOCH_SECOND);
-        TIME_UNITS.put("m", TimeUnit.EPOCH_MINUTE);
-        TIME_UNITS.put("min", TimeUnit.EPOCH_MINUTE);
-        TIME_UNITS.put("h", TimeUnit.EPOCH_HOUR);
-        TIME_UNITS.put("hr", TimeUnit.EPOCH_HOUR);
-        TIME_UNITS.put("d", TimeUnit.EPOCH_DAY);
-        TIME_UNITS.put("day", TimeUnit.EPOCH_DAY);
-        TIME_UNITS.put("wk", TimeUnit.EPOCH_WEEK);
-        TIME_UNITS.put("week", TimeUnit.EPOCH_WEEK);
+        POSITION_UNITS.put("mm", PositionUnit.MILLIMETER);
+        POSITION_UNITS.put("cm", PositionUnit.CENTIMETER);
+        POSITION_UNITS.put("dm", PositionUnit.DECIMETER);
+        POSITION_UNITS.put("dam", PositionUnit.DEKAMETER);
+        POSITION_UNITS.put("hm", PositionUnit.HECTOMETER);
+        POSITION_UNITS.put("m", PositionUnit.METER);
+        POSITION_UNITS.put("km", PositionUnit.KILOMETER);
+        POSITION_UNITS.put("mi", PositionUnit.MILE);
+        POSITION_UNITS.put("y", PositionUnit.YARD);
+        POSITION_UNITS.put("ft", PositionUnit.FOOT);
     }
 
     /** Utility class. */
-    private TimeUnits()
+    private PositionUnits()
     {
         // do not instantiate
     }
@@ -47,10 +47,10 @@ public final class TimeUnits
      * @return the unit as a String in the Map.
      * @throws NetworkException when parsing fails
      */
-    public static String parseTimeUnit(final String s) throws NetworkException
+    public static String parsePositionUnit(final String s) throws NetworkException
     {
         String u = null;
-        for (String us : TIME_UNITS.keySet())
+        for (String us : POSITION_UNITS.keySet())
         {
             if (s.toString().contains(us))
             {
@@ -62,7 +62,7 @@ public final class TimeUnits
         }
         if (u == null)
         {
-            throw new NetworkException("Parsing network: cannot instantiate time unit in: " + s);
+            throw new NetworkException("Parsing network: cannot instantiate length unit in: " + s);
         }
         return u;
     }
@@ -72,15 +72,15 @@ public final class TimeUnits
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Time parseTime(final String s) throws NetworkException
+    public static Position parsePosition(final String s) throws NetworkException
     {
-        String us = parseTimeUnit(s);
-        TimeUnit u = TIME_UNITS.get(us);
+        String us = parsePositionUnit(s);
+        PositionUnit u = POSITION_UNITS.get(us);
         String sv = s.substring(0, s.indexOf(us));
         try
         {
             double value = Double.parseDouble(sv);
-            return new Time(value, u);
+            return new Position(value, u);
         }
         catch (NumberFormatException nfe)
         {

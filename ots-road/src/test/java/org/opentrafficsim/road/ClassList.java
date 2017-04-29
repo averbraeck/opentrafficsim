@@ -252,7 +252,7 @@ public final class ClassList
     {
         for (Field f : c.getDeclaredFields())
         {
-            //System.out.println("field " + f.getName() + ": " + Modifier.toString(f.getModifiers()));
+            // System.out.println("field " + f.getName() + ": " + Modifier.toString(f.getModifiers()));
             if (!Modifier.isStatic(f.getModifiers()))
             {
                 return true;

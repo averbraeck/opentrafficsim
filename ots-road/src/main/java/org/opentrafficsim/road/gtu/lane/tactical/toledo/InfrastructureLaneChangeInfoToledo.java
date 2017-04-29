@@ -24,7 +24,7 @@ public class InfrastructureLaneChangeInfoToledo extends InfrastructureLaneChange
 
     /** */
     private static final long serialVersionUID = 20160811L;
-    
+
     /** Split number, 0 if this info does not regard a split. */
     private final int splitNumber;
 
@@ -35,7 +35,7 @@ public class InfrastructureLaneChangeInfoToledo extends InfrastructureLaneChange
      * @throws GTUException if the split number is below 1
      */
     public InfrastructureLaneChangeInfoToledo(final int requiredNumberOfLaneChanges, final Length remainingDistance,
-        final int splitNumber) throws GTUException
+            final int splitNumber) throws GTUException
     {
         super(requiredNumberOfLaneChanges, remainingDistance, splitNumber > 0);
         Throw.when(splitNumber <= 0, GTUException.class, "Split number should be at least 1.");
@@ -59,12 +59,12 @@ public class InfrastructureLaneChangeInfoToledo extends InfrastructureLaneChange
     {
         return this.splitNumber;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
         return "InfrastructureLaneChangeInfoToledo [requiredNumberOfLaneChanges=" + getRequiredNumberOfLaneChanges()
-            + ", remainingDistance=" + getRemainingDistance() + ", split=" + this.splitNumber + "]";
+                + ", remainingDistance=" + getRemainingDistance() + ", split=" + this.splitNumber + "]";
     }
 }

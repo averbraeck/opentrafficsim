@@ -2,12 +2,16 @@ package org.opentrafficsim.core.units.distributions;
 
 import java.io.Serializable;
 
+import org.djunits.unit.AbsoluteLinearUnit;
+import org.djunits.unit.AbsoluteTemperatureUnit;
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.AngleSolidUnit;
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.AreaUnit;
 import org.djunits.unit.DensityUnit;
 import org.djunits.unit.DimensionlessUnit;
+import org.djunits.unit.DirectionUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.ElectricalChargeUnit;
 import org.djunits.unit.ElectricalCurrentUnit;
 import org.djunits.unit.ElectricalPotentialUnit;
@@ -20,6 +24,7 @@ import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.MassUnit;
+import org.djunits.unit.PositionUnit;
 import org.djunits.unit.PowerUnit;
 import org.djunits.unit.PressureUnit;
 import org.djunits.unit.SpeedUnit;
@@ -79,10 +84,11 @@ public interface DiscreteDistFloatScalar
     /**
      * Absolute value.
      * @param <T> The absolute floatscalar type
-     * @param <U> The unit type used
+     * @param <AU> The absolute unit type used
+     * @param <RU> The relative unit type belonging to AU
      */
-    class Abs<T extends AbstractFloatScalarAbs<U, T, ?>, U extends Unit<U>> extends AbstractDiscreteDistScalar
-            implements Absolute, Serializable
+    class Abs<T extends AbstractFloatScalarAbs<AU, T, RU, ?>, AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>>
+            extends AbstractDiscreteDistScalar implements Absolute, Serializable
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -91,7 +97,7 @@ public interface DiscreteDistFloatScalar
          * @param distribution the wrapped distribution function.
          * @param unit the unit.
          */
-        public Abs(final DistDiscrete distribution, final U unit)
+        public Abs(final DistDiscrete distribution, final AU unit)
         {
             super(distribution, unit);
         }
@@ -100,7 +106,7 @@ public interface DiscreteDistFloatScalar
          * @param constant the constant value.
          * @param unit the unit.
          */
-        public Abs(final int constant, final U unit)
+        public Abs(final int constant, final AU unit)
         {
             super(constant, unit);
         }
@@ -114,19 +120,20 @@ public interface DiscreteDistFloatScalar
             switch (getUnit().getClass().getSimpleName())
             {
                 case "AngleUnit":
-                    return (T) new FloatDirection((float) getDistribution().draw(), (AngleUnit) getUnit());
+                    return (T) new FloatDirection((float) getDistribution().draw(), (DirectionUnit) getUnit());
 
                 case "LengthUnit":
-                    return (T) new FloatPosition((float) getDistribution().draw(), (LengthUnit) getUnit());
+                    return (T) new FloatPosition((float) getDistribution().draw(), (PositionUnit) getUnit());
 
                 case "TemperatureUnit":
-                    return (T) new FloatAbsoluteTemperature((float) getDistribution().draw(), (TemperatureUnit) getUnit());
+                    return (T) new FloatAbsoluteTemperature((float) getDistribution().draw(),
+                            (AbsoluteTemperatureUnit) getUnit());
 
                 case "TimeUnit":
                     return (T) new FloatTime((float) getDistribution().draw(), (TimeUnit) getUnit());
 
                 default:
-                    return (T) new FloatScalar.Abs(getDistribution().draw(), getUnit());
+                    return (T) new FloatScalar.Abs(getDistribution().draw(), (AU) getUnit());
             }
         }
 
@@ -244,7 +251,7 @@ public interface DiscreteDistFloatScalar
                     return (T) new FloatTemperature((float) getDistribution().draw(), (TemperatureUnit) getUnit());
 
                 case "TimeUnit":
-                    return (T) new FloatDuration((float) getDistribution().draw(), (TimeUnit) getUnit());
+                    return (T) new FloatDuration((float) getDistribution().draw(), (DurationUnit) getUnit());
 
                 case "TorqueUnit":
                     return (T) new FloatTorque((float) getDistribution().draw(), (TorqueUnit) getUnit());

@@ -50,9 +50,9 @@ public interface DirectedLaneChangeModel
      */
     @SuppressWarnings("checkstyle:parameternumber")
     DirectedLaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu, final LateralDirectionality direction,
-        final Collection<Headway> sameLaneTraffic, final Collection<Headway> otherLaneTraffic, final Length maxDistance,
-        final Speed speedLimit, final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold,
-        Duration laneChangeTime) throws GTUException, ParameterException, OperationalPlanException;
+            final Collection<Headway> sameLaneTraffic, final Collection<Headway> otherLaneTraffic, final Length maxDistance,
+            final Speed speedLimit, final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold,
+            Duration laneChangeTime) throws GTUException, ParameterException, OperationalPlanException;
 
     /** @return the perception. */
     LanePerception getPerception();

@@ -63,7 +63,7 @@ public interface CarFollowingModel
      * @return car-following acceleration
      */
     Acceleration followingAcceleration(BehavioralCharacteristics behavioralCharacteristics, Speed speed,
-        SpeedLimitInfo speedLimitInfo, SortedMap<Length, Speed> leaders) throws ParameterException;
+            SpeedLimitInfo speedLimitInfo, SortedMap<Length, Speed> leaders) throws ParameterException;
 
     /**
      * Return the name of the car-following model.

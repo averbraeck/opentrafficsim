@@ -55,8 +55,7 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform, Seria
         this.latCenter = latCenter;
         this.lonCenter = lonCenter;
         double lr = Math.toRadians(latCenter);
-        this.latToM =
-            111132.92 - 559.82 * Math.cos(2.0 * lr) + 1.175 * Math.cos(4.0 * lr) - 0.0023 * Math.cos(6.0 * lr); // 111.31;
+        this.latToM = 111132.92 - 559.82 * Math.cos(2.0 * lr) + 1.175 * Math.cos(4.0 * lr) - 0.0023 * Math.cos(6.0 * lr); // 111.31;
         this.lonToM = 111412.84 * Math.cos(lr) - 93.5 * Math.cos(3.0 * lr) - 0.118 * Math.cos(5.0 * lr); // 88.32;
     }
 
@@ -65,7 +64,7 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform, Seria
     public final float[] floatTransform(final double lon, final double lat)
     {
         double[] dt = doubleTransform(lon, lat);
-        return new float[]{(float) dt[0], (float) dt[1]};
+        return new float[] { (float) dt[0], (float) dt[1] };
     }
 
     /**
@@ -91,17 +90,17 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform, Seria
         double x = coslon * term2 - this.centerX;
         double y = sinlon * term2 - this.centerY;
 
-        return new double[]{x, y};
+        return new double[] { x, y };
     }
 
-    /**{@inheritDoc} */
+    /** {@inheritDoc} */
     @Override
     public final double[] doubleTransform(final double lon, final double lat)
     {
         double x = (lon - this.lonCenter) * this.lonToM;
         double y = (lat - this.latCenter) * this.latToM;
 
-        return new double[]{x, y};
+        return new double[] { x, y };
     }
 
     /** {@inheritDoc} */

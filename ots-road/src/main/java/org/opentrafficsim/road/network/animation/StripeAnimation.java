@@ -164,7 +164,8 @@ public class StripeAnimation extends Renderable2D<Stripe> implements ClonableRen
             {
                 OTSLine3D centerLine = stripe.getCenterLine();
                 Geometry leftDesignLine = centerLine.offsetLine(0.2).getLineString();
-                ArrayList<OTSPoint3D> result = makeDashes(new LengthIndexedLine(leftDesignLine), 0.2, 2.99, new double[] { 3, 9 });
+                ArrayList<OTSPoint3D> result =
+                        makeDashes(new LengthIndexedLine(leftDesignLine), 0.2, 2.99, new double[] { 3, 9 });
                 Geometry rightDesignLine =
                         centerLine.offsetLine(-0.2).getLineString().buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT);
                 Coordinate[] rightCoordinates =

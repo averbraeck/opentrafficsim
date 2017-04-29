@@ -11,13 +11,6 @@ import java.util.Map;
 
 import javax.media.j3d.Bounds;
 
-import mockit.Mock;
-import mockit.MockUp;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -26,6 +19,13 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
+
+import mockit.Mock;
+import mockit.MockUp;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Test the OTSLink class.
@@ -186,10 +186,9 @@ public class OTSLinkTest implements EventListenerInterface
         assertFalse("link is not equal to extremely similar link with different id", link.equals(otherLink));
         // make a link with the same name in another network
         Network otherNetwork = new OTSNetwork("other");
-        otherLink =
-                new OTSLink(otherNetwork, "link", new OTSNode(otherNetwork, "start", new OTSPoint3D(10, 20, 0)), new OTSNode(
-                        otherNetwork, "end", new OTSPoint3D(1000, 2000, 10)), linkType, designLine, simulator,
-                        directionalityMap);
+        otherLink = new OTSLink(otherNetwork, "link", new OTSNode(otherNetwork, "start", new OTSPoint3D(10, 20, 0)),
+                new OTSNode(otherNetwork, "end", new OTSPoint3D(1000, 2000, 10)), linkType, designLine, simulator,
+                directionalityMap);
         assertTrue("link is equal to extremely similar link with same id but different network", link.equals(otherLink));
         otherNetwork.removeLink(otherLink);
         OTSSimulatorInterface simulator2 = new MockUp<OTSSimulatorInterface>()

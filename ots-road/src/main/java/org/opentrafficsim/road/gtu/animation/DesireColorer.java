@@ -102,5 +102,5 @@ public abstract class DesireColorer implements GTUColorer, Serializable
         }
         return ColorInterpolator.interpolateColor(NONE, target, f);
     }
-    
+
 }

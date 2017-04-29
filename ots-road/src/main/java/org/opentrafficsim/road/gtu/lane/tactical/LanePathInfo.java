@@ -105,7 +105,7 @@ public class LanePathInfo implements Serializable
         }
         return lanes;
     }
-    
+
     /**
      * The reference lane is the widest lane on which the reference point of the GTU is fully registered.
      * @return the reference lane on which the GTU is registered, plus the driving direction on this lane, or null if the GTU is

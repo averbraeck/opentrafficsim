@@ -1,6 +1,8 @@
 package org.opentrafficsim.core.network.factory.xml.units;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.PositionUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -125,8 +127,7 @@ public final class Distributions
         }
         catch (IndexOutOfBoundsException e)
         {
-            throw new NetworkException("makeDistContinuous - wrong number of parameters for distribution function "
-                + ds);
+            throw new NetworkException("makeDistContinuous - wrong number of parameters for distribution function " + ds);
         }
     }
 
@@ -136,8 +137,7 @@ public final class Distributions
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static ContinuousDistDoubleScalar.Rel<Length, LengthUnit> parseLengthDist(final String s)
-        throws NetworkException
+    public static ContinuousDistDoubleScalar.Rel<Length, LengthUnit> parseLengthDist(final String s) throws NetworkException
     {
         String[] s1 = s.split("\\(");
         String ds = s1[0];
@@ -154,8 +154,8 @@ public final class Distributions
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static ContinuousDistDoubleScalar.Abs<Position, LengthUnit> parsePositionDist(final String s)
-        throws NetworkException
+    public static ContinuousDistDoubleScalar.Abs<Position, PositionUnit, LengthUnit> parsePositionDist(final String s)
+            throws NetworkException
     {
         String[] s1 = s.split("\\(");
         String ds = s1[0];
@@ -163,7 +163,8 @@ public final class Distributions
         String unit = LengthUnits.parseLengthUnit(s2[1]);
         double[] args = parseDoubleArgs(s2[0]);
         DistContinuous dist = makeDistContinuous(ds, args);
-        return new ContinuousDistDoubleScalar.Abs<Position, LengthUnit>(dist, LengthUnits.LENGTH_UNITS.get(unit));
+        return new ContinuousDistDoubleScalar.Abs<Position, PositionUnit, LengthUnit>(dist,
+                PositionUnits.POSITION_UNITS.get(unit));
     }
 
     /**
@@ -172,16 +173,16 @@ public final class Distributions
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> parseDurationDist(final String s)
-        throws NetworkException
+    public static ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> parseDurationDist(final String s)
+            throws NetworkException
     {
         String[] s1 = s.split("\\(");
         String ds = s1[0];
         String[] s2 = s1[1].split("\\)");
-        String unit = TimeUnits.parseTimeUnit(s2[1]);
+        String unit = DurationUnits.parseDurationUnit(s2[1]);
         double[] args = parseDoubleArgs(s2[0]);
         DistContinuous dist = makeDistContinuous(ds, args);
-        return new ContinuousDistDoubleScalar.Rel<Duration, TimeUnit>(dist, TimeUnits.TIME_UNITS.get(unit));
+        return new ContinuousDistDoubleScalar.Rel<Duration, DurationUnit>(dist, DurationUnits.DURATION_UNITS.get(unit));
     }
 
     /**
@@ -190,8 +191,8 @@ public final class Distributions
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static ContinuousDistDoubleScalar.Abs<Time, TimeUnit> parseTimeDist(final String s)
-        throws NetworkException
+    public static ContinuousDistDoubleScalar.Abs<Time, TimeUnit, DurationUnit> parseTimeDist(final String s)
+            throws NetworkException
     {
         String[] s1 = s.split("\\(");
         String ds = s1[0];
@@ -199,7 +200,7 @@ public final class Distributions
         String unit = TimeUnits.parseTimeUnit(s2[1]);
         double[] args = parseDoubleArgs(s2[0]);
         DistContinuous dist = makeDistContinuous(ds, args);
-        return new ContinuousDistDoubleScalar.Abs<Time, TimeUnit>(dist, TimeUnits.TIME_UNITS.get(unit));
+        return new ContinuousDistDoubleScalar.Abs<Time, TimeUnit, DurationUnit>(dist, TimeUnits.TIME_UNITS.get(unit));
     }
 
     /**
@@ -208,8 +209,7 @@ public final class Distributions
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> parseSpeedDist(final String s)
-        throws NetworkException
+    public static ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> parseSpeedDist(final String s) throws NetworkException
     {
         String[] s1 = s.split("\\(");
         String ds = s1[0];

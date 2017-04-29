@@ -73,16 +73,13 @@ public class HeadwayGTUTest
             {
                 hg2 = new HeadwayGTUSimple(id2, gtuType2, distance2, Length.ZERO, speed2, acceleration2, gtuStatus1,
                         gtuStatus2);
-                boolean honking =
-                        GTUStatus.HONK == gtuStatus1 || GTUStatus.HONK == gtuStatus2;
-                boolean braking = GTUStatus.BRAKING_LIGHTS == gtuStatus1
-                        || GTUStatus.BRAKING_LIGHTS == gtuStatus2;
-                boolean leftIndicator = GTUStatus.LEFT_TURNINDICATOR == gtuStatus1
-                        || GTUStatus.LEFT_TURNINDICATOR == gtuStatus2;
-                boolean rightIndicator = GTUStatus.RIGHT_TURNINDICATOR == gtuStatus1
-                        || GTUStatus.RIGHT_TURNINDICATOR == gtuStatus2;
-                boolean hazardLights = GTUStatus.EMERGENCY_LIGHTS == gtuStatus1
-                        || GTUStatus.EMERGENCY_LIGHTS == gtuStatus2;
+                boolean honking = GTUStatus.HONK == gtuStatus1 || GTUStatus.HONK == gtuStatus2;
+                boolean braking = GTUStatus.BRAKING_LIGHTS == gtuStatus1 || GTUStatus.BRAKING_LIGHTS == gtuStatus2;
+                boolean leftIndicator =
+                        GTUStatus.LEFT_TURNINDICATOR == gtuStatus1 || GTUStatus.LEFT_TURNINDICATOR == gtuStatus2;
+                boolean rightIndicator =
+                        GTUStatus.RIGHT_TURNINDICATOR == gtuStatus1 || GTUStatus.RIGHT_TURNINDICATOR == gtuStatus2;
+                boolean hazardLights = GTUStatus.EMERGENCY_LIGHTS == gtuStatus1 || GTUStatus.EMERGENCY_LIGHTS == gtuStatus2;
                 verifyFields(hg2, acceleration2, distance2, gtuType2, id2, Headway.ObjectType.GTU, null, null, null, speed2,
                         true, false, braking, hazardLights, honking, leftIndicator, rightIndicator, false);
 

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTU;
@@ -101,7 +101,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, OTS
     @Override
     protected final Duration relativeMillis(final double factor)
     {
-        return new Duration(factor, TimeUnit.MILLISECOND);
+        return new Duration(factor, DurationUnit.MILLISECOND);
     }
 
     /** {@inheritDoc} */

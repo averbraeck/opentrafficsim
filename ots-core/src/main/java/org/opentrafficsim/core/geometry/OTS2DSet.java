@@ -247,9 +247,8 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
     public final Set<OTSShape> intersectingShapes(final OTSShape shape)
     {
         Envelope envelope = shape.getEnvelope();
-        Set<OTSShape> result =
-                intersectingShapes(new Rectangle2D.Double(envelope.getMinX(), envelope.getMinY(), envelope.getWidth(),
-                        envelope.getHeight()));
+        Set<OTSShape> result = intersectingShapes(
+                new Rectangle2D.Double(envelope.getMinX(), envelope.getMinY(), envelope.getWidth(), envelope.getHeight()));
         for (Iterator<OTSShape> it = result.iterator(); it.hasNext();)
         {
             if (!it.next().intersects(shape))
@@ -353,9 +352,8 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
         {
             this.boundingBox = boundingBox;
             this.boundingShape = rectangleShape(boundingBox);
-            this.leaves =
-                    boundingBox.getWidth() > OTS2DSet.this.minimumCellSize
-                            || boundingBox.getHeight() > OTS2DSet.this.minimumCellSize ? new QuadTreeNode[4] : null;
+            this.leaves = boundingBox.getWidth() > OTS2DSet.this.minimumCellSize
+                    || boundingBox.getHeight() > OTS2DSet.this.minimumCellSize ? new QuadTreeNode[4] : null;
         }
 
         /**
@@ -702,12 +700,10 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
             }
             else
             {
-                String[] left =
-                        subStringGraphic(null == qtn || null == qtn.leaves ? null : qtn.leaves[1], recursionDepth - 1).split(
-                                "\\n");
-                String[] right =
-                        subStringGraphic(null == qtn || null == qtn.leaves ? null : qtn.leaves[3], recursionDepth - 1).split(
-                                "\\n");
+                String[] left = subStringGraphic(null == qtn || null == qtn.leaves ? null : qtn.leaves[1], recursionDepth - 1)
+                        .split("\\n");
+                String[] right = subStringGraphic(null == qtn || null == qtn.leaves ? null : qtn.leaves[3], recursionDepth - 1)
+                        .split("\\n");
                 String horizontalLine = null;
                 for (int i = 0; i < left.length; i++)
                 {
@@ -736,12 +732,10 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
                 }
                 result.append(horizontalLine);
                 result.append("\n");
-                left =
-                        subStringGraphic(null == qtn || null == qtn.leaves ? null : qtn.leaves[0], recursionDepth - 1).split(
-                                "\\n");
-                right =
-                        subStringGraphic(null == qtn || null == qtn.leaves ? null : qtn.leaves[2], recursionDepth - 1).split(
-                                "\\n");
+                left = subStringGraphic(null == qtn || null == qtn.leaves ? null : qtn.leaves[0], recursionDepth - 1)
+                        .split("\\n");
+                right = subStringGraphic(null == qtn || null == qtn.leaves ? null : qtn.leaves[2], recursionDepth - 1)
+                        .split("\\n");
                 for (int i = 0; i < left.length; i++)
                 {
                     result.append(left[i]);

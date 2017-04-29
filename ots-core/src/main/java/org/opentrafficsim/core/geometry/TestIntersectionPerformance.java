@@ -144,8 +144,8 @@ public final class TestIntersectionPerformance
             {
                 if (numEdges / numVertices > 2)
                 {
-                    System.out.println(baseTest(numEdges / numVertices, numVertices, 0.10, numRuns, false, variant).result(
-                            true, false));
+                    System.out.println(
+                            baseTest(numEdges / numVertices, numVertices, 0.10, numRuns, false, variant).result(true, false));
                 }
             }
         }
@@ -193,13 +193,13 @@ public final class TestIntersectionPerformance
             {
                 if (numTests != this.stats.get(0).getNumTests())
                 {
-                    System.err.println("Number of tests per run changed from " + this.stats.get(0).getNumTests() + " to "
-                            + numTests);
+                    System.err.println(
+                            "Number of tests per run changed from " + this.stats.get(0).getNumTests() + " to " + numTests);
                 }
                 if (numHits != this.stats.get(0).getNumHits())
                 {
-                    System.err.println("Number of hits per run changed from " + this.stats.get(0).getNumHits() + " to "
-                            + numHits);
+                    System.err.println(
+                            "Number of hits per run changed from " + this.stats.get(0).getNumHits() + " to " + numHits);
                 }
             }
             this.stats.add(new Result(numTests, numHits, executionTime));
@@ -272,8 +272,8 @@ public final class TestIntersectionPerformance
             }
             if (verbose)
             {
-                System.out.println(String.format("Removing lowest (%s) and highest (%s) run times", lowestRunTime,
-                        highestRunTime));
+                System.out.println(
+                        String.format("Removing lowest (%s) and highest (%s) run times", lowestRunTime, highestRunTime));
             }
             this.stats.remove(highestRunTime);
             this.stats.remove(lowestRunTime);
@@ -293,9 +293,9 @@ public final class TestIntersectionPerformance
             final double sdevRunTime = Math.sqrt(sumRunTimeSquared - sumRunTime * sumRunTime / size()) / (size() - 1);
             // System.out.println("mean " + meanRunTime + " sdev " + sdevRunTime);
             return String.format("%7d |  %5d   |%9d |%11.4f\u00b5s |%11.4f\u00b5s | " + " %5.2f%% |  %6.2f%%   |%5d |%8.1fs",
-                    this.numShapes, this.numVertices, totalTestsPerformed, 1000000 * sumRunTime / totalTestsPerformed, 1000000
-                            * sdevRunTime * size() / totalTestsPerformed, 100 * sdevRunTime / meanRunTime, 100.0 * totalHits
-                            / totalTestsPerformed, size(), sumRunTime);
+                    this.numShapes, this.numVertices, totalTestsPerformed, 1000000 * sumRunTime / totalTestsPerformed,
+                    1000000 * sdevRunTime * size() / totalTestsPerformed, 100 * sdevRunTime / meanRunTime,
+                    100.0 * totalHits / totalTestsPerformed, size(), sumRunTime);
         }
 
         /**

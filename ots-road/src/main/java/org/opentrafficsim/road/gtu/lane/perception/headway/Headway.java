@@ -18,8 +18,8 @@ import org.opentrafficsim.core.perception.PerceivedObject;
  * sharp bends. Therefore, algorithms implementing headway should only project the <i>reference point</i> of the reference GTU
  * on the center line of the adjacent lane, and then calculate the forward position and backward position on the adjacent lane
  * based on the reference point. Still, our human perception of what is parallel and what not, is not reflected by fractional
- * positions. See examples in <a href=
- * "http://simulation.tudelft.nl:8085/browse/OTS-113">http://simulation.tudelft.nl:8085/browse/OTS-113</a>.
+ * positions. See examples in
+ * <a href= "http://simulation.tudelft.nl:8085/browse/OTS-113">http://simulation.tudelft.nl:8085/browse/OTS-113</a>.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -45,13 +45,13 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
 
         /** there is no observed object, just a distance. */
         DISTANCEONLY,
-        
+
         /** intersection conflict. */
         CONFLICT,
-        
+
         /** stop line. */
         STOPLINE,
-        
+
         /** bus stop. */
         BUSSTOP;
 
@@ -78,25 +78,25 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
         {
             return this.equals(DISTANCEONLY);
         }
-        
+
         /** @return whether this object is a conflict or not. */
         public boolean isConflict()
         {
             return this.equals(CONFLICT);
         }
-        
+
         /** @return whether this object is a stop line or not. */
         public boolean isStopLine()
         {
             return this.equals(STOPLINE);
         }
-        
+
         /** @return whether this object is a bus stop or not. */
         public boolean isBusStop()
         {
             return this.equals(BUSSTOP);
         }
-        
+
     }
 
     /**
@@ -108,7 +108,7 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
      * @return Length; the length of the other object; can be null if unknown.
      */
     Length getLength();
-    
+
     /**
      * @return Speed; the (perceived) speed of the other object; can be null if unknown.
      */
@@ -144,6 +144,7 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
      *      ---------------
      * | a  | b |     c   |
      * </pre>
+     * 
      * @return Length; the (perceived) front overlap to the other object or null if there is no overlap.
      */
     Length getOverlapFront();
@@ -161,6 +162,7 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
      *      ---------------
      * | a  | b |     c   |
      * </pre>
+     * 
      * @return Length; the (perceived) rear overlap to the other object or null if there is no overlap.
      */
     Length getOverlapRear();
@@ -178,6 +180,7 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
      *      ---------------
      * | a  | b |     c   |
      * </pre>
+     * 
      * @return Length, the (perceived) overlap with the other object or null if there is no overlap.
      */
     Length getOverlap();
@@ -196,7 +199,7 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
      * @return whether the other object is parallel the reference object.
      */
     boolean isParallel();
-    
+
     /** {@inheritDoc} */
     @Override
     default int compareTo(Headway headway)
@@ -207,7 +210,7 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
         }
         else if (getDistance() == null)
         {
-             return -1;
+            return -1;
         }
         else if (headway.getDistance() == null)
         {

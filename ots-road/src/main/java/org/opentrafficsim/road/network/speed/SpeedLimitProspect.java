@@ -61,15 +61,15 @@ public class SpeedLimitProspect implements Serializable
      * @throws IllegalArgumentException if the distance is negative
      * @throws NullPointerException if any input is null
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public final void removeSpeedInfo(final Length distance, final SpeedLimitType<?> speedLimitType)
     {
         Throw.whenNull(distance, "Distance may not be null.");
-        Throw.when(distance.si < 0, IllegalArgumentException.class, "Removing speed info in the past is not allowed. "
-            + "Only add still active speed info.");
+        Throw.when(distance.si < 0, IllegalArgumentException.class,
+                "Removing speed info in the past is not allowed. " + "Only add still active speed info.");
         Throw.whenNull(speedLimitType, "Speed limit type may not be null.");
         Throw.when(speedLimitType.equals(SpeedLimitTypes.MAX_VEHICLE_SPEED), IllegalArgumentException.class,
-            "May not remove the maximum vehicle speed.");
+                "May not remove the maximum vehicle speed.");
         // null value does not comply to being a T for SpeedLimitType<T> but is separately treated
         checkAndAdd(new SpeedLimitEntry(distance, speedLimitType, null));
     }
@@ -89,9 +89,10 @@ public class SpeedLimitProspect implements Serializable
                  * For entries at the same distance, the speed limit type may not be the same, this leaves us with an undefined
                  * state as it cannot be derived which remains valid further on.
                  */
-                Throw.when(s.getDistance().equals(speedLimitEntry.getDistance()), IllegalStateException.class, "Info "
-                    + "of speed limit type '%s' is set twice at the same location (%s). This is undefined. "
-                    + "Either remove speed info, or overwrite with new speed info.", s.getSpeedLimitType(), s.getDistance());
+                Throw.when(s.getDistance().equals(speedLimitEntry.getDistance()), IllegalStateException.class,
+                        "Info " + "of speed limit type '%s' is set twice at the same location (%s). This is undefined. "
+                                + "Either remove speed info, or overwrite with new speed info.",
+                        s.getSpeedLimitType(), s.getDistance());
             }
         }
         this.prospect.add(speedLimitEntry);
@@ -159,8 +160,8 @@ public class SpeedLimitProspect implements Serializable
         for (SpeedLimitEntry<?> speedLimitEntry : this.prospect)
         {
             if (speedLimitEntry.getSpeedLimitType().equals(speedLimitType)
-                && (min == null || speedLimitEntry.getDistance().gt(min))
-                && (max == null || speedLimitEntry.getDistance().le(max)))
+                    && (min == null || speedLimitEntry.getDistance().gt(min))
+                    && (max == null || speedLimitEntry.getDistance().le(max)))
             {
                 list.add(speedLimitEntry.getDistance());
             }
@@ -209,7 +210,7 @@ public class SpeedLimitProspect implements Serializable
             }
         }
         throw new IllegalArgumentException("Speed info of speed limit type '" + speedLimitType.getId()
-            + "' is requested at a distance '" + distance + "' where the info is not changed.");
+                + "' is requested at a distance '" + distance + "' where the info is not changed.");
     }
 
     /**
@@ -298,8 +299,8 @@ public class SpeedLimitProspect implements Serializable
             }
             if (speedLimitEntry.getSpeedLimitType().equals(SpeedLimitTypes.MAX_VEHICLE_SPEED))
             {
-                out.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, SpeedLimitTypes.MAX_VEHICLE_SPEED.getInfoClass().cast(
-                    speedLimitEntry.getSpeedInfo()));
+                out.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED,
+                        SpeedLimitTypes.MAX_VEHICLE_SPEED.getInfoClass().cast(speedLimitEntry.getSpeedInfo()));
             }
         }
         return out;
@@ -332,7 +333,8 @@ public class SpeedLimitProspect implements Serializable
     /**
      * Stores speed limit type and it's speed info with a location.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version May 1, 2016 <br>

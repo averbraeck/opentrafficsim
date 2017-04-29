@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -88,7 +88,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     private Time earliestNextLaneChangeTime = Time.ZERO;
 
     /** Time a GTU should stay in its current lane after a lane change. */
-    private Duration durationInLaneAfterLaneChange = new Duration(15.0, TimeUnit.SECOND);
+    private Duration durationInLaneAfterLaneChange = new Duration(15.0, DurationUnit.SECOND);
 
     /** Lane we changed to at instantaneous lane change. */
     private Lane laneAfterLaneChange = null;
@@ -109,7 +109,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     {
         super(carFollowingModel, gtu, new CategorialLanePerception(gtu));
         getPerception().addPerceptionCategory(new DirectDefaultSimplePerception(getPerception()));
-        setNoLaneChange(new Duration(0.25, TimeUnit.SECOND));
+        setNoLaneChange(new Duration(0.25, DurationUnit.SECOND));
     }
 
     /**
@@ -149,13 +149,13 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     /**
      * Time after which situation is labeled a dead-lock.
      */
-    private final Duration deadLockThreshold = new Duration(5.0, TimeUnit.SI);
+    private final Duration deadLockThreshold = new Duration(5.0, DurationUnit.SI);
 
     /**
      * Headways that are causing the dead-lock.
      */
     private Collection<Headway> blockingHeadways = new HashSet<>();
-    
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:methodlength")
@@ -180,7 +180,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
             if (laneBasedGTU.getMaximumSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
             {
-                return new OperationalPlan(getGtu(), locationAtStartTime, startTime, new Duration(1.0, TimeUnit.SECOND));
+                return new OperationalPlan(getGtu(), locationAtStartTime, startTime, new Duration(1.0, DurationUnit.SECOND));
             }
 
             // perceive the forward headway, accessible lanes and speed limit.
@@ -189,7 +189,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             simplePerception.updateAccessibleAdjacentLanesLeft();
             simplePerception.updateAccessibleAdjacentLanesRight();
             simplePerception.updateSpeedLimit();
-            
+
             // find out where we are going
             Length forwardHeadway = behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD);
             LanePathInfo lanePathInfo = buildLanePathInfo(laneBasedGTU, forwardHeadway);
@@ -297,7 +297,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                             behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD), simplePerception.getSpeedLimit(),
                             // changes 1.0 to 0.0, no bias to the left: changed 0.5 to 0.1 (threshold from MOBIL model)
                             Acceleration.ZERO, new Acceleration(0.5, AccelerationUnit.SI),
-                            new Duration(0.5, TimeUnit.SECOND));
+                            new Duration(0.5, DurationUnit.SECOND));
                     if (dlms.getLaneChange() != null)
                     {
                         getGtu().setTurnIndicatorStatus(TurnIndicatorStatus.LEFT);
@@ -344,7 +344,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                             behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD), simplePerception.getSpeedLimit(),
                             // 1.0 = bias?
                             Acceleration.ZERO, new Acceleration(0.1, AccelerationUnit.SI),
-                            new Duration(0.5, TimeUnit.SECOND));
+                            new Duration(0.5, DurationUnit.SECOND));
                     if (dlms.getLaneChange() != null)
                     {
                         getGtu().setTurnIndicatorStatus(TurnIndicatorStatus.RIGHT);
@@ -366,7 +366,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                 System.err.println("Deleting gtu " + getGtu().getId() + " to prevent dead-lock.");
                 try
                 {
-                    getGtu().getSimulator().scheduleEventRel(new Duration(0.001, TimeUnit.SI), this, getGtu(), "destroy",
+                    getGtu().getSimulator().scheduleEventRel(new Duration(0.001, DurationUnit.SI), this, getGtu(), "destroy",
                             new Object[0]);
                 }
                 catch (SimRuntimeException exception)
@@ -384,7 +384,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                 System.err.println("LaneBasedGTUFollowingChange0TacticalPlanner.generateOperationalPlan() failed for "
                         + getGtu() + " because of " + exception.getMessage() + " -- GTU destroyed");
                 getGtu().destroy();
-                return new OperationalPlan(getGtu(), locationAtStartTime, startTime, new Duration(1.0, TimeUnit.SECOND));
+                return new OperationalPlan(getGtu(), locationAtStartTime, startTime, new Duration(1.0, DurationUnit.SECOND));
             }
             throw exception;
         }
@@ -559,7 +559,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         DirectedLaneMovementStep dlms = dlcm.computeLaneChangeAndAcceleration(gtu, direction, sameLaneTraffic, otherLaneTraffic,
                 gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD), simplePerception.getSpeedLimit(),
                 new Acceleration(2.0, AccelerationUnit.SI), new Acceleration(0.1, AccelerationUnit.SI),
-                new Duration(0.5, TimeUnit.SECOND));
+                new Duration(0.5, DurationUnit.SECOND));
         if (dlms.getLaneChange() == null)
         {
             return false;
@@ -759,8 +759,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
      */
     protected final void setDurationInLaneAfterLaneChange(final Duration durationInLaneAfterLaneChange) throws GTUException
     {
-        Throw.when(durationInLaneAfterLaneChange.lt0(), GTUException.class,
-                "durationInLaneAfterLaneChange should be >= 0");
+        Throw.when(durationInLaneAfterLaneChange.lt0(), GTUException.class, "durationInLaneAfterLaneChange should be >= 0");
         this.durationInLaneAfterLaneChange = durationInLaneAfterLaneChange;
     }
 

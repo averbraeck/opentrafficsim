@@ -94,7 +94,7 @@ public class OTSSimTimeDouble extends SimTime<Time, Duration, OTSSimTimeDouble> 
      */
     public final Time getTime()
     {
-        return new Time(this.time.si, TimeUnit.SI);
+        return new Time(this.time.si, TimeUnit.BASE);
     }
 
     /** {@inheritDoc} */

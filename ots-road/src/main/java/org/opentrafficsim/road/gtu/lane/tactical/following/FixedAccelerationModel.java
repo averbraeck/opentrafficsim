@@ -68,7 +68,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil imple
     /** {@inheritDoc} */
     @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
-        final Speed leaderSpeed, final Length headway, final Speed speedLimit, final Duration stepSize)
+            final Speed leaderSpeed, final Length headway, final Speed speedLimit, final Duration stepSize)
     {
         return this.acceleration;
     }
@@ -76,7 +76,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil imple
     /** {@inheritDoc} */
     @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
-        final Speed leaderSpeed, final Length headway, final Speed speedLimit)
+            final Speed leaderSpeed, final Length headway, final Speed speedLimit)
     {
         return this.acceleration;
     }
@@ -116,7 +116,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil imple
     {
         return "FixedAccelerationModel " + this.duration + ", " + this.acceleration;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final void setA(final Acceleration a)
@@ -130,7 +130,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil imple
     {
         //
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final void setFspeed(final double fSpeed)
@@ -143,7 +143,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil imple
     /** {@inheritDoc} */
     @Override
     public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedInfo)
-        throws ParameterException
+            throws ParameterException
     {
         return null;
     }
@@ -151,7 +151,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil imple
     /** {@inheritDoc} */
     @Override
     public final Length desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
-        throws ParameterException
+            throws ParameterException
     {
         return null;
     }
@@ -159,7 +159,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil imple
     /** {@inheritDoc} */
     @Override
     public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
-        final Speed speed, final SpeedLimitInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
+            final Speed speed, final SpeedLimitInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
         return null;
     }

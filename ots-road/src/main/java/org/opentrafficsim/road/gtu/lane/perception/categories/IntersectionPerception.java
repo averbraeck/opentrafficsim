@@ -36,7 +36,7 @@ public interface IntersectionPerception extends PerceptionCategory
      * @throws ParameterException if lane structure cannot be made due to missing parameter
      */
     void updateConflicts() throws GTUException, ParameterException;
-    
+
     /**
      * Default empty implementation to pass tests.
      */
@@ -44,7 +44,7 @@ public interface IntersectionPerception extends PerceptionCategory
     {
         //
     }
-    
+
     /**
      * Default empty implementation to pass tests.
      */
@@ -86,5 +86,5 @@ public interface IntersectionPerception extends PerceptionCategory
         updateTrafficLights();
         updateConflicts();
     }
-    
+
 }

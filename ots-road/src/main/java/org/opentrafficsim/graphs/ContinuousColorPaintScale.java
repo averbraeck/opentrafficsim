@@ -43,7 +43,7 @@ public class ContinuousColorPaintScale implements PaintScale, Serializable
      * @throws OTSSimulationException when bounds are wrong
      */
     ContinuousColorPaintScale(final String format, final double[] bounds, final Color[] boundColors)
-        throws OTSSimulationException
+            throws OTSSimulationException
     {
         this.format = format;
         if (bounds.length < 2)
@@ -129,8 +129,7 @@ public class ContinuousColorPaintScale implements PaintScale, Serializable
             bucket = this.bounds.length - 2;
         }
         final double ratio = (value - this.bounds[bucket]) / (this.bounds[bucket + 1] - this.bounds[bucket]);
-        Color mix =
-            new Color(mixComponent(ratio, this.boundColors[bucket].getRed(), this.boundColors[bucket + 1].getRed()),
+        Color mix = new Color(mixComponent(ratio, this.boundColors[bucket].getRed(), this.boundColors[bucket + 1].getRed()),
                 mixComponent(ratio, this.boundColors[bucket].getGreen(), this.boundColors[bucket + 1].getGreen()),
                 mixComponent(ratio, this.boundColors[bucket].getBlue(), this.boundColors[bucket + 1].getBlue()));
         return mix;

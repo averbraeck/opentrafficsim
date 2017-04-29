@@ -33,7 +33,7 @@ public abstract class AbstractLaneBasedStrategicalPlanner implements LaneBasedSt
      * @param gtu GTU
      */
     public AbstractLaneBasedStrategicalPlanner(final BehavioralCharacteristics behavioralCharacteristics,
-        final LaneBasedGTU gtu)
+            final LaneBasedGTU gtu)
     {
         Throw.whenNull(behavioralCharacteristics, "Behavioral characteristics may not be null.");
         Throw.whenNull(gtu, "GTU may not be null.");

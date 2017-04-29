@@ -375,7 +375,7 @@ public class ContourPlotTest implements UNITS
         cp.actionPerformed(new ActionEvent(cp, 0, "setDistanceGranularity " + useDistanceGranularity));
         cp.reGraph();
         bins = cp.getItemCount(0);
-        Time initialTime = new Time(0, SECOND);
+        Time initialTime = new Time(0, TimeUnit.BASE_SECOND);
         Length initialPosition = new Length(100, METER);
         Speed initialSpeed = new Speed(50, KM_PER_HOUR);
         ContourPlotModel model = new ContourPlotModel();
@@ -437,7 +437,7 @@ public class ContourPlotTest implements UNITS
         // System.out.println("Running simulator from " + simulator.getSimulatorTime().get() + " to "
         // + gtuFollowingModel.timeAfterCompletionOfStep(0));
         double stopTime = gtuFollowingModel.timeAfterCompletionOfStep(0).si;
-        simulator.runUpToAndIncluding(new Time(stopTime, TimeUnit.SI));
+        simulator.runUpToAndIncluding(new Time(stopTime, TimeUnit.BASE_SECOND));
         while (simulator.isRunning())
         {
             try
@@ -476,9 +476,10 @@ public class ContourPlotTest implements UNITS
                     && x < 60)// car.getOperationalPlan().getEndTime().getSI())
             {
                 // the car MAY have contributed to this cell
-                Time cellStartTime = new Time(Math.max(car.getOperationalPlan().getStartTime().getSI(), x), SECOND);
-                Time cellEndTime =
-                        new Time(Math.min(car.getOperationalPlan().getEndTime().getSI(), x + useTimeGranularity), SECOND);
+                Time cellStartTime =
+                        new Time(Math.max(car.getOperationalPlan().getStartTime().getSI(), x), TimeUnit.BASE_SECOND);
+                Time cellEndTime = new Time(Math.min(car.getOperationalPlan().getEndTime().getSI(), x + useTimeGranularity),
+                        TimeUnit.BASE_SECOND);
                 // System.out.println("cellStartTime=" + cellStartTime + ", cellEndTime=" + cellEndTime);
                 // The next if statement is the problem
                 // if (cellStartTime.lt(cellEndTime)
@@ -559,7 +560,7 @@ public class ContourPlotTest implements UNITS
         // System.out.println("Running simulator from " + simulator.getSimulatorTime().get() + " to "
         // + gtuFollowingModel.timeAfterCompletionOfStep(1));
         stopTime = gtuFollowingModel.timeAfterCompletionOfStep(1).si;
-        simulator.runUpToAndIncluding(new Time(stopTime, TimeUnit.SI));
+        simulator.runUpToAndIncluding(new Time(stopTime, TimeUnit.BASE_SECOND));
         while (simulator.isRunning())
         {
             try

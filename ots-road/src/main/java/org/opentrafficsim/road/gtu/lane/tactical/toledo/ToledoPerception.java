@@ -76,6 +76,7 @@ public class ToledoPerception extends AbstractPerceptionCategory implements Perc
      *     (-)        Lane-drop: 1 lane change  in 100m (100m per lane change, critical)
      *     (--------) Off-ramp:  3 lane changes in 600m (200m per lane change)
      * </pre>
+     * 
      * @param lane relative lateral lane
      * @return infrastructure lane change info of a lane
      */
@@ -103,11 +104,12 @@ public class ToledoPerception extends AbstractPerceptionCategory implements Perc
      *     (-)        Lane-drop: 1 lane change  in 100m (100m per lane change, critical)
      *     (--------) Off-ramp:  3 lane changes in 600m (200m per lane change)
      * </pre>
+     * 
      * @param lane relative lateral lane
      * @return time stamped infrastructure lane change info of a lane
      */
-    public final TimeStampedObject<SortedSet<InfrastructureLaneChangeInfoToledo>>
-        getTimeStampedInfrastructureLaneChangeInfo(final RelativeLane lane)
+    public final TimeStampedObject<SortedSet<InfrastructureLaneChangeInfoToledo>> getTimeStampedInfrastructureLaneChangeInfo(
+            final RelativeLane lane)
     {
         return this.infrastructureLaneChangeInfo.get(lane);
     }
@@ -131,7 +133,7 @@ public class ToledoPerception extends AbstractPerceptionCategory implements Perc
      * @throws ParameterException if a parameter is not defined
      */
     public final void updateLegalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
-        throws GTUException, ParameterException
+            throws GTUException, ParameterException
     {
         this.infrastructureCategory.updateLegalLaneChangePossibility(fromLane, lat);
     }
@@ -144,7 +146,7 @@ public class ToledoPerception extends AbstractPerceptionCategory implements Perc
      * @throws ParameterException if a parameter is not defined
      */
     public final void updatePhysicalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
-        throws GTUException, ParameterException
+            throws GTUException, ParameterException
     {
         this.infrastructureCategory.updatePhysicalLaneChangePossibility(fromLane, lat);
     }
@@ -220,7 +222,7 @@ public class ToledoPerception extends AbstractPerceptionCategory implements Perc
      * @throws NullPointerException if {@code lat == null}
      */
     public final TimeStampedObject<Length> getTimeStampedLegalLaneChangePossibility(final RelativeLane fromLane,
-        final LateralDirectionality lat)
+            final LateralDirectionality lat)
     {
         return this.infrastructureCategory.getTimeStampedLegalLaneChangePossibility(fromLane, lat);
     }
@@ -233,7 +235,7 @@ public class ToledoPerception extends AbstractPerceptionCategory implements Perc
      * @throws NullPointerException if {@code lat == null}
      */
     public final TimeStampedObject<Length> getTimeStampedPhysicalLaneChangePossibility(final RelativeLane fromLane,
-        final LateralDirectionality lat)
+            final LateralDirectionality lat)
     {
         return this.infrastructureCategory.getTimeStampedPhysicalLaneChangePossibility(fromLane, lat);
     }
@@ -253,7 +255,7 @@ public class ToledoPerception extends AbstractPerceptionCategory implements Perc
     {
         this.infrastructureCategory.updateAll();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

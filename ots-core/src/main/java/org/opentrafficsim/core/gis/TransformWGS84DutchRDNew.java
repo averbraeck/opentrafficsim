@@ -7,8 +7,8 @@ import java.util.Locale;
 /**
  * Convert geographical coordinates between WGS84 and the Dutch RD (Rijksdriehoek) system. <br>
  * Specific MathTransform for WGS84 (EPSG:4326) to RD_new (EPSG:28992) conversions. Code based on C code by Peter Knoppers as
- * applied <a href="http://www.regiolab-delft.nl/?q=node/36">here</a>, which is based on <a
- * href="http://home.solcon.nl/pvanmanen/Download/Transformatieformules.pdf">this</a> paper.
+ * applied <a href="http://www.regiolab-delft.nl/?q=node/36">here</a>, which is based on
+ * <a href="http://home.solcon.nl/pvanmanen/Download/Transformatieformules.pdf">this</a> paper.
  * <p>
  * Copyright (c) ~2000-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -48,7 +48,7 @@ public final class TransformWGS84DutchRDNew
     /** This class is a utility class and instances cannot be constructed. */
     private TransformWGS84DutchRDNew()
     {
-        // This class is a utility class and instances cannot be constructed. 
+        // This class is a utility class and instances cannot be constructed.
     }
 
     /**
@@ -116,8 +116,8 @@ public final class TransformWGS84DutchRDNew
     {
         if (rdX < RD_MINIMUM_X || rdX > RD_MAXIMUM_X || rdY < RD_MINIMUM_Y || rdY > RD_MAXIMUM_Y)
         {
-            throw new IllegalArgumentException("Location (" + rdX + "," + rdY + ") is not within the range "
-                    + "of the Dutch RD system");
+            throw new IllegalArgumentException(
+                    "Location (" + rdX + "," + rdY + ") is not within the range " + "of the Dutch RD system");
         }
         final double dX = (rdX - 155000) / 100000;
         final double dY = (rdY - 463000) / 100000;
@@ -307,16 +307,16 @@ public final class TransformWGS84DutchRDNew
                     fromWGS84(rdIn);
                     if (xFactor != 0 || yFactor != 0)
                     {
-                        throw new Error("Supplied RD coordinates (" + rdIn + ") should have thrown an "
-                                + "IllegalArgumentException");
+                        throw new Error(
+                                "Supplied RD coordinates (" + rdIn + ") should have thrown an " + "IllegalArgumentException");
                     }
                 }
                 catch (IllegalArgumentException exception)
                 {
                     if (xFactor == 0 && yFactor == 0)
                     {
-                        throw new Error("Supplied RD coordinates (" + rdIn
-                                + ") should NOT have thrown an IllegalArgumentException");
+                        throw new Error(
+                                "Supplied RD coordinates (" + rdIn + ") should NOT have thrown an IllegalArgumentException");
                     }
                 }
             }

@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -95,8 +96,7 @@ public class LaneBasedGTUTest implements UNITS
             fail("truckUpToLane must be >= truckFromLane");
         }
         OTSModelInterface model = new Model();
-        SimpleSimulator simulator =
-                new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
+        SimpleSimulator simulator = new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
         GTUType carType = CAR;
         GTUType truckType = TRUCK;
         Set<GTUType> compatibility = new HashSet<GTUType>();
@@ -372,10 +372,9 @@ public class LaneBasedGTUTest implements UNITS
             this.network = new OTSNetwork("test"); // new network every time, otherwise nodes cannot be added again
             // Create a car with constant acceleration
             OTSModelInterface model = new Model();
-            SimpleSimulator simulator =
-                    new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
+            SimpleSimulator simulator = new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
             // Run the simulator clock to some non-zero value
-            simulator.runUpTo(new Time(60, SECOND));
+            simulator.runUpTo(new Time(60, TimeUnit.BASE_SECOND));
             while (simulator.isRunning())
             {
                 try
@@ -412,7 +411,7 @@ public class LaneBasedGTUTest implements UNITS
                     new LaneBasedCFLCTacticalPlanner(fam, laneChangeModel, car), car);
             car.init(strategicalPlanner, carPositions, carSpeed);
             // Let the simulator execute the move method of the car
-            simulator.runUpTo(new Time(61, SECOND));
+            simulator.runUpTo(new Time(61, TimeUnit.BASE_SECOND));
             while (simulator.isRunning())
             {
                 try

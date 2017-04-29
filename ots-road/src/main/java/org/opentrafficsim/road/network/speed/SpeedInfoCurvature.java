@@ -24,7 +24,7 @@ public class SpeedInfoCurvature implements Serializable
 
     /** */
     private static final long serialVersionUID = 20160501L;
-    
+
     /** Curvature radius. */
     private final Length radius;
 
@@ -61,8 +61,6 @@ public class SpeedInfoCurvature implements Serializable
         return new Speed(Math.sqrt(acceleration.si * this.radius.si), SpeedUnit.SI);
     }
 
-    
-
     /** {@inheritDoc} */
     @Override
     public final int hashCode()
@@ -93,12 +91,12 @@ public class SpeedInfoCurvature implements Serializable
         }
         return true;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
         return "SpeedInfoCurvature [radius=" + this.radius + "]";
     }
-    
+
 }

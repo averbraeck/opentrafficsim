@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.geometry;
 
-
 /**
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>

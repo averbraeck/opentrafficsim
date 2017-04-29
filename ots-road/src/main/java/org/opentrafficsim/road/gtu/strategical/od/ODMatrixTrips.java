@@ -2,8 +2,8 @@ package org.opentrafficsim.road.gtu.strategical.od;
 
 import java.util.List;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.vector.DurationVector;
@@ -42,7 +42,7 @@ public class ODMatrixTrips extends ODMatrix
      * @throws NullPointerException if any input is null
      */
     public ODMatrixTrips(final String id, final List<Node> origins, final List<Node> destinations,
-        final Categorization categorization, final DurationVector globalTimeVector, final Interpolation globalInterpolation)
+            final Categorization categorization, final DurationVector globalTimeVector, final Interpolation globalInterpolation)
     {
         super(id, origins, destinations, categorization, globalTimeVector, globalInterpolation);
     }
@@ -73,25 +73,25 @@ public class ODMatrixTrips extends ODMatrix
      * @throws NullPointerException if an input is null
      */
     public final void putTripsVector(final Node origin, final Node destination, final Category category, final int[] trips,
-        final DurationVector timeVector)
+            final DurationVector timeVector)
     {
         // this is what we need here, other checks in putDemandVector
         Throw.whenNull(trips, "Demand data may not be null.");
         Throw.whenNull(timeVector, "Time vector may not be null.");
         Throw.when(trips.length != timeVector.size() - 1, IllegalArgumentException.class,
-            "Trip data and time data have wrong lengths. Trip data should be 1 shorter than time data.");
+                "Trip data and time data have wrong lengths. Trip data should be 1 shorter than time data.");
         // convert to flow
         double[] flow = new double[timeVector.size()];
         try
         {
             for (int i = 0; i < trips.length; i++)
             {
-                flow[i] =
-                    trips[i] / (timeVector.get(i + 1).getInUnit(TimeUnit.HOUR) - timeVector.get(i).getInUnit(TimeUnit.HOUR));
+                flow[i] = trips[i]
+                        / (timeVector.get(i + 1).getInUnit(DurationUnit.HOUR) - timeVector.get(i).getInUnit(DurationUnit.HOUR));
             }
             // last value can remain zero as initialized
-            putDemandVector(origin, destination, category, new FrequencyVector(flow, FrequencyUnit.PER_HOUR,
-                StorageType.DENSE), timeVector, Interpolation.STEPWISE);
+            putDemandVector(origin, destination, category, new FrequencyVector(flow, FrequencyUnit.PER_HOUR, StorageType.DENSE),
+                    timeVector, Interpolation.STEPWISE);
         }
         catch (ValueException exception)
         {
@@ -154,13 +154,13 @@ public class ODMatrixTrips extends ODMatrix
             return 0;
         }
         Throw.when(periodIndex < 0 || periodIndex >= time.size() - 1, IllegalArgumentException.class,
-            "Period index out of range.");
+                "Period index out of range.");
         FrequencyVector demand = getDemandVector(origin, destination, category);
         Interpolation interpolation = getInterpolation(origin, destination, category);
         try
         {
-            return interpolation.integrate(demand.get(periodIndex), time.get(periodIndex), demand.get(periodIndex + 1), time
-                .get(periodIndex + 1));
+            return interpolation.integrate(demand.get(periodIndex), time.get(periodIndex), demand.get(periodIndex + 1),
+                    time.get(periodIndex + 1));
         }
         catch (ValueException exception)
         {
@@ -183,25 +183,24 @@ public class ODMatrixTrips extends ODMatrix
      * @throws UnsupportedOperationException if the interpolation of the data is not stepwise
      * @throws NullPointerException if an input is null
      */
-    public final void increaseTrips(final Node origin, final Node destination, final Category category,
-        final int periodIndex, final int trips)
+    public final void increaseTrips(final Node origin, final Node destination, final Category category, final int periodIndex,
+            final int trips)
     {
         Interpolation interpolation = getInterpolation(origin, destination, category);
         Throw.when(!interpolation.equals(Interpolation.STEPWISE), UnsupportedOperationException.class,
-            "Can only increase the number of trips for data with stepwise interpolation.");
+                "Can only increase the number of trips for data with stepwise interpolation.");
         DurationVector time = getTimeVector(origin, destination, category);
         Throw.when(periodIndex < 0 || periodIndex >= time.size() - 1, IllegalArgumentException.class,
-            "Period index out of range.");
+                "Period index out of range.");
         FrequencyVector demand = getDemandVector(origin, destination, category);
         try
         {
-            double additionalDemand =
-                trips
-                    / (time.get(periodIndex + 1).getInUnit(TimeUnit.HOUR) - time.get(periodIndex).getInUnit(TimeUnit.HOUR));
+            double additionalDemand = trips / (time.get(periodIndex + 1).getInUnit(DurationUnit.HOUR)
+                    - time.get(periodIndex).getInUnit(DurationUnit.HOUR));
             double[] dem = demand.getValuesInUnit(FrequencyUnit.PER_HOUR);
             dem[periodIndex] += additionalDemand;
-            putDemandVector(origin, destination, category, new FrequencyVector(dem, FrequencyUnit.PER_HOUR,
-                StorageType.DENSE), time, Interpolation.STEPWISE);
+            putDemandVector(origin, destination, category, new FrequencyVector(dem, FrequencyUnit.PER_HOUR, StorageType.DENSE),
+                    time, Interpolation.STEPWISE);
         }
         catch (ValueException exception)
         {
@@ -297,7 +296,7 @@ public class ODMatrixTrips extends ODMatrix
     public final String toString()
     {
         return "ODMatrixTrips [" + getOrigins().size() + " origins, " + getDestinations().size() + " destinations, "
-            + getCategorization() + " ]";
+                + getCategorization() + " ]";
     }
 
 }

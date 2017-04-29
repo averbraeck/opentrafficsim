@@ -24,16 +24,16 @@ public class Categorization implements Serializable
 
     /** Empty categorization. */
     public static final Categorization UNCATEGORIZED = new Categorization("Uncategorized");
-    
+
     /** */
     private static final long serialVersionUID = 20160921L;
-    
+
     /** Id. */
     private final String id;
-    
+
     /** Set of categorization classes. */
     private final List<Class<?>> classes = new ArrayList<>();
-    
+
     /**
      * @param id id
      */
@@ -42,7 +42,7 @@ public class Categorization implements Serializable
         Throw.whenNull(id, "Id may not be null.");
         this.id = id;
     }
-    
+
     /**
      * @param id Id
      * @param class1 1st class
@@ -58,8 +58,8 @@ public class Categorization implements Serializable
         for (Class<?> clazz : classes)
         {
             Throw.whenNull(clazz, "Classes may not be null.");
-            Throw.when(this.classes.contains(clazz), IllegalArgumentException.class,
-                "Class %s is given multiple times.", clazz);
+            Throw.when(this.classes.contains(clazz), IllegalArgumentException.class, "Class %s is given multiple times.",
+                    clazz);
             this.classes.add(clazz);
         }
     }
@@ -72,7 +72,7 @@ public class Categorization implements Serializable
     {
         return this.classes.size();
     }
-    
+
     /**
      * Returns the i'th class.
      * @param i index of the class
@@ -82,7 +82,7 @@ public class Categorization implements Serializable
     public final Class<?> get(final int i)
     {
         Throw.when(i < 0 || i >= size(), IndexOutOfBoundsException.class,
-            "Index %d is out of range for categorization of size %d.", i, size());
+                "Index %d is out of range for categorization of size %d.", i, size());
         return this.classes.get(i);
     }
 

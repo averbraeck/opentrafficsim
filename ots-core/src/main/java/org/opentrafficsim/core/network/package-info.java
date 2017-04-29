@@ -31,4 +31,3 @@
  * possibility of such damage.
  */
 package org.opentrafficsim.core.network;
-

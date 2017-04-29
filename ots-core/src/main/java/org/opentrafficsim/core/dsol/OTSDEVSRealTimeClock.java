@@ -2,7 +2,7 @@ package org.opentrafficsim.core.dsol;
 
 import java.rmi.RemoteException;
 
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 
@@ -60,7 +60,7 @@ public class OTSDEVSRealTimeClock extends DEVSRealTimeClock<Time, Duration, OTSS
     @Override
     protected final Duration relativeMillis(final double factor)
     {
-        return new Duration(factor, TimeUnit.MILLISECOND);
+        return new Duration(factor, DurationUnit.MILLISECOND);
     }
 
     /** {@inheritDoc} */

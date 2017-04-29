@@ -57,8 +57,8 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
      *            direction).
      * @param widthGenerator Generator&lt;Length&gt;; generator for the width of the GTU type (perpendicular to driving
      *            direction).
-     * @param maximumSpeedGenerator Generator&lt;Speed&gt;; generator for the maximum speed of the GTU type (in the
-     *            driving direction).
+     * @param maximumSpeedGenerator Generator&lt;Speed&gt;; generator for the maximum speed of the GTU type (in the driving
+     *            direction).
      * @param simulator OTSDEVSSimulatorInterface; the simulator.
      * @param network OTSNetwork; the network that will own the GTUs
      * @throws NullPointerException when one of the arguments is null

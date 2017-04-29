@@ -26,7 +26,7 @@ public final class GTUType extends Type<GTUType> implements Serializable
 
     /** The id of the GTUType to make it identifiable. */
     private final String id;
-    
+
     /** Parent GTUType. */
     private final GTUType parent;
 
@@ -35,20 +35,20 @@ public final class GTUType extends Type<GTUType> implements Serializable
 
     /** NONE GTUType to be used only for permeability and accessibility. */
     public static final GTUType NONE;
-    
+
     /** Super type for pedestrians. */
     public static final GTUType PEDESTRIAN;
-    
+
     /** Super type for bikes. */
     public static final GTUType BIKE;
-    
+
     /** Super type for vehicles. */
     public static final GTUType VEHICLE;
-    
+
     /** Super type for boats. */
     public static final GTUType BOAT;
-    
-    /** Super type for trains. */ 
+
+    /** Super type for trains. */
     public static final GTUType TRAIN;
 
     /* static block to guarantee that ALL is always on the first place, and NONE on the second, for code reproducibility. */
@@ -73,7 +73,7 @@ public final class GTUType extends Type<GTUType> implements Serializable
         this.id = id;
         this.parent = null;
     }
-    
+
     /**
      * @param id The id of the GTUType to make it identifiable.
      * @param parent GTUType; parent GTU type
@@ -93,7 +93,7 @@ public final class GTUType extends Type<GTUType> implements Serializable
     {
         return this.id;
     }
-    
+
     /**
      * @return parent.
      */
@@ -154,8 +154,8 @@ public final class GTUType extends Type<GTUType> implements Serializable
         if (this.parent == null)
             if (other.parent != null)
                 return false;
-        else if (!this.parent.equals(other.parent))
-            return false;
+            else if (!this.parent.equals(other.parent))
+                return false;
         return true;
     }
 

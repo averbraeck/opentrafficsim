@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -83,7 +83,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
     public static final Length GETOFFTHISLANENOW = Length.ZERO;
 
     /** Standard time horizon for route choices. */
-    private static final Duration TIMEHORIZON = new Duration(90, TimeUnit.SECOND);
+    private static final Duration TIMEHORIZON = new Duration(90, DurationUnit.SECOND);
 
     /** Lane change model for this tactical planner. */
     private LaneChangeModel laneChangeModel;
@@ -116,7 +116,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
             if (laneBasedGTU.getMaximumSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
             {
-                return new OperationalPlan(getGtu(), locationAtStartTime, startTime, new Duration(1.0, TimeUnit.SECOND));
+                return new OperationalPlan(getGtu(), locationAtStartTime, startTime, new Duration(1.0, DurationUnit.SECOND));
             }
 
             // perceive every time step... This is the 'classical' way of tactical planning.
@@ -570,7 +570,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                             // to the maximum time horizon (or we could end up in infinite recursion when there are
                             // loops in the network).
                             Length value = suitability(connectingLane, new Length(0, LengthUnit.SI), gtu,
-                                    new Duration(spareTime, TimeUnit.SI));
+                                    new Duration(spareTime, DurationUnit.SI));
                             // This line was missing...
                             value = value.plus(new Length(remainingDistance, LengthUnit.SI));
                             // Use the minimum of the value computed for the first split junction (if there is one)

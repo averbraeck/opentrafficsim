@@ -24,7 +24,7 @@ public interface PerceivableContext
      * @return the id of the context
      */
     String getId();
-    
+
     /**
      * Get an overview of the GTUs in the model. The set returned is a defensive copy.
      * @return a set of GTUs as registered in the current model.

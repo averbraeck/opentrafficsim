@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.gtu.generator;
 
 /**
- * Interface to check whether a GTU will have sufficient space to be generated. Implementations of this interface need
- * to define required input for instance by their constructors.
+ * Interface to check whether a GTU will have sufficient space to be generated. Implementations of this interface need to define
+ * required input for instance by their constructors.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -22,5 +22,5 @@ public interface SpaceChecker
      * @return Whether a GTU will have enough space to be generated.
      */
     public boolean checkEnoughSpace();
-    
+
 }

@@ -2,15 +2,17 @@ package org.opentrafficsim.core.units.distributions;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import nl.tudelft.simulation.jstats.distributions.DistContinuous;
-import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
 
+import org.djunits.unit.AbsoluteLinearUnit;
+import org.djunits.unit.AbsoluteTemperatureUnit;
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.AngleSolidUnit;
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.AreaUnit;
 import org.djunits.unit.DensityUnit;
 import org.djunits.unit.DimensionlessUnit;
+import org.djunits.unit.DirectionUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.ElectricalChargeUnit;
 import org.djunits.unit.ElectricalCurrentUnit;
 import org.djunits.unit.ElectricalPotentialUnit;
@@ -24,6 +26,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.LinearUnit;
 import org.djunits.unit.MassUnit;
+import org.djunits.unit.PositionUnit;
 import org.djunits.unit.PowerUnit;
 import org.djunits.unit.PressureUnit;
 import org.djunits.unit.SpeedUnit;
@@ -38,6 +41,9 @@ import org.djunits.value.vdouble.scalar.AbstractDoubleScalarRel;
 import org.djunits.value.vfloat.scalar.AbstractFloatScalarAbs;
 import org.djunits.value.vfloat.scalar.AbstractFloatScalarRel;
 import org.junit.Test;
+
+import nl.tudelft.simulation.jstats.distributions.DistContinuous;
+import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
 
 /**
  * Test the various distribution classes.
@@ -84,13 +90,13 @@ public class DistributionsTest
     @Test
     public final void testConstructors() throws ClassNotFoundException
     {
-        Unit<?>[] absoluteUnits = { AngleUnit.SI, LengthUnit.SI, TemperatureUnit.SI, TimeUnit.SI, JunkUnit.SI };
-        Unit<?>[] relativeUnits =
-                { AccelerationUnit.SI, AngleUnit.SI, AngleSolidUnit.SI, AreaUnit.SI, DensityUnit.SI, DimensionlessUnit.SI,
-                        ElectricalChargeUnit.SI, ElectricalCurrentUnit.SI, ElectricalPotentialUnit.SI,
-                        ElectricalResistanceUnit.SI, EnergyUnit.SI, FlowMassUnit.SI, FlowVolumeUnit.SI, ForceUnit.SI,
-                        FrequencyUnit.SI, LengthUnit.SI, LinearDensityUnit.SI, MassUnit.SI, PowerUnit.SI, PressureUnit.SI,
-                        SpeedUnit.SI, TemperatureUnit.SI, TimeUnit.SI, TorqueUnit.SI, VolumeUnit.SI, JunkUnit.SI };
+        AbsoluteLinearUnit<?, ?>[] absoluteUnits =
+                { DirectionUnit.BASE, PositionUnit.BASE, AbsoluteTemperatureUnit.KELVIN, TimeUnit.BASE, AbsJunkUnit.BASE };
+        Unit<?>[] relativeUnits = { AccelerationUnit.SI, AngleUnit.SI, AngleSolidUnit.SI, AreaUnit.SI, DensityUnit.SI,
+                DimensionlessUnit.SI, ElectricalChargeUnit.SI, ElectricalCurrentUnit.SI, ElectricalPotentialUnit.SI,
+                ElectricalResistanceUnit.SI, EnergyUnit.SI, FlowMassUnit.SI, FlowVolumeUnit.SI, ForceUnit.SI, FrequencyUnit.SI,
+                LengthUnit.SI, LinearDensityUnit.SI, MassUnit.SI, PowerUnit.SI, PressureUnit.SI, SpeedUnit.SI,
+                TemperatureUnit.SI, DurationUnit.SI, TorqueUnit.SI, VolumeUnit.SI, JunkUnit.SI };
 
         DistContinuous distCont = new DistContinuous(null)
         {
@@ -110,7 +116,7 @@ public class DistributionsTest
                 return 0;
             }
         };
-        for (Unit<?> unit : absoluteUnits)
+        for (AbsoluteLinearUnit<?, ?> unit : absoluteUnits)
         {
             checkDoubleAbsContUnit(distCont, unit);
             checkFloatAbsContUnit(distCont, unit);
@@ -139,7 +145,7 @@ public class DistributionsTest
                 return 0;
             }
         };
-        for (Unit<?> unit : absoluteUnits)
+        for (AbsoluteLinearUnit<?, ?> unit : absoluteUnits)
         {
             checkDoubleAbsDiscUnit(distDisc, unit);
             checkFloatAbsDiscUnit(distDisc, unit);
@@ -158,7 +164,7 @@ public class DistributionsTest
      * @param unit Unit
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void checkDoubleAbsContUnit(final DistContinuous distribution, final Unit unit)
+    private void checkDoubleAbsContUnit(final DistContinuous distribution, final AbsoluteLinearUnit unit)
     {
         ContinuousDistDoubleScalar.Abs dist = new ContinuousDistDoubleScalar.Abs(distribution, unit);
         this.nextDoubleResult = 123.456;
@@ -210,7 +216,7 @@ public class DistributionsTest
      * @param unit Unit
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void checkDoubleAbsDiscUnit(final DistDiscrete distribution, final Unit unit)
+    private void checkDoubleAbsDiscUnit(final DistDiscrete distribution, final AbsoluteLinearUnit unit)
     {
         DiscreteDistDoubleScalar.Abs dist = new DiscreteDistDoubleScalar.Abs(distribution, unit);
         this.nextDoubleResult = 123.456;
@@ -262,7 +268,7 @@ public class DistributionsTest
      * @param unit Unit
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void checkFloatAbsContUnit(final DistContinuous distribution, final Unit unit)
+    private void checkFloatAbsContUnit(final DistContinuous distribution, final AbsoluteLinearUnit unit)
     {
         ContinuousDistFloatScalar.Abs dist = new ContinuousDistFloatScalar.Abs(distribution, unit);
         this.nextDoubleResult = 123.456;
@@ -314,7 +320,7 @@ public class DistributionsTest
      * @param unit Unit
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void checkFloatAbsDiscUnit(final DistDiscrete distribution, final Unit unit)
+    private void checkFloatAbsDiscUnit(final DistDiscrete distribution, final AbsoluteLinearUnit unit)
     {
         DiscreteDistFloatScalar.Abs dist = new DiscreteDistFloatScalar.Abs(distribution, unit);
         this.nextDoubleResult = 123.456;
@@ -360,46 +366,87 @@ public class DistributionsTest
                 dist.toString().contains(unit.getClass().getSimpleName()));
     }
 
-}
+    /**
+     * Relative Unit used for testing. Based on a LengthUnit.
+     */
+    static class JunkUnit extends LinearUnit<JunkUnit>
+    {
+        /** */
+        private static final long serialVersionUID = 1L;
 
-/**
- * Unit used for testing. Based on a LengthUnit.
- */
-class JunkUnit extends LinearUnit<JunkUnit>
-{
-    /** */
-    private static final long serialVersionUID = 1L;
+        /** The SI unit. */
+        public static final JunkUnit SI;
 
-    /** The SI unit. */
-    public static final JunkUnit SI;
+        /**
+         * @param lengthUnit LengthUnit ...
+         * @param name String ...
+         * @param abbreviation String ...
+         * @param unitSystem UnitSystem ...
+         */
+        JunkUnit(final LengthUnit lengthUnit, final String name, final String abbreviation, final UnitSystem unitSystem)
+        {
+            super(name, abbreviation, unitSystem, false);
+        }
+
+        static
+        {
+            SI = new JunkUnit(LengthUnit.METER, "Junk", "JNK", null);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public JunkUnit getStandardUnit()
+        {
+            return SI;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String getSICoefficientsString()
+        {
+            return "m5";
+        }
+    }
 
     /**
-     * @param lengthUnit LengthUnit ...
-     * @param name String ...
-     * @param abbreviation String ...
-     * @param unitSystem UnitSystem ...
+     * Absolute Unit used for testing. Based on a PositionUnit.
      */
-    JunkUnit(final LengthUnit lengthUnit, final String name, final String abbreviation, final UnitSystem unitSystem)
+    static class AbsJunkUnit extends AbsoluteLinearUnit<AbsJunkUnit, JunkUnit>
     {
-        super(name, abbreviation, unitSystem, false);
-    }
+        /** */
+        private static final long serialVersionUID = 1L;
 
-    static
-    {
-        SI = new JunkUnit(LengthUnit.METER, "Junk", "JNK", null);
-    }
+        /** The BASE unit. */
+        public static final AbsJunkUnit BASE;
 
-    /** {@inheritDoc} */
-    @Override
-    public JunkUnit getStandardUnit()
-    {
-        return SI;
-    }
+        /**
+         * @param positionUnit PositionUnit ...
+         * @param name String ...
+         * @param abbreviation String ...
+         * @param unitSystem UnitSystem ...
+         */
+        AbsJunkUnit(final PositionUnit positionUnit, final String name, final String abbreviation, final UnitSystem unitSystem)
+        {
+            super(name, abbreviation, unitSystem, 1.0, 0.0, false, JunkUnit.SI);
+        }
 
-    /** {@inheritDoc} */
-    @Override
-    public String getSICoefficientsString()
-    {
-        return "m5";
+        static
+        {
+            BASE = new AbsJunkUnit(PositionUnit.METER, "Junk", "JNK", null);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public AbsJunkUnit getStandardUnit()
+        {
+            return BASE;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String getSICoefficientsString()
+        {
+            return "m5";
+        }
     }
 }

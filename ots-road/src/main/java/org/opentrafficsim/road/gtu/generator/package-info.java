@@ -26,4 +26,3 @@
  * possibility of such damage.
  */
 package org.opentrafficsim.road.gtu.generator;
-

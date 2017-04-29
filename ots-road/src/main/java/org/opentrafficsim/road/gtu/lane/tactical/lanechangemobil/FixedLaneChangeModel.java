@@ -48,27 +48,27 @@ public class FixedLaneChangeModel implements LaneChangeModel, Serializable
     public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
             final Collection<Headway> sameLaneTraffic, final Collection<Headway> rightLaneTraffic,
             final Collection<Headway> leftLaneTraffic, final Speed speedLimit, final Acceleration preferredLaneRouteIncentive,
-            final Acceleration laneChangeThreshold, final Acceleration nonPreferredLaneRouteIncentive) throws GTUException,
-            ParameterException
+            final Acceleration laneChangeThreshold, final Acceleration nonPreferredLaneRouteIncentive)
+            throws GTUException, ParameterException
     {
         Length headway = gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
         GTUFollowingModelOld gtuFollowingModel =
                 (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner()).getCarFollowingModel();
         if (null == this.laneChange)
         {
-            return new LaneMovementStep(gtuFollowingModel
-                    .computeDualAccelerationStep(gtu, sameLaneTraffic, headway, speedLimit).getLeaderAccelerationStep(), null);
+            return new LaneMovementStep(gtuFollowingModel.computeDualAccelerationStep(gtu, sameLaneTraffic, headway, speedLimit)
+                    .getLeaderAccelerationStep(), null);
         }
         else if (LateralDirectionality.LEFT == this.laneChange)
         {
-            return new LaneMovementStep(gtuFollowingModel
-                    .computeDualAccelerationStep(gtu, leftLaneTraffic, headway, speedLimit).getLeaderAccelerationStep(),
-                    this.laneChange);
+            return new LaneMovementStep(gtuFollowingModel.computeDualAccelerationStep(gtu, leftLaneTraffic, headway, speedLimit)
+                    .getLeaderAccelerationStep(), this.laneChange);
         }
         else if (LateralDirectionality.RIGHT == this.laneChange)
         {
-            return new LaneMovementStep(gtuFollowingModel.computeDualAccelerationStep(gtu, rightLaneTraffic, headway,
-                    speedLimit).getLeaderAccelerationStep(), this.laneChange);
+            return new LaneMovementStep(gtuFollowingModel
+                    .computeDualAccelerationStep(gtu, rightLaneTraffic, headway, speedLimit).getLeaderAccelerationStep(),
+                    this.laneChange);
         }
         throw new Error("Program Error - unhandled LateralDirectionality");
     }

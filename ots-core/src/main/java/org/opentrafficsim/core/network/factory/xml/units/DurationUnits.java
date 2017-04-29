@@ -3,16 +3,15 @@ package org.opentrafficsim.core.network.factory.xml.units;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.djunits.unit.AngleUnit;
-import org.djunits.unit.DirectionUnit;
+import org.djunits.unit.DurationUnit;
+import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.UNITS;
-import org.djunits.value.AngleUtil;
-import org.djunits.value.vdouble.scalar.Angle;
-import org.djunits.value.vdouble.scalar.Direction;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
- * Parser for angle with unit.
+ * Parser for durations and frequencies with unit.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -21,25 +20,41 @@ import org.opentrafficsim.core.network.NetworkException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public final class AngleUnits implements UNITS
+public final class DurationUnits implements UNITS
 {
-    /** The angle units. */
-    public static final Map<String, AngleUnit> ANGLE_UNITS = new HashMap<>();
+    /** The time units. */
+    public static final Map<String, DurationUnit> DURATION_UNITS = new HashMap<>();
 
-    /** The direction units. */
-    public static final Map<String, DirectionUnit> DIRECTION_UNITS = new HashMap<>();
+    /** The per time units. */
+    public static final Map<String, FrequencyUnit> FREQUENCY_UNITS = new HashMap<>();
 
     static
     {
-        ANGLE_UNITS.put("deg", DEGREE);
-        ANGLE_UNITS.put("rad", RADIAN);
+        DURATION_UNITS.put("ms", MILLISECOND);
+        DURATION_UNITS.put("s", SECOND);
+        DURATION_UNITS.put("m", MINUTE);
+        DURATION_UNITS.put("min", MINUTE);
+        DURATION_UNITS.put("h", HOUR);
+        DURATION_UNITS.put("hr", HOUR);
+        DURATION_UNITS.put("d", DAY);
+        DURATION_UNITS.put("day", DAY);
+        DURATION_UNITS.put("wk", WEEK);
+        DURATION_UNITS.put("week", WEEK);
 
-        DIRECTION_UNITS.put("deg", DirectionUnit.NORTH_DEGREE);
-        DIRECTION_UNITS.put("rad", DirectionUnit.NORTH_RADIAN);
+        FREQUENCY_UNITS.put("/ms", PER_MILLISECOND);
+        FREQUENCY_UNITS.put("/s", PER_SECOND);
+        FREQUENCY_UNITS.put("/m", PER_MINUTE);
+        FREQUENCY_UNITS.put("/min", PER_MINUTE);
+        FREQUENCY_UNITS.put("/h", PER_HOUR);
+        FREQUENCY_UNITS.put("/hr", PER_HOUR);
+        FREQUENCY_UNITS.put("/d", PER_DAY);
+        FREQUENCY_UNITS.put("/day", PER_DAY);
+        FREQUENCY_UNITS.put("/wk", PER_WEEK);
+        FREQUENCY_UNITS.put("/week", PER_WEEK);
     }
 
-    /** Utility class cannot be instantiated. */
-    private AngleUnits()
+    /** Utility class. */
+    private DurationUnits()
     {
         // do not instantiate
     }
@@ -49,10 +64,10 @@ public final class AngleUnits implements UNITS
      * @return the unit as a String in the Map.
      * @throws NetworkException when parsing fails
      */
-    public static String parseAngleUnit(final String s) throws NetworkException
+    public static String parseDurationUnit(final String s) throws NetworkException
     {
         String u = null;
-        for (String us : ANGLE_UNITS.keySet())
+        for (String us : DURATION_UNITS.keySet())
         {
             if (s.toString().contains(us))
             {
@@ -64,7 +79,7 @@ public final class AngleUnits implements UNITS
         }
         if (u == null)
         {
-            throw new NetworkException("Parsing network: cannot instantiate angle unit in: " + s);
+            throw new NetworkException("Parsing network: cannot instantiate time unit in: " + s);
         }
         return u;
     }
@@ -74,16 +89,15 @@ public final class AngleUnits implements UNITS
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Angle parseAngle(final String s) throws NetworkException
+    public static Duration parseDuration(final String s) throws NetworkException
     {
-        String us = parseAngleUnit(s);
-        AngleUnit u = ANGLE_UNITS.get(us);
+        String us = parseDurationUnit(s);
+        DurationUnit u = DURATION_UNITS.get(us);
         String sv = s.substring(0, s.indexOf(us));
         try
         {
             double value = Double.parseDouble(sv);
-            Angle angle = new Angle(value, u);
-            return new Angle(AngleUtil.normalize(angle).si, AngleUnit.SI);
+            return new Duration(value, u);
         }
         catch (NumberFormatException nfe)
         {
@@ -96,10 +110,10 @@ public final class AngleUnits implements UNITS
      * @return the unit as a String in the Map.
      * @throws NetworkException when parsing fails
      */
-    public static String parseDirectionUnit(final String s) throws NetworkException
+    public static String parseFrequencyUnit(final String s) throws NetworkException
     {
         String u = null;
-        for (String us : DIRECTION_UNITS.keySet())
+        for (String us : FREQUENCY_UNITS.keySet())
         {
             if (s.toString().contains(us))
             {
@@ -111,7 +125,7 @@ public final class AngleUnits implements UNITS
         }
         if (u == null)
         {
-            throw new NetworkException("Parsing network: cannot instantiate direction unit in: " + s);
+            throw new NetworkException("Parsing network: cannot instantiate frequency unit in: " + s);
         }
         return u;
     }
@@ -121,16 +135,15 @@ public final class AngleUnits implements UNITS
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Direction parseDirection(final String s) throws NetworkException
+    public static Frequency parseFrequency(final String s) throws NetworkException
     {
-        String us = parseDirectionUnit(s);
-        DirectionUnit u = DIRECTION_UNITS.get(us);
+        String us = parseFrequencyUnit(s);
+        FrequencyUnit u = FREQUENCY_UNITS.get(us);
         String sv = s.substring(0, s.indexOf(us));
         try
         {
             double value = Double.parseDouble(sv);
-            Direction direction = new Direction(value, u);
-            return new Direction(AngleUtil.normalize(direction).si, DirectionUnit.NORTH_RADIAN);
+            return new Frequency(value, u);
         }
         catch (NumberFormatException nfe)
         {

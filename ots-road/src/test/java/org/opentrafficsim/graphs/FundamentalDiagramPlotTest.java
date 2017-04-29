@@ -16,6 +16,7 @@ import java.util.Set;
 
 import javax.swing.JLabel;
 
+import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -78,7 +79,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
     // XXX @Test
     public final void fundamentalDiagramTest() throws Exception
     {
-        this.simulator = new SimpleSimulator(new Time(0, SECOND), new Duration(0, SECOND), new Duration(1800, SECOND), this);
+        this.simulator = new SimpleSimulator(new Time(0, TimeUnit.BASE_SECOND), new Duration(0, SECOND),
+                new Duration(1800, SECOND), this);
 
         Duration aggregationTime = new Duration(30, SECOND);
         Length position = new Length(123, METER);
@@ -120,7 +122,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         ActionEvent setXToSpeed = new ActionEvent(fd, 0, "Speed/Speed");
         ActionEvent resetAxis = new ActionEvent(fd, 0, "Flow/Density");
         Speed speed = new Speed(100, KM_PER_HOUR);
-        Time time = new Time(123, SECOND);
+        Time time = new Time(123, TimeUnit.BASE_SECOND);
         Length length = new Length(5.0, METER);
         Length width = new Length(2.0, METER);
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
@@ -152,7 +154,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
         gtu.init(strategicalPlanner, initialLongitudinalPositions, speed);
-        simulator.runUpTo(new Time(124, SECOND));
+        simulator.runUpTo(new Time(124, TimeUnit.BASE_SECOND));
         while (simulator.isRunning())
         {
             try
@@ -241,7 +243,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtuX), gtuX);
         gtuX.init(strategicalPlanner, initialLongitudinalPositions, speed);
-        simulator.runUpTo(new Time(125, SECOND));
+        simulator.runUpTo(new Time(125, TimeUnit.BASE_SECOND));
         while (simulator.isRunning())
         {
             try
@@ -332,7 +334,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
     @Test
     public final void testHints() throws Exception
     {
-        this.simulator = new SimpleSimulator(new Time(0, SECOND), new Duration(0, SECOND), new Duration(1800, SECOND), this);
+        this.simulator = new SimpleSimulator(new Time(0, TimeUnit.BASE_SECOND), new Duration(0, SECOND),
+                new Duration(1800, SECOND), this);
 
         Duration aggregationTime = new Duration(30, SECOND);
         Length position = new Length(123, METER);

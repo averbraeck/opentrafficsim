@@ -31,7 +31,6 @@ public interface MandatoryIncentive extends Incentive
      * @throws OperationalPlanException in case of a perception exception
      */
     Desire determineDesire(BehavioralCharacteristics behavioralCharacteristics, LanePerception perception,
-        CarFollowingModel carFollowingModel, Desire mandatoryDesire) throws ParameterException,
-        OperationalPlanException;
+            CarFollowingModel carFollowingModel, Desire mandatoryDesire) throws ParameterException, OperationalPlanException;
 
 }

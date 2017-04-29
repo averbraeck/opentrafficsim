@@ -11,8 +11,7 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version Jan 18, 2017 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jan 18, 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
@@ -34,7 +33,7 @@ public class CoordinatesTest
         assertEquals("x", 1, p.x, 0);
         assertEquals("y", 2, p.y, 0);
         assertEquals("z", 0, p.z, 0);
-        
+
         OTSPoint3D[] points = Coordinates.parseCoordinates("(1, 2, 3)(4, 5, 6)");
         assertEquals("length is 2", 2, points.length);
         assertEquals("x", 1, points[0].x, 0);

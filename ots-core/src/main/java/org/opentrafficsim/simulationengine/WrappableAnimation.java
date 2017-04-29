@@ -5,13 +5,13 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.network.NetworkException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * Requirements for demonstration that can be shown in the SuperDemo.

@@ -55,7 +55,7 @@ public class ReferenceSpeed extends ExtendedDataTypeSpeed
             throw new RuntimeException("Could not obtain reference speed from GTU " + gtuObj, exception);
         }
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String toString()

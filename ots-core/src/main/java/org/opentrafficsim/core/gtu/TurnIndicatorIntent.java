@@ -13,16 +13,16 @@ package org.opentrafficsim.core.gtu;
  */
 public enum TurnIndicatorIntent
 {
-    
+
     /** None. */
     NONE,
-    
+
     /** Left. */
     LEFT,
-    
+
     /** Right. */
     RIGHT,
-    
+
     /** Conflicting intents. */
     CONFLICTING;
 
@@ -33,7 +33,7 @@ public enum TurnIndicatorIntent
     {
         return this.equals(NONE);
     }
-    
+
     /**
      * @return whether left turn indicator intent
      */
@@ -49,7 +49,7 @@ public enum TurnIndicatorIntent
     {
         return this.equals(RIGHT);
     }
-    
+
     /**
      * @return whether conflicting indicator intent
      */
@@ -59,4 +59,3 @@ public enum TurnIndicatorIntent
     }
 
 }
-

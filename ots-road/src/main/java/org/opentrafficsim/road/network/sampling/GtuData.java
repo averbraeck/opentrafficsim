@@ -22,7 +22,7 @@ public class GtuData implements GtuDataInterface
 
     /** Gtu. */
     private final LaneBasedGTU gtu;
-    
+
     /**
      * @param gtu gtu
      */
@@ -30,7 +30,7 @@ public class GtuData implements GtuDataInterface
     {
         this.gtu = gtu;
     }
-    
+
     /**
      * @return gtu.
      */
@@ -38,7 +38,6 @@ public class GtuData implements GtuDataInterface
     {
         return this.gtu;
     }
-
 
     /** {@inheritDoc} */
     @Override
@@ -91,9 +90,9 @@ public class GtuData implements GtuDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public final  String toString()
+    public final String toString()
     {
         return "GtuData [gtu=" + this.gtu + "]";
     }
-    
+
 }

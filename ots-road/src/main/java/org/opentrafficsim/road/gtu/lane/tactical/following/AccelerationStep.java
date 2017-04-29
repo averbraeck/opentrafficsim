@@ -28,7 +28,7 @@ public class AccelerationStep implements Serializable
 
     /** Time when the current time slot ends. */
     private final Time validUntil;
-    
+
     /** Duration of the time step. */
     private final Duration duration;
 

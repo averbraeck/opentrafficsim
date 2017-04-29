@@ -3,8 +3,6 @@ package org.opentrafficsim.road;
 import java.lang.reflect.Field;
 import java.util.Set;
 
-import nl.tudelft.simulation.language.reflection.ClassUtil;
-
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterType;
@@ -12,6 +10,8 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeBoolea
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeInteger;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
+
+import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 /**
  * Creator of set of behavioral characteristics with default values.
@@ -32,7 +32,7 @@ public final class DefaultTestParameters
     {
         //
     }
-    
+
     /**
      * Returns a default set of behavioral characteristics.
      * @return Default set of behavioral characteristics.
@@ -40,7 +40,7 @@ public final class DefaultTestParameters
     @SuppressWarnings("unchecked")
     public static BehavioralCharacteristics create()
     {
-        
+
         BehavioralCharacteristics bc = new BehavioralCharacteristics();
 
         // set all default values using reflection
@@ -51,7 +51,7 @@ public final class DefaultTestParameters
             {
                 if (ParameterType.class.isAssignableFrom(field.getType()))
                 {
-                    try 
+                    try
                     {
                         field.setAccessible(true);
                         @SuppressWarnings("rawtypes")
@@ -65,7 +65,7 @@ public final class DefaultTestParameters
                 }
                 else if (ParameterTypeBoolean.class.equals(field.getType()))
                 {
-                    try 
+                    try
                     {
                         field.setAccessible(true);
                         ParameterTypeBoolean p = (ParameterTypeBoolean) field.get(ParameterTypes.class);
@@ -78,7 +78,7 @@ public final class DefaultTestParameters
                 }
                 else if (ParameterTypeDouble.class.equals(field.getType()))
                 {
-                    try 
+                    try
                     {
                         field.setAccessible(true);
                         ParameterTypeDouble p = (ParameterTypeDouble) field.get(ParameterTypes.class);
@@ -91,7 +91,7 @@ public final class DefaultTestParameters
                 }
                 else if (ParameterTypeInteger.class.equals(field.getType()))
                 {
-                    try 
+                    try
                     {
                         field.setAccessible(true);
                         ParameterTypeInteger p = (ParameterTypeInteger) field.get(ParameterTypes.class);
@@ -114,7 +114,7 @@ public final class DefaultTestParameters
         }
 
         return bc;
-        
+
     }
 
 }

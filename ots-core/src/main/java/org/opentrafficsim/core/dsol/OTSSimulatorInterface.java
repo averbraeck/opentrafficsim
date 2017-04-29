@@ -18,8 +18,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  *          initial version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public interface OTSSimulatorInterface extends
-    SimulatorInterface<Time, Duration, OTSSimTimeDouble>
+public interface OTSSimulatorInterface extends SimulatorInterface<Time, Duration, OTSSimTimeDouble>
 {
     /** {@inheritDoc} */
     @Override
@@ -27,8 +26,8 @@ public interface OTSSimulatorInterface extends
 
     /** {@inheritDoc} */
     @Override
-    void initialize(Replication<Time, Duration, OTSSimTimeDouble> replication,
-        ReplicationMode replicationMode) throws SimRuntimeException;
+    void initialize(Replication<Time, Duration, OTSSimTimeDouble> replication, ReplicationMode replicationMode)
+            throws SimRuntimeException;
 
     /** {@inheritDoc} */
     @Override

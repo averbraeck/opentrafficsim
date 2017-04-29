@@ -19,13 +19,13 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacter
 
 public interface TacticalPlannerFactory<T extends TacticalPlanner>
 {
- 
+
     /**
      * Returns a set of behavioral characteristics with default values for the next tactical planner that will be generated.
      * @return set of behavioral characteristics with default values for the next tactical planner that will be generated
      */
     BehavioralCharacteristics getDefaultBehavioralCharacteristics();
-    
+
     /**
      * Creates a new tactical planner for the given GTU.
      * @param gtu GTU
@@ -33,5 +33,5 @@ public interface TacticalPlannerFactory<T extends TacticalPlanner>
      * @throws GTUException if the gtu is not suitable in any way for the creation of the tactical planner
      */
     T create(GTU gtu) throws GTUException;
-    
+
 }

@@ -2,6 +2,7 @@ package org.opentrafficsim.core.gtu;
 
 import java.awt.Color;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -101,7 +102,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     /** aligned or not. */
     // TODO: should be indicated with a Parameter
     public static boolean ALIGNED = true;
-    
+
     /** aligned schedule count. */
     // TODO: can be removed after testing period
     public static int ALIGN_COUNT = 0;
@@ -180,7 +181,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         {
             if (initialSpeed.si < OperationalPlan.DRIFTING_SPEED_SI)
             {
-                this.operationalPlan = new OperationalPlan(this, p, now, new Duration(1E-6, TimeUnit.SECOND));
+                this.operationalPlan = new OperationalPlan(this, p, now, new Duration(1E-6, DurationUnit.SECOND));
             }
             else
             {
@@ -287,9 +288,9 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
             double tNext = Math.floor(2.0 * now.si + 1.0) / 2.0;
             DirectedPoint p = (tNext - now.si < 0.5) ? this.operationalPlan.getEndLocation()
-                    : this.operationalPlan.getLocation(new Duration(tNext - now.si, TimeUnit.SI));
-            this.nextMoveEvent =
-                    new SimEvent<>(new OTSSimTimeDouble(new Time(tNext, TimeUnit.SI)), this, this, "move", new Object[] { p });
+                    : this.operationalPlan.getLocation(new Duration(tNext - now.si, DurationUnit.SI));
+            this.nextMoveEvent = new SimEvent<>(new OTSSimTimeDouble(new Time(tNext, TimeUnit.BASE)), this, this, "move",
+                    new Object[] { p });
             ALIGN_COUNT++;
         }
         else
@@ -492,7 +493,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     }
 
     /** cache time. */
-    private Time cacheLocationTime = new Time(Double.NaN, TimeUnit.SI);
+    private Time cacheLocationTime = new Time(Double.NaN, TimeUnit.BASE);
 
     /** caced position at time. */
     private DirectedPoint cacheLocation = null;

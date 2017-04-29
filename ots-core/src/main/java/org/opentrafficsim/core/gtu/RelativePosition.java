@@ -216,7 +216,7 @@ public class RelativePosition implements Serializable
 
         /** the cached hashcode. */
         private final int hash;
-        
+
         /**
          * @param name the type name.
          */

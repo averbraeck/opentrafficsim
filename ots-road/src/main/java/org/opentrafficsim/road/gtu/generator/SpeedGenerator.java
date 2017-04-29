@@ -7,7 +7,6 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
-
 /**
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -24,13 +23,13 @@ public class SpeedGenerator implements Generator<Speed>
 
     /** Min speed. */
     private final Speed minSpeed;
-    
+
     /** Difference between max and min speed. */
     private final Speed deltaSpeed;
-    
+
     /** Random stream. */
     private final StreamInterface stream;
-    
+
     /**
      * @param minSpeed min speed
      * @param maxSpeed max speed
@@ -42,7 +41,7 @@ public class SpeedGenerator implements Generator<Speed>
         this.deltaSpeed = maxSpeed.minus(minSpeed);
         this.stream = stream;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public Speed draw() throws ProbabilityException, ParameterException

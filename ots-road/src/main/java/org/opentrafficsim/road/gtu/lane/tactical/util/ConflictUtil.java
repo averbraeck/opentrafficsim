@@ -6,19 +6,15 @@ import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractPara
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.UUID;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -73,7 +69,7 @@ public final class ConflictUtil
 
     /** Minimum time gap between events. */
     public static final ParameterTypeDuration MIN_GAP = new ParameterTypeDuration("minGap", "Minimum gap for conflicts.",
-            new Duration(0.000001, TimeUnit.SECOND), POSITIVE);
+            new Duration(0.000001, DurationUnit.SECOND), POSITIVE);
 
     /** Stopping distance at conflicts. */
     public static final ParameterTypeLength S0_CONF =
@@ -93,7 +89,7 @@ public final class ConflictUtil
             new ParameterTypeDuration("ti", "Indicator time before departure.", Duration.createSI(3.0), POSITIVE);
 
     /** Time step for free acceleration anticipation. */
-    private static final Duration TIME_STEP = new Duration(0.5, TimeUnit.SI);
+    private static final Duration TIME_STEP = new Duration(0.5, DurationUnit.SI);
 
     /**
      * Do not instantiate.
@@ -630,7 +626,7 @@ public final class ConflictUtil
                 double vSelf = ttcOa.getEndSpeed().si;
                 double speedDiff = conflictingVehicle.getSpeed().si - vSelf;
                 speedDiff = speedDiff > 0 ? speedDiff : 0;
-                Duration additionalTime = new Duration(speedDiff / -b.si, TimeUnit.SI);
+                Duration additionalTime = new Duration(speedDiff / -b.si, DurationUnit.SI);
                 // check if conflict vehicle will be upstream after that time, position beyond conflict after additional time
                 double followerFront = conflictingVehicle.getSpeed().si * ttcOa.getDuration().si
                         - conflictingVehicle.getDistance().si + (conflictingVehicle.getSpeed().si * additionalTime.si

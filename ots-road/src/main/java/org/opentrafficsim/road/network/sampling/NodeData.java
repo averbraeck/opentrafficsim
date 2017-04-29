@@ -41,7 +41,7 @@ public class NodeData implements NodeDataInterface
     {
         return this.node.getId();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final int hashCode()

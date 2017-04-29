@@ -35,7 +35,7 @@ public final class ColorInterpolator
         }
         double complement = 1 - ratio;
         return new Color((int) (zero.getRed() * complement + one.getRed() * ratio),
-            (int) (zero.getGreen() * complement + one.getGreen() * ratio),
-            (int) (zero.getBlue() * complement + one.getBlue() * ratio));
+                (int) (zero.getGreen() * complement + one.getGreen() * ratio),
+                (int) (zero.getBlue() * complement + one.getBlue() * ratio));
     }
 }

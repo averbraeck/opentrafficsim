@@ -530,17 +530,16 @@ public class BehavioralCharacteristicsTest implements CheckInterface
      * @throws IllegalAccessException Reflection.
      * @throws InstantiationException Reflection.
      */
-    private <R extends AbstractParameterType<?>> void checkDefaultValuesPerClass(final Class<R> clazz, final Object defaultValue)
-            throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-            NoSuchMethodException, SecurityException
+    private <R extends AbstractParameterType<?>> void checkDefaultValuesPerClass(final Class<R> clazz,
+            final Object defaultValue) throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+            InvocationTargetException, NoSuchMethodException, SecurityException
     {
         // none set
         AbstractParameterType<?> ld;
         if (clazz.equals(ParameterType.class))
         {
-            ld =
-                    clazz.getDeclaredConstructor(String.class, String.class, Class.class).newInstance("v", "vcong",
-                            getClass(defaultValue));
+            ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class).newInstance("v", "vcong",
+                    getClass(defaultValue));
         }
         else
         {
@@ -560,9 +559,8 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         {
             if (clazz.equals(ParameterType.class))
             {
-                ld =
-                        clazz.getDeclaredConstructor(String.class, String.class, Class.class, Check.class).newInstance("v",
-                                "vcong", getClass(defaultValue), POSITIVE);
+                ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, Check.class).newInstance("v",
+                        "vcong", getClass(defaultValue), POSITIVE);
             }
             else
             {
@@ -582,15 +580,13 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         // value set
         if (clazz.equals(ParameterType.class))
         {
-            ld =
-                    clazz.getDeclaredConstructor(String.class, String.class, Class.class, DoubleScalarInterface.class)
-                            .newInstance("v", "vcong", getClass(defaultValue), defaultValue);
+            ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, DoubleScalarInterface.class)
+                    .newInstance("v", "vcong", getClass(defaultValue), defaultValue);
         }
         else
         {
-            ld =
-                    clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue)).newInstance("v", "vcong",
-                            defaultValue);
+            ld = clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue)).newInstance("v", "vcong",
+                    defaultValue);
         }
         try
         {
@@ -605,15 +601,13 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         {
             if (clazz.equals(ParameterType.class))
             {
-                ld =
-                        clazz.getDeclaredConstructor(String.class, String.class, Class.class, DoubleScalarInterface.class,
-                                Check.class).newInstance("v", "vcong", getClass(defaultValue), defaultValue, POSITIVE);
+                ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, DoubleScalarInterface.class,
+                        Check.class).newInstance("v", "vcong", getClass(defaultValue), defaultValue, POSITIVE);
             }
             else
             {
-                ld =
-                        clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue), Check.class)
-                                .newInstance("v", "vcong", defaultValue, POSITIVE);
+                ld = clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue), Check.class)
+                        .newInstance("v", "vcong", defaultValue, POSITIVE);
             }
             try
             {

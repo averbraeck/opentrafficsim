@@ -54,8 +54,7 @@ public class LaneBasedStrategicalPlannerNone extends AbstractLaneBasedStrategica
 
     /** {@inheritDoc} */
     @Override
-    public LinkDirection nextLinkDirection(Link link, GTUDirectionality direction, GTUType gtuType)
-        throws NetworkException
+    public LinkDirection nextLinkDirection(Link link, GTUDirectionality direction, GTUType gtuType) throws NetworkException
     {
         return null;
     }
@@ -73,7 +72,7 @@ public class LaneBasedStrategicalPlannerNone extends AbstractLaneBasedStrategica
     {
         return null;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public Route getRoute()
@@ -89,4 +88,3 @@ public class LaneBasedStrategicalPlannerNone extends AbstractLaneBasedStrategica
     }
 
 }
-

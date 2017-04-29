@@ -59,7 +59,7 @@ public class LinkData implements LinkDataInterface
     {
         return this.link.getLength();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String getId()
@@ -114,5 +114,5 @@ public class LinkData implements LinkDataInterface
     {
         return "LinkData [link=" + this.link + "]";
     }
-    
+
 }

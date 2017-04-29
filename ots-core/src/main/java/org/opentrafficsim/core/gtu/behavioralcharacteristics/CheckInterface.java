@@ -40,8 +40,8 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterTy
  *     public void check(Length value, BehavioralCharacteristics bc) throws ParameterException
  *     {
  *         Throw.when(value.si &lt;= 2, ParameterException.class, &quot;Value of X is not above 2.&quot;);
- *         Throw.when(bc.contains(Y) &amp;&amp; value.si &gt; bc.getParameter(Y).si, ParameterException.class, 
- *             &quot;Value of X is larger than value of Y.&quot;);
+ *         Throw.when(bc.contains(Y) &amp;&amp; value.si &gt; bc.getParameter(Y).si, ParameterException.class,
+ *                 &quot;Value of X is larger than value of Y.&quot;);
  *     }
  * };
  * </pre>
@@ -57,11 +57,9 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterTy
  * <ul>
  * <li><tt>double</tt> for <tt>ParameterTypeDouble</tt></li>
  * <li><tt>int</tt> for <tt>ParameterTypeInteger</tt></li>
- * <li>
- * <tt>Speed</tt> for <tt>ParameterTypeSpeed</tt></li>
+ * <li><tt>Speed</tt> for <tt>ParameterTypeSpeed</tt></li>
  * <li><tt>Length</tt> for <tt>ParameterTypeLength</tt></li>
- * <li>
- * <tt>T</tt> for <tt>ParameterType&lt;T&gt;</tt></li>
+ * <li><tt>T</tt> for <tt>ParameterType&lt;T&gt;</tt></li>
  * </ul>
  * Note that <tt>ParameterTypeBoolean</tt> has no check method as checks on booleans are senseless.<br>
  * <br>
@@ -69,12 +67,11 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterTy
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, 
- *          initial version Apr 13, 2016 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-@SuppressWarnings({"checkstyle:interfaceistype", "checkstyle:javadoctype", "checkstyle:javadocvariable", "javadoc"})
+@SuppressWarnings({ "checkstyle:interfaceistype", "checkstyle:javadoctype", "checkstyle:javadocvariable", "javadoc" })
 public interface CheckInterface
 {
     // @formatter:off

@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -89,7 +90,7 @@ public class TrajectoryPlotTest implements UNITS
         Map<Lane, Length> initialLongitudinalPositions = new HashMap<>();
         initialLongitudinalPositions.put(lane1, initialPosition);
         // We want to start the car simulation at t=100s; therefore we have to advance the simulator up to that time.
-        simulator.runUpTo(new Time(100, SECOND));
+        simulator.runUpTo(new Time(100, TimeUnit.BASE_SECOND));
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         GTUFollowingModelOld gtuFollowingModel =
                 new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(10, SECOND));

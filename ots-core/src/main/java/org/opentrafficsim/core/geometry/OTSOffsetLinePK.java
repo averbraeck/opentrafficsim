@@ -20,7 +20,7 @@ public final class OTSOffsetLinePK
     {
         // Cannot be instantiated.
     }
-    
+
     /** Debugging flag. */
     static boolean debugOffsetLine = false;
 
@@ -72,7 +72,7 @@ public final class OTSOffsetLinePK
         // referenceLine.get(i).x - referenceLine.get(i - 1).x)) + ")")));
         // }
         // System.out.println("# offset is " + offset);
-        // System.out.println(OTSGeometry.printCoordinates("#reference:\nc0,0,0\n#", referenceLine, "\n    "));
+        // System.out.println(OTSGeometry.printCoordinates("#reference:\nc0,0,0\n#", referenceLine, "\n "));
         // }
         // else
         // {
@@ -92,9 +92,8 @@ public final class OTSOffsetLinePK
             return OTSLine3D.createAndCleanOTSLine3D(coordinates);
         }
 
-        OTSLine3D filteredReferenceLine =
-                referenceLine.noiseFilteredLine(Math.max(offsetMinimumFilterValue,
-                        Math.min(bufferOffset / offsetFilterRatio, offsetMaximumFilterValue)));
+        OTSLine3D filteredReferenceLine = referenceLine.noiseFilteredLine(
+                Math.max(offsetMinimumFilterValue, Math.min(bufferOffset / offsetFilterRatio, offsetMaximumFilterValue)));
         List<OTSPoint3D> tempPoints = new ArrayList<>();
         // Make good use of the fact that an OTSLine3D cannot have consecutive duplicate points and has > 1 points
         OTSPoint3D prevPoint = filteredReferenceLine.get(0);
@@ -148,9 +147,8 @@ public final class OTSOffsetLinePK
                         {
                             intermediateAngle += Math.PI;
                         }
-                        OTSPoint3D intermediatePoint =
-                                new OTSPoint3D(prevPoint.x - Math.sin(intermediateAngle) * offset, prevPoint.y
-                                        + Math.cos(intermediateAngle) * offset);
+                        OTSPoint3D intermediatePoint = new OTSPoint3D(prevPoint.x - Math.sin(intermediateAngle) * offset,
+                                prevPoint.y + Math.cos(intermediateAngle) * offset);
                         // Find any intersection points of the new segment and all previous segments
                         OTSPoint3D prevSegFrom = null;
                         int stopAt = tempPoints.size();
@@ -159,9 +157,8 @@ public final class OTSOffsetLinePK
                             OTSPoint3D prevSegTo = tempPoints.get(i);
                             if (null != prevSegFrom)
                             {
-                                OTSPoint3D prevSegIntersection =
-                                        OTSPoint3D.intersectionOfLineSegments(prevArcPoint, intermediatePoint, prevSegFrom,
-                                                prevSegTo);
+                                OTSPoint3D prevSegIntersection = OTSPoint3D.intersectionOfLineSegments(prevArcPoint,
+                                        intermediatePoint, prevSegFrom, prevSegTo);
                                 if (null != prevSegIntersection
                                         && prevSegIntersection.horizontalDistanceSI(prevArcPoint) > circlePrecision
                                         && prevSegIntersection.horizontalDistanceSI(prevSegFrom) > circlePrecision
@@ -182,8 +179,8 @@ public final class OTSOffsetLinePK
                         {
                             if (debugOffsetLine)
                             {
-                                System.out.println("#inserting intersection of arc segment with next segment "
-                                        + nextSegmentIntersection);
+                                System.out.println(
+                                        "#inserting intersection of arc segment with next segment " + nextSegmentIntersection);
                             }
                             tempPoints.add(nextSegmentIntersection);
                         }

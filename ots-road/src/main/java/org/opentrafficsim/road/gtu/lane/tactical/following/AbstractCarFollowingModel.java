@@ -40,8 +40,8 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
      */
     @Override
     public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
-        final Speed speed, final SpeedLimitInfo speedLimitInfo, final SortedMap<Length, Speed> leaders)
-        throws ParameterException
+            final Speed speed, final SpeedLimitInfo speedLimitInfo, final SortedMap<Length, Speed> leaders)
+            throws ParameterException
     {
         Throw.whenNull(behavioralCharacteristics, "Behavioral characteristics may not be null.");
         Throw.whenNull(speed, "Speed may not be null.");
@@ -53,8 +53,8 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
             return new Acceleration(Double.NEGATIVE_INFINITY, AccelerationUnit.SI);
         }
         // Forward to method with desired speed and headway predetermined by this car-following model.
-        return followingAcceleration(behavioralCharacteristics, speed, desiredSpeed(behavioralCharacteristics,
-            speedLimitInfo), desiredHeadway(behavioralCharacteristics, speed), leaders);
+        return followingAcceleration(behavioralCharacteristics, speed, desiredSpeed(behavioralCharacteristics, speedLimitInfo),
+                desiredHeadway(behavioralCharacteristics, speed), leaders);
     }
 
     /**
@@ -68,7 +68,7 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
      * @throws ParameterException if parameter exception occurs
      */
     protected abstract Acceleration followingAcceleration(BehavioralCharacteristics behavioralCharacteristics, Speed speed,
-        Speed desiredSpeed, Length desiredHeadway, SortedMap<Length, Speed> leaders) throws ParameterException;
+            Speed desiredSpeed, Length desiredHeadway, SortedMap<Length, Speed> leaders) throws ParameterException;
 
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")

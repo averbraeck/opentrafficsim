@@ -58,7 +58,6 @@ public class LaneData implements LaneDataInterface
         return this.lane.getId();
     }
 
-
     /** {@inheritDoc} */
     @Override
     public final int hashCode()
@@ -106,5 +105,5 @@ public class LaneData implements LaneDataInterface
     {
         return "LaneData [lane=" + this.lane + "]";
     }
-    
+
 }

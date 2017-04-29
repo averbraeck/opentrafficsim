@@ -23,9 +23,9 @@ public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPercep
 
     /** */
     private static final long serialVersionUID = 20160811L;
-    
-    /** 
-     * Maximum deceleration that is used to determine if a vehicle will attempt to stop for a yellow light.  <br> 
+
+    /**
+     * Maximum deceleration that is used to determine if a vehicle will attempt to stop for a yellow light. <br>
      * Derived from the report <cite>Onderzoek geeltijden</cite> by Goudappel Coffeng.
      */
     public static final Acceleration MAX_YELLOW_DECELERATION = new Acceleration(-2.8, AccelerationUnit.METER_PER_SECOND_2);
@@ -50,12 +50,12 @@ public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPercep
     {
         return getPerception().getGtu();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final LanePerception getPerception()
     {
         return (LanePerception) super.getPerception();
     }
-    
+
 }

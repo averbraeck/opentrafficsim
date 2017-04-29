@@ -18,13 +18,13 @@ public enum TextWidth
 {
     /** condensed font. */
     WIDTH_CONDENSED(TextAttribute.WIDTH_CONDENSED),
-    
+
     /** moderately condensed font. */
     WIDTH_SEMI_CONDENSED(TextAttribute.WIDTH_SEMI_CONDENSED),
-    
+
     /** regular font. */
     WIDTH_REGULAR(TextAttribute.WIDTH_REGULAR),
-    
+
     /** moderately extended font. */
     WIDTH_SEMI_EXTENDED(TextAttribute.WIDTH_SEMI_EXTENDED),
 
@@ -49,6 +49,5 @@ public enum TextWidth
     {
         return this.value;
     }
-    
-}
 
+}

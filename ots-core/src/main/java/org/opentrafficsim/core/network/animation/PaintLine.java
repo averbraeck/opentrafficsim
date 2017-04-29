@@ -41,7 +41,7 @@ public final class PaintLine
      * @param line array of points
      */
     public static void paintLine(final Graphics2D graphics, final Color color, final double width,
-        final DirectedPoint referencePoint, final OTSLine3D line)
+            final DirectedPoint referencePoint, final OTSLine3D line)
     {
         graphics.setColor(color);
         Stroke oldStroke = graphics.getStroke();

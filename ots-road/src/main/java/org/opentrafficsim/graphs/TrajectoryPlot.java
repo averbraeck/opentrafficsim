@@ -95,7 +95,7 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
     }
 
     /** Maximum of the time axis. */
-    private Time maximumTime = new Time(300, TimeUnit.SECOND);
+    private Time maximumTime = new Time(300, TimeUnit.BASE);
 
     /**
      * @return maximumTime
@@ -142,8 +142,8 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
                 // Register the GTUs currently (i.e. already) on the lane (if any) for statistics sampling.
                 for (LaneBasedGTU gtu : lane.getGtuList())
                 {
-                    notify(new TimedEvent<OTSSimTimeDouble>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), gtu }, gtu
-                            .getSimulator().getSimulatorTime()));
+                    notify(new TimedEvent<OTSSimTimeDouble>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), gtu },
+                            gtu.getSimulator().getSimulatorTime()));
                 }
             }
             catch (RemoteException exception)
@@ -592,8 +592,8 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
 
         /** {@inheritDoc} */
         @Override
-        public void addSample(final LaneBasedGTU gtu, final Lane lane, final double position) throws NetworkException,
-                GTUException
+        public void addSample(final LaneBasedGTU gtu, final Lane lane, final double position)
+                throws NetworkException, GTUException
         {
             if (this.samples.size() > 0)
             {
@@ -780,8 +780,8 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
         }
 
         /** {@inheritDoc} */
-        public final void addSample(final LaneBasedGTU gtu, final Lane lane, final double position) throws NetworkException,
-                GTUException
+        public final void addSample(final LaneBasedGTU gtu, final Lane lane, final double position)
+                throws NetworkException, GTUException
         {
             final int sample = (int) Math.ceil(gtu.getOperationalPlan().getStartTime().si / getSampleInterval().si);
             if (0 == this.positions.size())

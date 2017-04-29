@@ -8,7 +8,6 @@ import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
-import org.djunits.value.vdouble.scalar.Position;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -83,27 +82,6 @@ public final class LengthUnits implements UNITS
             throw new NetworkException("Parsing network: cannot instantiate length unit in: " + s);
         }
         return u;
-    }
-
-    /**
-     * @param s the string to parse
-     * @return the next value.
-     * @throws NetworkException when parsing fails
-     */
-    public static Position parsePosition(final String s) throws NetworkException
-    {
-        String us = parseLengthUnit(s);
-        LengthUnit u = LENGTH_UNITS.get(us);
-        String sv = s.substring(0, s.indexOf(us));
-        try
-        {
-            double value = Double.parseDouble(sv);
-            return new Position(value, u);
-        }
-        catch (NumberFormatException nfe)
-        {
-            throw new NetworkException("Parsing network: cannot instantiate scalar: " + s, nfe);
-        }
     }
 
     /**

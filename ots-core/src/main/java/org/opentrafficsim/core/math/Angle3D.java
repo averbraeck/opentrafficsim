@@ -78,8 +78,9 @@ public class Angle3D implements Serializable
         catch (ValueException exception)
         {
             // should be impossible as we constructed the vector always with three elements
-            throw new RuntimeException("getRoll() gave an exception; apparently vector " + this.rotation
-                    + " was not constructed right", exception);
+            throw new RuntimeException(
+                    "getRoll() gave an exception; apparently vector " + this.rotation + " was not constructed right",
+                    exception);
         }
     }
 
@@ -95,8 +96,9 @@ public class Angle3D implements Serializable
         catch (ValueException exception)
         {
             // should be impossible as we constructed the vector always with three elements
-            throw new RuntimeException("getPitch() gave an exception; apparently vector " + this.rotation
-                    + " was not constructed right", exception);
+            throw new RuntimeException(
+                    "getPitch() gave an exception; apparently vector " + this.rotation + " was not constructed right",
+                    exception);
         }
     }
 
@@ -112,8 +114,8 @@ public class Angle3D implements Serializable
         catch (ValueException exception)
         {
             // should be impossible as we constructed the vector always with three elements
-            throw new RuntimeException("getYaw() gave an exception; apparently vector " + this.rotation
-                    + " was not constructed right", exception);
+            throw new RuntimeException(
+                    "getYaw() gave an exception; apparently vector " + this.rotation + " was not constructed right", exception);
         }
     }
 

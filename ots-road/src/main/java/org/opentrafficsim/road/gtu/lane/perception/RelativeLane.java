@@ -55,7 +55,7 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
         Throw.when(lat.equals(LateralDirectionality.NONE) && numLanes != 0, IllegalArgumentException.class,
                 "Number of lanes must be zero if the lateral directionality is NONE.");
         Throw.when(numLanes < 0, IllegalArgumentException.class,
-            "Relative lane with %d lanes in %s direction is not allowed, use values > 0.", numLanes, lat);
+                "Relative lane with %d lanes in %s direction is not allowed, use values > 0.", numLanes, lat);
         this.lat = lat;
         this.numLanes = numLanes;
     }
@@ -142,16 +142,15 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
     }
 
     /**
-     * Returns the relative lane relative to this lane, for example "the left lane" of "the 3rd right lane" is
-     * "the 2nd right lane".
+     * Returns the relative lane relative to this lane, for example "the left lane" of "the 3rd right lane" is "the 2nd right
+     * lane".
      * @param relativeLane relative lane to get of this lane
      * @return relative lane relative to this lane
      */
     public final RelativeLane add(final RelativeLane relativeLane)
     {
         int nThis = this.lat.isNone() ? 0 : this.lat.isLeft() ? -this.numLanes : this.numLanes;
-        int nOther =
-            relativeLane.lat.isNone() ? 0 : relativeLane.lat.isLeft() ? -relativeLane.numLanes : relativeLane.numLanes;
+        int nOther = relativeLane.lat.isNone() ? 0 : relativeLane.lat.isLeft() ? -relativeLane.numLanes : relativeLane.numLanes;
         int nSum = nThis + nOther;
         if (nSum < 0)
         {
@@ -202,8 +201,7 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
         {
             return "RelativeLane [CURRENT]";
         }
-        return new StringBuilder("RelativeLane [").append(this.lat).append(", ").append(this.numLanes).append("]")
-            .toString();
+        return new StringBuilder("RelativeLane [").append(this.lat).append(", ").append(this.numLanes).append("]").toString();
     }
 
     /** {@inheritDoc} */

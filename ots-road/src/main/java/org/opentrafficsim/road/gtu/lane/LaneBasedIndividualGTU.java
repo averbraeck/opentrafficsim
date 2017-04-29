@@ -494,7 +494,8 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
          * @throws Exception when not all required values have been set
          */
         public final LaneBasedIndividualGTU build(
-                final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> laneBasedStrategicalPlannerFactory,
+                final LaneBasedStrategicalPlannerFactory<
+                        ? extends LaneBasedStrategicalPlanner> laneBasedStrategicalPlannerFactory,
                 final Route route) throws Exception
         {
             if (null == this.id || null == this.gtuType || null == this.initialLongitudinalPositions

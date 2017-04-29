@@ -14,15 +14,6 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.event.EventContext;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
-import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
-import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.immutablecollections.Immutable;
-import nl.tudelft.simulation.immutablecollections.ImmutableHashMap;
-import nl.tudelft.simulation.immutablecollections.ImmutableMap;
-import nl.tudelft.simulation.naming.context.ContextUtil;
-
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
@@ -34,6 +25,15 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.core.object.ObjectInterface;
 import org.opentrafficsim.core.perception.PerceivableContext;
+
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
+import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
+import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.immutablecollections.Immutable;
+import nl.tudelft.simulation.immutablecollections.ImmutableHashMap;
+import nl.tudelft.simulation.immutablecollections.ImmutableMap;
+import nl.tudelft.simulation.naming.context.ContextUtil;
 
 /**
  * A Network consists of a set of links. Each link has, in its turn, a start node and an end node.
@@ -178,8 +178,8 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         }
         if (!containsNode(link.getStartNode()) || !containsNode(link.getEndNode()))
         {
-            throw new NetworkException("Start node or end node of Link " + link.getId() + " not registered in network "
-                    + this.id);
+            throw new NetworkException(
+                    "Start node or end node of Link " + link.getId() + " not registered in network " + this.id);
         }
         this.linkMap.put(link.getId(), link);
         fireEvent(Network.LINK_ADD_EVENT, link.getId());
@@ -354,8 +354,8 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         }
         if (containsInvisibleObject(object.getId()))
         {
-            throw new NetworkException("InvisibleObject with name " + object.getId() + " already registered in network "
-                    + this.id);
+            throw new NetworkException(
+                    "InvisibleObject with name " + object.getId() + " already registered in network " + this.id);
         }
         this.invisibleObjectMap.put(object.getId(), object);
         fireEvent(Network.INVISIBLE_OBJECT_ADD_EVENT, object.getId());
@@ -409,8 +409,8 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     {
         if (containsRoute(gtuType, route))
         {
-            throw new NetworkException("Route " + route + " for GTUType " + gtuType + " already registered in network "
-                    + this.id);
+            throw new NetworkException(
+                    "Route " + route + " for GTUType " + gtuType + " already registered in network " + this.id);
         }
         if (this.routeMap.containsKey(gtuType) && this.routeMap.get(gtuType).keySet().contains(route.getId()))
         {
@@ -580,9 +580,8 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     public final CompleteRoute getShortestRouteBetween(final GTUType gtuType, final Node nodeFrom, final Node nodeTo,
             final List<Node> nodesVia) throws NetworkException
     {
-        CompleteRoute route =
-                new CompleteRoute(
-                        "Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo + " via " + nodesVia.toString(), gtuType);
+        CompleteRoute route = new CompleteRoute(
+                "Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo + " via " + nodesVia.toString(), gtuType);
         SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = this.linkGraphs.get(gtuType);
         if (graph == null)
         {

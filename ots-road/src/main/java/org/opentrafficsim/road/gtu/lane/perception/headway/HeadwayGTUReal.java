@@ -62,8 +62,7 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
      * @param facingSameDirection whether the GTU is facing the same direction.
      * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
      */
-    public HeadwayGTUReal(final LaneBasedGTU gtu, final Length distance, final boolean facingSameDirection)
-            throws GTUException
+    public HeadwayGTUReal(final LaneBasedGTU gtu, final Length distance, final boolean facingSameDirection) throws GTUException
     {
         super(distance);
         this.gtu = gtu;
@@ -80,8 +79,8 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
      * @param facingSameDirection whether the GTU is facing the same direction.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public HeadwayGTUReal(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap,
-            final Length overlapRear, final boolean facingSameDirection) throws GTUException
+    public HeadwayGTUReal(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap, final Length overlapRear,
+            final boolean facingSameDirection) throws GTUException
     {
         super(overlapFront, overlap, overlapRear);
         this.gtu = gtu;
@@ -140,7 +139,8 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
     }
 
     /**
-     * {@inheritDoc} <br><br>
+     * {@inheritDoc} <br>
+     * <br>
      * <b>Note: when moving a {@code HeadwayGTURealDirect}, only headway, speed and acceleration may be considered to be delayed
      * and anticipated. Other information is taken from the actual GTU at the time {@code moved()} is called.</b>
      */
@@ -149,8 +149,8 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
     {
         try
         {
-            return new HeadwayGTURealCopy(getId(), getGtuType(), headway, getLength(), speed, acceleration, getCarFollowingModel(),
-                    getBehavioralCharacteristics(), getSpeedLimitInfo(), getRoute(), getGtuStatus());
+            return new HeadwayGTURealCopy(getId(), getGtuType(), headway, getLength(), speed, acceleration,
+                    getCarFollowingModel(), getBehavioralCharacteristics(), getSpeedLimitInfo(), getRoute(), getGtuStatus());
         }
         catch (GTUException exception)
         {

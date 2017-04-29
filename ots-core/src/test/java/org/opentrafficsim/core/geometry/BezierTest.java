@@ -2,9 +2,10 @@ package org.opentrafficsim.core.geometry;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.junit.Test;
+
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Test the B&eacute;zier class.
@@ -58,9 +59,8 @@ public class BezierTest
         }
         for (int n : new int[] { 2, 3, 4, 100 })
         {
-            OTSLine3D line =
-                    Bezier.cubic(n, new DirectedPoint(from.x, from.y, from.z, Math.PI / 2, -Math.PI / 2, 0), new DirectedPoint(
-                            to.x, to.y, to.z, Math.PI, 0, -Math.PI / 2));
+            OTSLine3D line = Bezier.cubic(n, new DirectedPoint(from.x, from.y, from.z, Math.PI / 2, -Math.PI / 2, 0),
+                    new DirectedPoint(to.x, to.y, to.z, Math.PI, 0, -Math.PI / 2));
             for (int i = 1; i < line.size() - 1; i++)
             {
                 OTSPoint3D p = line.get(i);
@@ -70,9 +70,7 @@ public class BezierTest
             }
         }
         // Pity that the value 64 is private in the Bezier class.
-        assertEquals(
-                "Number of points is 64",
-                64,
+        assertEquals("Number of points is 64", 64,
                 Bezier.cubic(new DirectedPoint(from.x, from.y, from.z, Math.PI / 2, -Math.PI / 2, 0),
                         new DirectedPoint(to.x, to.y, to.z, Math.PI, 0, -Math.PI / 2)).size());
         assertEquals("Number of points is 64", 64, Bezier.bezier(from, control1, control2, to).size());
@@ -92,9 +90,8 @@ public class BezierTest
         }
         for (int n : new int[] { 2, 3, 4, 100 })
         {
-            OTSLine3D line =
-                    Bezier.cubic(n, new DirectedPoint(from.x, from.y, from.z, Math.PI / 2, Math.PI / 2, Math.PI),
-                            new DirectedPoint(to.x, to.y, to.z, 0, 0, Math.PI / 2));
+            OTSLine3D line = Bezier.cubic(n, new DirectedPoint(from.x, from.y, from.z, Math.PI / 2, Math.PI / 2, Math.PI),
+                    new DirectedPoint(to.x, to.y, to.z, 0, 0, Math.PI / 2));
             for (int i = 1; i < line.size() - 1; i++)
             {
                 OTSPoint3D p = line.get(i);

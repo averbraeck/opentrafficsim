@@ -32,8 +32,7 @@ public class DualAccelerationStep implements Serializable
      * @param leaderAccelerationStep AccelerationStep; the acceleration and time step size for the leader
      * @param followerAccelerationStep AccelerationStep; the acceleration and time step size for the (new) follower
      */
-    public DualAccelerationStep(final AccelerationStep leaderAccelerationStep,
-        final AccelerationStep followerAccelerationStep)
+    public DualAccelerationStep(final AccelerationStep leaderAccelerationStep, final AccelerationStep followerAccelerationStep)
     {
         this.leaderAccelerationStep = leaderAccelerationStep;
         this.followerAccelerationStep = followerAccelerationStep;

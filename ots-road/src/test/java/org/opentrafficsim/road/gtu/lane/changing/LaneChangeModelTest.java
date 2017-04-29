@@ -13,6 +13,7 @@ import java.util.Set;
 import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -106,7 +107,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         OTSPoint3D[] coordinates = new OTSPoint3D[] { new OTSPoint3D(from.getPoint().x, from.getPoint().y, 0),
                 new OTSPoint3D(to.getPoint().x, to.getPoint().y, 0) };
         OTSLine3D line = new OTSLine3D(coordinates);
-        CrossSectionLink link = new CrossSectionLink(network, name, from, to, LinkType.ALL, line, simulator, 
+        CrossSectionLink link = new CrossSectionLink(network, name, from, to, LinkType.ALL, line, simulator,
                 LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
         return link;
     }
@@ -194,8 +195,8 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions
                 .add(new DirectedLanePosition(lanes[1], new Length(100, METER), GTUDirectionality.DIR_PLUS));
-        SimpleSimulator simpleSimulator =
-                new SimpleSimulator(new Time(0, SECOND), new Duration(0, SECOND), new Duration(3600, SECOND), this);
+        SimpleSimulator simpleSimulator = new SimpleSimulator(new Time(0, TimeUnit.BASE_SECOND), new Duration(0, SECOND),
+                new Duration(3600, SECOND), this);
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
         BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create();
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =

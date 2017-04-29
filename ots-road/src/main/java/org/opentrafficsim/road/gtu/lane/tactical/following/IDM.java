@@ -41,13 +41,13 @@ public class IDM extends AbstractIDM
     /** {@inheritDoc} */
     @Override
     protected final Acceleration combineInteractionTerm(final Acceleration aFree,
-        final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final Speed desiredSpeed,
-        final Length desiredHeadway, final SortedMap<Length, Speed> leaders) throws ParameterException
+            final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final Speed desiredSpeed,
+            final Length desiredHeadway, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
         Acceleration a = behavioralCharacteristics.getParameter(ParameterTypes.A);
         double sRatio =
-            dynamicDesiredHeadway(behavioralCharacteristics, speed, desiredHeadway, leaders.get(leaders.firstKey())).si
-                / leaders.firstKey().si;
+                dynamicDesiredHeadway(behavioralCharacteristics, speed, desiredHeadway, leaders.get(leaders.firstKey())).si
+                        / leaders.firstKey().si;
         double aInt = -a.si * sRatio * sRatio;
         return new Acceleration(aFree.si + aInt, AccelerationUnit.SI);
     }

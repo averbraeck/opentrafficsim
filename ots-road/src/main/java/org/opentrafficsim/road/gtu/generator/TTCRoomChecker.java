@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.generator;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -55,7 +55,7 @@ public class TTCRoomChecker implements RoomChecker
             }
         }
         if ((speed.le(leaderSpeed) || headway.divideBy(speed.minus(leaderSpeed)).gt(this.ttc))
-                && headway.gt(speed.multiplyBy(new Duration(1.0, TimeUnit.SI)).plus(new Length(3.0, LengthUnit.SI))))
+                && headway.gt(speed.multiplyBy(new Duration(1.0, DurationUnit.SI)).plus(new Length(3.0, LengthUnit.SI))))
         {
             return speed;
         }

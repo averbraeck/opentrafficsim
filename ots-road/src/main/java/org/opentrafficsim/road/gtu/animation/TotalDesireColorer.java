@@ -51,5 +51,5 @@ public class TotalDesireColorer extends DesireColorer
     {
         return "Total desire";
     }
-    
+
 }

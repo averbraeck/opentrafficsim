@@ -36,7 +36,7 @@ public class BusSchedule extends Route
 
     /** Map of actual departures stored per bus stop. */
     private final Map<String, Time> actualDeparturesBusStop = new HashMap<>();
-    
+
     /** Map of actual departures stored per conflict. */
     private final Map<String, Time> actualDeparturesConflict = new HashMap<>();
 
@@ -85,8 +85,8 @@ public class BusSchedule extends Route
      */
     public final boolean isLineStop(final String busStopId, final Time time)
     {
-        return this.schedule.containsKey(busStopId)
-                && (!this.actualDeparturesConflict.containsKey(busStopId) || time.lt(this.actualDeparturesConflict.get(busStopId)));
+        return this.schedule.containsKey(busStopId) && (!this.actualDeparturesConflict.containsKey(busStopId)
+                || time.lt(this.actualDeparturesConflict.get(busStopId)));
     }
 
     /**
@@ -147,7 +147,7 @@ public class BusSchedule extends Route
             this.actualDeparturesConflict.put(conflictId, time);
         }
     }
-    
+
     /**
      * Return the actual departure time.
      * @param busStopId bus stop id

@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -26,7 +26,6 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.math.Solver;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -105,13 +104,13 @@ public final class LaneOperationalPlanBuilder
                 {
                     acceleration = maxDeceleration;
                     duration = new Duration(Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -distance.si),
-                            TimeUnit.SI);
+                            DurationUnit.SI);
                 }
                 if (acceleration.si > 0.0 && acceleration.gt(maxAcceleration))
                 {
                     acceleration = maxAcceleration;
                     duration = new Duration(Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -distance.si),
-                            TimeUnit.SI);
+                            DurationUnit.SI);
                 }
                 segment = new OperationalPlan.AccelerationSegment(duration, acceleration);
             }
@@ -235,8 +234,9 @@ public final class LaneOperationalPlanBuilder
                     if (x.ge(distance))
                     {
                         // we cannot reach the end speed in the given distance with the given acceleration
-                        Duration duration = new Duration(
-                                Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -distance.si), TimeUnit.SI);
+                        Duration duration =
+                                new Duration(Solver.firstSolutionAfter(0, acceleration.si / 2, startSpeed.si, -distance.si),
+                                        DurationUnit.SI);
                         segmentList.add(new OperationalPlan.AccelerationSegment(duration, acceleration));
                     }
                     else
@@ -254,8 +254,9 @@ public final class LaneOperationalPlanBuilder
                     if (x.ge(distance))
                     {
                         // we cannot reach the end speed in the given distance with the given deceleration
-                        Duration duration = new Duration(
-                                Solver.firstSolutionAfter(0, deceleration.si / 2, startSpeed.si, -distance.si), TimeUnit.SI);
+                        Duration duration =
+                                new Duration(Solver.firstSolutionAfter(0, deceleration.si / 2, startSpeed.si, -distance.si),
+                                        DurationUnit.SI);
                         segmentList.add(new OperationalPlan.AccelerationSegment(duration, deceleration));
                     }
                     else
