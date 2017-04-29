@@ -10,6 +10,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
@@ -142,7 +143,7 @@ public final class AHFEUtil
         streams.put("perception", new MersenneTwister(Math.abs(seedGenerator.nextLong()) + 1));
         simulator.getReplication().setStreams(streams);
 
-        TTCRoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, TimeUnit.SI));
+        TTCRoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
         IdGenerator idGenerator = new IdGenerator("");
 
         CarFollowingModelFactory<IDMPlus> idmPlusFactory = new IDMPlusFactory();
@@ -229,7 +230,7 @@ public final class AHFEUtil
                     new GTUType("truck", TRUCK), speedTruck, 1.0);
         }
 
-        TimeVector timeVector = new TimeVector(new double[] { 0, 360, 1560, 2160, 3960 }, TimeUnit.SI, StorageType.DENSE);
+        TimeVector timeVector = new TimeVector(new double[] { 0, 360, 1560, 2160, 3960 }, TimeUnit.BASE_SECOND, StorageType.DENSE);
         double leftLeft = leftDemand.si * leftFraction;
         FrequencyVector leftLeftDemandPattern = new FrequencyVector(
                 new double[] { leftLeft * 0.5, leftLeft * 0.5, leftLeft, leftLeft, 0.0 }, FrequencyUnit.SI, StorageType.DENSE);

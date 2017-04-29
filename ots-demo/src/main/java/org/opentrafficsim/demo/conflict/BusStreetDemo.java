@@ -13,6 +13,7 @@ import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
@@ -244,9 +245,10 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                     new HeadwayGenerator(new Frequency(800, FrequencyUnit.PER_HOUR), this.simulator);
             LaneBasedGTUCharacteristicsGenerator characteristicsGenerator = new CharacteristicsGenerator(this.simulator,
                     new double[] { 0.9, 0.06, 0.04 }, initialLongitudinalPositions, this.network);
-            RoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, TimeUnit.SI));
-            new LaneBasedGTUGenerator(id, headwayGenerator, Long.MAX_VALUE, Time.ZERO, new Time(Double.MAX_VALUE, TimeUnit.SI),
-                    this.gtuColorer, characteristicsGenerator, initialLongitudinalPositions, this.network, roomChecker);
+            RoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
+            new LaneBasedGTUGenerator(id, headwayGenerator, Long.MAX_VALUE, Time.ZERO,
+                    new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND), this.gtuColorer, characteristicsGenerator,
+                    initialLongitudinalPositions, this.network, roomChecker);
         }
 
     }
@@ -267,7 +269,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                 {
                     BusStreetDemo animation = new BusStreetDemo();
                     // 1 hour simulation run for testing
-                    animation.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, TimeUnit.MINUTE),
+                    animation.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
                             new ArrayList<Property<?>>(), null, true);
 
                 }
@@ -317,7 +319,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             {
                 return new Duration(
                         -Math.log(this.simulator.getReplication().getStream("generation").nextDouble()) / this.demand.si,
-                        TimeUnit.SI);
+                        DurationUnit.SI);
             }
             catch (RemoteException exception)
             {
@@ -372,10 +374,10 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         private final List<Node> busNodes2;
 
         /** Short dwell time. */
-        private final Duration shortDwellTime = new Duration(15.0, TimeUnit.SI);
+        private final Duration shortDwellTime = new Duration(15.0, DurationUnit.SI);
 
         /** Long dwell time. */
-        private final Duration longDwellTime = new Duration(60.0, TimeUnit.SI);
+        private final Duration longDwellTime = new Duration(60.0, DurationUnit.SI);
 
         /**
          * @param simulator simulator
@@ -487,14 +489,15 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                     BusSchedule schedule =
                             new BusSchedule("bus1." + this.simulator.getSimulatorTime().getTime(), this.busNodes1, "1");
                     Time now = this.simulator.getSimulatorTime().getTime();
-                    schedule.addBusStop("Cafe Boszicht.1", now.plus(new Duration(70.0, TimeUnit.SI)), this.longDwellTime, true);
-                    schedule.addBusStop("Herberg De Deugd", now.plus(new Duration(100.0, TimeUnit.SI)), this.shortDwellTime,
-                            false);
-                    schedule.addBusStop("De Vleeshoeve", now.plus(new Duration(120.0, TimeUnit.SI)), this.shortDwellTime,
-                            false);
-                    schedule.addBusStop("Dorpshuys", now.plus(new Duration(200.0, TimeUnit.SI)), this.longDwellTime, true);
-                    schedule.addBusStop("De verkeerde afslag", now.plus(new Duration(270.0, TimeUnit.SI)), this.longDwellTime,
+                    schedule.addBusStop("Cafe Boszicht.1", now.plus(new Duration(70.0, DurationUnit.SI)), this.longDwellTime,
                             true);
+                    schedule.addBusStop("Herberg De Deugd", now.plus(new Duration(100.0, DurationUnit.SI)), this.shortDwellTime,
+                            false);
+                    schedule.addBusStop("De Vleeshoeve", now.plus(new Duration(120.0, DurationUnit.SI)), this.shortDwellTime,
+                            false);
+                    schedule.addBusStop("Dorpshuys", now.plus(new Duration(200.0, DurationUnit.SI)), this.longDwellTime, true);
+                    schedule.addBusStop("De verkeerde afslag", now.plus(new Duration(270.0, DurationUnit.SI)),
+                            this.longDwellTime, true);
                     route = schedule;
                     break;
                 }
@@ -507,13 +510,14 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                     BusSchedule schedule =
                             new BusSchedule("bus2." + this.simulator.getSimulatorTime().getTime(), this.busNodes2, "2");
                     Time now = this.simulator.getSimulatorTime().getTime();
-                    schedule.addBusStop("Cafe Boszicht.2", now.plus(new Duration(80.0, TimeUnit.SI)), this.longDwellTime, true);
-                    schedule.addBusStop("De Vleeshoeve", now.plus(new Duration(110.0, TimeUnit.SI)), this.shortDwellTime,
-                            false);
-                    schedule.addBusStop("Kippenboerderij De Scharrelaar", now.plus(new Duration(180.0, TimeUnit.SI)),
-                            this.longDwellTime, false);
-                    schedule.addBusStop("De verkeerde afslag", now.plus(new Duration(260.0, TimeUnit.SI)), this.longDwellTime,
+                    schedule.addBusStop("Cafe Boszicht.2", now.plus(new Duration(80.0, DurationUnit.SI)), this.longDwellTime,
                             true);
+                    schedule.addBusStop("De Vleeshoeve", now.plus(new Duration(110.0, DurationUnit.SI)), this.shortDwellTime,
+                            false);
+                    schedule.addBusStop("Kippenboerderij De Scharrelaar", now.plus(new Duration(180.0, DurationUnit.SI)),
+                            this.longDwellTime, false);
+                    schedule.addBusStop("De verkeerde afslag", now.plus(new Duration(260.0, DurationUnit.SI)),
+                            this.longDwellTime, true);
                     route = schedule;
                     break;
                 }

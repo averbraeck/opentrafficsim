@@ -15,10 +15,10 @@ import java.util.Random;
 import java.util.Set;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
@@ -309,7 +309,7 @@ public class ShortMerge extends AbstractWrappableAnimation
             streams.put("gtuClass", new MersenneTwister(Math.abs(seedGenerator.nextLong()) + 1));
             this.getSimulator().getReplication().setStreams(streams);
 
-            TTCRoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, TimeUnit.SI));
+            TTCRoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
             IdGenerator idGenerator = new IdGenerator("");
 
             CarFollowingModelFactory<IDMPlus> idmPlusFactory = new IDMPlusFactory();
@@ -505,7 +505,7 @@ public class ShortMerge extends AbstractWrappableAnimation
             return new Duration(
                     -Math.log(ShortMerge.this.getSimulator().getReplication().getStream("headwayGeneration").nextDouble())
                             / this.demand.si,
-                    TimeUnit.SI);
+                    DurationUnit.SI);
         }
 
     }

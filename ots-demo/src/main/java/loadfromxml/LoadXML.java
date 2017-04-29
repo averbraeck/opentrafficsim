@@ -15,11 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.ParserConfigurationException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventProducer;
-
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
@@ -36,6 +32,10 @@ import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.xml.sax.SAXException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.EventProducer;
 
 /**
  * Select a OTS-network XML file, load it and run it.
@@ -106,7 +106,7 @@ public class LoadXML extends AbstractWrappableAnimation
         loadXML.xml = new String(Files.readAllBytes(Paths.get(loadXML.fileName)));
         try
         {
-            loadXML.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600, TimeUnit.SI), new ArrayList<Property<?>>(),
+            loadXML.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600, DurationUnit.SI), new ArrayList<Property<?>>(),
                     null, true);
         }
         catch (SimRuntimeException sre)

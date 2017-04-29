@@ -14,6 +14,7 @@ import java.util.Set;
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 
+import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -126,8 +127,8 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 try
                 {
                     FundamentalDiagramsLane fundamentalDiagramsLane = new FundamentalDiagramsLane();
-                    fundamentalDiagramsLane.buildAnimator(Time.ZERO, Duration.ZERO,
-                            new Duration(3600.0, SECOND), fundamentalDiagramsLane.getProperties(), null, true);
+                    fundamentalDiagramsLane.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND),
+                            fundamentalDiagramsLane.getProperties(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -381,13 +382,14 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 // Schedule creation of the first car (this will re-schedule itself one headway later, etc.).
                 this.simulator.scheduleEventAbs(Time.ZERO, this, this, "generateCar", null);
                 // Create a block at t = 5 minutes
-                this.simulator.scheduleEventAbs(new Time(1000, SECOND), this, this, "createBlock", null);
+                this.simulator.scheduleEventAbs(new Time(1000, TimeUnit.BASE_SECOND), this, this, "createBlock", null);
                 // Remove the block at t = 7 minutes
-                this.simulator.scheduleEventAbs(new Time(1200, SECOND), this, this, "removeBlock", null);
+                this.simulator.scheduleEventAbs(new Time(1200, TimeUnit.BASE_SECOND), this, this, "removeBlock", null);
                 // Schedule regular updates of the graph
                 for (int t = 1; t <= this.simulator.getReplication().getTreatment().getRunLength().si / 25; t++)
                 {
-                    this.simulator.scheduleEventAbs(new Time(25 * t - 0.001, SECOND), this, this, "drawGraphs", null);
+                    this.simulator.scheduleEventAbs(new Time(25 * t - 0.001, TimeUnit.BASE_SECOND), this, this, "drawGraphs",
+                            null);
                 }
             }
             catch (SimRuntimeException exception)
@@ -413,8 +415,8 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                         Speed.ZERO, this.simulator, this.network);
                 LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
                         new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, this.block), this.block);
-                this.block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO,
-                        DefaultCarAnimation.class, this.gtuColorer);
+                this.block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
+                        this.gtuColorer);
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
             {

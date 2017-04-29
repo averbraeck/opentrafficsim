@@ -2,12 +2,20 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
-    <release version="xx" date="xx" description="xx">
+    <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">
+      <action issue="OTS-321" type="add">
+        OTS-321. AIMSUN classes have to go into ots-aimsun project. 
+        ots-aimsun for aimsun classes on the OTS side.
+        ots-aimsun-demo for demos with aimsun classes.
+        ots-aimsun-proto for proto files and generated classes.
+        The last one is important to separate because of suppression of javadoc and formatting 
+        error messages because of checkstyle.
+      </action>
       <action issue="OTS-126" type="add">
         OTS-126. Add class for a speed sign.
       </action>
     </release>
-
+  
     <release version="0.14.00" date="2017-04-17" description="Release 0.14.00">
       <action issue="OTS-269" type="update">
         OTS-269. Settable deletion of GTU's if in trouble.
