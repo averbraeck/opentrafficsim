@@ -20,6 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -151,15 +152,15 @@ public class ModelControlA58 extends ModelStarter
             });
         }
 
-//        try
-//        {
-//            Thread.sleep(2000);
-//        }
-//        catch (InterruptedException exception)
-//        {
-//            exception.printStackTrace();
-//        }
-//        modelControlA58.doStopModel();
+        // try
+        // {
+        // Thread.sleep(2000);
+        // }
+        // catch (InterruptedException exception)
+        // {
+        // exception.printStackTrace();
+        // }
+        // modelControlA58.doStopModel();
     }
 
     /** {@inheritDoc} */
@@ -193,7 +194,7 @@ public class ModelControlA58 extends ModelStarter
                 try
                 {
                     ModelControlA58.this.a58Animation.buildAnimator(Time.ZERO, Duration.ZERO,
-                            new Duration(3600.000001, TimeUnit.SI), null, null, true);
+                            new Duration(3600.000001, DurationUnit.SI), null, null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -407,7 +408,7 @@ public class ModelControlA58 extends ModelStarter
 
         /** Connector to the IMB hub. */
         OTSIMBConnector imbConnector;
-        
+
         /**
          * @param imbConnection the connection to the IMB bus
          * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
@@ -467,7 +468,7 @@ public class ModelControlA58 extends ModelStarter
 
                 query = getQuery(A58Model.this.network, sampler, new MetaDataSet(), "All");
                 new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(), query,
-                        new Duration(30, TimeUnit.SECOND));
+                        new Duration(30, DurationUnit.SECOND));
 
                 metaDataSet = new MetaDataSet();
                 gtuTypes = new HashSet<>();
@@ -476,7 +477,7 @@ public class ModelControlA58 extends ModelStarter
                 metaDataSet.put(metaDataGtuType, gtuTypes);
                 query = getQuery(A58Model.this.network, sampler, metaDataSet, "Equipped");
                 new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(), query,
-                        new Duration(30, TimeUnit.SECOND));
+                        new Duration(30, DurationUnit.SECOND));
 
                 metaDataSet = new MetaDataSet();
                 gtuTypes = new HashSet<>();
@@ -485,7 +486,7 @@ public class ModelControlA58 extends ModelStarter
                 metaDataSet.put(metaDataGtuType, gtuTypes);
                 query = getQuery(A58Model.this.network, sampler, metaDataSet, "Not equipped");
                 new StatisticsGTULaneTransceiver(A58Model.this.imbConnector, imbAnimator, A58Model.this.network.getId(), query,
-                        new Duration(30, TimeUnit.SECOND));
+                        new Duration(30, DurationUnit.SECOND));
 
                 // metaDataSet = new MetaDataSet();
                 // gtuTypes = new HashSet<>();
@@ -513,13 +514,13 @@ public class ModelControlA58 extends ModelStarter
                 throw new RuntimeException(exception);
             }
 
-             URL gisURL = URLResource.getResource("/A58/map.xml");
-             System.err.println("GIS-map file: " + gisURL.toString());
-             CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
-             new GisRenderable2D(this.simulator, gisURL, rdto0);
+            URL gisURL = URLResource.getResource("/A58/map.xml");
+            System.err.println("GIS-map file: " + gisURL.toString());
+            CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
+            new GisRenderable2D(this.simulator, gisURL, rdto0);
 
             A58OdUtil.createDemand(this.network, this.gtuColorer, this.simulator, ModelControlA58.this.getPenetrationRate());
-            
+
         }
 
         /**
@@ -536,7 +537,8 @@ public class ModelControlA58 extends ModelStarter
             for (String link : net.getLinkMap().keySet())
             {
                 query.addSpaceTimeRegionLink(new LinkData((CrossSectionLink) net.getLink(link)), KpiGtuDirectionality.DIR_PLUS,
-                        Length.ZERO, net.getLink(link).getLength(), new Time(0, TimeUnit.SI), new Time(1.0, TimeUnit.HOUR));
+                        Length.ZERO, net.getLink(link).getLength(), new Time(0, TimeUnit.BASE_HOUR),
+                        new Time(1.0, TimeUnit.BASE_HOUR));
             }
             return query;
         }

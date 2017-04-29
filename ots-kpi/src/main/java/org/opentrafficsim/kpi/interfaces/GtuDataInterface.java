@@ -17,25 +17,25 @@ public interface GtuDataInterface
      * @return unique id of the gtu
      */
     String getId();
-    
+
     /**
      * @return origin node of the gtu
      */
     NodeDataInterface getOriginNodeData();
-    
+
     /**
      * @return destination node of the gtu
      */
     NodeDataInterface getDestinationNodeData();
-    
+
     /**
      * @return type of the gtu
      */
     GtuTypeDataInterface getGtuTypeData();
-    
+
     /**
      * @return route of the gtu
      */
     RouteDataInterface getRouteData();
-    
+
 }

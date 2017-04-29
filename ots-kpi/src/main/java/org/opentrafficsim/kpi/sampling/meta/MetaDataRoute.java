@@ -34,14 +34,14 @@ public class MetaDataRoute extends MetaDataType<RouteDataInterface>
         Throw.whenNull(gtu, "GTU may not be null.");
         return gtu.getRouteData();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String formatValue(String format, RouteDataInterface value)
     {
         return value.getId();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")

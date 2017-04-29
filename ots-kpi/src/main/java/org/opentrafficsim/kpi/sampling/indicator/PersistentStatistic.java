@@ -47,7 +47,7 @@ public class PersistentStatistic<T extends AbstractDoubleScalarRel<?, T>> implem
     {
         return this.persistent.getConfidenceInterval(alpha, side);
     }
-    
+
     /**
      * @return sum.
      */

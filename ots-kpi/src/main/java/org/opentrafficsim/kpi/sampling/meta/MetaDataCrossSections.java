@@ -40,7 +40,7 @@ public class MetaDataCrossSections extends MetaDataType<CrossSection>
     {
         return null;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String formatValue(String format, CrossSection value)
@@ -85,7 +85,8 @@ public class MetaDataCrossSections extends MetaDataType<CrossSection>
                     KpiDirectedLanePosition directedLanePosition = directedLanePositionIterator.next();
                     // If Trajectories is of same lane and direction, check position
                     if (trajectoryGroup.getLaneDirection().getLaneData().equals(directedLanePosition.getLaneData())
-                            && trajectoryGroup.getLaneDirection().getKpiDirection().equals(directedLanePosition.getKpiGtuDirection()))
+                            && trajectoryGroup.getLaneDirection().getKpiDirection()
+                                    .equals(directedLanePosition.getKpiGtuDirection()))
                     {
                         double position = directedLanePosition.getPosition().si;
                         float[] x = trajectoryAcceptList.getTrajectory(i).getX();

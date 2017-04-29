@@ -352,7 +352,7 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
     {
         double time = getSimulator().getSimulatorTime().getTime().si;
         Query q = StatisticsGTULaneTransceiver.this.query;
-        Time timeObject = new Time(time, TimeUnit.SI);
+        Time timeObject = new Time(time, TimeUnit.BASE_SECOND);
         List<TrajectoryGroup> groups = q.getTrajectoryGroups(timeObject);
 
         Length tdist = StatisticsGTULaneTransceiver.this.totalTravelDistance.getValue(q, timeObject, groups);
@@ -430,7 +430,7 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
         public void run()
         {
             Query q = StatisticsGTULaneTransceiver.this.query;
-            Time timeObject = new Time(this.time, TimeUnit.SI);
+            Time timeObject = new Time(this.time, TimeUnit.BASE_SECOND);
             List<TrajectoryGroup> groups = this.sourceGroups == null ? q.getTrajectoryGroups(timeObject) : this.sourceGroups;
             Length tdist = StatisticsGTULaneTransceiver.this.totalTravelDistance.getValue(q, timeObject, groups);
             Duration ttt = StatisticsGTULaneTransceiver.this.totalTravelTime.getValue(q, timeObject, groups);

@@ -51,7 +51,7 @@ public class IMBConnector implements Connector
         this.connection = new TConnection(host, port, modelName, modelId, federation);
         Throw.when(!this.connection.isConnected(), IMBException.class, "No connection to IMB hub on " + host + ":" + port);
     }
-    
+
     /**
      * Construct an IMBConnector that re-uses an existing TConnection.
      * @param connection TConnection; the existing TConnection
@@ -60,7 +60,7 @@ public class IMBConnector implements Connector
     public IMBConnector(final TConnection connection) throws IMBException
     {
         Throw.whenNull(connection, "conneciton cannot be null");
-        
+
         this.connection = connection;
         Throw.when(!this.connection.isConnected(), IMBException.class, "No connection to IMB hub");
     }

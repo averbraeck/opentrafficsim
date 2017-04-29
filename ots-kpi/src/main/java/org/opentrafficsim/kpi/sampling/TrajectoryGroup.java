@@ -59,7 +59,7 @@ public class TrajectoryGroup
     {
         Throw.whenNull(startTime, "Start time may not be null.");
         // keep before position check; prevents "End position may not be null" due to missing direction in other constructor
-        Throw.whenNull(laneDirection, "Lane direction time may not be null."); 
+        Throw.whenNull(laneDirection, "Lane direction time may not be null.");
         Throw.whenNull(startPosition, "Start position may not be null");
         Throw.whenNull(endPosition, "End position may not be null");
         Length length0 = laneDirection.getPositionInDirection(startPosition);

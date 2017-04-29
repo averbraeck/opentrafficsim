@@ -14,7 +14,7 @@ import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
@@ -88,8 +88,8 @@ public class N201IMB extends AbstractWrappableAnimation
                 {
                     N201IMB n201Model = new N201IMB();
                     // 1 hour simulation run for testing
-                    n201Model.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(
-                            10.0, TimeUnit.HOUR), new ArrayList<Property<?>>(), null, true);
+                    n201Model.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(10.0, DurationUnit.HOUR),
+                            new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -187,7 +187,7 @@ public class N201IMB extends AbstractWrappableAnimation
 
         /** Connector to the IMB hub. */
         OTSIMBConnector imbConnector;
-        
+
         /** the GIS map. */
         private GisRenderable2D gisMap;
 
@@ -245,16 +245,16 @@ public class N201IMB extends AbstractWrappableAnimation
                 // ODMatrixTrips matrix = N201ODfactory.get(network);
                 // N201ODfactory.makeGeneratorsFromOD(network, matrix, this.simulator);
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
-                    | GTUException | OTSGeometryException exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
+                    | OTSGeometryException exception)
             {
                 exception.printStackTrace();
             }
             Query query = N201ODfactory.getQuery(this.network, new RoadSampler(this.simulator));
             try
             {
-                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network.getId(), query, new Duration(30,
-                        TimeUnit.SECOND));
+                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network.getId(), query,
+                        new Duration(30, DurationUnit.SECOND));
             }
             catch (IMBException exception)
             {

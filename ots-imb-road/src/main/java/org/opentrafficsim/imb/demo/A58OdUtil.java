@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
@@ -43,9 +44,9 @@ import org.opentrafficsim.road.gtu.generator.CharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.generator.GTUTypeGenerator;
 import org.opentrafficsim.road.gtu.generator.HeadwayGeneratorDemand;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.SpeedGenerator;
 import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
-import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
@@ -77,7 +78,7 @@ public class A58OdUtil
     private final static double truckFraction = 0.15;
 
     /** Simulation period. */
-    private final static Time simPeriod = new Time(1.0, TimeUnit.HOUR);
+    private final static Time simPeriod = new Time(1.0, TimeUnit.BASE_HOUR);
 
     /** Time vector. */
     private static TimeVector timeVector;
@@ -91,7 +92,7 @@ public class A58OdUtil
         }
         try
         {
-            timeVector = new TimeVector(t, TimeUnit.MINUTE, DENSE);
+            timeVector = new TimeVector(t, TimeUnit.BASE_MINUTE, DENSE);
         }
         catch (ValueException exception)
         {
@@ -116,7 +117,7 @@ public class A58OdUtil
         streams.put("gtuRoute", new MersenneTwister(102L + j));
         simulator.getReplication().setStreams(streams);
 
-        TTCRoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, TimeUnit.SI));
+        TTCRoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
         IdGenerator idGenerator = new IdGenerator("");
         LaneBasedTacticalPlannerFactory<LaneBasedGTUFollowingDirectedChangeTacticalPlanner> tacticalFactory =
                 new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(new IDMPlusOldFactory());
@@ -145,8 +146,8 @@ public class A58OdUtil
         gtuType = new GTUType("car_equipped", CAR);
         bcFactory.addGaussianParameter(gtuType, ParameterTypes.FSPEED, 123.7 / 120, 12.0 / 120, streams.get("gtuClass"));
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
-        bcFactory.addParameter(gtuType, ParameterTypes.T, new Duration(0.6, TimeUnit.SI));
-        bcFactory.addParameter(gtuType, ParameterTypes.TMAX, new Duration(0.6, TimeUnit.SI));
+        bcFactory.addParameter(gtuType, ParameterTypes.T, new Duration(0.6, DurationUnit.SI));
+        bcFactory.addParameter(gtuType, ParameterTypes.TMAX, new Duration(0.6, DurationUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.A, new Acceleration(2.0, AccelerationUnit.SI));
         bcFactory.addGaussianParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead, lookAheadStdev, streams.get("gtuClass"));
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
@@ -159,8 +160,8 @@ public class A58OdUtil
         gtuType = new GTUType("truck_equipped", TRUCK);
         bcFactory.addParameter(gtuType, ParameterTypes.A, new Acceleration(0.4, AccelerationUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
-        bcFactory.addParameter(gtuType, ParameterTypes.T, new Duration(0.6, TimeUnit.SI));
-        bcFactory.addParameter(gtuType, ParameterTypes.TMAX, new Duration(0.6, TimeUnit.SI));
+        bcFactory.addParameter(gtuType, ParameterTypes.T, new Duration(0.6, DurationUnit.SI));
+        bcFactory.addParameter(gtuType, ParameterTypes.TMAX, new Duration(0.6, DurationUnit.SI));
         bcFactory.addGaussianParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead, lookAheadStdev, streams.get("gtuClass"));
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
         bcFactory.addParameter(gtuType, ParameterTypes.FSPEED, 2.0);
@@ -296,8 +297,8 @@ public class A58OdUtil
             }
             catch (NetworkException exception)
             {
-                //throw new RuntimeException(
-                //        "Length of lane " + lane + " incompatible with sink location, or sensor id already exists.", exception);
+                // throw new RuntimeException(
+                // "Length of lane " + lane + " incompatible with sink location, or sensor id already exists.", exception);
             }
         }
     }

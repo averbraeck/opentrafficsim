@@ -126,8 +126,8 @@ public abstract class AbstractTransceiver extends EventProducer implements Event
         Throw.whenNull(producer, "producer cannot be null");
         Throw.whenNull(eventType, "eventType cannot be null");
         Throw.whenNull(imbDeletePayload, "imbDeletePayload cannot be null");
-        Throw.when(!this.otsToIMBMap.containsKey(eventType), IMBException.class, "EventType " + eventType
-                + " for this channel was not registered with an addOTSToIMBChannel call");
+        Throw.when(!this.otsToIMBMap.containsKey(eventType), IMBException.class,
+                "EventType " + eventType + " for this channel was not registered with an addOTSToIMBChannel call");
 
         try
         {
@@ -181,8 +181,8 @@ public abstract class AbstractTransceiver extends EventProducer implements Event
         Throw.whenNull(eventType, "eventType cannot be null");
         Throw.whenNull(imbToOTSTransformer, "imbToOTSTransformer cannot be null");
 
-        this.imbMessageHandlerMap.put(imbEventName, new PubSubIMBMessageHandler(imbEventName, eventType, imbToOTSTransformer,
-                this.simulator));
+        this.imbMessageHandlerMap.put(imbEventName,
+                new PubSubIMBMessageHandler(imbEventName, eventType, imbToOTSTransformer, this.simulator));
         this.connector.register(imbEventName, this); // tell the connector we are interested in this IMB event
     }
 

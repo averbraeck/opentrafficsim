@@ -17,6 +17,7 @@ import java.util.Set;
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
@@ -338,7 +339,7 @@ public class CircularRoadIMB extends AbstractWrappableAnimation implements UNITS
             try
             {
                 new GraphTransceiver(this.model.imbConnector, simulator, this.model.getNetwork(), 640, 480, graph,
-                        new Duration(5.0, TimeUnit.SECOND));
+                        new Duration(5.0, DurationUnit.SECOND));
             }
             catch (IMBException exception)
             {
@@ -729,7 +730,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
                 }
             }
             // Schedule regular updates of the graph
-            this.simulator.scheduleEventAbs(new Time(9.999, SECOND), this, this, "drawGraphs", null);
+            this.simulator.scheduleEventAbs(new Time(9.999, TimeUnit.BASE_SECOND), this, this, "drawGraphs", null);
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException
                 | PropertyException exception)
@@ -750,7 +751,8 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
         // Re schedule this method
         try
         {
-            this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().get().getSI() + 10, SECOND), this, this,
+            this.simulator.scheduleEventAbs(
+                    new Time(this.simulator.getSimulatorTime().get().getSI() + 10, TimeUnit.BASE_SECOND), this, this,
                     "drawGraphs", null);
         }
         catch (SimRuntimeException exception)

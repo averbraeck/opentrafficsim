@@ -1,5 +1,6 @@
 package org.opentrafficsim.kpi.sampling.data;
 
+import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vfloat.scalar.FloatScalar;
@@ -116,29 +117,31 @@ public abstract class ExtendedDataType<T, O, S>
      * @param value0 first value
      * @param value1 second value
      * @param f interpolation fraction
-     * @param <U> unit of value, if values are {@code DoubleScalar}
+     * @param <AU> unit of value, if values are {@code DoubleScalar}
+     * @param <RU> the corresponding relative unit
      * @return interpolated value
      */
     @SuppressWarnings({ "unchecked", "checkstyle:designforextension" })
-    public <U extends Unit<U>> T interpolate(final T value0, final T value1, final double f)
+    public <AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>> T interpolate(final T value0, final T value1,
+            final double f)
     {
         Throw.whenNull(value0, "Values to interpolate may not be null.");
         Throw.whenNull(value1, "Values to interpolate may not be null.");
         if (value0 instanceof DoubleScalar.Rel<?>)
         {
-            return (T) DoubleScalar.interpolate((DoubleScalar.Rel<U>) value0, (DoubleScalar.Rel<U>) value1, f);
+            return (T) DoubleScalar.interpolate((DoubleScalar.Rel<RU>) value0, (DoubleScalar.Rel<RU>) value1, f);
         }
-        if (value0 instanceof DoubleScalar.Abs<?>)
+        if (value0 instanceof DoubleScalar.Abs<?, ?>)
         {
-            return (T) DoubleScalar.interpolate((DoubleScalar.Abs<U>) value0, (DoubleScalar.Abs<U>) value1, f);
+            return (T) DoubleScalar.interpolate((DoubleScalar.Abs<AU, RU>) value0, (DoubleScalar.Abs<AU, RU>) value1, f);
         }
         if (value0 instanceof FloatScalar.Rel<?>)
         {
-            return (T) FloatScalar.interpolate((FloatScalar.Rel<U>) value0, (FloatScalar.Rel<U>) value1, (float) f);
+            return (T) FloatScalar.interpolate((FloatScalar.Rel<RU>) value0, (FloatScalar.Rel<RU>) value1, (float) f);
         }
-        if (value0 instanceof FloatScalar.Abs<?>)
+        if (value0 instanceof FloatScalar.Abs<?, ?>)
         {
-            return (T) FloatScalar.interpolate((FloatScalar.Abs<U>) value0, (FloatScalar.Abs<U>) value1, (float) f);
+            return (T) FloatScalar.interpolate((FloatScalar.Abs<AU, RU>) value0, (FloatScalar.Abs<AU, RU>) value1, (float) f);
         }
         if (value0 instanceof Double)
         {

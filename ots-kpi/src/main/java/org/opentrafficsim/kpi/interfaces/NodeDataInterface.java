@@ -17,5 +17,5 @@ public interface NodeDataInterface
      * @return id
      */
     String getId();
-    
+
 }

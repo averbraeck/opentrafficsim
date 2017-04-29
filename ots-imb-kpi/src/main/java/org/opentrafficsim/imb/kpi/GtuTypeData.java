@@ -39,7 +39,7 @@ public class GtuTypeData implements GtuTypeDataInterface
     {
         return getGtuTypeName();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public int hashCode()

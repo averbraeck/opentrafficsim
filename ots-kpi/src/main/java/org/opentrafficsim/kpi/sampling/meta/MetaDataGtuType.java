@@ -34,14 +34,14 @@ public class MetaDataGtuType extends MetaDataType<GtuTypeDataInterface>
         Throw.whenNull(gtu, "GTU may not be null.");
         return gtu.getGtuTypeData();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String formatValue(String format, GtuTypeDataInterface value)
     {
         return value.getId();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")

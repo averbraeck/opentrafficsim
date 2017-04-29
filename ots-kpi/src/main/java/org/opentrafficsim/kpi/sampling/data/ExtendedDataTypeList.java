@@ -8,7 +8,7 @@ import org.opentrafficsim.kpi.sampling.SamplingException;
 import nl.tudelft.simulation.language.Throw;
 
 /**
- * Extended data type for anything that can be captured in a list. Typically, these are non-numeric objects. 
+ * Extended data type for anything that can be captured in a list. Typically, these are non-numeric objects.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -38,7 +38,7 @@ public abstract class ExtendedDataTypeList<T> extends ExtendedDataType<T, List<T
         Throw.when(i < 0 || i >= output.size(), SamplingException.class, "Index %d out of range.", i);
         return output.get(i);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public T getStorageValue(List<T> output, int i) throws SamplingException

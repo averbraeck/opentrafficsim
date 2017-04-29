@@ -20,12 +20,12 @@ public class VissimImposer
 
     /**
      * @param args command line args
-     * @throws IMBException in case of IMB exception 
+     * @throws IMBException in case of IMB exception
      */
     public static void main(String[] args) throws IMBException
     {
 
-        String host = "localhost"; //"vps17642.public.cloudvps.com";
+        String host = "localhost"; // "vps17642.public.cloudvps.com";
         int port = 4000;
         String modelName = "VISSIM";
         int modelId = 1;
@@ -42,18 +42,20 @@ public class VissimImposer
         }
 
         String networkId = "DTV";
-        for (int redo = 0; redo < 100; redo++ )
+        for (int redo = 0; redo < 100; redo++)
         {
             for (String[] linkString : net)
             {
-                connector.postIMBMessage("Node", IMBEventType.NEW, new Object[] { 0.0, networkId, linkString[0], 0.0, 0.0, 0.0 });
-                connector.postIMBMessage("Node", IMBEventType.NEW, new Object[] { 0.0, networkId, linkString[1], 0.0, 0.0, 0.0 });
+                connector.postIMBMessage("Node", IMBEventType.NEW,
+                        new Object[] { 0.0, networkId, linkString[0], 0.0, 0.0, 0.0 });
+                connector.postIMBMessage("Node", IMBEventType.NEW,
+                        new Object[] { 0.0, networkId, linkString[1], 0.0, 0.0, 0.0 });
             }
             for (String[] linkString : net)
             {
                 int points = 1 + (int) (Math.random() * 100);
                 Object[] coords = new Object[points * 3];
-                for (int i = 0; i < points*3; i++)
+                for (int i = 0; i < points * 3; i++)
                 {
                     coords[i] = Math.random();
                 }

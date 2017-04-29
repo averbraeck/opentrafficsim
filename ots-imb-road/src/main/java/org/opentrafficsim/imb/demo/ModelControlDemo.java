@@ -18,6 +18,7 @@ import javax.naming.NamingException;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
@@ -279,7 +280,7 @@ public class ModelControlDemo extends ModelStarter
             this.model = new CircularRoadIMB(new DefaultSwitchableGTUColorer(), new OTSNetwork(""), properties,
                     simulationIMBConnector);
             Replication<Time, Duration, OTSSimTimeDouble> replication = new Replication<Time, Duration, OTSSimTimeDouble>(
-                    "rep1", new OTSSimTimeDouble(Time.ZERO), Duration.ZERO, new Duration(1, TimeUnit.HOUR), this.model);
+                    "rep1", new OTSSimTimeDouble(Time.ZERO), Duration.ZERO, new Duration(1, DurationUnit.HOUR), this.model);
             OTSDEVSRealTimeClock simulator = new OTSDEVSRealTimeClock();
             simulator.initialize(replication, ReplicationMode.TERMINATING);
             signalModelState(ModelState.READY);
@@ -863,7 +864,7 @@ public class ModelControlDemo extends ModelStarter
                     }
                 }
                 // Schedule regular updates of the graph
-                this.simulator.scheduleEventAbs(new Time(9.999, SECOND), this, this, "drawGraphs", null);
+                this.simulator.scheduleEventAbs(new Time(9.999, TimeUnit.BASE_SECOND), this, this, "drawGraphs", null);
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException
                     | PropertyException exception)
@@ -906,8 +907,9 @@ public class ModelControlDemo extends ModelStarter
             // Re schedule this method
             try
             {
-                this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().get().getSI() + 10, SECOND), this,
-                        this, "drawGraphs", null);
+                this.simulator.scheduleEventAbs(
+                        new Time(this.simulator.getSimulatorTime().get().getSI() + 10, TimeUnit.BASE_SECOND), this, this,
+                        "drawGraphs", null);
             }
             catch (SimRuntimeException exception)
             {

@@ -28,7 +28,7 @@ public abstract class ExtendedDataTypeSpeed extends ExtendedDataTypeFloat<SpeedU
     {
         super(id);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected final FloatSpeed convertValue(final float value)

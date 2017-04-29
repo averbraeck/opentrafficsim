@@ -17,5 +17,5 @@ public interface GtuTypeDataInterface
      * @return GTU type
      */
     String getId();
-    
+
 }

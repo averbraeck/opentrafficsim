@@ -19,15 +19,15 @@ public interface LaneDataInterface
      * @return length of the lane
      */
     Length getLength();
-    
+
     /**
      * @return parent link of the lane
      */
     LinkDataInterface getLinkData();
-    
+
     /**
      * @return lane id
      */
     String getId();
-    
+
 }

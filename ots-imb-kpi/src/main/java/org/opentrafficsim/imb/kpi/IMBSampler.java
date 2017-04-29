@@ -221,8 +221,8 @@ public class IMBSampler extends Sampler
             }
             // END TEST LOOP
             // move on current
-            processGtuMoveEvent(kpiLaneDirection, Length.createSI(longitudinalPosition),
-                    Speed.createSI(speed), Acceleration.createSI(acceleration), now(), gtu);
+            processGtuMoveEvent(kpiLaneDirection, Length.createSI(longitudinalPosition), Speed.createSI(speed),
+                    Acceleration.createSI(acceleration), now(), gtu);
         }
         this.lastLanes.put(gtuId, kpiLaneDirection);
     }
@@ -249,7 +249,7 @@ public class IMBSampler extends Sampler
         {
             imbKpiTransceiver.notifyTime(now());
         }
-        this.lastTimestamp = new Time(timeStamp, TimeUnit.SI);
+        this.lastTimestamp = new Time(timeStamp, TimeUnit.BASE_SECOND);
         Iterator<KpiLaneDirection> iterator = this.startRecordingMap.keySet().iterator();
         while (iterator.hasNext())
         {
