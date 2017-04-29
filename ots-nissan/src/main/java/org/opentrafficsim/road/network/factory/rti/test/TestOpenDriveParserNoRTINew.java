@@ -19,9 +19,9 @@ import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -118,8 +118,8 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                 {
                     TestOpenDriveParserNoRTINew xmlModel = new TestOpenDriveParserNoRTINew();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(Time.ZERO, Duration.ZERO,
-                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    xmlModel.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
+                            new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -200,7 +200,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
         private ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist;
 
         /** */
-        private ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> iatDist;
+        private ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> iatDist;
 
         /** */
         private ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist;
@@ -231,7 +231,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
             super();
             this.stream = new MersenneTwister(1);
             this.initialSpeedDist = new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 0.0), SpeedUnit.SI);
-            this.iatDist = new ContinuousDistDoubleScalar.Rel<>(new DistExponential(this.stream, 30.0), TimeUnit.SECOND);
+            this.iatDist = new ContinuousDistDoubleScalar.Rel<>(new DistExponential(this.stream, 30.0), DurationUnit.SECOND);
             this.lengthDist = new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 4.0, 5.0), LengthUnit.METER);
             this.widthDist = new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 2.0), LengthUnit.METER);
             this.maxSpeedDist = new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(this.stream, 30.0, 35.0, 40.0),
@@ -706,8 +706,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
             Length carLength = this.lengthDist.draw();
             LaneBasedIndividualGTU car = new LaneBasedIndividualGTU("" + (++this.lastId), this.carType, carLength,
                     this.widthDist.draw(), this.maxSpeedDist.draw(), this.simulator, network);
-            car.init(laneBasedStrategicalPlannerFactory.create(car, route), lanepositionSet,
-                    Speed.ZERO);
+            car.init(laneBasedStrategicalPlannerFactory.create(car, route), lanepositionSet, Speed.ZERO);
             this.rtiCars.add(car);
         }
 
@@ -813,8 +812,8 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                 endWidth = eLane.getEndWidth();
             }
             OTSLine3D designLine = Bezier.cubic(64, sp, ep);
-            CrossSectionLink newLink =
-                    new CrossSectionLink(network, linkId, sNode, eNode, linkType, designLine, this.simulator, laneKeepingPolicy);
+            CrossSectionLink newLink = new CrossSectionLink(network, linkId, sNode, eNode, linkType, designLine, this.simulator,
+                    laneKeepingPolicy);
             newLink.addDirectionality(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
             Lane newLane = new Lane(newLink, laneId, Length.ZERO, Length.ZERO, beginWidth, endWidth, sLane.getLaneType(),
                     LongitudinalDirectionality.DIR_PLUS, sLane.getSpeedLimit(GTUType.ALL), sLane.getOvertakingConditions());

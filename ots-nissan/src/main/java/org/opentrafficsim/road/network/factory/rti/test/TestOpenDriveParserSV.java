@@ -19,6 +19,7 @@ import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -114,8 +115,8 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                 {
                     TestOpenDriveParserSV xmlModel = new TestOpenDriveParserSV();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(Time.ZERO, Duration.ZERO,
-                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    xmlModel.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
+                            new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -240,8 +241,8 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
             // distributions
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist =
                     new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 0.0), SpeedUnit.SI);
-            ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> iatDist =
-                    new ContinuousDistDoubleScalar.Rel<>(new DistExponential(stream, 30.0), TimeUnit.SECOND);
+            ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> iatDist =
+                    new ContinuousDistDoubleScalar.Rel<>(new DistExponential(stream, 30.0), DurationUnit.SECOND);
             ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist =
                     new ContinuousDistDoubleScalar.Rel<>(new DistUniform(stream, 4.0, 5.0), LengthUnit.METER);
             ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDist =
@@ -275,7 +276,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                             {
                                 // make a generator
                                 Time startTime = Time.ZERO;
-                                Time endTime = new Time(Double.MAX_VALUE, TimeUnit.SI);
+                                Time endTime = new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND);
                                 Length position = lane.getLength().lt(m25) ? m0 : m25;
                                 String id = lane.getParentLink().getId() + "." + lane.getId();
                                 new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualGTU.class,
@@ -319,7 +320,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                             {
                                 // make a generator
                                 Time startTime = Time.ZERO;
-                                Time endTime = new Time(Double.MAX_VALUE, TimeUnit.SI);
+                                Time endTime = new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND);
                                 Length position = lane.getLength().lt(m25) ? lane.getLength() : lane.getLength().minus(m25);
                                 String id = lane.getParentLink().getId() + "." + lane.getId();
                                 new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualGTU.class,
