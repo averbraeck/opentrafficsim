@@ -1890,6 +1890,13 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
 
     /** {@inheritDoc} */
     @Override
+    public String getFullId()
+    {
+        return this.controllerName;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public final InvisibleObjectInterface clone(final OTSSimulatorInterface newSimulator, final Network newNetwork)
             throws NetworkException
     {

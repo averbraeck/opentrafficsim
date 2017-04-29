@@ -282,12 +282,12 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         {
             throw new NetworkException("Object " + object + " already registered in network " + this.id);
         }
-        if (containsObject(object.getId()))
+        if (containsObject(object.getFullId()))
         {
-            throw new NetworkException("Object with name " + object.getId() + " already registered in network " + this.id);
+            throw new NetworkException("Object with name " + object.getFullId() + " already registered in network " + this.id);
         }
-        this.objectMap.put(object.getId(), object);
-        fireEvent(Network.OBJECT_ADD_EVENT, object.getId());
+        this.objectMap.put(object.getFullId(), object);
+        fireEvent(Network.OBJECT_ADD_EVENT, object.getFullId());
     }
 
     /** {@inheritDoc} */
@@ -298,18 +298,23 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         {
             throw new NetworkException("Object " + object + " not registered in network " + this.id);
         }
-        fireEvent(Network.OBJECT_REMOVE_EVENT, object.getId());
-        this.objectMap.remove(object.getId());
+        fireEvent(Network.OBJECT_REMOVE_EVENT, object.getFullId());
+        this.objectMap.remove(object.getFullId());
     }
 
     /** {@inheritDoc} */
     @Override
     public final boolean containsObject(final ObjectInterface object)
     {
-        return this.objectMap.containsKey(object.getId());
+        return this.objectMap.containsKey(object.getFullId());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Note that the objectId should be the <b>fullId</b> of the object, including any additions such as lane ids, link ids,
+     * etc.
+     */
     @Override
     public final boolean containsObject(final String objectId)
     {
@@ -352,13 +357,13 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         {
             throw new NetworkException("InvisibleObject " + object + " already registered in network " + this.id);
         }
-        if (containsInvisibleObject(object.getId()))
+        if (containsInvisibleObject(object.getFullId()))
         {
             throw new NetworkException(
-                    "InvisibleObject with name " + object.getId() + " already registered in network " + this.id);
+                    "InvisibleObject with name " + object.getFullId() + " already registered in network " + this.id);
         }
-        this.invisibleObjectMap.put(object.getId(), object);
-        fireEvent(Network.INVISIBLE_OBJECT_ADD_EVENT, object.getId());
+        this.invisibleObjectMap.put(object.getFullId(), object);
+        fireEvent(Network.INVISIBLE_OBJECT_ADD_EVENT, object.getFullId());
     }
 
     /** {@inheritDoc} */
@@ -369,22 +374,27 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         {
             throw new NetworkException("InvisibleObject " + object + " not registered in network " + this.id);
         }
-        fireEvent(Network.INVISIBLE_OBJECT_REMOVE_EVENT, object.getId());
-        this.objectMap.remove(object.getId());
+        fireEvent(Network.INVISIBLE_OBJECT_REMOVE_EVENT, object.getFullId());
+        this.objectMap.remove(object.getFullId());
     }
 
     /** {@inheritDoc} */
     @Override
     public final boolean containsInvisibleObject(final InvisibleObjectInterface object)
     {
-        return false;
+        return this.invisibleObjectMap.containsKey(object.getFullId());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Note that the objectId should be the <b>fullId</b> of the object, including any additions such as lane ids, link ids,
+     * etc.
+     */
     @Override
     public final boolean containsInvisibleObject(final String objectId)
     {
-        return false;
+        return this.invisibleObjectMap.containsKey(objectId);
     }
 
     /***************************************************************************************/

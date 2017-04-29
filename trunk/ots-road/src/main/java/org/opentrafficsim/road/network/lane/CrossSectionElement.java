@@ -364,6 +364,15 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     }
 
     /**
+     * Retrieve the id of this CrossSectionElement.
+     * @return String; the id of this CrossSectionElement
+     */
+    public final String getFullId()
+    {
+        return getParentLink().getId() + "." + this.id;
+    }
+
+    /**
      * Return the lateral offset from the design line of the parent Link of the Left or Right boundary of this
      * CrossSectionElement at the specified fractional longitudinal position.
      * @param lateralDirection LateralDirectionality; LEFT, or RIGHT

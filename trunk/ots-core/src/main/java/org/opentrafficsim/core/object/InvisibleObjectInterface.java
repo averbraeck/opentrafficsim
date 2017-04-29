@@ -20,6 +20,7 @@ import org.opentrafficsim.core.network.NetworkException;
  */
 public interface InvisibleObjectInterface extends Identifyable
 {
+    
     /**
      * Duplicate the invisibleObject in a new simulator and network.
      * @param newSimulator OTSSimulatorInterface; the new simulator
@@ -27,6 +28,9 @@ public interface InvisibleObjectInterface extends Identifyable
      * @return InvisibleObjectInterface; clone of this, but living in the new network and simulator
      * @throws NetworkException when the new Network is not compatible
      */
-    InvisibleObjectInterface clone(final OTSSimulatorInterface newSimulator, final Network newNetwork) throws NetworkException;
+    InvisibleObjectInterface clone(OTSSimulatorInterface newSimulator, Network newNetwork) throws NetworkException;
+
+    /** @return the full id that makes the id unique in the network. */
+    String getFullId();
 
 }

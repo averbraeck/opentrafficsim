@@ -3,16 +3,17 @@
   <body>
 
     <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">
-      <action issue="OTS-321" type="add">
-        OTS-321. AIMSUN classes have to go into ots-aimsun project. 
-        ots-aimsun for aimsun classes on the OTS side.
-        ots-aimsun-demo for demos with aimsun classes.
-        ots-aimsun-proto for proto files and generated classes.
-        The last one is important to separate because of suppression of javadoc and formatting 
-        error messages because of checkstyle.
-      </action>
       <action issue="OTS-126" type="add">
         OTS-126. Add class for a speed sign.
+      </action>
+      <action issue="OTS-156" type="add">
+        OTS-156. Make conflicts GTUType dependent. Priority at conflicts may depend on the GTUType, e.g. at some conflicts, 
+        trams have absolute priority over cars, but cars may behave according to a right-has-priority rule. 
+      </action>
+      <action issue="OTS-217" type="update">
+        OTS-217. Initial operational plans and lane changes. In some cases, tactical planners should not create an 
+        operational plan containing a lane change. E.g. filling the network at t=0, some surrounding GTUs 
+        may not yet be generated.
       </action>
       <action issue="OTS-319" type="add">
         OTS-319. Alignment with DJUNITS 3.00. Units for absolute and relative values have been separated. 
@@ -24,13 +25,33 @@
         DirectionUnit (e.g., NORTH_RADIANS: radians relative to NORTH, or EAST_DEGREES:degrees relative 
         to EAST). Time can be stated relative to the POSIX Epoch (1-1-1970), AD 1, or the J2000.1 Epoch.
       </action>
+      <action issue="OTS-321" type="add">
+        OTS-321. AIMSUN classes have to go into ots-aimsun project. 
+        ots-aimsun for aimsun classes on the OTS side.
+        ots-aimsun-demo for demos with aimsun classes.
+        ots-aimsun-proto for proto files and generated classes.
+        The last one is important to separate because of suppression of javadoc and formatting 
+        error messages because of checkstyle.
+      </action>
+      <action issue="OTS-327" type="fix">
+        OTS-327. Demo Crossing with Traffic Lights has a casting error. There was still a reference to the 
+        TimeUnit in the typed distributions, where a DurationUnit should have been used. This has been
+        solved in all four typed Distributions.
+      </action>
+      <action issue="OTS-328" type="fix">
+        OTS-328. TRAFCOD2 demo does not start anymore. To make the registration work better in the OTSNetwork, 
+        the name of any registered object should be unique within a lane. In order to make a) inspecting 
+        ids easy, while b) still registering full ids with a cross section name and a cross section element name, 
+        the method getFullId() has been added in addition to getId(). When displaying objects, getId() is used. 
+        When registering objects, getFullId() is used.
+      </action>
       <action issue="OTS-329" type="fix">
         OTS-329. N201 XML Parser demo throws error. All sensor, trafficlight, and sensor objects in XML files 
         have to be globally unique in the network. N201v8.xml in the ots-parser-xml project test has been
         updated to make the names of Lane objects unique.
       </action>
       <action issue="OTS-330" type="fix">
-        Directions not interpreted correctly when parsing. This was caused by the fact that the DirectionUnit 
+        OTS-330. Directions not interpreted correctly when parsing. This was caused by the fact that the DirectionUnit 
         uses NORTH_RADIANS as the BASE, and EAST_RADIANS is -90 degrees rotated with respect to NORTH_RADIANS. 
         Instead of using getSI() or .si for the direction, getInUnit() should be used in Links.java.
       </action>

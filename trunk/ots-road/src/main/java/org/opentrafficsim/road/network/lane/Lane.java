@@ -574,9 +574,9 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             throw new NetworkException("Illegal position for sensor " + position + " valid range is 0.." + getLength().getSI());
         }
-        if (this.parentLink.getNetwork().containsObject(sensor.getId()))
+        if (this.parentLink.getNetwork().containsObject(sensor.getFullId()))
         {
-            throw new NetworkException("Network already contains an object with the name " + sensor.getId());
+            throw new NetworkException("Network already contains an object with the name " + sensor.getFullId());
         }
         List<SingleSensor> sensorList = this.sensors.get(position);
         if (null == sensorList)
@@ -790,7 +790,8 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
-     * Insert a laneBasedObject at the right place in the laneBasedObject list of this Lane.
+     * Insert a laneBasedObject at the right place in the laneBasedObject list of this Lane. Register it in the network WITH
+     * the Lane id. 
      * @param laneBasedObject LaneBasedObject; the laneBasedObject to add
      * @throws NetworkException when the position of the laneBasedObject is beyond (or before) the range of this Lane
      */
@@ -802,9 +803,9 @@ public class Lane extends CrossSectionElement implements Serializable
             throw new NetworkException(
                     "Illegal position for laneBasedObject " + position + " valid range is 0.." + getLength().getSI());
         }
-        if (this.parentLink.getNetwork().containsObject(laneBasedObject.getId()))
+        if (this.parentLink.getNetwork().containsObject(laneBasedObject.getFullId()))
         {
-            throw new NetworkException("Network already contains an object with the name " + laneBasedObject.getId());
+            throw new NetworkException("Network already contains an object with the name " + laneBasedObject.getFullId());
         }
         List<LaneBasedObject> laneBasedObjectList = this.laneBasedObjects.get(position);
         if (null == laneBasedObjectList)
@@ -819,7 +820,7 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * Remove a laneBasedObject from the laneBasedObject list of this Lane.
-     * @param laneBasedObject Sensoe; the laneBasedObject to remove.
+     * @param laneBasedObject LaneBasedObject; the laneBasedObject to remove.
      * @throws NetworkException when the laneBasedObject was not found on this Lane
      */
     public final void removeLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException

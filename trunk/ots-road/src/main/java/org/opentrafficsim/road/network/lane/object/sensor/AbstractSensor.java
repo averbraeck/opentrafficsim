@@ -300,6 +300,14 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
 
     /** {@inheritDoc} */
     @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "Sensor[" + getId() + "]";
+    }
+    
+    /** {@inheritDoc} */
+    @Override
     public abstract AbstractSensor clone(CrossSectionElement newCSE, OTSSimulatorInterface newSimulator, boolean animation)
             throws NetworkException;
 
