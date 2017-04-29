@@ -12,7 +12,7 @@ import java.util.Map;
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.geotools.data.FileDataStore;
@@ -62,8 +62,8 @@ public class TestShapeParser extends AbstractWrappableAnimation
                 {
                     TestShapeParser xmlModel = new TestShapeParser();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(Time.ZERO, Duration.ZERO,
-                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<org.opentrafficsim.base.modelproperties.Property<?>>(), null, true);
+                    xmlModel.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
+                            new ArrayList<org.opentrafficsim.base.modelproperties.Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -150,8 +150,7 @@ public class TestShapeParser extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(
-                final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
+        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
                 throws SimRuntimeException
         {
 
@@ -376,7 +375,7 @@ public class TestShapeParser extends AbstractWrappableAnimation
         /**
          * @param feature
          * @return info on one driving lane
-         * @throws NetworkException 
+         * @throws NetworkException
          */
         private NWBDrivingLane getPropertiesDrivingLanes(final Feature feature) throws NetworkException
         {
@@ -412,7 +411,7 @@ public class TestShapeParser extends AbstractWrappableAnimation
         /**
          * @param feature
          * @return info on one special lane
-         * @throws NetworkException 
+         * @throws NetworkException
          */
         private NWBDrivingLane getPropertiesSpecialLanes(final Feature feature) throws NetworkException
         {

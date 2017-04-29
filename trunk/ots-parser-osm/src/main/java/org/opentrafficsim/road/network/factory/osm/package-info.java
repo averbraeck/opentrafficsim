@@ -9,4 +9,3 @@
  * @author <a>Moritz Bergmann</a>
  */
 package org.opentrafficsim.road.network.factory.osm;
-

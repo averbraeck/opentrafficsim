@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.xml.CrossSectionElementTag.ElementType;
@@ -57,7 +56,7 @@ class SensorTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseSensor(final Node node, final XmlNetworkLaneParser parser, final LinkTag linkTag)
-        throws SAXException, NetworkException
+            throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         SensorTag sensorTag = new SensorTag();
@@ -70,15 +69,15 @@ class SensorTag implements Serializable
         CrossSectionElementTag cseTag = linkTag.roadLayoutTag.cseTags.get(laneName);
         if (cseTag == null)
             throw new NetworkException("SENSOR: LANE " + laneName + " not found in elements of link " + linkTag.name
-                + " - roadtype " + linkTag.roadLayoutTag.name);
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
         if (cseTag.elementType != ElementType.LANE)
             throw new NetworkException("SENSOR: LANE " + laneName + " not a real GTU lane for link " + linkTag.name
-                + " - roadtype " + linkTag.roadLayoutTag.name);
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
 
         Node position = attributes.getNamedItem("POSITION");
         if (position == null)
-            throw new NetworkException("SENSOR: POSITION element not found in elements of link " + linkTag.name
-                + " - roadtype " + linkTag.roadLayoutTag.name);
+            throw new NetworkException("SENSOR: POSITION element not found in elements of link " + linkTag.name + " - roadtype "
+                    + linkTag.roadLayoutTag.name);
         sensorTag.positionStr = position.getNodeValue().trim();
 
         Node name = attributes.getNamedItem("NAME");
@@ -87,39 +86,37 @@ class SensorTag implements Serializable
 
         Node classNode = attributes.getNamedItem("CLASS");
         if (classNode == null)
-            throw new SAXException("SENSOR: missing attribute CLASS for sensor " + sensorTag.name + " on lane "
-                + laneName);
+            throw new SAXException("SENSOR: missing attribute CLASS for sensor " + sensorTag.name + " on lane " + laneName);
         sensorTag.className = classNode.getNodeValue().trim();
         try
         {
             Class<?> clazz = Class.forName(sensorTag.className);
             if (!AbstractSensor.class.isAssignableFrom(clazz))
                 throw new SAXException("SENSOR: CLASS NAME " + sensorTag.className + " for sensor " + sensorTag.name
-                    + " on lane " + laneName + " does not extend the AbstractSensor class");
+                        + " on lane " + laneName + " does not extend the AbstractSensor class");
 
             try
             {
-                ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class, Length.class,
-                    RelativePosition.TYPE.class, OTSDEVSSimulatorInterface.class});
+                ClassUtil.resolveConstructor(clazz, new Class[] { String.class, Lane.class, Length.class,
+                        RelativePosition.TYPE.class, OTSDEVSSimulatorInterface.class });
             }
             catch (NoSuchMethodException nsme)
             {
-                throw new SAXException("SENSOR: CLASS NAME " + sensorTag.className + " for sensor " + sensorTag.name
-                    + " on lane " + laneName
-                    + " -- no constructor with arguments (String, Lane, Length, RelativePosition.TYPE,"
-                    + " OTSSimulatorInterface, Length, OTSLine3D)");
+                throw new SAXException(
+                        "SENSOR: CLASS NAME " + sensorTag.className + " for sensor " + sensorTag.name + " on lane " + laneName
+                                + " -- no constructor with arguments (String, Lane, Length, RelativePosition.TYPE,"
+                                + " OTSSimulatorInterface, Length, OTSLine3D)");
             }
         }
         catch (ClassNotFoundException cnfe)
         {
-            throw new SAXException("SENSOR: CLASS NAME " + sensorTag.className + " for sensor " + sensorTag.name
-                + " on lane " + laneName + " could not be loaded.");
+            throw new SAXException("SENSOR: CLASS NAME " + sensorTag.className + " for sensor " + sensorTag.name + " on lane "
+                    + laneName + " could not be loaded.");
         }
 
         Node triggerNode = attributes.getNamedItem("TRIGGER");
         if (triggerNode == null)
-            throw new SAXException("SENSOR: missing attribute TRIGGER for sensor " + sensorTag.name + " on lane "
-                + laneName);
+            throw new SAXException("SENSOR: missing attribute TRIGGER for sensor " + sensorTag.name + " on lane " + laneName);
         sensorTag.triggerPosition = parseTriggerPosition(triggerNode.getNodeValue().trim(), sensorTag, laneName);
 
         if (!linkTag.sensorTags.containsKey(laneName))
@@ -134,8 +131,8 @@ class SensorTag implements Serializable
      * @return a relative position type, such as RelatievPostition.FRONT
      * @throws SAXException when the trigger position did not exist
      */
-    static RelativePosition.TYPE parseTriggerPosition(final String trigger, final SensorTag sensorTag,
-        final String laneName) throws SAXException
+    static RelativePosition.TYPE parseTriggerPosition(final String trigger, final SensorTag sensorTag, final String laneName)
+            throws SAXException
     {
         switch (trigger)
         {
@@ -155,8 +152,7 @@ class SensorTag implements Serializable
                 return RelativePosition.REFERENCE;
 
             default:
-                throw new SAXException("SENSOR: wrong type of TRIGGER for sensor " + sensorTag.name + " on lane "
-                    + laneName);
+                throw new SAXException("SENSOR: wrong type of TRIGGER for sensor " + sensorTag.name + " on lane " + laneName);
         }
     }
 

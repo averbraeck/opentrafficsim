@@ -23,7 +23,8 @@ import org.xml.sax.SAXException;
  * initial version Jul 24, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class LaneOverrideTag implements Serializable {
+class LaneOverrideTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150724L;
 
@@ -53,28 +54,33 @@ class LaneOverrideTag implements Serializable {
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseLaneOverride(final Node node, final VissimNetworkLaneParser parser, final LinkTag linkTag)
-        throws SAXException, NetworkException {
+            throws SAXException, NetworkException
+    {
         NamedNodeMap attributes = node.getAttributes();
         LaneOverrideTag laneOverrideTag = new LaneOverrideTag();
 
-        if (attributes.getNamedItem("LANE") == null) {
+        if (attributes.getNamedItem("LANE") == null)
+        {
             throw new SAXException("LANEOVERRIDE: missing attribute LANE" + " for link " + linkTag.name);
         }
         String name = attributes.getNamedItem("LANE").getNodeValue().trim();
-        if (linkTag.laneOverrideTags.containsKey(name)) {
+        if (linkTag.laneOverrideTags.containsKey(name))
+        {
             throw new SAXException("LANEOVERRIDE: LANE OVERRIDE with LANE " + name + " defined twice");
         }
 
-        if (attributes.getNamedItem("SPEED") != null) {
+        if (attributes.getNamedItem("SPEED") != null)
+        {
             laneOverrideTag.speed = SpeedUnits.parseSpeed(attributes.getNamedItem("SPEED").getNodeValue().trim());
         }
 
-        if (attributes.getNamedItem("DIRECTION") != null) {
-            laneOverrideTag.direction = Directions.parseDirection(attributes.getNamedItem("DIRECTION").getNodeValue()
-                .trim());
+        if (attributes.getNamedItem("DIRECTION") != null)
+        {
+            laneOverrideTag.direction = Directions.parseDirection(attributes.getNamedItem("DIRECTION").getNodeValue().trim());
         }
 
-        if (attributes.getNamedItem("COLOR") != null) {
+        if (attributes.getNamedItem("COLOR") != null)
+        {
             laneOverrideTag.color = Colors.parseColor(attributes.getNamedItem("COLOR").getNodeValue().trim());
         }
 
@@ -90,9 +96,10 @@ class LaneOverrideTag implements Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public final String toString() {
+    public final String toString()
+    {
         return "LaneOverrideTag [speed=" + this.speed + ", direction=" + this.direction + ", color=" + this.color
-            + ", overtakingConditions=" + this.overtakingConditions + "]";
+                + ", overtakingConditions=" + this.overtakingConditions + "]";
     }
 
 }

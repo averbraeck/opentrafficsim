@@ -10,7 +10,8 @@ import com.vividsolutions.jts.geom.Geometry;
 /**
  * @author P070518
  */
-public abstract class AbstractNWBRoadElement {
+public abstract class AbstractNWBRoadElement
+{
 
     // the geometry
     private Geometry myGeom;
@@ -37,7 +38,8 @@ public abstract class AbstractNWBRoadElement {
      * @param endDistance
      */
     public AbstractNWBRoadElement(Geometry myGeom, OTSNode startNode, OTSNode endNode, String roadId, Double beginDistance,
-        Double endDistance) {
+            Double endDistance)
+    {
         super();
         this.myGeom = myGeom;
         this.startNode = startNode;
@@ -47,27 +49,33 @@ public abstract class AbstractNWBRoadElement {
         this.endDistance = endDistance;
     }
 
-    public Geometry getMyGeom() {
+    public Geometry getMyGeom()
+    {
         return myGeom;
     }
 
-    public OTSNode getStartNode() {
+    public OTSNode getStartNode()
+    {
         return startNode;
     }
 
-    public OTSNode getEndNode() {
+    public OTSNode getEndNode()
+    {
         return endNode;
     }
 
-    public String getRoadId() {
+    public String getRoadId()
+    {
         return roadId;
     }
 
-    public Double getBeginDistance() {
+    public Double getBeginDistance()
+    {
         return beginDistance;
     }
 
-    public Double getEndDistance() {
+    public Double getEndDistance()
+    {
         return endDistance;
     }
 

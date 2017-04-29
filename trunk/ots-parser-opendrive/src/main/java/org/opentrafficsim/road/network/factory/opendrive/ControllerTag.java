@@ -55,8 +55,8 @@ class ControllerTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static ControllerTag parseController(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException,
-        NetworkException
+    static ControllerTag parseController(final Node node, final OpenDriveNetworkLaneParser parser)
+            throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         ControllerTag controllerTag = new ControllerTag();

@@ -105,7 +105,8 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class RoadLayoutTag implements Serializable {
+class RoadLayoutTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150723L;
 
@@ -147,9 +148,11 @@ class RoadLayoutTag implements Serializable {
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseRoadTypes(final NodeList nodeList, final VissimNetworkLaneParser parser) throws SAXException,
-        NetworkException {
-        for (Node node : XMLParser.getNodes(nodeList, "ROADLAYOUT")) {
+    static void parseRoadTypes(final NodeList nodeList, final VissimNetworkLaneParser parser)
+            throws SAXException, NetworkException
+    {
+        for (Node node : XMLParser.getNodes(nodeList, "ROADLAYOUT"))
+        {
             RoadLayoutTag roadLayoutTag = parseRoadType(node, parser);
             parser.getRoadLayoutTags().put(roadLayoutTag.name, roadLayoutTag);
         }
@@ -164,65 +167,78 @@ class RoadLayoutTag implements Serializable {
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static RoadLayoutTag parseRoadType(final Node node, final VissimNetworkLaneParser parser) throws SAXException,
-        NetworkException {
+    static RoadLayoutTag parseRoadType(final Node node, final VissimNetworkLaneParser parser)
+            throws SAXException, NetworkException
+    {
         NamedNodeMap attributes = node.getAttributes();
         RoadLayoutTag roadLayoutTag = new RoadLayoutTag();
 
         Node name = attributes.getNamedItem("NAME");
-        if (name == null) {
+        if (name == null)
+        {
             throw new SAXException("ROADLAYOUT: missing attribute NAME");
         }
         roadLayoutTag.name = name.getNodeValue().trim();
-        if (parser.getRoadLayoutTags().keySet().contains(roadLayoutTag.name)) {
+        if (parser.getRoadLayoutTags().keySet().contains(roadLayoutTag.name))
+        {
             throw new SAXException("ROADLAYOUT: NAME " + roadLayoutTag.name + " defined twice");
         }
 
         Node roadType = attributes.getNamedItem("ROADTYPE");
-        if (roadType == null) {
+        if (roadType == null)
+        {
             throw new SAXException("ROADLAYOUT: missing attribute ROADTYPE");
         }
-        if (!parser.getRoadTypeTags().containsKey(roadType.getNodeValue().trim())) {
+        if (!parser.getRoadTypeTags().containsKey(roadType.getNodeValue().trim()))
+        {
             throw new SAXException("ROADLAYOUT: ROADTYPE " + roadType.getNodeValue().trim() + " not defined");
         }
         roadLayoutTag.roadTypeTag = parser.getRoadTypeTags().get(roadType.getNodeValue().trim());
 
         Node width = attributes.getNamedItem("WIDTH");
-        if (width != null) {
+        if (width != null)
+        {
             roadLayoutTag.defaultLaneWidth = LengthUnits.parseLength(width.getNodeValue());
         }
 
         Node lkp = attributes.getNamedItem("LANEKEEPING");
-        if (lkp != null) {
+        if (lkp != null)
+        {
             roadLayoutTag.laneKeepingPolicy = LaneAttributes.parseLaneKeepingPolicy(lkp.getNodeValue().trim());
         }
 
         Node oc = attributes.getNamedItem("OVERTAKING");
-        if (oc != null) {
+        if (oc != null)
+        {
             roadLayoutTag.overtakingConditions = LaneAttributes.parseOvertakingConditions(oc.getNodeValue().trim(), parser);
         }
 
         List<Node> speedLimitList = XMLParser.getNodes(node.getChildNodes(), "SPEEDLIMIT");
-        if (speedLimitList.size() > 0) {
+        if (speedLimitList.size() > 0)
+        {
             roadLayoutTag.legalSpeedLimits = new LinkedHashMap<>();
         }
-        for (Node speedLimitNode : speedLimitList) {
+        for (Node speedLimitNode : speedLimitList)
+        {
             NamedNodeMap speedLimitAttributes = speedLimitNode.getAttributes();
 
             Node gtuTypeName = speedLimitAttributes.getNamedItem("GTUTYPE");
-            if (gtuTypeName == null) {
+            if (gtuTypeName == null)
+            {
                 throw new NetworkException("ROADLAYOUT.SPEEDLIMIT: No GTUTYPE defined");
             }
-            if (!parser.getGtuTypes().containsKey(gtuTypeName.getNodeValue().trim())) {
-                throw new NetworkException("ROADLAYOUT.SPEEDLIMIT: " + roadLayoutTag.name + " GTUTYPE " + gtuTypeName
-                    .getNodeValue().trim() + " not defined");
+            if (!parser.getGtuTypes().containsKey(gtuTypeName.getNodeValue().trim()))
+            {
+                throw new NetworkException("ROADLAYOUT.SPEEDLIMIT: " + roadLayoutTag.name + " GTUTYPE "
+                        + gtuTypeName.getNodeValue().trim() + " not defined");
             }
             GTUType gtuType = parser.getGtuTypes().get(gtuTypeName.getNodeValue().trim());
 
             Node speedNode = speedLimitAttributes.getNamedItem("LEGALSPEEDLIMIT");
-            if (speedNode == null) {
+            if (speedNode == null)
+            {
                 throw new NetworkException("ROADLAYOUT.SPEEDLIMIT: " + roadLayoutTag.name + " GTUTYPE " + gtuType.getId()
-                    + ": LEGALSPEEDLIMIT not defined");
+                        + ": LEGALSPEEDLIMIT not defined");
             }
             Speed speed = SpeedUnits.parseSpeed(speedNode.getNodeValue().trim());
 
@@ -231,27 +247,32 @@ class RoadLayoutTag implements Serializable {
 
         int cseCount = 0;
 
-        for (Node laneNode : XMLParser.getNodes(node.getChildNodes(), "LANE")) {
+        for (Node laneNode : XMLParser.getNodes(node.getChildNodes(), "LANE"))
+        {
             CrossSectionElementTag.parseLane(laneNode, parser, roadLayoutTag);
             cseCount++;
         }
 
-        for (Node ntlNode : XMLParser.getNodes(node.getChildNodes(), "NOTRAFFICLANE")) {
+        for (Node ntlNode : XMLParser.getNodes(node.getChildNodes(), "NOTRAFFICLANE"))
+        {
             CrossSectionElementTag.parseNoTrafficLane(ntlNode, parser, roadLayoutTag);
             cseCount++;
         }
 
-        for (Node stripeNode : XMLParser.getNodes(node.getChildNodes(), "STRIPE")) {
+        for (Node stripeNode : XMLParser.getNodes(node.getChildNodes(), "STRIPE"))
+        {
             CrossSectionElementTag.parseStripe(stripeNode, parser, roadLayoutTag);
             cseCount++;
         }
 
-        for (Node shoulderNode : XMLParser.getNodes(node.getChildNodes(), "SHOULDER")) {
+        for (Node shoulderNode : XMLParser.getNodes(node.getChildNodes(), "SHOULDER"))
+        {
             CrossSectionElementTag.parseShoulder(shoulderNode, parser, roadLayoutTag);
             cseCount++;
         }
 
-        if (cseCount == 0) {
+        if (cseCount == 0)
+        {
             throw new NetworkException("ROADLAYOUT: No elements defined for road type " + roadLayoutTag.name);
         }
 
@@ -260,10 +281,11 @@ class RoadLayoutTag implements Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "RoadLayoutTag [name=" + this.name + ", roadTypeTag=" + this.roadTypeTag + ", legalSpeedLimits="
-            + this.legalSpeedLimits + ", laneKeepingPolicy=" + this.laneKeepingPolicy + ", overtakingConditions="
-            + this.overtakingConditions + ", defaultLaneWidth=" + this.defaultLaneWidth + ", cseTags=" + this.cseTags + "]";
+                + this.legalSpeedLimits + ", laneKeepingPolicy=" + this.laneKeepingPolicy + ", overtakingConditions="
+                + this.overtakingConditions + ", defaultLaneWidth=" + this.defaultLaneWidth + ", cseTags=" + this.cseTags + "]";
     }
 
 }

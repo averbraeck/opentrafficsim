@@ -58,7 +58,7 @@ class RoadMarkTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseRoadMark(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final LaneTag laneTag)
-        throws SAXException, NetworkException
+            throws SAXException, NetworkException
     {
         int roadMarkCount = 0;
         for (Node node : XMLParser.getNodes(nodeList, "roadMark"))

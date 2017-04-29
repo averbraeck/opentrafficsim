@@ -136,8 +136,7 @@ public class OSMParser implements Sink, Serializable
             {
                 for (Tag wantedTag : this.wantedTags)
                 {
-                    if (entityTag.getKey().equals(wantedTag.getKey())
-                        && entityTag.getValue().equals(wantedTag.getValue()))
+                    if (entityTag.getKey().equals(wantedTag.getKey()) && entityTag.getValue().equals(wantedTag.getValue()))
                     {
                         wanted = true;
                         break checkTags;
@@ -211,8 +210,7 @@ public class OSMParser implements Sink, Serializable
             }
             if (++counter / total * 100 >= nextPercentage)
             {
-                this.progressListener
-                    .progress(new ProgressEvent(this, "Removing unused nodes " + nextPercentage + "%"));
+                this.progressListener.progress(new ProgressEvent(this, "Removing unused nodes " + nextPercentage + "%"));
                 nextPercentage += percentageStep;
             }
         }
@@ -235,8 +233,7 @@ public class OSMParser implements Sink, Serializable
             }
             if (++counter / total * 100 >= nextPercentage)
             {
-                this.progressListener
-                    .progress(new ProgressEvent(this, "Removing unused nodes " + nextPercentage + "%"));
+                this.progressListener.progress(new ProgressEvent(this, "Removing unused nodes " + nextPercentage + "%"));
                 nextPercentage += percentageStep;
             }
         }

@@ -17,7 +17,8 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class SignalHeadTag implements Serializable {
+class SignalHeadTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150723L;
 
@@ -57,7 +58,8 @@ class SignalHeadTag implements Serializable {
     /**
      * @param signalHeadTag
      */
-    public SignalHeadTag(SignalHeadTag signalHeadTag) {
+    public SignalHeadTag(SignalHeadTag signalHeadTag)
+    {
         this.no = signalHeadTag.no;
         this.sg = signalHeadTag.sg;
         this.activeOnThisLink = signalHeadTag.activeOnThisLink;
@@ -71,7 +73,8 @@ class SignalHeadTag implements Serializable {
     /**
      *
      */
-    public SignalHeadTag() {
+    public SignalHeadTag()
+    {
         // TODO Auto-generated constructor stub
     }
 
@@ -83,16 +86,20 @@ class SignalHeadTag implements Serializable {
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseSignalHead(final NodeList nodeList, final VissimNetworkLaneParser parser) throws SAXException,
-        NetworkException {
-        for (Node linksNode : XMLParser.getNodes(nodeList, "signalHeads")) {
+    static void parseSignalHead(final NodeList nodeList, final VissimNetworkLaneParser parser)
+            throws SAXException, NetworkException
+    {
+        for (Node linksNode : XMLParser.getNodes(nodeList, "signalHeads"))
+        {
 
-            for (Node node : XMLParser.getNodes(linksNode.getChildNodes(), "signalHead")) {
+            for (Node node : XMLParser.getNodes(linksNode.getChildNodes(), "signalHead"))
+            {
                 NamedNodeMap attributes = node.getAttributes();
                 // make a link with its attributes
                 SignalHeadTag signalHeadTag = new SignalHeadTag();
 
-                if (attributes.getNamedItem("lane") == null) {
+                if (attributes.getNamedItem("lane") == null)
+                {
                     throw new SAXException("SignalHead: missing attribute: lane");
                 }
                 String laneLink = attributes.getNamedItem("lane").getNodeValue().trim();
@@ -100,17 +107,20 @@ class SignalHeadTag implements Serializable {
                 signalHeadTag.linkName = laneLinkInfo[0];
                 signalHeadTag.laneName = laneLinkInfo[1];
 
-                if (attributes.getNamedItem("no") == null) {
+                if (attributes.getNamedItem("no") == null)
+                {
                     throw new SAXException("SignalHead: missing attribute: no");
                 }
                 signalHeadTag.no = attributes.getNamedItem("no").getNodeValue().trim();
 
-                if (attributes.getNamedItem("pos") == null) {
+                if (attributes.getNamedItem("pos") == null)
+                {
                     throw new SAXException("SignalHead: missing attribute: pos");
                 }
                 signalHeadTag.positionStr = attributes.getNamedItem("pos").getNodeValue().trim();
 
-                if (attributes.getNamedItem("sg") == null) {
+                if (attributes.getNamedItem("sg") == null)
+                {
                     throw new SAXException("SignalHead: missing attribute: sg");
                 }
                 signalHeadTag.signalGroup = attributes.getNamedItem("sg").getNodeValue().trim();
@@ -124,9 +134,9 @@ class SignalHeadTag implements Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public final String toString() {
-        return "TrafficLightTag [name=" + this.no + ", positionStr=" + this.positionStr + ", className=" + this.className
-            + "]";
+    public final String toString()
+    {
+        return "TrafficLightTag [name=" + this.no + ", positionStr=" + this.positionStr + ", className=" + this.className + "]";
     }
 
 }

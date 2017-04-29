@@ -7,8 +7,8 @@ import java.util.List;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.factory.xml.units.DurationUnits;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
-import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -102,7 +102,7 @@ class ShortestRouteTag implements Serializable
             Node timeCost = attributes.getNamedItem("TIMECOST");
             if (timeCost == null)
                 throw new SAXException("SHORTESTROUTE: missing attribute TIMECOST");
-            shortestRouteTag.costPerTime = TimeUnits.parseFrequency(timeCost.getNodeValue().trim());
+            shortestRouteTag.costPerTime = DurationUnits.parseFrequency(timeCost.getNodeValue().trim());
 
             parser.shortestRouteTags.put(shortestRouteTag.name.trim(), shortestRouteTag);
         }

@@ -48,7 +48,8 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class LaneTypeTag implements Serializable {
+class LaneTypeTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150723L;
 
@@ -76,53 +77,64 @@ class LaneTypeTag implements Serializable {
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseLaneTypes(final NodeList nodeList, final VissimNetworkLaneParser parser) throws SAXException,
-        NetworkException {
-        for (Node node : XMLParser.getNodes(nodeList, "LANETYPE")) {
+    static void parseLaneTypes(final NodeList nodeList, final VissimNetworkLaneParser parser)
+            throws SAXException, NetworkException
+    {
+        for (Node node : XMLParser.getNodes(nodeList, "LANETYPE"))
+        {
             NamedNodeMap attributes = node.getAttributes();
             LaneTypeTag laneTypeTag = new LaneTypeTag();
 
             Node name = attributes.getNamedItem("NAME");
-            if (name == null) {
+            if (name == null)
+            {
                 throw new SAXException("LANETYPE: missing attribute NAME");
             }
             laneTypeTag.name = name.getNodeValue().trim();
-            if (parser.getLaneTypeTags().keySet().contains(laneTypeTag.name)) {
+            if (parser.getLaneTypeTags().keySet().contains(laneTypeTag.name))
+            {
                 throw new SAXException("LANETYPE: NAME " + laneTypeTag.name + " defined twice");
             }
 
             Node width = attributes.getNamedItem("DEFAULTLANEWIDTH");
-            if (width != null) {
+            if (width != null)
+            {
                 laneTypeTag.defaultLaneWidth = LengthUnits.parseLength(width.getNodeValue());
             }
 
             Node lkp = attributes.getNamedItem("DEFAULTLANEKEEPING");
-            if (lkp != null) {
+            if (lkp != null)
+            {
                 laneTypeTag.defaultLaneKeepingPolicy = org.opentrafficsim.road.network.factory.vissim.units.LaneAttributes
-                    .parseLaneKeepingPolicy(lkp.getNodeValue().trim());
+                        .parseLaneKeepingPolicy(lkp.getNodeValue().trim());
             }
 
             List<Node> speedLimitList = XMLParser.getNodes(node.getChildNodes(), "SPEEDLIMIT");
-            if (speedLimitList.size() == 0) {
+            if (speedLimitList.size() == 0)
+            {
                 throw new SAXException("LANETYPE: missing tag SPEEDLIMIT");
             }
-            for (Node speedLimitNode : speedLimitList) {
+            for (Node speedLimitNode : speedLimitList)
+            {
                 NamedNodeMap speedLimitAttributes = speedLimitNode.getAttributes();
 
                 Node gtuTypeName = speedLimitAttributes.getNamedItem("GTUTYPE");
-                if (gtuTypeName == null) {
+                if (gtuTypeName == null)
+                {
                     throw new NetworkException("LANETYPE: No GTUTYPE defined");
                 }
-                if (!parser.getGtuTypes().containsKey(gtuTypeName.getNodeValue().trim())) {
-                    throw new NetworkException("LANETYPE: " + laneTypeTag.name + " GTUTYPE " + gtuTypeName.getNodeValue()
-                        .trim() + " not defined");
+                if (!parser.getGtuTypes().containsKey(gtuTypeName.getNodeValue().trim()))
+                {
+                    throw new NetworkException(
+                            "LANETYPE: " + laneTypeTag.name + " GTUTYPE " + gtuTypeName.getNodeValue().trim() + " not defined");
                 }
                 GTUType gtuType = parser.getGtuTypes().get(gtuTypeName.getNodeValue().trim());
 
                 Node speedNode = speedLimitAttributes.getNamedItem("LEGALSPEEDLIMIT");
-                if (speedNode == null) {
-                    throw new NetworkException("LANETYPE: " + laneTypeTag.name + " GTUTYPE " + gtuType.getId()
-                        + ": LEGALSPEEDLIMIT not defined");
+                if (speedNode == null)
+                {
+                    throw new NetworkException(
+                            "LANETYPE: " + laneTypeTag.name + " GTUTYPE " + gtuType.getId() + ": LEGALSPEEDLIMIT not defined");
                 }
                 Speed speed = SpeedUnits.parseSpeed(speedNode.getNodeValue().trim());
 

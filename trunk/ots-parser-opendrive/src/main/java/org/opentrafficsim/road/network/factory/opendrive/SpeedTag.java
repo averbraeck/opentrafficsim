@@ -44,7 +44,7 @@ class SpeedTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseSpeed(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final LaneTag laneTag)
-        throws SAXException, NetworkException
+            throws SAXException, NetworkException
     {
         int speedCount = 0;
         for (Node node : XMLParser.getNodes(nodeList, "speed"))

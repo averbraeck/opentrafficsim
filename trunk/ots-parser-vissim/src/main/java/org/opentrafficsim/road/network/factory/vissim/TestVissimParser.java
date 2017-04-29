@@ -11,7 +11,7 @@ import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opengis.feature.Property;
@@ -32,24 +32,30 @@ import org.xml.sax.SAXException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-public class TestVissimParser extends AbstractWrappableAnimation {
+public class TestVissimParser extends AbstractWrappableAnimation
+{
 
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
      * @throws SimRuntimeException should never happen
      */
-    public static void main(final String[] args) throws SimRuntimeException {
-        SwingUtilities.invokeLater(new Runnable() {
+    public static void main(final String[] args) throws SimRuntimeException
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
             @Override
-            public void run() {
-                try {
+            public void run()
+            {
+                try
+                {
                     TestVissimParser xmlModel = new TestVissimParser();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(
-                        60.0, TimeUnit.MINUTE), new ArrayList<org.opentrafficsim.base.modelproperties.Property<?>>(), null,
-                        true);
-                } catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception) {
+                    xmlModel.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
+                            new ArrayList<org.opentrafficsim.base.modelproperties.Property<?>>(), null, true);
+                }
+                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+                {
                     exception.printStackTrace();
                 }
             }
@@ -58,44 +64,51 @@ public class TestVissimParser extends AbstractWrappableAnimation {
 
     /** {@inheritDoc} */
     @Override
-    public final String shortName() {
+    public final String shortName()
+    {
         return "TestXMLModel";
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String description() {
+    public final String description()
+    {
         return "TestXMLModel";
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void stopTimersThreads() {
+    public final void stopTimersThreads()
+    {
         super.stopTimersThreads();
     }
 
     /** {@inheritDoc} */
     @Override
-    protected final void addTabs(final SimpleSimulatorInterface simulator) {
+    protected final void addTabs(final SimpleSimulatorInterface simulator)
+    {
         return;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer) {
+    protected final OTSModelInterface makeModel(final GTUColorer colorer)
+    {
         return new VissimImport();
     }
 
     /** {@inheritDoc} */
     @Override
-    protected final java.awt.geom.Rectangle2D.Double makeAnimationRectangle() {
+    protected final java.awt.geom.Rectangle2D.Double makeAnimationRectangle()
+    {
         // return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
         return new Rectangle2D.Double(162000, 384500, 2000, 2000);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String toString() {
+    public final String toString()
+    {
         return "TestVissimParser []";
     }
 
@@ -114,7 +127,8 @@ public class TestVissimParser extends AbstractWrappableAnimation {
     /**
      * @author P070518
      */
-    class VissimImport implements OTSModelInterface {
+    class VissimImport implements OTSModelInterface
+    {
         /** */
         private static final long serialVersionUID = 20141121L;
 
@@ -127,18 +141,22 @@ public class TestVissimParser extends AbstractWrappableAnimation {
         /** {@inheritDoc} */
         @Override
         public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
-            throws SimRuntimeException {
+                throws SimRuntimeException
+        {
 
             // OTS network or SmartTraffic??
             boolean OpenTrafficSim = false;
             String sinkKillClassName;
             String sensorClassName;
             String trafficLightName;
-            if (OpenTrafficSim) {
+            if (OpenTrafficSim)
+            {
                 sinkKillClassName = "org.opentrafficsim.road.network.lane.object.sensor.SinkSensor";
                 sensorClassName = "org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor";
                 trafficLightName = "org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight";
-            } else {
+            }
+            else
+            {
                 sinkKillClassName = "nl.grontmij.smarttraffic.model.KillSensor";
                 sensorClassName = "nl.grontmij.smarttraffic.model.CheckSensor";
                 trafficLightName = "org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight";
@@ -146,26 +164,34 @@ public class TestVissimParser extends AbstractWrappableAnimation {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
             ClassLoader classLoader = getClass().getClassLoader();
             URL inputUrl = null;
-            try {
+            try
+            {
                 inputUrl = new URL(classLoader.getResource("ehv_eisen1_VA.inpx").toString());
-            } catch (MalformedURLException e1) {
+            }
+            catch (MalformedURLException e1)
+            {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
             String path = classLoader.getResource("").getPath().toString();
             File outputFile = new File(path, "/testEindhoven.xml");
-            try {
+            try
+            {
                 outputFile.createNewFile();
-            } catch (IOException e1) {
+            }
+            catch (IOException e1)
+            {
                 e1.printStackTrace();
             }
             VissimNetworkLaneParser nlp = new VissimNetworkLaneParser(this.simulator);
 
-            try {
-                this.network = nlp.build(inputUrl, outputFile, network, sinkKillClassName, sensorClassName,
-                    trafficLightName);
-            } catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
-                | GTUException | OTSGeometryException exception) {
+            try
+            {
+                this.network = nlp.build(inputUrl, outputFile, network, sinkKillClassName, sensorClassName, trafficLightName);
+            }
+            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
+                    | OTSGeometryException exception)
+            {
                 exception.printStackTrace();
             }
 
@@ -175,9 +201,12 @@ public class TestVissimParser extends AbstractWrappableAnimation {
          * @param property
          * @return a double
          */
-        private Double parseDouble(Property property) {
-            if (property.getValue() != null) {
-                if (property.getValue().toString() != null) {
+        private Double parseDouble(Property property)
+        {
+            if (property.getValue() != null)
+            {
+                if (property.getValue().toString() != null)
+                {
                     return Double.parseDouble(property.getValue().toString());
                 }
             }
@@ -200,7 +229,8 @@ public class TestVissimParser extends AbstractWrappableAnimation {
 
         /** {@inheritDoc} */
         @Override
-        public final String toString() {
+        public final String toString()
+        {
             return "TestVissimParser [simulator=" + this.simulator + "]";
         }
 

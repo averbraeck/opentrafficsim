@@ -134,20 +134,21 @@ class RoadTypeTag implements Serializable
         for (Node speedLimitNode : speedLimitList)
         {
             NamedNodeMap speedLimitAttributes = speedLimitNode.getAttributes();
-            
+
             Node gtuTypeName = speedLimitAttributes.getNamedItem("GTUTYPE");
             if (gtuTypeName == null)
                 throw new NetworkException("ROADTYPE: No GTUTYPE defined");
             if (!parser.gtuTypes.containsKey(gtuTypeName.getNodeValue().trim()))
-                throw new NetworkException("ROADTYPE: " + roadTypeTag.name + " GTUTYPE " + gtuTypeName.getNodeValue().trim() + " not defined");
-            GTUType gtuType= parser.gtuTypes.get(gtuTypeName.getNodeValue().trim());
+                throw new NetworkException(
+                        "ROADTYPE: " + roadTypeTag.name + " GTUTYPE " + gtuTypeName.getNodeValue().trim() + " not defined");
+            GTUType gtuType = parser.gtuTypes.get(gtuTypeName.getNodeValue().trim());
 
             Node speedNode = speedLimitAttributes.getNamedItem("LEGALSPEEDLIMIT");
             if (speedNode == null)
                 throw new NetworkException(
                         "ROADTYPE: " + roadTypeTag.name + " GTUTYPE " + gtuType.getId() + ": LEGALSPEEDLIMIT not defined");
             Speed speed = SpeedUnits.parseSpeed(speedNode.getNodeValue().trim());
-            
+
             roadTypeTag.legalSpeedLimits.put(gtuType, speed);
         }
 

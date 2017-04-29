@@ -21,7 +21,8 @@ import org.xml.sax.SAXException;
  * initial version Jul 24, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ArcTag implements Serializable {
+class ArcTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150724L;
 
@@ -46,9 +47,11 @@ class ArcTag implements Serializable {
     double startAngle;
 
     /** Direction of the arc; LEFT or RIGHT. */
-    enum ArcDirection {
+    enum ArcDirection
+    {
         /** Left = counter-clockwise. */
-        LEFT, /** Right = clockwise. */
+        LEFT,
+        /** Right = clockwise. */
         RIGHT;
     }
 
@@ -62,36 +65,41 @@ class ArcTag implements Serializable {
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseArc(final Node arcNode, final VissimNetworkLaneParser parser, final LinkTag linkTag)
-        throws SAXException, NetworkException {
+            throws SAXException, NetworkException
+    {
         NamedNodeMap arcAttributes = arcNode.getAttributes();
         linkTag.arcTag = new ArcTag();
 
         Node radius = arcAttributes.getNamedItem("RADIUS");
-        if (radius == null) {
+        if (radius == null)
+        {
             throw new SAXException("ARC: missing attribute RADIUS");
         }
         linkTag.arcTag.radius = LengthUnits.parseLength(radius.getNodeValue());
 
         Node angle = arcAttributes.getNamedItem("ANGLE");
-        if (angle == null) {
+        if (angle == null)
+        {
             throw new SAXException("ARC: missing attribute ANGLE");
         }
         linkTag.arcTag.angle = AngleUnits.parseDirection(angle.getNodeValue());
 
         Node dirNode = arcAttributes.getNamedItem("DIRECTION");
-        if (dirNode == null) {
+        if (dirNode == null)
+        {
             throw new SAXException("ARC: missing attribute DIRECTION");
         }
         String dir = dirNode.getNodeValue().trim();
-        linkTag.arcTag.direction = (dir.equals("L") || dir.equals("LEFT") || dir.equals("COUNTERCLOCKWISE"))
-            ? ArcDirection.LEFT : ArcDirection.RIGHT;
+        linkTag.arcTag.direction = (dir.equals("L") || dir.equals("LEFT") || dir.equals("COUNTERCLOCKWISE")) ? ArcDirection.LEFT
+                : ArcDirection.RIGHT;
 
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String toString() {
+    public final String toString()
+    {
         return "ArcTag [angle=" + this.angle + ", radius=" + this.radius + ", direction=" + this.direction + ", center="
-            + this.center + ", startAngle=" + this.startAngle + "]";
+                + this.center + ", startAngle=" + this.startAngle + "]";
     }
 }

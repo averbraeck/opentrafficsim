@@ -21,7 +21,7 @@ class SinkTag implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150723L;
-    
+
     /** Position of the sink on the link, relative to the design line, stored as a string to parse when the length is known. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String positionStr = null;
@@ -36,7 +36,7 @@ class SinkTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseSink(final Node node, final XmlNetworkLaneParser parser, final LinkTag linkTag)
-        throws SAXException, NetworkException
+            throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         SinkTag sinkTag = new SinkTag();
@@ -49,17 +49,17 @@ class SinkTag implements Serializable
         CrossSectionElementTag cseTag = linkTag.roadLayoutTag.cseTags.get(laneName);
         if (cseTag == null)
             throw new NetworkException("SINK: LANE " + laneName + " not found in elements of link " + linkTag.name
-                + " - roadtype " + linkTag.roadLayoutTag.name);
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
         if (cseTag.elementType != ElementType.LANE)
             throw new NetworkException("SINK: LANE " + laneName + " not a real GTU lane for link " + linkTag.name
-                + " - roadtype " + linkTag.roadLayoutTag.name);
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
         if (linkTag.sinkTags.containsKey(laneName))
             throw new SAXException("SINK for LANE with NAME " + laneName + " defined twice");
 
         Node position = attributes.getNamedItem("POSITION");
         if (position == null)
-            throw new NetworkException("SINK: POSITION element not found in elements of link " + linkTag.name
-                + " - roadtype " + linkTag.roadLayoutTag.name);
+            throw new NetworkException("SINK: POSITION element not found in elements of link " + linkTag.name + " - roadtype "
+                    + linkTag.roadLayoutTag.name);
         sinkTag.positionStr = position.getNodeValue().trim();
 
         linkTag.sinkTags.put(laneName, sinkTag);

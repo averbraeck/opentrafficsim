@@ -11,7 +11,8 @@ import java.io.Serializable;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ConnectorTag implements Serializable {
+class ConnectorTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150723L;
 
@@ -56,9 +57,10 @@ class ConnectorTag implements Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public final String toString() {
+    public final String toString()
+    {
         return "TrafficLightTag [fromName=" + this.fromLinkNo + ", positionStr=" + this.toPositionStr + ", className="
-            + this.className + "]";
+                + this.className + "]";
     }
 
 }

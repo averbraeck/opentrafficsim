@@ -17,7 +17,8 @@ import org.xml.sax.SAXException;
  * initial version Jul 24, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class PolyLineTag implements Serializable {
+class PolyLineTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150724L;
 
@@ -31,8 +32,10 @@ class PolyLineTag implements Serializable {
     /**
      * @param polyLineTag PolyLineTag; the parser with the lists of information
      */
-    public PolyLineTag(PolyLineTag polyLineTag) {
-        if (polyLineTag != null) {
+    public PolyLineTag(PolyLineTag polyLineTag)
+    {
+        if (polyLineTag != null)
+        {
             this.length = polyLineTag.length;
             this.vertices = polyLineTag.vertices;
         }
@@ -42,7 +45,8 @@ class PolyLineTag implements Serializable {
      * @param length Length; length of the line
      * @param vertices OTSPoint3D[]; the points of the line
      */
-    public PolyLineTag(Length length, OTSPoint3D[] vertices) {
+    public PolyLineTag(Length length, OTSPoint3D[] vertices)
+    {
         super();
         this.length = length;
         this.vertices = vertices;
@@ -51,7 +55,8 @@ class PolyLineTag implements Serializable {
     /**
      *
      */
-    public PolyLineTag() {
+    public PolyLineTag()
+    {
         // TODO Auto-generated constructor stub
     }
 
@@ -65,7 +70,8 @@ class PolyLineTag implements Serializable {
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parsePolyLine(final String coords, final VissimNetworkLaneParser parser, final LinkTag linkTag)
-        throws SAXException, NetworkException {
+            throws SAXException, NetworkException
+    {
         linkTag.polyLineTag = new PolyLineTag();
         linkTag.polyLineTag.vertices = parseVertices(coords);
     }
@@ -75,7 +81,8 @@ class PolyLineTag implements Serializable {
      * @param cs the string containing the coordinate.
      * @return a Point3d containing the x,y or x,y,z values.
      */
-    public static OTSPoint3D[] parseVertices(final String cs) {
+    public static OTSPoint3D[] parseVertices(final String cs)
+    {
         String cs1 = cs.replaceAll("\\s+", "");
         String c = cs1.replace(")(", ")split(");
         String[] cc = c.split("split");
@@ -83,8 +90,10 @@ class PolyLineTag implements Serializable {
         // only intermediate points: therefore the first and last are not included!!
         int i = 0;
         int vertexCount = 0;
-        for (String coord : cc) {
-            if (i > 0 && i < cc.length - 1) {
+        for (String coord : cc)
+        {
+            if (i > 0 && i < cc.length - 1)
+            {
                 coords[vertexCount] = Coordinates.parseCoordinate(coord);
                 vertexCount++;
             }
@@ -95,7 +104,8 @@ class PolyLineTag implements Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public final String toString() {
+    public final String toString()
+    {
         return "PolyLineTag [length=" + this.length + "]";
     }
 

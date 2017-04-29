@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -91,7 +92,7 @@ class GeneratorTag implements Serializable
 
     /** Interarrival time. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> iatDist = null;
+    ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> iatDist = null;
 
     /** Initial speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -354,7 +355,7 @@ class GeneratorTag implements Serializable
             }
         }
         Time startTime = generatorTag.startTime != null ? generatorTag.startTime : Time.ZERO;
-        Time endTime = generatorTag.endTime != null ? generatorTag.endTime : new Time(Double.MAX_VALUE, TimeUnit.SI);
+        Time endTime = generatorTag.endTime != null ? generatorTag.endTime : new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND);
         Length position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, lane);
         LaneBasedTacticalPlannerFactory<?> tacticalPlannerFactory = makeTacticalPlannerFactory(generatorTag);
         LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory =

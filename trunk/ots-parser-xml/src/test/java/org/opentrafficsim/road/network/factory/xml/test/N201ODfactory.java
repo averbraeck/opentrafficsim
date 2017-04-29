@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
@@ -103,7 +104,7 @@ public class N201ODfactory
         try
         {
             matrix = new ODMatrixTrips("N201demo", origins, destinations, Categorization.UNCATEGORIZED,
-                    new DurationVector(new double[] { 0, 3600 }, TimeUnit.SI, StorageType.DENSE), Interpolation.STEPWISE);
+                    new DurationVector(new double[] { 0, 3600 }, DurationUnit.SI, StorageType.DENSE), Interpolation.STEPWISE);
         }
         catch (ValueException exception)
         {
@@ -142,7 +143,7 @@ public class N201ODfactory
         // fixed generator input
         Class<?> gtuClass = LaneBasedIndividualGTU.class;
         Time startTime = Time.ZERO;
-        Time endTime = new Time(Double.MAX_VALUE, TimeUnit.SI);
+        Time endTime = new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND);
         Length position = new Length(1.0, LengthUnit.SI);
         GTUType gtuType = CAR;
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initSpeedDist =
@@ -195,8 +196,8 @@ public class N201ODfactory
             CrossSectionLink link = (CrossSectionLink) origin.getLinks().iterator().next(); // should be only 1 for origins
             int lanes = link.getLanes().size();
             double iat = 3600 / (dem / lanes);
-            ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> iatDist =
-                    new ContinuousDistDoubleScalar.Rel<>(iat, TimeUnit.SECOND);
+            ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> iatDist =
+                    new ContinuousDistDoubleScalar.Rel<>(iat, DurationUnit.SECOND);
             GTUDirectionality dir =
                     link.getStartNode().equals(origin) ? GTUDirectionality.DIR_PLUS : GTUDirectionality.DIR_MINUS;
             // put generator on each lane
@@ -256,7 +257,8 @@ public class N201ODfactory
         for (String link : links)
         {
             query.addSpaceTimeRegionLink(new LinkData((CrossSectionLink) network.getLink(link)), KpiGtuDirectionality.DIR_PLUS,
-                    Length.ZERO, network.getLink(link).getLength(), new Time(0, TimeUnit.SI), new Time(1.0, TimeUnit.HOUR));
+                    Length.ZERO, network.getLink(link).getLength(), new Time(0, TimeUnit.BASE_HOUR),
+                    new Time(1.0, TimeUnit.BASE_HOUR));
         }
     }
 

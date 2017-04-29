@@ -123,7 +123,7 @@ final class LinkTag implements Serializable
     /** The lane keeping policy, i.e., keep left, keep right or keep lane. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     LaneKeepingPolicy laneKeepingPolicy = null;
-    
+
     /** The priority for conflicts. */
     Priority priority = null;
 
@@ -183,7 +183,7 @@ final class LinkTag implements Serializable
 
             if (attributes.getNamedItem("PRIORITY") != null)
                 linkTag.priority = LaneAttributes.parsePriority(attributes.getNamedItem("PRIORITY").getNodeValue());
-            
+
             Node lkp = attributes.getNamedItem("LANEKEEPING");
             if (lkp != null)
                 linkTag.laneKeepingPolicy = LaneAttributes.parseLaneKeepingPolicy(lkp.getNodeValue().trim());

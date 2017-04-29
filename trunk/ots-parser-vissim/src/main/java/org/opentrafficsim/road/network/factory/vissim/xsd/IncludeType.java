@@ -54,11 +54,11 @@ import org.w3c.dom.Element;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "includeType", namespace = "http://www.w3.org/2001/XInclude", propOrder = {"content"})
-public class IncludeType {
+@XmlType(name = "includeType", namespace = "http://www.w3.org/2001/XInclude", propOrder = { "content" })
+public class IncludeType
+{
 
-    @XmlElementRef(name = "fallback", namespace = "http://www.w3.org/2001/XInclude", type = JAXBElement.class,
-        required = false)
+    @XmlElementRef(name = "fallback", namespace = "http://www.w3.org/2001/XInclude", type = JAXBElement.class, required = false)
     @XmlMixed
     @XmlAnyElement(lax = true)
     protected List<Object> content;
@@ -101,8 +101,10 @@ public class IncludeType {
      * Objects of the following type(s) are allowed in the list {@link JAXBElement }{@code <}{@link FallbackType }{@code >}
      * {@link String } {@link Element } {@link Object }
      */
-    public List<Object> getContent() {
-        if (content == null) {
+    public List<Object> getContent()
+    {
+        if (content == null)
+        {
             content = new ArrayList<Object>();
         }
         return this.content;
@@ -112,7 +114,8 @@ public class IncludeType {
      * Gets the value of the href property.
      * @return possible object is {@link String }
      */
-    public String getHref() {
+    public String getHref()
+    {
         return href;
     }
 
@@ -120,7 +123,8 @@ public class IncludeType {
      * Sets the value of the href property.
      * @param value allowed object is {@link String }
      */
-    public void setHref(String value) {
+    public void setHref(String value)
+    {
         this.href = value;
     }
 
@@ -128,10 +132,14 @@ public class IncludeType {
      * Gets the value of the parse property.
      * @return possible object is {@link ParseType }
      */
-    public ParseType getParse() {
-        if (parse == null) {
+    public ParseType getParse()
+    {
+        if (parse == null)
+        {
             return ParseType.XML;
-        } else {
+        }
+        else
+        {
             return parse;
         }
     }
@@ -140,7 +148,8 @@ public class IncludeType {
      * Sets the value of the parse property.
      * @param value allowed object is {@link ParseType }
      */
-    public void setParse(ParseType value) {
+    public void setParse(ParseType value)
+    {
         this.parse = value;
     }
 
@@ -148,7 +157,8 @@ public class IncludeType {
      * Gets the value of the xpointer property.
      * @return possible object is {@link String }
      */
-    public String getXpointer() {
+    public String getXpointer()
+    {
         return xpointer;
     }
 
@@ -156,7 +166,8 @@ public class IncludeType {
      * Sets the value of the xpointer property.
      * @param value allowed object is {@link String }
      */
-    public void setXpointer(String value) {
+    public void setXpointer(String value)
+    {
         this.xpointer = value;
     }
 
@@ -164,7 +175,8 @@ public class IncludeType {
      * Gets the value of the encoding property.
      * @return possible object is {@link String }
      */
-    public String getEncoding() {
+    public String getEncoding()
+    {
         return encoding;
     }
 
@@ -172,7 +184,8 @@ public class IncludeType {
      * Sets the value of the encoding property.
      * @param value allowed object is {@link String }
      */
-    public void setEncoding(String value) {
+    public void setEncoding(String value)
+    {
         this.encoding = value;
     }
 
@@ -180,7 +193,8 @@ public class IncludeType {
      * Gets the value of the accept property.
      * @return possible object is {@link String }
      */
-    public String getAccept() {
+    public String getAccept()
+    {
         return accept;
     }
 
@@ -188,7 +202,8 @@ public class IncludeType {
      * Sets the value of the accept property.
      * @param value allowed object is {@link String }
      */
-    public void setAccept(String value) {
+    public void setAccept(String value)
+    {
         this.accept = value;
     }
 
@@ -196,7 +211,8 @@ public class IncludeType {
      * Gets the value of the acceptLanguage property.
      * @return possible object is {@link String }
      */
-    public String getAcceptLanguage() {
+    public String getAcceptLanguage()
+    {
         return acceptLanguage;
     }
 
@@ -204,7 +220,8 @@ public class IncludeType {
      * Sets the value of the acceptLanguage property.
      * @param value allowed object is {@link String }
      */
-    public void setAcceptLanguage(String value) {
+    public void setAcceptLanguage(String value)
+    {
         this.acceptLanguage = value;
     }
 
@@ -216,7 +233,8 @@ public class IncludeType {
      * setter.
      * @return always non-null
      */
-    public Map<QName, String> getOtherAttributes() {
+    public Map<QName, String> getOtherAttributes()
+    {
         return otherAttributes;
     }
 

@@ -39,7 +39,8 @@ import com.vividsolutions.jts.geom.LineString;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-final class LinkTag implements Serializable {
+final class LinkTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150723L;
 
@@ -146,17 +147,20 @@ final class LinkTag implements Serializable {
     /**
      * @param linkTag LinkTag; link Info from XML
      */
-    public LinkTag(LinkTag linkTag) {
+    public LinkTag(LinkTag linkTag)
+    {
         this.connectorTag = linkTag.connectorTag;
         this.connector = linkTag.connector;
         this.laneKeepingPolicy = linkTag.laneKeepingPolicy;
         this.lanes.putAll(linkTag.lanes);
         this.laneTags.putAll(linkTag.laneTags);
         this.legalSpeed = linkTag.legalSpeed;
-        if (linkTag.straightTag != null) {
+        if (linkTag.straightTag != null)
+        {
             this.straightTag = new StraightTag(linkTag.straightTag);
         }
-        if (linkTag.polyLineTag != null) {
+        if (linkTag.polyLineTag != null)
+        {
             this.polyLineTag = new PolyLineTag(linkTag.polyLineTag);
         }
         this.nodeEndTag = linkTag.nodeEndTag;
@@ -166,7 +170,8 @@ final class LinkTag implements Serializable {
     /**
      *
      */
-    public LinkTag() {
+    public LinkTag()
+    {
     }
 
     /**
@@ -177,12 +182,14 @@ final class LinkTag implements Serializable {
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseLinks(final NodeList nodeList, final VissimNetworkLaneParser parser) throws SAXException,
-        NetworkException {
+    static void parseLinks(final NodeList nodeList, final VissimNetworkLaneParser parser) throws SAXException, NetworkException
+    {
 
-        for (Node linksNode : XMLParser.getNodes(nodeList, "links")) {
+        for (Node linksNode : XMLParser.getNodes(nodeList, "links"))
+        {
 
-            for (Node node : XMLParser.getNodes(linksNode.getChildNodes(), "link")) {
+            for (Node node : XMLParser.getNodes(linksNode.getChildNodes(), "link"))
+            {
                 NamedNodeMap attributes = node.getAttributes();
 
                 // make a linkTag with the link attributes
@@ -192,16 +199,19 @@ final class LinkTag implements Serializable {
                 // TODO: differentiate by road type
                 linkTag.laneKeepingPolicy = LaneKeepingPolicy.KEEP_LANE;
 
-                if (attributes.getNamedItem("no") == null) {
+                if (attributes.getNamedItem("no") == null)
+                {
                     throw new SAXException("LINK: missing attribute: no");
                 }
                 linkTag.name = attributes.getNamedItem("no").getNodeValue().trim();
                 Integer linkNr = Integer.parseInt(linkTag.name);
-                if (linkNr > parser.getUpperLinkNr()) {
+                if (linkNr > parser.getUpperLinkNr())
+                {
                     parser.setUpperLinkNr(linkNr);
                 }
 
-                if (attributes.getNamedItem("assumSpeedOncom") == null) {
+                if (attributes.getNamedItem("assumSpeedOncom") == null)
+                {
                     throw new SAXException("LINK: missing attribute assumSpeedOncom");
                 }
                 linkTag.legalSpeed = attributes.getNamedItem("assumSpeedOncom").getNodeValue().trim();
@@ -220,13 +230,15 @@ final class LinkTag implements Serializable {
 
                 // additional info from connectors
                 List<Node> connectorFromNode = XMLParser.getNodes(node.getChildNodes(), "fromLinkEndPt");
-                if (connectorFromNode.size() > 0) {
+                if (connectorFromNode.size() > 0)
+                {
                     linkTag.connector = true;
                     createConnectorInfoFrom(linkTag, connectorFromNode);
                 }
 
                 List<Node> connectorToNode = XMLParser.getNodes(node.getChildNodes(), "toLinkEndPt");
-                if (connectorFromNode.size() > 0) {
+                if (connectorFromNode.size() > 0)
+                {
                     linkTag.connector = true;
                     createConnectorInfoTo(linkTag, connectorToNode);
                 }
@@ -239,32 +251,39 @@ final class LinkTag implements Serializable {
 
     }
 
-    private static void createConnectorInfoTo(LinkTag linkTag, List<Node> connectorToNode) throws SAXException {
+    private static void createConnectorInfoTo(LinkTag linkTag, List<Node> connectorToNode) throws SAXException
+    {
         NamedNodeMap attributes;
-        if (linkTag.connectorTag == null) {
+        if (linkTag.connectorTag == null)
+        {
             linkTag.connectorTag = new ConnectorTag();
         }
         attributes = connectorToNode.get(0).getAttributes();
-        if (attributes.getNamedItem("lane") == null) {
+        if (attributes.getNamedItem("lane") == null)
+        {
             throw new SAXException("Connector: missing attribute: link/lane info");
         }
         String connect = attributes.getNamedItem("lane").getNodeValue().trim();
         String[] connectInfo = connect.split("\\s+");
         linkTag.connectorTag.toLinkNo = connectInfo[0];
         linkTag.connectorTag.toLaneNo = connectInfo[1];
-        if (attributes.getNamedItem("pos") == null) {
+        if (attributes.getNamedItem("pos") == null)
+        {
             throw new SAXException("Connector: missing attribute: pos (position info)");
         }
         linkTag.connectorTag.toPositionStr = attributes.getNamedItem("pos").getNodeValue().trim();
     }
 
-    private static void createConnectorInfoFrom(LinkTag linkTag, List<Node> connectorFromNode) throws SAXException {
+    private static void createConnectorInfoFrom(LinkTag linkTag, List<Node> connectorFromNode) throws SAXException
+    {
         NamedNodeMap attributes;
-        if (linkTag.connectorTag == null) {
+        if (linkTag.connectorTag == null)
+        {
             linkTag.connectorTag = new ConnectorTag();
         }
         attributes = connectorFromNode.get(0).getAttributes();
-        if (attributes.getNamedItem("lane") == null) {
+        if (attributes.getNamedItem("lane") == null)
+        {
             throw new SAXException("Connector: missing attribute: link/lane info");
         }
         String connect = attributes.getNamedItem("lane").getNodeValue().trim();
@@ -272,22 +291,28 @@ final class LinkTag implements Serializable {
         linkTag.connectorTag.fromLinkNo = connectInfo[0];
         linkTag.connectorTag.fromLaneNo = connectInfo[1];
 
-        if (attributes.getNamedItem("pos") == null) {
+        if (attributes.getNamedItem("pos") == null)
+        {
             throw new SAXException("Connector: missing attribute: pos (position info)");
         }
         linkTag.connectorTag.fromPositionStr = attributes.getNamedItem("pos").getNodeValue().trim();
     }
 
-    private static void createLanes(LinkTag linkTag, List<Node> laneNodes) {
+    private static void createLanes(LinkTag linkTag, List<Node> laneNodes)
+    {
         NamedNodeMap attributes;
         int laneNo = 1;
-        for (Node laneNode : XMLParser.getNodes(laneNodes.get(0).getChildNodes(), "lane")) {
+        for (Node laneNode : XMLParser.getNodes(laneNodes.get(0).getChildNodes(), "lane"))
+        {
 
             attributes = laneNode.getAttributes();
             LaneTag laneTag = new LaneTag();
-            if (attributes.getLength() > 0) {
+            if (attributes.getLength() > 0)
+            {
                 laneTag.width = attributes.getNamedItem("width").getNodeValue().trim();
-            } else {
+            }
+            else
+            {
                 laneTag.width = "3.5";
                 // must be a connector without lane attributes
                 // the lane width is determined by its predecessor and successor
@@ -300,7 +325,8 @@ final class LinkTag implements Serializable {
     }
 
     private static void createNodesForLink(final VissimNetworkLaneParser parser, LinkTag linkTag, OTSPoint3D[] nodeCoords)
-        throws SAXException, NetworkException {
+            throws SAXException, NetworkException
+    {
         // generate nodes from every Vissim link/connector
         String fromNodeStr = "" + parser.getUpperNodeNr();
         parser.setUpperNodeNr(parser.getUpperNodeNr() + 1);
@@ -315,23 +341,28 @@ final class LinkTag implements Serializable {
     }
 
     private static OTSPoint3D[] parseLinkGeometry(final VissimNetworkLaneParser parser, Node node, LinkTag linkTag)
-        throws SAXException, NetworkException {
+            throws SAXException, NetworkException
+    {
         List<Node> geometry = XMLParser.getNodes(node.getChildNodes(), "geometry");
         List<Node> pointsNodes = XMLParser.getNodes(geometry.get(0).getChildNodes(), "points3D");
         String coords = "";
         int numberOfPoints = 0;
-        for (Node pointNode : XMLParser.getNodes(pointsNodes.get(0).getChildNodes(), "point3D")) {
+        for (Node pointNode : XMLParser.getNodes(pointsNodes.get(0).getChildNodes(), "point3D"))
+        {
             NamedNodeMap polyLineAttributes = pointNode.getAttributes();
-            coords += "(" + polyLineAttributes.getNamedItem("x").getNodeValue() + ", " + polyLineAttributes.getNamedItem("y")
-                .getNodeValue() + ")";
+            coords += "(" + polyLineAttributes.getNamedItem("x").getNodeValue() + ", "
+                    + polyLineAttributes.getNamedItem("y").getNodeValue() + ")";
             numberOfPoints++;
         }
 
         OTSPoint3D[] nodeCoords = null;
-        if (numberOfPoints > 2) {
+        if (numberOfPoints > 2)
+        {
             // process the intermediate vertices only
             PolyLineTag.parsePolyLine(coords, parser, linkTag);
-        } else {
+        }
+        else
+        {
             // parse the STRAIGHT tag
             StraightTag.parseStraight(coords, parser, linkTag);
             // add coordinates to the nodes and vertices
@@ -347,15 +378,15 @@ final class LinkTag implements Serializable {
      * @param linkTag LinkTag; Tag of the link that meets the connector
      * @param parser VissimNetworkLaneParser; the VissimParser with info to create a network
      * @param splitPosition Double; position at the link where the split is expected
-     * @param margin Double; if the splitPosition is at the start or end of the LinkTag, the connector is supposed to be 
-     *            a chain and not a split
+     * @param margin Double; if the splitPosition is at the start or end of the LinkTag, the connector is supposed to be a chain
+     *            and not a split
      * @param isConnectorToLink boolean; is this is a connector towards a link (true) or starting from a link (false)
      * @return Mat&lt;String, LinkTab&gt;
      * @throws OTSGeometryException ...
      */
-    public static Map<String, LinkTag> splitLink(final NodeTag splitNodeTag, final LinkTag linkTag, 
-            final VissimNetworkLaneParser parser, final Double splitPosition, final Double margin, 
-            final boolean isConnectorToLink) throws OTSGeometryException 
+    public static Map<String, LinkTag> splitLink(final NodeTag splitNodeTag, final LinkTag linkTag,
+            final VissimNetworkLaneParser parser, final Double splitPosition, final Double margin,
+            final boolean isConnectorToLink) throws OTSGeometryException
     {
 
         // generate a LineString of the "real" Link
@@ -365,7 +396,8 @@ final class LinkTag implements Serializable {
         // only split if the splitPosition is not:
         // (1) at or very near the start of a link
         // (2) at or very near the end of a link
-        if (splitPosition > margin && splitPosition < designLine.getLength() - margin) {
+        if (splitPosition > margin && splitPosition < designLine.getLength() - margin)
+        {
             // split the geometry in two parts (cut by the connector)
             LineString designLineStart = SubstringLine.getSubstring(designLine, 0.0, splitPosition);
             LineString designLineEnd = SubstringLine.getSubstring(designLine, splitPosition, designLine.getLength());
@@ -388,10 +420,12 @@ final class LinkTag implements Serializable {
             // Furthermore, the signalHeads and sensors are moved to one of the new links
             // First, relocate the signalheads over the links that are split
             Iterator<SignalHeadTag> signalHeads = linkTag.signalHeads.iterator();
-            while (signalHeads.hasNext()) {
+            while (signalHeads.hasNext())
+            {
                 SignalHeadTag signalHeadTag = signalHeads.next();
                 Double position = Double.parseDouble(signalHeadTag.positionStr);
-                if (position > splitPosition) {
+                if (position > splitPosition)
+                {
                     // update the position of the signalHead!
                     Double newPosition = position - splitPosition;
                     signalHeadTag.positionStr = newPosition.toString();
@@ -405,10 +439,12 @@ final class LinkTag implements Serializable {
 
             // relocate the signalheads over the links that are split
             Iterator<SensorTag> sensors = linkTag.sensors.iterator();
-            while (sensors.hasNext()) {
+            while (sensors.hasNext())
+            {
                 SensorTag sensorTag = sensors.next();
                 Double position = Double.parseDouble(sensorTag.positionStr);
-                if (position > splitPosition) {
+                if (position > splitPosition)
+                {
                     // update the position of the Sensor!
                     Double newPosition = position - splitPosition;
                     sensorTag.positionStr = newPosition.toString();
@@ -437,31 +473,40 @@ final class LinkTag implements Serializable {
      * @param designLine
      * @param nodeTag
      */
-    private static void createGeometryStartLink(LinkTag linkTag, LineString designLine, NodeTag nodeTag) {
+    private static void createGeometryStartLink(LinkTag linkTag, LineString designLine, NodeTag nodeTag)
+    {
         Coordinate[] coords = designLine.getCoordinates();
         OTSPoint3D[] vertices = new OTSPoint3D[coords.length - 2];
         int i = 0;
 
-        for (Coordinate coord : coords) {
+        for (Coordinate coord : coords)
+        {
             // startNode point
-            if (i == 0) {
+            if (i == 0)
+            {
                 linkTag.nodeStartTag.coordinate = new OTSPoint3D(coord);
             }
             // endNode point
-            if (i == coords.length - 1) {
+            if (i == coords.length - 1)
+            {
                 nodeTag.coordinate = new OTSPoint3D(coord);
                 linkTag.nodeEndTag = nodeTag;
             }
-            if (coords.length > 2 && (i > 0 && i < coords.length - 1)) {
+            if (coords.length > 2 && (i > 0 && i < coords.length - 1))
+            {
                 vertices[i - 1] = new OTSPoint3D(coord);
             }
             i++;
         }
-        if (linkTag.polyLineTag != null) {
-            if (coords.length <= 2) {
+        if (linkTag.polyLineTag != null)
+        {
+            if (coords.length <= 2)
+            {
                 linkTag.polyLineTag = null;
                 linkTag.straightTag = new StraightTag();
-            } else {
+            }
+            else
+            {
                 linkTag.polyLineTag.vertices = vertices;
             }
         }
@@ -473,71 +518,94 @@ final class LinkTag implements Serializable {
      * @param designLine
      * @param nodeTag
      */
-    private static void createGeometryEndLink(LinkTag linkTag, LineString designLine, NodeTag nodeTag) {
+    private static void createGeometryEndLink(LinkTag linkTag, LineString designLine, NodeTag nodeTag)
+    {
         Coordinate[] coords = designLine.getCoordinates();
         OTSPoint3D[] vertices = new OTSPoint3D[coords.length - 2];
         int i = 0;
-        for (Coordinate coord : coords) {
-            if (i == 0) {
+        for (Coordinate coord : coords)
+        {
+            if (i == 0)
+            {
                 nodeTag.coordinate = new OTSPoint3D(coord);
                 linkTag.nodeStartTag = nodeTag;
             }
-            if (i == coords.length - 1) {
+            if (i == coords.length - 1)
+            {
                 linkTag.nodeEndTag.coordinate = new OTSPoint3D(coord);
             }
-            if (coords.length > 2 && (i > 0 && i < coords.length - 1)) {
+            if (coords.length > 2 && (i > 0 && i < coords.length - 1))
+            {
                 vertices[i - 1] = new OTSPoint3D(coord);
             }
             i++;
         }
-        if (linkTag.polyLineTag != null) {
-            if (coords.length <= 2) {
+        if (linkTag.polyLineTag != null)
+        {
+            if (coords.length <= 2)
+            {
                 linkTag.polyLineTag = null;
                 linkTag.straightTag = new StraightTag();
-            } else {
+            }
+            else
+            {
                 linkTag.polyLineTag.vertices = vertices;
             }
         }
     }
 
-    private static void createGeometryShortenedLink(LinkTag linkTag, LineString designLine) {
+    private static void createGeometryShortenedLink(LinkTag linkTag, LineString designLine)
+    {
         Coordinate[] coords = designLine.getCoordinates();
         OTSPoint3D[] vertices = new OTSPoint3D[coords.length - 2];
         int i = 0;
-        for (Coordinate coord : coords) {
-            if (i == 0) {
+        for (Coordinate coord : coords)
+        {
+            if (i == 0)
+            {
                 linkTag.nodeStartTag.coordinate = new OTSPoint3D(coord);
             }
-            if (i == coords.length - 1) {
+            if (i == coords.length - 1)
+            {
                 linkTag.nodeEndTag.coordinate = new OTSPoint3D(coord);
             }
-            if (coords.length > 2 && (i > 0 && i < coords.length - 1)) {
+            if (coords.length > 2 && (i > 0 && i < coords.length - 1))
+            {
                 vertices[i - 1] = new OTSPoint3D(coord);
             }
             i++;
         }
-        if (linkTag.polyLineTag != null) {
-            if (coords.length <= 2) {
+        if (linkTag.polyLineTag != null)
+        {
+            if (coords.length <= 2)
+            {
                 linkTag.polyLineTag = null;
                 linkTag.straightTag = new StraightTag();
-            } else {
+            }
+            else
+            {
                 linkTag.polyLineTag.vertices = vertices;
             }
         }
     }
 
-    public static OTSLine3D createLineString(LinkTag linkTag) throws OTSGeometryException {
+    public static OTSLine3D createLineString(LinkTag linkTag) throws OTSGeometryException
+    {
         OTSPoint3D[] coordinates = null;
-        if (linkTag.straightTag != null) {
+        if (linkTag.straightTag != null)
+        {
             coordinates = new OTSPoint3D[2];
             coordinates[0] = linkTag.nodeStartTag.coordinate;
             coordinates[1] = linkTag.nodeEndTag.coordinate;
-        } else if (linkTag.polyLineTag != null) {
+        }
+        else if (linkTag.polyLineTag != null)
+        {
             int intermediatePoints = linkTag.polyLineTag.vertices.length;
             coordinates = new OTSPoint3D[intermediatePoints + 2];
             coordinates[0] = linkTag.nodeStartTag.coordinate;
             coordinates[intermediatePoints + 1] = linkTag.nodeEndTag.coordinate;
-            for (int p = 0; p < intermediatePoints; p++) {
+            for (int p = 0; p < intermediatePoints; p++)
+            {
                 coordinates[p + 1] = linkTag.polyLineTag.vertices[p];
             }
         }
@@ -553,61 +621,75 @@ final class LinkTag implements Serializable {
      * @return the corresponding position as a length on the center line
      * @throws NetworkException when parsing fails
      */
-    static Length parseBeginEndPosition(final String posStr, final CrossSectionElement cse) throws NetworkException {
-        if (posStr.trim().equals("BEGIN")) {
+    static Length parseBeginEndPosition(final String posStr, final CrossSectionElement cse) throws NetworkException
+    {
+        if (posStr.trim().equals("BEGIN"))
+        {
             return new Length(0.0, LengthUnit.METER);
         }
 
         double length = cse.getCenterLine().getLengthSI();
 
-        if (posStr.trim().equals("END")) {
+        if (posStr.trim().equals("END"))
+        {
             return new Length(length, LengthUnit.METER);
         }
 
-        if (posStr.endsWith("%")) {
+        if (posStr.endsWith("%"))
+        {
             String s = posStr.substring(0, posStr.length() - 1).trim();
-            try {
+            try
+            {
                 double fraction = Double.parseDouble(s) / 100.0;
-                if (fraction < 0.0 || fraction > 1.0) {
+                if (fraction < 0.0 || fraction > 1.0)
+                {
                     throw new NetworkException("parseBeginEndPosition: attribute POSITION with value " + posStr
-                        + " invalid for lane " + cse.toString() + ", should be a percentage between 0 and 100%");
+                            + " invalid for lane " + cse.toString() + ", should be a percentage between 0 and 100%");
                 }
                 return new Length(length * fraction, LengthUnit.METER);
-            } catch (NumberFormatException nfe) {
+            }
+            catch (NumberFormatException nfe)
+            {
                 throw new NetworkException("parseBeginEndPosition: attribute POSITION with value " + posStr
-                    + " invalid for lane " + cse.toString() + ", should be a percentage between 0 and 100%", nfe);
+                        + " invalid for lane " + cse.toString() + ", should be a percentage between 0 and 100%", nfe);
             }
         }
 
-        if (posStr.trim().startsWith("END-")) {
+        if (posStr.trim().startsWith("END-"))
+        {
             String s = posStr.substring(4).trim();
             double offset = LengthUnits.parseLength(s).getSI();
-            if (offset > length) {
+            if (offset > length)
+            {
                 throw new NetworkException("parseBeginEndPosition - attribute POSITION with value " + posStr
-                    + " invalid for lane " + cse.toString() + ": provided negative offset greater than than link length");
+                        + " invalid for lane " + cse.toString() + ": provided negative offset greater than than link length");
             }
             return new Length(length - offset, LengthUnit.METER);
         }
 
         Length offset = LengthUnits.parseLength(posStr);
-        if (offset.getSI() > length) {
-            throw new NetworkException("parseBeginEndPosition - attribute POSITION with value " + posStr
-                + " invalid for lane " + cse.toString() + ": provided offset greater than than link length");
+        if (offset.getSI() > length)
+        {
+            throw new NetworkException("parseBeginEndPosition - attribute POSITION with value " + posStr + " invalid for lane "
+                    + cse.toString() + ": provided offset greater than than link length");
         }
         return offset;
     }
 
     /** {@inheritDoc} */
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "LinkTag [name=" + this.name + "]";
     }
 
     /**
      * @param parser VissimNetworkLaneParser; the VissimParser with info to create a network
      */
-    public static void addSignalHeads(VissimNetworkLaneParser parser) {
-        for (SignalHeadTag signalHeadTag : parser.getSignalHeadTags().values()) {
+    public static void addSignalHeads(VissimNetworkLaneParser parser)
+    {
+        for (SignalHeadTag signalHeadTag : parser.getSignalHeadTags().values())
+        {
             parser.getLinkTags().get(signalHeadTag.linkName).signalHeads.add(signalHeadTag);
         }
     }
@@ -615,8 +697,10 @@ final class LinkTag implements Serializable {
     /**
      * @param parser VissimNetworkLaneParser; the VissimParser with info to create a network
      */
-    public static void addDetectors(VissimNetworkLaneParser parser) {
-        for (SensorTag sensorTag : parser.getSensorTags().values()) {
+    public static void addDetectors(VissimNetworkLaneParser parser)
+    {
+        for (SensorTag sensorTag : parser.getSensorTags().values())
+        {
             parser.getLinkTags().get(sensorTag.linkName).sensors.add(sensorTag);
         }
     }
@@ -627,9 +711,11 @@ final class LinkTag implements Serializable {
      * @throws NamingException:
      * @throws NetworkException:
      */
-    public static void shortenConnectors(VissimNetworkLaneParser parser) throws OTSGeometryException, NetworkException,
-        NamingException {
-        for (LinkTag connectorTag : parser.getConnectorTags().values()) {
+    public static void shortenConnectors(VissimNetworkLaneParser parser)
+            throws OTSGeometryException, NetworkException, NamingException
+    {
+        for (LinkTag connectorTag : parser.getConnectorTags().values())
+        {
             OTSLine3D designLineOTS = LinkTag.createLineString(connectorTag);
             LineString designLine = designLineOTS.getLineString();
             Double length = designLine.getLength();

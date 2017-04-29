@@ -39,8 +39,8 @@ class SpiralTag implements Serializable
      * @throws SAXException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseSpiral(final NodeList nodeList, final OpenDriveNetworkLaneParser parser,
-        final GeometryTag geometryTag) throws SAXException
+    static void parseSpiral(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final GeometryTag geometryTag)
+            throws SAXException
     {
         int typeCount = 0;
         for (Node node : XMLParser.getNodes(nodeList, "spiral"))
@@ -52,8 +52,7 @@ class SpiralTag implements Serializable
 
             Node curvStart = attributes.getNamedItem("curvStart");
             if (curvStart != null)
-                spiralTag.curvStart =
-                    new Length(Double.parseDouble(curvStart.getNodeValue().trim()), LengthUnit.SI);
+                spiralTag.curvStart = new Length(Double.parseDouble(curvStart.getNodeValue().trim()), LengthUnit.SI);
 
             Node curvEnd = attributes.getNamedItem("curvEnd");
             if (curvEnd != null)

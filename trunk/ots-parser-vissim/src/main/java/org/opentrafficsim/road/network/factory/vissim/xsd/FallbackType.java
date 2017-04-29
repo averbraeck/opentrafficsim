@@ -44,11 +44,11 @@ import javax.xml.namespace.QName;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fallbackType", namespace = "http://www.w3.org/2001/XInclude", propOrder = {"content"})
-public class FallbackType {
+@XmlType(name = "fallbackType", namespace = "http://www.w3.org/2001/XInclude", propOrder = { "content" })
+public class FallbackType
+{
 
-    @XmlElementRef(name = "include", namespace = "http://www.w3.org/2001/XInclude", type = JAXBElement.class,
-        required = false)
+    @XmlElementRef(name = "include", namespace = "http://www.w3.org/2001/XInclude", type = JAXBElement.class, required = false)
     @XmlMixed
     @XmlAnyElement(lax = true)
     protected List<Object> content;
@@ -75,8 +75,10 @@ public class FallbackType {
     /**
      * @return the content
      */
-    public List<Object> getContent() {
-        if (content == null) {
+    public List<Object> getContent()
+    {
+        if (content == null)
+        {
             content = new ArrayList<Object>();
         }
         return this.content;
@@ -90,7 +92,8 @@ public class FallbackType {
      * setter.
      * @return always non-null
      */
-    public Map<QName, String> getOtherAttributes() {
+    public Map<QName, String> getOtherAttributes()
+    {
         return otherAttributes;
     }
 

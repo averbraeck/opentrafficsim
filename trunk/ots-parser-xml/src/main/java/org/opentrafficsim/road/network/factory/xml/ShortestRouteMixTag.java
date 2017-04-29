@@ -44,8 +44,8 @@ class ShortestRouteMixTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseShortestRouteMix(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException,
-        NetworkException
+    static void parseShortestRouteMix(final NodeList nodeList, final XmlNetworkLaneParser parser)
+            throws SAXException, NetworkException
     {
         for (Node node : XMLParser.getNodes(nodeList, "SHORTESTROUTEMIX"))
         {
@@ -80,7 +80,7 @@ class ShortestRouteMixTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     private static void parseRouteMixRouteTag(final Node shortestRouteNode, final XmlNetworkLaneParser parser,
-        final ShortestRouteMixTag shortestRouteMixTag) throws NetworkException, SAXException
+            final ShortestRouteMixTag shortestRouteMixTag) throws NetworkException, SAXException
     {
         NamedNodeMap attributes = shortestRouteNode.getAttributes();
 
@@ -89,13 +89,13 @@ class ShortestRouteMixTag implements Serializable
             throw new NetworkException("SHORTESTROUTEMIX: No SHORTESTROUTE NAME defined");
         if (!parser.routeTags.containsKey(shortestRouteName.getNodeValue().trim()))
             throw new NetworkException("SHORTESTROUTEMIX: " + shortestRouteMixTag.name + " SHORTESTROUTE "
-                + shortestRouteName.getNodeValue().trim() + " not defined");
+                    + shortestRouteName.getNodeValue().trim() + " not defined");
         shortestRouteMixTag.routes.add(parser.shortestRouteTags.get(shortestRouteName.getNodeValue().trim()));
 
         Node weight = attributes.getNamedItem("WEIGHT");
         if (weight == null)
             throw new NetworkException("SHORTESTROUTEMIX: " + shortestRouteMixTag.name + " SHORTESTROUTE "
-                + shortestRouteName.getNodeValue().trim() + ": weight not defined");
+                    + shortestRouteName.getNodeValue().trim() + ": weight not defined");
         shortestRouteMixTag.weights.add(Double.parseDouble(weight.getNodeValue()));
     }
 

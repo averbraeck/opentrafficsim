@@ -208,10 +208,11 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {"bezier", "clothoid", "straight", "arc", "polyline", "roadlayout",
-    "laneoverrideOrGENERATOROrLISTGENERATOR"})
+@XmlType(name = "", propOrder = { "bezier", "clothoid", "straight", "arc", "polyline", "roadlayout",
+        "laneoverrideOrGENERATOROrLISTGENERATOR" })
 @XmlRootElement(name = "LINK")
-public class LINK {
+public class LINK
+{
 
     @XmlElement(name = "BEZIER")
     protected LINK.BEZIER bezier;
@@ -231,11 +232,13 @@ public class LINK {
     @XmlElement(name = "ROADLAYOUT")
     protected ROADLAYOUT roadlayout;
 
-    @XmlElements({@XmlElement(name = "LANEOVERRIDE", type = LINK.LANEOVERRIDE.class), @XmlElement(name = "GENERATOR",
-        type = LINK.GENERATOR.class), @XmlElement(name = "LISTGENERATOR", type = LINK.LISTGENERATOR.class), @XmlElement(
-            name = "FILL", type = LINK.FILL.class), @XmlElement(name = "BLOCK", type = LINK.BLOCK.class), @XmlElement(
-                name = "SENSOR", type = LINK.SENSOR.class), @XmlElement(name = "TRAFFICLIGHT",
-                    type = LINK.TRAFFICLIGHT.class), @XmlElement(name = "SINK", type = LINK.SINK.class)})
+    @XmlElements({ @XmlElement(name = "LANEOVERRIDE", type = LINK.LANEOVERRIDE.class),
+            @XmlElement(name = "GENERATOR", type = LINK.GENERATOR.class),
+            @XmlElement(name = "LISTGENERATOR", type = LINK.LISTGENERATOR.class),
+            @XmlElement(name = "FILL", type = LINK.FILL.class), @XmlElement(name = "BLOCK", type = LINK.BLOCK.class),
+            @XmlElement(name = "SENSOR", type = LINK.SENSOR.class),
+            @XmlElement(name = "TRAFFICLIGHT", type = LINK.TRAFFICLIGHT.class),
+            @XmlElement(name = "SINK", type = LINK.SINK.class) })
     protected List<Object> laneoverrideOrGENERATOROrLISTGENERATOR;
 
     @XmlAttribute(name = "NAME", required = true)
@@ -276,7 +279,8 @@ public class LINK {
      * Gets the value of the bezier property.
      * @return possible object is {@link Object }
      */
-    public LINK.BEZIER getBEZIER() {
+    public LINK.BEZIER getBEZIER()
+    {
         return bezier;
     }
 
@@ -284,7 +288,8 @@ public class LINK {
      * Sets the value of the bezier property.
      * @param value allowed object is {@link Object }
      */
-    public void setBEZIER(LINK.BEZIER value) {
+    public void setBEZIER(LINK.BEZIER value)
+    {
         this.bezier = value;
     }
 
@@ -292,7 +297,8 @@ public class LINK {
      * Gets the value of the clothoid property.
      * @return possible object is {@link LINK.CLOTHOID }
      */
-    public LINK.CLOTHOID getCLOTHOID() {
+    public LINK.CLOTHOID getCLOTHOID()
+    {
         return clothoid;
     }
 
@@ -300,7 +306,8 @@ public class LINK {
      * Sets the value of the clothoid property.
      * @param value allowed object is {@link LINK.CLOTHOID }
      */
-    public void setCLOTHOID(LINK.CLOTHOID value) {
+    public void setCLOTHOID(LINK.CLOTHOID value)
+    {
         this.clothoid = value;
     }
 
@@ -308,7 +315,8 @@ public class LINK {
      * Gets the value of the straight property.
      * @return possible object is {@link LINK.STRAIGHT }
      */
-    public LINK.STRAIGHT getSTRAIGHT() {
+    public LINK.STRAIGHT getSTRAIGHT()
+    {
         return straight;
     }
 
@@ -316,7 +324,8 @@ public class LINK {
      * Sets the value of the straight property.
      * @param value allowed object is {@link LINK.STRAIGHT }
      */
-    public void setSTRAIGHT(LINK.STRAIGHT value) {
+    public void setSTRAIGHT(LINK.STRAIGHT value)
+    {
         this.straight = value;
     }
 
@@ -324,7 +333,8 @@ public class LINK {
      * Gets the value of the arc property.
      * @return possible object is {@link LINK.ARC }
      */
-    public LINK.ARC getARC() {
+    public LINK.ARC getARC()
+    {
         return arc;
     }
 
@@ -332,7 +342,8 @@ public class LINK {
      * Sets the value of the arc property.
      * @param value allowed object is {@link LINK.ARC }
      */
-    public void setARC(LINK.ARC value) {
+    public void setARC(LINK.ARC value)
+    {
         this.arc = value;
     }
 
@@ -340,7 +351,8 @@ public class LINK {
      * Gets the value of the polyline property.
      * @return possible object is {@link LINK.POLYLINE }
      */
-    public LINK.POLYLINE getPOLYLINE() {
+    public LINK.POLYLINE getPOLYLINE()
+    {
         return polyline;
     }
 
@@ -348,7 +360,8 @@ public class LINK {
      * Sets the value of the polyline property.
      * @param value allowed object is {@link LINK.POLYLINE }
      */
-    public void setPOLYLINE(LINK.POLYLINE value) {
+    public void setPOLYLINE(LINK.POLYLINE value)
+    {
         this.polyline = value;
     }
 
@@ -356,7 +369,8 @@ public class LINK {
      * Gets the value of the roadlayout property.
      * @return possible object is {@link ROADLAYOUT }
      */
-    public ROADLAYOUT getROADLAYOUT() {
+    public ROADLAYOUT getROADLAYOUT()
+    {
         return roadlayout;
     }
 
@@ -364,7 +378,8 @@ public class LINK {
      * Sets the value of the roadlayout property.
      * @param value allowed object is {@link ROADLAYOUT }
      */
-    public void setROADLAYOUT(ROADLAYOUT value) {
+    public void setROADLAYOUT(ROADLAYOUT value)
+    {
         this.roadlayout = value;
     }
 
@@ -388,8 +403,10 @@ public class LINK {
     /**
      * @return elements of a link
      */
-    public List<Object> getLANEOVERRIDEOrGENERATOROrLISTGENERATOR() {
-        if (laneoverrideOrGENERATOROrLISTGENERATOR == null) {
+    public List<Object> getLANEOVERRIDEOrGENERATOROrLISTGENERATOR()
+    {
+        if (laneoverrideOrGENERATOROrLISTGENERATOR == null)
+        {
             laneoverrideOrGENERATOROrLISTGENERATOR = new ArrayList<Object>();
         }
         return this.laneoverrideOrGENERATOROrLISTGENERATOR;
@@ -399,7 +416,8 @@ public class LINK {
      * Gets the value of the name property.
      * @return possible object is {@link String }
      */
-    public String getNAME() {
+    public String getNAME()
+    {
         return name;
     }
 
@@ -407,7 +425,8 @@ public class LINK {
      * Sets the value of the name property.
      * @param value allowed object is {@link String }
      */
-    public void setNAME(String value) {
+    public void setNAME(String value)
+    {
         this.name = value;
     }
 
@@ -415,7 +434,8 @@ public class LINK {
      * Gets the value of the nodestart property.
      * @return possible object is {@link Object }
      */
-    public String getNODESTART() {
+    public String getNODESTART()
+    {
         return nodestart;
     }
 
@@ -423,7 +443,8 @@ public class LINK {
      * Sets the value of the nodestart property.
      * @param value allowed object is {@link Object }
      */
-    public void setNODESTART(String value) {
+    public void setNODESTART(String value)
+    {
         this.nodestart = value;
     }
 
@@ -431,7 +452,8 @@ public class LINK {
      * Gets the value of the nodeend property.
      * @return possible object is {@link Object }
      */
-    public String getNODEEND() {
+    public String getNODEEND()
+    {
         return nodeEnd;
     }
 
@@ -439,7 +461,8 @@ public class LINK {
      * Sets the value of the nodeend property.
      * @param value allowed object is {@link Object }
      */
-    public void setNODEEND(String value) {
+    public void setNODEEND(String value)
+    {
         this.nodeEnd = value;
     }
 
@@ -447,7 +470,8 @@ public class LINK {
      * Gets the value of the roadlayoutAttribute property.
      * @return possible object is {@link String }
      */
-    public String getROADLAYOUTAttribute() {
+    public String getROADLAYOUTAttribute()
+    {
         return roadlayoutAttribute;
     }
 
@@ -455,7 +479,8 @@ public class LINK {
      * Sets the value of the roadlayoutAttribute property.
      * @param value allowed object is {@link String }
      */
-    public void setROADLAYOUTAttribute(String value) {
+    public void setROADLAYOUTAttribute(String value)
+    {
         this.roadlayoutAttribute = value;
     }
 
@@ -463,7 +488,8 @@ public class LINK {
      * Gets the value of the offsetstart property.
      * @return possible object is {@link String }
      */
-    public String getOFFSETSTART() {
+    public String getOFFSETSTART()
+    {
         return offsetstart;
     }
 
@@ -471,7 +497,8 @@ public class LINK {
      * Sets the value of the offsetstart property.
      * @param value allowed object is {@link String }
      */
-    public void setOFFSETSTART(String value) {
+    public void setOFFSETSTART(String value)
+    {
         this.offsetstart = value;
     }
 
@@ -479,7 +506,8 @@ public class LINK {
      * Gets the value of the offsetend property.
      * @return possible object is {@link String }
      */
-    public String getOFFSETEND() {
+    public String getOFFSETEND()
+    {
         return offsetend;
     }
 
@@ -487,7 +515,8 @@ public class LINK {
      * Sets the value of the offsetend property.
      * @param value allowed object is {@link String }
      */
-    public void setOFFSETEND(String value) {
+    public void setOFFSETEND(String value)
+    {
         this.offsetend = value;
     }
 
@@ -495,7 +524,8 @@ public class LINK {
      * Gets the value of the rotationstart property.
      * @return possible object is {@link String }
      */
-    public String getROTATIONSTART() {
+    public String getROTATIONSTART()
+    {
         return rotationstart;
     }
 
@@ -503,7 +533,8 @@ public class LINK {
      * Sets the value of the rotationstart property.
      * @param value allowed object is {@link String }
      */
-    public void setROTATIONSTART(String value) {
+    public void setROTATIONSTART(String value)
+    {
         this.rotationstart = value;
     }
 
@@ -511,7 +542,8 @@ public class LINK {
      * Gets the value of the rotationend property.
      * @return possible object is {@link String }
      */
-    public String getROTATIONEND() {
+    public String getROTATIONEND()
+    {
         return rotationend;
     }
 
@@ -519,7 +551,8 @@ public class LINK {
      * Sets the value of the rotationend property.
      * @param value allowed object is {@link String }
      */
-    public void setROTATIONEND(String value) {
+    public void setROTATIONEND(String value)
+    {
         this.rotationend = value;
     }
 
@@ -527,7 +560,8 @@ public class LINK {
      * Gets the value of the lanekeeping property.
      * @return possible object is {@link String }
      */
-    public String getLANEKEEPING() {
+    public String getLANEKEEPING()
+    {
         return lanekeeping;
     }
 
@@ -535,7 +569,8 @@ public class LINK {
      * Sets the value of the lanekeeping property.
      * @param value allowed object is {@link String }
      */
-    public void setLANEKEEPING(String value) {
+    public void setLANEKEEPING(String value)
+    {
         this.lanekeeping = value;
     }
 
@@ -543,7 +578,8 @@ public class LINK {
      * Gets the value of the base property.
      * @return possible object is {@link String }
      */
-    public String getBase() {
+    public String getBase()
+    {
         return base;
     }
 
@@ -551,7 +587,8 @@ public class LINK {
      * Sets the value of the base property.
      * @param value allowed object is {@link String }
      */
-    public void setBase(String value) {
+    public void setBase(String value)
+    {
         this.base = value;
     }
 
@@ -575,7 +612,8 @@ public class LINK {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class ARC {
+    public static class ARC
+    {
 
         @XmlAttribute(name = "RADIUS", required = true)
         protected String radius;
@@ -590,7 +628,8 @@ public class LINK {
          * Gets the value of the radius property.
          * @return possible object is {@link String }
          */
-        public String getRADIUS() {
+        public String getRADIUS()
+        {
             return radius;
         }
 
@@ -598,7 +637,8 @@ public class LINK {
          * Sets the value of the radius property.
          * @param value allowed object is {@link String }
          */
-        public void setRADIUS(String value) {
+        public void setRADIUS(String value)
+        {
             this.radius = value;
         }
 
@@ -606,7 +646,8 @@ public class LINK {
          * Gets the value of the angle property.
          * @return possible object is {@link String }
          */
-        public String getANGLE() {
+        public String getANGLE()
+        {
             return angle;
         }
 
@@ -614,7 +655,8 @@ public class LINK {
          * Sets the value of the angle property.
          * @param value allowed object is {@link String }
          */
-        public void setANGLE(String value) {
+        public void setANGLE(String value)
+        {
             this.angle = value;
         }
 
@@ -622,7 +664,8 @@ public class LINK {
          * Gets the value of the direction property.
          * @return possible object is {@link String }
          */
-        public String getDIRECTION() {
+        public String getDIRECTION()
+        {
             return direction;
         }
 
@@ -630,7 +673,8 @@ public class LINK {
          * Sets the value of the direction property.
          * @param value allowed object is {@link String }
          */
-        public void setDIRECTION(String value) {
+        public void setDIRECTION(String value)
+        {
             this.direction = value;
         }
 
@@ -655,7 +699,8 @@ public class LINK {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class BLOCK {
+    public static class BLOCK
+    {
 
         @XmlAttribute(name = "LANE", required = true)
         protected String lane;
@@ -667,7 +712,8 @@ public class LINK {
          * Gets the value of the lane property.
          * @return possible object is {@link String }
          */
-        public String getLANE() {
+        public String getLANE()
+        {
             return lane;
         }
 
@@ -675,7 +721,8 @@ public class LINK {
          * Sets the value of the lane property.
          * @param value allowed object is {@link String }
          */
-        public void setLANE(String value) {
+        public void setLANE(String value)
+        {
             this.lane = value;
         }
 
@@ -683,7 +730,8 @@ public class LINK {
          * Gets the value of the position property.
          * @return possible object is {@link String }
          */
-        public String getPOSITION() {
+        public String getPOSITION()
+        {
             return position;
         }
 
@@ -691,7 +739,8 @@ public class LINK {
          * Sets the value of the position property.
          * @param value allowed object is {@link String }
          */
-        public void setPOSITION(String value) {
+        public void setPOSITION(String value)
+        {
             this.position = value;
         }
 
@@ -720,7 +769,8 @@ public class LINK {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class CLOTHOID {
+    public static class CLOTHOID
+    {
 
         @XmlAttribute(name = "STARTANGLE")
         protected String startangle;
@@ -744,7 +794,8 @@ public class LINK {
          * Gets the value of the startangle property.
          * @return possible object is {@link String }
          */
-        public String getSTARTANGLE() {
+        public String getSTARTANGLE()
+        {
             return startangle;
         }
 
@@ -752,7 +803,8 @@ public class LINK {
          * Sets the value of the startangle property.
          * @param value allowed object is {@link String }
          */
-        public void setSTARTANGLE(String value) {
+        public void setSTARTANGLE(String value)
+        {
             this.startangle = value;
         }
 
@@ -760,7 +812,8 @@ public class LINK {
          * Gets the value of the startcurvature property.
          * @return possible object is {@link String }
          */
-        public String getSTARTCURVATURE() {
+        public String getSTARTCURVATURE()
+        {
             return startcurvature;
         }
 
@@ -768,7 +821,8 @@ public class LINK {
          * Sets the value of the startcurvature property.
          * @param value allowed object is {@link String }
          */
-        public void setSTARTCURVATURE(String value) {
+        public void setSTARTCURVATURE(String value)
+        {
             this.startcurvature = value;
         }
 
@@ -776,7 +830,8 @@ public class LINK {
          * Gets the value of the endcurvature property.
          * @return possible object is {@link String }
          */
-        public String getENDCURVATURE() {
+        public String getENDCURVATURE()
+        {
             return endcurvature;
         }
 
@@ -784,7 +839,8 @@ public class LINK {
          * Sets the value of the endcurvature property.
          * @param value allowed object is {@link String }
          */
-        public void setENDCURVATURE(String value) {
+        public void setENDCURVATURE(String value)
+        {
             this.endcurvature = value;
         }
 
@@ -792,7 +848,8 @@ public class LINK {
          * Gets the value of the length property.
          * @return possible object is {@link String }
          */
-        public String getLENGTH() {
+        public String getLENGTH()
+        {
             return length;
         }
 
@@ -800,7 +857,8 @@ public class LINK {
          * Sets the value of the length property.
          * @param value allowed object is {@link String }
          */
-        public void setLENGTH(String value) {
+        public void setLENGTH(String value)
+        {
             this.length = value;
         }
 
@@ -808,7 +866,8 @@ public class LINK {
          * Gets the value of the endelevation property.
          * @return possible object is {@link String }
          */
-        public String getENDELEVATION() {
+        public String getENDELEVATION()
+        {
             return endelevation;
         }
 
@@ -816,7 +875,8 @@ public class LINK {
          * Sets the value of the endelevation property.
          * @param value allowed object is {@link String }
          */
-        public void setENDELEVATION(String value) {
+        public void setENDELEVATION(String value)
+        {
             this.endelevation = value;
         }
 
@@ -824,7 +884,8 @@ public class LINK {
          * Gets the value of the numsegments property.
          * @return possible object is {@link BigInteger }
          */
-        public BigInteger getNUMSEGMENTS() {
+        public BigInteger getNUMSEGMENTS()
+        {
             return numsegments;
         }
 
@@ -832,7 +893,8 @@ public class LINK {
          * Sets the value of the numsegments property.
          * @param value allowed object is {@link BigInteger }
          */
-        public void setNUMSEGMENTS(BigInteger value) {
+        public void setNUMSEGMENTS(BigInteger value)
+        {
             this.numsegments = value;
         }
 
@@ -843,7 +905,8 @@ public class LINK {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class BEZIER {
+    public static class BEZIER
+    {
 
     }
 
@@ -871,7 +934,8 @@ public class LINK {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class FILL {
+    public static class FILL
+    {
 
         @XmlAttribute(name = "LANE", required = true)
         protected String lane;
@@ -898,7 +962,8 @@ public class LINK {
          * Gets the value of the lane property.
          * @return possible object is {@link String }
          */
-        public String getLANE() {
+        public String getLANE()
+        {
             return lane;
         }
 
@@ -906,7 +971,8 @@ public class LINK {
          * Sets the value of the lane property.
          * @param value allowed object is {@link String }
          */
-        public void setLANE(String value) {
+        public void setLANE(String value)
+        {
             this.lane = value;
         }
 
@@ -914,7 +980,8 @@ public class LINK {
          * Gets the value of the gtu property.
          * @return possible object is {@link String }
          */
-        public String getGTU() {
+        public String getGTU()
+        {
             return gtu;
         }
 
@@ -922,7 +989,8 @@ public class LINK {
          * Sets the value of the gtu property.
          * @param value allowed object is {@link String }
          */
-        public void setGTU(String value) {
+        public void setGTU(String value)
+        {
             this.gtu = value;
         }
 
@@ -930,7 +998,8 @@ public class LINK {
          * Gets the value of the gtumix property.
          * @return possible object is {@link String }
          */
-        public String getGTUMIX() {
+        public String getGTUMIX()
+        {
             return gtumix;
         }
 
@@ -938,7 +1007,8 @@ public class LINK {
          * Sets the value of the gtumix property.
          * @param value allowed object is {@link String }
          */
-        public void setGTUMIX(String value) {
+        public void setGTUMIX(String value)
+        {
             this.gtumix = value;
         }
 
@@ -946,7 +1016,8 @@ public class LINK {
          * Gets the value of the distance property.
          * @return possible object is {@link String }
          */
-        public String getDISTANCE() {
+        public String getDISTANCE()
+        {
             return distance;
         }
 
@@ -954,7 +1025,8 @@ public class LINK {
          * Sets the value of the distance property.
          * @param value allowed object is {@link String }
          */
-        public void setDISTANCE(String value) {
+        public void setDISTANCE(String value)
+        {
             this.distance = value;
         }
 
@@ -962,7 +1034,8 @@ public class LINK {
          * Gets the value of the initialspeed property.
          * @return possible object is {@link String }
          */
-        public String getINITIALSPEED() {
+        public String getINITIALSPEED()
+        {
             return initialspeed;
         }
 
@@ -970,7 +1043,8 @@ public class LINK {
          * Sets the value of the initialspeed property.
          * @param value allowed object is {@link String }
          */
-        public void setINITIALSPEED(String value) {
+        public void setINITIALSPEED(String value)
+        {
             this.initialspeed = value;
         }
 
@@ -978,7 +1052,8 @@ public class LINK {
          * Gets the value of the maxgtu property.
          * @return possible object is {@link Double }
          */
-        public Double getMAXGTU() {
+        public Double getMAXGTU()
+        {
             return maxgtu;
         }
 
@@ -986,7 +1061,8 @@ public class LINK {
          * Sets the value of the maxgtu property.
          * @param value allowed object is {@link Double }
          */
-        public void setMAXGTU(Double value) {
+        public void setMAXGTU(Double value)
+        {
             this.maxgtu = value;
         }
 
@@ -994,7 +1070,8 @@ public class LINK {
          * Gets the value of the route property.
          * @return possible object is {@link String }
          */
-        public String getROUTE() {
+        public String getROUTE()
+        {
             return route;
         }
 
@@ -1002,7 +1079,8 @@ public class LINK {
          * Sets the value of the route property.
          * @param value allowed object is {@link String }
          */
-        public void setROUTE(String value) {
+        public void setROUTE(String value)
+        {
             this.route = value;
         }
 
@@ -1036,7 +1114,8 @@ public class LINK {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class GENERATOR {
+    public static class GENERATOR
+    {
 
         @XmlAttribute(name = "LANE", required = true)
         protected String lane;
@@ -1075,7 +1154,8 @@ public class LINK {
          * Gets the value of the lane property.
          * @return possible object is {@link String }
          */
-        public String getLANE() {
+        public String getLANE()
+        {
             return lane;
         }
 
@@ -1083,7 +1163,8 @@ public class LINK {
          * Sets the value of the lane property.
          * @param value allowed object is {@link String }
          */
-        public void setLANE(String value) {
+        public void setLANE(String value)
+        {
             this.lane = value;
         }
 
@@ -1091,7 +1172,8 @@ public class LINK {
          * Gets the value of the position property.
          * @return possible object is {@link String }
          */
-        public String getPOSITION() {
+        public String getPOSITION()
+        {
             return position;
         }
 
@@ -1099,7 +1181,8 @@ public class LINK {
          * Sets the value of the position property.
          * @param value allowed object is {@link String }
          */
-        public void setPOSITION(String value) {
+        public void setPOSITION(String value)
+        {
             this.position = value;
         }
 
@@ -1107,7 +1190,8 @@ public class LINK {
          * Gets the value of the gtu property.
          * @return possible object is {@link String }
          */
-        public String getGTU() {
+        public String getGTU()
+        {
             return gtu;
         }
 
@@ -1115,7 +1199,8 @@ public class LINK {
          * Sets the value of the gtu property.
          * @param value allowed object is {@link String }
          */
-        public void setGTU(String value) {
+        public void setGTU(String value)
+        {
             this.gtu = value;
         }
 
@@ -1123,7 +1208,8 @@ public class LINK {
          * Gets the value of the gtumix property.
          * @return possible object is {@link String }
          */
-        public String getGTUMIX() {
+        public String getGTUMIX()
+        {
             return gtumix;
         }
 
@@ -1131,7 +1217,8 @@ public class LINK {
          * Sets the value of the gtumix property.
          * @param value allowed object is {@link String }
          */
-        public void setGTUMIX(String value) {
+        public void setGTUMIX(String value)
+        {
             this.gtumix = value;
         }
 
@@ -1139,7 +1226,8 @@ public class LINK {
          * Gets the value of the iat property.
          * @return possible object is {@link String }
          */
-        public String getIAT() {
+        public String getIAT()
+        {
             return iat;
         }
 
@@ -1147,7 +1235,8 @@ public class LINK {
          * Sets the value of the iat property.
          * @param value allowed object is {@link String }
          */
-        public void setIAT(String value) {
+        public void setIAT(String value)
+        {
             this.iat = value;
         }
 
@@ -1155,7 +1244,8 @@ public class LINK {
          * Gets the value of the initialspeed property.
          * @return possible object is {@link String }
          */
-        public String getINITIALSPEED() {
+        public String getINITIALSPEED()
+        {
             return initialspeed;
         }
 
@@ -1163,7 +1253,8 @@ public class LINK {
          * Sets the value of the initialspeed property.
          * @param value allowed object is {@link String }
          */
-        public void setINITIALSPEED(String value) {
+        public void setINITIALSPEED(String value)
+        {
             this.initialspeed = value;
         }
 
@@ -1171,7 +1262,8 @@ public class LINK {
          * Gets the value of the maxgtu property.
          * @return possible object is {@link Double }
          */
-        public Double getMAXGTU() {
+        public Double getMAXGTU()
+        {
             return maxgtu;
         }
 
@@ -1179,7 +1271,8 @@ public class LINK {
          * Sets the value of the maxgtu property.
          * @param value allowed object is {@link Double }
          */
-        public void setMAXGTU(Double value) {
+        public void setMAXGTU(Double value)
+        {
             this.maxgtu = value;
         }
 
@@ -1187,7 +1280,8 @@ public class LINK {
          * Gets the value of the starttime property.
          * @return possible object is {@link String }
          */
-        public String getSTARTTIME() {
+        public String getSTARTTIME()
+        {
             return starttime;
         }
 
@@ -1195,7 +1289,8 @@ public class LINK {
          * Sets the value of the starttime property.
          * @param value allowed object is {@link String }
          */
-        public void setSTARTTIME(String value) {
+        public void setSTARTTIME(String value)
+        {
             this.starttime = value;
         }
 
@@ -1203,7 +1298,8 @@ public class LINK {
          * Gets the value of the endtime property.
          * @return possible object is {@link String }
          */
-        public String getENDTIME() {
+        public String getENDTIME()
+        {
             return endtime;
         }
 
@@ -1211,7 +1307,8 @@ public class LINK {
          * Sets the value of the endtime property.
          * @param value allowed object is {@link String }
          */
-        public void setENDTIME(String value) {
+        public void setENDTIME(String value)
+        {
             this.endtime = value;
         }
 
@@ -1219,7 +1316,8 @@ public class LINK {
          * Gets the value of the route property.
          * @return possible object is {@link String }
          */
-        public String getROUTE() {
+        public String getROUTE()
+        {
             return route;
         }
 
@@ -1227,7 +1325,8 @@ public class LINK {
          * Sets the value of the route property.
          * @param value allowed object is {@link String }
          */
-        public void setROUTE(String value) {
+        public void setROUTE(String value)
+        {
             this.route = value;
         }
 
@@ -1235,7 +1334,8 @@ public class LINK {
          * Gets the value of the gtucolorer property.
          * @return possible object is {@link String }
          */
-        public String getGTUCOLORER() {
+        public String getGTUCOLORER()
+        {
             return gtucolorer;
         }
 
@@ -1243,7 +1343,8 @@ public class LINK {
          * Sets the value of the gtucolorer property.
          * @param value allowed object is {@link String }
          */
-        public void setGTUCOLORER(String value) {
+        public void setGTUCOLORER(String value)
+        {
             this.gtucolorer = value;
         }
 
@@ -1271,7 +1372,8 @@ public class LINK {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class LANEOVERRIDE {
+    public static class LANEOVERRIDE
+    {
 
         @XmlAttribute(name = "LANE", required = true)
         protected String lane;
@@ -1292,7 +1394,8 @@ public class LINK {
          * Gets the value of the lane property.
          * @return possible object is {@link String }
          */
-        public String getLANE() {
+        public String getLANE()
+        {
             return lane;
         }
 
@@ -1300,7 +1403,8 @@ public class LINK {
          * Sets the value of the lane property.
          * @param value allowed object is {@link String }
          */
-        public void setLANE(String value) {
+        public void setLANE(String value)
+        {
             this.lane = value;
         }
 
@@ -1308,7 +1412,8 @@ public class LINK {
          * Gets the value of the legalspeedlimit property.
          * @return possible object is {@link String }
          */
-        public String getLEGALSPEEDLIMIT() {
+        public String getLEGALSPEEDLIMIT()
+        {
             return legalspeedlimit;
         }
 
@@ -1316,7 +1421,8 @@ public class LINK {
          * Sets the value of the legalspeedlimit property.
          * @param value allowed object is {@link String }
          */
-        public void setLEGALSPEEDLIMIT(String value) {
+        public void setLEGALSPEEDLIMIT(String value)
+        {
             this.legalspeedlimit = value;
         }
 
@@ -1324,7 +1430,8 @@ public class LINK {
          * Gets the value of the direction property.
          * @return possible object is {@link String }
          */
-        public String getDIRECTION() {
+        public String getDIRECTION()
+        {
             return direction;
         }
 
@@ -1332,7 +1439,8 @@ public class LINK {
          * Sets the value of the direction property.
          * @param value allowed object is {@link String }
          */
-        public void setDIRECTION(String value) {
+        public void setDIRECTION(String value)
+        {
             this.direction = value;
         }
 
@@ -1340,7 +1448,8 @@ public class LINK {
          * Gets the value of the color property.
          * @return possible object is {@link String }
          */
-        public String getCOLOR() {
+        public String getCOLOR()
+        {
             return color;
         }
 
@@ -1348,7 +1457,8 @@ public class LINK {
          * Sets the value of the color property.
          * @param value allowed object is {@link String }
          */
-        public void setCOLOR(String value) {
+        public void setCOLOR(String value)
+        {
             this.color = value;
         }
 
@@ -1356,7 +1466,8 @@ public class LINK {
          * Gets the value of the overtaking property.
          * @return possible object is {@link String }
          */
-        public String getOVERTAKING() {
+        public String getOVERTAKING()
+        {
             return overtaking;
         }
 
@@ -1364,7 +1475,8 @@ public class LINK {
          * Sets the value of the overtaking property.
          * @param value allowed object is {@link String }
          */
-        public void setOVERTAKING(String value) {
+        public void setOVERTAKING(String value)
+        {
             this.overtaking = value;
         }
 
@@ -1395,7 +1507,8 @@ public class LINK {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class LISTGENERATOR {
+    public static class LISTGENERATOR
+    {
 
         @XmlAttribute(name = "URI", required = true)
         @XmlSchemaType(name = "anyURI")
@@ -1426,7 +1539,8 @@ public class LINK {
          * Gets the value of the uri property.
          * @return possible object is {@link String }
          */
-        public String getURI() {
+        public String getURI()
+        {
             return uri;
         }
 
@@ -1434,7 +1548,8 @@ public class LINK {
          * Sets the value of the uri property.
          * @param value allowed object is {@link String }
          */
-        public void setURI(String value) {
+        public void setURI(String value)
+        {
             this.uri = value;
         }
 
@@ -1442,7 +1557,8 @@ public class LINK {
          * Gets the value of the lane property.
          * @return possible object is {@link String }
          */
-        public String getLANE() {
+        public String getLANE()
+        {
             return lane;
         }
 
@@ -1450,7 +1566,8 @@ public class LINK {
          * Sets the value of the lane property.
          * @param value allowed object is {@link String }
          */
-        public void setLANE(String value) {
+        public void setLANE(String value)
+        {
             this.lane = value;
         }
 
@@ -1458,7 +1575,8 @@ public class LINK {
          * Gets the value of the position property.
          * @return possible object is {@link String }
          */
-        public String getPOSITION() {
+        public String getPOSITION()
+        {
             return position;
         }
 
@@ -1466,7 +1584,8 @@ public class LINK {
          * Sets the value of the position property.
          * @param value allowed object is {@link String }
          */
-        public void setPOSITION(String value) {
+        public void setPOSITION(String value)
+        {
             this.position = value;
         }
 
@@ -1474,7 +1593,8 @@ public class LINK {
          * Gets the value of the gtu property.
          * @return possible object is {@link String }
          */
-        public String getGTU() {
+        public String getGTU()
+        {
             return gtu;
         }
 
@@ -1482,7 +1602,8 @@ public class LINK {
          * Sets the value of the gtu property.
          * @param value allowed object is {@link String }
          */
-        public void setGTU(String value) {
+        public void setGTU(String value)
+        {
             this.gtu = value;
         }
 
@@ -1490,7 +1611,8 @@ public class LINK {
          * Gets the value of the gtumix property.
          * @return possible object is {@link String }
          */
-        public String getGTUMIX() {
+        public String getGTUMIX()
+        {
             return gtumix;
         }
 
@@ -1498,7 +1620,8 @@ public class LINK {
          * Sets the value of the gtumix property.
          * @param value allowed object is {@link String }
          */
-        public void setGTUMIX(String value) {
+        public void setGTUMIX(String value)
+        {
             this.gtumix = value;
         }
 
@@ -1506,7 +1629,8 @@ public class LINK {
          * Gets the value of the initialspeed property.
          * @return possible object is {@link String }
          */
-        public String getINITIALSPEED() {
+        public String getINITIALSPEED()
+        {
             return initialspeed;
         }
 
@@ -1514,7 +1638,8 @@ public class LINK {
          * Sets the value of the initialspeed property.
          * @param value allowed object is {@link String }
          */
-        public void setINITIALSPEED(String value) {
+        public void setINITIALSPEED(String value)
+        {
             this.initialspeed = value;
         }
 
@@ -1522,7 +1647,8 @@ public class LINK {
          * Gets the value of the route property.
          * @return possible object is {@link String }
          */
-        public String getROUTE() {
+        public String getROUTE()
+        {
             return route;
         }
 
@@ -1530,7 +1656,8 @@ public class LINK {
          * Sets the value of the route property.
          * @param value allowed object is {@link String }
          */
-        public void setROUTE(String value) {
+        public void setROUTE(String value)
+        {
             this.route = value;
         }
 
@@ -1538,7 +1665,8 @@ public class LINK {
          * Gets the value of the gtucolorer property.
          * @return possible object is {@link String }
          */
-        public String getGTUCOLORER() {
+        public String getGTUCOLORER()
+        {
             return gtucolorer;
         }
 
@@ -1546,7 +1674,8 @@ public class LINK {
          * Sets the value of the gtucolorer property.
          * @param value allowed object is {@link String }
          */
-        public void setGTUCOLORER(String value) {
+        public void setGTUCOLORER(String value)
+        {
             this.gtucolorer = value;
         }
 
@@ -1571,7 +1700,8 @@ public class LINK {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class POLYLINE {
+    public static class POLYLINE
+    {
 
         @XmlAttribute(name = "LENGTH")
         protected String length;
@@ -1583,7 +1713,8 @@ public class LINK {
          * Gets the value of the length property.
          * @return possible object is {@link String }
          */
-        public String getLENGTH() {
+        public String getLENGTH()
+        {
             return length;
         }
 
@@ -1591,7 +1722,8 @@ public class LINK {
          * Sets the value of the length property.
          * @param value allowed object is {@link String }
          */
-        public void setLENGTH(String value) {
+        public void setLENGTH(String value)
+        {
             this.length = value;
         }
 
@@ -1613,8 +1745,10 @@ public class LINK {
         /**
          * @return intermediate points
          */
-        public List<String> getINTERMEDIATEPOINTS() {
-            if (intermediatepoints == null) {
+        public List<String> getINTERMEDIATEPOINTS()
+        {
+            if (intermediatepoints == null)
+            {
                 intermediatepoints = new ArrayList<String>();
             }
             return this.intermediatepoints;
@@ -1644,7 +1778,8 @@ public class LINK {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class SENSOR {
+    public static class SENSOR
+    {
 
         @XmlAttribute(name = "NAME")
         protected String name;
@@ -1665,7 +1800,8 @@ public class LINK {
          * Gets the value of the name property.
          * @return possible object is {@link String }
          */
-        public String getNAME() {
+        public String getNAME()
+        {
             return name;
         }
 
@@ -1673,7 +1809,8 @@ public class LINK {
          * Sets the value of the name property.
          * @param value allowed object is {@link String }
          */
-        public void setNAME(String value) {
+        public void setNAME(String value)
+        {
             this.name = value;
         }
 
@@ -1681,7 +1818,8 @@ public class LINK {
          * Gets the value of the lane property.
          * @return possible object is {@link String }
          */
-        public String getLANE() {
+        public String getLANE()
+        {
             return lane;
         }
 
@@ -1689,7 +1827,8 @@ public class LINK {
          * Sets the value of the lane property.
          * @param value allowed object is {@link String }
          */
-        public void setLANE(String value) {
+        public void setLANE(String value)
+        {
             this.lane = value;
         }
 
@@ -1697,7 +1836,8 @@ public class LINK {
          * Gets the value of the position property.
          * @return possible object is {@link String }
          */
-        public String getPOSITION() {
+        public String getPOSITION()
+        {
             return position;
         }
 
@@ -1705,7 +1845,8 @@ public class LINK {
          * Sets the value of the position property.
          * @param value allowed object is {@link String }
          */
-        public void setPOSITION(String value) {
+        public void setPOSITION(String value)
+        {
             this.position = value;
         }
 
@@ -1713,7 +1854,8 @@ public class LINK {
          * Gets the value of the class property.
          * @return possible object is {@link String }
          */
-        public String getCLASS() {
+        public String getCLASS()
+        {
             return _class;
         }
 
@@ -1721,7 +1863,8 @@ public class LINK {
          * Sets the value of the class property.
          * @param value allowed object is {@link String }
          */
-        public void setCLASS(String value) {
+        public void setCLASS(String value)
+        {
             this._class = value;
         }
 
@@ -1729,7 +1872,8 @@ public class LINK {
          * Gets the value of the trigger property.
          * @return possible object is {@link String }
          */
-        public String getTRIGGER() {
+        public String getTRIGGER()
+        {
             return trigger;
         }
 
@@ -1737,7 +1881,8 @@ public class LINK {
          * Sets the value of the trigger property.
          * @param value allowed object is {@link String }
          */
-        public void setTRIGGER(String value) {
+        public void setTRIGGER(String value)
+        {
             this.trigger = value;
         }
 
@@ -1762,7 +1907,8 @@ public class LINK {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class SINK {
+    public static class SINK
+    {
 
         @XmlAttribute(name = "LANE", required = true)
         protected String lane;
@@ -1774,7 +1920,8 @@ public class LINK {
          * Gets the value of the lane property.
          * @return possible object is {@link String }
          */
-        public String getLANE() {
+        public String getLANE()
+        {
             return lane;
         }
 
@@ -1782,7 +1929,8 @@ public class LINK {
          * Sets the value of the lane property.
          * @param value allowed object is {@link String }
          */
-        public void setLANE(String value) {
+        public void setLANE(String value)
+        {
             this.lane = value;
         }
 
@@ -1790,7 +1938,8 @@ public class LINK {
          * Gets the value of the position property.
          * @return possible object is {@link String }
          */
-        public String getPOSITION() {
+        public String getPOSITION()
+        {
             return position;
         }
 
@@ -1798,7 +1947,8 @@ public class LINK {
          * Sets the value of the position property.
          * @param value allowed object is {@link String }
          */
-        public void setPOSITION(String value) {
+        public void setPOSITION(String value)
+        {
             this.position = value;
         }
 
@@ -1822,7 +1972,8 @@ public class LINK {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class STRAIGHT {
+    public static class STRAIGHT
+    {
 
         @XmlAttribute(name = "LENGTH")
         protected String length;
@@ -1831,7 +1982,8 @@ public class LINK {
          * Gets the value of the length property.
          * @return possible object is {@link String }
          */
-        public String getLENGTH() {
+        public String getLENGTH()
+        {
             return length;
         }
 
@@ -1839,7 +1991,8 @@ public class LINK {
          * Sets the value of the length property.
          * @param value allowed object is {@link String }
          */
-        public void setLENGTH(String value) {
+        public void setLENGTH(String value)
+        {
             this.length = value;
         }
 
@@ -1866,7 +2019,8 @@ public class LINK {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class TRAFFICLIGHT {
+    public static class TRAFFICLIGHT
+    {
 
         @XmlAttribute(name = "NAME")
         protected String name;
@@ -1884,7 +2038,8 @@ public class LINK {
          * Gets the value of the name property.
          * @return possible object is {@link String }
          */
-        public String getNAME() {
+        public String getNAME()
+        {
             return name;
         }
 
@@ -1892,7 +2047,8 @@ public class LINK {
          * Sets the value of the name property.
          * @param value allowed object is {@link String }
          */
-        public void setNAME(String value) {
+        public void setNAME(String value)
+        {
             this.name = value;
         }
 
@@ -1900,7 +2056,8 @@ public class LINK {
          * Gets the value of the lane property.
          * @return possible object is {@link String }
          */
-        public String getLANE() {
+        public String getLANE()
+        {
             return lane;
         }
 
@@ -1908,7 +2065,8 @@ public class LINK {
          * Sets the value of the lane property.
          * @param value allowed object is {@link String }
          */
-        public void setLANE(String value) {
+        public void setLANE(String value)
+        {
             this.lane = value;
         }
 
@@ -1916,7 +2074,8 @@ public class LINK {
          * Gets the value of the position property.
          * @return possible object is {@link String }
          */
-        public String getPOSITION() {
+        public String getPOSITION()
+        {
             return position;
         }
 
@@ -1924,7 +2083,8 @@ public class LINK {
          * Sets the value of the position property.
          * @param value allowed object is {@link String }
          */
-        public void setPOSITION(String value) {
+        public void setPOSITION(String value)
+        {
             this.position = value;
         }
 
@@ -1932,7 +2092,8 @@ public class LINK {
          * Gets the value of the class property.
          * @return possible object is {@link String }
          */
-        public String getCLASS() {
+        public String getCLASS()
+        {
             return _class;
         }
 
@@ -1940,7 +2101,8 @@ public class LINK {
          * Sets the value of the class property.
          * @param value allowed object is {@link String }
          */
-        public void setCLASS(String value) {
+        public void setCLASS(String value)
+        {
             this._class = value;
         }
 

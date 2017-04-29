@@ -72,8 +72,8 @@ public class XMLNetworkSensorTest implements UNITS
             try
             {
                 TestXMLModel model = new TestXMLModel();
-                final SimpleAnimator simulator = new SimpleAnimator(Time.ZERO, Duration.ZERO,
-                        new Duration(120.0, SECOND), model);
+                final SimpleAnimator simulator =
+                        new SimpleAnimator(Time.ZERO, Duration.ZERO, new Duration(120.0, SECOND), model);
 
                 // get the nodes in the network.
                 Node n1 = model.getNetwork().getNodeMap().get("N1");

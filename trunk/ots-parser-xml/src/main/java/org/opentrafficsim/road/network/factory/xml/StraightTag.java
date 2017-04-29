@@ -22,7 +22,7 @@ class StraightTag implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150724L;
-    
+
     /** Length. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length length = null;
@@ -37,14 +37,13 @@ class StraightTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseStraight(final Node straightNode, final XmlNetworkLaneParser parser, final LinkTag linkTag)
-        throws SAXException, NetworkException
+            throws SAXException, NetworkException
     {
         NamedNodeMap straightAttributes = straightNode.getAttributes();
         linkTag.straightTag = new StraightTag();
 
         if (straightAttributes.getNamedItem("LENGTH") != null)
-            linkTag.straightTag.length =
-                LengthUnits.parseLength(straightAttributes.getNamedItem("LENGTH").getNodeValue());
+            linkTag.straightTag.length = LengthUnits.parseLength(straightAttributes.getNamedItem("LENGTH").getNodeValue());
     }
 
     /** {@inheritDoc} */

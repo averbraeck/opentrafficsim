@@ -11,7 +11,8 @@ import java.io.Serializable;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class LaneTag implements Serializable {
+class LaneTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150723L;
 
@@ -33,7 +34,8 @@ class LaneTag implements Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public final String toString() {
+    public final String toString()
+    {
         return "LaneTag [laneName=" + this.laneNo + ", linkNo=" + this.linkNo + ", className=" + this.className + "]";
     }
 

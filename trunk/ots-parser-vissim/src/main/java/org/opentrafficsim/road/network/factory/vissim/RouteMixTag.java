@@ -19,7 +19,8 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class RouteMixTag implements Serializable {
+class RouteMixTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150723L;
 
@@ -43,25 +44,31 @@ class RouteMixTag implements Serializable {
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseRouteMix(final NodeList nodeList, final VissimNetworkLaneParser parser) throws SAXException,
-        NetworkException {
-        for (Node node : XMLParser.getNodes(nodeList, "ROUTEMIX")) {
+    static void parseRouteMix(final NodeList nodeList, final VissimNetworkLaneParser parser)
+            throws SAXException, NetworkException
+    {
+        for (Node node : XMLParser.getNodes(nodeList, "ROUTEMIX"))
+        {
             NamedNodeMap attributes = node.getAttributes();
             RouteMixTag routeMixTag = new RouteMixTag();
 
-            if (attributes.getNamedItem("NAME") == null) {
+            if (attributes.getNamedItem("NAME") == null)
+            {
                 throw new SAXException("ROUTEMIX: missing attribute NAME");
             }
             routeMixTag.name = attributes.getNamedItem("NAME").getNodeValue().trim();
-            if (parser.getRouteTags().keySet().contains(routeMixTag.name)) {
+            if (parser.getRouteTags().keySet().contains(routeMixTag.name))
+            {
                 throw new SAXException("ROUTEMIX: NAME " + routeMixTag.name + " defined twice");
             }
 
             List<Node> routeList = XMLParser.getNodes(node.getChildNodes(), "ROUTE");
-            if (routeList.size() == 0) {
+            if (routeList.size() == 0)
+            {
                 throw new SAXException("ROUTEMIX: missing tag ROUTE");
             }
-            for (Node routeNode : routeList) {
+            for (Node routeNode : routeList)
+            {
                 parseRouteMixRouteTag(routeNode, parser, routeMixTag);
             }
 
@@ -79,30 +86,35 @@ class RouteMixTag implements Serializable {
      */
     @SuppressWarnings("checkstyle:needbraces")
     private static void parseRouteMixRouteTag(final Node routeNode, final VissimNetworkLaneParser parser,
-        final RouteMixTag routeMixTag) throws NetworkException, SAXException {
+            final RouteMixTag routeMixTag) throws NetworkException, SAXException
+    {
         NamedNodeMap attributes = routeNode.getAttributes();
 
         Node routeName = attributes.getNamedItem("NAME");
-        if (routeName == null) {
+        if (routeName == null)
+        {
             throw new NetworkException("ROUTEMIX: No ROUTE NAME defined");
         }
-        if (!parser.getRouteTags().containsKey(routeName.getNodeValue().trim())) {
-            throw new NetworkException("ROUTEMIX: " + routeMixTag.name + " ROUTE " + routeName.getNodeValue().trim()
-                + " not defined");
+        if (!parser.getRouteTags().containsKey(routeName.getNodeValue().trim()))
+        {
+            throw new NetworkException(
+                    "ROUTEMIX: " + routeMixTag.name + " ROUTE " + routeName.getNodeValue().trim() + " not defined");
         }
         routeMixTag.routes.add(parser.getRouteTags().get(routeName.getNodeValue().trim()));
 
         Node weight = attributes.getNamedItem("WEIGHT");
-        if (weight == null) {
-            throw new NetworkException("ROUTEMIX: " + routeMixTag.name + " ROUTE " + routeName.getNodeValue().trim()
-                + ": weight not defined");
+        if (weight == null)
+        {
+            throw new NetworkException(
+                    "ROUTEMIX: " + routeMixTag.name + " ROUTE " + routeName.getNodeValue().trim() + ": weight not defined");
         }
         routeMixTag.weights.add(Double.parseDouble(weight.getNodeValue()));
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String toString() {
+    public final String toString()
+    {
         return "RouteMixTag [name=" + this.name + ", routes=" + this.routes + ", weights=" + this.weights + "]";
     }
 

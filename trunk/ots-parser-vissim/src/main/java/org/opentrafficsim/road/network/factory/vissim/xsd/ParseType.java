@@ -28,16 +28,22 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(name = "parseType", namespace = "http://www.w3.org/2001/XInclude")
 @XmlEnum
-public enum ParseType {
+public enum ParseType
+{
 
-    @XmlEnumValue("xml") XML("xml"), @XmlEnumValue("text") TEXT("text");
+    @XmlEnumValue("xml")
+    XML("xml"),
+    @XmlEnumValue("text")
+    TEXT("text");
     private final String value;
 
-    ParseType(String v) {
+    ParseType(String v)
+    {
         value = v;
     }
 
-    public String value() {
+    public String value()
+    {
         return value;
     }
 
@@ -45,9 +51,12 @@ public enum ParseType {
      * @param v String to parse
      * @return a ParseType
      */
-    public static ParseType fromValue(String v) {
-        for (ParseType c : ParseType.values()) {
-            if (c.value.equals(v)) {
+    public static ParseType fromValue(String v)
+    {
+        for (ParseType c : ParseType.values())
+        {
+            if (c.value.equals(v))
+            {
                 return c;
             }
         }

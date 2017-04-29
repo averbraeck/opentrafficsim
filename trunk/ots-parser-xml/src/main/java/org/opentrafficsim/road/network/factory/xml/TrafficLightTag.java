@@ -51,7 +51,7 @@ class TrafficLightTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseTrafficLight(final Node node, final XmlNetworkLaneParser parser, final LinkTag linkTag)
-        throws SAXException, NetworkException
+            throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         TrafficLightTag trafficLightTag = new TrafficLightTag();
@@ -63,16 +63,16 @@ class TrafficLightTag implements Serializable
             throw new NetworkException("TRAFFICLIGHT: LANE " + laneName + " no ROADTYPE for link " + linkTag.name);
         CrossSectionElementTag cseTag = linkTag.roadLayoutTag.cseTags.get(laneName);
         if (cseTag == null)
-            throw new NetworkException("TRAFFICLIGHT: LANE " + laneName + " not found in elements of link "
-                + linkTag.name + " - roadtype " + linkTag.roadLayoutTag.name);
+            throw new NetworkException("TRAFFICLIGHT: LANE " + laneName + " not found in elements of link " + linkTag.name
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
         if (cseTag.elementType != ElementType.LANE)
-            throw new NetworkException("TRAFFICLIGHT: LANE " + laneName + " not a real GTU lane for link "
-                + linkTag.name + " - roadtype " + linkTag.roadLayoutTag.name);
+            throw new NetworkException("TRAFFICLIGHT: LANE " + laneName + " not a real GTU lane for link " + linkTag.name
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
 
         Node position = attributes.getNamedItem("POSITION");
         if (position == null)
             throw new NetworkException("TRAFFICLIGHT: POSITION element not found in elements of link " + linkTag.name
-                + " - roadtype " + linkTag.roadLayoutTag.name);
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
         trafficLightTag.positionStr = position.getNodeValue().trim();
 
         Node name = attributes.getNamedItem("NAME");
@@ -81,37 +81,32 @@ class TrafficLightTag implements Serializable
 
         Node classNode = attributes.getNamedItem("CLASS");
         if (classNode == null)
-            throw new SAXException("TRAFFICLIGHT: missing attribute CLASS for traffic light " + trafficLightTag.name
-                + " on lane " + laneName);
+            throw new SAXException(
+                    "TRAFFICLIGHT: missing attribute CLASS for traffic light " + trafficLightTag.name + " on lane " + laneName);
         trafficLightTag.className = classNode.getNodeValue().trim();
         try
         {
             Class<?> clazz = Class.forName(trafficLightTag.className);
             if (!TrafficLight.class.isAssignableFrom(clazz))
                 throw new SAXException("TRAFFICLIGHT: CLASS NAME " + trafficLightTag.className + " for trafficLight "
-                    + trafficLightTag.name + " on lane " + laneName + " does not implement the TrafficLight interface");
+                        + trafficLightTag.name + " on lane " + laneName + " does not implement the TrafficLight interface");
 
             try
             {
-                ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class, Length.class,
-                    OTSDEVSSimulatorInterface.class });
+                ClassUtil.resolveConstructor(clazz,
+                        new Class[] { String.class, Lane.class, Length.class, OTSDEVSSimulatorInterface.class });
             }
             catch (NoSuchMethodException nsme)
             {
-                throw new SAXException(
-                    "TRAFFICLIGHT: CLASS NAME "
-                        + trafficLightTag.className
-                        + " for trafficLight "
-                        + trafficLightTag.name
-                        + " on lane "
-                        + laneName
+                throw new SAXException("TRAFFICLIGHT: CLASS NAME " + trafficLightTag.className + " for trafficLight "
+                        + trafficLightTag.name + " on lane " + laneName
                         + " -- no constructor with arguments (String, Lane, Length, OTSDEVSSimulatorInterface)");
             }
         }
         catch (ClassNotFoundException cnfe)
         {
             throw new SAXException("TRAFFICLIGHT: CLASS NAME " + trafficLightTag.className + " for trafficLight "
-                + trafficLightTag.name + " on lane " + laneName + " could not be loaded.");
+                    + trafficLightTag.name + " on lane " + laneName + " could not be loaded.");
         }
 
         if (!linkTag.trafficLightTags.containsKey(laneName))

@@ -63,9 +63,10 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {"speedgtucolorer", "accelerationgtucolorer", "lanechangeurgegtucolorer"})
+@XmlType(name = "", propOrder = { "speedgtucolorer", "accelerationgtucolorer", "lanechangeurgegtucolorer" })
 @XmlRootElement(name = "GLOBAL")
-public class GLOBAL {
+public class GLOBAL
+{
 
     @XmlElement(name = "SPEEDGTUCOLORER")
     protected GLOBAL.SPEEDGTUCOLORER speedgtucolorer;
@@ -84,7 +85,8 @@ public class GLOBAL {
      * Gets the value of the speedgtucolorer property.
      * @return possible object is {@link GLOBAL.SPEEDGTUCOLORER }
      */
-    public GLOBAL.SPEEDGTUCOLORER getSPEEDGTUCOLORER() {
+    public GLOBAL.SPEEDGTUCOLORER getSPEEDGTUCOLORER()
+    {
         return speedgtucolorer;
     }
 
@@ -92,7 +94,8 @@ public class GLOBAL {
      * Sets the value of the speedgtucolorer property.
      * @param value allowed object is {@link GLOBAL.SPEEDGTUCOLORER }
      */
-    public void setSPEEDGTUCOLORER(GLOBAL.SPEEDGTUCOLORER value) {
+    public void setSPEEDGTUCOLORER(GLOBAL.SPEEDGTUCOLORER value)
+    {
         this.speedgtucolorer = value;
     }
 
@@ -100,7 +103,8 @@ public class GLOBAL {
      * Gets the value of the accelerationgtucolorer property.
      * @return possible object is {@link GLOBAL.ACCELERATIONGTUCOLORER }
      */
-    public GLOBAL.ACCELERATIONGTUCOLORER getACCELERATIONGTUCOLORER() {
+    public GLOBAL.ACCELERATIONGTUCOLORER getACCELERATIONGTUCOLORER()
+    {
         return accelerationgtucolorer;
     }
 
@@ -108,7 +112,8 @@ public class GLOBAL {
      * Sets the value of the accelerationgtucolorer property.
      * @param value allowed object is {@link GLOBAL.ACCELERATIONGTUCOLORER }
      */
-    public void setACCELERATIONGTUCOLORER(GLOBAL.ACCELERATIONGTUCOLORER value) {
+    public void setACCELERATIONGTUCOLORER(GLOBAL.ACCELERATIONGTUCOLORER value)
+    {
         this.accelerationgtucolorer = value;
     }
 
@@ -116,7 +121,8 @@ public class GLOBAL {
      * Gets the value of the lanechangeurgegtucolorer property.
      * @return possible object is {@link GLOBAL.LANECHANGEURGEGTUCOLORER }
      */
-    public GLOBAL.LANECHANGEURGEGTUCOLORER getLANECHANGEURGEGTUCOLORER() {
+    public GLOBAL.LANECHANGEURGEGTUCOLORER getLANECHANGEURGEGTUCOLORER()
+    {
         return lanechangeurgegtucolorer;
     }
 
@@ -124,7 +130,8 @@ public class GLOBAL {
      * Sets the value of the lanechangeurgegtucolorer property.
      * @param value allowed object is {@link GLOBAL.LANECHANGEURGEGTUCOLORER }
      */
-    public void setLANECHANGEURGEGTUCOLORER(GLOBAL.LANECHANGEURGEGTUCOLORER value) {
+    public void setLANECHANGEURGEGTUCOLORER(GLOBAL.LANECHANGEURGEGTUCOLORER value)
+    {
         this.lanechangeurgegtucolorer = value;
     }
 
@@ -132,7 +139,8 @@ public class GLOBAL {
      * Gets the value of the base property.
      * @return possible object is {@link String }
      */
-    public String getBase() {
+    public String getBase()
+    {
         return base;
     }
 
@@ -140,7 +148,8 @@ public class GLOBAL {
      * Sets the value of the base property.
      * @param value allowed object is {@link String }
      */
-    public void setBase(String value) {
+    public void setBase(String value)
+    {
         this.base = value;
     }
 
@@ -163,7 +172,8 @@ public class GLOBAL {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class ACCELERATIONGTUCOLORER {
+    public static class ACCELERATIONGTUCOLORER
+    {
 
         @XmlAttribute(name = "MAXDECELERATION", required = true)
         protected String maxdeceleration;
@@ -175,7 +185,8 @@ public class GLOBAL {
          * Gets the value of the maxdeceleration property.
          * @return possible object is {@link String }
          */
-        public String getMAXDECELERATION() {
+        public String getMAXDECELERATION()
+        {
             return maxdeceleration;
         }
 
@@ -183,7 +194,8 @@ public class GLOBAL {
          * Sets the value of the maxdeceleration property.
          * @param value allowed object is {@link String }
          */
-        public void setMAXDECELERATION(String value) {
+        public void setMAXDECELERATION(String value)
+        {
             this.maxdeceleration = value;
         }
 
@@ -191,7 +203,8 @@ public class GLOBAL {
          * Gets the value of the maxacceleration property.
          * @return possible object is {@link String }
          */
-        public String getMAXACCELERATION() {
+        public String getMAXACCELERATION()
+        {
             return maxacceleration;
         }
 
@@ -199,7 +212,8 @@ public class GLOBAL {
          * Sets the value of the maxacceleration property.
          * @param value allowed object is {@link String }
          */
-        public void setMAXACCELERATION(String value) {
+        public void setMAXACCELERATION(String value)
+        {
             this.maxacceleration = value;
         }
 
@@ -224,7 +238,8 @@ public class GLOBAL {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class LANECHANGEURGEGTUCOLORER {
+    public static class LANECHANGEURGEGTUCOLORER
+    {
 
         @XmlAttribute(name = "MINLANECHANGEDISTANCE", required = true)
         protected String minlanechangedistance;
@@ -236,7 +251,8 @@ public class GLOBAL {
          * Gets the value of the minlanechangedistance property.
          * @return possible object is {@link String }
          */
-        public String getMINLANECHANGEDISTANCE() {
+        public String getMINLANECHANGEDISTANCE()
+        {
             return minlanechangedistance;
         }
 
@@ -244,7 +260,8 @@ public class GLOBAL {
          * Sets the value of the minlanechangedistance property.
          * @param value allowed object is {@link String }
          */
-        public void setMINLANECHANGEDISTANCE(String value) {
+        public void setMINLANECHANGEDISTANCE(String value)
+        {
             this.minlanechangedistance = value;
         }
 
@@ -252,7 +269,8 @@ public class GLOBAL {
          * Gets the value of the horizon property.
          * @return possible object is {@link String }
          */
-        public String getHORIZON() {
+        public String getHORIZON()
+        {
             return horizon;
         }
 
@@ -260,7 +278,8 @@ public class GLOBAL {
          * Sets the value of the horizon property.
          * @param value allowed object is {@link String }
          */
-        public void setHORIZON(String value) {
+        public void setHORIZON(String value)
+        {
             this.horizon = value;
         }
 
@@ -284,7 +303,8 @@ public class GLOBAL {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class SPEEDGTUCOLORER {
+    public static class SPEEDGTUCOLORER
+    {
 
         @XmlAttribute(name = "MAXSPEED", required = true)
         protected String maxspeed;
@@ -293,7 +313,8 @@ public class GLOBAL {
          * Gets the value of the maxspeed property.
          * @return possible object is {@link String }
          */
-        public String getMAXSPEED() {
+        public String getMAXSPEED()
+        {
             return maxspeed;
         }
 
@@ -301,7 +322,8 @@ public class GLOBAL {
          * Sets the value of the maxspeed property.
          * @param value allowed object is {@link String }
          */
-        public void setMAXSPEED(String value) {
+        public void setMAXSPEED(String value)
+        {
             this.maxspeed = value;
         }
 

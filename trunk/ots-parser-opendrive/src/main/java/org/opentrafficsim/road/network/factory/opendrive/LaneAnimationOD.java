@@ -36,7 +36,7 @@ public class LaneAnimationOD extends Renderable2D implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20141017L;
-    
+
     /** Color of the lane. */
     private final Color color;
 
@@ -48,7 +48,7 @@ public class LaneAnimationOD extends Renderable2D implements Serializable
      * @throws RemoteException on communication failure
      */
     public LaneAnimationOD(final Lane source, final OTSSimulatorInterface simulator, final Color color)
-        throws NamingException, RemoteException
+            throws NamingException, RemoteException
     {
         super(source, simulator);
         this.color = color;
@@ -62,7 +62,7 @@ public class LaneAnimationOD extends Renderable2D implements Serializable
      * @param line OTSLine3D; the coordinates of the center line of the stripe
      */
     public static void paintLine(final Graphics2D graphics, final Color color, final DirectedPoint referencePoint,
-        final OTSLine3D line)
+            final OTSLine3D line)
     {
         graphics.setColor(color);
         graphics.setStroke(new BasicStroke(0.1f)); // width of the stripe is 0.1m
@@ -92,8 +92,8 @@ public class LaneAnimationOD extends Renderable2D implements Serializable
      * @param fraction double; the relative position on the lane
      * @param dir LongitudinalDirectionality; the driving direction of the lane
      */
-    private static void paintArrow(final Graphics2D graphics, final Color color, final DirectedPoint ref,
-        final OTSLine3D line, final double fraction, final LongitudinalDirectionality dir)
+    private static void paintArrow(final Graphics2D graphics, final Color color, final DirectedPoint ref, final OTSLine3D line,
+            final double fraction, final LongitudinalDirectionality dir)
     {
         try
         {
@@ -104,8 +104,7 @@ public class LaneAnimationOD extends Renderable2D implements Serializable
             graphics.setStroke(new BasicStroke(0.2f));
             Path2D.Double path = new Path2D.Double();
             path.moveTo(start.x - ref.x, -start.y + ref.y);
-            Point2d end =
-                new Point2d(start.x + len * Math.cos(start.getRotZ()), start.y + len * Math.sin(start.getRotZ()));
+            Point2d end = new Point2d(start.x + len * Math.cos(start.getRotZ()), start.y + len * Math.sin(start.getRotZ()));
             path.lineTo(end.x - ref.x, -end.y + ref.y);
             graphics.draw(path);
 
@@ -113,14 +112,12 @@ public class LaneAnimationOD extends Renderable2D implements Serializable
             {
                 path = new Path2D.Double();
                 path.moveTo(end.x - ref.x, -end.y + ref.y);
-                Point2d ar1 =
-                    new Point2d(end.x + ar * Math.cos(start.getRotZ() + 0.75 * Math.PI), end.y + ar
-                        * Math.sin(start.getRotZ() + 0.75 * Math.PI));
+                Point2d ar1 = new Point2d(end.x + ar * Math.cos(start.getRotZ() + 0.75 * Math.PI),
+                        end.y + ar * Math.sin(start.getRotZ() + 0.75 * Math.PI));
                 path.lineTo(ar1.x - ref.x, -ar1.y + ref.y);
                 path.moveTo(end.x - ref.x, -end.y + ref.y);
-                Point2d ar2 =
-                    new Point2d(end.x + ar * Math.cos(start.getRotZ() + 1.25 * Math.PI), end.y + ar
-                        * Math.sin(start.getRotZ() + 1.25 * Math.PI));
+                Point2d ar2 = new Point2d(end.x + ar * Math.cos(start.getRotZ() + 1.25 * Math.PI),
+                        end.y + ar * Math.sin(start.getRotZ() + 1.25 * Math.PI));
                 path.lineTo(ar2.x - ref.x, -ar2.y + ref.y);
                 graphics.draw(path);
             }
@@ -129,14 +126,12 @@ public class LaneAnimationOD extends Renderable2D implements Serializable
             {
                 path = new Path2D.Double();
                 path.moveTo(start.x - ref.x, -start.y + ref.y);
-                Point2d ar1 =
-                    new Point2d(start.x + ar * Math.cos(start.getRotZ() + 0.25 * Math.PI), start.y + ar
-                        * Math.sin(start.getRotZ() + 0.25 * Math.PI));
+                Point2d ar1 = new Point2d(start.x + ar * Math.cos(start.getRotZ() + 0.25 * Math.PI),
+                        start.y + ar * Math.sin(start.getRotZ() + 0.25 * Math.PI));
                 path.lineTo(ar1.x - ref.x, -ar1.y + ref.y);
                 path.moveTo(start.x - ref.x, -start.y + ref.y);
-                Point2d ar2 =
-                    new Point2d(start.x + ar * Math.cos(start.getRotZ() - 0.25 * Math.PI), start.y + ar
-                        * Math.sin(start.getRotZ() - 0.25 * Math.PI));
+                Point2d ar2 = new Point2d(start.x + ar * Math.cos(start.getRotZ() - 0.25 * Math.PI),
+                        start.y + ar * Math.sin(start.getRotZ() - 0.25 * Math.PI));
                 path.lineTo(ar2.x - ref.x, -ar2.y + ref.y);
                 graphics.draw(path);
             }
@@ -156,12 +151,9 @@ public class LaneAnimationOD extends Renderable2D implements Serializable
         PaintPolygons.paintMultiPolygon(graphics, this.color, lane.getLocation(), lane.getContour(), true);
         // paintLine(graphics, Color.yellow, lane.getLocation(), lane.getCenterLine());
         paintLine(graphics, Color.white, lane.getLocation(), lane.getContour());
-        paintArrow(graphics, Color.yellow, lane.getLocation(), lane.getCenterLine(), 0.25,
-            lane.getDirectionality(GTUType.ALL));
-        paintArrow(graphics, Color.green, lane.getLocation(), lane.getCenterLine(), 0.50,
-            lane.getDirectionality(GTUType.ALL));
-        paintArrow(graphics, Color.blue, lane.getLocation(), lane.getCenterLine(), 0.75,
-            lane.getDirectionality(GTUType.ALL));
+        paintArrow(graphics, Color.yellow, lane.getLocation(), lane.getCenterLine(), 0.25, lane.getDirectionality(GTUType.ALL));
+        paintArrow(graphics, Color.green, lane.getLocation(), lane.getCenterLine(), 0.50, lane.getDirectionality(GTUType.ALL));
+        paintArrow(graphics, Color.blue, lane.getLocation(), lane.getCenterLine(), 0.75, lane.getDirectionality(GTUType.ALL));
     }
 
     /** {@inheritDoc} */

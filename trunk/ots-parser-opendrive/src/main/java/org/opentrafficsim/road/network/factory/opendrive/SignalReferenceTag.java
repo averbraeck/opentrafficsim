@@ -49,7 +49,7 @@ class SignalReferenceTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static SignalReferenceTag parseSignalReference(final Node node, final OpenDriveNetworkLaneParser parser)
-        throws SAXException, NetworkException
+            throws SAXException, NetworkException
     {
         SignalReferenceTag signaReferencelTag = new SignalReferenceTag();
         NamedNodeMap attributes = node.getAttributes();

@@ -10,7 +10,8 @@ import com.vividsolutions.jts.geom.Geometry;
 /**
  * @author P070518
  */
-public class NWBDrivingLane extends AbstractNWBRoadElement {
+public class NWBDrivingLane extends AbstractNWBRoadElement
+{
 
     // number of driving lanes at start of link
     private Integer startNumberOfLanes;
@@ -28,27 +29,31 @@ public class NWBDrivingLane extends AbstractNWBRoadElement {
      * @param roadId
      * @param beginDistance
      * @param endDistance
-     * @param startNumberOfLanes 
-     * @param endNumberOfLanes 
+     * @param startNumberOfLanes
+     * @param endNumberOfLanes
      * @param sideCode
      */
     public NWBDrivingLane(Geometry myGeom, OTSNode startNode, OTSNode endNode, String roadId, Double beginDistance,
-        Double endDistance, Integer startNumberOfLanes, Integer endNumberOfLanes, String sideCode) {
+            Double endDistance, Integer startNumberOfLanes, Integer endNumberOfLanes, String sideCode)
+    {
         super(myGeom, startNode, endNode, roadId, beginDistance, endDistance);
         this.startNumberOfLanes = startNumberOfLanes;
         this.endNumberOfLanes = endNumberOfLanes;
         this.sideCode = sideCode;
     }
 
-    public Integer getStartNumberOfLanes() {
+    public Integer getStartNumberOfLanes()
+    {
         return startNumberOfLanes;
     }
 
-    public Integer getEndNumberOfLanes() {
+    public Integer getEndNumberOfLanes()
+    {
         return endNumberOfLanes;
     }
 
-    public String getSideCode() {
+    public String getSideCode()
+    {
         return sideCode;
     }
 

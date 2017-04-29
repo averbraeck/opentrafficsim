@@ -23,7 +23,7 @@ class LateralProfileTag implements Serializable
 
     /** */
     private static final long serialVersionUID = 20150723L;
-    
+
     /** GeometryTags */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<SuperElevationTag> superElevationTags = new ArrayList<SuperElevationTag>();
@@ -37,8 +37,8 @@ class LateralProfileTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseElevationProfile(final NodeList nodeList, final OpenDriveNetworkLaneParser parser,
-        final RoadTag roadTag) throws SAXException, NetworkException
+    static void parseElevationProfile(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final RoadTag roadTag)
+            throws SAXException, NetworkException
     {
         for (Node node0 : XMLParser.getNodes(nodeList, "lateralProfile"))
         {

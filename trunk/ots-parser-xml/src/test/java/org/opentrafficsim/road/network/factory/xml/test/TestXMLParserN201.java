@@ -10,7 +10,7 @@ import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
@@ -49,7 +49,7 @@ public class TestXMLParserN201 extends AbstractWrappableAnimation
 {
     /** */
     private static final long serialVersionUID = 1L;
-    
+
     /** */
     private TestXMLModelN201 model;
 
@@ -69,8 +69,8 @@ public class TestXMLParserN201 extends AbstractWrappableAnimation
                 {
                     TestXMLParserN201 xmlParser = new TestXMLParserN201();
                     // 1 hour simulation run for testing
-                    xmlParser.buildAnimator(Time.ZERO, Duration.ZERO,
-                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    xmlParser.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
+                            new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -153,7 +153,7 @@ public class TestXMLParserN201 extends AbstractWrappableAnimation
 
         /** the network. */
         private OTSNetwork network;
-        
+
         /** the GIS map. */
         private GisRenderable2D gisMap;
 

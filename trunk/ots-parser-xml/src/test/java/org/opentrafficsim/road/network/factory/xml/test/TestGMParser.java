@@ -14,6 +14,7 @@ import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -95,8 +96,8 @@ public class TestGMParser extends AbstractWrappableAnimation
                 {
                     TestGMParser xmlModel = new TestGMParser();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(Time.ZERO, Duration.ZERO,
-                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    xmlModel.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
+                            new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -199,8 +200,8 @@ public class TestGMParser extends AbstractWrappableAnimation
             StreamInterface stream = new MersenneTwister(1);
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist =
                     new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 0.0), SpeedUnit.METER_PER_SECOND);
-            ContinuousDistDoubleScalar.Rel<Duration, TimeUnit> interarrivelTimeDist =
-                    new ContinuousDistDoubleScalar.Rel<>(new DistExponential(stream, 7.0), TimeUnit.SECOND);
+            ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> interarrivelTimeDist =
+                    new ContinuousDistDoubleScalar.Rel<>(new DistExponential(stream, 7.0), DurationUnit.SECOND);
             ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist =
                     new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 4.5), LengthUnit.METER);
             ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDist =
@@ -209,7 +210,7 @@ public class TestGMParser extends AbstractWrappableAnimation
                     new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 140.0), SpeedUnit.KM_PER_HOUR);
             int maxGTUs = Integer.MAX_VALUE;
             Time startTime = Time.ZERO;
-            Time endTime = new Time(1E24, TimeUnit.HOUR);
+            Time endTime = new Time(1E24, TimeUnit.BASE_HOUR);
             GTUColorer gtuColorer = new SwitchableGTUColorer(0, new IDGTUColorer(),
                     new SpeedGTUColorer(new Speed(100.0, SpeedUnit.KM_PER_HOUR)),
                     new AccelerationGTUColorer(new Acceleration(-1.0, AccelerationUnit.METER_PER_SECOND_2),

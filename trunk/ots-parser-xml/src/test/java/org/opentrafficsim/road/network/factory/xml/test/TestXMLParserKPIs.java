@@ -11,6 +11,7 @@ import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -83,8 +84,8 @@ public class TestXMLParserKPIs extends AbstractWrappableAnimation
                 {
                     TestXMLParserKPIs xmlParserKPIs = new TestXMLParserKPIs();
                     // 1 hour simulation run for testing
-                    xmlParserKPIs.buildAnimator(Time.ZERO, Duration.ZERO,
-                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    xmlParserKPIs.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
+                            new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -235,7 +236,7 @@ public class TestXMLParserKPIs extends AbstractWrappableAnimation
 
     public void publishKpis(double time, final OTSDEVSSimulatorInterface simulator, final Query query)
     {
-        Time t = new Time(time, TimeUnit.SI);
+        Time t = new Time(time, TimeUnit.BASE_SECOND);
         List<TrajectoryGroup> groups = query.getTrajectoryGroups(t);
         Length tdist = this.totalTravelDistance.getValue(query, t, groups);
         Duration ttt = this.totalTravelTime.getValue(query, t, groups);
@@ -259,7 +260,7 @@ public class TestXMLParserKPIs extends AbstractWrappableAnimation
     {
         try
         {
-            simulator.scheduleEventAbs(new Time(time, TimeUnit.SI), this, this, "publishKpis",
+            simulator.scheduleEventAbs(new Time(time, TimeUnit.BASE_SECOND), this, this, "publishKpis",
                     new Object[] { time, simulator, query });
         }
         catch (SimRuntimeException exception)

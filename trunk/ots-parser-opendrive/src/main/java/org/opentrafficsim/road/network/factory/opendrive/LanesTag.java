@@ -25,7 +25,7 @@ class LanesTag implements Serializable
 
     /** */
     private static final long serialVersionUID = 20150723L;
-    
+
     /** GeometryTags */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<LaneSectionTag> laneSectionTags = new ArrayList<LaneSectionTag>();
@@ -40,7 +40,7 @@ class LanesTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseLanes(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final RoadTag roadTag)
-        throws SAXException, NetworkException
+            throws SAXException, NetworkException
     {
         int laneSectionCount = 0;
         LanesTag lanesTag = new LanesTag();

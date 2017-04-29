@@ -10,7 +10,8 @@ import com.vividsolutions.jts.geom.Geometry;
 /**
  * @author P070518
  */
-public class NWBRoadElement extends AbstractNWBRoadElement {
+public class NWBRoadElement extends AbstractNWBRoadElement
+{
 
     // the geometry
     // junctionStart
@@ -47,8 +48,9 @@ public class NWBRoadElement extends AbstractNWBRoadElement {
      * @param endKM
      */
     public NWBRoadElement(Geometry myGeom, OTSNode startNode, OTSNode endNode, String roadId, Double beginDistance,
-        Double endDistance, String junctionIdBegin, String junctionIdEnd, String adminDirection, String drivingDirection,
-        Double beginKM, Double endKM) {
+            Double endDistance, String junctionIdBegin, String junctionIdEnd, String adminDirection, String drivingDirection,
+            Double beginKM, Double endKM)
+    {
         super(myGeom, startNode, endNode, roadId, beginDistance, endDistance);
         this.junctionIdBegin = junctionIdBegin;
         this.junctionIdEnd = junctionIdEnd;
@@ -58,27 +60,33 @@ public class NWBRoadElement extends AbstractNWBRoadElement {
         this.endKM = endKM;
     }
 
-    public String getJunctionIdBegin() {
+    public String getJunctionIdBegin()
+    {
         return junctionIdBegin;
     }
 
-    public String getJunctionIdEnd() {
+    public String getJunctionIdEnd()
+    {
         return junctionIdEnd;
     }
 
-    public String getAdminDirection() {
+    public String getAdminDirection()
+    {
         return adminDirection;
     }
 
-    public String getDrivingDirection() {
+    public String getDrivingDirection()
+    {
         return drivingDirection;
     }
 
-    public Double getBeginKM() {
+    public Double getBeginKM()
+    {
         return beginKM;
     }
 
-    public Double getEndKM() {
+    public Double getEndKM()
+    {
         return endKM;
     }
 

@@ -42,7 +42,7 @@ class SignalsTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseSignals(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final RoadTag roadTag)
-        throws SAXException, NetworkException
+            throws SAXException, NetworkException
     {
         SignalsTag signalsTag = new SignalsTag();
         for (Node node0 : XMLParser.getNodes(nodeList, "signals"))

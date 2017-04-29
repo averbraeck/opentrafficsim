@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
@@ -24,6 +22,8 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * <p>
@@ -89,7 +89,7 @@ class FillTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseFill(final Node node, final XmlNetworkLaneParser parser, final LinkTag linkTag)
-        throws SAXException, NetworkException
+            throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         FillTag fillTag = new FillTag();
@@ -102,10 +102,10 @@ class FillTag implements Serializable
         CrossSectionElementTag cseTag = linkTag.roadLayoutTag.cseTags.get(laneName);
         if (cseTag == null)
             throw new NetworkException("FILL: LANE " + laneName + " not found in elements of link " + linkTag.name
-                + " - roadtype " + linkTag.roadLayoutTag.name);
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
         if (cseTag.elementType != ElementType.LANE)
             throw new NetworkException("FILL: LANE " + laneName + " not a real GTU lane for link " + linkTag.name
-                + " - roadtype " + linkTag.roadLayoutTag.name);
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
         if (linkTag.generatorTags.containsKey(laneName))
             throw new SAXException("FILL for LANE with NAME " + laneName + " defined twice");
         fillTag.laneName = laneName;
@@ -114,8 +114,8 @@ class FillTag implements Serializable
         {
             String gtuName = attributes.getNamedItem("GTU").getNodeValue().trim();
             if (!parser.gtuTags.containsKey(gtuName))
-                throw new NetworkException("FILL: LANE " + laneName + " GTU " + gtuName + " in link " + linkTag.name
-                    + " not defined");
+                throw new NetworkException(
+                        "FILL: LANE " + laneName + " GTU " + gtuName + " in link " + linkTag.name + " not defined");
             fillTag.gtuTag = parser.gtuTags.get(gtuName);
         }
 
@@ -123,18 +123,18 @@ class FillTag implements Serializable
         {
             String gtuMixName = attributes.getNamedItem("GTUMIX").getNodeValue().trim();
             if (!parser.gtuMixTags.containsKey(gtuMixName))
-                throw new NetworkException("FILL: LANE " + laneName + " GTUMIX " + gtuMixName + " in link "
-                    + linkTag.name + " not defined");
+                throw new NetworkException(
+                        "FILL: LANE " + laneName + " GTUMIX " + gtuMixName + " in link " + linkTag.name + " not defined");
             fillTag.gtuMixTag = parser.gtuMixTags.get(gtuMixName);
         }
 
         if (fillTag.gtuTag == null && fillTag.gtuMixTag == null)
-            throw new SAXException("FILL: missing attribute GTU or GTUMIX for Lane with NAME " + laneName + " of link "
-                + linkTag.name);
+            throw new SAXException(
+                    "FILL: missing attribute GTU or GTUMIX for Lane with NAME " + laneName + " of link " + linkTag.name);
 
         if (fillTag.gtuTag != null && fillTag.gtuMixTag != null)
-            throw new SAXException("FILL: both attribute GTU and GTUMIX defined for Lane with NAME " + laneName
-                + " of link " + linkTag.name);
+            throw new SAXException(
+                    "FILL: both attribute GTU and GTUMIX defined for Lane with NAME " + laneName + " of link " + linkTag.name);
 
         Node distance = attributes.getNamedItem("DISTANCE");
         if (distance == null)
@@ -155,8 +155,8 @@ class FillTag implements Serializable
         {
             String routeName = attributes.getNamedItem("ROUTE").getNodeValue().trim();
             if (!parser.routeTags.containsKey(routeName))
-                throw new NetworkException("FILL: LANE " + laneName + " ROUTE " + routeName + " in link "
-                    + linkTag.name + " not defined");
+                throw new NetworkException(
+                        "FILL: LANE " + laneName + " ROUTE " + routeName + " in link " + linkTag.name + " not defined");
             fillTag.routeTag = parser.routeTags.get(routeName);
             numberRouteTags++;
         }
@@ -165,8 +165,8 @@ class FillTag implements Serializable
         {
             String routeMixName = attributes.getNamedItem("ROUTEMIX").getNodeValue().trim();
             if (!parser.routeMixTags.containsKey(routeMixName))
-                throw new NetworkException("FILL: LANE " + laneName + " ROUTEMIX " + routeMixName + " in link "
-                    + linkTag.name + " not defined");
+                throw new NetworkException(
+                        "FILL: LANE " + laneName + " ROUTEMIX " + routeMixName + " in link " + linkTag.name + " not defined");
             fillTag.routeMixTag = parser.routeMixTags.get(routeMixName);
             numberRouteTags++;
         }
@@ -175,8 +175,8 @@ class FillTag implements Serializable
         {
             String shortestRouteName = attributes.getNamedItem("SHORTESTROUTE").getNodeValue().trim();
             if (!parser.shortestRouteTags.containsKey(shortestRouteName))
-                throw new NetworkException("FILL: LANE " + laneName + " SHORTESTROUTE " + shortestRouteName
-                    + " in link " + linkTag.name + " not defined");
+                throw new NetworkException("FILL: LANE " + laneName + " SHORTESTROUTE " + shortestRouteName + " in link "
+                        + linkTag.name + " not defined");
             fillTag.shortestRouteTag = parser.shortestRouteTags.get(shortestRouteName);
             numberRouteTags++;
         }
@@ -185,15 +185,15 @@ class FillTag implements Serializable
         {
             String shortestRouteMixName = attributes.getNamedItem("SHORTESTROUTEMIX").getNodeValue().trim();
             if (!parser.shortestRouteMixTags.containsKey(shortestRouteMixName))
-                throw new NetworkException("FILL: LANE " + laneName + " SHORTESTROUTEMIX " + shortestRouteMixName
-                    + " in link " + linkTag.name + " not defined");
+                throw new NetworkException("FILL: LANE " + laneName + " SHORTESTROUTEMIX " + shortestRouteMixName + " in link "
+                        + linkTag.name + " not defined");
             fillTag.shortestRouteMixTag = parser.shortestRouteMixTags.get(shortestRouteMixName);
             numberRouteTags++;
         }
 
         if (numberRouteTags > 1)
-            throw new SAXException("FILL: multiple ROUTE tags defined for Lane with NAME " + laneName + " of link "
-                + linkTag.name);
+            throw new SAXException(
+                    "FILL: multiple ROUTE tags defined for Lane with NAME " + laneName + " of link " + linkTag.name);
 
         // TODO GTUColorer
 
@@ -210,7 +210,7 @@ class FillTag implements Serializable
      * @throws NetworkException when route generator cannot be instantiated
      */
     static void makeFill(final FillTag fillTag, final XmlNetworkLaneParser parser, final LinkTag linkTag,
-        final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, NetworkException
+            final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, NetworkException
     {
         Lane lane = linkTag.lanes.get(fillTag.laneName);
         Class<?> gtuClass = LaneBasedIndividualGTU.class;
@@ -219,8 +219,7 @@ class FillTag implements Serializable
         {
             nodeList.add(parser.nodeTags.get(nodeTag.name).node);
         }
-        RouteGenerator rg =
-            new FixedRouteGenerator(new CompleteRoute("fixed route", GTUType.ALL, nodeList));
+        RouteGenerator rg = new FixedRouteGenerator(new CompleteRoute("fixed route", GTUType.ALL, nodeList));
 
         // TODO create a FILL
 

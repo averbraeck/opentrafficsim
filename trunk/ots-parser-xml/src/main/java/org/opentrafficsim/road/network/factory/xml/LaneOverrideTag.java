@@ -55,7 +55,7 @@ class LaneOverrideTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseLaneOverride(final Node node, final XmlNetworkLaneParser parser, final LinkTag linkTag)
-        throws SAXException, NetworkException
+            throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         LaneOverrideTag laneOverrideTag = new LaneOverrideTag();
@@ -67,8 +67,8 @@ class LaneOverrideTag implements Serializable
             throw new NetworkException("LANEOVERRIDE: LANE " + name.trim() + " no ROADTYPE for link " + linkTag.name);
         CrossSectionElementTag laneTag = linkTag.roadLayoutTag.cseTags.get(name.trim());
         if (laneTag == null)
-            throw new NetworkException("LANEOVERRIDE: Lane with LANE " + name.trim()
-                + " not found in elements of link " + linkTag.name + " - roadtype " + linkTag.roadLayoutTag.name);
+            throw new NetworkException("LANEOVERRIDE: Lane with LANE " + name.trim() + " not found in elements of link "
+                    + linkTag.name + " - roadtype " + linkTag.roadLayoutTag.name);
         if (linkTag.laneOverrideTags.containsKey(name))
             throw new SAXException("LANEOVERRIDE: LANE OVERRIDE with LANE " + name + " defined twice");
 
@@ -76,16 +76,14 @@ class LaneOverrideTag implements Serializable
             laneOverrideTag.speed = SpeedUnits.parseSpeed(attributes.getNamedItem("SPEED").getNodeValue().trim());
 
         if (attributes.getNamedItem("DIRECTION") != null)
-            laneOverrideTag.direction =
-                Directions.parseDirection(attributes.getNamedItem("DIRECTION").getNodeValue().trim());
+            laneOverrideTag.direction = Directions.parseDirection(attributes.getNamedItem("DIRECTION").getNodeValue().trim());
 
         if (attributes.getNamedItem("COLOR") != null)
             laneOverrideTag.color = Colors.parseColor(attributes.getNamedItem("COLOR").getNodeValue().trim());
 
         Node oc = attributes.getNamedItem("OVERTAKING");
         if (oc != null)
-            laneOverrideTag.overtakingConditions =
-                LaneAttributes.parseOvertakingConditions(oc.getNodeValue().trim(), parser);
+            laneOverrideTag.overtakingConditions = LaneAttributes.parseOvertakingConditions(oc.getNodeValue().trim(), parser);
 
         linkTag.laneOverrideTags.put(name.trim(), laneOverrideTag);
 

@@ -10,7 +10,7 @@ import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
@@ -65,8 +65,8 @@ public class TestXMLParser extends AbstractWrappableAnimation
                 {
                     TestXMLParser xmlParser = new TestXMLParser();
                     // 1 hour simulation run for testing
-                    xmlParser.buildAnimator(Time.ZERO, Duration.ZERO,
-                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    xmlParser.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
+                            new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -111,7 +111,7 @@ public class TestXMLParser extends AbstractWrappableAnimation
         // return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
         // return new Rectangle2D.Double(104000, 482000, 5000, 5000);
         // return new Rectangle2D.Double(0, 0, 5000, 5000);
-            return new Rectangle2D.Double(162000, 384500, 2000, 2000);
+        return new Rectangle2D.Double(162000, 384500, 2000, 2000);
     }
 
     /** {@inheritDoc} */

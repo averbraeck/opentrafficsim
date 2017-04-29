@@ -23,7 +23,8 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ListGeneratorTag implements Serializable {
+class ListGeneratorTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150723L;
 
@@ -61,77 +62,95 @@ class ListGeneratorTag implements Serializable {
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseListGenerator(final Node node, final VissimNetworkLaneParser parser, final LinkTag linkTag)
-        throws SAXException, NetworkException {
+            throws SAXException, NetworkException
+    {
         NamedNodeMap attributes = node.getAttributes();
         ListGeneratorTag listGeneratorTag = new ListGeneratorTag();
 
-        if (attributes.getNamedItem("URI") == null) {
+        if (attributes.getNamedItem("URI") == null)
+        {
             throw new SAXException("LISTGENERATOR: missing attribute URI" + " for link " + linkTag.name);
         }
         String uriStr = attributes.getNamedItem("URI").getNodeValue().trim();
-        try {
+        try
+        {
             listGeneratorTag.uri = new URI(uriStr);
-        } catch (URISyntaxException exception) {
+        }
+        catch (URISyntaxException exception)
+        {
             throw new NetworkException("LISTGENERATOR: URI " + uriStr + " is not valid", exception);
         }
 
-        if (attributes.getNamedItem("LANE") == null) {
+        if (attributes.getNamedItem("LANE") == null)
+        {
             throw new SAXException("LISTGENERATOR: missing attribute LANE" + " for link " + linkTag.name);
         }
         String laneName = attributes.getNamedItem("LANE").getNodeValue().trim();
-        if (linkTag.roadLayoutTag == null) {
+        if (linkTag.roadLayoutTag == null)
+        {
             throw new NetworkException("LISTGENERATOR: LANE " + laneName + " no ROADTYPE for link " + linkTag.name);
         }
         CrossSectionElementTag cseTag = linkTag.roadLayoutTag.cseTags.get(laneName);
-        if (cseTag == null) {
+        if (cseTag == null)
+        {
             throw new NetworkException("LISTGENERATOR: LANE " + laneName + " not found in elements of link " + linkTag.name
-                + " - roadtype " + linkTag.roadLayoutTag.name);
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
         }
-        if (cseTag.elementType != ElementType.LANE) {
+        if (cseTag.elementType != ElementType.LANE)
+        {
             throw new NetworkException("LISTGENERATOR: LANE " + laneName + " not a real GTU lane for link " + linkTag.name
-                + " - roadtype " + linkTag.roadLayoutTag.name);
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
         }
-        if (linkTag.generatorTags.containsKey(laneName)) {
+        if (linkTag.generatorTags.containsKey(laneName))
+        {
             throw new SAXException("LISTGENERATOR for LANE with NAME " + laneName + " defined twice");
         }
 
         Node position = attributes.getNamedItem("POSITION");
-        if (position == null) {
+        if (position == null)
+        {
             throw new NetworkException("LISTGENERATOR: POSITION element not found in elements of link " + linkTag.name
-                + " - roadtype " + linkTag.roadLayoutTag.name);
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
         }
         listGeneratorTag.positionStr = position.getNodeValue().trim();
 
-        if (attributes.getNamedItem("GTU") != null) {
+        if (attributes.getNamedItem("GTU") != null)
+        {
             String gtuName = attributes.getNamedItem("GTU").getNodeValue().trim();
-            if (!parser.getGtuTags().containsKey(gtuName)) {
-                throw new NetworkException("LISTGENERATOR: LANE " + laneName + " GTU " + gtuName + " in link " + linkTag.name
-                    + " not defined");
+            if (!parser.getGtuTags().containsKey(gtuName))
+            {
+                throw new NetworkException(
+                        "LISTGENERATOR: LANE " + laneName + " GTU " + gtuName + " in link " + linkTag.name + " not defined");
             }
             listGeneratorTag.gtuTag = parser.getGtuTags().get(gtuName);
         }
 
-        if (attributes.getNamedItem("GTUMIX") != null) {
+        if (attributes.getNamedItem("GTUMIX") != null)
+        {
             String gtuMixName = attributes.getNamedItem("GTUMIX").getNodeValue().trim();
-            if (!parser.getGtuMixTags().containsKey(gtuMixName)) {
+            if (!parser.getGtuMixTags().containsKey(gtuMixName))
+            {
                 throw new NetworkException("LISTGENERATOR: LANE " + laneName + " GTUMIX " + gtuMixName + " in link "
-                    + linkTag.name + " not defined");
+                        + linkTag.name + " not defined");
             }
             listGeneratorTag.gtuMixTag = parser.getGtuMixTags().get(gtuMixName);
         }
 
-        if (listGeneratorTag.gtuTag == null && listGeneratorTag.gtuMixTag == null) {
-            throw new SAXException("LISTGENERATOR: missing attribute GTU or GTUMIX for Lane with NAME " + laneName
-                + " of link " + linkTag.name);
+        if (listGeneratorTag.gtuTag == null && listGeneratorTag.gtuMixTag == null)
+        {
+            throw new SAXException("LISTGENERATOR: missing attribute GTU or GTUMIX for Lane with NAME " + laneName + " of link "
+                    + linkTag.name);
         }
 
-        if (listGeneratorTag.gtuTag != null && listGeneratorTag.gtuMixTag != null) {
+        if (listGeneratorTag.gtuTag != null && listGeneratorTag.gtuMixTag != null)
+        {
             throw new SAXException("LISTGENERATOR: both attribute GTU and GTUMIX defined for Lane with NAME " + laneName
-                + " of link " + linkTag.name);
+                    + " of link " + linkTag.name);
         }
 
         Node initialSpeed = attributes.getNamedItem("INITIALSPEED");
-        if (initialSpeed == null) {
+        if (initialSpeed == null)
+        {
             throw new SAXException("LISTGENERATOR: missing attribute INITIALSPEED");
         }
         listGeneratorTag.initialSpeedDist = Distributions.parseSpeedDist(initialSpeed.getNodeValue());
@@ -143,9 +162,10 @@ class ListGeneratorTag implements Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public final String toString() {
+    public final String toString()
+    {
         return "ListGeneratorTag [uri=" + this.uri + ", positionStr=" + this.positionStr + ", gtuTag=" + this.gtuTag
-            + ", gtuMixTag=" + this.gtuMixTag + ", initialSpeedDist=" + this.initialSpeedDist + ", gtuColorer="
-            + this.gtuColorer + "]";
+                + ", gtuMixTag=" + this.gtuMixTag + ", initialSpeedDist=" + this.initialSpeedDist + ", gtuColorer="
+                + this.gtuColorer + "]";
     }
 }

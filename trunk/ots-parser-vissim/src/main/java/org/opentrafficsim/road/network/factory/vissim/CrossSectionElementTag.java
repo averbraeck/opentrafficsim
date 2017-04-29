@@ -96,20 +96,31 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class CrossSectionElementTag implements Serializable {
+class CrossSectionElementTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150723L;
 
     /** Element types. */
-    @SuppressWarnings({"javadoc", "checkstyle:javadocvariable"})
-    enum ElementType {
-        LANE, NOTRAFFICLANE, SHOULDER, STRIPE
+    @SuppressWarnings({ "javadoc", "checkstyle:javadocvariable" })
+    enum ElementType
+    {
+        LANE,
+        NOTRAFFICLANE,
+        SHOULDER,
+        STRIPE
     };
 
     /** Stripe types. */
-    @SuppressWarnings({"javadoc", "checkstyle:javadocvariable"})
-    enum StripeType {
-        SOLID, DASHED, BLOCKED, DOUBLE, LEFTONLY, RIGHTONLY
+    @SuppressWarnings({ "javadoc", "checkstyle:javadocvariable" })
+    enum StripeType
+    {
+        SOLID,
+        DASHED,
+        BLOCKED,
+        DOUBLE,
+        LEFTONLY,
+        RIGHTONLY
     };
 
     /** Type. */
@@ -163,108 +174,144 @@ class CrossSectionElementTag implements Serializable {
      */
     @SuppressWarnings("checkstyle:needbraces")
     static CrossSectionElementTag parseLane(final Node node, final VissimNetworkLaneParser parser,
-        final RoadLayoutTag roadLayoutTag) throws SAXException, NetworkException {
+            final RoadLayoutTag roadLayoutTag) throws SAXException, NetworkException
+    {
         NamedNodeMap attributes = node.getAttributes();
         CrossSectionElementTag cseTag = new CrossSectionElementTag();
 
-        if (attributes.getNamedItem("NAME") == null) {
+        if (attributes.getNamedItem("NAME") == null)
+        {
             throw new SAXException("ROADLAYOUT.LANE: missing attribute NAME for ROADLAYOUT " + roadLayoutTag.name);
         }
         String name = attributes.getNamedItem("NAME").getNodeValue().trim();
-        if (roadLayoutTag.cseTags.containsKey(name)) {
+        if (roadLayoutTag.cseTags.containsKey(name))
+        {
             throw new SAXException("ROADLAYOUT.LANE: LANE NAME " + name + " defined twice");
         }
         cseTag.name = name;
 
         cseTag.elementType = ElementType.LANE;
 
-        if (attributes.getNamedItem("LANETYPE") != null) {
+        if (attributes.getNamedItem("LANETYPE") != null)
+        {
             String laneTypeString = attributes.getNamedItem("LANETYPE").getNodeValue().trim();
-            if (!parser.getLaneTypeTags().containsKey(laneTypeString)) {
-                throw new SAXException("ROADLAYOUT.LANE: LANETYPE " + laneTypeString + " for lane " + roadLayoutTag.name
-                    + "." + name + " not defined");
+            if (!parser.getLaneTypeTags().containsKey(laneTypeString))
+            {
+                throw new SAXException("ROADLAYOUT.LANE: LANETYPE " + laneTypeString + " for lane " + roadLayoutTag.name + "."
+                        + name + " not defined");
             }
             cseTag.laneTypeTag = parser.getLaneTypeTags().get(laneTypeString);
         }
 
-        if (attributes.getNamedItem("OFFSET") != null) {
+        if (attributes.getNamedItem("OFFSET") != null)
+        {
             cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
-        } else {
+        }
+        else
+        {
             throw new SAXException("ROADLAYOUT.LANE: missing attribute OFFSET for lane " + roadLayoutTag.name + "." + name);
         }
 
-        if (attributes.getNamedItem("WIDTH") != null) {
+        if (attributes.getNamedItem("WIDTH") != null)
+        {
             cseTag.width = LengthUnits.parseLength(attributes.getNamedItem("WIDTH").getNodeValue());
-        } else if (roadLayoutTag.defaultLaneWidth != null) {
+        }
+        else if (roadLayoutTag.defaultLaneWidth != null)
+        {
             cseTag.width = roadLayoutTag.defaultLaneWidth;
-        } else if (roadLayoutTag.roadTypeTag.defaultLaneWidth != null) {
+        }
+        else if (roadLayoutTag.roadTypeTag.defaultLaneWidth != null)
+        {
             cseTag.width = roadLayoutTag.roadTypeTag.defaultLaneWidth;
-        } else {
+        }
+        else
+        {
             throw new SAXException("ROADLAYOUT.LANE: cannot determine WIDTH for lane: " + roadLayoutTag.name + "." + name);
         }
 
         List<Node> speedLimitList = XMLParser.getNodes(node.getChildNodes(), "SPEEDLIMIT");
-        if (speedLimitList.size() > 0) {
+        if (speedLimitList.size() > 0)
+        {
             cseTag.legalSpeedLimits = new LinkedHashMap<>();
         }
-        for (Node speedLimitNode : speedLimitList) {
+        for (Node speedLimitNode : speedLimitList)
+        {
             NamedNodeMap speedLimitAttributes = speedLimitNode.getAttributes();
 
             Node gtuTypeName = speedLimitAttributes.getNamedItem("GTUTYPE");
-            if (gtuTypeName == null) {
+            if (gtuTypeName == null)
+            {
                 throw new NetworkException("ROADLAYOUT.LANE.SPEEDLIMIT: No GTUTYPE defined");
             }
-            if (!parser.getGtuTypes().containsKey(gtuTypeName.getNodeValue().trim())) {
-                throw new NetworkException("ROADLAYOUT.LANE.SPEEDLIMIT: " + roadLayoutTag.name + " GTUTYPE " + gtuTypeName
-                    .getNodeValue().trim() + " not defined");
+            if (!parser.getGtuTypes().containsKey(gtuTypeName.getNodeValue().trim()))
+            {
+                throw new NetworkException("ROADLAYOUT.LANE.SPEEDLIMIT: " + roadLayoutTag.name + " GTUTYPE "
+                        + gtuTypeName.getNodeValue().trim() + " not defined");
             }
             GTUType gtuType = parser.getGtuTypes().get(gtuTypeName.getNodeValue().trim());
 
             Node speedNode = speedLimitAttributes.getNamedItem("LEGALSPEEDLIMIT");
-            if (speedNode == null) {
-                throw new NetworkException("ROADLAYOUT.LANE.SPEEDLIMIT: " + roadLayoutTag.name + " GTUTYPE " + gtuType
-                    .getId() + ": LEGALSPEEDLIMIT not defined");
+            if (speedNode == null)
+            {
+                throw new NetworkException("ROADLAYOUT.LANE.SPEEDLIMIT: " + roadLayoutTag.name + " GTUTYPE " + gtuType.getId()
+                        + ": LEGALSPEEDLIMIT not defined");
             }
             Speed speed = SpeedUnits.parseSpeed(speedNode.getNodeValue().trim());
 
             cseTag.legalSpeedLimits.put(gtuType, speed);
         }
 
-        if (cseTag.legalSpeedLimits == null) {
-            if (cseTag.laneTypeTag != null && cseTag.laneTypeTag.legalSpeedLimits != null) {
+        if (cseTag.legalSpeedLimits == null)
+        {
+            if (cseTag.laneTypeTag != null && cseTag.laneTypeTag.legalSpeedLimits != null)
+            {
                 cseTag.legalSpeedLimits = new LinkedHashMap<>(cseTag.laneTypeTag.legalSpeedLimits);
-            } else if (roadLayoutTag.legalSpeedLimits != null) {
+            }
+            else if (roadLayoutTag.legalSpeedLimits != null)
+            {
                 cseTag.legalSpeedLimits = new LinkedHashMap<>(roadLayoutTag.legalSpeedLimits);
-            } else if (roadLayoutTag.roadTypeTag.legalSpeedLimits != null) {
+            }
+            else if (roadLayoutTag.roadTypeTag.legalSpeedLimits != null)
+            {
                 cseTag.legalSpeedLimits = new LinkedHashMap<>(roadLayoutTag.roadTypeTag.legalSpeedLimits);
-            } else {
-                throw new SAXException("ROADLAYOUT.LANE: cannot determine SPEED for lane: " + roadLayoutTag.name + "."
-                    + name);
+            }
+            else
+            {
+                throw new SAXException("ROADLAYOUT.LANE: cannot determine SPEED for lane: " + roadLayoutTag.name + "." + name);
             }
         }
 
-        if (attributes.getNamedItem("DIRECTION") == null) {
-            throw new SAXException("ROADLAYOUT.LANE: missing attribute DIRECTION for lane " + roadLayoutTag.name + "."
-                + name);
+        if (attributes.getNamedItem("DIRECTION") == null)
+        {
+            throw new SAXException("ROADLAYOUT.LANE: missing attribute DIRECTION for lane " + roadLayoutTag.name + "." + name);
         }
         cseTag.direction = Directions.parseDirection(attributes.getNamedItem("DIRECTION").getNodeValue());
 
-        if (attributes.getNamedItem("COLOR") != null) {
+        if (attributes.getNamedItem("COLOR") != null)
+        {
             cseTag.color = Colors.parseColor(attributes.getNamedItem("COLOR").getNodeValue());
-        } else {
+        }
+        else
+        {
             cseTag.color = Color.LIGHT_GRAY;
         }
 
         Node oc = attributes.getNamedItem("OVERTAKING");
-        if (oc != null) {
+        if (oc != null)
+        {
             // cseTag.overtakingConditions = LaneAttributes.parseOvertakingConditions(oc.getNodeValue().trim(), parser);
-        } else if (roadLayoutTag.overtakingConditions != null) {
+        }
+        else if (roadLayoutTag.overtakingConditions != null)
+        {
             cseTag.overtakingConditions = roadLayoutTag.overtakingConditions;
-        } else if (roadLayoutTag.roadTypeTag.defaultOvertakingConditions != null) {
+        }
+        else if (roadLayoutTag.roadTypeTag.defaultOvertakingConditions != null)
+        {
             cseTag.overtakingConditions = roadLayoutTag.roadTypeTag.defaultOvertakingConditions;
-        } else {
-            throw new SAXException("ROADLAYOUT.LANE: cannot determine OVERTAKING for lane: " + roadLayoutTag.name + "."
-                + name);
+        }
+        else
+        {
+            throw new SAXException("ROADLAYOUT.LANE: cannot determine OVERTAKING for lane: " + roadLayoutTag.name + "." + name);
         }
 
         roadLayoutTag.cseTags.put(cseTag.name, cseTag);
@@ -282,43 +329,61 @@ class CrossSectionElementTag implements Serializable {
      */
     @SuppressWarnings("checkstyle:needbraces")
     static CrossSectionElementTag parseNoTrafficLane(final Node node, final VissimNetworkLaneParser parser,
-        final RoadLayoutTag roadLayoutTag) throws SAXException, NetworkException {
+            final RoadLayoutTag roadLayoutTag) throws SAXException, NetworkException
+    {
         NamedNodeMap attributes = node.getAttributes();
         CrossSectionElementTag cseTag = new CrossSectionElementTag();
 
         String name;
-        if (attributes.getNamedItem("NAME") != null) {
+        if (attributes.getNamedItem("NAME") != null)
+        {
             name = attributes.getNamedItem("NAME").getNodeValue().trim();
-        } else {
+        }
+        else
+        {
             name = UUID.randomUUID().toString();
         }
-        if (roadLayoutTag.cseTags.containsKey(name)) {
+        if (roadLayoutTag.cseTags.containsKey(name))
+        {
             throw new SAXException("ROADLAYOUT.NOTRAFFICLANE: LANE NAME " + name + " defined twice");
         }
         cseTag.name = name;
 
         cseTag.elementType = ElementType.NOTRAFFICLANE;
 
-        if (attributes.getNamedItem("OFFSET") != null) {
+        if (attributes.getNamedItem("OFFSET") != null)
+        {
             cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
-        } else {
+        }
+        else
+        {
             throw new SAXException("ROADLAYOUT.LANE: missing attribute OFFSET for lane " + roadLayoutTag.name + "." + name);
         }
 
-        if (attributes.getNamedItem("WIDTH") != null) {
+        if (attributes.getNamedItem("WIDTH") != null)
+        {
             cseTag.width = LengthUnits.parseLength(attributes.getNamedItem("WIDTH").getNodeValue());
-        } else if (roadLayoutTag.defaultLaneWidth != null) {
+        }
+        else if (roadLayoutTag.defaultLaneWidth != null)
+        {
             cseTag.width = roadLayoutTag.defaultLaneWidth;
-        } else if (roadLayoutTag.roadTypeTag.defaultLaneWidth != null) {
+        }
+        else if (roadLayoutTag.roadTypeTag.defaultLaneWidth != null)
+        {
             cseTag.width = roadLayoutTag.roadTypeTag.defaultLaneWidth;
-        } else {
-            throw new SAXException("ROADLAYOUT.NOTRAFFICLANE: cannot determine WIDTH for NOTRAFFICLANE: "
-                + roadLayoutTag.name + "." + name);
+        }
+        else
+        {
+            throw new SAXException(
+                    "ROADLAYOUT.NOTRAFFICLANE: cannot determine WIDTH for NOTRAFFICLANE: " + roadLayoutTag.name + "." + name);
         }
 
-        if (attributes.getNamedItem("COLOR") != null) {
+        if (attributes.getNamedItem("COLOR") != null)
+        {
             cseTag.color = Colors.parseColor(attributes.getNamedItem("COLOR").getNodeValue());
-        } else {
+        }
+        else
+        {
             cseTag.color = Color.GRAY;
         }
 
@@ -337,43 +402,61 @@ class CrossSectionElementTag implements Serializable {
      */
     @SuppressWarnings("checkstyle:needbraces")
     static CrossSectionElementTag parseShoulder(final Node node, final VissimNetworkLaneParser parser,
-        final RoadLayoutTag roadLayoutTag) throws SAXException, NetworkException {
+            final RoadLayoutTag roadLayoutTag) throws SAXException, NetworkException
+    {
         NamedNodeMap attributes = node.getAttributes();
         CrossSectionElementTag cseTag = new CrossSectionElementTag();
 
         String name;
-        if (attributes.getNamedItem("NAME") != null) {
+        if (attributes.getNamedItem("NAME") != null)
+        {
             name = attributes.getNamedItem("NAME").getNodeValue().trim();
-        } else {
+        }
+        else
+        {
             name = UUID.randomUUID().toString();
         }
-        if (roadLayoutTag.cseTags.containsKey(name)) {
+        if (roadLayoutTag.cseTags.containsKey(name))
+        {
             throw new SAXException("ROADLAYOUT.SHOULDER: LANE NAME " + name + " defined twice");
         }
         cseTag.name = name;
 
         cseTag.elementType = ElementType.SHOULDER;
 
-        if (attributes.getNamedItem("OFFSET") != null) {
+        if (attributes.getNamedItem("OFFSET") != null)
+        {
             cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
-        } else {
+        }
+        else
+        {
             throw new SAXException("ROADLAYOUT.LANE: missing attribute OFFSET for lane " + roadLayoutTag.name + "." + name);
         }
 
-        if (attributes.getNamedItem("WIDTH") != null) {
+        if (attributes.getNamedItem("WIDTH") != null)
+        {
             cseTag.width = LengthUnits.parseLength(attributes.getNamedItem("WIDTH").getNodeValue());
-        } else if (roadLayoutTag.defaultLaneWidth != null) {
+        }
+        else if (roadLayoutTag.defaultLaneWidth != null)
+        {
             cseTag.width = roadLayoutTag.defaultLaneWidth;
-        } else if (roadLayoutTag.roadTypeTag.defaultLaneWidth != null) {
+        }
+        else if (roadLayoutTag.roadTypeTag.defaultLaneWidth != null)
+        {
             cseTag.width = roadLayoutTag.roadTypeTag.defaultLaneWidth;
-        } else {
-            throw new SAXException("ROADLAYOUT.SHOULDER: cannot determine WIDTH for NOTRAFFICLANE: " + roadLayoutTag.name
-                + "." + name);
+        }
+        else
+        {
+            throw new SAXException(
+                    "ROADLAYOUT.SHOULDER: cannot determine WIDTH for NOTRAFFICLANE: " + roadLayoutTag.name + "." + name);
         }
 
-        if (attributes.getNamedItem("COLOR") != null) {
+        if (attributes.getNamedItem("COLOR") != null)
+        {
             cseTag.color = Colors.parseColor(attributes.getNamedItem("COLOR").getNodeValue());
-        } else {
+        }
+        else
+        {
             cseTag.color = Color.GREEN;
         }
 
@@ -392,42 +475,57 @@ class CrossSectionElementTag implements Serializable {
      */
     @SuppressWarnings("checkstyle:needbraces")
     static CrossSectionElementTag parseStripe(final Node node, final VissimNetworkLaneParser parser,
-        final RoadLayoutTag roadLayoutTag) throws SAXException, NetworkException {
+            final RoadLayoutTag roadLayoutTag) throws SAXException, NetworkException
+    {
         NamedNodeMap attributes = node.getAttributes();
         CrossSectionElementTag cseTag = new CrossSectionElementTag();
 
         String name;
-        if (attributes.getNamedItem("NAME") != null) {
+        if (attributes.getNamedItem("NAME") != null)
+        {
             name = attributes.getNamedItem("NAME").getNodeValue().trim();
-        } else {
+        }
+        else
+        {
             name = UUID.randomUUID().toString();
         }
-        if (roadLayoutTag.cseTags.containsKey(name)) {
+        if (roadLayoutTag.cseTags.containsKey(name))
+        {
             throw new SAXException("ROADLAYOUT.STRIPE: LANE NAME " + name + " defined twice");
         }
         cseTag.name = name;
 
         cseTag.elementType = ElementType.STRIPE;
 
-        if (attributes.getNamedItem("TYPE") != null) {
+        if (attributes.getNamedItem("TYPE") != null)
+        {
             cseTag.stripeType = parseStripeType(attributes.getNamedItem("TYPE").getNodeValue());
         }
 
-        if (attributes.getNamedItem("OFFSET") != null) {
+        if (attributes.getNamedItem("OFFSET") != null)
+        {
             cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
-        } else {
+        }
+        else
+        {
             throw new SAXException("ROADLAYOUT.LANE: missing attribute OFFSET for lane " + roadLayoutTag.name + "." + name);
         }
 
-        if (attributes.getNamedItem("WIDTH") != null) {
+        if (attributes.getNamedItem("WIDTH") != null)
+        {
             cseTag.width = LengthUnits.parseLength(attributes.getNamedItem("WIDTH").getNodeValue());
-        } else {
+        }
+        else
+        {
             cseTag.width = new Length(0.2, LengthUnit.METER);
         }
 
-        if (attributes.getNamedItem("COLOR") != null) {
+        if (attributes.getNamedItem("COLOR") != null)
+        {
             cseTag.color = Colors.parseColor(attributes.getNamedItem("COLOR").getNodeValue());
-        } else {
+        }
+        else
+        {
             cseTag.color = Color.WHITE;
         }
 
@@ -440,18 +538,30 @@ class CrossSectionElementTag implements Serializable {
      * @return the stripe type.
      * @throws NetworkException in case of unknown model.
      */
-    private static StripeType parseStripeType(final String stripeStr) throws NetworkException {
-        if (stripeStr.equals("SOLID")) {
+    private static StripeType parseStripeType(final String stripeStr) throws NetworkException
+    {
+        if (stripeStr.equals("SOLID"))
+        {
             return StripeType.SOLID;
-        } else if (stripeStr.equals("DASHED")) {
+        }
+        else if (stripeStr.equals("DASHED"))
+        {
             return StripeType.DASHED;
-        } else if (stripeStr.equals("BLOCKED")) {
+        }
+        else if (stripeStr.equals("BLOCKED"))
+        {
             return StripeType.BLOCKED;
-        } else if (stripeStr.equals("DOUBLE")) {
+        }
+        else if (stripeStr.equals("DOUBLE"))
+        {
             return StripeType.DOUBLE;
-        } else if (stripeStr.equals("LEFTONLY")) {
+        }
+        else if (stripeStr.equals("LEFTONLY"))
+        {
             return StripeType.LEFTONLY;
-        } else if (stripeStr.equals("RIGHTONLY")) {
+        }
+        else if (stripeStr.equals("RIGHTONLY"))
+        {
             return StripeType.RIGHTONLY;
         }
         throw new NetworkException("Unknown stripe type: " + stripeStr);
@@ -459,11 +569,12 @@ class CrossSectionElementTag implements Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "CrossSectionElementTag [elementType=" + this.elementType + ", name=" + this.name + ", laneTypeTag="
-            + this.laneTypeTag + ", stripeType=" + this.stripeType + ", offset=" + this.offset + ", legalSpeedLimits="
-            + this.legalSpeedLimits + ", width=" + this.width + ", direction=" + this.direction + ", color=" + this.color
-            + ", overtakingConditions=" + this.overtakingConditions + "]";
+                + this.laneTypeTag + ", stripeType=" + this.stripeType + ", offset=" + this.offset + ", legalSpeedLimits="
+                + this.legalSpeedLimits + ", width=" + this.width + ", direction=" + this.direction + ", color=" + this.color
+                + ", overtakingConditions=" + this.overtakingConditions + "]";
     }
 
 }

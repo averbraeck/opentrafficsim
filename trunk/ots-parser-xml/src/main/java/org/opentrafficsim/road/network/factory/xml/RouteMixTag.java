@@ -44,8 +44,7 @@ class RouteMixTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseRouteMix(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException,
-        NetworkException
+    static void parseRouteMix(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException, NetworkException
     {
         for (Node node : XMLParser.getNodes(nodeList, "ROUTEMIX"))
         {
@@ -80,7 +79,7 @@ class RouteMixTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     private static void parseRouteMixRouteTag(final Node routeNode, final XmlNetworkLaneParser parser,
-        final RouteMixTag routeMixTag) throws NetworkException, SAXException
+            final RouteMixTag routeMixTag) throws NetworkException, SAXException
     {
         NamedNodeMap attributes = routeNode.getAttributes();
 
@@ -88,14 +87,14 @@ class RouteMixTag implements Serializable
         if (routeName == null)
             throw new NetworkException("ROUTEMIX: No ROUTE NAME defined");
         if (!parser.routeTags.containsKey(routeName.getNodeValue().trim()))
-            throw new NetworkException("ROUTEMIX: " + routeMixTag.name + " ROUTE " + routeName.getNodeValue().trim()
-                + " not defined");
+            throw new NetworkException(
+                    "ROUTEMIX: " + routeMixTag.name + " ROUTE " + routeName.getNodeValue().trim() + " not defined");
         routeMixTag.routes.add(parser.routeTags.get(routeName.getNodeValue().trim()));
 
         Node weight = attributes.getNamedItem("WEIGHT");
         if (weight == null)
-            throw new NetworkException("ROUTEMIX: " + routeMixTag.name + " ROUTE " + routeName.getNodeValue().trim()
-                + ": weight not defined");
+            throw new NetworkException(
+                    "ROUTEMIX: " + routeMixTag.name + " ROUTE " + routeName.getNodeValue().trim() + ": weight not defined");
         routeMixTag.weights.add(Double.parseDouble(weight.getNodeValue()));
     }
 

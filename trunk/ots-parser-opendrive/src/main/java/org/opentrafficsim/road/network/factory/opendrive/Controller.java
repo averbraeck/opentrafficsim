@@ -8,7 +8,7 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -52,8 +52,8 @@ public class Controller implements Serializable
      * @throws NamingException if an error occurs when adding the animation handler
      * @throws NetworkException when the GTU cannot be placed on the given lane
      */
-    public Controller(final String name, final OTSDEVSSimulatorInterface simulator) throws GTUException,
-        NetworkException, NamingException
+    public Controller(final String name, final OTSDEVSSimulatorInterface simulator)
+            throws GTUException, NetworkException, NamingException
     {
         this.id = name;
         this.simulator = simulator;
@@ -81,7 +81,7 @@ public class Controller implements Serializable
     {
         try
         {
-            this.simulator.scheduleEventRel(new Duration(96.0, TimeUnit.SECOND), this, this, "unBlock", null);
+            this.simulator.scheduleEventRel(new Duration(96.0, DurationUnit.SECOND), this, this, "unBlock", null);
         }
         catch (SimRuntimeException exception)
         {
@@ -96,12 +96,12 @@ public class Controller implements Serializable
                 {
                     // System.out.println("traffic light 3 at time " + this.simulator.getSimulatorTime() + " is " +
                     // ((TrafficLight) light).getTrafficLightColor().toString());
-                    this.simulator.scheduleEventRel(Duration.ZERO, this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
-                    this.simulator.scheduleEventRel(new Duration(15.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
-                    this.simulator.scheduleEventRel(new Duration(24.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
+                    this.simulator.scheduleEventRel(Duration.ZERO, this, light, "setTrafficLightColor",
+                            new Object[] { TrafficLightColor.GREEN });
+                    this.simulator.scheduleEventRel(new Duration(15.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.YELLOW });
+                    this.simulator.scheduleEventRel(new Duration(24.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.RED });
                 }
                 catch (SimRuntimeException exception)
                 {
@@ -115,12 +115,12 @@ public class Controller implements Serializable
             {
                 try
                 {
-                    this.simulator.scheduleEventRel(Duration.ZERO, this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
-                    this.simulator.scheduleEventRel(new Duration(15.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
-                    this.simulator.scheduleEventRel(new Duration(24.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
+                    this.simulator.scheduleEventRel(Duration.ZERO, this, light, "setTrafficLightColor",
+                            new Object[] { TrafficLightColor.GREEN });
+                    this.simulator.scheduleEventRel(new Duration(15.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.YELLOW });
+                    this.simulator.scheduleEventRel(new Duration(24.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.RED });
                 }
                 catch (SimRuntimeException exception)
                 {
@@ -136,12 +136,12 @@ public class Controller implements Serializable
                 {
                     // System.out.println("traffic light 6 at time " + this.simulator.getSimulatorTime());
 
-                    this.simulator.scheduleEventRel(new Duration(24.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
-                    this.simulator.scheduleEventRel(new Duration(39.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
-                    this.simulator.scheduleEventRel(new Duration(48.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
+                    this.simulator.scheduleEventRel(new Duration(24.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.GREEN });
+                    this.simulator.scheduleEventRel(new Duration(39.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.YELLOW });
+                    this.simulator.scheduleEventRel(new Duration(48.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.RED });
                 }
                 catch (SimRuntimeException exception)
                 {
@@ -155,12 +155,12 @@ public class Controller implements Serializable
             {
                 try
                 {
-                    this.simulator.scheduleEventRel(new Duration(24.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
-                    this.simulator.scheduleEventRel(new Duration(39.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
-                    this.simulator.scheduleEventRel(new Duration(48.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
+                    this.simulator.scheduleEventRel(new Duration(24.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.GREEN });
+                    this.simulator.scheduleEventRel(new Duration(39.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.YELLOW });
+                    this.simulator.scheduleEventRel(new Duration(48.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.RED });
                 }
                 catch (SimRuntimeException exception)
                 {
@@ -176,12 +176,12 @@ public class Controller implements Serializable
                 {
                     // System.out.println("traffic light 9 at time " + this.simulator.getSimulatorTime());
 
-                    this.simulator.scheduleEventRel(new Duration(48.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
-                    this.simulator.scheduleEventRel(new Duration(63.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
-                    this.simulator.scheduleEventRel(new Duration(72.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
+                    this.simulator.scheduleEventRel(new Duration(48.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.GREEN });
+                    this.simulator.scheduleEventRel(new Duration(63.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.YELLOW });
+                    this.simulator.scheduleEventRel(new Duration(72.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.RED });
                 }
                 catch (SimRuntimeException exception)
                 {
@@ -195,12 +195,12 @@ public class Controller implements Serializable
             {
                 try
                 {
-                    this.simulator.scheduleEventRel(new Duration(48.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
-                    this.simulator.scheduleEventRel(new Duration(63.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
-                    this.simulator.scheduleEventRel(new Duration(72.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
+                    this.simulator.scheduleEventRel(new Duration(48.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.GREEN });
+                    this.simulator.scheduleEventRel(new Duration(63.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.YELLOW });
+                    this.simulator.scheduleEventRel(new Duration(72.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.RED });
                 }
                 catch (SimRuntimeException exception)
                 {
@@ -216,12 +216,12 @@ public class Controller implements Serializable
                 {
                     // System.out.println("traffic light 12 at time " + this.simulator.getSimulatorTime());
 
-                    this.simulator.scheduleEventRel(new Duration(72.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
-                    this.simulator.scheduleEventRel(new Duration(87.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
-                    this.simulator.scheduleEventRel(new Duration(96.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
+                    this.simulator.scheduleEventRel(new Duration(72.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.GREEN });
+                    this.simulator.scheduleEventRel(new Duration(87.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.YELLOW });
+                    this.simulator.scheduleEventRel(new Duration(96.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.RED });
                 }
                 catch (SimRuntimeException exception)
                 {
@@ -235,12 +235,12 @@ public class Controller implements Serializable
             {
                 try
                 {
-                    this.simulator.scheduleEventRel(new Duration(72.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
-                    this.simulator.scheduleEventRel(new Duration(87.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
-                    this.simulator.scheduleEventRel(new Duration(96.0, TimeUnit.SECOND), this, light,
-                        "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
+                    this.simulator.scheduleEventRel(new Duration(72.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.GREEN });
+                    this.simulator.scheduleEventRel(new Duration(87.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.YELLOW });
+                    this.simulator.scheduleEventRel(new Duration(96.0, DurationUnit.SECOND), this, light,
+                            "setTrafficLightColor", new Object[] { TrafficLightColor.RED });
                 }
                 catch (SimRuntimeException exception)
                 {

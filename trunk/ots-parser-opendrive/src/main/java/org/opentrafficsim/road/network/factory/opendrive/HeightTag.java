@@ -46,7 +46,7 @@ class HeightTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseHeight(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final LaneTag laneTag)
-        throws SAXException, NetworkException
+            throws SAXException, NetworkException
     {
         int heightCount = 0;
         for (Node node : XMLParser.getNodes(nodeList, "height"))

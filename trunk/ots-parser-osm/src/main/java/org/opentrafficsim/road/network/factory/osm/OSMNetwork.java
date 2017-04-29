@@ -236,7 +236,8 @@ public class OSMNetwork implements Serializable
                     // FIXME: should probably assign all link end points of toNode to fromNode
                     continue;
                 }
-                newLinks.add(new OSMLink(fromNode, toNode, osmWay.getTags(), distanceLongLat(fromNode, toNode), warningListener));
+                newLinks.add(
+                        new OSMLink(fromNode, toNode, osmWay.getTags(), distanceLongLat(fromNode, toNode), warningListener));
             }
         }
         this.links = newLinks;
@@ -341,9 +342,8 @@ public class OSMNetwork implements Serializable
                         throw new Error("about to add " + link1 + " to removeLinks which already contains that link");
                     }
                     redundancyRemoved = true;
-                    OSMLink replacementLink =
-                            new OSMLink(link1.getStart(), link2.getEnd(), link1.getTags(), link1.getLength()
-                                    + link2.getLength(), link1.getLanes(), link1.getForwardLanes());
+                    OSMLink replacementLink = new OSMLink(link1.getStart(), link2.getEnd(), link1.getTags(),
+                            link1.getLength() + link2.getLength(), link1.getLanes(), link1.getForwardLanes());
                     if (!link1.getSplineList().isEmpty())
                     {
                         for (OSMNode n1 : link1.getSplineList())

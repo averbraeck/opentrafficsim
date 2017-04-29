@@ -62,7 +62,7 @@ class ListGeneratorTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseListGenerator(final Node node, final XmlNetworkLaneParser parser, final LinkTag linkTag)
-        throws SAXException, NetworkException
+            throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         ListGeneratorTag listGeneratorTag = new ListGeneratorTag();
@@ -86,26 +86,26 @@ class ListGeneratorTag implements Serializable
             throw new NetworkException("LISTGENERATOR: LANE " + laneName + " no ROADTYPE for link " + linkTag.name);
         CrossSectionElementTag cseTag = linkTag.roadLayoutTag.cseTags.get(laneName);
         if (cseTag == null)
-            throw new NetworkException("LISTGENERATOR: LANE " + laneName + " not found in elements of link "
-                + linkTag.name + " - roadtype " + linkTag.roadLayoutTag.name);
+            throw new NetworkException("LISTGENERATOR: LANE " + laneName + " not found in elements of link " + linkTag.name
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
         if (cseTag.elementType != ElementType.LANE)
-            throw new NetworkException("LISTGENERATOR: LANE " + laneName + " not a real GTU lane for link "
-                + linkTag.name + " - roadtype " + linkTag.roadLayoutTag.name);
+            throw new NetworkException("LISTGENERATOR: LANE " + laneName + " not a real GTU lane for link " + linkTag.name
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
         if (linkTag.generatorTags.containsKey(laneName))
             throw new SAXException("LISTGENERATOR for LANE with NAME " + laneName + " defined twice");
 
         Node position = attributes.getNamedItem("POSITION");
         if (position == null)
             throw new NetworkException("LISTGENERATOR: POSITION element not found in elements of link " + linkTag.name
-                + " - roadtype " + linkTag.roadLayoutTag.name);
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
         listGeneratorTag.positionStr = position.getNodeValue().trim();
 
         if (attributes.getNamedItem("GTU") != null)
         {
             String gtuName = attributes.getNamedItem("GTU").getNodeValue().trim();
             if (!parser.gtuTags.containsKey(gtuName))
-                throw new NetworkException("LISTGENERATOR: LANE " + laneName + " GTU " + gtuName + " in link "
-                    + linkTag.name + " not defined");
+                throw new NetworkException(
+                        "LISTGENERATOR: LANE " + laneName + " GTU " + gtuName + " in link " + linkTag.name + " not defined");
             listGeneratorTag.gtuTag = parser.gtuTags.get(gtuName);
         }
 
@@ -114,17 +114,17 @@ class ListGeneratorTag implements Serializable
             String gtuMixName = attributes.getNamedItem("GTUMIX").getNodeValue().trim();
             if (!parser.gtuMixTags.containsKey(gtuMixName))
                 throw new NetworkException("LISTGENERATOR: LANE " + laneName + " GTUMIX " + gtuMixName + " in link "
-                    + linkTag.name + " not defined");
+                        + linkTag.name + " not defined");
             listGeneratorTag.gtuMixTag = parser.gtuMixTags.get(gtuMixName);
         }
 
         if (listGeneratorTag.gtuTag == null && listGeneratorTag.gtuMixTag == null)
-            throw new SAXException("LISTGENERATOR: missing attribute GTU or GTUMIX for Lane with NAME " + laneName
-                + " of link " + linkTag.name);
+            throw new SAXException("LISTGENERATOR: missing attribute GTU or GTUMIX for Lane with NAME " + laneName + " of link "
+                    + linkTag.name);
 
         if (listGeneratorTag.gtuTag != null && listGeneratorTag.gtuMixTag != null)
-            throw new SAXException("LISTGENERATOR: both attribute GTU and GTUMIX defined for Lane with NAME "
-                + laneName + " of link " + linkTag.name);
+            throw new SAXException("LISTGENERATOR: both attribute GTU and GTUMIX defined for Lane with NAME " + laneName
+                    + " of link " + linkTag.name);
 
         Node initialSpeed = attributes.getNamedItem("INITIALSPEED");
         if (initialSpeed == null)

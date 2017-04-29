@@ -50,7 +50,8 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class RoadTypeTag implements Serializable {
+class RoadTypeTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150723L;
 
@@ -84,9 +85,11 @@ class RoadTypeTag implements Serializable {
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseRoadTypes(final NodeList nodeList, final VissimNetworkLaneParser parser) throws SAXException,
-        NetworkException {
-        for (Node node : XMLParser.getNodes(nodeList, "ROADTYPE")) {
+    static void parseRoadTypes(final NodeList nodeList, final VissimNetworkLaneParser parser)
+            throws SAXException, NetworkException
+    {
+        for (Node node : XMLParser.getNodes(nodeList, "ROADTYPE"))
+        {
             RoadTypeTag roadTypeTag = parseRoadType(node, parser);
             parser.getRoadTypeTags().put(roadTypeTag.name, roadTypeTag);
         }
@@ -101,27 +104,32 @@ class RoadTypeTag implements Serializable {
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static RoadTypeTag parseRoadType(final Node node, final VissimNetworkLaneParser parser) throws SAXException,
-        NetworkException {
+    static RoadTypeTag parseRoadType(final Node node, final VissimNetworkLaneParser parser)
+            throws SAXException, NetworkException
+    {
         NamedNodeMap attributes = node.getAttributes();
         RoadTypeTag roadTypeTag = new RoadTypeTag();
 
         Node name = attributes.getNamedItem("NAME");
-        if (name == null) {
+        if (name == null)
+        {
             throw new SAXException("ROADTYPE: missing attribute NAME");
         }
         roadTypeTag.name = name.getNodeValue().trim();
-        if (parser.getRoadTypeTags().keySet().contains(roadTypeTag.name)) {
+        if (parser.getRoadTypeTags().keySet().contains(roadTypeTag.name))
+        {
             throw new SAXException("ROADTYPE: NAME " + roadTypeTag.name + " defined twice");
         }
 
         Node width = attributes.getNamedItem("DEFAULTLANEWIDTH");
-        if (width != null) {
+        if (width != null)
+        {
             roadTypeTag.defaultLaneWidth = LengthUnits.parseLength(width.getNodeValue());
         }
 
         Node lkp = attributes.getNamedItem("DEFAULTLANEKEEPING");
-        if (lkp != null) {
+        if (lkp != null)
+        {
             roadTypeTag.defaultLaneKeepingPolicy = LaneAttributes.parseLaneKeepingPolicy(lkp.getNodeValue().trim());
         }
 
@@ -132,26 +140,31 @@ class RoadTypeTag implements Serializable {
         // }
 
         List<Node> speedLimitList = XMLParser.getNodes(node.getChildNodes(), "SPEEDLIMIT");
-        if (speedLimitList.size() == 0) {
+        if (speedLimitList.size() == 0)
+        {
             throw new SAXException("ROADTYPE: missing tag SPEEDLIMIT");
         }
-        for (Node speedLimitNode : speedLimitList) {
+        for (Node speedLimitNode : speedLimitList)
+        {
             NamedNodeMap speedLimitAttributes = speedLimitNode.getAttributes();
 
             Node gtuTypeName = speedLimitAttributes.getNamedItem("GTUTYPE");
-            if (gtuTypeName == null) {
+            if (gtuTypeName == null)
+            {
                 throw new NetworkException("ROADTYPE: No GTUTYPE defined");
             }
-            if (!parser.getGtuTypes().containsKey(gtuTypeName.getNodeValue().trim())) {
-                throw new NetworkException("ROADTYPE: " + roadTypeTag.name + " GTUTYPE " + gtuTypeName.getNodeValue().trim()
-                    + " not defined");
+            if (!parser.getGtuTypes().containsKey(gtuTypeName.getNodeValue().trim()))
+            {
+                throw new NetworkException(
+                        "ROADTYPE: " + roadTypeTag.name + " GTUTYPE " + gtuTypeName.getNodeValue().trim() + " not defined");
             }
             GTUType gtuType = parser.getGtuTypes().get(gtuTypeName.getNodeValue().trim());
 
             Node speedNode = speedLimitAttributes.getNamedItem("LEGALSPEEDLIMIT");
-            if (speedNode == null) {
-                throw new NetworkException("ROADTYPE: " + roadTypeTag.name + " GTUTYPE " + gtuType.getId()
-                    + ": LEGALSPEEDLIMIT not defined");
+            if (speedNode == null)
+            {
+                throw new NetworkException(
+                        "ROADTYPE: " + roadTypeTag.name + " GTUTYPE " + gtuType.getId() + ": LEGALSPEEDLIMIT not defined");
             }
             Speed speed = SpeedUnits.parseSpeed(speedNode.getNodeValue().trim());
 
@@ -163,10 +176,11 @@ class RoadTypeTag implements Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "RoadTypeTag [name=" + this.name + ", legalSpeedLimits=" + this.legalSpeedLimits + ", defaultLaneWidth="
-            + this.defaultLaneWidth + ", defaultLaneKeepingPolicy=" + this.defaultLaneKeepingPolicy
-            + ", defaultOvertakingConditions=" + this.defaultOvertakingConditions + "]";
+                + this.defaultLaneWidth + ", defaultLaneKeepingPolicy=" + this.defaultLaneKeepingPolicy
+                + ", defaultOvertakingConditions=" + this.defaultOvertakingConditions + "]";
     }
 
 }

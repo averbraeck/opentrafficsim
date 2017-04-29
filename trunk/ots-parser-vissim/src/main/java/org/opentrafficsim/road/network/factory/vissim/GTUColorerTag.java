@@ -7,8 +7,8 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.animation.AccelerationGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
-import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SpeedGTUColorer;
+import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.xml.sax.SAXException;
 
 /**
@@ -52,8 +52,7 @@ final class GTUColorerTag
                 return makeSwitchableGTUColorer(globalTag);
 
             default:
-                throw new SAXException("GTUCOLORER: unknown name " + name
-                    + " not one of ID|SPEED|ACCELERATION|SWITCHABLE");
+                throw new SAXException("GTUCOLORER: unknown name " + name + " not one of ID|SPEED|ACCELERATION|SWITCHABLE");
         }
     }
 
@@ -77,8 +76,8 @@ final class GTUColorerTag
     static GTUColorer makeAccelerationGTUColorer(final GlobalTag globalTag)
     {
         // TODO use parameters for AccelerationGTUColorer
-        return new AccelerationGTUColorer(new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2), new Acceleration(
-            1.0, AccelerationUnit.METER_PER_SECOND_2));
+        return new AccelerationGTUColorer(new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2),
+                new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2));
     }
 
     /**
@@ -88,8 +87,7 @@ final class GTUColorerTag
     static GTUColorer makeSwitchableGTUColorer(final GlobalTag globalTag)
     {
         GTUColorer[] gtuColorers =
-            new GTUColorer[]{new IDGTUColorer(), makeSpeedGTUColorer(globalTag),
-                makeAccelerationGTUColorer(globalTag)};
+                new GTUColorer[] { new IDGTUColorer(), makeSpeedGTUColorer(globalTag), makeAccelerationGTUColorer(globalTag) };
         // TODO default colorer
         return new SwitchableGTUColorer(0, gtuColorers);
     }

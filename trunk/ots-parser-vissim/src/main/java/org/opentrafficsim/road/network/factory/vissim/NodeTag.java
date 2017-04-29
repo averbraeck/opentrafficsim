@@ -9,7 +9,7 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.AngleUnit;
+import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -32,7 +32,8 @@ import nl.tudelft.simulation.language.Throw;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class NodeTag implements Serializable {
+class NodeTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150723L;
 
@@ -50,7 +51,7 @@ class NodeTag implements Serializable {
 
     /** TODO slope as an angle. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Direction slope = null;
+    Angle slope = null;
 
     /** The calculated Node, either through a coordinate or after calculation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -66,7 +67,8 @@ class NodeTag implements Serializable {
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseNodes(final VissimNetworkLaneParser parser, String fromNode, String toNode, OTSPoint3D[] points)
-        throws SAXException, NetworkException {
+            throws SAXException, NetworkException
+    {
         NodeTag nodeFromTag = new NodeTag();
         nodeFromTag.name = fromNode;
         nodeFromTag.coordinate = points[0];
@@ -87,12 +89,17 @@ class NodeTag implements Serializable {
      * @param nodeTag NodeTag; node Info
      * @throws NetworkException
      */
-    private static void generateOTSNode(final VissimNetworkLaneParser parser, final NodeTag nodeTag) throws NetworkException {
-        if (nodeTag.coordinate != null && nodeTag.angle != null) {
+    private static void generateOTSNode(final VissimNetworkLaneParser parser, final NodeTag nodeTag) throws NetworkException
+    {
+        if (nodeTag.coordinate != null && nodeTag.angle != null)
+        {
             // only make a node if we know the coordinate and angle. Otherwise, wait till we can calculate it.
-            try {
+            try
+            {
                 makeOTSNode(nodeTag, parser);
-            } catch (NamingException exception) {
+            }
+            catch (NamingException exception)
+            {
                 throw new NetworkException(exception);
             }
         }
@@ -106,12 +113,15 @@ class NodeTag implements Serializable {
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */
-    static List<NodeTag> parseNodeList(final String nodeNames, final VissimNetworkLaneParser parser) throws SAXException,
-        NetworkException {
+    static List<NodeTag> parseNodeList(final String nodeNames, final VissimNetworkLaneParser parser)
+            throws SAXException, NetworkException
+    {
         List<NodeTag> nodeList = new ArrayList<>();
         String[] ns = nodeNames.split("\\s");
-        for (String s : ns) {
-            if (!parser.getNodeTags().containsKey(s)) {
+        for (String s : ns)
+        {
+            if (!parser.getNodeTags().containsKey(s))
+            {
                 throw new SAXException("Node " + s + " from node list [" + nodeNames + "] was not defined");
             }
             nodeList.add(parser.getNodeTags().get(s));
@@ -127,15 +137,17 @@ class NodeTag implements Serializable {
      * @throws NetworkException when point cannot be instantiated
      * @throws NamingException when animation context cannot be found.
      */
-    static OTSNode makeOTSNode(final NodeTag nodeTag, final VissimNetworkLaneParser parser) throws NetworkException,
-        NamingException {
+    static OTSNode makeOTSNode(final NodeTag nodeTag, final VissimNetworkLaneParser parser)
+            throws NetworkException, NamingException
+    {
         Throw.whenNull(nodeTag.angle, "NodeTag: " + nodeTag.name + " angle == null");
-        if (nodeTag.node != null) {
+        if (nodeTag.node != null)
+        {
             nodeTag.node.getNetwork().removeNode(nodeTag.node);
         }
         String id = nodeTag.name;
         Direction angle = nodeTag.angle;
-        Direction slope = nodeTag.slope == null ? Direction.ZERO : nodeTag.slope;
+        Angle slope = nodeTag.slope == null ? Angle.ZERO : nodeTag.slope;
         OTSNode node = new OTSNode(parser.getNetwork(), id, nodeTag.coordinate, angle, slope);
         nodeTag.node = node;
         return node;
@@ -144,22 +156,27 @@ class NodeTag implements Serializable {
     /**
      * @param parser VissimNetworkLaneParser; the parser with the lists of information
      */
-    public static void removeDuplicateNodes(final VissimNetworkLaneParser parser) {
+    public static void removeDuplicateNodes(final VissimNetworkLaneParser parser)
+    {
         // the map with NodeTag (key) that should be deleted and replaced by another nodeTag (value)
         Map<String, String> replaceNodeMap = new HashMap<>();
         Iterator<NodeTag> nodeTagValues = parser.getNodeTags().values().iterator();
 
         // determine identical nodes
-        while (nodeTagValues.hasNext()) {
+        while (nodeTagValues.hasNext())
+        {
             NodeTag nodeTag = nodeTagValues.next();
             // compare to other nodeTags
             Iterator<NodeTag> nodeTagValuesCopy = parser.getNodeTags().values().iterator();
-            while (nodeTagValuesCopy.hasNext()) {
+            while (nodeTagValuesCopy.hasNext())
+            {
                 NodeTag nodeTagCopy = nodeTagValuesCopy.next();
                 // if the coordinates are equal (distance == 0)
-                if (nodeTagCopy.coordinate.distance(nodeTag.coordinate).si == 0 && !nodeTagCopy.name.equals(nodeTag.name)) {
+                if (nodeTagCopy.coordinate.distance(nodeTag.coordinate).si == 0 && !nodeTagCopy.name.equals(nodeTag.name))
+                {
                     // is there an already found and handled duplicate node?
-                    if (replaceNodeMap.get(nodeTag.name) == null) {
+                    if (replaceNodeMap.get(nodeTag.name) == null)
+                    {
                         replaceNodeMap.put(nodeTagCopy.name, nodeTag.name);
                     }
                 }
@@ -168,22 +185,26 @@ class NodeTag implements Serializable {
 
         // rename nodes in linkTags nodeTags
         Iterator<LinkTag> linkTagValues = parser.getLinkTags().values().iterator();
-        while (linkTagValues.hasNext()) {
+        while (linkTagValues.hasNext())
+        {
             LinkTag linkTag = linkTagValues.next();
             NodeTag nodeTag = linkTag.nodeEndTag;
-            if (replaceNodeMap.get(nodeTag.name) != null) {
+            if (replaceNodeMap.get(nodeTag.name) != null)
+            {
                 linkTag.nodeEndTag = parser.getNodeTags().get(replaceNodeMap.get(nodeTag.name));
             }
 
             NodeTag node2Tag = linkTag.nodeStartTag;
-            if (replaceNodeMap.get(node2Tag.name) != null) {
+            if (replaceNodeMap.get(node2Tag.name) != null)
+            {
                 linkTag.nodeStartTag = parser.getNodeTags().get(replaceNodeMap.get(node2Tag.name));
             }
         }
 
         // remove duplicate nodes from nodeTags
         Iterator<String> nodeTagNames = replaceNodeMap.keySet().iterator();
-        while (nodeTagNames.hasNext()) {
+        while (nodeTagNames.hasNext())
+        {
             String nodeTagName = nodeTagNames.next();
             parser.getNodeTags().remove(nodeTagName);
         }
@@ -193,20 +214,24 @@ class NodeTag implements Serializable {
     /**
      * @param parser VissimNetworkLaneParser; the parser with the lists of information
      */
-    public static void removeRedundantNodeTags(final VissimNetworkLaneParser parser) {
+    public static void removeRedundantNodeTags(final VissimNetworkLaneParser parser)
+    {
         Iterator<NodeTag> nodeTagValues;
         Iterator<LinkTag> linkTagValues;
         Iterator<LinkTag> connectoTagValues;
         // remove redundant nodes from nodeTags
         Map<String, NodeTag> removeNodeMap = new HashMap<>();
         nodeTagValues = parser.getNodeTags().values().iterator();
-        while (nodeTagValues.hasNext()) {
+        while (nodeTagValues.hasNext())
+        {
             NodeTag nodeTag = nodeTagValues.next();
             linkTagValues = parser.getLinkTags().values().iterator();
             boolean found = false;
-            while (linkTagValues.hasNext()) {
+            while (linkTagValues.hasNext())
+            {
                 LinkTag linkTag = linkTagValues.next();
-                if (linkTag.nodeStartTag.name.equals(nodeTag.name) || linkTag.nodeEndTag.name.equals(nodeTag.name)) {
+                if (linkTag.nodeStartTag.name.equals(nodeTag.name) || linkTag.nodeEndTag.name.equals(nodeTag.name))
+                {
                     found = true;
                 }
             }
@@ -217,18 +242,21 @@ class NodeTag implements Serializable {
             // found = true;
             // }
             // }
-            if (!found) {
+            if (!found)
+            {
                 removeNodeMap.put(nodeTag.name, nodeTag);
             }
         }
-        for (NodeTag nodeTag : removeNodeMap.values()) {
+        for (NodeTag nodeTag : removeNodeMap.values())
+        {
             parser.getNodeTags().remove(nodeTag.name);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "NodeTag [name=" + this.name + ", coordinate=" + this.coordinate + ", node=" + this.node + "]";
     }
 
@@ -240,8 +268,9 @@ class NodeTag implements Serializable {
      * @throws OTSGeometryException
      * @throws NetworkException
      */
-    public static NodeTag createNewNodeAtLinkPosition(final LinkTag linkTag, final VissimNetworkLaneParser parser, 
-            final Double position) throws OTSGeometryException, NetworkException {
+    public static NodeTag createNewNodeAtLinkPosition(final LinkTag linkTag, final VissimNetworkLaneParser parser,
+            final Double position) throws OTSGeometryException, NetworkException
+    {
         // make a new Node
         NodeTag nodeTag = new NodeTag();
         // generate a LineString

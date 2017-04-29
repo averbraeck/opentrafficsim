@@ -51,8 +51,7 @@ public final class ReadOSMFile implements Serializable
      * @throws MalformedURLException when <cite>location</cite> is not valid
      */
     public ReadOSMFile(final String location, final List<OSMTag> wantedTags, final List<String> filteredKeys,
-        final ProgressListener progressListener) throws URISyntaxException, FileNotFoundException,
-        MalformedURLException
+            final ProgressListener progressListener) throws URISyntaxException, FileNotFoundException, MalformedURLException
     {
         URL url = new URL(location);
         File file = new File(url.toURI());
@@ -76,9 +75,8 @@ public final class ReadOSMFile implements Serializable
             compression = CompressionMethod.BZip2;
         }
 
-        RunnableSource reader =
-            protocolBufferBinaryFormat ? new OsmosisReader(new FileInputStream(file)) : new XmlReader(file, false,
-                compression);
+        RunnableSource reader = protocolBufferBinaryFormat ? new OsmosisReader(new FileInputStream(file))
+                : new XmlReader(file, false, compression);
 
         reader.setSink(this.sinkImplementation);
 

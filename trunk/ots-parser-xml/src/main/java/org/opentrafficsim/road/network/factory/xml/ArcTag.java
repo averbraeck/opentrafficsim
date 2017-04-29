@@ -65,7 +65,7 @@ class ArcTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseArc(final Node arcNode, final XmlNetworkLaneParser parser, final LinkTag linkTag)
-        throws SAXException, NetworkException
+            throws SAXException, NetworkException
     {
         NamedNodeMap arcAttributes = arcNode.getAttributes();
         linkTag.arcTag = new ArcTag();
@@ -84,8 +84,7 @@ class ArcTag implements Serializable
         if (dirNode == null)
             throw new SAXException("ARC: missing attribute DIRECTION");
         String dir = dirNode.getNodeValue().trim();
-        linkTag.arcTag.direction =
-            (dir.equals("L") || dir.equals("LEFT") || dir.equals("COUNTERCLOCKWISE")) ? ArcDirection.LEFT
+        linkTag.arcTag.direction = (dir.equals("L") || dir.equals("LEFT") || dir.equals("COUNTERCLOCKWISE")) ? ArcDirection.LEFT
                 : ArcDirection.RIGHT;
 
     }

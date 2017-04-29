@@ -40,7 +40,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "NODE")
-public class NODE {
+public class NODE
+{
 
     @XmlAttribute(name = "NAME", required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -65,7 +66,8 @@ public class NODE {
      * Gets the value of the name property.
      * @return possible object is {@link String }
      */
-    public String getNAME() {
+    public String getNAME()
+    {
         return name;
     }
 
@@ -73,7 +75,8 @@ public class NODE {
      * Sets the value of the name property.
      * @param value allowed object is {@link String }
      */
-    public void setNAME(String value) {
+    public void setNAME(String value)
+    {
         this.name = value;
     }
 
@@ -81,7 +84,8 @@ public class NODE {
      * Gets the value of the coordinate property.
      * @return possible object is {@link String }
      */
-    public String getCOORDINATE() {
+    public String getCOORDINATE()
+    {
         return coordinate;
     }
 
@@ -89,7 +93,8 @@ public class NODE {
      * Sets the value of the coordinate property.
      * @param value allowed object is {@link String }
      */
-    public void setCOORDINATE(String value) {
+    public void setCOORDINATE(String value)
+    {
         this.coordinate = value;
     }
 
@@ -97,7 +102,8 @@ public class NODE {
      * Gets the value of the angle property.
      * @return possible object is {@link String }
      */
-    public String getANGLE() {
+    public String getANGLE()
+    {
         return angle;
     }
 
@@ -105,7 +111,8 @@ public class NODE {
      * Sets the value of the angle property.
      * @param value allowed object is {@link String }
      */
-    public void setANGLE(String value) {
+    public void setANGLE(String value)
+    {
         this.angle = value;
     }
 
@@ -113,7 +120,8 @@ public class NODE {
      * Gets the value of the base property.
      * @return possible object is {@link String }
      */
-    public String getBase() {
+    public String getBase()
+    {
         return base;
     }
 
@@ -121,15 +129,18 @@ public class NODE {
      * Sets the value of the base property.
      * @param value allowed object is {@link String }
      */
-    public void setBase(String value) {
+    public void setBase(String value)
+    {
         this.base = value;
     }
 
-    public NODE getRefId() {
+    public NODE getRefId()
+    {
         return refId;
     }
 
-    public void setRefId(NODE refId) {
+    public void setRefId(NODE refId)
+    {
         this.refId = refId;
     }
 

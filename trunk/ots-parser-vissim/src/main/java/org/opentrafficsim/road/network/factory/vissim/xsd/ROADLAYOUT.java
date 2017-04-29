@@ -119,16 +119,18 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {"speedlimit", "laneOrNOTRAFFICLANEOrSHOULDER"})
+@XmlType(name = "", propOrder = { "speedlimit", "laneOrNOTRAFFICLANEOrSHOULDER" })
 @XmlRootElement(name = "ROADLAYOUT")
-public class ROADLAYOUT {
+public class ROADLAYOUT
+{
 
     @XmlElement(name = "SPEEDLIMIT")
     protected List<ROADLAYOUT.SPEEDLIMIT> speedlimit;
 
-    @XmlElements({@XmlElement(name = "LANE", type = ROADLAYOUT.LANE.class), @XmlElement(name = "NOTRAFFICLANE",
-        type = ROADLAYOUT.NOTRAFFICLANE.class), @XmlElement(name = "SHOULDER", type = ROADLAYOUT.SHOULDER.class),
-        @XmlElement(name = "STRIPE", type = ROADLAYOUT.STRIPE.class)})
+    @XmlElements({ @XmlElement(name = "LANE", type = ROADLAYOUT.LANE.class),
+            @XmlElement(name = "NOTRAFFICLANE", type = ROADLAYOUT.NOTRAFFICLANE.class),
+            @XmlElement(name = "SHOULDER", type = ROADLAYOUT.SHOULDER.class),
+            @XmlElement(name = "STRIPE", type = ROADLAYOUT.STRIPE.class) })
     protected List<Object> laneOrNOTRAFFICLANEOrSHOULDER;
 
     @XmlAttribute(name = "NAME", required = true)
@@ -165,8 +167,10 @@ public class ROADLAYOUT {
      * <p>
      * Objects of the following type(s) are allowed in the list {@link ROADLAYOUT.SPEEDLIMIT }
      */
-    public List<ROADLAYOUT.SPEEDLIMIT> getSPEEDLIMIT() {
-        if (speedlimit == null) {
+    public List<ROADLAYOUT.SPEEDLIMIT> getSPEEDLIMIT()
+    {
+        if (speedlimit == null)
+        {
             speedlimit = new ArrayList<ROADLAYOUT.SPEEDLIMIT>();
         }
         return this.speedlimit;
@@ -188,8 +192,10 @@ public class ROADLAYOUT {
      * Objects of the following type(s) are allowed in the list {@link ROADLAYOUT.LANE } {@link ROADLAYOUT.NOTRAFFICLANE }
      * {@link ROADLAYOUT.SHOULDER } {@link ROADLAYOUT.STRIPE }
      */
-    public List<Object> getLANEOrNOTRAFFICLANEOrSHOULDER() {
-        if (laneOrNOTRAFFICLANEOrSHOULDER == null) {
+    public List<Object> getLANEOrNOTRAFFICLANEOrSHOULDER()
+    {
+        if (laneOrNOTRAFFICLANEOrSHOULDER == null)
+        {
             laneOrNOTRAFFICLANEOrSHOULDER = new ArrayList<Object>();
         }
         return this.laneOrNOTRAFFICLANEOrSHOULDER;
@@ -199,7 +205,8 @@ public class ROADLAYOUT {
      * Gets the value of the name property.
      * @return possible object is {@link String }
      */
-    public String getNAME() {
+    public String getNAME()
+    {
         return name;
     }
 
@@ -207,7 +214,8 @@ public class ROADLAYOUT {
      * Sets the value of the name property.
      * @param value allowed object is {@link String }
      */
-    public void setNAME(String value) {
+    public void setNAME(String value)
+    {
         this.name = value;
     }
 
@@ -215,7 +223,8 @@ public class ROADLAYOUT {
      * Gets the value of the roadtype property.
      * @return possible object is {@link String }
      */
-    public String getROADTYPE() {
+    public String getROADTYPE()
+    {
         return roadtype;
     }
 
@@ -223,7 +232,8 @@ public class ROADLAYOUT {
      * Sets the value of the roadtype property.
      * @param value allowed object is {@link String }
      */
-    public void setROADTYPE(String value) {
+    public void setROADTYPE(String value)
+    {
         this.roadtype = value;
     }
 
@@ -231,7 +241,8 @@ public class ROADLAYOUT {
      * Gets the value of the width property.
      * @return possible object is {@link String }
      */
-    public String getWIDTH() {
+    public String getWIDTH()
+    {
         return width;
     }
 
@@ -239,7 +250,8 @@ public class ROADLAYOUT {
      * Sets the value of the width property.
      * @param value allowed object is {@link String }
      */
-    public void setWIDTH(String value) {
+    public void setWIDTH(String value)
+    {
         this.width = value;
     }
 
@@ -247,7 +259,8 @@ public class ROADLAYOUT {
      * Gets the value of the lanekeeping property.
      * @return possible object is {@link String }
      */
-    public String getLANEKEEPING() {
+    public String getLANEKEEPING()
+    {
         return lanekeeping;
     }
 
@@ -255,7 +268,8 @@ public class ROADLAYOUT {
      * Sets the value of the lanekeeping property.
      * @param value allowed object is {@link String }
      */
-    public void setLANEKEEPING(String value) {
+    public void setLANEKEEPING(String value)
+    {
         this.lanekeeping = value;
     }
 
@@ -263,7 +277,8 @@ public class ROADLAYOUT {
      * Gets the value of the overtaking property.
      * @return possible object is {@link String }
      */
-    public String getOVERTAKING() {
+    public String getOVERTAKING()
+    {
         return overtaking;
     }
 
@@ -271,7 +286,8 @@ public class ROADLAYOUT {
      * Sets the value of the overtaking property.
      * @param value allowed object is {@link String }
      */
-    public void setOVERTAKING(String value) {
+    public void setOVERTAKING(String value)
+    {
         this.overtaking = value;
     }
 
@@ -279,7 +295,8 @@ public class ROADLAYOUT {
      * Gets the value of the base property.
      * @return possible object is {@link String }
      */
-    public String getBase() {
+    public String getBase()
+    {
         return base;
     }
 
@@ -287,7 +304,8 @@ public class ROADLAYOUT {
      * Sets the value of the base property.
      * @param value allowed object is {@link String }
      */
-    public void setBase(String value) {
+    public void setBase(String value)
+    {
         this.base = value;
     }
 
@@ -326,8 +344,9 @@ public class ROADLAYOUT {
      * </pre>
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {"speedlimit"})
-    public static class LANE {
+    @XmlType(name = "", propOrder = { "speedlimit" })
+    public static class LANE
+    {
 
         @XmlElement(name = "SPEEDLIMIT")
         protected List<ROADLAYOUT.LANE.SPEEDLIMIT> speedlimit;
@@ -368,8 +387,10 @@ public class ROADLAYOUT {
          * <p>
          * Objects of the following type(s) are allowed in the list {@link ROADLAYOUT.LANE.SPEEDLIMIT }
          */
-        public List<ROADLAYOUT.LANE.SPEEDLIMIT> getSPEEDLIMIT() {
-            if (speedlimit == null) {
+        public List<ROADLAYOUT.LANE.SPEEDLIMIT> getSPEEDLIMIT()
+        {
+            if (speedlimit == null)
+            {
                 speedlimit = new ArrayList<ROADLAYOUT.LANE.SPEEDLIMIT>();
             }
             return this.speedlimit;
@@ -379,7 +400,8 @@ public class ROADLAYOUT {
          * Gets the value of the name property.
          * @return possible object is {@link String }
          */
-        public String getNAME() {
+        public String getNAME()
+        {
             return name;
         }
 
@@ -387,7 +409,8 @@ public class ROADLAYOUT {
          * Sets the value of the name property.
          * @param value allowed object is {@link String }
          */
-        public void setNAME(String value) {
+        public void setNAME(String value)
+        {
             this.name = value;
         }
 
@@ -395,7 +418,8 @@ public class ROADLAYOUT {
          * Gets the value of the lanetype property.
          * @return possible object is {@link String }
          */
-        public String getLANETYPE() {
+        public String getLANETYPE()
+        {
             return lanetype;
         }
 
@@ -403,7 +427,8 @@ public class ROADLAYOUT {
          * Sets the value of the lanetype property.
          * @param value allowed object is {@link String }
          */
-        public void setLANETYPE(String value) {
+        public void setLANETYPE(String value)
+        {
             this.lanetype = value;
         }
 
@@ -411,7 +436,8 @@ public class ROADLAYOUT {
          * Gets the value of the offset property.
          * @return possible object is {@link String }
          */
-        public String getOFFSET() {
+        public String getOFFSET()
+        {
             return offset;
         }
 
@@ -419,7 +445,8 @@ public class ROADLAYOUT {
          * Sets the value of the offset property.
          * @param value allowed object is {@link String }
          */
-        public void setOFFSET(String value) {
+        public void setOFFSET(String value)
+        {
             this.offset = value;
         }
 
@@ -427,7 +454,8 @@ public class ROADLAYOUT {
          * Gets the value of the width property.
          * @return possible object is {@link String }
          */
-        public String getWIDTH() {
+        public String getWIDTH()
+        {
             return width;
         }
 
@@ -435,7 +463,8 @@ public class ROADLAYOUT {
          * Sets the value of the width property.
          * @param value allowed object is {@link String }
          */
-        public void setWIDTH(String value) {
+        public void setWIDTH(String value)
+        {
             this.width = value;
         }
 
@@ -443,7 +472,8 @@ public class ROADLAYOUT {
          * Gets the value of the direction property.
          * @return possible object is {@link String }
          */
-        public String getDIRECTION() {
+        public String getDIRECTION()
+        {
             return direction;
         }
 
@@ -451,7 +481,8 @@ public class ROADLAYOUT {
          * Sets the value of the direction property.
          * @param value allowed object is {@link String }
          */
-        public void setDIRECTION(String value) {
+        public void setDIRECTION(String value)
+        {
             this.direction = value;
         }
 
@@ -459,7 +490,8 @@ public class ROADLAYOUT {
          * Gets the value of the color property.
          * @return possible object is {@link String }
          */
-        public String getCOLOR() {
+        public String getCOLOR()
+        {
             return color;
         }
 
@@ -467,7 +499,8 @@ public class ROADLAYOUT {
          * Sets the value of the color property.
          * @param value allowed object is {@link String }
          */
-        public void setCOLOR(String value) {
+        public void setCOLOR(String value)
+        {
             this.color = value;
         }
 
@@ -475,7 +508,8 @@ public class ROADLAYOUT {
          * Gets the value of the overtaking property.
          * @return possible object is {@link String }
          */
-        public String getOVERTAKING() {
+        public String getOVERTAKING()
+        {
             return overtaking;
         }
 
@@ -483,7 +517,8 @@ public class ROADLAYOUT {
          * Sets the value of the overtaking property.
          * @param value allowed object is {@link String }
          */
-        public void setOVERTAKING(String value) {
+        public void setOVERTAKING(String value)
+        {
             this.overtaking = value;
         }
 
@@ -506,7 +541,8 @@ public class ROADLAYOUT {
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "")
-        public static class SPEEDLIMIT {
+        public static class SPEEDLIMIT
+        {
 
             @XmlAttribute(name = "GTUTYPE", required = true)
             protected String gtutype;
@@ -518,7 +554,8 @@ public class ROADLAYOUT {
              * Gets the value of the gtutype property.
              * @return possible object is {@link String }
              */
-            public String getGTUTYPE() {
+            public String getGTUTYPE()
+            {
                 return gtutype;
             }
 
@@ -526,7 +563,8 @@ public class ROADLAYOUT {
              * Sets the value of the gtutype property.
              * @param value allowed object is {@link String }
              */
-            public void setGTUTYPE(String value) {
+            public void setGTUTYPE(String value)
+            {
                 this.gtutype = value;
             }
 
@@ -534,7 +572,8 @@ public class ROADLAYOUT {
              * Gets the value of the legalspeedlimit property.
              * @return possible object is {@link String }
              */
-            public String getLEGALSPEEDLIMIT() {
+            public String getLEGALSPEEDLIMIT()
+            {
                 return legalspeedlimit;
             }
 
@@ -542,7 +581,8 @@ public class ROADLAYOUT {
              * Sets the value of the legalspeedlimit property.
              * @param value allowed object is {@link String }
              */
-            public void setLEGALSPEEDLIMIT(String value) {
+            public void setLEGALSPEEDLIMIT(String value)
+            {
                 this.legalspeedlimit = value;
             }
 
@@ -571,7 +611,8 @@ public class ROADLAYOUT {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class NOTRAFFICLANE {
+    public static class NOTRAFFICLANE
+    {
 
         @XmlAttribute(name = "NAME")
         protected String name;
@@ -589,7 +630,8 @@ public class ROADLAYOUT {
          * Gets the value of the name property.
          * @return possible object is {@link String }
          */
-        public String getNAME() {
+        public String getNAME()
+        {
             return name;
         }
 
@@ -597,7 +639,8 @@ public class ROADLAYOUT {
          * Sets the value of the name property.
          * @param value allowed object is {@link String }
          */
-        public void setNAME(String value) {
+        public void setNAME(String value)
+        {
             this.name = value;
         }
 
@@ -605,7 +648,8 @@ public class ROADLAYOUT {
          * Gets the value of the offset property.
          * @return possible object is {@link String }
          */
-        public String getOFFSET() {
+        public String getOFFSET()
+        {
             return offset;
         }
 
@@ -613,7 +657,8 @@ public class ROADLAYOUT {
          * Sets the value of the offset property.
          * @param value allowed object is {@link String }
          */
-        public void setOFFSET(String value) {
+        public void setOFFSET(String value)
+        {
             this.offset = value;
         }
 
@@ -621,7 +666,8 @@ public class ROADLAYOUT {
          * Gets the value of the width property.
          * @return possible object is {@link String }
          */
-        public String getWIDTH() {
+        public String getWIDTH()
+        {
             return width;
         }
 
@@ -629,7 +675,8 @@ public class ROADLAYOUT {
          * Sets the value of the width property.
          * @param value allowed object is {@link String }
          */
-        public void setWIDTH(String value) {
+        public void setWIDTH(String value)
+        {
             this.width = value;
         }
 
@@ -637,7 +684,8 @@ public class ROADLAYOUT {
          * Gets the value of the color property.
          * @return possible object is {@link String }
          */
-        public String getCOLOR() {
+        public String getCOLOR()
+        {
             return color;
         }
 
@@ -645,7 +693,8 @@ public class ROADLAYOUT {
          * Sets the value of the color property.
          * @param value allowed object is {@link String }
          */
-        public void setCOLOR(String value) {
+        public void setCOLOR(String value)
+        {
             this.color = value;
         }
 
@@ -672,7 +721,8 @@ public class ROADLAYOUT {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class SHOULDER {
+    public static class SHOULDER
+    {
 
         @XmlAttribute(name = "NAME")
         protected String name;
@@ -690,7 +740,8 @@ public class ROADLAYOUT {
          * Gets the value of the name property.
          * @return possible object is {@link String }
          */
-        public String getNAME() {
+        public String getNAME()
+        {
             return name;
         }
 
@@ -698,7 +749,8 @@ public class ROADLAYOUT {
          * Sets the value of the name property.
          * @param value allowed object is {@link String }
          */
-        public void setNAME(String value) {
+        public void setNAME(String value)
+        {
             this.name = value;
         }
 
@@ -706,7 +758,8 @@ public class ROADLAYOUT {
          * Gets the value of the offset property.
          * @return possible object is {@link String }
          */
-        public String getOFFSET() {
+        public String getOFFSET()
+        {
             return offset;
         }
 
@@ -714,7 +767,8 @@ public class ROADLAYOUT {
          * Sets the value of the offset property.
          * @param value allowed object is {@link String }
          */
-        public void setOFFSET(String value) {
+        public void setOFFSET(String value)
+        {
             this.offset = value;
         }
 
@@ -722,7 +776,8 @@ public class ROADLAYOUT {
          * Gets the value of the width property.
          * @return possible object is {@link String }
          */
-        public String getWIDTH() {
+        public String getWIDTH()
+        {
             return width;
         }
 
@@ -730,7 +785,8 @@ public class ROADLAYOUT {
          * Sets the value of the width property.
          * @param value allowed object is {@link String }
          */
-        public void setWIDTH(String value) {
+        public void setWIDTH(String value)
+        {
             this.width = value;
         }
 
@@ -738,7 +794,8 @@ public class ROADLAYOUT {
          * Gets the value of the color property.
          * @return possible object is {@link String }
          */
-        public String getCOLOR() {
+        public String getCOLOR()
+        {
             return color;
         }
 
@@ -746,7 +803,8 @@ public class ROADLAYOUT {
          * Sets the value of the color property.
          * @param value allowed object is {@link String }
          */
-        public void setCOLOR(String value) {
+        public void setCOLOR(String value)
+        {
             this.color = value;
         }
 
@@ -771,7 +829,8 @@ public class ROADLAYOUT {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class SPEEDLIMIT {
+    public static class SPEEDLIMIT
+    {
 
         @XmlAttribute(name = "GTUTYPE", required = true)
         protected String gtutype;
@@ -783,7 +842,8 @@ public class ROADLAYOUT {
          * Gets the value of the gtutype property.
          * @return possible object is {@link String }
          */
-        public String getGTUTYPE() {
+        public String getGTUTYPE()
+        {
             return gtutype;
         }
 
@@ -791,7 +851,8 @@ public class ROADLAYOUT {
          * Sets the value of the gtutype property.
          * @param value allowed object is {@link String }
          */
-        public void setGTUTYPE(String value) {
+        public void setGTUTYPE(String value)
+        {
             this.gtutype = value;
         }
 
@@ -799,7 +860,8 @@ public class ROADLAYOUT {
          * Gets the value of the legalspeedlimit property.
          * @return possible object is {@link String }
          */
-        public String getLEGALSPEEDLIMIT() {
+        public String getLEGALSPEEDLIMIT()
+        {
             return legalspeedlimit;
         }
 
@@ -807,7 +869,8 @@ public class ROADLAYOUT {
          * Sets the value of the legalspeedlimit property.
          * @param value allowed object is {@link String }
          */
-        public void setLEGALSPEEDLIMIT(String value) {
+        public void setLEGALSPEEDLIMIT(String value)
+        {
             this.legalspeedlimit = value;
         }
 
@@ -835,7 +898,8 @@ public class ROADLAYOUT {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class STRIPE {
+    public static class STRIPE
+    {
 
         @XmlAttribute(name = "NAME")
         protected String name;
@@ -856,7 +920,8 @@ public class ROADLAYOUT {
          * Gets the value of the name property.
          * @return possible object is {@link String }
          */
-        public String getNAME() {
+        public String getNAME()
+        {
             return name;
         }
 
@@ -864,7 +929,8 @@ public class ROADLAYOUT {
          * Sets the value of the name property.
          * @param value allowed object is {@link String }
          */
-        public void setNAME(String value) {
+        public void setNAME(String value)
+        {
             this.name = value;
         }
 
@@ -872,7 +938,8 @@ public class ROADLAYOUT {
          * Gets the value of the type property.
          * @return possible object is {@link String }
          */
-        public String getTYPE() {
+        public String getTYPE()
+        {
             return type;
         }
 
@@ -880,7 +947,8 @@ public class ROADLAYOUT {
          * Sets the value of the type property.
          * @param value allowed object is {@link String }
          */
-        public void setTYPE(String value) {
+        public void setTYPE(String value)
+        {
             this.type = value;
         }
 
@@ -888,7 +956,8 @@ public class ROADLAYOUT {
          * Gets the value of the offset property.
          * @return possible object is {@link String }
          */
-        public String getOFFSET() {
+        public String getOFFSET()
+        {
             return offset;
         }
 
@@ -896,7 +965,8 @@ public class ROADLAYOUT {
          * Sets the value of the offset property.
          * @param value allowed object is {@link String }
          */
-        public void setOFFSET(String value) {
+        public void setOFFSET(String value)
+        {
             this.offset = value;
         }
 
@@ -904,7 +974,8 @@ public class ROADLAYOUT {
          * Gets the value of the width property.
          * @return possible object is {@link String }
          */
-        public String getWIDTH() {
+        public String getWIDTH()
+        {
             return width;
         }
 
@@ -912,7 +983,8 @@ public class ROADLAYOUT {
          * Sets the value of the width property.
          * @param value allowed object is {@link String }
          */
-        public void setWIDTH(String value) {
+        public void setWIDTH(String value)
+        {
             this.width = value;
         }
 
@@ -920,7 +992,8 @@ public class ROADLAYOUT {
          * Gets the value of the color property.
          * @return possible object is {@link String }
          */
-        public String getCOLOR() {
+        public String getCOLOR()
+        {
             return color;
         }
 
@@ -928,7 +1001,8 @@ public class ROADLAYOUT {
          * Sets the value of the color property.
          * @param value allowed object is {@link String }
          */
-        public void setCOLOR(String value) {
+        public void setCOLOR(String value)
+        {
             this.color = value;
         }
 
