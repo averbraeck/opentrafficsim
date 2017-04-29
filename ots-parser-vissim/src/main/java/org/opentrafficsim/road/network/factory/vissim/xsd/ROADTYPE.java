@@ -51,9 +51,10 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {"speedlimit"})
+@XmlType(name = "", propOrder = { "speedlimit" })
 @XmlRootElement(name = "ROADTYPE")
-public class ROADTYPE {
+public class ROADTYPE
+{
 
     @XmlElement(name = "SPEEDLIMIT", required = true)
     protected List<ROADTYPE.SPEEDLIMIT> speedlimit;
@@ -89,8 +90,10 @@ public class ROADTYPE {
      * <p>
      * Objects of the following type(s) are allowed in the list {@link ROADTYPE.SPEEDLIMIT }
      */
-    public List<ROADTYPE.SPEEDLIMIT> getSPEEDLIMIT() {
-        if (speedlimit == null) {
+    public List<ROADTYPE.SPEEDLIMIT> getSPEEDLIMIT()
+    {
+        if (speedlimit == null)
+        {
             speedlimit = new ArrayList<ROADTYPE.SPEEDLIMIT>();
         }
         return this.speedlimit;
@@ -100,7 +103,8 @@ public class ROADTYPE {
      * Gets the value of the name property.
      * @return possible object is {@link String }
      */
-    public String getNAME() {
+    public String getNAME()
+    {
         return name;
     }
 
@@ -108,7 +112,8 @@ public class ROADTYPE {
      * Sets the value of the name property.
      * @param value allowed object is {@link String }
      */
-    public void setNAME(String value) {
+    public void setNAME(String value)
+    {
         this.name = value;
     }
 
@@ -116,7 +121,8 @@ public class ROADTYPE {
      * Gets the value of the defaultlanewidth property.
      * @return possible object is {@link String }
      */
-    public String getDEFAULTLANEWIDTH() {
+    public String getDEFAULTLANEWIDTH()
+    {
         return defaultlanewidth;
     }
 
@@ -124,7 +130,8 @@ public class ROADTYPE {
      * Sets the value of the defaultlanewidth property.
      * @param value allowed object is {@link String }
      */
-    public void setDEFAULTLANEWIDTH(String value) {
+    public void setDEFAULTLANEWIDTH(String value)
+    {
         this.defaultlanewidth = value;
     }
 
@@ -132,7 +139,8 @@ public class ROADTYPE {
      * Gets the value of the defaultlanekeeping property.
      * @return possible object is {@link String }
      */
-    public String getDEFAULTLANEKEEPING() {
+    public String getDEFAULTLANEKEEPING()
+    {
         return defaultlanekeeping;
     }
 
@@ -140,7 +148,8 @@ public class ROADTYPE {
      * Sets the value of the defaultlanekeeping property.
      * @param value allowed object is {@link String }
      */
-    public void setDEFAULTLANEKEEPING(String value) {
+    public void setDEFAULTLANEKEEPING(String value)
+    {
         this.defaultlanekeeping = value;
     }
 
@@ -148,7 +157,8 @@ public class ROADTYPE {
      * Gets the value of the defaultovertaking property.
      * @return possible object is {@link String }
      */
-    public String getDEFAULTOVERTAKING() {
+    public String getDEFAULTOVERTAKING()
+    {
         return defaultovertaking;
     }
 
@@ -156,7 +166,8 @@ public class ROADTYPE {
      * Sets the value of the defaultovertaking property.
      * @param value allowed object is {@link String }
      */
-    public void setDEFAULTOVERTAKING(String value) {
+    public void setDEFAULTOVERTAKING(String value)
+    {
         this.defaultovertaking = value;
     }
 
@@ -164,7 +175,8 @@ public class ROADTYPE {
      * Gets the value of the base property.
      * @return possible object is {@link String }
      */
-    public String getBase() {
+    public String getBase()
+    {
         return base;
     }
 
@@ -172,7 +184,8 @@ public class ROADTYPE {
      * Sets the value of the base property.
      * @param value allowed object is {@link String }
      */
-    public void setBase(String value) {
+    public void setBase(String value)
+    {
         this.base = value;
     }
 
@@ -195,7 +208,8 @@ public class ROADTYPE {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class SPEEDLIMIT {
+    public static class SPEEDLIMIT
+    {
 
         @XmlAttribute(name = "GTUTYPE", required = true)
         protected String gtutype;
@@ -207,7 +221,8 @@ public class ROADTYPE {
          * Gets the value of the gtutype property.
          * @return possible object is {@link String }
          */
-        public String getGTUTYPE() {
+        public String getGTUTYPE()
+        {
             return gtutype;
         }
 
@@ -215,7 +230,8 @@ public class ROADTYPE {
          * Sets the value of the gtutype property.
          * @param value allowed object is {@link String }
          */
-        public void setGTUTYPE(String value) {
+        public void setGTUTYPE(String value)
+        {
             this.gtutype = value;
         }
 
@@ -223,7 +239,8 @@ public class ROADTYPE {
          * Gets the value of the legalspeedlimit property.
          * @return possible object is {@link String }
          */
-        public String getLEGALSPEEDLIMIT() {
+        public String getLEGALSPEEDLIMIT()
+        {
             return legalspeedlimit;
         }
 
@@ -231,7 +248,8 @@ public class ROADTYPE {
          * Sets the value of the legalspeedlimit property.
          * @param value allowed object is {@link String }
          */
-        public void setLEGALSPEEDLIMIT(String value) {
+        public void setLEGALSPEEDLIMIT(String value)
+        {
             this.legalspeedlimit = value;
         }
 

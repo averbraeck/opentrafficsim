@@ -14,7 +14,7 @@ import javax.naming.event.EventContext;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
@@ -81,15 +81,13 @@ public class TestXMLParserClone extends AbstractWrappableAnimation
                 {
                     TestXMLParserClone xmlParserClone = new TestXMLParserClone();
                     // 1 hour simulation run for testing
-                    xmlParserClone.oldSimulator =
-                            xmlParserClone.buildAnimator(Time.ZERO, Duration.ZERO,
-                                    new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    xmlParserClone.oldSimulator = xmlParserClone.buildAnimator(Time.ZERO, Duration.ZERO,
+                            new Duration(60.0, DurationUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
                     System.out.println("Number of animation objects before for old sim : "
                             + countNumberAnimationObjects(xmlParserClone.oldSimulator));
 
-                    xmlParserClone.newSimulator =
-                            xmlParserClone.buildAnimator(Time.ZERO, Duration.ZERO,
-                                    new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    xmlParserClone.newSimulator = xmlParserClone.buildAnimator(Time.ZERO, Duration.ZERO,
+                            new Duration(60.0, DurationUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
                     System.out.println("Number of animation objects after for old sim  : "
                             + countNumberAnimationObjects(xmlParserClone.oldSimulator));
                     System.out.println("Number of animation objects after for new sim  : "

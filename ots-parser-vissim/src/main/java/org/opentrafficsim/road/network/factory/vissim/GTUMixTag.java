@@ -39,7 +39,8 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class GTUMixTag implements Serializable {
+class GTUMixTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150723L;
 
@@ -63,26 +64,31 @@ class GTUMixTag implements Serializable {
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseGTUMix(final NodeList nodeList, final VissimNetworkLaneParser parser) throws SAXException,
-        NetworkException {
-        for (Node node : XMLParser.getNodes(nodeList, "GTUMIX")) {
+    static void parseGTUMix(final NodeList nodeList, final VissimNetworkLaneParser parser) throws SAXException, NetworkException
+    {
+        for (Node node : XMLParser.getNodes(nodeList, "GTUMIX"))
+        {
             NamedNodeMap attributes = node.getAttributes();
             GTUMixTag gtuMixTag = new GTUMixTag();
 
             Node name = attributes.getNamedItem("NAME");
-            if (name == null) {
+            if (name == null)
+            {
                 throw new SAXException("GTUMIX: missing attribute NAME");
             }
             gtuMixTag.name = name.getNodeValue().trim();
-            if (parser.getGtuMixTags().keySet().contains(gtuMixTag.name)) {
+            if (parser.getGtuMixTags().keySet().contains(gtuMixTag.name))
+            {
                 throw new SAXException("GTUMIX: NAME " + gtuMixTag.name + " defined twice");
             }
 
             List<Node> gtuList = XMLParser.getNodes(node.getChildNodes(), "GTU");
-            if (gtuList.size() == 0) {
+            if (gtuList.size() == 0)
+            {
                 throw new SAXException("GTUMIX: missing tag GTU");
             }
-            for (Node gtuNode : gtuList) {
+            for (Node gtuNode : gtuList)
+            {
                 parseGTUMixGTUTag(gtuNode, parser, gtuMixTag);
             }
 
@@ -99,31 +105,35 @@ class GTUMixTag implements Serializable {
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    private static void parseGTUMixGTUTag(final Node gtuNode, final VissimNetworkLaneParser parser,
-        final GTUMixTag gtuMixTag) throws NetworkException, SAXException {
+    private static void parseGTUMixGTUTag(final Node gtuNode, final VissimNetworkLaneParser parser, final GTUMixTag gtuMixTag)
+            throws NetworkException, SAXException
+    {
         NamedNodeMap attributes = gtuNode.getAttributes();
 
         Node gtuName = attributes.getNamedItem("NAME");
-        if (gtuName == null) {
+        if (gtuName == null)
+        {
             throw new NetworkException("GTUMIX: No GTU NAME defined");
         }
-        if (!parser.getGtuTags().containsKey(gtuName.getNodeValue().trim())) {
-            throw new NetworkException("GTUMIX: " + gtuMixTag.name + " GTU " + gtuName.getNodeValue().trim()
-                + " not defined");
+        if (!parser.getGtuTags().containsKey(gtuName.getNodeValue().trim()))
+        {
+            throw new NetworkException("GTUMIX: " + gtuMixTag.name + " GTU " + gtuName.getNodeValue().trim() + " not defined");
         }
         gtuMixTag.gtus.add(parser.getGtuTags().get(gtuName.getNodeValue().trim()));
 
         Node weight = attributes.getNamedItem("WEIGHT");
-        if (weight == null) {
-            throw new NetworkException("GTUMIX: " + gtuMixTag.name + " GTU " + gtuName.getNodeValue().trim()
-                + ": weight not defined");
+        if (weight == null)
+        {
+            throw new NetworkException(
+                    "GTUMIX: " + gtuMixTag.name + " GTU " + gtuName.getNodeValue().trim() + ": weight not defined");
         }
         gtuMixTag.weights.add(Double.parseDouble(weight.getNodeValue()));
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String toString() {
+    public final String toString()
+    {
         return "GTUMixTag [name=" + this.name + ", gtus=" + this.gtus + ", weights=" + this.weights + "]";
     }
 

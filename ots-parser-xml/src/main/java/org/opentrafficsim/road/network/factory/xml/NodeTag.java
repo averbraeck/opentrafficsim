@@ -7,12 +7,11 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.AngleUnit;
+import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.core.network.animation.NodeAnimation;
 import org.opentrafficsim.core.network.factory.xml.units.AngleUnits;
 import org.opentrafficsim.core.network.factory.xml.units.Coordinates;
@@ -51,7 +50,7 @@ class NodeTag implements Serializable
 
     /** TODO slope as an angle. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Direction slope = null;
+    Angle slope = null;
 
     /** The calculated Node, either through a coordinate or after calculation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -64,8 +63,7 @@ class NodeTag implements Serializable
      * @throws NetworkException when parsing of GTU tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseNodes(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException,
-        NetworkException
+    static void parseNodes(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException, NetworkException
     {
         for (Node node : XMLParser.getNodes(nodeList, "NODE"))
         {
@@ -112,8 +110,8 @@ class NodeTag implements Serializable
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */
-    static List<NodeTag> parseNodeList(final String nodeNames, final XmlNetworkLaneParser parser) throws SAXException,
-        NetworkException
+    static List<NodeTag> parseNodeList(final String nodeNames, final XmlNetworkLaneParser parser)
+            throws SAXException, NetworkException
     {
         List<NodeTag> nodeList = new ArrayList<>();
         String[] ns = nodeNames.split("\\s");
@@ -136,16 +134,16 @@ class NodeTag implements Serializable
      * @throws NetworkException when point cannot be instantiated
      * @throws NamingException when animation context cannot be found.
      */
-    static OTSNode makeOTSNode(final NodeTag nodeTag, final XmlNetworkLaneParser parser) throws NetworkException,
-        NamingException
+    static OTSNode makeOTSNode(final NodeTag nodeTag, final XmlNetworkLaneParser parser)
+            throws NetworkException, NamingException
     {
         Throw.whenNull(nodeTag.angle, "NodeTag: " + nodeTag.name + " angle == null");
         String id = nodeTag.name;
         Direction angle = nodeTag.angle;
-        Direction slope = nodeTag.slope == null ? Direction.ZERO : nodeTag.slope;
+        Angle slope = nodeTag.slope == null ? Angle.ZERO : nodeTag.slope;
         OTSNode node = new OTSNode(parser.network, id, nodeTag.coordinate, angle, slope);
         nodeTag.node = node;
-        
+
         try
         {
             new NodeAnimation(nodeTag.node, parser.simulator);
@@ -154,7 +152,7 @@ class NodeTag implements Serializable
         {
             exception.printStackTrace();
         }
-        
+
         return node;
     }
 

@@ -54,7 +54,8 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class GlobalTag implements Serializable {
+class GlobalTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150723L;
 
@@ -85,83 +86,96 @@ class GlobalTag implements Serializable {
      * @throws SAXException when parsing of GLOBAL tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseGlobal(final NodeList nodeList, final VissimNetworkLaneParser parser) throws NetworkException,
-        SAXException {
+    static void parseGlobal(final NodeList nodeList, final VissimNetworkLaneParser parser) throws NetworkException, SAXException
+    {
         List<Node> nodes = XMLParser.getNodes(nodeList, "GLOBAL");
-        if (nodes.size() > 1) {
+        if (nodes.size() > 1)
+        {
             throw new SAXException("GLOBAL: More than one tag GLOBAL in the XML-file");
         }
-        if (nodes.size() == 1) {
+        if (nodes.size() == 1)
+        {
             Node node = nodes.get(0);
 
             parser.setGlobalTag(new GlobalTag());
 
             // SPEEDGTUCOLORER attributes
             List<Node> speedGTUColorerNodes = XMLParser.getNodes(node.getChildNodes(), "SPEEDGTUCOLORER");
-            if (speedGTUColorerNodes.size() > 1) {
+            if (speedGTUColorerNodes.size() > 1)
+            {
                 throw new SAXException("GLOBAL: More than one tag SPEEDGTUCOLORER in the XML-file");
             }
-            if (speedGTUColorerNodes.size() == 1) {
+            if (speedGTUColorerNodes.size() == 1)
+            {
                 Node speedGTUColorerNode = nodes.get(0);
                 NamedNodeMap speedGTUColorerAttributes = speedGTUColorerNode.getAttributes();
-                if (speedGTUColorerAttributes.getNamedItem("MAXSPEED") == null) {
+                if (speedGTUColorerAttributes.getNamedItem("MAXSPEED") == null)
+                {
                     throw new SAXException("GLOBAL: No attribute MAXSPEED for the tag SPEEDGTUCOLORER");
                 }
-                parser.getGlobalTag().speedGTUColorerMaxSpeed = SpeedUnits.parseSpeed(speedGTUColorerAttributes.getNamedItem(
-                    "MAXSPEED").getNodeValue());
+                parser.getGlobalTag().speedGTUColorerMaxSpeed =
+                        SpeedUnits.parseSpeed(speedGTUColorerAttributes.getNamedItem("MAXSPEED").getNodeValue());
             }
 
             // ACCELERATIONGTUCOLORER attributes
             List<Node> accelerationGTUColorerNodes = XMLParser.getNodes(node.getChildNodes(), "ACCELERATIONGTUCOLORER");
-            if (accelerationGTUColorerNodes.size() > 1) {
+            if (accelerationGTUColorerNodes.size() > 1)
+            {
                 throw new SAXException("GLOBAL: More than one tag ACCELERATIONGTUCOLORER in the XML-file");
             }
-            if (accelerationGTUColorerNodes.size() == 1) {
+            if (accelerationGTUColorerNodes.size() == 1)
+            {
                 Node accelerationGTUColorerNode = nodes.get(0);
                 NamedNodeMap accelerationGTUColorerAttributes = accelerationGTUColorerNode.getAttributes();
-                if (accelerationGTUColorerAttributes.getNamedItem("MAXDECELERATION") == null) {
+                if (accelerationGTUColorerAttributes.getNamedItem("MAXDECELERATION") == null)
+                {
                     throw new SAXException("GLOBAL: No attribute MAXDECELERATION for the tag ACCELERATIONGTUCOLORER");
                 }
-                parser.getGlobalTag().accelerationGTUColorerMaxDeceleration = AccelerationUnits.parseAcceleration(
-                    accelerationGTUColorerAttributes.getNamedItem("MAXDECELERATION").getNodeValue());
-                if (accelerationGTUColorerAttributes.getNamedItem("MAXACCELERATION") == null) {
+                parser.getGlobalTag().accelerationGTUColorerMaxDeceleration = AccelerationUnits
+                        .parseAcceleration(accelerationGTUColorerAttributes.getNamedItem("MAXDECELERATION").getNodeValue());
+                if (accelerationGTUColorerAttributes.getNamedItem("MAXACCELERATION") == null)
+                {
                     throw new SAXException("GLOBAL: No attribute MAXACCELERATION for the tag ACCELERATIONGTUCOLORER");
                 }
-                parser.getGlobalTag().accelerationGTUColorerMaxAcceleration = AccelerationUnits.parseAcceleration(
-                    accelerationGTUColorerAttributes.getNamedItem("MAXACCELERATION").getNodeValue());
+                parser.getGlobalTag().accelerationGTUColorerMaxAcceleration = AccelerationUnits
+                        .parseAcceleration(accelerationGTUColorerAttributes.getNamedItem("MAXACCELERATION").getNodeValue());
             }
 
             // LANECHANGEURGEGTUCOLORER attributes
             List<Node> lcuGTUColorerNodes = XMLParser.getNodes(node.getChildNodes(), "LANECHANGEURGEGTUCOLORER");
-            if (lcuGTUColorerNodes.size() > 1) {
+            if (lcuGTUColorerNodes.size() > 1)
+            {
                 throw new SAXException("GLOBAL: More than one tag LANECHANGEURGEGTUCOLORER in the XML-file");
             }
-            if (lcuGTUColorerNodes.size() == 1) {
+            if (lcuGTUColorerNodes.size() == 1)
+            {
                 Node lcuGTUColorerNode = nodes.get(0);
                 NamedNodeMap lcuGTUColorerAttributes = lcuGTUColorerNode.getAttributes();
-                if (lcuGTUColorerAttributes.getNamedItem("MINLANECHANGEDISTANCE") == null) {
-                    throw new SAXException(
-                        "GLOBAL: No attribute MINLANECHANGEDISTANCE for the tag LANECHANGEURGEGTUCOLORER");
+                if (lcuGTUColorerAttributes.getNamedItem("MINLANECHANGEDISTANCE") == null)
+                {
+                    throw new SAXException("GLOBAL: No attribute MINLANECHANGEDISTANCE for the tag LANECHANGEURGEGTUCOLORER");
                 }
-                parser.getGlobalTag().laneChangeUrgeGTUColorerMinLaneChangeDistance = LengthUnits.parseLength(
-                    lcuGTUColorerAttributes.getNamedItem("MINLANECHANGEDISTANCE").getNodeValue());
-                if (lcuGTUColorerAttributes.getNamedItem("HORIZON") == null) {
+                parser.getGlobalTag().laneChangeUrgeGTUColorerMinLaneChangeDistance =
+                        LengthUnits.parseLength(lcuGTUColorerAttributes.getNamedItem("MINLANECHANGEDISTANCE").getNodeValue());
+                if (lcuGTUColorerAttributes.getNamedItem("HORIZON") == null)
+                {
                     throw new SAXException("GLOBAL: No attribute HORIZON for the tag LANECHANGEURGEGTUCOLORER");
                 }
-                parser.getGlobalTag().laneChangeUrgeGTUColorerHorizon = LengthUnits.parseLength(lcuGTUColorerAttributes
-                    .getNamedItem("HORIZON").getNodeValue());
+                parser.getGlobalTag().laneChangeUrgeGTUColorerHorizon =
+                        LengthUnits.parseLength(lcuGTUColorerAttributes.getNamedItem("HORIZON").getNodeValue());
             }
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public String toString() {
-        return "GlobalTag [speedGTUColorerMaxSpeed=" + this.speedGTUColorerMaxSpeed
-            + ", accelerationGTUColorerMaxDeceleration=" + this.accelerationGTUColorerMaxDeceleration
-            + ", accelerationGTUColorerMaxAcceleration=" + this.accelerationGTUColorerMaxAcceleration
-            + ", laneChangeUrgeGTUColorerMinLaneChangeDistance=" + this.laneChangeUrgeGTUColorerMinLaneChangeDistance
-            + ", laneChangeUrgeGTUColorerHorizon=" + this.laneChangeUrgeGTUColorerHorizon + "]";
+    public String toString()
+    {
+        return "GlobalTag [speedGTUColorerMaxSpeed=" + this.speedGTUColorerMaxSpeed + ", accelerationGTUColorerMaxDeceleration="
+                + this.accelerationGTUColorerMaxDeceleration + ", accelerationGTUColorerMaxAcceleration="
+                + this.accelerationGTUColorerMaxAcceleration + ", laneChangeUrgeGTUColorerMinLaneChangeDistance="
+                + this.laneChangeUrgeGTUColorerMinLaneChangeDistance + ", laneChangeUrgeGTUColorerHorizon="
+                + this.laneChangeUrgeGTUColorerHorizon + "]";
     }
 
 }

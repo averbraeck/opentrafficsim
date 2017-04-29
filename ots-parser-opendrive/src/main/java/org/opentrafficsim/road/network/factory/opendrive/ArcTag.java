@@ -22,7 +22,7 @@ class ArcTag implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150723L;
-    
+
     /** Degree of the curve at the start(s-coordinate?). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length curvature = null;
@@ -35,8 +35,7 @@ class ArcTag implements Serializable
      * @throws SAXException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void
-        parseArc(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final GeometryTag geometryTag)
+    static void parseArc(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final GeometryTag geometryTag)
             throws SAXException
     {
         int typeCount = 0;

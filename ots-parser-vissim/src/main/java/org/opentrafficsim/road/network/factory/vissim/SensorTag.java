@@ -18,7 +18,8 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class SensorTag implements Serializable {
+class SensorTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150723L;
 
@@ -72,7 +73,8 @@ class SensorTag implements Serializable {
     /**
      * @param sensorTag
      */
-    public SensorTag(SensorTag sensorTag) {
+    public SensorTag(SensorTag sensorTag)
+    {
         this.name = sensorTag.name;
         this.length = sensorTag.length;
         this.laneName = sensorTag.laneName;
@@ -89,7 +91,8 @@ class SensorTag implements Serializable {
     /**
      *
      */
-    public SensorTag() {
+    public SensorTag()
+    {
         // TODO Auto-generated constructor stub
     }
 
@@ -101,22 +104,26 @@ class SensorTag implements Serializable {
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseSensor(final NodeList nodeList, final VissimNetworkLaneParser parser) throws SAXException,
-        NetworkException {
+    static void parseSensor(final NodeList nodeList, final VissimNetworkLaneParser parser) throws SAXException, NetworkException
+    {
 
-        for (Node linksNode : XMLParser.getNodes(nodeList, "detectors")) {
+        for (Node linksNode : XMLParser.getNodes(nodeList, "detectors"))
+        {
 
-            for (Node node : XMLParser.getNodes(linksNode.getChildNodes(), "detector")) {
+            for (Node node : XMLParser.getNodes(linksNode.getChildNodes(), "detector"))
+            {
                 NamedNodeMap attributes = node.getAttributes();
                 // make a link with its attributes
                 SensorTag sensorTag = new SensorTag();
 
-                if (attributes.getNamedItem("name") == null) {
+                if (attributes.getNamedItem("name") == null)
+                {
                     throw new SAXException("Sensor: missing attribute: name");
                 }
                 sensorTag.name = attributes.getNamedItem("name").getNodeValue().trim();
 
-                if (attributes.getNamedItem("lane") == null) {
+                if (attributes.getNamedItem("lane") == null)
+                {
                     throw new SAXException("Sensor: missing attribute: lane");
                 }
                 String laneLink = attributes.getNamedItem("lane").getNodeValue().trim();
@@ -124,32 +131,38 @@ class SensorTag implements Serializable {
                 sensorTag.linkName = laneLinkInfo[0];
                 sensorTag.laneName = laneLinkInfo[1];
 
-                if (attributes.getNamedItem("length") == null) {
+                if (attributes.getNamedItem("length") == null)
+                {
                     throw new SAXException("Sensor: missing attribute: length");
                 }
                 sensorTag.length = attributes.getNamedItem("length").getNodeValue().trim();
 
-                if (attributes.getNamedItem("no") == null) {
+                if (attributes.getNamedItem("no") == null)
+                {
                     throw new SAXException("Sensor: missing attribute: no");
                 }
                 sensorTag.no = attributes.getNamedItem("no").getNodeValue().trim();
 
-                if (attributes.getNamedItem("portNo") == null) {
+                if (attributes.getNamedItem("portNo") == null)
+                {
                     throw new SAXException("Sensor: missing attribute: portNo");
                 }
                 sensorTag.portNo = attributes.getNamedItem("portNo").getNodeValue().trim();
 
-                if (attributes.getNamedItem("sc") == null) {
+                if (attributes.getNamedItem("sc") == null)
+                {
                     throw new SAXException("Sensor: missing attribute: sc");
                 }
                 sensorTag.sc = attributes.getNamedItem("sc").getNodeValue().trim();
 
-                if (attributes.getNamedItem("type") == null) {
+                if (attributes.getNamedItem("type") == null)
+                {
                     throw new SAXException("Sensor: missing attribute: type");
                 }
                 sensorTag.type = attributes.getNamedItem("type").getNodeValue().trim();
 
-                if (attributes.getNamedItem("pos") == null) {
+                if (attributes.getNamedItem("pos") == null)
+                {
                     throw new SAXException("Sensor: missing attribute: pos");
                 }
                 sensorTag.positionStr = attributes.getNamedItem("pos").getNodeValue().trim();
@@ -169,8 +182,10 @@ class SensorTag implements Serializable {
      * @throws SAXException when the trigger position did not exist
      */
     static RelativePosition.TYPE parseTriggerPosition(final String trigger, final SensorTag sensorTag, final String laneName)
-        throws SAXException {
-        switch (trigger) {
+            throws SAXException
+    {
+        switch (trigger)
+        {
             case "FRONT":
                 return RelativePosition.FRONT;
 
@@ -187,15 +202,15 @@ class SensorTag implements Serializable {
                 return RelativePosition.REFERENCE;
 
             default:
-                throw new SAXException("SENSOR: wrong type of TRIGGER for sensor " + sensorTag.name + " on lane "
-                    + laneName);
+                throw new SAXException("SENSOR: wrong type of TRIGGER for sensor " + sensorTag.name + " on lane " + laneName);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String toString() {
+    public final String toString()
+    {
         return "SensorTag [name=" + this.name + ", positionStr=" + this.positionStr + ", className=" + this.className
-            + ", triggerPosition=" + this.triggerPosition + "]";
+                + ", triggerPosition=" + this.triggerPosition + "]";
     }
 }

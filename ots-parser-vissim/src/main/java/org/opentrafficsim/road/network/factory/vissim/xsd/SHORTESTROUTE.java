@@ -43,7 +43,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "SHORTESTROUTE")
-public class SHORTESTROUTE {
+public class SHORTESTROUTE
+{
 
     @XmlAttribute(name = "NAME", required = true)
     protected String name;
@@ -77,7 +78,8 @@ public class SHORTESTROUTE {
      * Gets the value of the name property.
      * @return possible object is {@link String }
      */
-    public String getNAME() {
+    public String getNAME()
+    {
         return name;
     }
 
@@ -85,7 +87,8 @@ public class SHORTESTROUTE {
      * Sets the value of the name property.
      * @param value allowed object is {@link String }
      */
-    public void setNAME(String value) {
+    public void setNAME(String value)
+    {
         this.name = value;
     }
 
@@ -93,7 +96,8 @@ public class SHORTESTROUTE {
      * Gets the value of the from property.
      * @return possible object is {@link Object }
      */
-    public Object getFROM() {
+    public Object getFROM()
+    {
         return from;
     }
 
@@ -101,7 +105,8 @@ public class SHORTESTROUTE {
      * Sets the value of the from property.
      * @param value allowed object is {@link Object }
      */
-    public void setFROM(Object value) {
+    public void setFROM(Object value)
+    {
         this.from = value;
     }
 
@@ -109,7 +114,8 @@ public class SHORTESTROUTE {
      * Gets the value of the to property.
      * @return possible object is {@link Object }
      */
-    public Object getTO() {
+    public Object getTO()
+    {
         return to;
     }
 
@@ -117,7 +123,8 @@ public class SHORTESTROUTE {
      * Sets the value of the to property.
      * @param value allowed object is {@link Object }
      */
-    public void setTO(Object value) {
+    public void setTO(Object value)
+    {
         this.to = value;
     }
 
@@ -136,8 +143,10 @@ public class SHORTESTROUTE {
      * <p>
      * Objects of the following type(s) are allowed in the list {@link Object }
      */
-    public List<Object> getVIA() {
-        if (via == null) {
+    public List<Object> getVIA()
+    {
+        if (via == null)
+        {
             via = new ArrayList<Object>();
         }
         return this.via;
@@ -147,7 +156,8 @@ public class SHORTESTROUTE {
      * Gets the value of the distancecost property.
      * @return possible object is {@link String }
      */
-    public String getDISTANCECOST() {
+    public String getDISTANCECOST()
+    {
         return distancecost;
     }
 
@@ -155,7 +165,8 @@ public class SHORTESTROUTE {
      * Sets the value of the distancecost property.
      * @param value allowed object is {@link String }
      */
-    public void setDISTANCECOST(String value) {
+    public void setDISTANCECOST(String value)
+    {
         this.distancecost = value;
     }
 
@@ -163,7 +174,8 @@ public class SHORTESTROUTE {
      * Gets the value of the timecost property.
      * @return possible object is {@link String }
      */
-    public String getTIMECOST() {
+    public String getTIMECOST()
+    {
         return timecost;
     }
 
@@ -171,7 +183,8 @@ public class SHORTESTROUTE {
      * Sets the value of the timecost property.
      * @param value allowed object is {@link String }
      */
-    public void setTIMECOST(String value) {
+    public void setTIMECOST(String value)
+    {
         this.timecost = value;
     }
 
@@ -179,7 +192,8 @@ public class SHORTESTROUTE {
      * Gets the value of the base property.
      * @return possible object is {@link String }
      */
-    public String getBase() {
+    public String getBase()
+    {
         return base;
     }
 
@@ -187,7 +201,8 @@ public class SHORTESTROUTE {
      * Sets the value of the base property.
      * @param value allowed object is {@link String }
      */
-    public void setBase(String value) {
+    public void setBase(String value)
+    {
         this.base = value;
     }
 

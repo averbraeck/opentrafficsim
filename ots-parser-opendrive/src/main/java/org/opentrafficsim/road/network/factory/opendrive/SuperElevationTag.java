@@ -58,7 +58,7 @@ class SuperElevationTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static SuperElevationTag parseSuperElevation(final Node node, final OpenDriveNetworkLaneParser parser)
-        throws SAXException, NetworkException
+            throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         SuperElevationTag elevationTag = new SuperElevationTag();

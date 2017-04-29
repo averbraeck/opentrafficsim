@@ -45,8 +45,7 @@ class RouteTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseRoutes(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException,
-        NetworkException
+    static void parseRoutes(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException, NetworkException
     {
         for (Node node : XMLParser.getNodes(nodeList, "ROUTE"))
         {

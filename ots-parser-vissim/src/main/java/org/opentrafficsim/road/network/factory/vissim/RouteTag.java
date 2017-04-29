@@ -20,7 +20,8 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class RouteTag implements Serializable {
+class RouteTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150723L;
 
@@ -44,21 +45,25 @@ class RouteTag implements Serializable {
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseRoutes(final NodeList nodeList, final VissimNetworkLaneParser parser) throws SAXException,
-        NetworkException {
-        for (Node node : XMLParser.getNodes(nodeList, "ROUTE")) {
+    static void parseRoutes(final NodeList nodeList, final VissimNetworkLaneParser parser) throws SAXException, NetworkException
+    {
+        for (Node node : XMLParser.getNodes(nodeList, "ROUTE"))
+        {
             NamedNodeMap attributes = node.getAttributes();
             RouteTag routeTag = new RouteTag();
 
-            if (attributes.getNamedItem("NAME") == null) {
+            if (attributes.getNamedItem("NAME") == null)
+            {
                 throw new SAXException("ROUTE: missing attribute NAME");
             }
             routeTag.name = attributes.getNamedItem("NAME").getNodeValue().trim();
-            if (parser.getRouteTags().keySet().contains(routeTag.name)) {
+            if (parser.getRouteTags().keySet().contains(routeTag.name))
+            {
                 throw new SAXException("ROUTE: NAME " + routeTag.name + " defined twice");
             }
 
-            if (attributes.getNamedItem("NODELIST") == null) {
+            if (attributes.getNamedItem("NODELIST") == null)
+            {
                 throw new SAXException("ROUTE " + routeTag.name + ": missing attribute NODELIST");
             }
             String routeNodes = attributes.getNamedItem("NODELIST").getNodeValue().trim();
@@ -72,16 +77,19 @@ class RouteTag implements Serializable {
      * Make the route based on the nodes. This method should be called after the Nodes have been created from the NodeTags.
      * @throws NetworkException when node cannot be added.
      */
-    void makeRoute() throws NetworkException {
+    void makeRoute() throws NetworkException
+    {
         this.route = new Route(this.name);
-        for (NodeTag nodeTag : this.routeNodeTags) {
+        for (NodeTag nodeTag : this.routeNodeTags)
+        {
             this.route.addNode(nodeTag.node);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String toString() {
+    public final String toString()
+    {
         return "RouteTag [name=" + this.name + ", routeNodeTags=" + this.routeNodeTags + ", route=" + this.route + "]";
     }
 }

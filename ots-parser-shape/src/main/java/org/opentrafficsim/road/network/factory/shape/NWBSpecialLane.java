@@ -10,7 +10,8 @@ import com.vividsolutions.jts.geom.Geometry;
 /**
  * @author P070518
  */
-public class NWBSpecialLane extends AbstractNWBRoadElement {
+public class NWBSpecialLane extends AbstractNWBRoadElement
+{
 
     private String laneType;
 
@@ -33,22 +34,26 @@ public class NWBSpecialLane extends AbstractNWBRoadElement {
      * @param sideCode
      */
     public NWBSpecialLane(Geometry myGeom, OTSNode startNode, OTSNode endNode, String roadId, Double beginDistance,
-        Double endDistance, String laneType, Integer numberOfLanes, String sideCode) {
+            Double endDistance, String laneType, Integer numberOfLanes, String sideCode)
+    {
         super(myGeom, startNode, endNode, roadId, beginDistance, endDistance);
         this.laneType = laneType;
         this.numberOfLanes = numberOfLanes;
         this.sideCode = sideCode;
     }
 
-    public String getLaneType() {
+    public String getLaneType()
+    {
         return laneType;
     }
 
-    public Integer getNumberOfLanes() {
+    public Integer getNumberOfLanes()
+    {
         return numberOfLanes;
     }
 
-    public String getSideCode() {
+    public String getSideCode()
+    {
         return sideCode;
     }
 

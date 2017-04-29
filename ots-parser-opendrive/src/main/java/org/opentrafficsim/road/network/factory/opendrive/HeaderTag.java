@@ -85,8 +85,7 @@ public class HeaderTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseHeader(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException,
-        NetworkException
+    static void parseHeader(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         HeaderTag headerTag = new HeaderTag();

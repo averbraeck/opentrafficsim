@@ -13,7 +13,8 @@ import org.xml.sax.SAXException;
  * initial version Jul 24, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class BezierTag {
+class BezierTag
+{
     /**
      * Parse the LINK.BEZIER tag.
      * @param bezierNode the XML-node to parse
@@ -24,7 +25,8 @@ class BezierTag {
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseBezier(final Node bezierNode, final VissimNetworkLaneParser parser, final LinkTag linkTag)
-        throws SAXException, NetworkException {
+            throws SAXException, NetworkException
+    {
         linkTag.bezierTag = new BezierTag();
     }
 }

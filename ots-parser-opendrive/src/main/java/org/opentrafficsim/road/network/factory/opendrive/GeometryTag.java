@@ -124,14 +124,14 @@ class GeometryTag implements Serializable
      * @param network the network
      * @param geometryTag the tag with the info for the node.
      * @return a constructed node
-     * @throws NetworkException if node already exists in the network, or if name of the node is not unique. 
+     * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
     static OTSNode makeOTSNode(final Network network, final GeometryTag geometryTag) throws NetworkException
     {
         Direction angle = Direction.ZERO;
-        Direction slope = Direction.ZERO;
+        Angle slope = Angle.ZERO;
         OTSPoint3D coordinate =
-            new OTSPoint3D(geometryTag.x.doubleValue(), geometryTag.y.doubleValue(), geometryTag.z.doubleValue());
+                new OTSPoint3D(geometryTag.x.doubleValue(), geometryTag.y.doubleValue(), geometryTag.z.doubleValue());
 
         if (geometryTag.id == null)
         {
@@ -148,7 +148,7 @@ class GeometryTag implements Serializable
     public final String toString()
     {
         return "GeometryTag [id=" + this.id + ", s=" + this.s + ", x=" + this.x + ", y=" + this.y + ", z=" + this.z + ", hdg="
-                + this.hdg + ", length=" + this.length + ", spiralTag=" + this.spiralTag + ", arcTag=" + this.arcTag
-                + ", node=" + this.node + ", interLine=" + this.interLine + "]";
+                + this.hdg + ", length=" + this.length + ", spiralTag=" + this.spiralTag + ", arcTag=" + this.arcTag + ", node="
+                + this.node + ", interLine=" + this.interLine + "]";
     }
 }

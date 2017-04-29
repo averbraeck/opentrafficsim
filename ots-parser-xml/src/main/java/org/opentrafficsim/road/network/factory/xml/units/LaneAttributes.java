@@ -60,7 +60,7 @@ public final class LaneAttributes
      * @throws NetworkException in case of unknown overtaking conditions.
      */
     public static OvertakingConditions parseOvertakingConditions(final String ocStr, final XmlNetworkLaneParser parser)
-        throws NetworkException
+            throws NetworkException
     {
         if (ocStr.equals("LEFTONLY"))
         {
@@ -198,7 +198,7 @@ public final class LaneAttributes
         }
         return parser.gtuTypes.get(typeName);
     }
-    
+
     /**
      * @param priority the priority string
      * @return the priority

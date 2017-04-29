@@ -38,7 +38,8 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class VissimNetworkLaneParser implements Serializable {
+public class VissimNetworkLaneParser implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150723L;
 
@@ -116,7 +117,8 @@ public class VissimNetworkLaneParser implements Serializable {
     /**
      * @param simulator the simulator for creating the animation. Null if no animation needed.
      */
-    public VissimNetworkLaneParser(final OTSDEVSSimulatorInterface simulator) {
+    public VissimNetworkLaneParser(final OTSDEVSSimulatorInterface simulator)
+    {
         this.simulator = simulator;
     }
 
@@ -139,10 +141,11 @@ public class VissimNetworkLaneParser implements Serializable {
      */
     @SuppressWarnings("checkstyle:needbraces")
     public OTSNetwork build(final URL inputUrl, final File outputFile, final OTSNetwork network, final String sinkKillClassName,
-        final String sensorClassName, final String trafficLightName) throws NetworkException, ParserConfigurationException, 
-                SAXException, IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException 
+            final String sensorClassName, final String trafficLightName) throws NetworkException, ParserConfigurationException,
+            SAXException, IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException
     {
-        if (inputUrl.getFile().length() > 0 && !(new File(inputUrl.getFile()).exists())) {
+        if (inputUrl.getFile().length() > 0 && !(new File(inputUrl.getFile()).exists()))
+        {
             throw new SAXException("XmlNetworkLaneParser.build: File url.getFile() does not exist");
         }
 
@@ -158,9 +161,10 @@ public class VissimNetworkLaneParser implements Serializable {
         NodeList networkXMLNodeList = document.getDocumentElement().getChildNodes();
 
         // Is it a Vissim network?
-        if (!document.getDocumentElement().getNodeName().equals("network")) {
+        if (!document.getDocumentElement().getNodeName().equals("network"))
+        {
             throw new SAXException("XmlNetworkLaneParser.build: XML document does not start with an NETWORK tag, found "
-                + document.getDocumentElement().getNodeName() + " instead");
+                    + document.getDocumentElement().getNodeName() + " instead");
         }
 
         // make the GTUTypes ALL and NONE to get started
@@ -187,10 +191,14 @@ public class VissimNetworkLaneParser implements Serializable {
         LinkTag.addDetectors(this);
 
         // create a subset of connector links
-        for (LinkTag linkTag : this.linkTags.values()) {
-            if (linkTag.connector) {
+        for (LinkTag linkTag : this.linkTags.values())
+        {
+            if (linkTag.connector)
+            {
                 this.connectorTags.put(linkTag.name, linkTag);
-            } else {
+            }
+            else
+            {
                 this.realLinkTags.put(linkTag.name, linkTag);
             }
         }
@@ -228,22 +236,26 @@ public class VissimNetworkLaneParser implements Serializable {
         removeDoubleConnectors(removeConnectorTags);
 
         // build links
-        for (LinkTag linkTag : this.linkTags.values()) {
+        for (LinkTag linkTag : this.linkTags.values())
+        {
             Links.buildLink(linkTag, this, this.simulator);
         }
 
         // Generate the real links
-        for (LinkTag realLinkTag : this.linkTags.values()) {
+        for (LinkTag realLinkTag : this.linkTags.values())
+        {
             Links.applyRoadTypeToLink(realLinkTag, this, this.simulator);
         }
 
         // Generate sink/kill sensors at the links that have no further connections (dead-walking)
-        for (LinkTag realLinkTag : this.linkTags.values()) {
+        for (LinkTag realLinkTag : this.linkTags.values())
+        {
             Links.createSinkSensor(realLinkTag, this, this.simulator);
         }
 
         // generate the connector links
-        for (LinkTag connectorTag : this.linkTags.values()) {
+        for (LinkTag connectorTag : this.linkTags.values())
+        {
             Links.applyRoadTypeToConnector(connectorTag, this, this.simulator);
         }
 
@@ -260,16 +272,21 @@ public class VissimNetworkLaneParser implements Serializable {
         return makeNetwork();
     }
 
-    private void removeDoubleConnectors(HashMap<String, LinkTag> removeConnectorTags) {
-        for (LinkTag linkTag : this.connectorTags.values()) {
-            for (LinkTag linkTag2 : this.connectorTags.values()) {
-                if (linkTag.nodeStartTag.name.equals(linkTag2.nodeStartTag.name) && linkTag.nodeEndTag.name.equals(
-                    linkTag2.nodeEndTag.name) && !linkTag.equals(linkTag2)) {
+    private void removeDoubleConnectors(HashMap<String, LinkTag> removeConnectorTags)
+    {
+        for (LinkTag linkTag : this.connectorTags.values())
+        {
+            for (LinkTag linkTag2 : this.connectorTags.values())
+            {
+                if (linkTag.nodeStartTag.name.equals(linkTag2.nodeStartTag.name)
+                        && linkTag.nodeEndTag.name.equals(linkTag2.nodeEndTag.name) && !linkTag.equals(linkTag2))
+                {
                     removeConnectorTags.put(linkTag.nodeStartTag.name + linkTag.nodeEndTag.name, linkTag);
                 }
             }
         }
-        for (Entry<String, LinkTag> entry : removeConnectorTags.entrySet()) {
+        for (Entry<String, LinkTag> entry : removeConnectorTags.entrySet())
+        {
             connectorTags.remove(entry.getValue().name);
             linkTags.remove(entry.getValue().name);
         }
@@ -279,33 +296,39 @@ public class VissimNetworkLaneParser implements Serializable {
      * @param parser VissimNetworkLaneParser;
      * @throws OTSGeometryException
      */
-    private void createLinkBetweenConnectorAndLink(final VissimNetworkLaneParser parser) throws OTSGeometryException 
+    private void createLinkBetweenConnectorAndLink(final VissimNetworkLaneParser parser) throws OTSGeometryException
     {
         // loop through all connector links
-        for (LinkTag connectorLinkTag : this.connectorTags.values()) {
+        for (LinkTag connectorLinkTag : this.connectorTags.values())
+        {
 
             OTSLine3D designLineOTS = LinkTag.createLineString(connectorLinkTag);
             LineString designLine = designLineOTS.getLineString();
             Double length = designLine.getLength();
             // default: we replace the connector link by a bezier curved link
-            if (length < 999995) {
+            if (length < 999995)
+            {
                 connectorLinkTag.nodeStartTag = parser.nodeTags.get(connectorLinkTag.connectorTag.fromNodeName);
                 connectorLinkTag.nodeEndTag = parser.nodeTags.get(connectorLinkTag.connectorTag.toNodeName);
                 connectorLinkTag.bezierTag = new BezierTag();
-                if (connectorLinkTag.nodeStartTag.name.equals(connectorLinkTag.nodeEndTag.name)) {
+                if (connectorLinkTag.nodeStartTag.name.equals(connectorLinkTag.nodeEndTag.name))
+                {
                     this.linkTags.remove(connectorLinkTag.name);
                     // this.connectorTags.remove(connectorLinkTag.name);
                 }
-                if (connectorLinkTag.polyLineTag != null) {
+                if (connectorLinkTag.polyLineTag != null)
+                {
                     connectorLinkTag.polyLineTag = null;
                 }
-                if (connectorLinkTag.straightTag != null) {
+                if (connectorLinkTag.straightTag != null)
+                {
                     connectorLinkTag.straightTag = null;
                 }
             }
             // if the link is quite long....we could split it but we don't do this now
             // so the next block is inactive!!!
-            else {
+            else
+            {
                 // get the from link
                 LinkTag pasteLinkFromTag = new LinkTag(connectorLinkTag);
                 // add a unique name
@@ -315,10 +338,12 @@ public class VissimNetworkLaneParser implements Serializable {
                 pasteLinkFromTag.nodeStartTag = parser.nodeTags.get(connectorLinkTag.connectorTag.fromNodeName);
                 pasteLinkFromTag.nodeEndTag = connectorLinkTag.nodeStartTag;
                 pasteLinkFromTag.bezierTag = new BezierTag();
-                if (pasteLinkFromTag.polyLineTag != null) {
+                if (pasteLinkFromTag.polyLineTag != null)
+                {
                     pasteLinkFromTag.polyLineTag = null;
                 }
-                if (pasteLinkFromTag.straightTag != null) {
+                if (pasteLinkFromTag.straightTag != null)
+                {
                     pasteLinkFromTag.straightTag = null;
                 }
                 // this.linkTags.put(pasteLinkFromTag.name, pasteLinkFromTag);
@@ -332,10 +357,12 @@ public class VissimNetworkLaneParser implements Serializable {
                 pasteLinkToTag.nodeEndTag = parser.nodeTags.get(connectorLinkTag.connectorTag.toNodeName);
 
                 pasteLinkToTag.bezierTag = new BezierTag();
-                if (pasteLinkToTag.polyLineTag != null) {
+                if (pasteLinkToTag.polyLineTag != null)
+                {
                     pasteLinkToTag.polyLineTag = null;
                 }
-                if (pasteLinkToTag.straightTag != null) {
+                if (pasteLinkToTag.straightTag != null)
+                {
                     pasteLinkToTag.straightTag = null;
                 }
                 // this.linkTags.put(pasteLinkToTag.name, pasteLinkToTag);
@@ -346,7 +373,8 @@ public class VissimNetworkLaneParser implements Serializable {
     }
 
     private void splitLinkAtSignalAndDetector(Map<String, LinkTag> inputLinkTags, Double margin,
-        Double splitMetersAfterSignalHead) throws OTSGeometryException, NetworkException {
+            Double splitMetersAfterSignalHead) throws OTSGeometryException, NetworkException
+    {
 
         Map<String, LinkTag> newLinkTags = new HashMap<>();
         // Loops through all links
@@ -355,16 +383,20 @@ public class VissimNetworkLaneParser implements Serializable {
     }
 
     private void splitLinksAtSignal(Double margin, Double splitMetersAfterSignalHead, Map<String, LinkTag> inputLinkTags,
-        Map<String, LinkTag> newLinkTags) throws OTSGeometryException, NetworkException {
-        for (LinkTag linkTag : inputLinkTags.values()) {
-            for (SignalHeadTag signalHeadTag : linkTag.signalHeads) {
+            Map<String, LinkTag> newLinkTags) throws OTSGeometryException, NetworkException
+    {
+        for (LinkTag linkTag : inputLinkTags.values())
+        {
+            for (SignalHeadTag signalHeadTag : linkTag.signalHeads)
+            {
                 Double position = Double.parseDouble(signalHeadTag.positionStr);
                 Double splitPosition = position + splitMetersAfterSignalHead;
                 // A new node has to be created
                 NodeTag newNodeTag = NodeTag.createNewNodeAtLinkPosition(linkTag, this, splitPosition);
                 // split the link and connect the new node after the position of the signalhead\
                 Map<String, LinkTag> newLinks = LinkTag.splitLink(newNodeTag, linkTag, this, splitPosition, margin, false);
-                if (newLinks != null) {
+                if (newLinks != null)
+                {
                     newLinkTags.putAll(newLinks);
                 }
             }
@@ -372,20 +404,24 @@ public class VissimNetworkLaneParser implements Serializable {
             linkTag.sensors.removeAll(linkTag.sensorTagsToRemove);
             // relocate the signalHeads and detectors afterwards!
         }
-        if (!newLinkTags.isEmpty()) {
+        if (!newLinkTags.isEmpty())
+        {
             this.linkTags.putAll(newLinkTags);
         }
 
         // run again for the newly created linkTags
         Map<String, LinkTag> new2LinkTags = new HashMap<>();
-        if (newLinkTags.size() > 0) {
+        if (newLinkTags.size() > 0)
+        {
             splitLinksAtSignal(margin, splitMetersAfterSignalHead, newLinkTags, new2LinkTags);
         }
     }
 
-    private void splitLinksIntersectedByConnector(Double margin) throws OTSGeometryException, NetworkException {
+    private void splitLinksIntersectedByConnector(Double margin) throws OTSGeometryException, NetworkException
+    {
         // loop through all connector links
-        for (LinkTag connectorLinkTag : this.connectorTags.values()) {
+        for (LinkTag connectorLinkTag : this.connectorTags.values())
+        {
             // ***********************
             // 1: connector meets link:
             // get the position where this connector intersects the Link. Here the link will be split
@@ -399,33 +435,39 @@ public class VissimNetworkLaneParser implements Serializable {
             NodeTag newSplitNodeTag = NodeTag.createNewNodeAtLinkPosition(linkToTag, this, position);
 
             // split the link
-            Map<String, LinkTag> newLinkToTags = LinkTag.splitLink(newSplitNodeTag, linkToTag, this, position, margin,
-                isConnectorToLink);
+            Map<String, LinkTag> newLinkToTags =
+                    LinkTag.splitLink(newSplitNodeTag, linkToTag, this, position, margin, isConnectorToLink);
             linkToTag.signalHeads.removeAll(linkToTag.signalHeadsToRemove);
             linkToTag.sensors.removeAll(linkToTag.sensorTagsToRemove);
 
-            if (newLinkToTags != null) {
+            if (newLinkToTags != null)
+            {
                 // only add if a link is split
                 connectorLinkTag.connectorTag.toNodeName = newSplitNodeTag.name;
                 this.nodeTags.put(newSplitNodeTag.name, newSplitNodeTag);
                 // adjust the connection of other Connector links
-                for (LinkTag connectorLinkTag2 : this.connectorTags.values()) {
+                for (LinkTag connectorLinkTag2 : this.connectorTags.values())
+                {
 
-                    if (connectorLinkTag2 != connectorLinkTag && connectorLinkTag2.connectorTag.toLinkNo.equals(
-                        connectorLinkTag.connectorTag.toLinkNo)) {
+                    if (connectorLinkTag2 != connectorLinkTag
+                            && connectorLinkTag2.connectorTag.toLinkNo.equals(connectorLinkTag.connectorTag.toLinkNo))
+                    {
 
                         Double position2 = Double.parseDouble(connectorLinkTag2.connectorTag.toPositionStr);
-                        if (position2 > position) {
+                        if (position2 > position)
+                        {
                             connectorLinkTag2.connectorTag.toLinkNo = newLinkToTags.values().iterator().next().name;
                             Double newPosition = position2 - position;
                             connectorLinkTag2.connectorTag.toPositionStr = newPosition.toString();
                         }
                     }
-                    if (connectorLinkTag2 != connectorLinkTag && connectorLinkTag2.connectorTag.fromLinkNo.equals(
-                        connectorLinkTag.connectorTag.toLinkNo)) {
+                    if (connectorLinkTag2 != connectorLinkTag
+                            && connectorLinkTag2.connectorTag.fromLinkNo.equals(connectorLinkTag.connectorTag.toLinkNo))
+                    {
 
                         Double position2 = Double.parseDouble(connectorLinkTag2.connectorTag.fromPositionStr);
-                        if (position2 > position) {
+                        if (position2 > position)
+                        {
                             connectorLinkTag2.connectorTag.fromLinkNo = newLinkToTags.values().iterator().next().name;
                             Double newPosition = position2 - position;
                             connectorLinkTag2.connectorTag.fromPositionStr = newPosition.toString();
@@ -435,15 +477,19 @@ public class VissimNetworkLaneParser implements Serializable {
                 // connectorTag.connectorTag.toLinkNo = newLinkToTags.values().iterator().next().name;
                 this.linkTags.putAll(newLinkToTags);
                 this.realLinkTags.putAll(newLinkToTags);
-            } else {
+            }
+            else
+            {
 
                 // from connector to next link
-                if (position < margin) {
+                if (position < margin)
+                {
                     this.nodeTags.remove(connectorLinkTag.connectorTag.toNodeName);
                     connectorLinkTag.connectorTag.toNodeName = linkToTag.nodeStartTag.name;
                 }
                 // from link to connector
-                else {
+                else
+                {
                     this.nodeTags.remove(connectorLinkTag.connectorTag.toNodeName);
                     connectorLinkTag.connectorTag.toNodeName = linkToTag.nodeEndTag.name;
                 }
@@ -456,32 +502,38 @@ public class VissimNetworkLaneParser implements Serializable {
             isConnectorToLink = false;
             NodeTag newSplitNodeTag2 = NodeTag.createNewNodeAtLinkPosition(linkFromTag, this, position);
 
-            Map<String, LinkTag> newLinkFromTags = LinkTag.splitLink(newSplitNodeTag2, linkFromTag, this, position, margin,
-                isConnectorToLink);
+            Map<String, LinkTag> newLinkFromTags =
+                    LinkTag.splitLink(newSplitNodeTag2, linkFromTag, this, position, margin, isConnectorToLink);
             linkFromTag.signalHeads.removeAll(linkFromTag.signalHeadsToRemove);
             linkFromTag.sensors.removeAll(linkFromTag.sensorTagsToRemove);
 
-            if (newLinkFromTags != null) {
+            if (newLinkFromTags != null)
+            {
                 // only add if a link is split
                 connectorLinkTag.connectorTag.fromNodeName = newSplitNodeTag2.name;
                 this.nodeTags.put(newSplitNodeTag2.name, newSplitNodeTag2);
                 // adjust the connection of other Connector links
-                for (LinkTag connectorLinkTag2 : this.connectorTags.values()) {
-                    if (connectorLinkTag2 != connectorLinkTag && connectorLinkTag2.connectorTag.fromLinkNo.equals(
-                        connectorLinkTag.connectorTag.fromLinkNo)) {
+                for (LinkTag connectorLinkTag2 : this.connectorTags.values())
+                {
+                    if (connectorLinkTag2 != connectorLinkTag
+                            && connectorLinkTag2.connectorTag.fromLinkNo.equals(connectorLinkTag.connectorTag.fromLinkNo))
+                    {
 
                         Double position2 = Double.parseDouble(connectorLinkTag2.connectorTag.fromPositionStr);
-                        if (position2 > position) {
+                        if (position2 > position)
+                        {
                             connectorLinkTag2.connectorTag.fromLinkNo = newLinkFromTags.values().iterator().next().name;
                             Double newPosition = position2 - position;
                             connectorLinkTag2.connectorTag.fromPositionStr = newPosition.toString();
                         }
                     }
-                    if (connectorLinkTag2 != connectorLinkTag && connectorLinkTag2.connectorTag.toLinkNo.equals(
-                        connectorLinkTag.connectorTag.fromLinkNo)) {
+                    if (connectorLinkTag2 != connectorLinkTag
+                            && connectorLinkTag2.connectorTag.toLinkNo.equals(connectorLinkTag.connectorTag.fromLinkNo))
+                    {
 
                         Double position2 = Double.parseDouble(connectorLinkTag2.connectorTag.toPositionStr);
-                        if (position2 > position) {
+                        if (position2 > position)
+                        {
                             connectorLinkTag2.connectorTag.toLinkNo = newLinkFromTags.values().iterator().next().name;
                             Double newPosition = position2 - position;
                             connectorLinkTag2.connectorTag.toPositionStr = newPosition.toString();
@@ -491,14 +543,18 @@ public class VissimNetworkLaneParser implements Serializable {
                 // connectorTag.connectorTag.fromLinkNo = newLinkFromTags.values().iterator().next().name;
                 this.linkTags.putAll(newLinkFromTags);
                 this.realLinkTags.putAll(newLinkFromTags);
-            } else {
+            }
+            else
+            {
                 // from connector to next link
-                if (position < margin) {
+                if (position < margin)
+                {
                     this.nodeTags.remove(connectorLinkTag.connectorTag.fromNodeName);
                     connectorLinkTag.connectorTag.fromNodeName = linkFromTag.nodeStartTag.name;
                 }
                 // from link to connector
-                else {
+                else
+                {
                     this.nodeTags.remove(connectorLinkTag.connectorTag.fromNodeName);
                     connectorLinkTag.connectorTag.fromNodeName = linkFromTag.nodeEndTag.name;
                 }
@@ -510,7 +566,8 @@ public class VissimNetworkLaneParser implements Serializable {
      * @return the OTSNetwork with the static information about the network
      * @throws NetworkException if items cannot be added to the Network
      */
-    private OTSNetwork makeNetwork() throws NetworkException {
+    private OTSNetwork makeNetwork() throws NetworkException
+    {
         // for (RouteTag routeTag : this.routeTags.values()) {
         // // TODO Make routes GTU specific. See what to do with GTUType.ALL for routes
         // // TODO Automate addition of Routes to network
@@ -521,183 +578,228 @@ public class VissimNetworkLaneParser implements Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public final String toString() {
+    public final String toString()
+    {
         return "VissimANMNetworkLaneParser [gtuTypes=" + this.gtuTypes + ", laneTypes=" + this.laneTypes + "]";
     }
 
-    public GlobalTag getGlobalTag() {
+    public GlobalTag getGlobalTag()
+    {
         return globalTag;
     }
 
-    public void setGlobalTag(GlobalTag globalTag) {
+    public void setGlobalTag(GlobalTag globalTag)
+    {
         this.globalTag = globalTag;
     }
 
-    public Map<String, NodeTag> getNodeTags() {
+    public Map<String, NodeTag> getNodeTags()
+    {
         return nodeTags;
     }
 
-    public void setNodeTags(Map<String, NodeTag> nodeTags) {
+    public void setNodeTags(Map<String, NodeTag> nodeTags)
+    {
         this.nodeTags = nodeTags;
     }
 
-    public Map<String, LinkTag> getLinkTags() {
+    public Map<String, LinkTag> getLinkTags()
+    {
         return linkTags;
     }
 
-    public void setLinkTags(Map<String, LinkTag> linkTags) {
+    public void setLinkTags(Map<String, LinkTag> linkTags)
+    {
         this.linkTags = linkTags;
     }
 
-    public Map<String, LinkTag> getConnectorTags() {
+    public Map<String, LinkTag> getConnectorTags()
+    {
         return connectorTags;
     }
 
-    public void setConnectorTags(Map<String, LinkTag> connectorTags) {
+    public void setConnectorTags(Map<String, LinkTag> connectorTags)
+    {
         this.connectorTags = connectorTags;
     }
 
-    public Map<String, LinkTag> getRealLinkTags() {
+    public Map<String, LinkTag> getRealLinkTags()
+    {
         return realLinkTags;
     }
 
-    public void setRealLinkTags(Map<String, LinkTag> realLinkTags) {
+    public void setRealLinkTags(Map<String, LinkTag> realLinkTags)
+    {
         this.realLinkTags = realLinkTags;
     }
 
-    public Map<String, SignalHeadTag> getSignalHeadTags() {
+    public Map<String, SignalHeadTag> getSignalHeadTags()
+    {
         return signalHeadTags;
     }
 
-    public void setSignalHeadTags(Map<String, SignalHeadTag> signalHeadTags) {
+    public void setSignalHeadTags(Map<String, SignalHeadTag> signalHeadTags)
+    {
         this.signalHeadTags = signalHeadTags;
     }
 
-    public Map<String, SensorTag> getSensorTags() {
+    public Map<String, SensorTag> getSensorTags()
+    {
         return sensorTags;
     }
 
-    public void setSensorTags(Map<String, SensorTag> sensorTags) {
+    public void setSensorTags(Map<String, SensorTag> sensorTags)
+    {
         this.sensorTags = sensorTags;
     }
 
-    public Map<String, GTUTag> getGtuTags() {
+    public Map<String, GTUTag> getGtuTags()
+    {
         return gtuTags;
     }
 
-    public void setGtuTags(Map<String, GTUTag> gtuTags) {
+    public void setGtuTags(Map<String, GTUTag> gtuTags)
+    {
         this.gtuTags = gtuTags;
     }
 
-    public Map<String, GTUMixTag> getGtuMixTags() {
+    public Map<String, GTUMixTag> getGtuMixTags()
+    {
         return gtuMixTags;
     }
 
-    public void setGtuMixTags(Map<String, GTUMixTag> gtuMixTags) {
+    public void setGtuMixTags(Map<String, GTUMixTag> gtuMixTags)
+    {
         this.gtuMixTags = gtuMixTags;
     }
 
-    public Map<String, RoadTypeTag> getRoadTypeTags() {
+    public Map<String, RoadTypeTag> getRoadTypeTags()
+    {
         return roadTypeTags;
     }
 
-    public void setRoadTypeTags(Map<String, RoadTypeTag> roadTypeTags) {
+    public void setRoadTypeTags(Map<String, RoadTypeTag> roadTypeTags)
+    {
         this.roadTypeTags = roadTypeTags;
     }
 
-    public Map<String, GTUType> getGtuTypes() {
+    public Map<String, GTUType> getGtuTypes()
+    {
         return gtuTypes;
     }
 
-    public void setGtuTypes(Map<String, GTUType> gtuTypes) {
+    public void setGtuTypes(Map<String, GTUType> gtuTypes)
+    {
         this.gtuTypes = gtuTypes;
     }
 
-    public Map<String, LaneTypeTag> getLaneTypeTags() {
+    public Map<String, LaneTypeTag> getLaneTypeTags()
+    {
         return laneTypeTags;
     }
 
-    public void setLaneTypeTags(Map<String, LaneTypeTag> laneTypeTags) {
+    public void setLaneTypeTags(Map<String, LaneTypeTag> laneTypeTags)
+    {
         this.laneTypeTags = laneTypeTags;
     }
 
-    public Map<String, RoadLayoutTag> getRoadLayoutTags() {
+    public Map<String, RoadLayoutTag> getRoadLayoutTags()
+    {
         return roadLayoutTags;
     }
 
-    public void setRoadLayoutTags(Map<String, RoadLayoutTag> roadLayoutTags) {
+    public void setRoadLayoutTags(Map<String, RoadLayoutTag> roadLayoutTags)
+    {
         this.roadLayoutTags = roadLayoutTags;
     }
 
-    public Map<String, RouteMixTag> getRouteMixTags() {
+    public Map<String, RouteMixTag> getRouteMixTags()
+    {
         return routeMixTags;
     }
 
-    public void setRouteMixTags(Map<String, RouteMixTag> routeMixTags) {
+    public void setRouteMixTags(Map<String, RouteMixTag> routeMixTags)
+    {
         this.routeMixTags = routeMixTags;
     }
 
-    public Map<String, ShortestRouteMixTag> getShortestRouteMixTags() {
+    public Map<String, ShortestRouteMixTag> getShortestRouteMixTags()
+    {
         return shortestRouteMixTags;
     }
 
-    public void setShortestRouteMixTags(Map<String, ShortestRouteMixTag> shortestRouteMixTags) {
+    public void setShortestRouteMixTags(Map<String, ShortestRouteMixTag> shortestRouteMixTags)
+    {
         this.shortestRouteMixTags = shortestRouteMixTags;
     }
 
-    public Map<String, ShortestRouteTag> getShortestRouteTags() {
+    public Map<String, ShortestRouteTag> getShortestRouteTags()
+    {
         return shortestRouteTags;
     }
 
-    public void setShortestRouteTags(Map<String, ShortestRouteTag> shortestRouteTags) {
+    public void setShortestRouteTags(Map<String, ShortestRouteTag> shortestRouteTags)
+    {
         this.shortestRouteTags = shortestRouteTags;
     }
 
-    public Map<String, RouteTag> getRouteTags() {
+    public Map<String, RouteTag> getRouteTags()
+    {
         return routeTags;
     }
 
-    public void setRouteTags(Map<String, RouteTag> routeTags) {
+    public void setRouteTags(Map<String, RouteTag> routeTags)
+    {
         this.routeTags = routeTags;
     }
 
-    public Map<String, LaneType> getLaneTypes() {
+    public Map<String, LaneType> getLaneTypes()
+    {
         return laneTypes;
     }
 
-    public void setLaneTypes(Map<String, LaneType> laneTypes) {
+    public void setLaneTypes(Map<String, LaneType> laneTypes)
+    {
         this.laneTypes = laneTypes;
     }
 
-    public OTSDEVSSimulatorInterface getSimulator() {
+    public OTSDEVSSimulatorInterface getSimulator()
+    {
         return simulator;
     }
 
-    public void setSimulator(OTSDEVSSimulatorInterface simulator) {
+    public void setSimulator(OTSDEVSSimulatorInterface simulator)
+    {
         this.simulator = simulator;
     }
 
-    public OTSNetwork getNetwork() {
+    public OTSNetwork getNetwork()
+    {
         return network;
     }
 
-    public void setNetwork(OTSNetwork network) {
+    public void setNetwork(OTSNetwork network)
+    {
         this.network = network;
     }
 
-    public int getUpperNodeNr() {
+    public int getUpperNodeNr()
+    {
         return upperNodeNr;
     }
 
-    public void setUpperNodeNr(int upperNodeNr) {
+    public void setUpperNodeNr(int upperNodeNr)
+    {
         this.upperNodeNr = upperNodeNr;
     }
 
-    public int getUpperLinkNr() {
+    public int getUpperLinkNr()
+    {
         return upperLinkNr;
     }
 
-    public void setUpperLinkNr(int upperLinkNr) {
+    public void setUpperLinkNr(int upperLinkNr)
+    {
         this.upperLinkNr = upperLinkNr;
     }
 }

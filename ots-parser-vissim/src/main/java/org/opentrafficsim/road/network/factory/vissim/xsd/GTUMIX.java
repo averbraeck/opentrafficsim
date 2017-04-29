@@ -48,9 +48,10 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {"gtu"})
+@XmlType(name = "", propOrder = { "gtu" })
 @XmlRootElement(name = "GTUMIX")
-public class GTUMIX {
+public class GTUMIX
+{
 
     @XmlElement(name = "GTU", required = true)
     protected List<GTUMIX.GTU> gtu;
@@ -77,8 +78,10 @@ public class GTUMIX {
      * <p>
      * Objects of the following type(s) are allowed in the list {@link GTUMIX.GTU }
      */
-    public List<GTUMIX.GTU> getGTU() {
-        if (gtu == null) {
+    public List<GTUMIX.GTU> getGTU()
+    {
+        if (gtu == null)
+        {
             gtu = new ArrayList<GTUMIX.GTU>();
         }
         return this.gtu;
@@ -88,7 +91,8 @@ public class GTUMIX {
      * Gets the value of the name property.
      * @return possible object is {@link String }
      */
-    public String getNAME() {
+    public String getNAME()
+    {
         return name;
     }
 
@@ -96,7 +100,8 @@ public class GTUMIX {
      * Sets the value of the name property.
      * @param value allowed object is {@link String }
      */
-    public void setNAME(String value) {
+    public void setNAME(String value)
+    {
         this.name = value;
     }
 
@@ -104,7 +109,8 @@ public class GTUMIX {
      * Gets the value of the base property.
      * @return possible object is {@link String }
      */
-    public String getBase() {
+    public String getBase()
+    {
         return base;
     }
 
@@ -112,7 +118,8 @@ public class GTUMIX {
      * Sets the value of the base property.
      * @param value allowed object is {@link String }
      */
-    public void setBase(String value) {
+    public void setBase(String value)
+    {
         this.base = value;
     }
 
@@ -135,7 +142,8 @@ public class GTUMIX {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class GTU {
+    public static class GTU
+    {
 
         @XmlAttribute(name = "NAME", required = true)
         protected String name;
@@ -147,7 +155,8 @@ public class GTUMIX {
          * Gets the value of the name property.
          * @return possible object is {@link String }
          */
-        public String getNAME() {
+        public String getNAME()
+        {
             return name;
         }
 
@@ -155,21 +164,24 @@ public class GTUMIX {
          * Sets the value of the name property.
          * @param value allowed object is {@link String }
          */
-        public void setNAME(String value) {
+        public void setNAME(String value)
+        {
             this.name = value;
         }
 
         /**
          * Gets the value of the weight property.
          */
-        public double getWEIGHT() {
+        public double getWEIGHT()
+        {
             return weight;
         }
 
         /**
          * Sets the value of the weight property.
          */
-        public void setWEIGHT(double value) {
+        public void setWEIGHT(double value)
+        {
             this.weight = value;
         }
 

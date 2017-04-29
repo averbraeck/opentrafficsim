@@ -69,8 +69,7 @@ class LaneTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static LaneTag parseLane(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException,
-        NetworkException
+    static LaneTag parseLane(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         LaneTag laneTag = new LaneTag();

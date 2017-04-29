@@ -8,7 +8,7 @@ import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
@@ -61,8 +61,8 @@ public class NetworkTest extends AbstractWrappableAnimation
                 {
                     NetworkTest xmlModel = new NetworkTest();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(Time.ZERO, Duration.ZERO,
-                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    xmlModel.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
+                            new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -147,7 +147,7 @@ public class NetworkTest extends AbstractWrappableAnimation
 
         /** The simulator. */
         private OTSDEVSSimulatorInterface simulator;
-        
+
         /** the network. */
         private OTSNetwork network = null;
 

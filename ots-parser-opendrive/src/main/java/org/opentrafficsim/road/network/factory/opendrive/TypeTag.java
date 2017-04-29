@@ -47,7 +47,7 @@ class TypeTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseType(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final RoadTag roadTag)
-        throws SAXException, NetworkException
+            throws SAXException, NetworkException
     {
         int typeCount = 0;
         for (Node node : XMLParser.getNodes(nodeList, "type"))

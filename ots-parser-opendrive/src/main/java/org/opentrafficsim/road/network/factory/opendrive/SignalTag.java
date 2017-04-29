@@ -76,8 +76,7 @@ class SignalTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static SignalTag parseSignal(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException,
-        NetworkException
+    static SignalTag parseSignal(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException, NetworkException
     {
         SignalTag signalTag = new SignalTag();
         NamedNodeMap attributes = node.getAttributes();
@@ -135,7 +134,7 @@ class SignalTag implements Serializable
     public final String toString()
     {
         return "SignalTag [s=" + this.s + ", t=" + this.t + ", id=" + this.id + ", name=" + this.name + ", dynamic="
-                + this.dynamic + ", orientation=" + this.orientation + ", zOffset=" + this.zOffset + ", country="
-                + this.country + ", type=" + this.type + ", subtype=" + this.subtype + ", value=" + this.value + "]";
+                + this.dynamic + ", orientation=" + this.orientation + ", zOffset=" + this.zOffset + ", country=" + this.country
+                + ", type=" + this.type + ", subtype=" + this.subtype + ", value=" + this.value + "]";
     }
 }

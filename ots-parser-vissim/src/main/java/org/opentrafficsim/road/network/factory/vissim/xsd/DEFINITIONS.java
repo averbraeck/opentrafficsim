@@ -52,21 +52,27 @@ import org.opentrafficsim.road.network.factory.vissim.GTUTYPE;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {"content"})
+@XmlType(name = "", propOrder = { "content" })
 @XmlRootElement(name = "DEFINITIONS")
-public class DEFINITIONS {
+public class DEFINITIONS
+{
 
-    @XmlElementRefs({@XmlElementRef(name = "LANETYPE", namespace = "http://www.opentrafficsim.org/ots",
-        type = LANETYPE.class, required = false), @XmlElementRef(name = "GTUTYPE",
-            namespace = "http://www.opentrafficsim.org/ots", type = GTUTYPE.class, required = false), @XmlElementRef(
-                name = "GTU", namespace = "http://www.opentrafficsim.org/ots", type = GTU.class, required = false),
-        @XmlElementRef(name = "ROADTYPE", namespace = "http://www.opentrafficsim.org/ots", type = ROADTYPE.class,
-            required = false), @XmlElementRef(name = "ROADLAYOUT", namespace = "http://www.opentrafficsim.org/ots",
-                type = ROADLAYOUT.class, required = false), @XmlElementRef(name = "include",
-                    namespace = "http://www.w3.org/2001/XInclude", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "GLOBAL", namespace = "http://www.opentrafficsim.org/ots", type = GLOBAL.class,
-            required = false), @XmlElementRef(name = "GTUMIX", namespace = "http://www.opentrafficsim.org/ots",
-                type = GTUMIX.class, required = false)})
+    @XmlElementRefs({
+            @XmlElementRef(name = "LANETYPE", namespace = "http://www.opentrafficsim.org/ots", type = LANETYPE.class,
+                    required = false),
+            @XmlElementRef(name = "GTUTYPE", namespace = "http://www.opentrafficsim.org/ots", type = GTUTYPE.class,
+                    required = false),
+            @XmlElementRef(name = "GTU", namespace = "http://www.opentrafficsim.org/ots", type = GTU.class, required = false),
+            @XmlElementRef(name = "ROADTYPE", namespace = "http://www.opentrafficsim.org/ots", type = ROADTYPE.class,
+                    required = false),
+            @XmlElementRef(name = "ROADLAYOUT", namespace = "http://www.opentrafficsim.org/ots", type = ROADLAYOUT.class,
+                    required = false),
+            @XmlElementRef(name = "include", namespace = "http://www.w3.org/2001/XInclude", type = JAXBElement.class,
+                    required = false),
+            @XmlElementRef(name = "GLOBAL", namespace = "http://www.opentrafficsim.org/ots", type = GLOBAL.class,
+                    required = false),
+            @XmlElementRef(name = "GTUMIX", namespace = "http://www.opentrafficsim.org/ots", type = GTUMIX.class,
+                    required = false) })
     @XmlMixed
     protected List<Object> content;
 
@@ -91,8 +97,10 @@ public class DEFINITIONS {
      * {@link ROADTYPE } {@link ROADLAYOUT } {@link JAXBElement }{@code <}{@link IncludeType }{@code >} {@link GLOBAL }
      * {@link GTUMIX }
      */
-    public List<Object> getContent() {
-        if (content == null) {
+    public List<Object> getContent()
+    {
+        if (content == null)
+        {
             content = new ArrayList<Object>();
         }
         return this.content;
@@ -102,7 +110,8 @@ public class DEFINITIONS {
      * Gets the value of the base property.
      * @return possible object is {@link String }
      */
-    public String getBase() {
+    public String getBase()
+    {
         return base;
     }
 
@@ -110,7 +119,8 @@ public class DEFINITIONS {
      * Sets the value of the base property.
      * @param value allowed object is {@link String }
      */
-    public void setBase(String value) {
+    public void setBase(String value)
+    {
         this.base = value;
     }
 

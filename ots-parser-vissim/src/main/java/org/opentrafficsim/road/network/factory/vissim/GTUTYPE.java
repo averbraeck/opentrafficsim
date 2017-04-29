@@ -34,7 +34,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "GTUTYPE")
-public class GTUTYPE {
+public class GTUTYPE
+{
 
     @XmlAttribute(name = "NAME", required = true)
     protected String name;
@@ -47,7 +48,8 @@ public class GTUTYPE {
      * Gets the value of the name property.
      * @return possible object is {@link String }
      */
-    public String getNAME() {
+    public String getNAME()
+    {
         return name;
     }
 
@@ -55,7 +57,8 @@ public class GTUTYPE {
      * Sets the value of the name property.
      * @param value allowed object is {@link String }
      */
-    public void setNAME(String value) {
+    public void setNAME(String value)
+    {
         this.name = value;
     }
 
@@ -63,7 +66,8 @@ public class GTUTYPE {
      * Gets the value of the base property.
      * @return possible object is {@link String }
      */
-    public String getBase() {
+    public String getBase()
+    {
         return base;
     }
 
@@ -71,7 +75,8 @@ public class GTUTYPE {
      * Sets the value of the base property.
      * @param value allowed object is {@link String }
      */
-    public void setBase(String value) {
+    public void setBase(String value)
+    {
         this.base = value;
     }
 

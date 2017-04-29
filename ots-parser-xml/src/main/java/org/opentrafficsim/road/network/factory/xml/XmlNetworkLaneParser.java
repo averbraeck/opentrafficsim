@@ -168,13 +168,13 @@ public class XmlNetworkLaneParser implements Serializable
      * @throws SimRuntimeException when simulator cannot be used to schedule GTU generation
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public final OTSNetwork build(final URL url, final OTSNetwork network) throws NetworkException,
-            ParserConfigurationException, SAXException, IOException, NamingException, GTUException, OTSGeometryException,
-            SimRuntimeException
+    public final OTSNetwork build(final URL url, final OTSNetwork network)
+            throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
+            OTSGeometryException, SimRuntimeException
     {
         return build(url.openStream(), network);
     }
-    
+
     /**
      * @param stream the input stream with the network in the agreed xml-grammar.
      * @param network OTSNetwork; the network
@@ -189,20 +189,20 @@ public class XmlNetworkLaneParser implements Serializable
      * @throws SimRuntimeException when simulator cannot be used to schedule GTU generation
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public final OTSNetwork build(final InputStream stream, final OTSNetwork network) throws NetworkException,
-            ParserConfigurationException, SAXException, IOException, NamingException, GTUException, OTSGeometryException,
-            SimRuntimeException
+    public final OTSNetwork build(final InputStream stream, final OTSNetwork network)
+            throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
+            OTSGeometryException, SimRuntimeException
     {
-//        try
-//        {
-//            if (url.getFile().length() > 0 && !(new File(url.toURI()).exists()))
-//                throw new SAXException("XmlNetworkLaneParser.build: File " + url.getFile() + " does not exist");
-//        }
-//        catch (URISyntaxException exception)
-//        {
-//            throw new SAXException("XmlNetworkLaneParser.build: File " + url.getFile() + " is not properly formatted",
-//                    exception);
-//        }
+        // try
+        // {
+        // if (url.getFile().length() > 0 && !(new File(url.toURI()).exists()))
+        // throw new SAXException("XmlNetworkLaneParser.build: File " + url.getFile() + " does not exist");
+        // }
+        // catch (URISyntaxException exception)
+        // {
+        // throw new SAXException("XmlNetworkLaneParser.build: File " + url.getFile() + " is not properly formatted",
+        // exception);
+        // }
         this.network = network;
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

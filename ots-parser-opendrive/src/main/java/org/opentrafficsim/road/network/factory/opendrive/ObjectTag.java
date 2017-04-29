@@ -90,8 +90,7 @@ class ObjectTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static ObjectTag parseObject(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException,
-        NetworkException
+    static ObjectTag parseObject(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException, NetworkException
     {
         ObjectTag objectTag = new ObjectTag();
         NamedNodeMap attributes = node.getAttributes();
@@ -126,8 +125,7 @@ class ObjectTag implements Serializable
 
         Node validLength = attributes.getNamedItem("validLength");
         if (validLength != null)
-            objectTag.validLength =
-                new Length(Double.parseDouble(validLength.getNodeValue().trim()), LengthUnit.METER);
+            objectTag.validLength = new Length(Double.parseDouble(validLength.getNodeValue().trim()), LengthUnit.METER);
 
         Node length = attributes.getNamedItem("length");
         if (length != null)

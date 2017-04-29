@@ -56,8 +56,8 @@ class ConnectionTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static ConnectionTag parseConnection(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException,
-        NetworkException
+    static ConnectionTag parseConnection(final Node node, final OpenDriveNetworkLaneParser parser)
+            throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         ConnectionTag connectionTag = new ConnectionTag();
@@ -87,8 +87,7 @@ class ConnectionTag implements Serializable
             else if ("end".equals(contactPoint.getNodeValue().trim()))
                 connectionTag.contactPoint = ContactPointEnum.END;
             else
-                throw new SAXException("contactPoint is neither 'start' nor 'end' but: "
-                    + contactPoint.getNodeValue().trim());
+                throw new SAXException("contactPoint is neither 'start' nor 'end' but: " + contactPoint.getNodeValue().trim());
         }
 
         for (Node laneLink : XMLParser.getNodes(node.getChildNodes(), "laneLink"))

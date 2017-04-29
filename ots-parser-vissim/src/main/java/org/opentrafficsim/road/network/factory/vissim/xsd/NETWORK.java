@@ -48,16 +48,17 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {"definitionsOrIncludeOrNODE"})
+@XmlType(name = "", propOrder = { "definitionsOrIncludeOrNODE" })
 @XmlRootElement(name = "NETWORK")
-public class NETWORK {
+public class NETWORK
+{
 
-    @XmlElements({@XmlElement(name = "DEFINITIONS", type = DEFINITIONS.class), @XmlElement(name = "include",
-        namespace = "http://www.w3.org/2001/XInclude", type = IncludeType.class), @XmlElement(name = "NODE",
-            type = NODE.class), @XmlElement(name = "LINK", type = LINK.class), @XmlElement(name = "ROUTE",
-                type = ROUTE.class), @XmlElement(name = "ROUTEMIX", type = ROUTEMIX.class), @XmlElement(
-                    name = "SHORTESTROUTE", type = SHORTESTROUTE.class), @XmlElement(name = "SHORTESTROUTEMIX",
-                        type = SHORTESTROUTEMIX.class)})
+    @XmlElements({ @XmlElement(name = "DEFINITIONS", type = DEFINITIONS.class),
+            @XmlElement(name = "include", namespace = "http://www.w3.org/2001/XInclude", type = IncludeType.class),
+            @XmlElement(name = "NODE", type = NODE.class), @XmlElement(name = "LINK", type = LINK.class),
+            @XmlElement(name = "ROUTE", type = ROUTE.class), @XmlElement(name = "ROUTEMIX", type = ROUTEMIX.class),
+            @XmlElement(name = "SHORTESTROUTE", type = SHORTESTROUTE.class),
+            @XmlElement(name = "SHORTESTROUTEMIX", type = SHORTESTROUTEMIX.class) })
     protected List<Object> definitionsOrIncludeOrNODE;
 
     @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
@@ -83,8 +84,10 @@ public class NETWORK {
     /**
      * @return definitions
      */
-    public List<Object> getDEFINITIONSOrIncludeOrNODE() {
-        if (definitionsOrIncludeOrNODE == null) {
+    public List<Object> getDEFINITIONSOrIncludeOrNODE()
+    {
+        if (definitionsOrIncludeOrNODE == null)
+        {
             definitionsOrIncludeOrNODE = new ArrayList<Object>();
         }
         return this.definitionsOrIncludeOrNODE;
@@ -94,7 +97,8 @@ public class NETWORK {
      * Gets the value of the base property.
      * @return possible object is {@link String }
      */
-    public String getBase() {
+    public String getBase()
+    {
         return base;
     }
 
@@ -102,7 +106,8 @@ public class NETWORK {
      * Sets the value of the base property.
      * @param value allowed object is {@link String }
      */
-    public void setBase(String value) {
+    public void setBase(String value)
+    {
         this.base = value;
     }
 

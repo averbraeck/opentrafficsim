@@ -36,7 +36,7 @@ public class GeneratorAnimation extends Renderable2D implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150130L;
-    
+
     /** The half width left and right of the center line that is used to draw the block. */
     private final double halfWidth;
 
@@ -50,7 +50,7 @@ public class GeneratorAnimation extends Renderable2D implements Serializable
      * @throws OTSGeometryException if position out of bounds
      */
     public GeneratorAnimation(final Lane lane, final Length position, final OTSSimulatorInterface simulator)
-        throws NamingException, RemoteException, OTSGeometryException
+            throws NamingException, RemoteException, OTSGeometryException
     {
         super(new GenPos(lane, position), simulator);
         this.halfWidth = 0.4 * (lane.getBeginWidth().si + lane.getEndWidth().si) / 2.0;

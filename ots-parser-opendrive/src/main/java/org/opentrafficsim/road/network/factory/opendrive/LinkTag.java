@@ -74,7 +74,7 @@ class LinkTag implements Serializable
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseLink(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final RoadTag roadTag)
-        throws SAXException, NetworkException
+            throws SAXException, NetworkException
     {
         int linkCount = 0;
         for (Node node : XMLParser.getNodes(nodeList, "link"))
@@ -95,22 +95,19 @@ class LinkTag implements Serializable
 
                 Node elementId = attributes.getNamedItem("elementId");
                 if (elementId == null)
-                    throw new SAXException("ROAD.LINK.PREDECESSOR: missing attribute elementId for ROAD.ID="
-                        + roadTag.id);
+                    throw new SAXException("ROAD.LINK.PREDECESSOR: missing attribute elementId for ROAD.ID=" + roadTag.id);
 
                 Node elementType = attributes.getNamedItem("elementType");
                 if (elementType == null)
-                    throw new SAXException("ROAD.LINK.PREDECESSOR: missing attribute elementType for ROAD.ID="
-                        + roadTag.id);
-                if ("road".equals(elementType.getNodeValue().trim())
-                    || "junction".equals(elementType.getNodeValue().trim()))
+                    throw new SAXException("ROAD.LINK.PREDECESSOR: missing attribute elementType for ROAD.ID=" + roadTag.id);
+                if ("road".equals(elementType.getNodeValue().trim()) || "junction".equals(elementType.getNodeValue().trim()))
                 {
                     linkTag.predecessorType = elementType.getNodeValue().trim();
                     linkTag.predecessorId = elementId.getNodeValue().trim();
                 }
                 else
                     throw new SAXException("ROAD.LINK.PREDECESSOR: elementType for ROAD.ID=" + roadTag.id
-                        + " is neither 'road' nor 'junction' but: " + elementType.getNodeValue().trim());
+                            + " is neither 'road' nor 'junction' but: " + elementType.getNodeValue().trim());
 
                 Node contactPoint = attributes.getNamedItem("contactPoint");
                 if (contactPoint != null)
@@ -124,7 +121,7 @@ class LinkTag implements Serializable
                         linkTag.predecessorContactPoint = ContactPointEnum.END;
                     else
                         throw new SAXException("ROAD.LINK.PREDECESSOR: contactPoint for ROAD.ID=" + roadTag.id
-                            + " is neither 'start' nor 'end' but: " + contactPoint.getNodeValue().trim());
+                                + " is neither 'start' nor 'end' but: " + contactPoint.getNodeValue().trim());
                 }
             }
 
@@ -144,17 +141,15 @@ class LinkTag implements Serializable
 
                 Node elementType = attributes.getNamedItem("elementType");
                 if (elementType == null)
-                    throw new SAXException("ROAD.LINK.SUCCESSOR: missing attribute elementType for ROAD.ID="
-                        + roadTag.id);
-                if ("road".equals(elementType.getNodeValue().trim())
-                    || "junction".equals(elementType.getNodeValue().trim()))
+                    throw new SAXException("ROAD.LINK.SUCCESSOR: missing attribute elementType for ROAD.ID=" + roadTag.id);
+                if ("road".equals(elementType.getNodeValue().trim()) || "junction".equals(elementType.getNodeValue().trim()))
                 {
                     linkTag.successorType = elementType.getNodeValue().trim();
                     linkTag.successorId = elementId.getNodeValue().trim();
                 }
                 else
                     throw new SAXException("ROAD.LINK.SUCCESSOR: elementType for ROAD.ID=" + roadTag.id
-                        + " is neither 'road' nor 'junction' but: " + elementType.getNodeValue().trim());
+                            + " is neither 'road' nor 'junction' but: " + elementType.getNodeValue().trim());
 
                 Node contactPoint = attributes.getNamedItem("contactPoint");
                 if (contactPoint != null)
@@ -168,7 +163,7 @@ class LinkTag implements Serializable
                         linkTag.successorContactPoint = ContactPointEnum.END;
                     else
                         throw new SAXException("ROAD.LINK.SUCCESSOR: contactPoint for ROAD.ID=" + roadTag.id
-                            + " is neither 'start' nor 'end' but: " + contactPoint.getNodeValue().trim());
+                                + " is neither 'start' nor 'end' but: " + contactPoint.getNodeValue().trim());
                 }
             }
 
@@ -197,7 +192,7 @@ class LinkTag implements Serializable
                     ndir = NeighborDirection.OPPOSITE;
                 else
                     throw new SAXException("ROAD.LINK.NEIGHBOR: contactPoint for ROAD.ID=" + roadTag.id
-                        + " is neither 'same' nor 'opposite' but: " + direction.getNodeValue().trim());
+                            + " is neither 'same' nor 'opposite' but: " + direction.getNodeValue().trim());
 
                 Node side = attributes.getNamedItem("side");
                 if (side == null)
@@ -220,7 +215,7 @@ class LinkTag implements Serializable
                 }
                 else
                     throw new SAXException("ROAD.LINK.NEIGHBOR: side for ROAD.ID=" + roadTag.id
-                        + " is neither 'left' nor 'right' but: " + side.getNodeValue().trim());
+                            + " is neither 'left' nor 'right' but: " + side.getNodeValue().trim());
             }
 
         }

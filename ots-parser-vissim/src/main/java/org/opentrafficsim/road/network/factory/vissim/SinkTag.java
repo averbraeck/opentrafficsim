@@ -16,7 +16,8 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class SinkTag implements Serializable {
+class SinkTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150723L;
 
@@ -33,35 +34,42 @@ class SinkTag implements Serializable {
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseSink(final Node node, final VissimNetworkLaneParser parser, final LinkTag linkTag) throws SAXException,
-        NetworkException {
+    static void parseSink(final Node node, final VissimNetworkLaneParser parser, final LinkTag linkTag)
+            throws SAXException, NetworkException
+    {
         NamedNodeMap attributes = node.getAttributes();
         SinkTag sinkTag = new SinkTag();
 
-        if (attributes.getNamedItem("LANE") == null) {
+        if (attributes.getNamedItem("LANE") == null)
+        {
             throw new SAXException("SINK: missing attribute LANE" + " for link " + linkTag.name);
         }
         String laneName = attributes.getNamedItem("LANE").getNodeValue().trim();
-        if (linkTag.roadLayoutTag == null) {
+        if (linkTag.roadLayoutTag == null)
+        {
             throw new NetworkException("SINK: LANE " + laneName + " no ROADTYPE for link " + linkTag.name);
         }
         CrossSectionElementTag cseTag = linkTag.roadLayoutTag.cseTags.get(laneName);
-        if (cseTag == null) {
+        if (cseTag == null)
+        {
             throw new NetworkException("SINK: LANE " + laneName + " not found in elements of link " + linkTag.name
-                + " - roadtype " + linkTag.roadLayoutTag.name);
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
         }
-        if (cseTag.elementType != org.opentrafficsim.road.network.factory.vissim.CrossSectionElementTag.ElementType.LANE) {
+        if (cseTag.elementType != org.opentrafficsim.road.network.factory.vissim.CrossSectionElementTag.ElementType.LANE)
+        {
             throw new NetworkException("SINK: LANE " + laneName + " not a real GTU lane for link " + linkTag.name
-                + " - roadtype " + linkTag.roadLayoutTag.name);
+                    + " - roadtype " + linkTag.roadLayoutTag.name);
         }
-        if (linkTag.generatorTags.containsKey(laneName)) {
+        if (linkTag.generatorTags.containsKey(laneName))
+        {
             throw new SAXException("SINK for LANE with NAME " + laneName + " defined twice");
         }
 
         Node position = attributes.getNamedItem("POSITION");
-        if (position == null) {
-            throw new NetworkException("SINK: POSITION element not found in elements of link " + linkTag.name
-                + " - roadtype " + linkTag.roadLayoutTag.name);
+        if (position == null)
+        {
+            throw new NetworkException("SINK: POSITION element not found in elements of link " + linkTag.name + " - roadtype "
+                    + linkTag.roadLayoutTag.name);
         }
         sinkTag.positionStr = position.getNodeValue().trim();
 
@@ -70,7 +78,8 @@ class SinkTag implements Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public final String toString() {
+    public final String toString()
+    {
         return "SinkTag [positionStr=" + this.positionStr + "]";
     }
 }

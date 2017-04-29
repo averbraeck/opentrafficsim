@@ -11,7 +11,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author p070518
  */
 @XmlRootElement
-public class Customer {
+public class Customer
+{
 
     String name;
 
@@ -19,30 +20,36 @@ public class Customer {
 
     int id;
 
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 
     @XmlElement
-    public void setName(String name) {
+    public void setName(String name)
+    {
         this.name = name;
     }
 
-    public int getAge() {
+    public int getAge()
+    {
         return age;
     }
 
     @XmlElement
-    public void setAge(int age) {
+    public void setAge(int age)
+    {
         this.age = age;
     }
 
-    public int getId() {
+    public int getId()
+    {
         return id;
     }
 
     @XmlAttribute
-    public void setId(int id) {
+    public void setId(int id)
+    {
         this.id = id;
     }
 

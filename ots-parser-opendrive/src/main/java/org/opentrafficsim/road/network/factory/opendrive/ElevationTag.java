@@ -56,8 +56,8 @@ class ElevationTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static ElevationTag parseElevation(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException,
-        NetworkException
+    static ElevationTag parseElevation(final Node node, final OpenDriveNetworkLaneParser parser)
+            throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         ElevationTag elevationTag = new ElevationTag();
@@ -87,8 +87,7 @@ class ElevationTag implements Serializable
             throw new SAXException("Geometry: missing attribute d");
         elevationTag.d = new Length(Double.parseDouble(d.getNodeValue().trim()), LengthUnit.METER);
 
-        elevationTag.elevation =
-            new Length(elevationTag.a.plus(elevationTag.b.multiplyBy(elevationTag.s.doubleValue()))
+        elevationTag.elevation = new Length(elevationTag.a.plus(elevationTag.b.multiplyBy(elevationTag.s.doubleValue()))
                 .plus(elevationTag.c.multiplyBy(Math.pow(elevationTag.s.doubleValue(), 2)))
                 .plus(elevationTag.d.multiplyBy(Math.pow(elevationTag.s.doubleValue(), 3))));
 

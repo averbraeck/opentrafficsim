@@ -59,7 +59,7 @@ public class OSMLink implements Serializable
      * @param warningListener WarningListener; the warning listener that will receive warning events
      */
     public OSMLink(final OSMNode fromNode, final OSMNode toNode, final List<OSMTag> tags, final double length,
-        final WarningListener warningListener)
+            final WarningListener warningListener)
     {
         if (fromNode == toNode)
         {
@@ -101,8 +101,7 @@ public class OSMLink implements Serializable
                 this.setOneway(true);
                 this.forwardLanes = this.lanes;
             }
-            if (tag.getKey().equals("highway")
-                && (tag.getValue().equals("cycleway") || tag.getValue().equals("footway")
+            if (tag.getKey().equals("highway") && (tag.getValue().equals("cycleway") || tag.getValue().equals("footway")
                     || tag.getValue().equals("pedestrian") || tag.getValue().equals("steps")))
             {
                 this.lanes = 1;
@@ -164,7 +163,7 @@ public class OSMLink implements Serializable
      * @param flanes byte; the number of forward lanes
      */
     public OSMLink(final OSMNode startNode, final OSMNode endNode, final List<OSMTag> tags, final double length,
-        final byte lanes, final byte flanes)
+            final byte lanes, final byte flanes)
     {
         if (startNode == endNode)
         {

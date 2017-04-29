@@ -38,7 +38,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "GTU")
-public class GTU {
+public class GTU
+{
 
     @XmlAttribute(name = "NAME", required = true)
     protected String name;
@@ -63,7 +64,8 @@ public class GTU {
      * Gets the value of the name property.
      * @return possible object is {@link String }
      */
-    public String getNAME() {
+    public String getNAME()
+    {
         return name;
     }
 
@@ -71,7 +73,8 @@ public class GTU {
      * Sets the value of the name property.
      * @param value allowed object is {@link String }
      */
-    public void setNAME(String value) {
+    public void setNAME(String value)
+    {
         this.name = value;
     }
 
@@ -79,7 +82,8 @@ public class GTU {
      * Gets the value of the gtutype property.
      * @return possible object is {@link String }
      */
-    public String getGTUTYPE() {
+    public String getGTUTYPE()
+    {
         return gtutype;
     }
 
@@ -87,7 +91,8 @@ public class GTU {
      * Sets the value of the gtutype property.
      * @param value allowed object is {@link String }
      */
-    public void setGTUTYPE(String value) {
+    public void setGTUTYPE(String value)
+    {
         this.gtutype = value;
     }
 
@@ -95,7 +100,8 @@ public class GTU {
      * Gets the value of the length property.
      * @return possible object is {@link String }
      */
-    public String getLENGTH() {
+    public String getLENGTH()
+    {
         return length;
     }
 
@@ -103,7 +109,8 @@ public class GTU {
      * Sets the value of the length property.
      * @param value allowed object is {@link String }
      */
-    public void setLENGTH(String value) {
+    public void setLENGTH(String value)
+    {
         this.length = value;
     }
 
@@ -111,7 +118,8 @@ public class GTU {
      * Gets the value of the width property.
      * @return possible object is {@link String }
      */
-    public String getWIDTH() {
+    public String getWIDTH()
+    {
         return width;
     }
 
@@ -119,7 +127,8 @@ public class GTU {
      * Sets the value of the width property.
      * @param value allowed object is {@link String }
      */
-    public void setWIDTH(String value) {
+    public void setWIDTH(String value)
+    {
         this.width = value;
     }
 
@@ -127,7 +136,8 @@ public class GTU {
      * Gets the value of the maxspeed property.
      * @return possible object is {@link String }
      */
-    public String getMAXSPEED() {
+    public String getMAXSPEED()
+    {
         return maxspeed;
     }
 
@@ -135,7 +145,8 @@ public class GTU {
      * Sets the value of the maxspeed property.
      * @param value allowed object is {@link String }
      */
-    public void setMAXSPEED(String value) {
+    public void setMAXSPEED(String value)
+    {
         this.maxspeed = value;
     }
 
@@ -143,7 +154,8 @@ public class GTU {
      * Gets the value of the base property.
      * @return possible object is {@link String }
      */
-    public String getBase() {
+    public String getBase()
+    {
         return base;
     }
 
@@ -151,7 +163,8 @@ public class GTU {
      * Sets the value of the base property.
      * @param value allowed object is {@link String }
      */
-    public void setBase(String value) {
+    public void setBase(String value)
+    {
         this.base = value;
     }
 

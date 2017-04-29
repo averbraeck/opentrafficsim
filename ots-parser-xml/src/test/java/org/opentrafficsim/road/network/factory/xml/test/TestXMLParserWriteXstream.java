@@ -12,7 +12,7 @@ import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
@@ -65,8 +65,8 @@ public class TestXMLParserWriteXstream extends AbstractWrappableAnimation
                 {
                     TestXMLParserWriteXstream xmlParserWriteXStream = new TestXMLParserWriteXstream();
                     // 1 hour simulation run for testing
-                    xmlParserWriteXStream.buildAnimator(Time.ZERO, Duration.ZERO,
-                            new Duration(60.0, TimeUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    xmlParserWriteXStream.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
+                            new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -142,18 +142,17 @@ public class TestXMLParserWriteXstream extends AbstractWrappableAnimation
 
         /** the network. */
         private OTSNetwork network;
-        
+
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(
-                final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
+        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
             long millis = System.currentTimeMillis();
             URL url = URLResource.getResource("/N201v8.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
-            
+
             try
             {
                 this.network = nlp.build(url);

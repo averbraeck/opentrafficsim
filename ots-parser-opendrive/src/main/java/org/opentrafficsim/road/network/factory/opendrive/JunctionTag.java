@@ -52,8 +52,7 @@ class JunctionTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseJunction(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException,
-        NetworkException
+    static void parseJunction(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         JunctionTag junctionTag = new JunctionTag();
@@ -94,7 +93,7 @@ class JunctionTag implements Serializable
      * @throws GTUException when the traffic light (a GTU at the moment) has an error
      */
     public static void createController(JunctionTag juncTag, OTSDEVSSimulatorInterface simulator,
-        OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws GTUException, NetworkException, NamingException
+            OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws GTUException, NetworkException, NamingException
     {
         if (juncTag.controllerTags.size() > 0)
         {
@@ -108,8 +107,7 @@ class JunctionTag implements Serializable
 
                 // AbstractTrafficLight trafficLight = openDriveNetworkLaneParser.trafficLightsBySignals.get(signalId);
 
-                for (SimpleTrafficLight trafficLight : openDriveNetworkLaneParser.trafficLightsBySignals
-                    .get(signalId))
+                for (SimpleTrafficLight trafficLight : openDriveNetworkLaneParser.trafficLightsBySignals.get(signalId))
                     controller.addTrafficLight(sequence, trafficLight);
 
                 /*

@@ -19,7 +19,8 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ShortestRouteMixTag implements Serializable {
+class ShortestRouteMixTag implements Serializable
+{
     /** */
     private static final long serialVersionUID = 20150723L;
 
@@ -43,25 +44,31 @@ class ShortestRouteMixTag implements Serializable {
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseShortestRouteMix(final NodeList nodeList, final VissimNetworkLaneParser parser) throws SAXException,
-        NetworkException {
-        for (Node node : XMLParser.getNodes(nodeList, "SHORTESTROUTEMIX")) {
+    static void parseShortestRouteMix(final NodeList nodeList, final VissimNetworkLaneParser parser)
+            throws SAXException, NetworkException
+    {
+        for (Node node : XMLParser.getNodes(nodeList, "SHORTESTROUTEMIX"))
+        {
             NamedNodeMap attributes = node.getAttributes();
             ShortestRouteMixTag shortestRouteMixTag = new ShortestRouteMixTag();
 
-            if (attributes.getNamedItem("NAME") == null) {
+            if (attributes.getNamedItem("NAME") == null)
+            {
                 throw new SAXException("SHORTESTROUTEMIX: missing attribute NAME");
             }
             shortestRouteMixTag.name = attributes.getNamedItem("NAME").getNodeValue().trim();
-            if (parser.getRouteTags().keySet().contains(shortestRouteMixTag.name)) {
+            if (parser.getRouteTags().keySet().contains(shortestRouteMixTag.name))
+            {
                 throw new SAXException("SHORTESTROUTEMIX: NAME " + shortestRouteMixTag.name + " defined twice");
             }
 
             List<Node> shortestRouteList = XMLParser.getNodes(node.getChildNodes(), "SHORTESTROUTE");
-            if (shortestRouteList.size() == 0) {
+            if (shortestRouteList.size() == 0)
+            {
                 throw new SAXException("SHORTESTROUTEMIX: missing tag SHORTESTROUTE");
             }
-            for (Node shortestRouteNode : shortestRouteList) {
+            for (Node shortestRouteNode : shortestRouteList)
+            {
                 parseRouteMixRouteTag(shortestRouteNode, parser, shortestRouteMixTag);
             }
 
@@ -79,30 +86,35 @@ class ShortestRouteMixTag implements Serializable {
      */
     @SuppressWarnings("checkstyle:needbraces")
     private static void parseRouteMixRouteTag(final Node shortestRouteNode, final VissimNetworkLaneParser parser,
-        final ShortestRouteMixTag shortestRouteMixTag) throws NetworkException, SAXException {
+            final ShortestRouteMixTag shortestRouteMixTag) throws NetworkException, SAXException
+    {
         NamedNodeMap attributes = shortestRouteNode.getAttributes();
 
         Node shortestRouteName = attributes.getNamedItem("NAME");
-        if (shortestRouteName == null) {
+        if (shortestRouteName == null)
+        {
             throw new NetworkException("SHORTESTROUTEMIX: No SHORTESTROUTE NAME defined");
         }
-        if (!parser.getRouteTags().containsKey(shortestRouteName.getNodeValue().trim())) {
+        if (!parser.getRouteTags().containsKey(shortestRouteName.getNodeValue().trim()))
+        {
             throw new NetworkException("SHORTESTROUTEMIX: " + shortestRouteMixTag.name + " SHORTESTROUTE "
-                + shortestRouteName.getNodeValue().trim() + " not defined");
+                    + shortestRouteName.getNodeValue().trim() + " not defined");
         }
         shortestRouteMixTag.routes.add(parser.getShortestRouteTags().get(shortestRouteName.getNodeValue().trim()));
 
         Node weight = attributes.getNamedItem("WEIGHT");
-        if (weight == null) {
+        if (weight == null)
+        {
             throw new NetworkException("SHORTESTROUTEMIX: " + shortestRouteMixTag.name + " SHORTESTROUTE "
-                + shortestRouteName.getNodeValue().trim() + ": weight not defined");
+                    + shortestRouteName.getNodeValue().trim() + ": weight not defined");
         }
         shortestRouteMixTag.weights.add(Double.parseDouble(weight.getNodeValue()));
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String toString() {
+    public final String toString()
+    {
         return "ShortestRouteMixTag [name=" + this.name + ", routes=" + this.routes + ", weights=" + this.weights + "]";
     }
 
