@@ -21,15 +21,15 @@ public interface LinkDataInterface
      * @return length of the link
      */
     Length getLength();
-    
+
     /**
      * @return list of lanes of the link
      */
     List<LaneDataInterface> getLaneDatas();
-    
+
     /**
      * @return link id
      */
     String getId();
-    
+
 }

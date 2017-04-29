@@ -34,7 +34,7 @@ public class MetaDataOrigin extends MetaDataType<NodeDataInterface>
         Throw.whenNull(gtu, "GTU may not be null.");
         return gtu.getOriginNodeData();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String formatValue(String format, NodeDataInterface value)

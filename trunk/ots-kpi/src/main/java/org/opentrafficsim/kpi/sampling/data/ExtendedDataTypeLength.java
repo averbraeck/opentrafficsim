@@ -28,7 +28,7 @@ public abstract class ExtendedDataTypeLength extends ExtendedDataTypeFloat<Lengt
     {
         super(id);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected final FloatLength convertValue(final float value)

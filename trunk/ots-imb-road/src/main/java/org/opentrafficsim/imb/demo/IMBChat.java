@@ -327,12 +327,12 @@ public class IMBChat extends JFrame
                     Disconnect();
             }
         });
-        
+
         topPanel.add(this.btnConnect, BorderLayout.LINE_END);
-        
+
         this.messages = new JTextArea("hier komen de messages");
         mainPanel.add(this.messages, BorderLayout.CENTER);
-        
+
         JPanel bottomPanel = new JPanel(new BorderLayout());
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
         this.editMessage = new JTextField("");

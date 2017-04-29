@@ -1,12 +1,12 @@
 package nl.tno.imb.mc;
 
+import org.opentrafficsim.imb.IMBException;
+import org.opentrafficsim.imb.ObjectArrayToIMB;
+
 import nl.tno.imb.TByteBuffer;
 import nl.tno.imb.TConnection;
 import nl.tno.imb.TEventEntry;
 import nl.tno.imb.mc.ModelEvent.ModelCommand;
-
-import org.opentrafficsim.imb.IMBException;
-import org.opentrafficsim.imb.ObjectArrayToIMB;
 
 /**
  * IMB Model Control starter.
@@ -172,9 +172,8 @@ public abstract class ModelStarter
         this.controller = settings.getSetting(CONTROLLER_SWITCH, DEFAULT_CONTROLLER);
         this.controllersEventName =
                 settings.getSetting(CONTROLLERS_EVENT_NAME_SWITCH, this.idleFederation + "." + CONTROLLERS_ROOT_EVENT_NAME);
-        this.controllerPrivateEventName =
-                settings.getSwitch(CONTROLLER_PRIVATE_EVENT_NAME_SWITCH, this.idleFederation + "."
-                        + CONTROLLERS_ROOT_EVENT_NAME);
+        this.controllerPrivateEventName = settings.getSwitch(CONTROLLER_PRIVATE_EVENT_NAME_SWITCH,
+                this.idleFederation + "." + CONTROLLERS_ROOT_EVENT_NAME);
         long linkId = 0;
         try
         {
@@ -215,9 +214,8 @@ public abstract class ModelStarter
         {
             throw new IMBException("Could not connect to " + this.remoteHost + ":" + this.getRemotePort());
         }
-        this.privateModelEvent =
-                this.connection.subscribe(this.controllerPrivateEventName + EVENT_NAME_PART_SEPARATOR + modelName
-                        + EVENT_NAME_PART_SEPARATOR + String.format("%08x", this.connection.getUniqueClientID()), false);
+        this.privateModelEvent = this.connection.subscribe(this.controllerPrivateEventName + EVENT_NAME_PART_SEPARATOR
+                + modelName + EVENT_NAME_PART_SEPARATOR + String.format("%08x", this.connection.getUniqueClientID()), false);
         this.privateModelEvent.onNormalEvent = new TEventEntry.TOnNormalEvent()
         {
             @Override
@@ -383,11 +381,10 @@ public abstract class ModelStarter
                 {
                     ModelParameters modelParameters = new ModelParameters(payload);
                     parameterRequest(modelParameters); // let it be modified
-                    this.connection.signalEvent(
-                            returnEventName,
-                            TEventEntry.EK_NORMAL_EVENT,
+                    this.connection.signalEvent(returnEventName, TEventEntry.EK_NORMAL_EVENT,
                             ObjectArrayToIMB.objectArrayToIMBPayload(new Object[] { ModelCommand.DEFAULT_PARAMETERS.getValue(),
-                                    this.connection.getUniqueClientID(), modelParameters }), false);
+                                    this.connection.getUniqueClientID(), modelParameters }),
+                            false);
                 }
                 break;
             }
@@ -431,11 +428,9 @@ public abstract class ModelStarter
      */
     private void signalModelExit() throws IMBException
     {
-        this.controllersEvent.signalEvent(
-                TEventEntry.EK_NORMAL_EVENT,
-                ObjectArrayToIMB.objectArrayToIMBPayload(
-                        new Object[] { ModelCommand.MODEL.getValue(), TEventEntry.ACTION_DELETE,
-                                this.connection.getUniqueClientID() }).getBuffer());
+        this.controllersEvent.signalEvent(TEventEntry.EK_NORMAL_EVENT, ObjectArrayToIMB.objectArrayToIMBPayload(
+                new Object[] { ModelCommand.MODEL.getValue(), TEventEntry.ACTION_DELETE, this.connection.getUniqueClientID() })
+                .getBuffer());
     }
 
     /**
@@ -457,14 +452,12 @@ public abstract class ModelStarter
      */
     private void signalModelNew(final String eventName) throws IMBException
     {
-        NewEvent newEvent =
-                new NewEvent(this.connection.getUniqueClientID(), this.connection.getOwnerName(), this.controller,
-                        this.priority, this.state, this.connection.getFederation(), this.privateModelEvent.getEventName(),
-                        this.privateControllerEvent.getEventName());
+        NewEvent newEvent = new NewEvent(this.connection.getUniqueClientID(), this.connection.getOwnerName(), this.controller,
+                this.priority, this.state, this.connection.getFederation(), this.privateModelEvent.getEventName(),
+                this.privateControllerEvent.getEventName());
         TByteBuffer payload = null;
-        payload =
-                ObjectArrayToIMB.objectArrayToIMBPayload(new Object[] { ModelCommand.MODEL.getValue(), TEventEntry.ACTION_NEW,
-                        newEvent });
+        payload = ObjectArrayToIMB
+                .objectArrayToIMBPayload(new Object[] { ModelCommand.MODEL.getValue(), TEventEntry.ACTION_NEW, newEvent });
         if (eventName.length() == 0)
         {
             this.controllersEvent.signalEvent(TEventEntry.EK_NORMAL_EVENT, payload.getBuffer());
@@ -475,9 +468,8 @@ public abstract class ModelStarter
         }
         if (0 != this.progress)
         {
-            payload =
-                    ObjectArrayToIMB.objectArrayToIMBPayload(new Object[] { ModelCommand.PROGRESS.getValue(),
-                            this.connection.getUniqueClientID(), this.progress });
+            payload = ObjectArrayToIMB.objectArrayToIMBPayload(
+                    new Object[] { ModelCommand.PROGRESS.getValue(), this.connection.getUniqueClientID(), this.progress });
             if (eventName.length() == 0)
             {
                 this.controllersEvent.signalEvent(TEventEntry.EK_NORMAL_EVENT, payload.getBuffer());
@@ -496,12 +488,10 @@ public abstract class ModelStarter
      */
     public void signalModelProgress(int currentProgress) throws IMBException
     {
-        this.controllersEvent.signalEvent(
-                TEventEntry.EK_NORMAL_EVENT,
-                ObjectArrayToIMB
-                        .objectArrayToIMBPayload(
-                                new Object[] { ModelCommand.PROGRESS.getValue(), this.connection.getUniqueClientID(),
-                                        currentProgress }).getBuffer());
+        this.controllersEvent.signalEvent(TEventEntry.EK_NORMAL_EVENT,
+                ObjectArrayToIMB.objectArrayToIMBPayload(
+                        new Object[] { ModelCommand.PROGRESS.getValue(), this.connection.getUniqueClientID(), currentProgress })
+                        .getBuffer());
         this.progress = currentProgress;
     }
 
@@ -514,12 +504,12 @@ public abstract class ModelStarter
     public void signalModelState(final ModelState newState, final String federation) throws IMBException
     {
         ChangeEvent modelChangeEvent = new ChangeEvent(this.connection.getUniqueClientID(), newState, federation);
-        this.controllersEvent.signalEvent(
-                TEventEntry.EK_NORMAL_EVENT,
-                ObjectArrayToIMB.objectArrayToIMBPayload(
-                        new Object[] { ModelCommand.MODEL.getValue(), TEventEntry.ACTION_CHANGE, modelChangeEvent })
+        this.controllersEvent.signalEvent(TEventEntry.EK_NORMAL_EVENT,
+                ObjectArrayToIMB
+                        .objectArrayToIMBPayload(
+                                new Object[] { ModelCommand.MODEL.getValue(), TEventEntry.ACTION_CHANGE, modelChangeEvent })
                         .getBuffer());
-		this.state = newState;
+        this.state = newState;
         System.out.println("New model state " + newState + " on " + federation);
     }
 

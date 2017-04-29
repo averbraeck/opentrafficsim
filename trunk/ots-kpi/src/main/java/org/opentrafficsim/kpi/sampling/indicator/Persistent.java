@@ -75,7 +75,7 @@ public final class Persistent<U extends Unit<U>, T extends AbstractDoubleScalarR
         persistent.n = this.n;
         return persistent;
     }
-    
+
     /**
      * Adds a value with given weight to the persistent.
      * @param value the value

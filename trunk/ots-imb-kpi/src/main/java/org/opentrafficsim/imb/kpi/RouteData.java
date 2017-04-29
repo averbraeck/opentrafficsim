@@ -59,7 +59,7 @@ public class RouteData implements RouteDataInterface
     {
         return this.endNode;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String getId()

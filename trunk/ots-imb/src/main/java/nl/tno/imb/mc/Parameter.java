@@ -17,8 +17,7 @@ import nl.tno.imb.TByteBuffer;
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version Oct 14, 2016 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Oct 14, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
@@ -27,13 +26,13 @@ public class Parameter
 {
     /** Name of this parameter. */
     private final String name;
-    
+
     /** Type of this Parameter. */
     private final Object value;
-    
+
     /** Type of this parameter. */
     private final ParameterType type;
-    
+
     /** List of possible values. */
     private List<String> valueList = null;
 
@@ -48,7 +47,7 @@ public class Parameter
         this.type = ParameterType.FLOAT;
         this.value = value;
     }
-    
+
     /**
      * Construct a Boolean parameter.
      * @param name String; the name of the new Boolean parameter
@@ -84,13 +83,13 @@ public class Parameter
         this.type = ParameterType.STRING;
         this.value = value;
     }
-    
+
     /**
      * Construct a new Parameter from the next object in a TByteBuffer.
      * @param payload TByteBuffer; the received IMB data
      * @throws IMBException when the received type cannot be converted to a Parameter sub-type
      */
-    public Parameter (final TByteBuffer payload) throws IMBException
+    public Parameter(final TByteBuffer payload) throws IMBException
     {
         this.name = payload.readString();
         int valueCode = payload.readInt32();
@@ -114,7 +113,7 @@ public class Parameter
             this.type = ParameterType.STRING;
             this.value = payload.readString();
         }
-        else 
+        else
         {
             throw new IMBException("Inhandled type: " + valueCode);
         }
@@ -128,12 +127,12 @@ public class Parameter
             }
         }
     }
-    
+
     /**
      * Prepare this parameter for transmission over IMB.
      * @param payload TByteBuffer; the transmission buffer
      */
-    public void prepare (final TByteBuffer payload)
+    public void prepare(final TByteBuffer payload)
     {
         payload.prepare(this.name);
         payload.prepare(this.type.value);
@@ -142,15 +141,15 @@ public class Parameter
             case BOOLEAN:
                 payload.prepare((boolean) this.value);
                 break;
-                
+
             case FLOAT:
                 payload.prepare((double) this.value);
                 break;
-                
+
             case INTEGER:
                 payload.prepare((int) this.value);
                 break;
-                
+
             case STRING:
                 payload.prepare((String) this.value);
                 break;
@@ -165,15 +164,15 @@ public class Parameter
         }
         else
         {
-            payload.prepare(0); 
+            payload.prepare(0);
         }
     }
-    
+
     /**
      * Prepare this parameter for transmission over IMB.
      * @param payload TByteBuffer; the transmission buffer
      */
-    public void qWrite (final TByteBuffer payload)
+    public void qWrite(final TByteBuffer payload)
     {
         payload.qWrite(this.name);
         payload.qWrite(this.type.value);
@@ -182,15 +181,15 @@ public class Parameter
             case BOOLEAN:
                 payload.qWrite((boolean) this.value);
                 break;
-                
+
             case FLOAT:
                 payload.qWrite((double) this.value);
                 break;
-                
+
             case INTEGER:
                 payload.qWrite((int) this.value);
                 break;
-                
+
             case STRING:
                 payload.qWrite((String) this.value);
                 break;
@@ -205,10 +204,10 @@ public class Parameter
         }
         else
         {
-            payload.qWrite(0); 
+            payload.qWrite(0);
         }
     }
-    
+
     /**
      * Set the list of pre-defined options that the user may choose from.
      * @param list List&lt;String&gt;; the list of options
@@ -273,7 +272,7 @@ public class Parameter
 
         /** The IMB integer value used for this ParameterType. */
         public final int value;
-        
+
         /**
          * Construct a new ParameterType.
          * @param value int; the IMB integer value for the new ParameterType
@@ -282,13 +281,14 @@ public class Parameter
         {
             this.value = value;
         }
-        
+
     };
-    
+
     /**
      * Really simple iterator for properties.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate: 2016-05-28 11:33:31 +0200 (Sat, 28 May 2016) $, @version $Revision: 2051 $, by $Author: averbraeck $,
@@ -364,6 +364,4 @@ public class Parameter
 
     }
 
-
 }
-

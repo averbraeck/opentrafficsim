@@ -23,7 +23,7 @@ public class IMBTransformResult implements Serializable
 
     /** the event content to store. */
     private final Object eventContent;
-    
+
     /** the event listener to store. */
     private final EventListenerInterface eventListener;
 
@@ -49,10 +49,9 @@ public class IMBTransformResult implements Serializable
 
     /**
      * @return eventListener EventListenerInterface; the stored event listener
-     */ 
+     */
     public final EventListenerInterface getEventListener()
     {
         return this.eventListener;
     }
 }
-

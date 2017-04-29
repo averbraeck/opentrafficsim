@@ -313,7 +313,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             Object[] content = (Object[]) event.getContent();
             SingleSensor sensor = (SingleSensor) content[1];
             sensor.addListener(this, SingleSensor.SENSOR_TRIGGER_EVENT);
-            
+
             try
             {
                 getConnector().postIMBMessage("Sensor_GTU", IMBEventType.NEW, transformNew(event));
@@ -392,7 +392,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
                     return;
                 }
             }
-            
+
             // post the Node message to de-register the lane from the IMB bus
             try
             {

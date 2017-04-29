@@ -49,7 +49,8 @@ public class CrossSection implements Serializable
      * @param fraction fraction on link
      * @throws SamplingException if an input is null
      */
-    public CrossSection(final LinkDataInterface link, final KpiGtuDirectionality direction, final double fraction) throws SamplingException
+    public CrossSection(final LinkDataInterface link, final KpiGtuDirectionality direction, final double fraction)
+            throws SamplingException
     {
         Throw.whenNull(link, "Link lane positions may not be null.");
         Throw.whenNull(direction, "Direction may not be null.");
@@ -83,7 +84,7 @@ public class CrossSection implements Serializable
      */
     public final Iterator<KpiDirectedLanePosition> getIterator()
     {
-         return new ImmutableIterator<>(this.directedLanePositions.iterator());
+        return new ImmutableIterator<>(this.directedLanePositions.iterator());
     }
 
     /** {@inheritDoc} */

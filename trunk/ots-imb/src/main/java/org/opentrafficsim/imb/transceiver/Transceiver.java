@@ -30,13 +30,12 @@ public interface Transceiver
      * @return Connector the IMB connector.
      */
     Connector getConnector();
-    
+
     /**
      * Handle an IMB message sent to OTS.
-     * @param imbEventName String; the IMB event name of the message that was received from IMB 
+     * @param imbEventName String; the IMB event name of the message that was received from IMB
      * @param imbPayload TByteBuffer; the packed IMB message payload
      * @throws IMBException in case the IMB event cannot be handled by this Transceiver
      */
     void handleMessageFromIMB(String imbEventName, TByteBuffer imbPayload) throws IMBException;
 }
-

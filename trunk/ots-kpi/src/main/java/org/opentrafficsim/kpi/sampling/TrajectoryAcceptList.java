@@ -91,7 +91,7 @@ public class TrajectoryAcceptList
      */
     public final Iterator<Trajectory> getTrajectoryIterator()
     {
-         return new ImmutableIterator<>(this.trajectoryList.iterator());
+        return new ImmutableIterator<>(this.trajectoryList.iterator());
     }
 
     /**
@@ -99,7 +99,7 @@ public class TrajectoryAcceptList
      */
     public final Iterator<TrajectoryGroup> getTrajectoryGroupIterator()
     {
-         return new ImmutableIterator<>(this.trajectoryGroupList.iterator());
+        return new ImmutableIterator<>(this.trajectoryGroupList.iterator());
     }
 
     /**

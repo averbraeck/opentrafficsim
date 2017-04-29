@@ -1,14 +1,14 @@
 package org.opentrafficsim.imb.connector;
 
-import nl.tno.imb.TConnection;
-import nl.tudelft.simulation.language.Throw;
-
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.IntegerProperty;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.StringProperty;
 import org.opentrafficsim.imb.IMBException;
+
+import nl.tno.imb.TConnection;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>
@@ -40,7 +40,7 @@ public class OTSIMBConnector extends IMBConnector
     {
         super(host, port, modelName, modelId, federation);
     }
-    
+
     /**
      * @param connection the IMB connection
      * @throws IMBException in case of connection problems
@@ -128,7 +128,7 @@ public class OTSIMBConnector extends IMBConnector
         }
         return null;
     }
-    
+
     /**
      * Create a CompoundProperty with the settings for an IMB connection.
      * @param displayPriority int; the displayPriority of the created CompoundProperty
@@ -153,5 +153,5 @@ public class OTSIMBConnector extends IMBConnector
         }
         return null;
     }
-    
+
 }

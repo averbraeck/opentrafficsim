@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -283,7 +284,7 @@ public final class Trajectory
     {
         try
         {
-            return new FloatTimeVector(getT(), TimeUnit.SI, StorageType.DENSE);
+            return new FloatTimeVector(getT(), TimeUnit.BASE_SECOND, StorageType.DENSE);
         }
         catch (ValueException exception)
         {
@@ -319,7 +320,7 @@ public final class Trajectory
         {
             return Duration.ZERO;
         }
-        return new Duration(this.t[this.size - 1] - this.t[0], TimeUnit.SI);
+        return new Duration(this.t[this.size - 1] - this.t[0], DurationUnit.SI);
     }
 
     /**

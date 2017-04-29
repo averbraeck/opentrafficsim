@@ -12,7 +12,8 @@ import nl.tudelft.simulation.language.Throw;
 /**
  * IMB transceiver for the network. <br>
  * OTS publishes events about the Network to IMB to be able to identify the network. At the start of the OTS simulation, or when
- * a (sub) network is added later, a NEW message is sent to IMB to identify the network's id. No CHANGE or DELETE messages are posted.
+ * a (sub) network is added later, a NEW message is sent to IMB to identify the network's id. No CHANGE or DELETE messages are
+ * posted.
  * <p>
  * <style>table,th,td {border:1px solid grey; border-style:solid; text-align:left; border-collapse: collapse;}</style>
  * <h2>NEW</h2>

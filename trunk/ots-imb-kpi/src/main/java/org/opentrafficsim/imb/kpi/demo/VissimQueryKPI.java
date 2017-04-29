@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
@@ -68,7 +69,7 @@ public class VissimQueryKPI
     {
 
         // connection
-        String host = "localhost"; //"vps17642.public.cloudvps.com";
+        String host = "localhost"; // "vps17642.public.cloudvps.com";
         int port = 4000;
         String modelName = "KPI Model";
         int modelId = 3456;
@@ -154,12 +155,12 @@ public class VissimQueryKPI
         String id;
         String queryDescription;
         MetaDataSet metaDataSet;
-        
+
         id = "All";
         queryDescription = "All query for VISSIM model.";
         metaDataSet = new MetaDataSet();
         makeQuery(sampler, id, queryDescription, metaDataSet, lanes, imbConnector);
-        
+
         id = "Equipped";
         queryDescription = "Equipped query for VISSIM model.";
         metaDataSet = new MetaDataSet();
@@ -168,7 +169,7 @@ public class VissimQueryKPI
         gtuTypes.add(new GtuTypeData("truck_equipped"));
         metaDataSet.put(new MetaDataGtuType(), gtuTypes);
         makeQuery(sampler, id, queryDescription, metaDataSet, lanes, imbConnector);
-        
+
         id = "Not equipped";
         queryDescription = "Not equipped query for VISSIM model.";
         metaDataSet = new MetaDataSet();
@@ -177,12 +178,12 @@ public class VissimQueryKPI
         gtuTypes.add(new GtuTypeData("truck"));
         metaDataSet.put(new MetaDataGtuType(), gtuTypes);
         makeQuery(sampler, id, queryDescription, metaDataSet, lanes, imbConnector);
-        
+
     }
 
     /**
      * @param sampler sampler
-     * @param id id 
+     * @param id id
      * @param queryDescription query description
      * @param metaDataSet meta data set
      * @param lanes lanes
@@ -196,10 +197,10 @@ public class VissimQueryKPI
         for (String laneId : lanes.keySet())
         {
             query.addSpaceTimeRegion(new KpiLaneDirection(lanes.get(laneId), KpiGtuDirectionality.DIR_PLUS), Length.ZERO,
-                    lanes.get(laneId).getLength(), Time.ZERO, new Time(1.0, TimeUnit.HOUR));
+                    lanes.get(laneId).getLength(), Time.ZERO, new Time(1.0, TimeUnit.BASE_HOUR));
         }
         sampler.addImbKpiTransceiver(new ImbKpiTransceiver(imbConnector, Time.ZERO, imbConnector.getModelName(), query,
-                new Duration(30.0, TimeUnit.SI)));
+                new Duration(30.0, DurationUnit.SI)));
     }
 
     /**

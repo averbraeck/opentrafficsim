@@ -12,12 +12,12 @@ package org.opentrafficsim.kpi.sampling;
  */
 public enum KpiGtuDirectionality
 {
-    
+
     /**
      * Driving direction matches the direction of the graph, increasing fractional position when driving in this direction.
      */
     DIR_PLUS,
-    
+
     /**
      * Driving direction opposite to the direction of the graph, decreasing fractional position when driving in this direction.
      */
@@ -38,5 +38,5 @@ public enum KpiGtuDirectionality
     {
         return this.equals(DIR_MINUS);
     }
-    
+
 }

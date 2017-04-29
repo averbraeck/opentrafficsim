@@ -1,6 +1,6 @@
 package org.opentrafficsim.kpi.sampling.data;
 
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vfloat.scalar.FloatDuration;
@@ -17,7 +17,7 @@ import org.djunits.value.vfloat.vector.FloatDurationVector;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class ExtendedDataTypeDuration extends ExtendedDataTypeFloat<TimeUnit, FloatDuration, FloatDurationVector>
+public abstract class ExtendedDataTypeDuration extends ExtendedDataTypeFloat<DurationUnit, FloatDuration, FloatDurationVector>
 {
 
     /**
@@ -28,7 +28,7 @@ public abstract class ExtendedDataTypeDuration extends ExtendedDataTypeFloat<Tim
     {
         super(id);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected final FloatDuration convertValue(final float value)
@@ -40,7 +40,7 @@ public abstract class ExtendedDataTypeDuration extends ExtendedDataTypeFloat<Tim
     @Override
     protected final FloatDurationVector convert(final float[] storage) throws ValueException
     {
-        return new FloatDurationVector(storage, TimeUnit.SI, StorageType.DENSE);
+        return new FloatDurationVector(storage, DurationUnit.SI, StorageType.DENSE);
     }
 
 }

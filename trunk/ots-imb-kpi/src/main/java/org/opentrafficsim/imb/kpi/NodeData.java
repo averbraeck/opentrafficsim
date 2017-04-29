@@ -19,13 +19,13 @@ public class NodeData implements NodeDataInterface
 
     /** Node name. */
     private final String nodeName;
-    
+
     /** position. */
     private final CartesianPoint position;
 
     /**
      * @param nodeName name of the node
-     * @param position  position of the node
+     * @param position position of the node
      */
     public NodeData(final String nodeName, final CartesianPoint position)
     {
@@ -48,7 +48,7 @@ public class NodeData implements NodeDataInterface
     {
         return this.position;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String getId()

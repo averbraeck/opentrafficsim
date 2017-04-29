@@ -79,7 +79,8 @@ public final class Query
      * @param interval interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampler, final String id, final String description, final MetaDataSet metaDataSet, final Duration interval)
+    public Query(final Sampler sampler, final String id, final String description, final MetaDataSet metaDataSet,
+            final Duration interval)
     {
         this(sampler, id, description, metaDataSet, null, interval);
     }
@@ -121,7 +122,7 @@ public final class Query
         this.interval = interval;
         sampler.registerMetaDataTypes(metaDataSet.getMetaDataTypes());
     }
-    
+
     /**
      * @param sampler sampler
      * @param description description
@@ -287,7 +288,7 @@ public final class Query
      */
     public Iterator<SpaceTimeRegion> getSpaceTimeIterator()
     {
-         return new ImmutableIterator<>(this.spaceTimeRegions.iterator());
+        return new ImmutableIterator<>(this.spaceTimeRegions.iterator());
     }
 
     /**
@@ -302,7 +303,7 @@ public final class Query
     {
         return getTrajectoryGroups(Time.ZERO, endTime);
     }
-    
+
     /**
      * Returns a list of TrajectoryGroups in accordance with the query. Each {@code TrajectoryGroup} contains {@code Trajectory}
      * objects pertaining to a {@code SpaceTimeRegion} from the query. A {@code Trajectory} is only included if all the meta

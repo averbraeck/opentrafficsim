@@ -14,7 +14,7 @@ import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
@@ -88,8 +88,8 @@ public class A58IMB extends AbstractWrappableAnimation
                     List<Property<?>> propertyList = new ArrayList<>();
                     propertyList.add(OTSIMBConnector.standardIMBProperties(0, "vps17642.public.cloudvps.com"));
                     // 1 hour simulation run for testing
-                    a58Model.buildAnimator(Time.ZERO, Duration.ZERO,
-                            new Duration(10.0, TimeUnit.HOUR), propertyList, null, true);
+                    a58Model.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(10.0, DurationUnit.HOUR), propertyList, null,
+                            true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -184,7 +184,7 @@ public class A58IMB extends AbstractWrappableAnimation
 
         /** the network as created by the AbstractWrappableIMBAnimation. */
         private final OTSNetwork network;
-        
+
         /** the GIS map. */
         private GisRenderable2D gisMap;
 
@@ -267,10 +267,11 @@ public class A58IMB extends AbstractWrappableAnimation
             System.err.println("GIS-map file: " + gisURL.toString());
             CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
             this.gisMap = new GisRenderable2D(this.simulator, gisURL, rdto0);
-//             URL nwbURL = URLResource.getResource("/A58/nwb.xml");
-//             System.err.println("NWB-map file: " + nwbURL.toString());
-//             new GisRenderable2D(this.simulator, nwbURL);
+            // URL nwbURL = URLResource.getResource("/A58/nwb.xml");
+            // System.err.println("NWB-map file: " + nwbURL.toString());
+            // new GisRenderable2D(this.simulator, nwbURL);
         }
+
         /**
          * @return gisMap
          */
@@ -365,8 +366,8 @@ public class A58IMB extends AbstractWrappableAnimation
     public List<Property<?>> getSupportedProperties()
     {
         List<Property<?>> result = new ArrayList<>();
-        result.add(new ContinuousProperty("penetration", "penetration",
-                "<html>Fraction of vehicles equipped with CACC</html>", 0.0, 0.0, 1.0, "%.2f", false, 13));
+        result.add(new ContinuousProperty("penetration", "penetration", "<html>Fraction of vehicles equipped with CACC</html>",
+                0.0, 0.0, 1.0, "%.2f", false, 13));
         return result;
     }
 
