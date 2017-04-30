@@ -1024,6 +1024,12 @@
     </repository>
 
     <repository>
+      <name>sim0mq Public Repository</name>
+      <id>sim0mq</id>
+      <url>http://sim0mq.org/maven</url>
+    </repository>
+
+    <repository>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
