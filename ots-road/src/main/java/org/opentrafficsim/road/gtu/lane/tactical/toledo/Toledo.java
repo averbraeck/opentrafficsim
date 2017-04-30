@@ -28,6 +28,8 @@ import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DirectNeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
@@ -84,6 +86,8 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
     public Toledo(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu)
     {
         super(carFollowingModel, gtu, new CategorialLanePerception(gtu));
+        getPerception().addPerceptionCategory(new ToledoPerception(getPerception()));
+        getPerception().addPerceptionCategory(new DirectNeighborsPerception(getPerception(), HeadwayGtuType.WRAP));
     }
 
     /** {@inheritDoc} */
@@ -91,7 +95,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
     public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
             throws OperationalPlanException, GTUException, NetworkException, ParameterException
     {
-
+        
         // obtain objects to get info
         LanePerception perception = getPerception();
         perception.perceive();
@@ -146,11 +150,11 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             }
             else
             {
-                initiatedLaneChange = null;
+                initiatedLaneChange = LateralDirectionality.NONE;
             }
 
             // accelerate for gap selection
-            if (initiatedLaneChange == null)
+            if (initiatedLaneChange.isNone())
             {
                 if ((vC > vR && vC > vL) || (!perception.getPerceptionCategory(NeighborsPerception.class)
                         .getLeaders(RelativeLane.CURRENT).isEmpty()
@@ -159,16 +163,6 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
                 {
                     acceleration = CarFollowingUtil.followLeaders(getCarFollowingModel(), bc, getGtu().getSpeed(), sli,
                             perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT));
-                    // TODO remove this test code
-                    if (getGtu().getId().equals("19"))
-                    {
-                        System.out.println("Acceleration of GTU " + getGtu().getId() + ": " + acceleration + " at "
-                                + getGtu().getSpeed() + ", following "
-                                + perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT)
-                                        .first().getSpeed()
-                                + ", " + perception.getPerceptionCategory(NeighborsPerception.class)
-                                        .getLeaders(RelativeLane.CURRENT).first().getDistance());
-                    }
                 }
                 else
                 {
@@ -304,13 +298,14 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
     {
 
         // capture no leaders/follower cases for forward and backward gaps
-        if (gap.equals(Gap.FORWARD) && perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).isEmpty())
+        if (gap.equals(Gap.FORWARD) && (perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane) == null
+                || perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).isEmpty()))
         {
             // no leaders
             return new GapInfo(Double.NEGATIVE_INFINITY, null, null, null);
         }
-        if (gap.equals(Gap.BACKWARD)
-                && perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).isEmpty())
+        if (gap.equals(Gap.BACKWARD) && (perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane) == null
+                || perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).isEmpty()))
         {
             // no followers
             return new GapInfo(Double.NEGATIVE_INFINITY, null, null, null);
@@ -368,17 +363,19 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             constant = 0;
             alpha = bc.getParameter(ToledoLaneChangeParameters.ALPHA_ADJ);
             distanceToGap = Length.ZERO;
-            if (!perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).isEmpty())
+            if (perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane) != null
+                    && !perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).isEmpty())
             {
                 leaderDist = perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).first().getDistance();
                 leaderSpeed = perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).first().getSpeed();
             }
             else
             {
-                leaderDist = Length.POSITIVE_INFINITY;
-                leaderSpeed = Speed.POSITIVE_INFINITY;
+                leaderDist = Length.POS_MAXVALUE;
+                leaderSpeed = Speed.POS_MAXVALUE;
             }
-            if (!perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).isEmpty())
+            if (perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane) != null
+                    && !perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).isEmpty())
             {
                 // plus own vehicle length for distance from nose of own vehicle (and then whole negative)
                 followerDist = perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).first()
@@ -389,9 +386,9 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             }
             else
             {
-                followerDist = Length.NEGATIVE_INFINITY;
-                followerSpeed = Speed.NEGATIVE_INFINITY;
-                putativeDistance = Length.POSITIVE_INFINITY;
+                followerDist = Length.NEG_MAXVALUE;
+                followerSpeed = Speed.NEG_MAXVALUE;
+                putativeDistance = Length.POS_MAXVALUE;
             }
             putativeSpeed = null;
             putativeLength = leaderDist.plus(followerDist).plus(getGtu().getLength());
@@ -401,7 +398,8 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             constant = bc.getParameter(ToledoLaneChangeParameters.C_BCK_TG);
             alpha = bc.getParameter(ToledoLaneChangeParameters.ALPHA_BCK);
             deltaFrontVehicle = 0;
-            if (perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).size() > 1)
+            if (perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane) != null
+                    && perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).size() > 1)
             {
                 // two followers
                 Iterator<HeadwayGTU> it =
@@ -491,7 +489,8 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         boolean acceptLead;
         boolean acceptLag;
 
-        if (!perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).isEmpty())
+        if (perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane) != null
+                && !perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).isEmpty())
         {
             Speed dVLead = perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).first().getSpeed()
                     .minus(gtu.getSpeed());
@@ -522,7 +521,8 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             acceptLead = false;
         }
 
-        if (!perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).isEmpty())
+        if (perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane) != null
+                && !perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).isEmpty())
         {
             Speed dVLag = perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).first().getSpeed()
                     .minus(gtu.getSpeed());
@@ -577,6 +577,11 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             throws ParameterException, OperationalPlanException
     {
 
+        if (!perception.getLaneStructure().getCrossSection().contains(lane))
+        {
+            return 0.0;
+        }
+
         // get infrastructure info
         boolean takeNextOffRamp = false;
         for (InfrastructureLaneChangeInfoToledo info : perception.getPerceptionCategory(ToledoPerception.class)
@@ -615,12 +620,12 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         }
 
         // heavy neighbor
-        Length leaderLength = !perception.getPerceptionCategory(NeighborsPerception.class)
+        Length leaderLength = !lane.isCurrent() && !perception.getPerceptionCategory(NeighborsPerception.class)
                 .getFirstLeaders(lane.getLateralDirectionality()).isEmpty()
                         ? perception.getPerceptionCategory(NeighborsPerception.class)
                                 .getFirstLeaders(lane.getLateralDirectionality()).first().getLength()
                         : Length.ZERO;
-        Length followerLength = !perception.getPerceptionCategory(NeighborsPerception.class)
+        Length followerLength = !lane.isCurrent() && !perception.getPerceptionCategory(NeighborsPerception.class)
                 .getFirstFollowers(lane.getLateralDirectionality()).isEmpty()
                         ? perception.getPerceptionCategory(NeighborsPerception.class)
                                 .getFirstFollowers(lane.getLateralDirectionality()).first().getDistance()
@@ -732,8 +737,10 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             throws OperationalPlanException
     {
         int nVehicles = 0;
-        nVehicles += perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).size();
-        nVehicles += perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).size();
+        nVehicles += perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane) == null ? 0
+                : perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(lane).size();
+        nVehicles += perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane) == null ? 0
+                : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane).size();
         if (nVehicles > 0)
         {
             Length d1;
