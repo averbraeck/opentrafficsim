@@ -4,10 +4,10 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -34,8 +34,7 @@ public class SpeedSign extends AbstractLaneBasedObject
     private static final long serialVersionUID = 20170420L;
 
     /** End of day. */
-    // TODO: 24 hours is the end of day 1, but not the end of day 2, 3, 4, ... of the simulation.
-    private static final Time ENDOFDAY = new Time(24, TimeUnit.BASE_HOUR);
+    private static final Duration ENDOFDAY = new Duration(24, DurationUnit.HOUR);
 
     /** Speed limit. */
     private final Speed speed;
@@ -43,11 +42,11 @@ public class SpeedSign extends AbstractLaneBasedObject
     /** GTU type. */
     private final GTUType gtuType;
 
-    /** Start time. */
-    private final Time startTime;
+    /** Start time-of-day. */
+    private final Duration startTimeOfDay;
 
-    /** End time. */
-    private final Time endTime;
+    /** End time-of-day. */
+    private final Duration endTimeOfDay;
 
     /**
      * Speed sign.
@@ -58,20 +57,20 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @param simulator simulator
      * @param speed speed
      * @param gtuType GTU type
-     * @param startTime start time of day
-     * @param endTime end time of day
+     * @param startTimeOfDay start time-of-day
+     * @param endTimeOfDay end time-of-day
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public SpeedSign(final String id, final Lane lane, final LongitudinalDirectionality direction,
             final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed, final GTUType gtuType,
-            final Time startTime, final Time endTime) throws NetworkException
+            final Duration startTimeOfDay, final Duration endTimeOfDay) throws NetworkException
     {
         super(id, lane, direction, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition));
         this.speed = speed;
         this.gtuType = gtuType;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.startTimeOfDay = startTimeOfDay;
+        this.endTimeOfDay = endTimeOfDay;
 
         try
         {
@@ -98,7 +97,7 @@ public class SpeedSign extends AbstractLaneBasedObject
             final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed, final GTUType gtuType)
             throws NetworkException
     {
-        this(id, lane, direction, longitudinalPosition, simulator, speed, gtuType, Time.ZERO, ENDOFDAY);
+        this(id, lane, direction, longitudinalPosition, simulator, speed, gtuType, Duration.ZERO, ENDOFDAY);
     }
 
     /**
@@ -109,16 +108,16 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @param longitudinalPosition longitudinal position
      * @param simulator simulator
      * @param speed speed
-     * @param startTime start time of day
-     * @param endTime end time of day
+     * @param startTimeOfDay start time-of-day
+     * @param endTimeOfDay end time-of-day
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public SpeedSign(final String id, final Lane lane, final LongitudinalDirectionality direction,
-            final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed, final Time startTime,
-            final Time endTime) throws NetworkException
+            final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed,
+            final Duration startTimeOfDay, final Duration endTimeOfDay) throws NetworkException
     {
-        this(id, lane, direction, longitudinalPosition, simulator, speed, GTUType.ALL, startTime, endTime);
+        this(id, lane, direction, longitudinalPosition, simulator, speed, GTUType.ALL, startTimeOfDay, endTimeOfDay);
     }
 
     /**
@@ -134,19 +133,18 @@ public class SpeedSign extends AbstractLaneBasedObject
     public SpeedSign(final String id, final Lane lane, final LongitudinalDirectionality direction,
             final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed) throws NetworkException
     {
-        // TODO Time.ZERO, ENDOFDAY only works for the first day in the simulation -- in the EPOCH year...
-        this(id, lane, direction, longitudinalPosition, simulator, speed, GTUType.ALL, Time.ZERO, ENDOFDAY);
+        this(id, lane, direction, longitudinalPosition, simulator, speed, GTUType.ALL, Duration.ZERO, ENDOFDAY);
     }
 
     /**
      * Return whether this speed limit is currently active.
      * @param gtuTypeIn GTU type
-     * @param time current time
+     * @param time current time-of-day
      * @return whether this speed limit is currently active
      */
-    public boolean isActive(final GTUType gtuTypeIn, final Time time)
+    public boolean isActive(final GTUType gtuTypeIn, final Duration time)
     {
-        return gtuTypeIn.isOfType(this.gtuType) && time.ge(this.startTime) && time.le(this.endTime);
+        return gtuTypeIn.isOfType(this.gtuType) && time.ge(this.startTimeOfDay) && time.le(this.endTimeOfDay);
     }
 
     /**
@@ -164,7 +162,7 @@ public class SpeedSign extends AbstractLaneBasedObject
             final boolean animation) throws NetworkException
     {
         return new SpeedSign(getId(), (Lane) newCSE, getDirection(), getLongitudinalPosition(), newSimulator, this.speed,
-                this.gtuType, this.startTime, this.endTime);
+                this.gtuType, this.startTimeOfDay, this.endTimeOfDay);
     }
 
     /** {@inheritDoc} */
@@ -173,16 +171,16 @@ public class SpeedSign extends AbstractLaneBasedObject
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.endTime == null) ? 0 : this.endTime.hashCode());
+        result = prime * result + ((this.endTimeOfDay == null) ? 0 : this.endTimeOfDay.hashCode());
         result = prime * result + ((this.gtuType == null) ? 0 : this.gtuType.hashCode());
         result = prime * result + ((this.speed == null) ? 0 : this.speed.hashCode());
-        result = prime * result + ((this.startTime == null) ? 0 : this.startTime.hashCode());
+        result = prime * result + ((this.startTimeOfDay == null) ? 0 : this.startTimeOfDay.hashCode());
         return result;
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
         {
@@ -197,14 +195,14 @@ public class SpeedSign extends AbstractLaneBasedObject
             return false;
         }
         SpeedSign other = (SpeedSign) obj;
-        if (this.endTime == null)
+        if (this.endTimeOfDay == null)
         {
-            if (other.endTime != null)
+            if (other.endTimeOfDay != null)
             {
                 return false;
             }
         }
-        else if (!this.endTime.equals(other.endTime))
+        else if (!this.endTimeOfDay.equals(other.endTimeOfDay))
         {
             return false;
         }
@@ -230,14 +228,14 @@ public class SpeedSign extends AbstractLaneBasedObject
         {
             return false;
         }
-        if (this.startTime == null)
+        if (this.startTimeOfDay == null)
         {
-            if (other.startTime != null)
+            if (other.startTimeOfDay != null)
             {
                 return false;
             }
         }
-        else if (!this.startTime.equals(other.startTime))
+        else if (!this.startTimeOfDay.equals(other.startTimeOfDay))
         {
             return false;
         }
@@ -248,8 +246,8 @@ public class SpeedSign extends AbstractLaneBasedObject
     @Override
     public String toString()
     {
-        return "SpeedSign [speed=" + this.speed + ", gtuType=" + this.gtuType + ", startTime=" + this.startTime + ", endTime="
-                + this.endTime + "]";
+        return "SpeedSign [speed=" + this.speed + ", gtuType=" + this.gtuType + ", startTime=" + this.startTimeOfDay + ", endTime="
+                + this.endTimeOfDay + "]";
     }
 
 }
