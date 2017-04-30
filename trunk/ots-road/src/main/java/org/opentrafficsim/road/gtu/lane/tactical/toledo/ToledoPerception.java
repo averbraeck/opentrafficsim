@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.toledo;
 
 import java.util.Map;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.TimeStampedObject;
@@ -51,8 +52,9 @@ public class ToledoPerception extends AbstractPerceptionCategory implements Perc
     /**
      * Updates the infrastructural lane change info.
      * @param lane relative lateral lane
+     * @throws GTUException when GTU is not initialized
      */
-    public void updateInfrastructureLaneChangeInfo(final RelativeLane lane)
+    public void updateInfrastructureLaneChangeInfo(final RelativeLane lane) throws GTUException
     {
         //
     }
@@ -82,7 +84,8 @@ public class ToledoPerception extends AbstractPerceptionCategory implements Perc
      */
     public final SortedSet<InfrastructureLaneChangeInfoToledo> getInfrastructureLaneChangeInfo(final RelativeLane lane)
     {
-        return this.infrastructureLaneChangeInfo.get(lane).getObject();
+        return new TreeSet<>();
+        // return this.infrastructureLaneChangeInfo.get(lane).getObject();
     }
 
     /**

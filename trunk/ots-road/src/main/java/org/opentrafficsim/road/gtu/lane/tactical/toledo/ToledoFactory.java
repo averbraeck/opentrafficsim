@@ -30,8 +30,8 @@ public class ToledoFactory implements LaneBasedTacticalPlannerFactory<Toledo>
         try
         {
             behavioralCharacteristics.setDefaultParameter(ParameterTypes.LOOKAHEAD);
-            // TODO remove LOOKBACKOLD and insert LOOKBACK once NeighborsPerception uses LOOKBACK
-            behavioralCharacteristics.setDefaultParameter(ParameterTypes.LOOKBACKOLD);
+            behavioralCharacteristics.setDefaultParameter(ParameterTypes.LOOKBACK);
+            behavioralCharacteristics.setDefaultParameter(ParameterTypes.PERCEPTION);
         }
         catch (ParameterException exception)
         {
