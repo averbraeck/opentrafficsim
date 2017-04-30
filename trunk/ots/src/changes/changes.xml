@@ -2,6 +2,15 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="0.xx.xx" date="2017-xx-xx" description="Release 0.xx.xx">
+      <action issue="OTS-320" type="fix">
+        OTS-320. SpeedSign ENDOFDAY 
+      </action>
+      <action issue="OTS-325" type="fix">
+        OTS-325. Toledo demos complain about missing TacticalPlanner
+      </action>
+    </release>
+
     <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">
       <action issue="OTS-126" type="add">
         OTS-126. Add class for a speed sign.
