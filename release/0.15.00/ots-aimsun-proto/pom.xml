@@ -1,0 +1,68 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>opentrafficsim</groupId>
+    <artifactId>ots</artifactId>
+    <version>0.15.00</version>
+    <relativePath>../ots/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>ots-aimsun-proto</artifactId>
+  <name>OTS AIMSUN protobuf classes</name>
+  <description>OTS AIMSUN protobuf and generated Java classes</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>3.2.0</version>
+    </dependency>
+  </dependencies>
+  
+  <!-- Suppress checkstyle checks on this project. -->
+  <build>
+    <!-- see https://www.xolstice.org/protobuf-maven-plugin/examples/protoc-artifact.html -->
+    <extensions>
+      <extension>
+        <groupId>kr.motd.maven</groupId>
+        <artifactId>os-maven-plugin</artifactId>
+        <version>1.3.0.Final</version>
+      </extension>
+    </extensions>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${maven.checkstyle.version}</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      
+      <!-- see https://www.xolstice.org/protobuf-maven-plugin/compile-mojo.html -->
+      <plugin>
+        <groupId>org.xolstice.maven.plugins</groupId>
+        <artifactId>protobuf-maven-plugin</artifactId>
+        <version>0.5.0</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>test-compile</goal>
+            </goals>
+            <configuration>
+              <protocArtifact>com.google.protobuf:protoc:2.6.1:exe:${os.detected.classifier}</protocArtifact>
+              <outputDirectory>${basedir}/src/main/java</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
+    </plugins>
+  </build>
+
+</project>
