@@ -2,13 +2,7 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
-    <release version="0.xx.xx" date="2017-xx-xx" description="Release 0.xx.xx">
-      <action issue="OTS-320" type="fix">
-        OTS-320. SpeedSign ENDOFDAY 
-      </action>
-      <action issue="OTS-325" type="fix">
-        OTS-325. Toledo demos complain about missing TacticalPlanner
-      </action>
+    <release version="0.15.01" date="2017-xx-xx" description="Release 0.15.01">
     </release>
 
     <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">
@@ -34,6 +28,9 @@
         DirectionUnit (e.g., NORTH_RADIANS: radians relative to NORTH, or EAST_DEGREES:degrees relative 
         to EAST). Time can be stated relative to the POSIX Epoch (1-1-1970), AD 1, or the J2000.1 Epoch.
       </action>
+      <action issue="OTS-320" type="fix">
+        OTS-320. SpeedSign ENDOFDAY 
+      </action>
       <action issue="OTS-321" type="add">
         OTS-321. AIMSUN classes have to go into ots-aimsun project. 
         ots-aimsun for aimsun classes on the OTS side.
@@ -41,6 +38,9 @@
         ots-aimsun-proto for proto files and generated classes.
         The last one is important to separate because of suppression of javadoc and formatting 
         error messages because of checkstyle.
+      </action>
+      <action issue="OTS-325" type="fix">
+        OTS-325. Toledo demos complain about missing TacticalPlanner
       </action>
       <action issue="OTS-327" type="fix">
         OTS-327. Demo Crossing with Traffic Lights has a casting error. There was still a reference to the 
