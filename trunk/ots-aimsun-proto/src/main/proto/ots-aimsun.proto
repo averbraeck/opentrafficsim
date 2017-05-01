@@ -4,7 +4,7 @@
 
 syntax = "proto2";
 
-package aimsun;
+package org.opentrafficsim.aimsun.proto;
 
 option java_outer_classname = "AimsunControlProtoBuf";
 
