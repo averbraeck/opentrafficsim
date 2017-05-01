@@ -1,0 +1,566 @@
+<document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
+  <body>
+
+    <release version="0.xx.xx" date="2017-xx-xx" description="Release 0.xx.xx">
+      <action issue="OTS-320" type="fix">
+        OTS-320. SpeedSign ENDOFDAY 
+      </action>
+      <action issue="OTS-325" type="fix">
+        OTS-325. Toledo demos complain about missing TacticalPlanner
+      </action>
+    </release>
+
+    <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">
+      <action issue="OTS-126" type="add">
+        OTS-126. Add class for a speed sign.
+      </action>
+      <action issue="OTS-156" type="add">
+        OTS-156. Make conflicts GTUType dependent. Priority at conflicts may depend on the GTUType, e.g. at some conflicts, 
+        trams have absolute priority over cars, but cars may behave according to a right-has-priority rule. 
+      </action>
+      <action issue="OTS-217" type="update">
+        OTS-217. Initial operational plans and lane changes. In some cases, tactical planners should not create an 
+        operational plan containing a lane change. E.g. filling the network at t=0, some surrounding GTUs 
+        may not yet be generated.
+      </action>
+      <action issue="OTS-319" type="add">
+        OTS-319. Alignment with DJUNITS 3.00. Units for absolute and relative values have been separated. 
+        They are truly different and should never have been mixed. As an example, an AbsoluteTemperature 
+        of 10 degrees Celsius has an offset of 283.15 Kelvin from absolute zero. A relative temperature of
+        10 degrees Celsius, however, is equivalent to 10 Kelvin, and does not have any offset. The same
+        holds for Direction, Time, and Position. This has quite some effects on the code, as TimeUnits in
+        Durations had to be replaced with a DurationUnit. Same for Directions that now have their own
+        DirectionUnit (e.g., NORTH_RADIANS: radians relative to NORTH, or EAST_DEGREES:degrees relative 
+        to EAST). Time can be stated relative to the POSIX Epoch (1-1-1970), AD 1, or the J2000.1 Epoch.
+      </action>
+      <action issue="OTS-321" type="add">
+        OTS-321. AIMSUN classes have to go into ots-aimsun project. 
+        ots-aimsun for aimsun classes on the OTS side.
+        ots-aimsun-demo for demos with aimsun classes.
+        ots-aimsun-proto for proto files and generated classes.
+        The last one is important to separate because of suppression of javadoc and formatting 
+        error messages because of checkstyle.
+      </action>
+      <action issue="OTS-327" type="fix">
+        OTS-327. Demo Crossing with Traffic Lights has a casting error. There was still a reference to the 
+        TimeUnit in the typed distributions, where a DurationUnit should have been used. This has been
+        solved in all four typed Distributions.
+      </action>
+      <action issue="OTS-328" type="fix">
+        OTS-328. TRAFCOD2 demo does not start anymore. To make the registration work better in the OTSNetwork, 
+        the name of any registered object should be unique within a lane. In order to make a) inspecting 
+        ids easy, while b) still registering full ids with a cross section name and a cross section element name, 
+        the method getFullId() has been added in addition to getId(). When displaying objects, getId() is used. 
+        When registering objects, getFullId() is used.
+      </action>
+      <action issue="OTS-329" type="fix">
+        OTS-329. N201 XML Parser demo throws error. All sensor, trafficlight, and sensor objects in XML files 
+        have to be globally unique in the network. N201v8.xml in the ots-parser-xml project test has been
+        updated to make the names of Lane objects unique.
+      </action>
+      <action issue="OTS-330" type="fix">
+        OTS-330. Directions not interpreted correctly when parsing. This was caused by the fact that the DirectionUnit 
+        uses NORTH_RADIANS as the BASE, and EAST_RADIANS is -90 degrees rotated with respect to NORTH_RADIANS. 
+        Instead of using getSI() or .si for the direction, getInUnit() should be used in Links.java.
+      </action>
+      <action type="update">
+        Updated to DJUNITS version 3.00.01.
+      </action>
+    </release>
+  
+    <release version="0.14.00" date="2017-04-17" description="Release 0.14.00">
+      <action issue="OTS-269" type="update">
+        OTS-269. Settable deletion of GTU's if in trouble.
+      </action>
+      <action issue="OTS-265" type="update">
+        OTS-265. BLOCK should have a cloneable class and should have animation
+        capabilities.
+      </action>
+      <action issue="OTS-263" type="fix">
+        OTS-263. Fixed bug in detection of intersecting lines (shapes).
+      </action>
+      <action issue="OTS-273" type="fix">
+        OTS-273. XML parser parsed wrong value for use as Z-coordinate.
+      </action>
+      <action issue="OTS-279" type="add">
+        OTS-279. Added BusStop.
+      </action>
+      <action issue="OTS-280" type="add">
+        OTS-280. Added BusSchedule.
+      </action>
+      <action issue="OTS-280" type="update">
+        OTS-277. Removed LaneBlock.
+      </action>
+      <action issue="OTS-295" type="add">
+        OTS-295. PRIORITY added to LINK tag in xml parser.
+      </action>
+      <action issue="OTS-299" type="add">
+        OTS-299. Method projectedPosition was actually translatedPosition; method name
+        fixed. Added new method projectedPosition.
+      </action>
+      <action issue="OTS-297" type="update">
+        OTS-297. DJUNITS version 2.01.03 used. Scalars in SI units with the exception
+        of Money scalars can now be created with e.g., Length len = Length.createSI(5.0).
+      </action>
+      <action issue="OTS-298" type="update">
+        OTS-298. DJUNITS version 2.01.03 used. Constants NaN, POSITIVI_INFINITY,
+        NEGATIVE_INFINITY, POS_MAXVALUE and NEG_MAXVALUE have been added to scalars,
+        with the exception of Money scalars.
+      </action>
+      <action issue="OTS-278" type="add">
+        OTS-278. Scheduled busses and bus stops.
+      </action>
+      <action issue="OTS-316" type="update">
+        OTS-316. Allow non default GTU colorers in visualization.
+      </action>
+      <action issue="OTS-267" type="update">
+        OTS-267. Researched parallelization of the gtu's move() method and provided options
+        for synchronized update of the GTU's positions as well as position caching.
+      </action>
+      <action type="update">
+        Updated to DJUNITS version 2.02.00 and DSOL version 3.01.05.
+      </action>
+    </release>
+
+    <release version="0.13.04" date="2017-01-16" description="Intermediate Release 0.13.04">
+      <action issue="OTS-156" type="update">
+        OTS-156. Make conflicts GTUType dependent.
+      </action>
+      <action issue="OTS-156" type="fix">
+        OTS-246. Demo model XMLNetworks merge with LMRS throws error.
+      </action>
+      <action issue="OTS-250" type="update">
+        OTS-250. Interaction conflicts and traffic lights.
+      </action>
+      <action issue="OTS-251" type="fix">
+        OTS-251. Memory leak in simulation when GTUs leave the system.
+        DefaultCarAnimation
+        object changed.
+      </action>
+      <action issue="OTS-252" type="fix">
+        OTS-252. GTUs do not have a hashCode function
+      </action>
+      <action issue="OTS-253" type="fix">
+        OTS-253. Memory leak in infrastructure animation after cloning. Extra
+        functions in
+        OTSNetwork to clone and destroy networks.
+      </action>
+      <action issue="OTS-254" type="update">
+        OTS-254. ToggleAnimationButtons should be aligned to the left.
+      </action>
+      <action issue="OTS-255" type="update">
+        OTS-255. As a result of update OTS-253, the constructor of the OTSLink and
+        CrossSectionLink have changed to include
+        the simulator.
+      </action>
+      <action type="update">
+        Default jog4j-2 configuration file added.
+      </action>
+      <action type="update">
+        Updated to use DSOL version 3.01.03, which allows to override the Renderable2D.destroy()
+        function.
+      </action>
+    </release>
+
+
+    <release version="0.13.03" date="2017-01-05" description="Intermediate Release 0.13.03">
+      <action issue="OTS-244" type="fix">
+        OTS-244. OTSNetwork.shortestPath does not calculate shortest route when
+        direction is
+        BOTH.
+      </action>
+      <action issue="OTS-245" type="update">
+        OTS-245. Several methods of AbstractGTU and AbstractLaneBasedGTU should be
+        declared
+        non-final to allow extensions.
+      </action>
+    </release>
+
+
+    <release version="0.13.02" date="2017-01-03" description="Intermediate Release 0.13.02">
+      <action issue="OTS-242" type="fix">
+        OTS-242. Repair of Bezier curve.
+      </action>
+      <action type="update">
+        toString() methods added to several classes in ots-core.
+      </action>
+      <action type="update">
+        Throw.when(...) added to constructor of Distribution.java.
+      </action>
+      <action type="update">
+        Unit tests added for several classes in ots-core.
+      </action>
+      <action type="update">
+        Hierarchical GTUType class.
+      </action>
+    </release>
+
+
+    <release version="0.13.01" date="2016-12-20" description="Intermediate Release 0.13.01">
+      <action issue="OTS-235" type="add">
+        OTS-235: Arc with variable radius.
+      </action>
+      <action issue="OTS-236" type="add">
+        OTS-236: Bezier SHAPE and control points limited to intersection of control
+        lines.
+      </action>
+      <action issue="OTS-237" type="fix">
+        OTS-237: Clone of CrossSectionLink added CrossSectionElements twice.
+      </action>
+      <action issue="OTS-238" type="fix">
+        OTS-238: GTU should not immediately change lane on initialization with the
+        DirectedLaneChange tactical planner.
+      </action>
+      <action issue="OTS-239" type="fix">
+        OTS-239: Time to not change lanes after a lane change with the
+        DirectedLaneChange
+        tactical planner should be settable.
+      </action>
+      <action issue="OTS-240" type="add">
+        OTS-240: The threshold distance for differences between initial locations of
+        the GTU
+        on different lanes should be settable.
+      </action>
+    </release>
+
+
+    <release version="0.13.00" date="2016-12-11" description="Sprint 8">
+      <action issue="OTS-64" type="add">
+        OTS-64: LMRS - Relaxation.
+      </action>
+      <action issue="OTS-65" type="add">
+        OTS-65: Level of lane change desire by other drivers.
+      </action>
+      <action issue="OTS-66" type="add">
+        OTS-66: Relaxation response to lane change in front.
+      </action>
+      <action issue="OTS-200" type="add">
+        OTS-200: Implement TrafCOD traffic controller.
+      </action>
+      <action issue="OTS-214" type="add">
+        OTS-214: TrafficLight implementation for car following + instantaneous lane
+        change
+        model.
+      </action>
+      <action issue="OTS-215" type="add">
+        OTS-215: TrafficLight implementation for LMRS.
+      </action>
+      <action issue="OTS-218" type="update">
+        OTS-218: Automatically register LaneBasedObject on their Lane.
+      </action>
+      <action issue="OTS-219" type="update">
+        OTS-219: Store the GTUs that trigger a Sensor in the Sensor and not in the
+        Lane.
+      </action>
+      <action issue="OTS-221" type="add">
+        OTS-221: Bring back LaneBasedGTUFollowingDirectedChangeTacticalPlanner.
+      </action>
+      <action issue="OTS-222" type="fix">
+        OTS-222: Z-order drawing.
+      </action>
+      <action issue="OTS-223" type="fix">
+        OTS-223: Repair parsing for ARC.
+      </action>
+      <action issue="OTS-224" type="add">
+        OTS-224: Allow for selection of layers in animation.
+      </action>
+      <action issue="OTS-225" type="add">
+        OTS-225: Provide default zoom for animation, and fix zoomAll method.
+      </action>
+      <action issue="OTS-226" type="add">
+        OTS-226: Allow animation of ids for Node, Link, Lane, Sensor, TrafficLight,
+        and GTU.
+      </action>
+      <action type="update">
+        Moved ImmutableCollections to DSOL version 3.01.01.
+      </action>
+      <action type="update">
+        Updated to use DSOL version 3.01.01.
+      </action>
+    </release>
+
+
+    <release version="0.12.02" date="2016-11-20" description="Intermediate Release 0.12.02">
+      <action issue="OTS-87" type="update">
+        OTS-87 Implement mandatory incentives for LMRS.
+      </action>
+      <action issue="OTS-88" type="update">
+        OTS-88 Implement voluntary incentives for LMRS.
+      </action>
+      <action issue="OTS-160" type="update">
+        OTS-160 Categorize perception.
+      </action>
+      <action issue="OTS-216" type="update">
+        OTS-216 Added neg() function to djunits and updated djunits in ots to version
+        2.01.01.
+      </action>
+    </release>
+
+
+    <release version="0.12.01" date="2016-11-07" description="Intermediate release 0.12.01">
+      <action issue="OTS-213" type="fix">
+        OTS-213 Change SimpleWeightedGraph in OTSNetwork into
+        SimpleDirectedWeightedGraph
+      </action>
+      <action issue="OTS-214" type="add">
+        OTS-214 TrafficLight implementation for car following + instantaneous lane
+        change
+        model
+      </action>
+      <action issue="OTS-215" type="add">
+        OTS-215 TrafficLight implementation for LMRS
+      </action>
+    </release>
+
+
+    <release version="0.12.00" date="2016-11-02" description="Sprint 7">
+      <action issue="OTS-106" type="add">
+        OTS-106 Traffic lights as separate objects that can be observed instead of a
+        'fake'
+        GTU
+      </action>
+      <action issue="OTS-181" type="add">
+        OTS-181 Observable object hierarchy
+      </action>
+      <action issue="OTS-171" type="add">
+        OTS-174 Retrieve network saved with xstream for a new simulation
+      </action>
+      <action issue="OTS-151" type="update">
+        OTS-151 Simplify registration of GTU on lanes
+      </action>
+      <action issue="OTS-209" type="update">
+        OTS-209 DJUNITS Scalars should import Comparable individually
+      </action>
+      <action issue="OTS-210" type="add">
+        OTS-210 GTU to handle its own instantaneous lane change
+      </action>
+      <action issue="OTS-211" type="update">
+        OTS-211 GTU should be able to provide its reference position
+      </action>
+      <action type="add">
+        Separate project 'ots' to act as the root instead of ots-base as ots-base now contains code
+      </action>
+    </release>
+
+
+    <release version="0.11.00" date="2016-10-07" description="Sprint 6">
+      <action issue="OTS-104" type="fix">
+        OTS-104 XML parser dependent on order of parsing
+      </action>
+      <action issue="OTS-115" type="fix">
+        OTS-115 Repair error with lane direction in parser while link direction not
+        yet set
+      </action>
+      <action issue="OTS-128" type="add">
+        OTS-128 Add ROADCLASS definition in XML and as element under ROADTYPE
+      </action>
+      <action issue="OTS-177" type="add">
+        OTS-177 Make a list of changes based on JIRA sprints in POM file
+      </action>
+      <action issue="OTS-179" type="add">
+        OTS-179 OD Matrix class
+      </action>
+      <action issue="OTS-180" type="add">
+        OTS-180 IMB Callback for SimSmartMobility
+      </action>
+      <action issue="OTS-173" type="add">
+        OTS-173 Add events for adding/removing and for triggering of sensors
+      </action>
+      <action issue="OTS-182" type="add">
+        OTS-182 Links and Nodes should automatically be added to a Network
+      </action>
+      <action issue="OTS-183" type="update">
+        OTS-183 Simplify IMB connection in OTS demos
+      </action>
+      <action issue="OTS-184" type="add">
+        OTS-184 SimSmartMobility: SimulationTransceiver: add comments about payload
+      </action>
+      <action issue="OTS-185" type="add">
+        OTS-185 SimSmartMobility: IMB NetworkTransceiver
+      </action>
+      <action issue="OTS-186" type="add">
+        OTS-186 SimSmartMobility: IMB NodeTransceiver
+      </action>
+      <action issue="OTS-187" type="add">
+        OTS-187 SimSmartMobility: IMB LinkGTUTransceiver
+      </action>
+      <action issue="OTS-188" type="add">
+        OTS-188 SimSmartMobility: IMB LaneGTUTransceiver
+      </action>
+      <action issue="OTS-189" type="add">
+        OTS-189 SimSmartMobility: IMB GTUTransceiver conform SSM v1 standard
+      </action>
+      <action issue="OTS-190" type="add">
+        OTS-190 IMB SensorGTUTransceiver
+      </action>
+      <action issue="OTS-192" type="add">
+        OTS-192 XML parser has to be adapted to latest changes in the way a network is
+        built
+      </action>
+      <action issue="OTS-193" type="add">
+        OTS-193 Sampling framework to calculate KPIs
+      </action>
+      <action issue="OTS-194" type="update">
+        OTS-194 ImmutableCollections have to be updated
+      </action>
+    </release>
+
+
+    <release version="0.10.00" date="2016-08-28" description="Sprint 5">
+      <action issue="OTS-84" type="fix">
+        OTS-84 Demo simulations don't check for sufficient headway.
+      </action>
+      <action issue="OTS-148" type="update">
+        OTS-148 Direction should not implement &gt;, &gt;=, &lt;, &lt;=.
+      </action>
+      <action issue="OTS-150" type="add">
+        OTS-150 min and max functions for djunit scalars.
+      </action>
+      <action issue="OTS-154" type="add">
+        OTS-154 getLength() in Headway.
+      </action>
+      <action issue="OTS-155" type="add">
+        OTS-155 Add split as merge type.
+      </action>
+      <action issue="OTS-158" type="add">
+        OTS-158 Method to add default values of parameters defined in given class.
+      </action>
+      <action issue="OTS-159" type="add">
+        OTS-159 Add first offramp info in perception.
+      </action>
+      <action issue="OTS-161" type="update">
+        OTS-161 Replace Velocity by Speed in all code.
+      </action>
+      <action issue="OTS-163" type="add">
+        OTS-163 Save network with xstream.
+      </action>
+      <action issue="OTS-164" type="add">
+        OTS-164 POLYLINE element for LINK in XML.
+      </action>
+      <action issue="OTS-165" type="update">
+        OTS-165 Tidy up XML definitions.
+      </action>
+      <action issue="OTS-169" type="add">
+        OTS-169 Split ots-road project: separate projects for the different parsers.
+      </action>
+      <action issue="OTS-171" type="update">
+        OTS-171 Create separate ots-imb project.
+      </action>
+      <action issue="OTS-172" type="add">
+        OTS-172 Pub/sub between GTU, Lane and Graphs.
+      </action>
+    </release>
+
+
+    <release version="0.09.00" date="2016-05-27" description="Sprint 4">
+      <action issue="OTS-107" type="add">
+        OTS-107 Unit test verifies equals(), hashCode(), toString(), Serializable.
+      </action>
+      <action issue="OTS-111" type="update">
+        OTS-111 DJUNITS names of Abs quantities.
+      </action>
+      <action issue="OTS-116" type="fix">
+        OTS-116 Animation objects not shown after toString() changes in OTS.
+      </action>
+      <action issue="OTS-118" type="update">
+        OTS-118 Change Velocity to Speed in GTU methods.
+      </action>
+      <action issue="OTS-120" type="add">
+        OTS-120 Create a getCenter() method in all GTUs.
+      </action>
+      <action issue="OTS-123" type="update">
+        OTS-123 Exception.throwIf() method to separate class.
+      </action>
+      <action issue="OTS-131" type="add">
+        OTS-131 Add class for speed limit types with static defaults and uniqueness.
+        check
+      </action>
+      <action issue="OTS-133" type="add">
+        OTS-133 Add utility class for tactical planners for current active speed
+        limit.
+        types
+      </action>
+      <action issue="OTS-134" type="add">
+        OTS-134 Add interface for perception with common lane change and
+        car-following.
+        info
+      </action>
+      <action issue="OTS-135" type="fix">
+        OTS-135 Throw.when cannot throw Exceptions that can be internally thrown.
+      </action>
+      <action issue="OTS-137" type="update">
+        OTS-137 Immutable collection classes.
+      </action>
+      <action issue="OTS-138" type="update">
+        OTS-138 Implement GTUType as a Type.
+      </action>
+      <action issue="OTS-139" type="update">
+        OTS-139 LinkType and LaneType should become Types.
+      </action>
+    </release>
+
+
+    <release version="0.08.00" date="2016-04-08" description="Sprint 3">
+      <action issue="OTS-17" type="update">
+        OTS-17 Zoom whole network, zoom to home extent, toggle grid on/off.
+      </action>
+      <action issue="OTS-50" type="update">
+        OTS-50 Mouse-centered zoom in animation panel.
+      </action>
+      <action issue="OTS-55" type="fix">
+        OTS-55 Some demos don't check room for generated GTUs.
+      </action>
+      <action issue="OTS-63" type="add">
+        OTS-63 Display x and y coordinates on animation screen.
+      </action>
+      <action issue="OTS-89" type="fix">
+        OTS-89 Runtime error in dsol repaint.
+      </action>
+      <action issue="OTS-90" type="update">
+        OTS-90 Play and pause buttons should be merged.
+      </action>
+      <action issue="OTS-101" type="add">
+        OTS-101 Create list of driver characteristics.
+      </action>
+      <action issue="OTS-102" type="update">
+        OTS-102 New implementations of IDM and car-following interface.
+      </action>
+      <action issue="OTS-103" type="add">
+        OTS-103 Create a runUpToAndIncluding method for the dsol DEVSSimulator.
+      </action>
+      <action issue="OTS-108" type="update">
+        OTS-108 New implementation of headway algorithms.
+      </action>
+      <action issue="OTS-109" type="add">
+        OTS-109 Link new algorithms to RTI software for Nissan.
+      </action>
+    </release>
+
+
+    <release version="0.07.00" date="2016-03-15" description="Sprint 2">
+      <action issue="OTS-76" type="fix">
+        OTS-76 Circular road demo gives errors around simulation time 10 minutes.
+      </action>
+    </release>
+
+
+    <release version="0.06.00" date="2016-01-27" description="Sprint 1">
+    </release>
+
+
+    <release version="0.05.00" date="2015-12-20" description="Major upgrade">
+      <action dev="averbraeck" type="add">
+        ots-core: Perception added.
+      </action>
+      <action dev="averbraeck" type="add">
+        ots-core: OperationalPlan, TacticalPlanner, and StrategicalPlanner added.
+      </action>
+      <action dev="averbraeck" type="add">
+        ots-core, ots-road: All GTUs are free ranging; Lane-based behavior is just a
+        constraint.
+      </action>
+    </release>
+
+  </body>
+</document>
