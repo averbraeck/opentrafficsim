@@ -1,7 +1,9 @@
 package org.opentrafficsim.road.network.sampling.data;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Length;
@@ -16,6 +18,7 @@ import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeDuration;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.sampling.GtuData;
 
 import nl.tudelft.simulation.language.Throw;
@@ -52,6 +55,7 @@ public class TimeToCollision extends ExtendedDataTypeDuration
         {
             DirectedLanePosition ref = gtuObj.getReferencePosition();
             Map<Lane, GTUDirectionality> map = new HashMap<>();
+            Set<LaneDirection> visited = new HashSet<>();
             map.put(ref.getLane(), ref.getGtuDirection());
             Length pos = ref.getPosition();
             Length cumulDist = Length.ZERO; // from start of lane
@@ -68,6 +72,12 @@ public class TimeToCollision extends ExtendedDataTypeDuration
                 next = lane.getGtuAhead(pos, dir, RelativePosition.REAR, now);
                 if (next == null)
                 {
+                    LaneDirection laneDir = new LaneDirection(lane, map.get(lane));
+                    if (visited.contains(laneDir))
+                    {
+                        break;
+                    }
+                    visited.add(laneDir);
                     cumulDist = cumulDist.plus(lane.getLength());
                     map = lane.downstreamLanes(dir, gtuObj.getGTUType());
                 }
