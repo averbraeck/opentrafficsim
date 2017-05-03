@@ -6,7 +6,13 @@ package org.opentrafficsim.aimsun.proto;
 public final class AimsunControlProtoBuf {
   private AimsunControlProtoBuf() {}
   public static void registerAllExtensions(
+      com.google.protobuf.ExtensionRegistryLite registry) {
+  }
+
+  public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
+    registerAllExtensions(
+        (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface CreateSimulationOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.opentrafficsim.aimsun.proto.CreateSimulation)
@@ -47,37 +53,30 @@ public final class AimsunControlProtoBuf {
   /**
    * Protobuf type {@code org.opentrafficsim.aimsun.proto.CreateSimulation}
    */
-  public static final class CreateSimulation extends
-      com.google.protobuf.GeneratedMessage implements
+  public  static final class CreateSimulation extends
+      com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:org.opentrafficsim.aimsun.proto.CreateSimulation)
       CreateSimulationOrBuilder {
     // Use CreateSimulation.newBuilder() to construct.
-    private CreateSimulation(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private CreateSimulation(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
-      this.unknownFields = builder.getUnknownFields();
     }
-    private CreateSimulation(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-    private static final CreateSimulation defaultInstance;
-    public static CreateSimulation getDefaultInstance() {
-      return defaultInstance;
+    private CreateSimulation() {
+      runTime_ = 0D;
+      warmUpTime_ = 0D;
+      networkXML_ = "";
     }
 
-    public CreateSimulation getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-        getUnknownFields() {
+    getUnknownFields() {
       return this.unknownFields;
     }
     private CreateSimulation(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      initFields();
+      this();
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
@@ -118,7 +117,7 @@ public final class AimsunControlProtoBuf {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
+            e).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -129,26 +128,11 @@ public final class AimsunControlProtoBuf {
       return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_CreateSimulation_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_CreateSimulation_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation.class, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation.Builder.class);
-    }
-
-    public static com.google.protobuf.Parser<CreateSimulation> PARSER =
-        new com.google.protobuf.AbstractParser<CreateSimulation>() {
-      public CreateSimulation parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new CreateSimulation(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<CreateSimulation> getParserForType() {
-      return PARSER;
     }
 
     private int bitField0_;
@@ -183,7 +167,7 @@ public final class AimsunControlProtoBuf {
     }
 
     public static final int NETWORKXML_FIELD_NUMBER = 3;
-    private java.lang.Object networkXML_;
+    private volatile java.lang.Object networkXML_;
     /**
      * <code>optional string networkXML = 3;</code>
      */
@@ -224,11 +208,6 @@ public final class AimsunControlProtoBuf {
       }
     }
 
-    private void initFields() {
-      runTime_ = 0D;
-      warmUpTime_ = 0D;
-      networkXML_ = "";
-    }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -249,7 +228,6 @@ public final class AimsunControlProtoBuf {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeDouble(1, runTime_);
       }
@@ -257,14 +235,13 @@ public final class AimsunControlProtoBuf {
         output.writeDouble(2, warmUpTime_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeBytes(3, getNetworkXMLBytes());
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, networkXML_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
-    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSerializedSize;
+      int size = memoizedSize;
       if (size != -1) return size;
 
       size = 0;
@@ -277,19 +254,72 @@ public final class AimsunControlProtoBuf {
           .computeDoubleSize(2, warmUpTime_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(3, getNetworkXMLBytes());
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, networkXML_);
       }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
       return size;
     }
 
     private static final long serialVersionUID = 0L;
     @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation)) {
+        return super.equals(obj);
+      }
+      org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation other = (org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation) obj;
+
+      boolean result = true;
+      result = result && (hasRunTime() == other.hasRunTime());
+      if (hasRunTime()) {
+        result = result && (
+            java.lang.Double.doubleToLongBits(getRunTime())
+            == java.lang.Double.doubleToLongBits(
+                other.getRunTime()));
+      }
+      result = result && (hasWarmUpTime() == other.hasWarmUpTime());
+      if (hasWarmUpTime()) {
+        result = result && (
+            java.lang.Double.doubleToLongBits(getWarmUpTime())
+            == java.lang.Double.doubleToLongBits(
+                other.getWarmUpTime()));
+      }
+      result = result && (hasNetworkXML() == other.hasNetworkXML());
+      if (hasNetworkXML()) {
+        result = result && getNetworkXML()
+            .equals(other.getNetworkXML());
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasRunTime()) {
+        hash = (37 * hash) + RUNTIME_FIELD_NUMBER;
+        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+            java.lang.Double.doubleToLongBits(getRunTime()));
+      }
+      if (hasWarmUpTime()) {
+        hash = (37 * hash) + WARMUPTIME_FIELD_NUMBER;
+        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+            java.lang.Double.doubleToLongBits(getWarmUpTime()));
+      }
+      if (hasNetworkXML()) {
+        hash = (37 * hash) + NETWORKXML_FIELD_NUMBER;
+        hash = (53 * hash) + getNetworkXML().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
     }
 
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation parseFrom(
@@ -315,46 +345,57 @@ public final class AimsunControlProtoBuf {
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation prototype) {
-      return newBuilder().mergeFrom(prototype);
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
     }
-    public Builder toBuilder() { return newBuilder(this); }
+    public static Builder newBuilder(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -362,7 +403,7 @@ public final class AimsunControlProtoBuf {
      * Protobuf type {@code org.opentrafficsim.aimsun.proto.CreateSimulation}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:org.opentrafficsim.aimsun.proto.CreateSimulation)
         org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulationOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -370,7 +411,7 @@ public final class AimsunControlProtoBuf {
         return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_CreateSimulation_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_CreateSimulation_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -383,18 +424,15 @@ public final class AimsunControlProtoBuf {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
         }
       }
-      private static Builder create() {
-        return new Builder();
-      }
-
       public Builder clear() {
         super.clear();
         runTime_ = 0D;
@@ -404,10 +442,6 @@ public final class AimsunControlProtoBuf {
         networkXML_ = "";
         bitField0_ = (bitField0_ & ~0x00000004);
         return this;
-      }
-
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -448,6 +482,32 @@ public final class AimsunControlProtoBuf {
         return result;
       }
 
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation) {
           return mergeFrom((org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation)other);
@@ -470,17 +530,16 @@ public final class AimsunControlProtoBuf {
           networkXML_ = other.networkXML_;
           onChanged();
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
         return this;
       }
 
       public final boolean isInitialized() {
         if (!hasRunTime()) {
-          
           return false;
         }
         if (!hasWarmUpTime()) {
-          
           return false;
         }
         return true;
@@ -495,7 +554,7 @@ public final class AimsunControlProtoBuf {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation) e.getUnfinishedMessage();
-          throw e;
+          throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -644,16 +703,53 @@ public final class AimsunControlProtoBuf {
         onChanged();
         return this;
       }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
 
       // @@protoc_insertion_point(builder_scope:org.opentrafficsim.aimsun.proto.CreateSimulation)
     }
 
+    // @@protoc_insertion_point(class_scope:org.opentrafficsim.aimsun.proto.CreateSimulation)
+    private static final org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation DEFAULT_INSTANCE;
     static {
-      defaultInstance = new CreateSimulation(true);
-      defaultInstance.initFields();
+      DEFAULT_INSTANCE = new org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation();
     }
 
-    // @@protoc_insertion_point(class_scope:org.opentrafficsim.aimsun.proto.CreateSimulation)
+    public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    @java.lang.Deprecated public static final com.google.protobuf.Parser<CreateSimulation>
+        PARSER = new com.google.protobuf.AbstractParser<CreateSimulation>() {
+      public CreateSimulation parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+          return new CreateSimulation(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<CreateSimulation> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<CreateSimulation> getParserForType() {
+      return PARSER;
+    }
+
+    public org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
   }
 
   public interface SimulateUntilOrBuilder extends
@@ -672,37 +768,28 @@ public final class AimsunControlProtoBuf {
   /**
    * Protobuf type {@code org.opentrafficsim.aimsun.proto.SimulateUntil}
    */
-  public static final class SimulateUntil extends
-      com.google.protobuf.GeneratedMessage implements
+  public  static final class SimulateUntil extends
+      com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:org.opentrafficsim.aimsun.proto.SimulateUntil)
       SimulateUntilOrBuilder {
     // Use SimulateUntil.newBuilder() to construct.
-    private SimulateUntil(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private SimulateUntil(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
-      this.unknownFields = builder.getUnknownFields();
     }
-    private SimulateUntil(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-    private static final SimulateUntil defaultInstance;
-    public static SimulateUntil getDefaultInstance() {
-      return defaultInstance;
+    private SimulateUntil() {
+      time_ = 0D;
     }
 
-    public SimulateUntil getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-        getUnknownFields() {
+    getUnknownFields() {
       return this.unknownFields;
     }
     private SimulateUntil(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      initFields();
+      this();
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
@@ -732,7 +819,7 @@ public final class AimsunControlProtoBuf {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
+            e).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -743,26 +830,11 @@ public final class AimsunControlProtoBuf {
       return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_SimulateUntil_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_SimulateUntil_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil.class, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil.Builder.class);
-    }
-
-    public static com.google.protobuf.Parser<SimulateUntil> PARSER =
-        new com.google.protobuf.AbstractParser<SimulateUntil>() {
-      public SimulateUntil parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new SimulateUntil(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<SimulateUntil> getParserForType() {
-      return PARSER;
     }
 
     private int bitField0_;
@@ -781,9 +853,6 @@ public final class AimsunControlProtoBuf {
       return time_;
     }
 
-    private void initFields() {
-      time_ = 0D;
-    }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -800,16 +869,14 @@ public final class AimsunControlProtoBuf {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeDouble(1, time_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
-    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSerializedSize;
+      int size = memoizedSize;
       if (size != -1) return size;
 
       size = 0;
@@ -817,16 +884,49 @@ public final class AimsunControlProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeDoubleSize(1, time_);
       }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
       return size;
     }
 
     private static final long serialVersionUID = 0L;
     @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil)) {
+        return super.equals(obj);
+      }
+      org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil other = (org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil) obj;
+
+      boolean result = true;
+      result = result && (hasTime() == other.hasTime());
+      if (hasTime()) {
+        result = result && (
+            java.lang.Double.doubleToLongBits(getTime())
+            == java.lang.Double.doubleToLongBits(
+                other.getTime()));
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasTime()) {
+        hash = (37 * hash) + TIME_FIELD_NUMBER;
+        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+            java.lang.Double.doubleToLongBits(getTime()));
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
     }
 
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil parseFrom(
@@ -852,46 +952,57 @@ public final class AimsunControlProtoBuf {
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil prototype) {
-      return newBuilder().mergeFrom(prototype);
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
     }
-    public Builder toBuilder() { return newBuilder(this); }
+    public static Builder newBuilder(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -899,7 +1010,7 @@ public final class AimsunControlProtoBuf {
      * Protobuf type {@code org.opentrafficsim.aimsun.proto.SimulateUntil}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:org.opentrafficsim.aimsun.proto.SimulateUntil)
         org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntilOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -907,7 +1018,7 @@ public final class AimsunControlProtoBuf {
         return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_SimulateUntil_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_SimulateUntil_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -920,27 +1031,20 @@ public final class AimsunControlProtoBuf {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
         }
       }
-      private static Builder create() {
-        return new Builder();
-      }
-
       public Builder clear() {
         super.clear();
         time_ = 0D;
         bitField0_ = (bitField0_ & ~0x00000001);
         return this;
-      }
-
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -973,6 +1077,32 @@ public final class AimsunControlProtoBuf {
         return result;
       }
 
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil) {
           return mergeFrom((org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil)other);
@@ -987,13 +1117,13 @@ public final class AimsunControlProtoBuf {
         if (other.hasTime()) {
           setTime(other.getTime());
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
         return this;
       }
 
       public final boolean isInitialized() {
         if (!hasTime()) {
-          
           return false;
         }
         return true;
@@ -1008,7 +1138,7 @@ public final class AimsunControlProtoBuf {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil) e.getUnfinishedMessage();
-          throw e;
+          throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -1049,16 +1179,53 @@ public final class AimsunControlProtoBuf {
         onChanged();
         return this;
       }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
 
       // @@protoc_insertion_point(builder_scope:org.opentrafficsim.aimsun.proto.SimulateUntil)
     }
 
+    // @@protoc_insertion_point(class_scope:org.opentrafficsim.aimsun.proto.SimulateUntil)
+    private static final org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil DEFAULT_INSTANCE;
     static {
-      defaultInstance = new SimulateUntil(true);
-      defaultInstance.initFields();
+      DEFAULT_INSTANCE = new org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil();
     }
 
-    // @@protoc_insertion_point(class_scope:org.opentrafficsim.aimsun.proto.SimulateUntil)
+    public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    @java.lang.Deprecated public static final com.google.protobuf.Parser<SimulateUntil>
+        PARSER = new com.google.protobuf.AbstractParser<SimulateUntil>() {
+      public SimulateUntil parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+          return new SimulateUntil(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<SimulateUntil> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<SimulateUntil> getParserForType() {
+      return PARSER;
+    }
+
+    public org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
   }
 
   public interface GTUPositionsOrBuilder extends
@@ -1092,37 +1259,28 @@ public final class AimsunControlProtoBuf {
   /**
    * Protobuf type {@code org.opentrafficsim.aimsun.proto.GTUPositions}
    */
-  public static final class GTUPositions extends
-      com.google.protobuf.GeneratedMessage implements
+  public  static final class GTUPositions extends
+      com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:org.opentrafficsim.aimsun.proto.GTUPositions)
       GTUPositionsOrBuilder {
     // Use GTUPositions.newBuilder() to construct.
-    private GTUPositions(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private GTUPositions(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
-      this.unknownFields = builder.getUnknownFields();
     }
-    private GTUPositions(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-    private static final GTUPositions defaultInstance;
-    public static GTUPositions getDefaultInstance() {
-      return defaultInstance;
+    private GTUPositions() {
+      gtuPos_ = java.util.Collections.emptyList();
     }
 
-    public GTUPositions getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-        getUnknownFields() {
+    getUnknownFields() {
       return this.unknownFields;
     }
     private GTUPositions(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      initFields();
+      this();
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
@@ -1146,7 +1304,8 @@ public final class AimsunControlProtoBuf {
                 gtuPos_ = new java.util.ArrayList<org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition>();
                 mutable_bitField0_ |= 0x00000001;
               }
-              gtuPos_.add(input.readMessage(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition.PARSER, extensionRegistry));
+              gtuPos_.add(
+                  input.readMessage(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition.PARSER, extensionRegistry));
               break;
             }
           }
@@ -1155,7 +1314,7 @@ public final class AimsunControlProtoBuf {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
+            e).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
           gtuPos_ = java.util.Collections.unmodifiableList(gtuPos_);
@@ -1169,26 +1328,11 @@ public final class AimsunControlProtoBuf {
       return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.class, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.Builder.class);
-    }
-
-    public static com.google.protobuf.Parser<GTUPositions> PARSER =
-        new com.google.protobuf.AbstractParser<GTUPositions>() {
-      public GTUPositions parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new GTUPositions(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<GTUPositions> getParserForType() {
-      return PARSER;
     }
 
     public interface GTUPositionOrBuilder extends
@@ -1248,37 +1392,32 @@ public final class AimsunControlProtoBuf {
     /**
      * Protobuf type {@code org.opentrafficsim.aimsun.proto.GTUPositions.GTUPosition}
      */
-    public static final class GTUPosition extends
-        com.google.protobuf.GeneratedMessage implements
+    public  static final class GTUPosition extends
+        com.google.protobuf.GeneratedMessageV3 implements
         // @@protoc_insertion_point(message_implements:org.opentrafficsim.aimsun.proto.GTUPositions.GTUPosition)
         GTUPositionOrBuilder {
       // Use GTUPosition.newBuilder() to construct.
-      private GTUPosition(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      private GTUPosition(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
-        this.unknownFields = builder.getUnknownFields();
       }
-      private GTUPosition(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-      private static final GTUPosition defaultInstance;
-      public static GTUPosition getDefaultInstance() {
-        return defaultInstance;
-      }
-
-      public GTUPosition getDefaultInstanceForType() {
-        return defaultInstance;
+      private GTUPosition() {
+        gtuId_ = "";
+        x_ = 0D;
+        y_ = 0D;
+        z_ = 0D;
+        angle_ = 0D;
       }
 
-      private final com.google.protobuf.UnknownFieldSet unknownFields;
       @java.lang.Override
       public final com.google.protobuf.UnknownFieldSet
-          getUnknownFields() {
+      getUnknownFields() {
         return this.unknownFields;
       }
       private GTUPosition(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        initFields();
+        this();
         int mutable_bitField0_ = 0;
         com.google.protobuf.UnknownFieldSet.Builder unknownFields =
             com.google.protobuf.UnknownFieldSet.newBuilder();
@@ -1329,7 +1468,7 @@ public final class AimsunControlProtoBuf {
           throw e.setUnfinishedMessage(this);
         } catch (java.io.IOException e) {
           throw new com.google.protobuf.InvalidProtocolBufferException(
-              e.getMessage()).setUnfinishedMessage(this);
+              e).setUnfinishedMessage(this);
         } finally {
           this.unknownFields = unknownFields.build();
           makeExtensionsImmutable();
@@ -1340,31 +1479,16 @@ public final class AimsunControlProtoBuf {
         return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_GTUPosition_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_GTUPosition_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition.class, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition.Builder.class);
       }
 
-      public static com.google.protobuf.Parser<GTUPosition> PARSER =
-          new com.google.protobuf.AbstractParser<GTUPosition>() {
-        public GTUPosition parsePartialFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-          return new GTUPosition(input, extensionRegistry);
-        }
-      };
-
-      @java.lang.Override
-      public com.google.protobuf.Parser<GTUPosition> getParserForType() {
-        return PARSER;
-      }
-
       private int bitField0_;
       public static final int GTUID_FIELD_NUMBER = 1;
-      private java.lang.Object gtuId_;
+      private volatile java.lang.Object gtuId_;
       /**
        * <code>required string gtuId = 1;</code>
        */
@@ -1465,13 +1589,6 @@ public final class AimsunControlProtoBuf {
         return angle_;
       }
 
-      private void initFields() {
-        gtuId_ = "";
-        x_ = 0D;
-        y_ = 0D;
-        z_ = 0D;
-        angle_ = 0D;
-      }
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
         byte isInitialized = memoizedIsInitialized;
@@ -1500,9 +1617,8 @@ public final class AimsunControlProtoBuf {
 
       public void writeTo(com.google.protobuf.CodedOutputStream output)
                           throws java.io.IOException {
-        getSerializedSize();
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          output.writeBytes(1, getGtuIdBytes());
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 1, gtuId_);
         }
         if (((bitField0_ & 0x00000002) == 0x00000002)) {
           output.writeDouble(2, x_);
@@ -1516,18 +1632,16 @@ public final class AimsunControlProtoBuf {
         if (((bitField0_ & 0x00000010) == 0x00000010)) {
           output.writeDouble(5, angle_);
         }
-        getUnknownFields().writeTo(output);
+        unknownFields.writeTo(output);
       }
 
-      private int memoizedSerializedSize = -1;
       public int getSerializedSize() {
-        int size = memoizedSerializedSize;
+        int size = memoizedSize;
         if (size != -1) return size;
 
         size = 0;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeBytesSize(1, getGtuIdBytes());
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, gtuId_);
         }
         if (((bitField0_ & 0x00000002) == 0x00000002)) {
           size += com.google.protobuf.CodedOutputStream
@@ -1545,16 +1659,94 @@ public final class AimsunControlProtoBuf {
           size += com.google.protobuf.CodedOutputStream
             .computeDoubleSize(5, angle_);
         }
-        size += getUnknownFields().getSerializedSize();
-        memoizedSerializedSize = size;
+        size += unknownFields.getSerializedSize();
+        memoizedSize = size;
         return size;
       }
 
       private static final long serialVersionUID = 0L;
       @java.lang.Override
-      protected java.lang.Object writeReplace()
-          throws java.io.ObjectStreamException {
-        return super.writeReplace();
+      public boolean equals(final java.lang.Object obj) {
+        if (obj == this) {
+         return true;
+        }
+        if (!(obj instanceof org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition)) {
+          return super.equals(obj);
+        }
+        org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition other = (org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition) obj;
+
+        boolean result = true;
+        result = result && (hasGtuId() == other.hasGtuId());
+        if (hasGtuId()) {
+          result = result && getGtuId()
+              .equals(other.getGtuId());
+        }
+        result = result && (hasX() == other.hasX());
+        if (hasX()) {
+          result = result && (
+              java.lang.Double.doubleToLongBits(getX())
+              == java.lang.Double.doubleToLongBits(
+                  other.getX()));
+        }
+        result = result && (hasY() == other.hasY());
+        if (hasY()) {
+          result = result && (
+              java.lang.Double.doubleToLongBits(getY())
+              == java.lang.Double.doubleToLongBits(
+                  other.getY()));
+        }
+        result = result && (hasZ() == other.hasZ());
+        if (hasZ()) {
+          result = result && (
+              java.lang.Double.doubleToLongBits(getZ())
+              == java.lang.Double.doubleToLongBits(
+                  other.getZ()));
+        }
+        result = result && (hasAngle() == other.hasAngle());
+        if (hasAngle()) {
+          result = result && (
+              java.lang.Double.doubleToLongBits(getAngle())
+              == java.lang.Double.doubleToLongBits(
+                  other.getAngle()));
+        }
+        result = result && unknownFields.equals(other.unknownFields);
+        return result;
+      }
+
+      @java.lang.Override
+      public int hashCode() {
+        if (memoizedHashCode != 0) {
+          return memoizedHashCode;
+        }
+        int hash = 41;
+        hash = (19 * hash) + getDescriptor().hashCode();
+        if (hasGtuId()) {
+          hash = (37 * hash) + GTUID_FIELD_NUMBER;
+          hash = (53 * hash) + getGtuId().hashCode();
+        }
+        if (hasX()) {
+          hash = (37 * hash) + X_FIELD_NUMBER;
+          hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+              java.lang.Double.doubleToLongBits(getX()));
+        }
+        if (hasY()) {
+          hash = (37 * hash) + Y_FIELD_NUMBER;
+          hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+              java.lang.Double.doubleToLongBits(getY()));
+        }
+        if (hasZ()) {
+          hash = (37 * hash) + Z_FIELD_NUMBER;
+          hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+              java.lang.Double.doubleToLongBits(getZ()));
+        }
+        if (hasAngle()) {
+          hash = (37 * hash) + ANGLE_FIELD_NUMBER;
+          hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+              java.lang.Double.doubleToLongBits(getAngle()));
+        }
+        hash = (29 * hash) + unknownFields.hashCode();
+        memoizedHashCode = hash;
+        return hash;
       }
 
       public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition parseFrom(
@@ -1580,46 +1772,57 @@ public final class AimsunControlProtoBuf {
       }
       public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition parseFrom(java.io.InputStream input)
           throws java.io.IOException {
-        return PARSER.parseFrom(input);
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input);
       }
       public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition parseFrom(
           java.io.InputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        return PARSER.parseFrom(input, extensionRegistry);
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input, extensionRegistry);
       }
       public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition parseDelimitedFrom(java.io.InputStream input)
           throws java.io.IOException {
-        return PARSER.parseDelimitedFrom(input);
+        return com.google.protobuf.GeneratedMessageV3
+            .parseDelimitedWithIOException(PARSER, input);
       }
       public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition parseDelimitedFrom(
           java.io.InputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        return PARSER.parseDelimitedFrom(input, extensionRegistry);
+        return com.google.protobuf.GeneratedMessageV3
+            .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
       }
       public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition parseFrom(
           com.google.protobuf.CodedInputStream input)
           throws java.io.IOException {
-        return PARSER.parseFrom(input);
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input);
       }
       public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition parseFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        return PARSER.parseFrom(input, extensionRegistry);
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input, extensionRegistry);
       }
 
-      public static Builder newBuilder() { return Builder.create(); }
       public Builder newBuilderForType() { return newBuilder(); }
-      public static Builder newBuilder(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition prototype) {
-        return newBuilder().mergeFrom(prototype);
+      public static Builder newBuilder() {
+        return DEFAULT_INSTANCE.toBuilder();
       }
-      public Builder toBuilder() { return newBuilder(this); }
+      public static Builder newBuilder(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition prototype) {
+        return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() {
+        return this == DEFAULT_INSTANCE
+            ? new Builder() : new Builder().mergeFrom(this);
+      }
 
       @java.lang.Override
       protected Builder newBuilderForType(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         Builder builder = new Builder(parent);
         return builder;
       }
@@ -1627,7 +1830,7 @@ public final class AimsunControlProtoBuf {
        * Protobuf type {@code org.opentrafficsim.aimsun.proto.GTUPositions.GTUPosition}
        */
       public static final class Builder extends
-          com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+          com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
           // @@protoc_insertion_point(builder_implements:org.opentrafficsim.aimsun.proto.GTUPositions.GTUPosition)
           org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPositionOrBuilder {
         public static final com.google.protobuf.Descriptors.Descriptor
@@ -1635,7 +1838,7 @@ public final class AimsunControlProtoBuf {
           return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_GTUPosition_descriptor;
         }
 
-        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
             internalGetFieldAccessorTable() {
           return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_GTUPosition_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
@@ -1648,18 +1851,15 @@ public final class AimsunControlProtoBuf {
         }
 
         private Builder(
-            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+            com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
           super(parent);
           maybeForceBuilderInitialization();
         }
         private void maybeForceBuilderInitialization() {
-          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          if (com.google.protobuf.GeneratedMessageV3
+                  .alwaysUseFieldBuilders) {
           }
         }
-        private static Builder create() {
-          return new Builder();
-        }
-
         public Builder clear() {
           super.clear();
           gtuId_ = "";
@@ -1673,10 +1873,6 @@ public final class AimsunControlProtoBuf {
           angle_ = 0D;
           bitField0_ = (bitField0_ & ~0x00000010);
           return this;
-        }
-
-        public Builder clone() {
-          return create().mergeFrom(buildPartial());
         }
 
         public com.google.protobuf.Descriptors.Descriptor
@@ -1725,6 +1921,32 @@ public final class AimsunControlProtoBuf {
           return result;
         }
 
+        public Builder clone() {
+          return (Builder) super.clone();
+        }
+        public Builder setField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            Object value) {
+          return (Builder) super.setField(field, value);
+        }
+        public Builder clearField(
+            com.google.protobuf.Descriptors.FieldDescriptor field) {
+          return (Builder) super.clearField(field);
+        }
+        public Builder clearOneof(
+            com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+          return (Builder) super.clearOneof(oneof);
+        }
+        public Builder setRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            int index, Object value) {
+          return (Builder) super.setRepeatedField(field, index, value);
+        }
+        public Builder addRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            Object value) {
+          return (Builder) super.addRepeatedField(field, value);
+        }
         public Builder mergeFrom(com.google.protobuf.Message other) {
           if (other instanceof org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition) {
             return mergeFrom((org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition)other);
@@ -1753,25 +1975,22 @@ public final class AimsunControlProtoBuf {
           if (other.hasAngle()) {
             setAngle(other.getAngle());
           }
-          this.mergeUnknownFields(other.getUnknownFields());
+          this.mergeUnknownFields(other.unknownFields);
+          onChanged();
           return this;
         }
 
         public final boolean isInitialized() {
           if (!hasGtuId()) {
-            
             return false;
           }
           if (!hasX()) {
-            
             return false;
           }
           if (!hasY()) {
-            
             return false;
           }
           if (!hasAngle()) {
-            
             return false;
           }
           return true;
@@ -1786,7 +2005,7 @@ public final class AimsunControlProtoBuf {
             parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
           } catch (com.google.protobuf.InvalidProtocolBufferException e) {
             parsedMessage = (org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition) e.getUnfinishedMessage();
-            throw e;
+            throw e.unwrapIOException();
           } finally {
             if (parsedMessage != null) {
               mergeFrom(parsedMessage);
@@ -1999,16 +2218,53 @@ public final class AimsunControlProtoBuf {
           onChanged();
           return this;
         }
+        public final Builder setUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.setUnknownFields(unknownFields);
+        }
+
+        public final Builder mergeUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.mergeUnknownFields(unknownFields);
+        }
+
 
         // @@protoc_insertion_point(builder_scope:org.opentrafficsim.aimsun.proto.GTUPositions.GTUPosition)
       }
 
+      // @@protoc_insertion_point(class_scope:org.opentrafficsim.aimsun.proto.GTUPositions.GTUPosition)
+      private static final org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition DEFAULT_INSTANCE;
       static {
-        defaultInstance = new GTUPosition(true);
-        defaultInstance.initFields();
+        DEFAULT_INSTANCE = new org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition();
       }
 
-      // @@protoc_insertion_point(class_scope:org.opentrafficsim.aimsun.proto.GTUPositions.GTUPosition)
+      public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+      }
+
+      @java.lang.Deprecated public static final com.google.protobuf.Parser<GTUPosition>
+          PARSER = new com.google.protobuf.AbstractParser<GTUPosition>() {
+        public GTUPosition parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+            return new GTUPosition(input, extensionRegistry);
+        }
+      };
+
+      public static com.google.protobuf.Parser<GTUPosition> parser() {
+        return PARSER;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<GTUPosition> getParserForType() {
+        return PARSER;
+      }
+
+      public org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition getDefaultInstanceForType() {
+        return DEFAULT_INSTANCE;
+      }
+
     }
 
     public static final int GTUPOS_FIELD_NUMBER = 1;
@@ -2046,9 +2302,6 @@ public final class AimsunControlProtoBuf {
       return gtuPos_.get(index);
     }
 
-    private void initFields() {
-      gtuPos_ = java.util.Collections.emptyList();
-    }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -2067,16 +2320,14 @@ public final class AimsunControlProtoBuf {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      getSerializedSize();
       for (int i = 0; i < gtuPos_.size(); i++) {
         output.writeMessage(1, gtuPos_.get(i));
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
-    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSerializedSize;
+      int size = memoizedSize;
       if (size != -1) return size;
 
       size = 0;
@@ -2084,16 +2335,43 @@ public final class AimsunControlProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, gtuPos_.get(i));
       }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
       return size;
     }
 
     private static final long serialVersionUID = 0L;
     @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions)) {
+        return super.equals(obj);
+      }
+      org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions other = (org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions) obj;
+
+      boolean result = true;
+      result = result && getGtuPosList()
+          .equals(other.getGtuPosList());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getGtuPosCount() > 0) {
+        hash = (37 * hash) + GTUPOS_FIELD_NUMBER;
+        hash = (53 * hash) + getGtuPosList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
     }
 
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions parseFrom(
@@ -2119,46 +2397,57 @@ public final class AimsunControlProtoBuf {
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions prototype) {
-      return newBuilder().mergeFrom(prototype);
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
     }
-    public Builder toBuilder() { return newBuilder(this); }
+    public static Builder newBuilder(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -2166,7 +2455,7 @@ public final class AimsunControlProtoBuf {
      * Protobuf type {@code org.opentrafficsim.aimsun.proto.GTUPositions}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:org.opentrafficsim.aimsun.proto.GTUPositions)
         org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositionsOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -2174,7 +2463,7 @@ public final class AimsunControlProtoBuf {
         return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -2187,19 +2476,16 @@ public final class AimsunControlProtoBuf {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
           getGtuPosFieldBuilder();
         }
       }
-      private static Builder create() {
-        return new Builder();
-      }
-
       public Builder clear() {
         super.clear();
         if (gtuPosBuilder_ == null) {
@@ -2209,10 +2495,6 @@ public final class AimsunControlProtoBuf {
           gtuPosBuilder_.clear();
         }
         return this;
-      }
-
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -2248,6 +2530,32 @@ public final class AimsunControlProtoBuf {
         return result;
       }
 
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions) {
           return mergeFrom((org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions)other);
@@ -2278,21 +2586,21 @@ public final class AimsunControlProtoBuf {
               gtuPos_ = other.gtuPos_;
               bitField0_ = (bitField0_ & ~0x00000001);
               gtuPosBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getGtuPosFieldBuilder() : null;
             } else {
               gtuPosBuilder_.addAllMessages(other.gtuPos_);
             }
           }
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
         return this;
       }
 
       public final boolean isInitialized() {
         for (int i = 0; i < getGtuPosCount(); i++) {
           if (!getGtuPos(i).isInitialized()) {
-            
             return false;
           }
         }
@@ -2308,7 +2616,7 @@ public final class AimsunControlProtoBuf {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions) e.getUnfinishedMessage();
-          throw e;
+          throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -2327,7 +2635,7 @@ public final class AimsunControlProtoBuf {
          }
       }
 
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private com.google.protobuf.RepeatedFieldBuilderV3<
           org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition.Builder, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPositionOrBuilder> gtuPosBuilder_;
 
       /**
@@ -2543,11 +2851,11 @@ public final class AimsunControlProtoBuf {
            getGtuPosBuilderList() {
         return getGtuPosFieldBuilder().getBuilderList();
       }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private com.google.protobuf.RepeatedFieldBuilderV3<
           org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition.Builder, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPositionOrBuilder> 
           getGtuPosFieldBuilder() {
         if (gtuPosBuilder_ == null) {
-          gtuPosBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          gtuPosBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
               org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition.Builder, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPositionOrBuilder>(
                   gtuPos_,
                   ((bitField0_ & 0x00000001) == 0x00000001),
@@ -2557,16 +2865,53 @@ public final class AimsunControlProtoBuf {
         }
         return gtuPosBuilder_;
       }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
 
       // @@protoc_insertion_point(builder_scope:org.opentrafficsim.aimsun.proto.GTUPositions)
     }
 
+    // @@protoc_insertion_point(class_scope:org.opentrafficsim.aimsun.proto.GTUPositions)
+    private static final org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions DEFAULT_INSTANCE;
     static {
-      defaultInstance = new GTUPositions(true);
-      defaultInstance.initFields();
+      DEFAULT_INSTANCE = new org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions();
     }
 
-    // @@protoc_insertion_point(class_scope:org.opentrafficsim.aimsun.proto.GTUPositions)
+    public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    @java.lang.Deprecated public static final com.google.protobuf.Parser<GTUPositions>
+        PARSER = new com.google.protobuf.AbstractParser<GTUPositions>() {
+      public GTUPositions parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+          return new GTUPositions(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<GTUPositions> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GTUPositions> getParserForType() {
+      return PARSER;
+    }
+
+    public org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
   }
 
   public interface OTSMessageOrBuilder extends
@@ -2611,41 +2956,33 @@ public final class AimsunControlProtoBuf {
      * <code>optional .org.opentrafficsim.aimsun.proto.GTUPositions gtuPositions = 3;</code>
      */
     org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositionsOrBuilder getGtuPositionsOrBuilder();
+
+    public org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage.MsgCase getMsgCase();
   }
   /**
    * Protobuf type {@code org.opentrafficsim.aimsun.proto.OTSMessage}
    */
-  public static final class OTSMessage extends
-      com.google.protobuf.GeneratedMessage implements
+  public  static final class OTSMessage extends
+      com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:org.opentrafficsim.aimsun.proto.OTSMessage)
       OTSMessageOrBuilder {
     // Use OTSMessage.newBuilder() to construct.
-    private OTSMessage(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private OTSMessage(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
-      this.unknownFields = builder.getUnknownFields();
     }
-    private OTSMessage(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-    private static final OTSMessage defaultInstance;
-    public static OTSMessage getDefaultInstance() {
-      return defaultInstance;
+    private OTSMessage() {
     }
 
-    public OTSMessage getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-        getUnknownFields() {
+    getUnknownFields() {
       return this.unknownFields;
     }
     private OTSMessage(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      initFields();
+      this();
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
@@ -2669,7 +3006,8 @@ public final class AimsunControlProtoBuf {
               if (msgCase_ == 1) {
                 subBuilder = ((org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation) msg_).toBuilder();
               }
-              msg_ = input.readMessage(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation.PARSER, extensionRegistry);
+              msg_ =
+                  input.readMessage(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation.PARSER, extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom((org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation) msg_);
                 msg_ = subBuilder.buildPartial();
@@ -2682,7 +3020,8 @@ public final class AimsunControlProtoBuf {
               if (msgCase_ == 2) {
                 subBuilder = ((org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil) msg_).toBuilder();
               }
-              msg_ = input.readMessage(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil.PARSER, extensionRegistry);
+              msg_ =
+                  input.readMessage(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil.PARSER, extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom((org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil) msg_);
                 msg_ = subBuilder.buildPartial();
@@ -2695,7 +3034,8 @@ public final class AimsunControlProtoBuf {
               if (msgCase_ == 3) {
                 subBuilder = ((org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions) msg_).toBuilder();
               }
-              msg_ = input.readMessage(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.PARSER, extensionRegistry);
+              msg_ =
+                  input.readMessage(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.PARSER, extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom((org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions) msg_);
                 msg_ = subBuilder.buildPartial();
@@ -2709,7 +3049,7 @@ public final class AimsunControlProtoBuf {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
+            e).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -2720,26 +3060,11 @@ public final class AimsunControlProtoBuf {
       return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_OTSMessage_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_OTSMessage_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage.class, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage.Builder.class);
-    }
-
-    public static com.google.protobuf.Parser<OTSMessage> PARSER =
-        new com.google.protobuf.AbstractParser<OTSMessage>() {
-      public OTSMessage parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new OTSMessage(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<OTSMessage> getParserForType() {
-      return PARSER;
     }
 
     private int bitField0_;
@@ -2751,18 +3076,25 @@ public final class AimsunControlProtoBuf {
       SIMULATEUNTIL(2),
       GTUPOSITIONS(3),
       MSG_NOT_SET(0);
-      private int value = 0;
+      private final int value;
       private MsgCase(int value) {
         this.value = value;
       }
+      /**
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
       public static MsgCase valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static MsgCase forNumber(int value) {
         switch (value) {
           case 1: return CREATESIMULATION;
           case 2: return SIMULATEUNTIL;
           case 3: return GTUPOSITIONS;
           case 0: return MSG_NOT_SET;
-          default: throw new java.lang.IllegalArgumentException(
-            "Value is undefined for this oneof enum.");
+          default: return null;
         }
       }
       public int getNumber() {
@@ -2772,7 +3104,7 @@ public final class AimsunControlProtoBuf {
 
     public MsgCase
     getMsgCase() {
-      return MsgCase.valueOf(
+      return MsgCase.forNumber(
           msgCase_);
     }
 
@@ -2854,8 +3186,6 @@ public final class AimsunControlProtoBuf {
       return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.getDefaultInstance();
     }
 
-    private void initFields() {
-    }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -2886,7 +3216,6 @@ public final class AimsunControlProtoBuf {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      getSerializedSize();
       if (msgCase_ == 1) {
         output.writeMessage(1, (org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation) msg_);
       }
@@ -2896,12 +3225,11 @@ public final class AimsunControlProtoBuf {
       if (msgCase_ == 3) {
         output.writeMessage(3, (org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions) msg_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
-    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSerializedSize;
+      int size = memoizedSize;
       if (size != -1) return size;
 
       size = 0;
@@ -2917,16 +3245,72 @@ public final class AimsunControlProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(3, (org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions) msg_);
       }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
       return size;
     }
 
     private static final long serialVersionUID = 0L;
     @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage)) {
+        return super.equals(obj);
+      }
+      org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage other = (org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage) obj;
+
+      boolean result = true;
+      result = result && getMsgCase().equals(
+          other.getMsgCase());
+      if (!result) return false;
+      switch (msgCase_) {
+        case 1:
+          result = result && getCreateSimulation()
+              .equals(other.getCreateSimulation());
+          break;
+        case 2:
+          result = result && getSimulateUntil()
+              .equals(other.getSimulateUntil());
+          break;
+        case 3:
+          result = result && getGtuPositions()
+              .equals(other.getGtuPositions());
+          break;
+        case 0:
+        default:
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      switch (msgCase_) {
+        case 1:
+          hash = (37 * hash) + CREATESIMULATION_FIELD_NUMBER;
+          hash = (53 * hash) + getCreateSimulation().hashCode();
+          break;
+        case 2:
+          hash = (37 * hash) + SIMULATEUNTIL_FIELD_NUMBER;
+          hash = (53 * hash) + getSimulateUntil().hashCode();
+          break;
+        case 3:
+          hash = (37 * hash) + GTUPOSITIONS_FIELD_NUMBER;
+          hash = (53 * hash) + getGtuPositions().hashCode();
+          break;
+        case 0:
+        default:
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
     }
 
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage parseFrom(
@@ -2952,46 +3336,57 @@ public final class AimsunControlProtoBuf {
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage prototype) {
-      return newBuilder().mergeFrom(prototype);
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
     }
-    public Builder toBuilder() { return newBuilder(this); }
+    public static Builder newBuilder(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -2999,7 +3394,7 @@ public final class AimsunControlProtoBuf {
      * Protobuf type {@code org.opentrafficsim.aimsun.proto.OTSMessage}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:org.opentrafficsim.aimsun.proto.OTSMessage)
         org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessageOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -3007,7 +3402,7 @@ public final class AimsunControlProtoBuf {
         return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_OTSMessage_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.internal_static_org_opentrafficsim_aimsun_proto_OTSMessage_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -3020,27 +3415,20 @@ public final class AimsunControlProtoBuf {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
         }
       }
-      private static Builder create() {
-        return new Builder();
-      }
-
       public Builder clear() {
         super.clear();
         msgCase_ = 0;
         msg_ = null;
         return this;
-      }
-
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -3091,6 +3479,32 @@ public final class AimsunControlProtoBuf {
         return result;
       }
 
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage) {
           return mergeFrom((org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage)other);
@@ -3119,26 +3533,24 @@ public final class AimsunControlProtoBuf {
             break;
           }
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
         return this;
       }
 
       public final boolean isInitialized() {
         if (hasCreateSimulation()) {
           if (!getCreateSimulation().isInitialized()) {
-            
             return false;
           }
         }
         if (hasSimulateUntil()) {
           if (!getSimulateUntil().isInitialized()) {
-            
             return false;
           }
         }
         if (hasGtuPositions()) {
           if (!getGtuPositions().isInitialized()) {
-            
             return false;
           }
         }
@@ -3154,7 +3566,7 @@ public final class AimsunControlProtoBuf {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage) e.getUnfinishedMessage();
-          throw e;
+          throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -3166,7 +3578,7 @@ public final class AimsunControlProtoBuf {
       private java.lang.Object msg_;
       public MsgCase
           getMsgCase() {
-        return MsgCase.valueOf(
+        return MsgCase.forNumber(
             msgCase_);
       }
 
@@ -3179,7 +3591,7 @@ public final class AimsunControlProtoBuf {
 
       private int bitField0_;
 
-      private com.google.protobuf.SingleFieldBuilder<
+      private com.google.protobuf.SingleFieldBuilderV3<
           org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation.Builder, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulationOrBuilder> createSimulationBuilder_;
       /**
        * <code>optional .org.opentrafficsim.aimsun.proto.CreateSimulation createSimulation = 1;</code>
@@ -3296,14 +3708,14 @@ public final class AimsunControlProtoBuf {
       /**
        * <code>optional .org.opentrafficsim.aimsun.proto.CreateSimulation createSimulation = 1;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private com.google.protobuf.SingleFieldBuilderV3<
           org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation.Builder, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulationOrBuilder> 
           getCreateSimulationFieldBuilder() {
         if (createSimulationBuilder_ == null) {
           if (!(msgCase_ == 1)) {
             msg_ = org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation.getDefaultInstance();
           }
-          createSimulationBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          createSimulationBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
               org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation.Builder, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulationOrBuilder>(
                   (org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation) msg_,
                   getParentForChildren(),
@@ -3311,10 +3723,11 @@ public final class AimsunControlProtoBuf {
           msg_ = null;
         }
         msgCase_ = 1;
+        onChanged();;
         return createSimulationBuilder_;
       }
 
-      private com.google.protobuf.SingleFieldBuilder<
+      private com.google.protobuf.SingleFieldBuilderV3<
           org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil.Builder, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntilOrBuilder> simulateUntilBuilder_;
       /**
        * <code>optional .org.opentrafficsim.aimsun.proto.SimulateUntil simulateUntil = 2;</code>
@@ -3431,14 +3844,14 @@ public final class AimsunControlProtoBuf {
       /**
        * <code>optional .org.opentrafficsim.aimsun.proto.SimulateUntil simulateUntil = 2;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private com.google.protobuf.SingleFieldBuilderV3<
           org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil.Builder, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntilOrBuilder> 
           getSimulateUntilFieldBuilder() {
         if (simulateUntilBuilder_ == null) {
           if (!(msgCase_ == 2)) {
             msg_ = org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil.getDefaultInstance();
           }
-          simulateUntilBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          simulateUntilBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
               org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil.Builder, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntilOrBuilder>(
                   (org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil) msg_,
                   getParentForChildren(),
@@ -3446,10 +3859,11 @@ public final class AimsunControlProtoBuf {
           msg_ = null;
         }
         msgCase_ = 2;
+        onChanged();;
         return simulateUntilBuilder_;
       }
 
-      private com.google.protobuf.SingleFieldBuilder<
+      private com.google.protobuf.SingleFieldBuilderV3<
           org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.Builder, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositionsOrBuilder> gtuPositionsBuilder_;
       /**
        * <code>optional .org.opentrafficsim.aimsun.proto.GTUPositions gtuPositions = 3;</code>
@@ -3566,14 +3980,14 @@ public final class AimsunControlProtoBuf {
       /**
        * <code>optional .org.opentrafficsim.aimsun.proto.GTUPositions gtuPositions = 3;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private com.google.protobuf.SingleFieldBuilderV3<
           org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.Builder, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositionsOrBuilder> 
           getGtuPositionsFieldBuilder() {
         if (gtuPositionsBuilder_ == null) {
           if (!(msgCase_ == 3)) {
             msg_ = org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.getDefaultInstance();
           }
-          gtuPositionsBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          gtuPositionsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
               org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.Builder, org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositionsOrBuilder>(
                   (org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions) msg_,
                   getParentForChildren(),
@@ -3581,51 +3995,89 @@ public final class AimsunControlProtoBuf {
           msg_ = null;
         }
         msgCase_ = 3;
+        onChanged();;
         return gtuPositionsBuilder_;
       }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
 
       // @@protoc_insertion_point(builder_scope:org.opentrafficsim.aimsun.proto.OTSMessage)
     }
 
+    // @@protoc_insertion_point(class_scope:org.opentrafficsim.aimsun.proto.OTSMessage)
+    private static final org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage DEFAULT_INSTANCE;
     static {
-      defaultInstance = new OTSMessage(true);
-      defaultInstance.initFields();
+      DEFAULT_INSTANCE = new org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage();
     }
 
-    // @@protoc_insertion_point(class_scope:org.opentrafficsim.aimsun.proto.OTSMessage)
+    public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    @java.lang.Deprecated public static final com.google.protobuf.Parser<OTSMessage>
+        PARSER = new com.google.protobuf.AbstractParser<OTSMessage>() {
+      public OTSMessage parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+          return new OTSMessage(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<OTSMessage> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<OTSMessage> getParserForType() {
+      return PARSER;
+    }
+
+    public org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_org_opentrafficsim_aimsun_proto_CreateSimulation_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_org_opentrafficsim_aimsun_proto_CreateSimulation_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_org_opentrafficsim_aimsun_proto_SimulateUntil_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_org_opentrafficsim_aimsun_proto_SimulateUntil_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_GTUPosition_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_GTUPosition_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_org_opentrafficsim_aimsun_proto_OTSMessage_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_org_opentrafficsim_aimsun_proto_OTSMessage_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
     return descriptor;
   }
-  private static com.google.protobuf.Descriptors.FileDescriptor
+  private static  com.google.protobuf.Descriptors.FileDescriptor
       descriptor;
   static {
     java.lang.String[] descriptorData = {
@@ -3660,31 +4112,31 @@ public final class AimsunControlProtoBuf {
     internal_static_org_opentrafficsim_aimsun_proto_CreateSimulation_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_org_opentrafficsim_aimsun_proto_CreateSimulation_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_opentrafficsim_aimsun_proto_CreateSimulation_descriptor,
         new java.lang.String[] { "RunTime", "WarmUpTime", "NetworkXML", });
     internal_static_org_opentrafficsim_aimsun_proto_SimulateUntil_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_org_opentrafficsim_aimsun_proto_SimulateUntil_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_opentrafficsim_aimsun_proto_SimulateUntil_descriptor,
         new java.lang.String[] { "Time", });
     internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_descriptor,
         new java.lang.String[] { "GtuPos", });
     internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_GTUPosition_descriptor =
       internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_descriptor.getNestedTypes().get(0);
     internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_GTUPosition_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_GTUPosition_descriptor,
         new java.lang.String[] { "GtuId", "X", "Y", "Z", "Angle", });
     internal_static_org_opentrafficsim_aimsun_proto_OTSMessage_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_org_opentrafficsim_aimsun_proto_OTSMessage_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_opentrafficsim_aimsun_proto_OTSMessage_descriptor,
         new java.lang.String[] { "CreateSimulation", "SimulateUntil", "GtuPositions", "Msg", });
   }
