@@ -278,8 +278,8 @@ public final class Trajectory
     
     /**
      * Returns extended data type value of a single sample.
-     * @param extendedDataType
-     * @param index
+     * @param extendedDataType data type from which to retrieve the data
+     * @param index index for which to retrieve the data
      * @param <T> scalar type of extended data type
      * @param <S> storage type of extended data type
      * @return extended data type value of a single sample
