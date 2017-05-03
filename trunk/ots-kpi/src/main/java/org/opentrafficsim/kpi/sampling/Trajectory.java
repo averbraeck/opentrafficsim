@@ -227,6 +227,80 @@ public final class Trajectory
     {
         return Arrays.copyOf(this.t, this.size);
     }
+    
+    /**
+     * Returns {@code x} value of a single sample.
+     * @param index index
+     * @return {@code x} value of a single sample
+     * @throws SamplingException if the index is out of bounds
+     */
+    public float getX(final int index) throws SamplingException
+    {
+        checkSample(index);
+        return this.x[index];
+    }
+    
+    /**
+     * Returns {@code v} value of a single sample.
+     * @param index index
+     * @return {@code v} value of a single sample
+     * @throws SamplingException if the index is out of bounds
+     */
+    public float getV(final int index) throws SamplingException
+    {
+        checkSample(index);
+        return this.v[index];
+    }
+    
+    /**
+     * Returns {@code a} value of a single sample.
+     * @param index index
+     * @return {@code a} value of a single sample
+     * @throws SamplingException if the index is out of bounds
+     */
+    public float getA(final int index) throws SamplingException
+    {
+        checkSample(index);
+        return this.a[index];
+    }
+    
+    /**
+     * Returns {@code t} value of a single sample.
+     * @param index index
+     * @return {@code t} value of a single sample
+     * @throws SamplingException if the index is out of bounds
+     */
+    public float getT(final int index) throws SamplingException
+    {
+        checkSample(index);
+        return this.t[index];
+    }
+    
+    /**
+     * Returns extended data type value of a single sample.
+     * @param extendedDataType
+     * @param index
+     * @param <T> scalar type of extended data type
+     * @param <S> storage type of extended data type
+     * @return extended data type value of a single sample
+     * @throws SamplingException if the index is out of bounds
+     */
+    @SuppressWarnings("unchecked")
+    public <T, S> T getExtendedData(final ExtendedDataType<T, ?, S> extendedDataType, final int index) throws SamplingException
+    {
+        checkSample(index);
+        return extendedDataType.getStorageValue((S) this.extendedData.get(extendedDataType), index);
+    }
+
+    /**
+     * Throws an exception if the sample index is out of bounds.
+     * @param index sample index
+     * @throws SamplingException if the sample index is out of bounds
+     */
+    private void checkSample(final int index) throws SamplingException
+    {
+        Throw.when(index < 0 || index >= this.size, SamplingException.class, "Index is out of bounds.");
+    }
 
     /**
      * @return strongly typed copy of position, position is relative to the start of the lane, also when trajectories have been
