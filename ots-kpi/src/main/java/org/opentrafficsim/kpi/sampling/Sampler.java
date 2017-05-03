@@ -321,21 +321,21 @@ public abstract class Sampler
      */
     public final void writeToFile(final String file)
     {
-        writeToFile(file, "%.3f", true);
+        writeToFile(file, "%.3f", CompressionMethod.ZIP);
     }
 
     /**
      * Write the contents of the sampler in to a file.
      * @param file file
      * @param format number format, as used in {@code String.format()}
-     * @param zipped whether to zip the file
+     * @param compression how to compress the data
      */
     // TODO This returns all data, regardless of registered space-time regions. We need a query to have space-time regions.
     // TODO Zip enum: bzip2, remove "omit repeated value", but add as compression option
-    public final void writeToFile(String file, final String format, final boolean zipped)
+    public final void writeToFile(String file, final String format, final CompressionMethod compression)
     {
         String name = null;
-        if (zipped)
+        if (compression.equals(CompressionMethod.ZIP))
         {
             File f = new File(file);
             name = f.getName();
@@ -352,7 +352,7 @@ public abstract class Sampler
         try
         {
             fos = new FileOutputStream(file);
-            if (zipped)
+            if (compression.equals(CompressionMethod.ZIP))
             {
                 zos = new ZipOutputStream(fos);
                 zos.putNextEntry(new ZipEntry(name));
@@ -438,7 +438,7 @@ public abstract class Sampler
                         str = new StringBuilder();
                         str.append(counter);
                         str.append(",");
-                        if (i == 0)
+                        if (!compression.equals(CompressionMethod.OMIT_DUMPLICATE_INFO) || i == 0)
                         {
                             str.append(kpiLaneDirection.getLaneData().getLinkData().getId());
                             str.append(",");
@@ -640,6 +640,30 @@ public abstract class Sampler
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Defines the compression method for stored data.
+     * <p>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 3 mei 2017 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public enum CompressionMethod
+    {
+        /** No compression. */
+        NONE,
+        
+        /** Duplicate info per trajectory is only stored at the first sample, and empty for other samples. */
+        OMIT_DUMPLICATE_INFO,
+        
+        /** Zip compression. */
+        ZIP,
+        
     }
 
 }
