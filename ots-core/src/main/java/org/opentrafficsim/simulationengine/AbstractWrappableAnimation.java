@@ -169,9 +169,10 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     }
 
     /**
-     * Overrridable method to return GTU colorer.
+     * Overridable method to return GTU colorer.
      * @return GTU colorer
      */
+    @SuppressWarnings("checkstyle:designforextension")
     protected GTUColorer getColorer()
     {
         return new DefaultSwitchableGTUColorer();
