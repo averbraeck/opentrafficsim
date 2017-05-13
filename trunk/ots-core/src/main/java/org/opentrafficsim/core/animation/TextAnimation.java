@@ -1,9 +1,11 @@
 package org.opentrafficsim.core.animation;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
@@ -370,6 +372,13 @@ public abstract class TextAnimation implements Locatable, Serializable
         {
             TextAnimation ta = ((TextAnimation) getSource());
             ta.paint(graphics, observer);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean contains(final Point2D pointWorldCoordinates, final Rectangle2D extent, final Dimension screen)
+        {
+            return false;
         }
 
         /** {@inheritDoc} */
