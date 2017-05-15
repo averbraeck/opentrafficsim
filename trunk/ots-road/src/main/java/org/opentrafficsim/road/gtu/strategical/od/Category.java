@@ -22,7 +22,7 @@ public class Category implements Serializable
 {
 
     /** Empty category. */
-    public static final Category UNCATEGORIZED = new Category(Categorization.UNCATEGORIZED);
+    public static final Category UNCATEGORIZED = new Category(Categorization.UNCATEGORIZED, 1.0);
 
     /** */
     private static final long serialVersionUID = 20160921L;
@@ -33,25 +33,31 @@ public class Category implements Serializable
     /** List of objects defining the category. */
     private final List<Object> objects = new ArrayList<>();
 
+    /** Global fraction for this category. */
+    private final double fraction;
+
     /**
      * @param categorization categorization
+     * @param fraction global fraction for category
      */
-    private Category(final Categorization categorization)
+    private Category(final Categorization categorization, final double fraction)
     {
         Throw.whenNull(categorization, "Categorization may not be null.");
         this.categorization = categorization;
+        this.fraction = fraction;
     }
 
     /**
      * @param categorization categorization
+     * @param fraction global fraction of category
      * @param object1 1st object
      * @param objects other objects
      * @throws IllegalArgumentException if the objects do not comply with the categorization
      * @throws NullPointerException if any input is null
      */
-    public Category(final Categorization categorization, final Object object1, final Object... objects)
+    public Category(final Categorization categorization, final double fraction, final Object object1, final Object... objects)
     {
-        this(categorization);
+        this(categorization, fraction);
         Throw.when(categorization.size() != objects.length + 1, IllegalArgumentException.class,
                 "Objects do not comply with the categorization; bad number of objects.");
         Throw.whenNull(object1, "Objects may not be null.");
@@ -93,20 +99,31 @@ public class Category implements Serializable
         return this.categorization;
     }
 
+    /**
+     * @return fraction.
+     */
+    public double getFraction()
+    {
+        return this.fraction;
+    }
+
     /** {@inheritDoc} */
     @Override
-    public final int hashCode()
+    public int hashCode()
     {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.categorization == null) ? 0 : this.categorization.hashCode());
+        long temp;
+        temp = Double.doubleToLongBits(this.fraction);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + ((this.objects == null) ? 0 : this.objects.hashCode());
         return result;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final boolean equals(final Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
         {
@@ -132,6 +149,10 @@ public class Category implements Serializable
         {
             return false;
         }
+        if (Double.doubleToLongBits(this.fraction) != Double.doubleToLongBits(other.fraction))
+        {
+            return false;
+        }
         if (this.objects == null)
         {
             if (other.objects != null)
@@ -150,7 +171,7 @@ public class Category implements Serializable
     @Override
     public final String toString()
     {
-        return "Category " + this.objects;
+        return "Category [fraction=" + this.fraction + ", " + this.objects + "]";
     }
 
 }
