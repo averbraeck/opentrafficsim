@@ -197,6 +197,85 @@ public class ODMatrix implements Serializable
     }
 
     /**
+     * Add a demand vector to OD, by a fraction of total demand.
+     * @param origin origin
+     * @param destination destination
+     * @param category category
+     * @param demand demand data, length has to be equal to the time vector
+     * @param timeVector time vector
+     * @param interpolation interpolation
+     * @param fraction fraction of demand for this category
+     * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
+     * @throws IllegalArgumentException if the category does not belong to the categorization
+     * @throws NullPointerException if an input is null
+     */
+    public final void putDemandVector(final Node origin, final Node destination, final Category category,
+            final FrequencyVector demand, final DurationVector timeVector, final Interpolation interpolation,
+            final double fraction)
+    {
+        Throw.whenNull(demand, "Demand data may not be null.");
+        double[] in = demand.getValuesInUnit();
+        double[] scaled = new double[in.length];
+        for (int i = 0; i < in.length; i++)
+        {
+            scaled[i] = in[i] * fraction;
+        }
+        FrequencyVector demandScaled;
+        try
+        {
+            demandScaled = new FrequencyVector(scaled, demand.getUnit(), demand.getStorageType());
+        }
+        catch (ValueException exception)
+        {
+            // cannot happen, we use an existing vector
+            throw new RuntimeException("An object was null.", exception);
+        }
+        putDemandVector(origin, destination, category, demandScaled, timeVector, interpolation);
+    }
+
+    /**
+     * Add a demand vector to OD, by a fraction per time period of total demand.
+     * @param origin origin
+     * @param destination destination
+     * @param category category
+     * @param demand demand data, length has to be equal to the time vector
+     * @param timeVector time vector
+     * @param interpolation interpolation
+     * @param fraction fraction of demand for this category
+     * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
+     * @throws IllegalArgumentException if the category does not belong to the categorization
+     * @throws NullPointerException if an input is null
+     */
+    public final void putDemandVector(final Node origin, final Node destination, final Category category,
+            final FrequencyVector demand, final DurationVector timeVector, final Interpolation interpolation,
+            final double[] fraction)
+    {
+        Throw.whenNull(demand, "Demand data may not be null.");
+        Throw.whenNull(fraction, "Fraction data may not be null.");
+        Throw.whenNull(timeVector, "Time vector may not be null.");
+        Throw.when(demand.size() != timeVector.size() || timeVector.size() != fraction.length, IllegalArgumentException.class,
+                "Arrays are of unequal length: demand=%d, timeVector=%d, fraction=%d", demand.size(), timeVector.size(),
+                fraction.length);
+        double[] in = demand.getValuesInUnit();
+        double[] scaled = new double[in.length];
+        for (int i = 0; i < in.length; i++)
+        {
+            scaled[i] = in[i] * fraction[i];
+        }
+        FrequencyVector demandScaled;
+        try
+        {
+            demandScaled = new FrequencyVector(scaled, demand.getUnit(), demand.getStorageType());
+        }
+        catch (ValueException exception)
+        {
+            // cannot happen, we use an existing vector
+            throw new RuntimeException("An object was null.", exception);
+        }
+        putDemandVector(origin, destination, category, demandScaled, timeVector, interpolation);
+    }
+
+    /**
      * @param origin origin
      * @param destination destination
      * @param category category
@@ -271,7 +350,7 @@ public class ODMatrix implements Serializable
         ODEntry odEntry = getODEntry(origin, destination, category);
         if (odEntry == null)
         {
-            return new Frequency(0.0, FrequencyUnit.PER_HOUR); // Frequency.ZERO give "Hz" which is not nice for flow
+            return new Frequency(0.0, FrequencyUnit.PER_HOUR); // Frequency.ZERO gives "Hz" which is not nice for flow
         }
         return odEntry.getDemand(time);
     }
@@ -331,7 +410,260 @@ public class ODMatrix implements Serializable
                 "Destination '%s' is not part of the OD matrix.", destination);
         return new HashSet<>(this.demandData.get(origin).get(destination).keySet());
     }
+    
+    /******************************************************************************************************/
+    /****************************************** TRIP METHODS **********************************************/
+    /******************************************************************************************************/
 
+    /**
+     * @param origin origin
+     * @param destination destination
+     * @param category category
+     * @param trips trip data, length has to be equal to the global time vector - 1
+     * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
+     * @throws IllegalArgumentException if the category does not belong to the categorization
+     * @throws NullPointerException if an input is null
+     */
+    public final void putTripsVector(final Node origin, final Node destination, final Category category, final int[] trips)
+    {
+        putTripsVector(origin, destination, category, trips, getGlobalTimeVector());
+    }
+
+    /**
+     * Sets demand data by number of trips. Interpolation over time is stepwise.
+     * @param origin origin
+     * @param destination destination
+     * @param category category
+     * @param trips trip data, length has to be equal to the time vector - 1
+     * @param timeVector time vector
+     * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
+     * @throws IllegalArgumentException if the category does not belong to the categorization
+     * @throws NullPointerException if an input is null
+     */
+    public final void putTripsVector(final Node origin, final Node destination, final Category category, final int[] trips,
+            final DurationVector timeVector)
+    {
+        // this is what we need here, other checks in putDemandVector
+        Throw.whenNull(trips, "Demand data may not be null.");
+        Throw.whenNull(timeVector, "Time vector may not be null.");
+        Throw.when(trips.length != timeVector.size() - 1, IllegalArgumentException.class,
+                "Trip data and time data have wrong lengths. Trip data should be 1 shorter than time data.");
+        // convert to flow
+        double[] flow = new double[timeVector.size()];
+        try
+        {
+            for (int i = 0; i < trips.length; i++)
+            {
+                flow[i] = trips[i]
+                        / (timeVector.get(i + 1).getInUnit(DurationUnit.HOUR) - timeVector.get(i).getInUnit(DurationUnit.HOUR));
+            }
+            // last value can remain zero as initialized
+            putDemandVector(origin, destination, category, new FrequencyVector(flow, FrequencyUnit.PER_HOUR, StorageType.DENSE),
+                    timeVector, Interpolation.STEPWISE);
+        }
+        catch (ValueException exception)
+        {
+            // should not happen as we check and then loop over the array length
+            throw new RuntimeException("Could not translate trip vector into demand vector.", exception);
+        }
+    }
+
+    /**
+     * @param origin origin
+     * @param destination destination
+     * @param category category
+     * @return trip data for given origin, destination and categorization, {@code null} if no data is given
+     * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
+     * @throws IllegalArgumentException if the category does not belong to the categorization
+     * @throws NullPointerException if an input is null
+     */
+    public final int[] getTripsVector(final Node origin, final Node destination, final Category category)
+    {
+        FrequencyVector demand = getDemandVector(origin, destination, category);
+        if (demand == null)
+        {
+            return null;
+        }
+        int[] trips = new int[demand.size() - 1];
+        DurationVector time = getTimeVector(origin, destination, category);
+        Interpolation interpolation = getInterpolation(origin, destination, category);
+        for (int i = 0; i < trips.length; i++)
+        {
+            try
+            {
+                trips[i] = interpolation.integrate(demand.get(i), time.get(i), demand.get(i + 1), time.get(i + 1));
+            }
+            catch (ValueException exception)
+            {
+                // should not happen as we loop over the array length
+                throw new RuntimeException("Could not translate demand vector into trip vector.", exception);
+            }
+        }
+        return trips;
+    }
+
+    /**
+     * Returns the number of trips in the given time period.
+     * @param origin origin
+     * @param destination destination
+     * @param category category
+     * @param periodIndex index of time period
+     * @return demand for given origin, destination and categorization, at given time
+     * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
+     * @throws IllegalArgumentException if the category does not belong to the categorization
+     * @throws IllegalArgumentException if the period is outside of the specified range
+     * @throws NullPointerException if an input is null
+     */
+    public final int getTrips(final Node origin, final Node destination, final Category category, final int periodIndex)
+    {
+        DurationVector time = getTimeVector(origin, destination, category);
+        if (time == null)
+        {
+            return 0;
+        }
+        Throw.when(periodIndex < 0 || periodIndex >= time.size() - 1, IllegalArgumentException.class,
+                "Period index out of range.");
+        FrequencyVector demand = getDemandVector(origin, destination, category);
+        Interpolation interpolation = getInterpolation(origin, destination, category);
+        try
+        {
+            return interpolation.integrate(demand.get(periodIndex), time.get(periodIndex), demand.get(periodIndex + 1),
+                    time.get(periodIndex + 1));
+        }
+        catch (ValueException exception)
+        {
+            // should not happen as the index was checked
+            throw new RuntimeException("Could not get number of trips.", exception);
+        }
+    }
+
+    /**
+     * Adds a number of trips to given origin-destination combination, category and time period. This can only be done for data
+     * with stepwise interpolation.
+     * @param origin origin
+     * @param destination destination
+     * @param category category
+     * @param periodIndex index of time period
+     * @param trips trips to add (may be negative)
+     * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
+     * @throws IllegalArgumentException if the category does not belong to the categorization
+     * @throws IllegalArgumentException if the period is outside of the specified range
+     * @throws UnsupportedOperationException if the interpolation of the data is not stepwise
+     * @throws NullPointerException if an input is null
+     */
+    public final void increaseTrips(final Node origin, final Node destination, final Category category, final int periodIndex,
+            final int trips)
+    {
+        Interpolation interpolation = getInterpolation(origin, destination, category);
+        Throw.when(!interpolation.equals(Interpolation.STEPWISE), UnsupportedOperationException.class,
+                "Can only increase the number of trips for data with stepwise interpolation.");
+        DurationVector time = getTimeVector(origin, destination, category);
+        Throw.when(periodIndex < 0 || periodIndex >= time.size() - 1, IllegalArgumentException.class,
+                "Period index out of range.");
+        FrequencyVector demand = getDemandVector(origin, destination, category);
+        try
+        {
+            double additionalDemand = trips / (time.get(periodIndex + 1).getInUnit(DurationUnit.HOUR)
+                    - time.get(periodIndex).getInUnit(DurationUnit.HOUR));
+            double[] dem = demand.getValuesInUnit(FrequencyUnit.PER_HOUR);
+            dem[periodIndex] += additionalDemand;
+            putDemandVector(origin, destination, category, new FrequencyVector(dem, FrequencyUnit.PER_HOUR, StorageType.DENSE),
+                    time, Interpolation.STEPWISE);
+        }
+        catch (ValueException exception)
+        {
+            // should not happen as the index was checked
+            throw new RuntimeException("Could not get number of trips.", exception);
+        }
+    }
+
+    /**
+     * Calculates total number of trips over time for given origin.
+     * @param origin origin
+     * @return total number of trips over time for given origin
+     * @throws IllegalArgumentException if origin is not part of the OD matrix
+     * @throws NullPointerException if origin is null
+     */
+    public final int originTotal(final Node origin)
+    {
+        int sum = 0;
+        for (Node destination : getDestinations())
+        {
+            sum += originDestinationTotal(origin, destination);
+        }
+        return sum;
+    }
+
+    /**
+     * Calculates total number of trips over time for given destination.
+     * @param destination destination
+     * @return total number of trips over time for given destination
+     * @throws IllegalArgumentException if destination is not part of the OD matrix
+     * @throws NullPointerException if destination is null
+     */
+    public final int destinationTotal(final Node destination)
+    {
+        int sum = 0;
+        for (Node origin : getOrigins())
+        {
+            sum += originDestinationTotal(origin, destination);
+        }
+        return sum;
+    }
+
+    /**
+     * Calculates total number of trips over time for the complete matrix.
+     * @return total number of trips over time for the complete matrix
+     */
+    public final int matrixTotal()
+    {
+        int sum = 0;
+        for (Node origin : getOrigins())
+        {
+            for (Node destination : getDestinations())
+            {
+                sum += originDestinationTotal(origin, destination);
+            }
+        }
+        return sum;
+    }
+
+    /**
+     * Calculates total number of trips over time for given origin-destination combination.
+     * @param origin origin
+     * @param destination destination
+     * @return total number of trips over time for given origin-destination combination
+     * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
+     * @throws NullPointerException if an input is null
+     */
+    public final int originDestinationTotal(final Node origin, final Node destination)
+    {
+        int sum = 0;
+        for (Category category : getCategories(origin, destination))
+        {
+            DurationVector time = getTimeVector(origin, destination, category);
+            FrequencyVector demand = getDemandVector(origin, destination, category);
+            Interpolation interpolation = getInterpolation(origin, destination, category);
+            for (int i = 0; i < time.size() - 1; i++)
+            {
+                try
+                {
+                    sum += interpolation.integrate(demand.get(i), time.get(i), demand.get(i + 1), time.get(i + 1));
+                }
+                catch (ValueException exception)
+                {
+                    // should not happen as we loop over the array length
+                    throw new RuntimeException("Could not determine total trips over time.", exception);
+                }
+            }
+        }
+        return sum;
+    }
+    
+    /******************************************************************************************************/
+    /****************************************** OTHER METHODS *********************************************/
+    /******************************************************************************************************/
+    
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
@@ -525,47 +857,47 @@ public class ODMatrix implements Serializable
         DurationVector timeVector = new DurationVector(new double[] { 0, 1200, 3600 }, DurationUnit.SECOND, StorageType.DENSE);
         ODMatrix odMatrix = new ODMatrix("TestOD", origins, destinations, categorization, timeVector, Interpolation.LINEAR);
 
-        Category category = new Category(categorization, ac1, "car");
+        Category category = new Category(categorization, 0.0, ac1, "car");
         odMatrix.putDemandVector(a, c, category,
                 new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, ac2, "car");
+        category = new Category(categorization, 0.0, ac2, "car");
         odMatrix.putDemandVector(a, c, category,
                 new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, ad1, "car");
+        category = new Category(categorization, 0.0, ad1, "car");
         odMatrix.putDemandVector(a, d, category,
                 new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, ac1, "car");
+        category = new Category(categorization, 0.0, ac1, "car");
         odMatrix.putDemandVector(a, c, category,
                 new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, ac2, "truck");
+        category = new Category(categorization, 0.0, ac2, "truck");
         odMatrix.putDemandVector(a, c, category,
                 new FrequencyVector(new double[] { 100, 200, 500 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, ad1, "truck");
+        category = new Category(categorization, 0.0, ad1, "truck");
         odMatrix.putDemandVector(a, d, category,
                 new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, bc1, "truck");
+        category = new Category(categorization, 0.0, bc1, "truck");
         odMatrix.putDemandVector(b, c, category,
                 new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, bc2, "truck");
+        category = new Category(categorization, 0.0, bc2, "truck");
         odMatrix.putDemandVector(b, c, category,
                 new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, bd1, "car");
+        category = new Category(categorization, 0.0, bd1, "car");
         odMatrix.putDemandVector(b, d, category,
                 new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, bc1, "car");
+        category = new Category(categorization, 0.0, bc1, "car");
         odMatrix.putDemandVector(b, c, category,
                 new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, bc2, "car");
+        category = new Category(categorization, 0.0, bc2, "car");
         odMatrix.putDemandVector(b, c, category,
                 new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, bd1, "truck");
+        category = new Category(categorization, 0.0, bd1, "truck");
         odMatrix.putDemandVector(b, d, category,
                 new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
 
         odMatrix.print();
         System.out.println(odMatrix);
 
-        category = new Category(categorization, ac2, "truck");
+        category = new Category(categorization, 0.0, ac2, "truck");
         for (double t = -100; t <= 3700; t += 100)
         {
             Duration time = new Duration(t, DurationUnit.SECOND);
@@ -573,7 +905,7 @@ public class ODMatrix implements Serializable
         }
 
         System.out.println("For OD       that does not exist; q = " + odMatrix.getDemand(c, a, category, Duration.ZERO));
-        category = new Category(categorization, ac2, "does not exist");
+        category = new Category(categorization, 0.0, ac2, "does not exist");
         System.out.println("For category that does not exist; q = " + odMatrix.getDemand(a, c, category, Duration.ZERO));
 
     }
