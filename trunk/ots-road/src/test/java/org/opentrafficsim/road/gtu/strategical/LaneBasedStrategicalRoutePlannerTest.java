@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.strategical;
 
-import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
 import java.util.HashMap;
 import java.util.Map;

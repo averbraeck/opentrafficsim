@@ -6,9 +6,9 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.RoadGTUTypes;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -76,7 +76,7 @@ public class BusStopConflictRule implements ConflictRule
                 gtu = lane.getGtuBehind(pos, dir, RelativePosition.FRONT, this.simulator.getSimulatorTime().getTime());
                 if (gtu == null)
                 {
-                    Map<Lane, GTUDirectionality> map = lane.upstreamLanes(dir, RoadGTUTypes.BUS);
+                    Map<Lane, GTUDirectionality> map = lane.upstreamLanes(dir, GTUType.BUS);
                     if (map.size() == 1)
                     {
                         lane = map.keySet().iterator().next();
@@ -102,8 +102,7 @@ public class BusStopConflictRule implements ConflictRule
         {
             throw new RuntimeException("Error while looking for GTU upstream of merge at bus stop.", exception);
         }
-        boolean busHasPriority =
-                gtu != null && gtu.getGTUType().isOfType(RoadGTUTypes.BUS) && gtu.getTurnIndicatorStatus().isLeft();
+        boolean busHasPriority = gtu != null && gtu.getGTUType().isOfType(GTUType.BUS) && gtu.getTurnIndicatorStatus().isLeft();
 
         // if bus has priority and bus is asking, PRIORITY
         // if bus has no priority and bus is not asking (i.e. car is asking), PRIORITY

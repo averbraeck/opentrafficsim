@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml.test;
 
-import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.BUS;
-import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+import static org.opentrafficsim.core.gtu.GTUType.BUS;
+import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
 import java.util.ArrayList;
 import java.util.HashSet;

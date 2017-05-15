@@ -1,6 +1,6 @@
 package org.opentrafficsim.demo.carFollowing;
 
-import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
 import java.awt.Frame;
 import java.rmi.RemoteException;

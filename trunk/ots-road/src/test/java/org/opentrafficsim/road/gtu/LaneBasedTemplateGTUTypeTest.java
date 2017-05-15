@@ -2,8 +2,8 @@ package org.opentrafficsim.road.gtu;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
-import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.TRUCK;
+import static org.opentrafficsim.core.gtu.GTUType.CAR;
+import static org.opentrafficsim.core.gtu.GTUType.TRUCK;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;

@@ -1,6 +1,6 @@
 package org.opentrafficsim.demo.lanechange;
 
-import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;

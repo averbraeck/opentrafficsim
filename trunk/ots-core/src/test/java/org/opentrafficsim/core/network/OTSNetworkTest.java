@@ -436,7 +436,7 @@ public class OTSNetworkTest implements EventListenerInterface
         Route route2 = new Route("route2");
         Route route3 = new Route("route3");
         GTUType carType = new GTUType("car", GTUType.VEHICLE);
-        GTUType bicycleType = new GTUType("bicycle", GTUType.BIKE);
+        GTUType bicycleType = new GTUType("bicycle", GTUType.BICYCLE);
         // The next test makes little sense until the getters are changed to search up to the GTUType root.
         assertEquals("initially the network has 0 routes", 0, network.getDefinedRouteMap(GTUType.ALL).size());
         network.addRoute(carType, route1);

@@ -21,6 +21,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
@@ -31,7 +32,6 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.RoadGTUTypes;
 import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
@@ -161,7 +161,7 @@ public final class ConflictUtil
             }
 
             // indicator if bus
-            if (gtu.getStrategicalPlanner().getRoute() instanceof BusSchedule && gtu.getGTUType().isOfType(RoadGTUTypes.BUS)
+            if (gtu.getStrategicalPlanner().getRoute() instanceof BusSchedule && gtu.getGTUType().isOfType(GTUType.BUS)
                     && conflict.getConflictRuleType().equals(BusStopConflictRule.class))
             {
                 BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
@@ -578,7 +578,7 @@ public final class ConflictUtil
             // none within visibility, assume a conflicting vehicle just outside of visibility driving at speed limit
             try
             {
-                HeadwayGTUSimple conflictGtu = new HeadwayGTUSimple("virtual " + UUID.randomUUID().toString(), RoadGTUTypes.CAR,
+                HeadwayGTUSimple conflictGtu = new HeadwayGTUSimple("virtual " + UUID.randomUUID().toString(), GTUType.CAR,
                         conflict.getConflictingVisibility(), new Length(4.0, LengthUnit.SI),
                         conflict.getConflictingSpeedLimit(), Acceleration.ZERO);
                 conflictingVehicles.add(conflictGtu);

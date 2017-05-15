@@ -1,7 +1,7 @@
 package org.opentrafficsim.imb.demo;
 
-import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.BUS;
-import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+import static org.opentrafficsim.core.gtu.GTUType.BUS;
+import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -49,7 +49,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
 import org.opentrafficsim.road.gtu.strategical.od.Categorization;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
-import org.opentrafficsim.road.gtu.strategical.od.ODMatrixTrips;
+import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -78,7 +78,7 @@ public class N201ODfactory
      * @param network network
      * @return origin-destination matrix
      */
-    public static ODMatrixTrips get(final Network network)
+    public static ODMatrix get(final Network network)
     {
         List<Node> origins = new ArrayList<>();
         origins.add(network.getNode("N1a")); // A, maar dan een stuk verder, tussenliggende kruispunten genegeerd
@@ -100,10 +100,10 @@ public class N201ODfactory
         destinations.add(network.getNode("N291a_uit2")); // I
         destinations.add(network.getNode("N50a")); // J
 
-        ODMatrixTrips matrix;
+        ODMatrix matrix;
         try
         {
-            matrix = new ODMatrixTrips("N201demo", origins, destinations, Categorization.UNCATEGORIZED,
+            matrix = new ODMatrix("N201demo", origins, destinations, Categorization.UNCATEGORIZED,
                     new DurationVector(new double[] { 0, 3600 }, DurationUnit.SI, StorageType.DENSE), Interpolation.STEPWISE);
         }
         catch (ValueException exception)
@@ -136,7 +136,7 @@ public class N201ODfactory
      * @param matrix origin-destination matrix
      * @param simulator simulator
      */
-    public static void makeGeneratorsFromOD(final OTSNetwork network, final ODMatrixTrips matrix,
+    public static void makeGeneratorsFromOD(final OTSNetwork network, final ODMatrix matrix,
             final OTSDEVSSimulatorInterface simulator)
     {
 
