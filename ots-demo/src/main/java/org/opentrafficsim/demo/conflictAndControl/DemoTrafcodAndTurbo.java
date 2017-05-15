@@ -1,7 +1,7 @@
 package org.opentrafficsim.demo.conflictAndControl;
 
 import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
-import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
 import java.awt.BorderLayout;
 import java.awt.geom.Rectangle2D;

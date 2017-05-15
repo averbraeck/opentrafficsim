@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.changing;
 
 import static org.junit.Assert.assertEquals;
-import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
 import java.util.Collection;
 import java.util.HashSet;

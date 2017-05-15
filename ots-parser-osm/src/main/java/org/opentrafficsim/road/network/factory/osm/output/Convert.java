@@ -1,9 +1,9 @@
 package org.opentrafficsim.road.network.factory.osm.output;
 
-import static org.opentrafficsim.core.gtu.GTUType.BIKE;
-import static org.opentrafficsim.core.gtu.GTUType.BOAT;
+import static org.opentrafficsim.core.gtu.GTUType.BICYCLE;
+import static org.opentrafficsim.core.gtu.GTUType.SHIP;
 import static org.opentrafficsim.core.gtu.GTUType.PEDESTRIAN;
-import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
 import java.awt.Color;
 import java.io.Serializable;
@@ -244,10 +244,10 @@ public final class Convert
                 switch (tag.getValue())
                 {
                     case "river":
-                        laneType = makeLaneType(BOAT);
+                        laneType = makeLaneType(SHIP);
                         break;
                     case "canal":
-                        laneType = makeLaneType(BOAT);
+                        laneType = makeLaneType(SHIP);
                         break;
                     default:
                         laneType = makeLaneType(GTUType.NONE);
@@ -300,7 +300,7 @@ public final class Convert
                 {
                     if (t2.getKey().equals("bicycle"))
                     {
-                        types.add(BIKE);
+                        types.add(BICYCLE);
                     }
                     /*
                      * if (t2.getKey().equals("foot")) {
@@ -341,7 +341,7 @@ public final class Convert
         {
             if (tag.getKey().equals("cycleway"))
             {
-                laneType = makeLaneType(BIKE);
+                laneType = makeLaneType(BICYCLE);
                 switch (tag.getValue())
                 {
                     case "lane": // cycleway:lane is directly adjacent to the highway.
@@ -362,7 +362,7 @@ public final class Convert
                         break;
                     case "shared_lane": // cycleway:shared_lane is embedded into the highway.
                         List<GTUType> types = new ArrayList<GTUType>();
-                        types.add(BIKE);
+                        types.add(BICYCLE);
                         types.add(CAR);
                         laneType = makeLaneType(types);
                         laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_MINUS);
@@ -438,7 +438,7 @@ public final class Convert
                 }
                 if (tag.getValue().equals("cycleway"))
                 {
-                    laneType = makeLaneType(BIKE);
+                    laneType = makeLaneType(BICYCLE);
                     if (osmLink.getLanes() == 1 && !osmLink.isOneway())
                     {
                         laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_BOTH);
@@ -566,7 +566,7 @@ public final class Convert
         {
             return defaultLaneWidth;
         }
-        else if (laneType.isCompatible(BIKE))
+        else if (laneType.isCompatible(BICYCLE))
         {
             return 0.8d; // TODO German default bikepath width
         }
@@ -574,7 +574,7 @@ public final class Convert
         {
             return 0.95d; // TODO German default footpath width
         }
-        else if (laneType.isCompatible(BOAT))
+        else if (laneType.isCompatible(SHIP))
         {
             for (OSMTag tag : link.getTags())
             {

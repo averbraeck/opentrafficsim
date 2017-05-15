@@ -11,9 +11,9 @@ import javax.naming.NamingException;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.RoadGTUTypes;
 import org.opentrafficsim.road.network.animation.BusStopAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -129,7 +129,7 @@ public class BusStop extends AbstractLaneBasedObject
                     }
                     objects = lane.getObjectAhead(objects.get(0).getLongitudinalPosition(), dir);
                 }
-                Map<Lane, GTUDirectionality> downstreamLanes = lane.downstreamLanes(dir, RoadGTUTypes.BUS);
+                Map<Lane, GTUDirectionality> downstreamLanes = lane.downstreamLanes(dir, GTUType.BUS);
                 int numLanes = 0;
                 for (Lane nextLane : downstreamLanes.keySet())
                 {

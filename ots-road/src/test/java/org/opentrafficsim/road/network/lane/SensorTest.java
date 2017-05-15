@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.network.lane;
 
-import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
+import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;

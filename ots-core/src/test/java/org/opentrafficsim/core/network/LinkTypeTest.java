@@ -48,7 +48,7 @@ public class LinkTypeTest
         }
         GTUType car = new GTUType("Car", GTUType.VEHICLE);
         GTUType truck = new GTUType("Truck", GTUType.VEHICLE);
-        GTUType catamaran = new GTUType("Catamaran", GTUType.BOAT);
+        GTUType catamaran = new GTUType("Catamaran", GTUType.SHIP);
         Collection<GTUType> carGroup = new ArrayList<>();
         carGroup.add(car);
         carGroup.add(truck);

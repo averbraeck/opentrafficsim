@@ -54,7 +54,6 @@ import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristicsGenerator;
-import org.opentrafficsim.road.gtu.lane.RoadGTUTypes;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectBusStopPerception;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
@@ -473,7 +472,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             {
                 case 0:
                 {
-                    gtuType = new GTUType("CAR", RoadGTUTypes.CAR);
+                    gtuType = new GTUType("CAR", GTUType.CAR);
                     length = new Length(4.0, LengthUnit.SI);
                     width = new Length(1.8, LengthUnit.SI);
                     maximumSpeed = new Speed(200.0, SpeedUnit.KM_PER_HOUR);
@@ -482,7 +481,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                 }
                 case 1:
                 {
-                    gtuType = new GTUType("BUS1", RoadGTUTypes.SCHEDULED_BUS);
+                    gtuType = new GTUType("BUS1", GTUType.SCHEDULED_BUS);
                     length = new Length(8.0, LengthUnit.SI);
                     width = new Length(2.0, LengthUnit.SI);
                     maximumSpeed = new Speed(100.0, SpeedUnit.KM_PER_HOUR);
@@ -503,7 +502,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                 }
                 case 2:
                 {
-                    gtuType = new GTUType("BUS2", RoadGTUTypes.SCHEDULED_BUS);
+                    gtuType = new GTUType("BUS2", GTUType.SCHEDULED_BUS);
                     length = new Length(12.0, LengthUnit.SI);
                     width = new Length(2.0, LengthUnit.SI);
                     maximumSpeed = new Speed(100.0, SpeedUnit.KM_PER_HOUR);
@@ -579,7 +578,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             DefaultLMRSPerceptionFactory pFac = new DefaultLMRSPerceptionFactory();
             LMRS lmrs = new LMRS(new IDMPlus(), gtu, pFac.generatePerception(gtu), Synchronization.PASSIVE);
             lmrs.setDefaultIncentives();
-            if (gtu.getGTUType().isOfType(RoadGTUTypes.SCHEDULED_BUS))
+            if (gtu.getGTUType().isOfType(GTUType.SCHEDULED_BUS))
             {
                 lmrs.addMandatoryIncentive(new IncentiveBusStop());
                 lmrs.addAccelerationIncentive(new AccelerationBusStop());
@@ -616,11 +615,11 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         {
 
             defaultCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, new Length(100.0, LengthUnit.METER));
-            if (gtuType.isOfType(RoadGTUTypes.CAR))
+            if (gtuType.isOfType(GTUType.CAR))
             {
                 defaultCharacteristics.setParameter(LmrsParameters.VGAIN, new Speed(3.0, SpeedUnit.METER_PER_SECOND));
             }
-            else if (gtuType.isOfType(RoadGTUTypes.SCHEDULED_BUS))
+            else if (gtuType.isOfType(GTUType.SCHEDULED_BUS))
             {
                 defaultCharacteristics.setParameter(ParameterTypes.A,
                         new Acceleration(0.8, AccelerationUnit.METER_PER_SECOND_2));

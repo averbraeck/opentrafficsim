@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.lane.object.sensor;
 
 import static org.junit.Assert.assertEquals;
-import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.TRUCK;
+import static org.opentrafficsim.core.gtu.GTUType.TRUCK;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;

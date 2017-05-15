@@ -39,28 +39,54 @@ public final class GTUType extends Type<GTUType> implements Serializable
     /** Super type for pedestrians. */
     public static final GTUType PEDESTRIAN;
 
-    /** Super type for bikes. */
-    public static final GTUType BIKE;
+    /** Super type for bicycle. */
+    public static final GTUType BICYCLE;
 
     /** Super type for vehicles. */
     public static final GTUType VEHICLE;
+    
+    /** Super type for emergency vehicles. */
+    public static final GTUType EMERGENCY_VEHICLE;
 
-    /** Super type for boats. */
-    public static final GTUType BOAT;
+    /** Super type for ships. */
+    public static final GTUType SHIP;
 
     /** Super type for trains. */
     public static final GTUType TRAIN;
+    
+    /** Super type for cars. */
+    public static final GTUType CAR;
+
+    /** Super type for vans. */
+    public static final GTUType VAN;
+
+    /** Super type for busses. */
+    public static final GTUType BUS;
+
+    /** Super type for trucks. */
+    public static final GTUType TRUCK;
+
+    /** Super type for scheduled busses. */
+    public static final GTUType SCHEDULED_BUS;
 
     /* static block to guarantee that ALL is always on the first place, and NONE on the second, for code reproducibility. */
     static
     {
         ALL = new GTUType("ALL");
         NONE = new GTUType("NONE");
+        
         PEDESTRIAN = new GTUType("PEDESTRIAN", ALL);
-        BIKE = new GTUType("BIKE", ALL);
-        VEHICLE = new GTUType("VEHICLE", ALL);
-        BOAT = new GTUType("BOAT", ALL);
+        BICYCLE = new GTUType("BICYCLE", ALL);
+        SHIP = new GTUType("SHIP", ALL);
         TRAIN = new GTUType("TRAIN", ALL);
+        
+        VEHICLE = new GTUType("VEHICLE", ALL);
+        EMERGENCY_VEHICLE = new GTUType("EMERGENCY_VEHICLE", ALL);
+        CAR = new GTUType("CAR", VEHICLE);
+        VAN = new GTUType("VAN", VEHICLE);
+        BUS = new GTUType("BUS", VEHICLE);
+        TRUCK = new GTUType("TRUCK", VEHICLE);
+        SCHEDULED_BUS = new GTUType("SCHEDULED BUS", BUS);
     }
 
     /**

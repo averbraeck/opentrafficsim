@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.CAR;
-import static org.opentrafficsim.road.gtu.lane.RoadGTUTypes.TRUCK;
+import static org.opentrafficsim.core.gtu.GTUType.CAR;
+import static org.opentrafficsim.core.gtu.GTUType.TRUCK;
 
 import java.awt.geom.Point2D;
 import java.util.HashSet;

@@ -77,7 +77,7 @@ public class OTSLinkTest implements EventListenerInterface
         link.addDirectionality(carType, LongitudinalDirectionality.DIR_MINUS);
         assertEquals("directionality for carType is DIR_MINUS", LongitudinalDirectionality.DIR_MINUS,
                 link.getDirectionality(carType));
-        GTUType bicycle = new GTUType("bicycle", GTUType.BIKE);
+        GTUType bicycle = new GTUType("bicycle", GTUType.BICYCLE);
         assertEquals("directionality for bicycle is DIR_NONE", LongitudinalDirectionality.DIR_NONE,
                 link.getDirectionality(bicycle));
         link.addDirectionality(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
