@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -23,6 +24,9 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
  */
 public class IncentiveKeep implements VoluntaryIncentive
 {
+    
+    /** Free lane change threshold parameter type. */
+    protected static final ParameterTypeDouble DFREE = LmrsParameters.DFREE;
 
     /** {@inheritDoc} */
     @Override
@@ -37,7 +41,7 @@ public class IncentiveKeep implements VoluntaryIncentive
             return new Desire(0, 0);
         }
         // keep right with dFree
-        return new Desire(0, behavioralCharacteristics.getParameter(LmrsParameters.DFREE));
+        return new Desire(0, behavioralCharacteristics.getParameter(DFREE));
     }
 
     /** {@inheritDoc} */

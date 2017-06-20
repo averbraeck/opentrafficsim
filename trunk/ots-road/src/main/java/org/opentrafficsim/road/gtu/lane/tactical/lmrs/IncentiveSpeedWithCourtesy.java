@@ -10,6 +10,9 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeAcceleration;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeSpeed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -57,6 +60,15 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
 {
 
+    /** Look ahead parameter type. */
+    protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
+
+    /** Acceleration parameter type. */
+    protected static final ParameterTypeAcceleration A = ParameterTypes.A;
+    
+    /** Anticipation speed difference parameter type. */
+    protected static final ParameterTypeSpeed VGAIN = LmrsParameters.VGAIN;
+    
     /** {@inheritDoc} */
     @Override
     public final Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics,
@@ -72,7 +84,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
 
         // gather some info
         Speed vCur = anticipationSpeed(RelativeLane.CURRENT, behavioralCharacteristics, perception, carFollowingModel);
-        Speed vGain = behavioralCharacteristics.getParameter(LmrsParameters.VGAIN);
+        Speed vGain = behavioralCharacteristics.getParameter(VGAIN);
 
         // calculate aGain (default 1; lower as acceleration is higher than 0)
         Dimensionless aGain;
@@ -84,7 +96,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
         Acceleration aCur = perception.getPerceptionCategory(EgoPerception.class).getAcceleration();
         if (aCur.si > 0)
         {
-            Acceleration a = behavioralCharacteristics.getParameter(ParameterTypes.A);
+            Acceleration a = behavioralCharacteristics.getParameter(A);
             aGain = a.minus(aCur).divideBy(a);
         }
         else
@@ -141,7 +153,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
                 .getSpeedLimitInfo(Length.ZERO);
         Speed anticipationSpeed = cfm.desiredSpeed(bc, sli);
         Speed desiredSpeed = new Speed(anticipationSpeed);
-        Length x0 = bc.getParameter(ParameterTypes.LOOKAHEAD);
+        Length x0 = bc.getParameter(LOOKAHEAD);
 
         // leaders with right indicators on left lane of considered lane
         if (perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection().contains(lane.getLeft()))

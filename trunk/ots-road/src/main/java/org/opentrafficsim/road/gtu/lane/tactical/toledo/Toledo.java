@@ -18,6 +18,7 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -62,6 +63,9 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /** */
     private static final long serialVersionUID = 20160711L;
+    
+    /** Look ahead parameter type. */
+    protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
     /** Defines light vs heavy vehicles. */
     static final Length MAX_LIGHT_VEHICLE_LENGTH = new Length(9.14, LengthUnit.METER);
@@ -254,7 +258,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         }
 
         // operational plan
-        Length forwardHeadway = bc.getParameter(ParameterTypes.LOOKAHEAD);
+        Length forwardHeadway = bc.getParameter(LOOKAHEAD);
         List<Lane> lanes = buildLanePathInfo(getGtu(), forwardHeadway).getLanes();
         if (initiatedLaneChange.isNone())
         {

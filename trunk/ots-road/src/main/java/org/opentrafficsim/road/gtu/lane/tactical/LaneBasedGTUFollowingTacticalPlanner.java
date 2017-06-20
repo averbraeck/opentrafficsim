@@ -9,6 +9,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
@@ -75,7 +76,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         perception.perceive();
 
         // see how far we can drive
-        Length maxDistance = laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
+        Length maxDistance = laneBasedGTU.getBehavioralCharacteristics().getParameter(LOOKAHEAD);
         LanePathInfo lanePathInfo = buildLanePathInfo(laneBasedGTU, maxDistance);
 
         // look at the conditions for headway from a GTU in front

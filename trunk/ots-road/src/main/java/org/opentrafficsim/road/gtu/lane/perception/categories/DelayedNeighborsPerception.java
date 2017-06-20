@@ -19,7 +19,6 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacter
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDuration;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.perception.PerceptionException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -147,7 +146,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
             accelerationError = bc.getParameter(AERROR);
             length = getPerception().getGtu().getLength();
             egoSpeed = getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
-            dt = bc.getParameter(ParameterTypes.DT);
+            dt = bc.getParameter(DT);
             try
             {
                 traveledDistance = getPerception().getGtu().getOdometer().minus(getInfo(ODOMETER).getObject());

@@ -7,6 +7,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeAcceleration;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -40,6 +41,9 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 public class IncentiveCourtesy implements VoluntaryIncentive, LmrsParameters
 {
 
+    /** Comfortable deceleration parameter type. */
+    protected static final ParameterTypeAcceleration B = ParameterTypes.B;
+    
     /** {@inheritDoc} */
     @Override
     public final Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics,
@@ -52,7 +56,7 @@ public class IncentiveCourtesy implements VoluntaryIncentive, LmrsParameters
         double dLeftNo = 0;
         double dRightNo = 0;
         double courtesy = behavioralCharacteristics.getParameter(COURTESY);
-        Acceleration b = behavioralCharacteristics.getParameter(ParameterTypes.B);
+        Acceleration b = behavioralCharacteristics.getParameter(B);
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
         Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
