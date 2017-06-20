@@ -6,6 +6,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -35,6 +36,9 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 public class IncentiveHierarchal implements VoluntaryIncentive
 {
 
+    /** Hierarchy parameter. */
+    protected static final ParameterTypeDouble HIERARCHY = LmrsParameters.HIERARCHY;
+    
     /** {@inheritDoc} */
     @Override
     public final Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics,
@@ -43,7 +47,7 @@ public class IncentiveHierarchal implements VoluntaryIncentive
     {
         double dLeft = 0;
         double dRight = 0;
-        double hierarchy = behavioralCharacteristics.getParameter(LmrsParameters.HIERARCHY);
+        double hierarchy = behavioralCharacteristics.getParameter(HIERARCHY);
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
         Speed vDes = carFollowingModel.desiredSpeed(behavioralCharacteristics,
                 perception.getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(RelativeLane.CURRENT)

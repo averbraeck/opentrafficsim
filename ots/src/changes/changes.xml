@@ -3,6 +3,9 @@
   <body>
 
     <release version="0.15.01" date="2017-xx-xx" description="Release 0.15.01">
+      <action issue="OTS-331" type="update">
+        OTS-331. Change ParameterTypes to referenced Types.
+      </action>
     </release>
 
     <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">

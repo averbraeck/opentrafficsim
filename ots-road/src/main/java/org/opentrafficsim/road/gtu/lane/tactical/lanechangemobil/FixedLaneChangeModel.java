@@ -8,6 +8,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -29,6 +30,9 @@ public class FixedLaneChangeModel implements LaneChangeModel, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150211L;
+    
+    /** Look ahead parameter type. */
+    protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
     /** Lane change that will always be returned by this FixedLaneChangeModel. */
     private final LateralDirectionality laneChange;
@@ -51,7 +55,7 @@ public class FixedLaneChangeModel implements LaneChangeModel, Serializable
             final Acceleration laneChangeThreshold, final Acceleration nonPreferredLaneRouteIncentive)
             throws GTUException, ParameterException
     {
-        Length headway = gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
+        Length headway = gtu.getBehavioralCharacteristics().getParameter(LOOKAHEAD);
         GTUFollowingModelOld gtuFollowingModel =
                 (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner()).getCarFollowingModel();
         if (null == this.laneChange)

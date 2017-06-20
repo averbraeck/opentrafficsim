@@ -22,6 +22,7 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
@@ -66,6 +67,9 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
 {
     /** */
     private static final long serialVersionUID = 20151125L;
+    
+    /** Look back parameter type. */
+    protected static final ParameterTypeLength LOOKBACKOLD = ParameterTypes.LOOKBACKOLD;
 
     /** Standard incentive to stay in the current lane. */
     private static final Acceleration STAYINCURRENTLANEINCENTIVE = new Acceleration(0.1, AccelerationUnit.METER_PER_SECOND_2);
@@ -123,8 +127,8 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             // NOTE: delete this if perception takes place independent of the tactical planning (different frequency)
             perception.perceive();
 
-            Length maximumForwardHeadway = laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
-            Length maximumReverseHeadway = laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACKOLD);
+            Length maximumForwardHeadway = laneBasedGTU.getBehavioralCharacteristics().getParameter(LOOKAHEAD);
+            Length maximumReverseHeadway = laneBasedGTU.getBehavioralCharacteristics().getParameter(LOOKBACKOLD);
             Time now = getGtu().getSimulator().getSimulatorTime().getTime();
             Speed speedLimit = perception.getPerceptionCategory(DefaultSimplePerception.class).getSpeedLimit();
 

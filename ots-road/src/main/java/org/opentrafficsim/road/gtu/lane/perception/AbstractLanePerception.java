@@ -13,6 +13,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.perception.AbstractPerception;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -51,6 +52,15 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
 
     /** */
     private static final long serialVersionUID = 20151128L;
+    
+    /** Perception parameter type. */
+    protected static final ParameterTypeLength PERCEPTION = ParameterTypes.PERCEPTION;
+    
+    /** Look ahead parameter type. */
+    protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
+    
+    /** Look back parameter type. */
+    protected static final ParameterTypeLength LOOKBACK = ParameterTypes.LOOKBACK;
 
     /** Lane structure to perform the perception with. */
     private LaneStructure laneStructure = null;
@@ -83,11 +93,11 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
         if (this.laneStructure == null || this.updateTime.lt(getGtu().getSimulator().getSimulatorTime().getTime()))
         {
             // downstream structure length
-            Length down = getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.PERCEPTION);
+            Length down = getGtu().getBehavioralCharacteristics().getParameter(PERCEPTION);
             // upstream structure length
-            Length up = getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACK);
+            Length up = getGtu().getBehavioralCharacteristics().getParameter(LOOKBACK);
             // structure length downstream of split on link not on route
-            Length downSplit = getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
+            Length downSplit = getGtu().getBehavioralCharacteristics().getParameter(LOOKAHEAD);
             // structure length upstream of merge on link not on route
             Length upMerge = Length.max(up, downSplit);
             // negative values for upstream

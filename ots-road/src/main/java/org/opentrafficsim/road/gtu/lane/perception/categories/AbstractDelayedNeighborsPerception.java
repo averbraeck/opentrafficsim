@@ -13,6 +13,7 @@ import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDuration;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.perception.PerceptionException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -39,6 +40,12 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
 
     /** */
     private static final long serialVersionUID = 20170217L;
+    
+    /** Reaction time parameter type. */
+    protected static final ParameterTypeDuration TR = ParameterTypes.TR;
+    
+    /** Time step parameter type. */
+    protected static final ParameterTypeDuration DT = ParameterTypes.DT;
 
     /** First update time. */
     private Time initialTime = null;
@@ -103,8 +110,8 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
             {
                 // TODO The reaction time may differ between observed objects and vary over time
                 BehavioralCharacteristics bc = getPerception().getGtu().getBehavioralCharacteristics();
-                this.reactionTime = bc.getParameter(ParameterTypes.TR);
-                this.plannerTimeStep = bc.getParameter(ParameterTypes.DT);
+                this.reactionTime = bc.getParameter(TR);
+                this.plannerTimeStep = bc.getParameter(DT);
                 double rem;
                 if (this.reactionTime.eq0())
                 {
@@ -343,7 +350,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
          */
         public NeighborsInfoType(final String id)
         {
-            super(id, ParameterTypes.TR);
+            super(id, TR);
         }
 
         /**

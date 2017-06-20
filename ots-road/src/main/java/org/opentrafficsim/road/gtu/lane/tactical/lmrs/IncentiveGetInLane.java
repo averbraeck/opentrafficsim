@@ -5,6 +5,8 @@ import java.util.SortedSet;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeSpeed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
@@ -33,6 +35,12 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
 public class IncentiveGetInLane implements MandatoryIncentive
 {
 
+    /** Congestion speed threshold parameter type. */
+    protected static final ParameterTypeSpeed VCONG = ParameterTypes.VCONG;
+    
+    /** Hierarchy parameter. */
+    protected static final ParameterTypeDouble HIERARCHY = LmrsParameters.HIERARCHY;
+    
     /** {@inheritDoc} */
     @Override
     public Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics, final LanePerception perception,
@@ -40,8 +48,8 @@ public class IncentiveGetInLane implements MandatoryIncentive
             throws ParameterException, OperationalPlanException
     {
 
-        Speed vCong = behavioralCharacteristics.getParameter(ParameterTypes.VCONG);
-        double hierarchy = behavioralCharacteristics.getParameter(LmrsParameters.HIERARCHY);
+        Speed vCong = behavioralCharacteristics.getParameter(VCONG);
+        double hierarchy = behavioralCharacteristics.getParameter(HIERARCHY);
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
         SortedSet<InfrastructureLaneChangeInfo> info = infra.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT);

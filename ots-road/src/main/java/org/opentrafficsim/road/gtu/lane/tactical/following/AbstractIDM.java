@@ -11,7 +11,10 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeAcceleration;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDuration;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.road.gtu.lane.tactical.util.SpeedLimitUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -31,7 +34,25 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 public abstract class AbstractIDM extends AbstractCarFollowingModel
 {
 
-    /** Speed limit adherence factor. */
+    /** Acceleration parameter type. */
+    protected static final ParameterTypeAcceleration A = ParameterTypes.A;
+
+    /** Comfortable deceleration parameter type. */
+    protected static final ParameterTypeAcceleration B = ParameterTypes.B;
+
+    /** Desired headway parameter type. */
+    protected static final ParameterTypeDuration T = ParameterTypes.T;
+
+    /** Stopping distance parameter type. */
+    protected static final ParameterTypeLength S0 = ParameterTypes.S0;
+
+    /** Adjustment deceleration parameter type. */
+    protected static final ParameterTypeAcceleration B0 = ParameterTypes.B0;
+
+    /** Speed limit adherence factor parameter type. */
+    protected static final ParameterTypeDouble FSPEED = ParameterTypes.FSPEED;
+    
+    /** Acceleration flattening. */
     public static final ParameterTypeDouble DELTA =
             new ParameterTypeDouble("delta", "Acceleration flattening exponent towards desired speed.", 4.0, POSITIVE);
 
@@ -41,7 +62,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
             throws ParameterException
     {
         Speed consideredSpeed = SpeedLimitUtil.getLegalSpeedLimit(speedInfo)
-                .multiplyBy(behavioralCharacteristics.getParameter(ParameterTypes.FSPEED));
+                .multiplyBy(behavioralCharacteristics.getParameter(FSPEED));
         Speed maxVehicleSpeed = SpeedLimitUtil.getMaximumVehicleSpeed(speedInfo);
         return consideredSpeed.le(maxVehicleSpeed) ? consideredSpeed : maxVehicleSpeed;
     }
@@ -51,8 +72,8 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
     public final Length desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
             throws ParameterException
     {
-        return behavioralCharacteristics.getParameter(ParameterTypes.S0)
-                .plus(speed.multiplyBy(behavioralCharacteristics.getParameter(ParameterTypes.T)));
+        return behavioralCharacteristics.getParameter(S0)
+                .plus(speed.multiplyBy(behavioralCharacteristics.getParameter(T)));
     }
 
     /**
@@ -75,8 +96,8 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
             final Speed desiredSpeed, final Length desiredHeadway, final SortedMap<Length, Speed> leaders)
             throws ParameterException
     {
-        Acceleration a = behavioralCharacteristics.getParameter(ParameterTypes.A);
-        Acceleration b0 = behavioralCharacteristics.getParameter(ParameterTypes.B0);
+        Acceleration a = behavioralCharacteristics.getParameter(A);
+        Acceleration b0 = behavioralCharacteristics.getParameter(B0);
         double delta = behavioralCharacteristics.getParameter(DELTA);
         double aFree = a.si * (1 - Math.pow(speed.si / desiredSpeed.si, delta));
         // limit deceleration in free term (occurs if speed > desired speed)
@@ -126,7 +147,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
          * equilibrium headway minus the stopping distance (i.e. sStar > s0), which means the driver wants to follow with
          * acceleration. Note that usually the free term determines acceleration in such cases.
          */
-        Length s0 = behavioralCharacteristics.getParameter(ParameterTypes.S0);
+        Length s0 = behavioralCharacteristics.getParameter(S0);
         /*
          * Limit used to be 0, but the IDM is very sensitive there. With a decelerating leader, an ok acceleration in one time
          * step, may results in acceleration < -10 in the next.
@@ -145,8 +166,8 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
     protected final Length dynamicHeadwayTerm(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed,
             final Speed leaderSpeed) throws ParameterException
     {
-        Acceleration a = behavioralCharacteristics.getParameter(ParameterTypes.A);
-        Acceleration b = behavioralCharacteristics.getParameter(ParameterTypes.B);
+        Acceleration a = behavioralCharacteristics.getParameter(A);
+        Acceleration b = behavioralCharacteristics.getParameter(B);
         return new Length(speed.si * (speed.si - leaderSpeed.si) / (2 * Math.sqrt(a.si * b.si)), LengthUnit.SI);
     }
 

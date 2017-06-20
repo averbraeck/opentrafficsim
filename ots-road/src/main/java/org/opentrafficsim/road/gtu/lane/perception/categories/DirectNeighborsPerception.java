@@ -16,6 +16,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -50,6 +51,9 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
 
     /** */
     private static final long serialVersionUID = 20160811L;
+    
+    /** Look ahead parameter type. */
+    protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
     /** Set of followers per relative lane. */
     private final Map<RelativeLane, TimeStampedObject<SortedSet<HeadwayGTU>>> followers = new HashMap<>();

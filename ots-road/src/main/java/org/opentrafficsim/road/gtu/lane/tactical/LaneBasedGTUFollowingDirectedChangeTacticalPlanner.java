@@ -20,6 +20,10 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeAcceleration;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDuration;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
@@ -83,6 +87,21 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
 {
     /** */
     private static final long serialVersionUID = 20160129L;
+    
+    /** Acceleration parameter type. */
+    protected static final ParameterTypeAcceleration A = ParameterTypes.A;
+
+    /** Desired headway parameter type. */
+    protected static final ParameterTypeDuration T = ParameterTypes.T;
+    
+    /** Speed limit adherance factor parameter type. */
+    protected static final ParameterTypeDouble FSPEED = ParameterTypes.FSPEED;
+    
+    /** Look ahead parameter type. */
+    protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
+    
+    /** Comfortable deceleration parameter type. */
+    protected static final ParameterTypeAcceleration B = ParameterTypes.B;
 
     /** Earliest next lane change time (unless we HAVE to change lanes). */
     private Time earliestNextLaneChangeTime = Time.ZERO;
@@ -170,9 +189,9 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);
             BehavioralCharacteristics behavioralCharacteristics = laneBasedGTU.getBehavioralCharacteristics();
             // This is the only interaction between the car-following model and the behavioral characteristics
-            getCarFollowingModelOld().setA(behavioralCharacteristics.getParameter(ParameterTypes.A));
-            getCarFollowingModelOld().setT(behavioralCharacteristics.getParameter(ParameterTypes.T));
-            getCarFollowingModelOld().setFspeed(behavioralCharacteristics.getParameter(ParameterTypes.FSPEED));
+            getCarFollowingModelOld().setA(behavioralCharacteristics.getParameter(A));
+            getCarFollowingModelOld().setT(behavioralCharacteristics.getParameter(T));
+            getCarFollowingModelOld().setFspeed(behavioralCharacteristics.getParameter(FSPEED));
 
             // start with the turn indicator off -- this can change during the method
             laneBasedGTU.setTurnIndicatorStatus(TurnIndicatorStatus.NONE);
@@ -191,7 +210,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             simplePerception.updateSpeedLimit();
 
             // find out where we are going
-            Length forwardHeadway = behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD);
+            Length forwardHeadway = behavioralCharacteristics.getParameter(LOOKAHEAD);
             LanePathInfo lanePathInfo = buildLanePathInfo(laneBasedGTU, forwardHeadway);
             NextSplitInfo nextSplitInfo = determineNextSplit(laneBasedGTU, forwardHeadway);
             Set<Lane> correctLanes = laneBasedGTU.positions(laneBasedGTU.getReference()).keySet();
@@ -294,7 +313,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                     DirectedLaneChangeModel dlcm = new DirectedAltruistic(getPerception());
                     DirectedLaneMovementStep dlms = dlcm.computeLaneChangeAndAcceleration(laneBasedGTU,
                             LateralDirectionality.LEFT, sameLaneTraffic, simplePerception.getNeighboringHeadwaysLeft(),
-                            behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD), simplePerception.getSpeedLimit(),
+                            behavioralCharacteristics.getParameter(LOOKAHEAD), simplePerception.getSpeedLimit(),
                             // changes 1.0 to 0.0, no bias to the left: changed 0.5 to 0.1 (threshold from MOBIL model)
                             Acceleration.ZERO, new Acceleration(0.5, AccelerationUnit.SI),
                             new Duration(0.5, DurationUnit.SECOND));
@@ -341,7 +360,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                     DirectedLaneChangeModel dlcm = new DirectedAltruistic(getPerception());
                     DirectedLaneMovementStep dlms = dlcm.computeLaneChangeAndAcceleration(laneBasedGTU,
                             LateralDirectionality.RIGHT, sameLaneTraffic, simplePerception.getNeighboringHeadwaysRight(),
-                            behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD), simplePerception.getSpeedLimit(),
+                            behavioralCharacteristics.getParameter(LOOKAHEAD), simplePerception.getSpeedLimit(),
                             // 1.0 = bias?
                             Acceleration.ZERO, new Acceleration(0.1, AccelerationUnit.SI),
                             new Duration(0.5, DurationUnit.SECOND));
@@ -557,7 +576,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         DirectedLaneChangeModel dlcm = new DirectedEgoistic(getPerception());
         // TODO make the elasticities 2.0 and 0.1 parameters of the class
         DirectedLaneMovementStep dlms = dlcm.computeLaneChangeAndAcceleration(gtu, direction, sameLaneTraffic, otherLaneTraffic,
-                gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD), simplePerception.getSpeedLimit(),
+                gtu.getBehavioralCharacteristics().getParameter(LOOKAHEAD), simplePerception.getSpeedLimit(),
                 new Acceleration(2.0, AccelerationUnit.SI), new Acceleration(0.1, AccelerationUnit.SI),
                 new Duration(0.5, DurationUnit.SECOND));
         if (dlms.getLaneChange() == null)
@@ -622,13 +641,13 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         boolean stopForEndOrSplit = !sinkAtEnd;
         BehavioralCharacteristics bc = getGtu().getBehavioralCharacteristics();
         Length maxDistance = sinkAtEnd ? new Length(Double.MAX_VALUE, LengthUnit.SI)
-                : Length.min(getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD),
+                : Length.min(getGtu().getBehavioralCharacteristics().getParameter(LOOKAHEAD),
                         lanePathInfo.getPath().getLength().minus(getGtu().getLength().multiplyBy(2.0)));
-        // bc.setParameter(ParameterTypes.B, bc.getParameter(ParameterTypes.B0));
+        // bc.setParameter(B, bc.getParameter(B0));
         AccelerationStep mostLimitingAccelerationStep = getCarFollowingModelOld().computeAccelerationStepWithNoLeader(getGtu(),
                 maxDistance, simplePerception.getSpeedLimit());
-        // bc.resetParameter(ParameterTypes.B);
-        Acceleration minB = bc.getParameter(ParameterTypes.B).neg();
+        // bc.resetParameter(B);
+        Acceleration minB = bc.getParameter(B).neg();
         Acceleration numericallySafeB =
                 Acceleration.max(minB, getGtu().getSpeed().divideBy(mostLimitingAccelerationStep.getDuration()).neg());
         if ((this.syncHeadway != null || this.coopHeadway != null) && mostLimitingAccelerationStep.getAcceleration().gt(minB))

@@ -4,6 +4,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDuration;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -30,6 +32,12 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
  */
 public class IncentiveRoute implements MandatoryIncentive
 {
+    
+    /** Look ahead parameter type. */
+    protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
+    
+    /** Look-ahead time for mandatory lane changes parameter type. */
+    public static final ParameterTypeDuration T0 = ParameterTypes.T0;
 
     /** {@inheritDoc} */
     @Override
@@ -104,8 +112,8 @@ public class IncentiveRoute implements MandatoryIncentive
     public static double getDesireToLeave(final BehavioralCharacteristics bc, final Length x, final int n, final Speed v)
             throws ParameterException
     {
-        double d1 = 1 - x.si / (n * bc.getParameter(ParameterTypes.LOOKAHEAD).si);
-        double d2 = 1 - (x.si / v.si) / (n * bc.getParameter(ParameterTypes.T0).si);
+        double d1 = 1 - x.si / (n * bc.getParameter(LOOKAHEAD).si);
+        double d2 = 1 - (x.si / v.si) / (n * bc.getParameter(T0).si);
         d1 = d2 > d1 ? d2 : d1;
         return d1 < 0 ? 0 : d1;
     }

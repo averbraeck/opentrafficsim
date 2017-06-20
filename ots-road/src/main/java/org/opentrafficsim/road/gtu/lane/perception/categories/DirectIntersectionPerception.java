@@ -16,6 +16,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -56,6 +57,9 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
 
     /** */
     private static final long serialVersionUID = 20160811L;
+    
+    /** Look ahead parameter type. */
+    protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
     /** Set of traffic lights. */
     private Map<RelativeLane, TimeStampedObject<SortedSet<HeadwayTrafficLight>>> trafficLights = new HashMap<>();
@@ -148,7 +152,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                 CrossSectionLink conflictingLink = otherConflict.getLane().getParentLink();
 
                 // TODO get from link combination (needs to be a map property on the links)
-                Length lookAhead = getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
+                Length lookAhead = getGtu().getBehavioralCharacteristics().getParameter(LOOKAHEAD);
                 Length conflictingVisibility = lookAhead;
                 Speed conflictingSpeedLimit;
                 try
