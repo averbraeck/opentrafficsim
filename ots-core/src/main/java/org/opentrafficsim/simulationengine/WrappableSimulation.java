@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 import javax.naming.NamingException;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.AbstractProperty;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.network.NetworkException;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * Requirements for demonstration that can be shown in the SuperDemo.
@@ -63,4 +63,12 @@ public interface WrappableSimulation
      * @return ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the list of visible properties
      */
     ArrayList<AbstractProperty<?>> getProperties();
+
+    /**
+     * Set the number of the next spawned replication.
+     * @param nextReplication Integer; the next replication number, or null to use the built-in auto-incrementing replication
+     *            counter
+     */
+    void setNextReplication(Integer nextReplication);
+
 }
