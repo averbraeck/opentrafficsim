@@ -4,17 +4,18 @@ import java.io.Serializable;
 
 import javax.naming.NamingException;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 
 /**
  * Construct a DSOL DEVSSimulator or DEVSAnimator the easy way.
@@ -50,6 +51,26 @@ public class SimpleSimulator extends OTSDEVSSimulator implements SimpleSimulator
         setPauseOnError(true);
         initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime), warmupPeriod, runLength,
                 model), ReplicationMode.TERMINATING);
+    }
+
+    /**
+     * Create a simulation engine with animation and prescribed replication number; the easy way. PauseOnError is set to true;
+     * @param startTime Time; the start time of the simulation
+     * @param warmupPeriod Duration; the warm up period of the simulation (use new Duration(0, SECOND) if you don't know what
+     *            this is)
+     * @param runLength Duration; the duration of the simulation
+     * @param model OTSModelInterface; the simulation to execute
+     * @param replication int; the replication number
+     * @throws SimRuntimeException on ???
+     * @throws NamingException when context for the animation cannot be created
+     * @throws PropertyException when one of the user modified properties has the empty string as key
+     */
+    public SimpleSimulator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
+            final OTSModelInterface model, final int replication) throws SimRuntimeException, NamingException, PropertyException
+    {
+        setPauseOnError(true);
+        initialize(new OTSReplication("rep" + replication, new OTSSimTimeDouble(startTime), warmupPeriod, runLength, model),
+                ReplicationMode.TERMINATING);
     }
 
     /**
