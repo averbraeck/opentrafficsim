@@ -6,6 +6,9 @@
       <action issue="OTS-331" type="update">
         OTS-331. Change ParameterTypes to referenced Types.
       </action>
+      <action issue="OTS-337" type="fix">
+        OTS-337. RoadSampler that starts for t>0s may give a NullPointer
+      </action>
     </release>
 
     <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">
