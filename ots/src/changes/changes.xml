@@ -7,7 +7,10 @@
         OTS-331. Change ParameterTypes to referenced Types.
       </action>
       <action issue="OTS-337" type="fix">
-        OTS-337. RoadSampler that starts for t>0s may give a NullPointer
+        OTS-337. RoadSampler that starts for t&gt;0s may give a NullPointer
+      </action>
+      <action issue="OTS-333" type="update">
+        OTS-333. Create interface for getId()
       </action>
     </release>
 
