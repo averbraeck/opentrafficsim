@@ -1,5 +1,7 @@
 package ahfe;
 
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,35 +15,37 @@ import java.util.zip.ZipOutputStream;
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.language.Throw;
-import nl.tudelft.simulation.language.io.URLResource;
-
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.AbstractProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
+import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.sampling.LinkData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
-import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
+import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.language.Throw;
+import nl.tudelft.simulation.language.io.URLResource;
 
 /**
  * Simulation for AHFE congress.
@@ -54,7 +58,7 @@ import org.opentrafficsim.simulationengine.OTSSimulationException;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class AHFESimulation extends AbstractWrappableSimulation
+public class AHFEAnimation extends AbstractWrappableAnimation
 {
 
     /** Warm-up time. */
@@ -122,7 +126,7 @@ public class AHFESimulation extends AbstractWrappableSimulation
      * @param leftDemand left fraction, per road
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AHFESimulation(final Integer replication, final String anticipationStrategy, final Duration reactionTime,
+    public AHFEAnimation(final Integer replication, final String anticipationStrategy, final Duration reactionTime,
             final Duration anticipationTime, final double truckFraction, final double distanceError, final double speedError,
             final double accelerationError, final Frequency leftDemand, final Frequency rightDemand, final double leftFraction)
     {
@@ -432,13 +436,14 @@ public class AHFESimulation extends AbstractWrappableSimulation
             {
                 try
                 {
-                    AHFESimulation model = new AHFESimulation(finalReplication, finalAnticipationStrategy, finalReactionTime,
+                    AHFEAnimation model = new AHFEAnimation(finalReplication, finalAnticipationStrategy, finalReactionTime,
                             finalAnticipationTime, finalTruckFraction, finalDistanceError, finalSpeedError,
                             finalAccelerationError, finalLeftDemand, finalRightDemand, finalLeftFraction);
                     System.out.println("Setting up replication " + finalReplication);
                     model.setNextReplication(finalReplication);
                     // 1 hour simulation run for testing
-                    model.buildSimulator(Time.ZERO, Duration.ZERO, Duration.createSI(SIMEND.si), new ArrayList<AbstractProperty<?>>());
+                    model.buildAnimator(Time.ZERO, Duration.ZERO, Duration.createSI(SIMEND.si), new ArrayList<Property<?>>(),
+                            null, true);
                     if (finalAutoRun)
                     {
                         int lastReportedTime = -1;
@@ -457,7 +462,6 @@ public class AHFESimulation extends AbstractWrappableSimulation
                             }
                             catch (SimRuntimeException sre)
                             {
-                                sre.printStackTrace();
                                 if (sre.getCause() != null && sre.getCause().getCause() != null
                                         && sre.getCause().getCause().getMessage().equals(
                                                 "Model has calcalated a negative infinite or negative max value acceleration."))
@@ -556,9 +560,23 @@ public class AHFESimulation extends AbstractWrappableSimulation
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel() throws OTSSimulationException
+    protected final OTSModelInterface makeModel(final GTUColorer colorer) throws OTSSimulationException
     {
-        return new AHFEModel();
+        return new AHFEModel(colorer);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected final void addAnimationToggles()
+    {
+        AnimationToggles.setTextAnimationTogglesStandard(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected final Double makeAnimationRectangle()
+    {
+        return new Rectangle2D.Double(-50, -100, 8050, 150);
     }
 
     /**
@@ -573,10 +591,15 @@ public class AHFESimulation extends AbstractWrappableSimulation
         /** The network. */
         private OTSNetwork network;
 
+        /** Colorer. */
+        private final GTUColorer colorer;
+
         /**
+         * @param colorer colorer
          */
-        AHFEModel()
+        AHFEModel(final GTUColorer colorer)
         {
+            this.colorer = colorer;
         }
 
         /** {@inheritDoc} */
@@ -585,10 +608,10 @@ public class AHFESimulation extends AbstractWrappableSimulation
         public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
                 throws SimRuntimeException, RemoteException
         {
-            AHFESimulation.this.simulator = theSimulator;
+            AHFEAnimation.this.simulator = theSimulator;
 
-            AHFESimulation.this.sampler = new RoadSampler((OTSDEVSSimulatorInterface) theSimulator);
-            AHFESimulation.this.sampler.registerExtendedDataType(new TimeToCollision());
+            AHFEAnimation.this.sampler = new RoadSampler((OTSDEVSSimulatorInterface) theSimulator);
+            AHFEAnimation.this.sampler.registerExtendedDataType(new TimeToCollision());
             try
             {
                 InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml");
@@ -609,7 +632,7 @@ public class AHFESimulation extends AbstractWrappableSimulation
                 registerLinkToSampler(linkData, Length.ZERO, linkData.getLength().minus(ignoreEnd));
 
                 // Generator
-                AHFEUtil.createDemand(this.network, null, (OTSDEVSSimulatorInterface) theSimulator, getReplication(),
+                AHFEUtil.createDemand(this.network, this.colorer, (OTSDEVSSimulatorInterface) theSimulator, getReplication(),
                         getAnticipationStrategy(), getReactionTime(), getAnticipationTime(), getTruckFraction(), SIMEND,
                         getLeftDemand(), getRightDemand(), getLeftFraction(), getDistanceError(), getSpeedError(),
                         getAccelerationError());
@@ -633,7 +656,7 @@ public class AHFESimulation extends AbstractWrappableSimulation
             {
                 Length start = laneData.getLength().multiplyBy(startDistance.si / linkData.getLength().si);
                 Length end = laneData.getLength().multiplyBy(endDistance.si / linkData.getLength().si);
-                AHFESimulation.this.sampler.registerSpaceTimeRegion(new SpaceTimeRegion(
+                AHFEAnimation.this.sampler.registerSpaceTimeRegion(new SpaceTimeRegion(
                         new KpiLaneDirection(laneData, KpiGtuDirectionality.DIR_PLUS), start, end, WARMUP, SIMEND));
             }
         }
@@ -643,7 +666,7 @@ public class AHFESimulation extends AbstractWrappableSimulation
         @Override
         public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
         {
-            return AHFESimulation.this.simulator;
+            return AHFEAnimation.this.simulator;
         }
 
         /** {@inheritDoc} */
