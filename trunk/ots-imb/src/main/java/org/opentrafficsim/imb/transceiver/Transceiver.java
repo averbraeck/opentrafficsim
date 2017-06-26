@@ -1,5 +1,6 @@
 package org.opentrafficsim.imb.transceiver;
 
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
 
@@ -17,7 +18,7 @@ import nl.tno.imb.TByteBuffer;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface Transceiver
+public interface Transceiver extends Identifiable
 {
     /**
      * Retrieve the id for the Transceiver channel, e.g. "GTU" or "Simulator Control".

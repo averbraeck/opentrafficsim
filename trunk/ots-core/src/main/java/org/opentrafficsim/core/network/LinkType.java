@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.Type;
 import org.opentrafficsim.core.gtu.GTUType;
 
@@ -25,7 +26,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LinkType extends Type<LinkType> implements Serializable
+public class LinkType extends Type<LinkType> implements Serializable, Identifiable
 {
     /** */
     private static final long serialVersionUID = 20140821L;

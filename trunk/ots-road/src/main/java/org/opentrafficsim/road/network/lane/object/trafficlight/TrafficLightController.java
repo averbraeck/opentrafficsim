@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.lane.object.trafficlight;
 
 import org.djunits.value.vdouble.scalar.Duration;
+import org.opentrafficsim.base.Identifiable;
 
 /**
  * Interface for a controller for a number of traffic lights. The controller knows of groups of traffic lights that belong to
@@ -15,7 +16,7 @@ import org.djunits.value.vdouble.scalar.Duration;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface TrafficLightController
+public interface TrafficLightController extends Identifiable
 {
     /** @return the controller id. */
     String getId();

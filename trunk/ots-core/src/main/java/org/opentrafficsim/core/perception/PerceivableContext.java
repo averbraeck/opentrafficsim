@@ -2,6 +2,7 @@ package org.opentrafficsim.core.perception;
 
 import java.util.Set;
 
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.gtu.GTU;
 
 /**
@@ -17,7 +18,7 @@ import org.opentrafficsim.core.gtu.GTU;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface PerceivableContext
+public interface PerceivableContext extends Identifiable
 {
     /**
      * Get a descriptive Id of the perceivable context (e.g., useful for debugging purposes).

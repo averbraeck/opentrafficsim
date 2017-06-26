@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.object;
 
-import org.opentrafficsim.base.Identifyable;
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
@@ -18,7 +18,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface InvisibleObjectInterface extends Identifyable
+public interface InvisibleObjectInterface extends Identifiable
 {
     
     /**

@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 
@@ -23,7 +24,7 @@ import nl.tudelft.simulation.immutablecollections.ImmutableSet;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public interface Node extends Locatable, Serializable
+public interface Node extends Locatable, Serializable, Identifiable
 {
     /**
      * Return the network in which this link is registered. Cannot be null.

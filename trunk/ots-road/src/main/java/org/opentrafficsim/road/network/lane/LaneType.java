@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.Type;
 import org.opentrafficsim.core.gtu.GTUType;
 
@@ -26,7 +27,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class LaneType extends Type<LaneType> implements Serializable
+public class LaneType extends Type<LaneType> implements Serializable, Identifiable
 {
     /** */
     private static final long serialVersionUID = 20140821L;

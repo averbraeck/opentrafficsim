@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTU;
@@ -23,7 +24,7 @@ import nl.tudelft.simulation.event.EventType;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface Link extends Locatable, Serializable
+public interface Link extends Locatable, Serializable, Identifiable
 {
     /**
      * Return the network in which this link is registered. Cannot be null.

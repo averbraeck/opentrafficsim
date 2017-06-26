@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.road.network.factory.osm.events.WarningEvent;
 import org.opentrafficsim.road.network.factory.osm.events.WarningListener;
 
@@ -18,7 +19,7 @@ import org.opentrafficsim.road.network.factory.osm.events.WarningListener;
  * initial version 31 dec. 2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
-public class OSMLink implements Serializable
+public class OSMLink implements Serializable, Identifiable
 {
     /** */
     private static final long serialVersionUID = 20141231L;

@@ -2,6 +2,8 @@ package org.opentrafficsim.core.perception;
 
 import java.io.Serializable;
 
+import org.opentrafficsim.base.Identifiable;
+
 /**
  * Information about a perceived object, which can be a GTU, a road sign, a traffic light, or an obstacle.
  * <p>
@@ -13,7 +15,7 @@ import java.io.Serializable;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface PerceivedObject extends Serializable
+public interface PerceivedObject extends Serializable, Identifiable
 {
     //
 }

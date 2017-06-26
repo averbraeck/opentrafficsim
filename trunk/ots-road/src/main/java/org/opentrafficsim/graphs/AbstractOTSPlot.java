@@ -14,6 +14,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.event.EventType;
@@ -33,7 +34,7 @@ import nl.tudelft.simulation.immutablecollections.ImmutableList;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 public abstract class AbstractOTSPlot extends JFrame
-        implements Dataset, ActionListener, MultipleViewerChart, LaneBasedGTUSampler
+        implements Dataset, ActionListener, MultipleViewerChart, LaneBasedGTUSampler, Identifiable
 {
 
     /** */
