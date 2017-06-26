@@ -22,7 +22,6 @@ import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 
@@ -135,8 +134,7 @@ public class RoadSampler extends Sampler implements EventListenerInterface
         {
             try
             {
-                DirectedLanePosition dlp = gtu.getReferencePosition();
-                if (dlp.getLane().equals(lane) && sameDirection(kpiLaneDirection.getKpiDirection(), dlp.getGtuDirection()))
+                if (sameDirection(kpiLaneDirection.getKpiDirection(), gtu.getDirection(lane)))
                 {
                     // Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_addition}
                     notify(new TimedEvent<>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), gtu, count },
