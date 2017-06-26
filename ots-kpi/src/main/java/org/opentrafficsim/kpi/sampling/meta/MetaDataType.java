@@ -2,6 +2,7 @@ package org.opentrafficsim.kpi.sampling.meta;
 
 import java.util.Set;
 
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.TrajectoryAcceptList;
 
@@ -19,7 +20,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> class of meta data
  */
-public abstract class MetaDataType<T>
+public abstract class MetaDataType<T> implements Identifiable
 {
 
     /** Id. */

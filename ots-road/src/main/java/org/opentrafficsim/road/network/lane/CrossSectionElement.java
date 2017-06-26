@@ -8,6 +8,7 @@ import java.util.List;
 import javax.media.j3d.Bounds;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -32,7 +33,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public abstract class CrossSectionElement extends EventProducer implements Locatable, Serializable
+public abstract class CrossSectionElement extends EventProducer implements Locatable, Serializable, Identifiable
 {
     /** */
     private static final long serialVersionUID = 20150826L;

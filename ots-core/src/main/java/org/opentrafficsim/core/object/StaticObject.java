@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.media.j3d.Bounds;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.Network;
@@ -26,7 +27,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class StaticObject extends EventProducer implements ObjectInterface, Serializable
+public class StaticObject extends EventProducer implements ObjectInterface, Serializable, Identifiable
 {
     /** */
     private static final long serialVersionUID = 20160400L;

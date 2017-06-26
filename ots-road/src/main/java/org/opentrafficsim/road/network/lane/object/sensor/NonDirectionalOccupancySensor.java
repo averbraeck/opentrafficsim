@@ -3,6 +3,7 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 
@@ -20,7 +21,7 @@ import nl.tudelft.simulation.event.EventType;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface NonDirectionalOccupancySensor extends Serializable
+public interface NonDirectionalOccupancySensor extends Serializable, Identifiable
 {
     /** @return the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the sensor. */
     RelativePosition.TYPE getPositionTypeEntry();

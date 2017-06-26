@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.io.Serializable;
 
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.gtu.GTU;
 
 /**
@@ -17,7 +18,7 @@ import org.opentrafficsim.core.gtu.GTU;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> the type of the perceived object
  */
-public class PerceivedObjectType<T> implements Serializable
+public class PerceivedObjectType<T> implements Serializable, Identifiable
 {
     /** */
     private static final long serialVersionUID = 20160505L;

@@ -3,6 +3,7 @@ package org.opentrafficsim.kpi.interfaces;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.base.Identifiable;
 
 /**
  * <p>
@@ -14,7 +15,7 @@ import org.djunits.value.vdouble.scalar.Length;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface LinkDataInterface
+public interface LinkDataInterface extends Identifiable
 {
 
     /**

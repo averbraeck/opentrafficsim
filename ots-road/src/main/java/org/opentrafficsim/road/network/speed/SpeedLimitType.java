@@ -2,6 +2,7 @@ package org.opentrafficsim.road.network.speed;
 
 import java.io.Serializable;
 
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.Type;
 
 import nl.tudelft.simulation.language.Throw;
@@ -17,7 +18,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> Class of speed info that is linked to the speed limit type.
  */
-public class SpeedLimitType<T> extends Type<SpeedLimitType<T>> implements Serializable
+public class SpeedLimitType<T> extends Type<SpeedLimitType<T>> implements Serializable, Identifiable
 {
 
     /** */

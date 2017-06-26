@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.IllegalFormatException;
 
 import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.Type;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -21,9 +22,9 @@ import nl.tudelft.simulation.language.Throw;
  * @param <T> Class of the value.
  */
 public abstract class AbstractParameterType<T extends DoubleScalarInterface> extends Type<AbstractParameterType<?>>
-        implements Serializable
+        implements Serializable, Identifiable
 {
-
+    
     /** */
     private static final long serialVersionUID = 20160400L;
 

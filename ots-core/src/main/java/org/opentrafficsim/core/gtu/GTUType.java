@@ -2,6 +2,7 @@ package org.opentrafficsim.core.gtu;
 
 import java.io.Serializable;
 
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.Type;
 
 import nl.tudelft.simulation.language.Throw;
@@ -19,7 +20,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public final class GTUType extends Type<GTUType> implements Serializable
+public final class GTUType extends Type<GTUType> implements Serializable, Identifiable
 {
     /** */
     private static final long serialVersionUID = 20141231L;

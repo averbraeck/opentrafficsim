@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.Type;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -197,7 +198,7 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      * @param <T> type of information.
      */
-    public static class DelayedInfoType<T> extends Type<DelayedInfoType<T>>
+    public static class DelayedInfoType<T> extends Type<DelayedInfoType<T>> implements Identifiable
     {
 
         /** Id. */

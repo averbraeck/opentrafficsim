@@ -4,6 +4,7 @@ import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vfloat.scalar.FloatScalar;
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 
@@ -26,7 +27,7 @@ import nl.tudelft.simulation.language.Throw;
  * @param <O> output type
  * @param <S> storage type
  */
-public abstract class ExtendedDataType<T, O, S>
+public abstract class ExtendedDataType<T, O, S> implements Identifiable
 {
 
     /** Id. */

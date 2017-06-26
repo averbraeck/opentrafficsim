@@ -1,5 +1,7 @@
 package org.opentrafficsim.kpi.interfaces;
 
+import org.opentrafficsim.base.Identifiable;
+
 /**
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -10,7 +12,7 @@ package org.opentrafficsim.kpi.interfaces;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface NodeDataInterface
+public interface NodeDataInterface extends Identifiable
 {
 
     /**

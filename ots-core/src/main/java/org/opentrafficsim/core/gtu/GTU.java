@@ -6,6 +6,7 @@ import java.io.Serializable;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
@@ -38,7 +39,7 @@ import nl.tudelft.simulation.immutablecollections.ImmutableSet;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface GTU extends Locatable, Serializable, EventProducerInterface
+public interface GTU extends Locatable, Serializable, EventProducerInterface, Identifiable
 {
     /** @return the id of the GTU */
     String getId();
