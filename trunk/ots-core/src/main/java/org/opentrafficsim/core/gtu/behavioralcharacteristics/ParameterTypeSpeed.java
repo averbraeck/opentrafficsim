@@ -14,7 +14,7 @@ import org.djunits.value.vdouble.scalar.Speed;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeSpeed extends ParameterType<Speed> implements Serializable
+public class ParameterTypeSpeed extends ParameterTypeNumeric<Speed> implements Serializable
 {
 
     /** */
@@ -47,7 +47,7 @@ public class ParameterTypeSpeed extends ParameterType<Speed> implements Serializ
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeSpeed(final String id, final String description, final Constraint constraint)
+    public ParameterTypeSpeed(final String id, final String description, final NumericConstraint constraint)
     {
         super(id, description, Speed.class, constraint);
     }
@@ -59,7 +59,7 @@ public class ParameterTypeSpeed extends ParameterType<Speed> implements Serializ
      * @param defaultValue Default value.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeSpeed(final String id, final String description, final Speed defaultValue, final Constraint constraint)
+    public ParameterTypeSpeed(final String id, final String description, final Speed defaultValue, final NumericConstraint constraint)
     {
         super(id, description, Speed.class, defaultValue, constraint);
     }

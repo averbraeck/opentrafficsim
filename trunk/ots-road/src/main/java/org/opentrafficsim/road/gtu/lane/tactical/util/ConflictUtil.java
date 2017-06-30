@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util;
 
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Constraint.ATLEASTONE;
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Constraint.POSITIVE;
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.ATLEASTONE;
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.POSITIVE;
 
 import java.io.Serializable;
 import java.util.ArrayList;

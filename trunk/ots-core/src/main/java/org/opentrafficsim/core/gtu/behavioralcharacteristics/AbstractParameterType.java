@@ -1,13 +1,10 @@
 package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.io.Serializable;
-import java.util.IllegalFormatException;
 
-import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.Type;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.tudelft.simulation.language.Throw;
 
 /**
@@ -21,8 +18,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> Class of the value.
  */
-public abstract class AbstractParameterType<T extends DoubleScalarInterface> extends Type<AbstractParameterType<?>>
-        implements Serializable, Identifiable
+public abstract class AbstractParameterType<T> extends Type<AbstractParameterType<?>> implements Serializable, Identifiable
 {
 
     /** */
@@ -34,144 +30,16 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
     /** Parameter description or full name. */
     private final String description;
 
+    /** Default constraint. */
+    private final Constraint<? super T> constraint;
+
     /** Class of the value. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final Class<T> valueClass;
+    private final Class<T> valueClass;
 
     /** Default value. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected final T defaultValue;
-
-    /** Default constraint. */
-    private final Constraint constraint;
-
-    /** List of default constraint for ParameterTypes. */
-    public enum Constraint
-    {
-
-        /** Checks for &gt;0. */
-        POSITIVE("Value of parameter '%s' must be above zero.")
-        {
-            /** {@inheritDoc} */
-            @Override
-            boolean fails(final double value)
-            {
-                return value <= 0.0;
-            }
-        },
-
-        /** Checks for &lt;0. */
-        NEGATIVE("Value of parameter '%s' must be below zero.")
-        {
-            /** {@inheritDoc} */
-            @Override
-            boolean fails(final double value)
-            {
-                return value >= 0.0;
-            }
-        },
-
-        /** Checks for &ge;0. */
-        POSITIVEZERO("Value of parameter '%s' may not be below zero.")
-        {
-            /** {@inheritDoc} */
-            @Override
-            boolean fails(final double value)
-            {
-                return value < 0.0;
-            }
-        },
-
-        /** Checks for &le;0. */
-        NEGATIVEZERO("Value of parameter '%s' may not be above zero.")
-        {
-            /** {@inheritDoc} */
-            @Override
-            boolean fails(final double value)
-            {
-                return value > 0.0;
-            }
-        },
-
-        /** Checks for &ne;0. */
-        NONZERO("Value of parameter '%s' may not be zero.")
-        {
-            /** {@inheritDoc} */
-            @Override
-            boolean fails(final double value)
-            {
-                return value == 0.0;
-            }
-        },
-
-        /** Checks for range [0...1]. */
-        UNITINTERVAL("Value of parameter '%s' must be in range [0...1]")
-        {
-            /** {@inheritDoc} */
-            @Override
-            boolean fails(final double value)
-            {
-                return value < 0.0 || value > 1.0;
-            }
-        },
-
-        /** Checks for &ge;1. */
-        ATLEASTONE("Value of parameter '%s' may not be below one.")
-        {
-            /** {@inheritDoc} */
-            @Override
-            boolean fails(final double value)
-            {
-                return value < 1.0;
-            }
-        };
-
-        /** Message for value failure, pointing to a parameter using '%s'. */
-        private final String failMessage;
-
-        /**
-         * Constructor with message for value failure, pointing to a parameter using '%s'.
-         * @param failMessage Message for value failure, pointing to a parameter using '%s'.
-         */
-        @SuppressWarnings("redundantmodifier")
-        @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED")
-        Constraint(final String failMessage)
-        {
-            Throw.whenNull(failMessage,
-                    "Default parameter constraint '%s' has null as fail message as given to the constructor,"
-                            + " which is not allowed.",
-                    this);
-            try
-            {
-                // return value can be ignored
-                String.format(failMessage, "dummy");
-            }
-            catch (IllegalFormatException ife)
-            {
-                throw new RuntimeException("Default parameter constraint " + this.toString()
-                        + " has an illegal formatting of the fail message as given to the constructor."
-                        + " It should contain a single '%s'.", ife);
-            }
-            this.failMessage = failMessage;
-        }
-
-        /**
-         * Returns a message for value failure, pointing to a parameter using '%s'.
-         * @return Message for value failure, pointing to a parameter using '%s'.
-         */
-        String failMessage()
-        {
-            return this.failMessage;
-        }
-
-        /**
-         * Checks whether the value fails to comply with constraints.
-         * @param value Value to check.
-         * @return Whether the value fails to comply with constraints.
-         */
-        abstract boolean fails(double value);
-
-    }
 
     /**
      * Constructor without default value and constraint.
@@ -182,6 +50,19 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
     public AbstractParameterType(final String id, final String description, final Class<T> valueClass)
     {
         this(id, description, valueClass, null, null, false);
+    }
+
+    /**
+     * Constructor without default value and constraint.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     * @param valueClass Class of the value.
+     * @param constraint Constraint to check the value.
+     */
+    public AbstractParameterType(final String id, final String description, final Class<T> valueClass,
+            final Constraint<? super T> constraint)
+    {
+        this(id, description, valueClass, null, constraint, false);
     }
 
     /**
@@ -197,28 +78,15 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
     }
 
     /**
-     * Constructor without default value, with constraint.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
-     * @param constraint Constraint for parameter values.
-     */
-    public AbstractParameterType(final String id, final String description, final Class<T> valueClass,
-            final Constraint constraint)
-    {
-        this(id, description, valueClass, null, constraint, false);
-    }
-
-    /**
-     * Constructor with default value and constraint.
+     * Constructor with default value, without constraint.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param valueClass Class of the value.
      * @param defaultValue Default value.
-     * @param constraint Constraint for parameter values.
+     * @param constraint Constraint to check the value.
      */
     public AbstractParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue,
-            final Constraint constraint)
+            final Constraint<? super T> constraint)
     {
         this(id, description, valueClass, defaultValue, constraint, true);
     }
@@ -229,11 +97,11 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
      * @param description Parameter description or full name.
      * @param valueClass Class of the value.
      * @param defaultValue Default value.
-     * @param constraint Check for parameter values.
+     * @param constraint Constraint to check the value.
      * @param hasDefaultValue Whether to check the default value for null.
      */
     protected AbstractParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue,
-            final Constraint constraint, final boolean hasDefaultValue)
+            final Constraint<? super T> constraint, final boolean hasDefaultValue)
     {
         Throw.whenNull(id, "Id may not be null.");
         Throw.whenNull(description, "Description may not be null.");
@@ -280,6 +148,15 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
     }
 
     /**
+     * Returns the class of the value.
+     * @return valueClass Class of the value.
+     */
+    public final Class<T> getValueClass()
+    {
+        return this.valueClass;
+    }
+    
+    /**
      * Returns whether this parameter type has a default value.
      * @return Whether this parameter type has a default value.
      */
@@ -293,20 +170,35 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
      * @return defaultValue Default value.
      * @throws ParameterException If no default value was set.
      */
-    public abstract Object getDefaultValue() throws ParameterException;
+    public final T getDefaultValue() throws ParameterException
+    {
+        Throw.when(null == this.defaultValue, ParameterException.class, "No default value was set for '%s'.", getId());
+        return this.defaultValue;
+    }
 
     /**
      * Checks the default constraints given with the parameter type.
      * @param value The value to check.
      * @throws ParameterException If the value does not comply with constraints.
      */
-    protected final void checkConstraint(final T value) throws ParameterException
+    public final void checkConstraint(final T value) throws ParameterException
     {
         if (this.constraint == null)
         {
             return;
         }
-        Throw.when(this.constraint.fails(value.getSI()), ParameterException.class, this.constraint.failMessage(), this.id);
+        Throw.when(this.constraint.fails(value), ParameterException.class, this.constraint.failMessage(), this.getId());
+    }
+
+    /**
+     * Method to overwrite for checks with constraints.
+     * @param value Value to check with constraints.
+     * @param bc Set of behavioral characteristics.
+     * @throws ParameterException If the value does not comply with constraints.
+     */
+    public void check(final T value, final BehavioralCharacteristics bc) throws ParameterException
+    {
+        //
     }
 
     /**
@@ -323,7 +215,6 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.constraint == null) ? 0 : this.constraint.hashCode());
         result = prime * result + ((this.defaultValue == null) ? 0 : this.defaultValue.hashCode());
         result = prime * result + this.description.hashCode();
         result = prime * result + this.id.hashCode();
@@ -357,10 +248,6 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
             return false;
         }
         if (!this.valueClass.equals(other.valueClass))
-        {
-            return false;
-        }
-        if (this.constraint != other.constraint)
         {
             return false;
         }

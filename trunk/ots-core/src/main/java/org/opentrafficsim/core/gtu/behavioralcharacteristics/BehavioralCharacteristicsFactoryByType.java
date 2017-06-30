@@ -49,8 +49,8 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
      * @param value the value of the parameter
      * @param <T> type
      */
-    public <T extends DoubleScalarInterface> void addParameter(final GTUType gtuType, final ParameterType<T> parameterType,
-            final T value)
+    public <T extends DoubleScalarInterface> void addParameter(final GTUType gtuType,
+            final AbstractParameterType<T> parameterType, final T value)
     {
         assureTypeInMap(gtuType);
         this.map.get(gtuType).add(new FixedEntry<>(parameterType, value));
@@ -77,7 +77,7 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
      * @param <T> type
      */
     public <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>> void addGaussianParameter(final GTUType gtuType,
-            final ParameterType<T> parameterType, final T mu, final T sig, final StreamInterface stream)
+            final ParameterTypeNumeric<T> parameterType, final T mu, final T sig, final StreamInterface stream)
     {
         assureTypeInMap(gtuType);
         this.map.get(gtuType).add(new GaussianEntry<>(parameterType, mu, sig, stream));
@@ -156,7 +156,7 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
         private static final long serialVersionUID = 20170400L;
 
         /** Parameter type. */
-        private final ParameterType<T> parameterType;
+        private final ParameterTypeNumeric<T> parameterType;
 
         /** Mean value. */
         private final T mu;
@@ -170,7 +170,7 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
          * @param sig standard deviation
          * @param stream random number stream
          */
-        GaussianEntry(final ParameterType<T> parameterType, final T mu, final T sig, final StreamInterface stream)
+        GaussianEntry(final ParameterTypeNumeric<T> parameterType, final T mu, final T sig, final StreamInterface stream)
         {
             this.parameterType = parameterType;
             this.mu = mu;
@@ -276,13 +276,13 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      * @param <T> value type
      */
-    private final class FixedEntry<T extends DoubleScalarInterface> implements ParameterEntry, Serializable
+    private final class FixedEntry<T> implements ParameterEntry, Serializable
     {
         /** */
         private static final long serialVersionUID = 20170400L;
 
         /** Parameter type. */
-        private final ParameterType<T> parameterType;
+        private final AbstractParameterType<T> parameterType;
 
         /** Value. */
         private final T value;
@@ -291,7 +291,7 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
          * @param parameterType the parameter type
          * @param value the fixed value
          */
-        FixedEntry(final ParameterType<T> parameterType, final T value)
+        FixedEntry(final AbstractParameterType<T> parameterType, final T value)
         {
             this.parameterType = parameterType;
             this.value = value;

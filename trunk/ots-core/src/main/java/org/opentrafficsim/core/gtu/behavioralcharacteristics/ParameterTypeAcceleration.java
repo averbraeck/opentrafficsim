@@ -14,7 +14,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeAcceleration extends ParameterType<Acceleration> implements Serializable
+public class ParameterTypeAcceleration extends ParameterTypeNumeric<Acceleration> implements Serializable
 {
 
     /** */
@@ -47,7 +47,7 @@ public class ParameterTypeAcceleration extends ParameterType<Acceleration> imple
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeAcceleration(final String id, final String description, final Constraint constraint)
+    public ParameterTypeAcceleration(final String id, final String description, final NumericConstraint constraint)
     {
         super(id, description, Acceleration.class, constraint);
     }
@@ -60,7 +60,7 @@ public class ParameterTypeAcceleration extends ParameterType<Acceleration> imple
      * @param constraint Constraint for parameter values.
      */
     public ParameterTypeAcceleration(final String id, final String description, final Acceleration defaultValue,
-            final Constraint constraint)
+            final NumericConstraint constraint)
     {
         super(id, description, Acceleration.class, defaultValue, constraint);
     }

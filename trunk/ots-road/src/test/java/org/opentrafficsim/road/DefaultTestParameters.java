@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterType;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeBoolean;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeInteger;
@@ -49,13 +49,13 @@ public final class DefaultTestParameters
         {
             for (Field field : fields)
             {
-                if (ParameterType.class.isAssignableFrom(field.getType()))
+                if (ParameterTypeNumeric.class.isAssignableFrom(field.getType()))
                 {
                     try
                     {
                         field.setAccessible(true);
                         @SuppressWarnings("rawtypes")
-                        ParameterType p = (ParameterType) field.get(ParameterTypes.class);
+                        ParameterTypeNumeric p = (ParameterTypeNumeric) field.get(ParameterTypes.class);
                         bc.setParameter(p, p.getDefaultValue());
                     }
                     catch (ParameterException pe)

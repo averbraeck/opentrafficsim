@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.djunits.unit.DimensionlessUnit;
 import org.djunits.value.vdouble.scalar.Dimensionless;
-import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
@@ -38,10 +37,10 @@ public class BehavioralCharacteristics implements Serializable
     private boolean copyOnWrite = false;
 
     /** List of parameters. */
-    private Map<AbstractParameterType<?>, DoubleScalarInterface> parameters;
+    private Map<AbstractParameterType<?>, Object> parameters;
 
     /** List of parameters with values before last set. */
-    private Map<AbstractParameterType<?>, DoubleScalarInterface> previous;
+    private Map<AbstractParameterType<?>, Object> previous;
 
     /**
      * Empty constructor.
@@ -71,7 +70,7 @@ public class BehavioralCharacteristics implements Serializable
      * @param <T> Class of value.
      * @throws ParameterException If the value does not comply with value type constraints.
      */
-    public final <T extends DoubleScalarInterface> void setParameter(final ParameterType<T> parameterType, final T value)
+    public final <T> void setParameter(final AbstractParameterType<T> parameterType, final T value)
             throws ParameterException
     {
         Throw.when(value == null, ParameterException.class,
@@ -81,55 +80,13 @@ public class BehavioralCharacteristics implements Serializable
     }
 
     /**
-     * Set parameter value of given parameter type.
-     * @param parameterType Parameter type.
-     * @param value Value.
-     */
-    public final void setParameter(final ParameterTypeBoolean parameterType, final boolean value)
-    {
-        try
-        {
-            saveSetParameter(parameterType, new Dimensionless(value ? 1.0 : 0.0, DimensionlessUnit.SI));
-        }
-        catch (ParameterException pe)
-        {
-            // This cannot occur as the ParameterTypeBoolean constructor does not allow a default check.
-            throw new RuntimeException("ParameterTypeBoolean default check throws a ParameterException.", pe);
-        }
-    }
-
-    /**
-     * Set parameter value of given parameter type.
-     * @param parameterType Parameter type.
-     * @param value Value.
-     * @throws ParameterException If the value does not comply with value type constraints.
-     */
-    public final void setParameter(final ParameterTypeDouble parameterType, final double value) throws ParameterException
-    {
-        parameterType.check(value, this);
-        saveSetParameter(parameterType, new Dimensionless(value, DimensionlessUnit.SI));
-    }
-
-    /**
-     * Set parameter value of given parameter type.
-     * @param parameterType Parameter type.
-     * @param value Value.
-     * @throws ParameterException If the value does not comply with value type constraints.
-     */
-    public final void setParameter(final ParameterTypeInteger parameterType, final int value) throws ParameterException
-    {
-        parameterType.check(value, this);
-        saveSetParameter(parameterType, new Dimensionless(value, DimensionlessUnit.SI));
-    }
-
-    /**
      * Remembers the current value, or if it is not given, for possible reset.
      * @param parameterType Parameter type.
      * @param value Value.
      * @param <T> Class of the value.
      * @throws ParameterException If the value does not comply with constraints.
      */
-    private <T extends DoubleScalarInterface> void saveSetParameter(final AbstractParameterType<T> parameterType, final T value)
+    private <T> void saveSetParameter(final AbstractParameterType<T> parameterType, final T value)
             throws ParameterException
     {
         parameterType.checkConstraint(value);
@@ -189,7 +146,7 @@ public class BehavioralCharacteristics implements Serializable
      * @throws ParameterException If parameter was never set.
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public <T extends DoubleScalarInterface> T getParameter(final ParameterType<T> parameterType) throws ParameterException
+    public <T> T getParameter(final AbstractParameterType<T> parameterType) throws ParameterException
     {
         checkContains(parameterType);
         @SuppressWarnings("unchecked")
@@ -198,41 +155,6 @@ public class BehavioralCharacteristics implements Serializable
         return result;
     }
 
-    /**
-     * Get parameter of given type.
-     * @param parameterType Parameter type.
-     * @return Parameter of given type.
-     * @throws ParameterException If parameter was never set.
-     */
-    public final boolean getParameter(final ParameterTypeBoolean parameterType) throws ParameterException
-    {
-        checkContains(parameterType);
-        return this.parameters.get(parameterType).getSI() != 0.0;
-    }
-
-    /**
-     * Get parameter of given type.
-     * @param parameterType Parameter type.
-     * @return Parameter of given type.
-     * @throws ParameterException If parameter was never set.
-     */
-    public final int getParameter(final ParameterTypeInteger parameterType) throws ParameterException
-    {
-        checkContains(parameterType);
-        return (int) this.parameters.get(parameterType).getSI();
-    }
-
-    /**
-     * Get parameter of given type.
-     * @param parameterType Parameter type.
-     * @return Parameter of given type.
-     * @throws ParameterException If parameter was never set.
-     */
-    public final double getParameter(final ParameterTypeDouble parameterType) throws ParameterException
-    {
-        checkContains(parameterType);
-        return this.parameters.get(parameterType).getSI();
-    }
 
     /**
      * Check whether parameter has been set.
@@ -259,7 +181,7 @@ public class BehavioralCharacteristics implements Serializable
      * Returns a safe copy of the parameters.
      * @return Safe copy of the parameters, e.g., for printing.
      */
-    public final Map<AbstractParameterType<?>, DoubleScalarInterface> getParameters()
+    public final Map<AbstractParameterType<?>, Object> getParameters()
     {
         return new HashMap<>(this.parameters);
     }
@@ -271,26 +193,10 @@ public class BehavioralCharacteristics implements Serializable
      * @return this set of behavioral characteristics (for method chaining)
      * @throws ParameterException if the parameter type has no default value
      */
-    @SuppressWarnings("unchecked")
-    public final <T extends DoubleScalarInterface> BehavioralCharacteristics setDefaultParameter(
+    public final <T> BehavioralCharacteristics setDefaultParameter(
             final AbstractParameterType<T> parameter) throws ParameterException
     {
-        T defaultValue;
-        if (parameter.getDefaultValue() instanceof DoubleScalarInterface)
-        {
-            // all types based on DJUNITS
-            defaultValue = (T) parameter.getDefaultValue();
-        }
-        else if (parameter.getDefaultValue() instanceof Boolean)
-        {
-            // boolean
-            defaultValue = (T) new Dimensionless((boolean) parameter.getDefaultValue() ? 1.0 : 0.0, DimensionlessUnit.SI);
-        }
-        else
-        {
-            // double or integer
-            defaultValue = (T) new Dimensionless(((Number) parameter.getDefaultValue()).doubleValue(), DimensionlessUnit.SI);
-        }
+        T defaultValue = parameter.getDefaultValue();
         try
         {
             saveSetParameter(parameter, defaultValue);
@@ -320,7 +226,7 @@ public class BehavioralCharacteristics implements Serializable
      * @return this set of behavioral characteristics (for method chaining)
      */
     @SuppressWarnings("unchecked")
-    private <T extends DoubleScalarInterface> BehavioralCharacteristics setDefaultParametersLocal(final Class<?> clazz)
+    private <T> BehavioralCharacteristics setDefaultParametersLocal(final Class<?> clazz)
     {
         // set all default values using reflection
         Set<Field> fields = ClassUtil.getAllFields(clazz);
@@ -333,23 +239,7 @@ public class BehavioralCharacteristics implements Serializable
                 {
                     field.setAccessible(true);
                     AbstractParameterType<T> p = (AbstractParameterType<T>) field.get(clazz);
-                    T defaultValue;
-                    if (p.getDefaultValue() instanceof DoubleScalarInterface)
-                    {
-                        // all types based on DJUNITS
-                        defaultValue = (T) p.getDefaultValue();
-                    }
-                    else if (p.getDefaultValue() instanceof Boolean)
-                    {
-                        // boolean
-                        defaultValue = (T) new Dimensionless((boolean) p.getDefaultValue() ? 1.0 : 0.0, DimensionlessUnit.SI);
-                    }
-                    else
-                    {
-                        // double or integer
-                        defaultValue =
-                                (T) new Dimensionless(((Number) p.getDefaultValue()).doubleValue(), DimensionlessUnit.SI);
-                    }
+                    T defaultValue = p.getDefaultValue();
                     saveSetParameter(p, defaultValue);
                 }
                 catch (IllegalArgumentException iare)

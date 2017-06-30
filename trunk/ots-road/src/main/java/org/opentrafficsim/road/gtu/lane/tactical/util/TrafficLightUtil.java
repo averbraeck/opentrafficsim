@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util;
 
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Constraint.POSITIVE;
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.POSITIVE;
 
 import java.util.Set;
 import java.util.SortedMap;

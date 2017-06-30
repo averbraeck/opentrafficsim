@@ -2,11 +2,6 @@ package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.io.Serializable;
 
-import org.djunits.unit.DimensionlessUnit;
-import org.djunits.value.vdouble.scalar.Dimensionless;
-
-import nl.tudelft.simulation.language.Throw;
-
 /**
  * Wrapper class for int parameters.
  * <p>
@@ -17,7 +12,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeInteger extends AbstractParameterType<Dimensionless> implements Serializable
+public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20160400L;
@@ -49,7 +44,7 @@ public class ParameterTypeInteger extends AbstractParameterType<Dimensionless> i
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeInteger(final String id, final String description, final Constraint constraint)
+    public ParameterTypeInteger(final String id, final String description, final NumericConstraint constraint)
     {
         this(id, description, 0, constraint, false);
     }
@@ -61,9 +56,9 @@ public class ParameterTypeInteger extends AbstractParameterType<Dimensionless> i
      * @param defaultValue Default value.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeInteger(final String id, final String description, final int defaultValue, final Constraint constraint)
+    public ParameterTypeInteger(final String id, final String description, final int defaultValue, final NumericConstraint constraint)
     {
-        super(id, description, Dimensionless.class, new Dimensionless(defaultValue, DimensionlessUnit.SI), constraint, true);
+        this(id, description, defaultValue, constraint, true);
     }
 
     /**
@@ -74,11 +69,10 @@ public class ParameterTypeInteger extends AbstractParameterType<Dimensionless> i
      * @param constraint Constraint for parameter values.
      * @param hasDefaultValue Whether to check the default value for null.
      */
-    private ParameterTypeInteger(final String id, final String description, final int defaultValue, final Constraint constraint,
+    private ParameterTypeInteger(final String id, final String description, final int defaultValue, final NumericConstraint constraint,
             final boolean hasDefaultValue)
     {
-        super(id, description, Dimensionless.class,
-                hasDefaultValue ? new Dimensionless(defaultValue, DimensionlessUnit.SI) : null, constraint, hasDefaultValue);
+        super(id, description, Integer.class, hasDefaultValue ? defaultValue : null, constraint, hasDefaultValue);
         try
         {
             // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of
@@ -89,13 +83,6 @@ public class ParameterTypeInteger extends AbstractParameterType<Dimensionless> i
         {
             throw new RuntimeException("Default value does not comply with constraints.", exception);
         }
-    }
-
-    /** {@inheritDoc} */
-    public final Integer getDefaultValue() throws ParameterException
-    {
-        Throw.when(null == this.defaultValue, ParameterException.class, "No default value was set for '%s'.", getId());
-        return (int) super.defaultValue.si;
     }
 
     /** {@inheritDoc} */

@@ -21,7 +21,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Constraint;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -37,7 +37,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class BehavioralCharacteristicsTest implements CheckInterface
+public class BehavioralCharacteristicsTest implements ConstraintInterface
 {
 
     /**
@@ -74,7 +74,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
 
         // Check ParameterType construction (id, description, class, defaultValue)
         Length defaultValue = new Length(1.0, LengthUnit.SI);
-        ParameterType<Length> a = new ParameterType<>("a", "along", Length.class, defaultValue);
+        ParameterTypeNumeric<Length> a = new ParameterTypeNumeric<>("a", "along", Length.class, defaultValue);
         assertEquals("Parameter type id not properly set.", "a", a.getId());
         assertEquals("Parameter type description not properly set.", "along", a.getDescription());
         assertTrue("has a default value", a.hasDefaultValue());
@@ -88,7 +88,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         }
 
         // Check ParameterType construction (id, description, class)
-        ParameterType<Length> b = new ParameterType<>("b", "blong", Length.class);
+        ParameterTypeNumeric<Length> b = new ParameterTypeNumeric<>("b", "blong", Length.class);
         assertEquals("Parameter type id not properly set.", "b", b.getId());
         assertEquals("Parameter type description not properly set.", "blong", b.getDescription());
         assertFalse("does not have a default value", b.hasDefaultValue());
@@ -167,7 +167,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
      * @param constraint Constraint to perform.
      * @param shouldFail Whether the check should fail.
      */
-    private void checkDefaultValue(final double value, final Constraint constraint, final boolean shouldFail)
+    private void checkDefaultValue(final double value, final NumericConstraint constraint, final boolean shouldFail)
     {
         try
         {
@@ -192,7 +192,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
      * @param constraint Constraint to perform.
      * @param shouldFail Whether the check should fail.
      */
-    private void checkSetValue(final double value, final Constraint constraint, final boolean shouldFail)
+    private void checkSetValue(final double value, final NumericConstraint constraint, final boolean shouldFail)
     {
         try
         {
@@ -379,7 +379,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         bc.setParameter(a, 1);
         bc.setParameter(a, 2);
         bc.resetParameter(a);
-        assertEquals("Value after reset should be the same as before last set.", 1, bc.getParameter(a));
+        assertEquals("Value after reset should be the same as before last set.", 1.0, bc.getParameter(a), 0.0);
 
         // If null value is ever going to be allowed, use these tests to check proper set/reset.
         // // check null is not the same as 'no value': no value -> set(null) -> reset -> get
@@ -460,7 +460,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         // null default value
         try
         {
-            new ParameterType<>("v", "vlong", Speed.class, null, POSITIVE);
+            new ParameterTypeNumeric<>("v", "vlong", Speed.class, null, POSITIVE);
             fail("Setting a default value of 'null' on ParameterType did not fail.");
         }
         catch (RuntimeException re)
@@ -478,7 +478,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         }
 
         // set null value
-        ParameterType<Speed> v = new ParameterType<>("v", "vlong", Speed.class);
+        ParameterTypeNumeric<Speed> v = new ParameterTypeNumeric<>("v", "vlong", Speed.class);
         BehavioralCharacteristics bc = new BehavioralCharacteristics();
         try
         {
@@ -506,7 +506,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
             InvocationTargetException, NoSuchMethodException, SecurityException
     {
         // @formatter:off
-        checkDefaultValuesPerClass(ParameterType.class,              Speed.createSI(3));
+        checkDefaultValuesPerClass(ParameterTypeNumeric.class,       Speed.createSI(3));
         checkDefaultValuesPerClass(ParameterTypeSpeed.class,         Speed.createSI(3));
         checkDefaultValuesPerClass(ParameterTypeAcceleration.class,  Acceleration.createSI(3));
         checkDefaultValuesPerClass(ParameterTypeLength.class,        Length.createSI(3));
@@ -536,7 +536,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
     {
         // none set
         AbstractParameterType<?> ld;
-        if (clazz.equals(ParameterType.class))
+        if (clazz.equals(ParameterTypeNumeric.class))
         {
             ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class).newInstance("v", "vcong",
                     getClass(defaultValue));
@@ -557,14 +557,14 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         // none set, including default check
         if (!clazz.equals(ParameterTypeBoolean.class)) // boolean has no checks
         {
-            if (clazz.equals(ParameterType.class))
+            if (clazz.equals(ParameterTypeNumeric.class))
             {
-                ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, Constraint.class).newInstance("v",
+                ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, NumericConstraint.class).newInstance("v",
                         "vcong", getClass(defaultValue), POSITIVE);
             }
             else
             {
-                ld = clazz.getDeclaredConstructor(String.class, String.class, Constraint.class).newInstance("v", "vcong",
+                ld = clazz.getDeclaredConstructor(String.class, String.class, NumericConstraint.class).newInstance("v", "vcong",
                         POSITIVE);
             }
             try
@@ -579,9 +579,9 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         }
 
         // value set
-        if (clazz.equals(ParameterType.class))
+        if (clazz.equals(ParameterTypeNumeric.class))
         {
-            ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, DoubleScalarInterface.class)
+            ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, Number.class)
                     .newInstance("v", "vcong", getClass(defaultValue), defaultValue);
         }
         else
@@ -600,14 +600,14 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         // value set, including default check
         if (!clazz.equals(ParameterTypeBoolean.class)) // boolean has no checks
         {
-            if (clazz.equals(ParameterType.class))
+            if (clazz.equals(ParameterTypeNumeric.class))
             {
-                ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, DoubleScalarInterface.class,
-                        Constraint.class).newInstance("v", "vcong", getClass(defaultValue), defaultValue, POSITIVE);
+                ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, Number.class,
+                        NumericConstraint.class).newInstance("v", "vcong", getClass(defaultValue), defaultValue, POSITIVE);
             }
             else
             {
-                ld = clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue), Constraint.class)
+                ld = clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue), NumericConstraint.class)
                         .newInstance("v", "vcong", defaultValue, POSITIVE);
             }
             try
