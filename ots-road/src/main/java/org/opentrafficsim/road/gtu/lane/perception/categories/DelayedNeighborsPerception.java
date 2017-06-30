@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.POSITIVE;
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.POSITIVEZERO;
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Constraint.POSITIVE;
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Constraint.POSITIVEZERO;
 
 import java.util.HashMap;
 import java.util.Map;

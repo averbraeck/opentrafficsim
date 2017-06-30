@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.UNITINTERVAL;
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Constraint.UNITINTERVAL;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -85,7 +85,7 @@ public interface LmrsParameters
     /** Anticipation speed difference at full lane change desired. */
     ParameterTypeSpeed VGAIN =
             new ParameterTypeSpeed("vGain", "Anticipation speed difference at " + "full lane change desired.",
-                    new Speed(69.6, SpeedUnit.KM_PER_HOUR), AbstractParameterType.Check.POSITIVE);
+                    new Speed(69.6, SpeedUnit.KM_PER_HOUR), AbstractParameterType.Constraint.POSITIVE);
 
     /** Courtesy parameter. */
     ParameterTypeDouble COURTESY = new ParameterTypeDouble("Courtesy", "Courtesy level for courtesy lane changes.", 1.0);

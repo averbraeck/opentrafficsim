@@ -290,9 +290,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
             this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
             try
             {
-                Set<GTUType> compatibility = new HashSet<>();
-                compatibility.add(this.gtuType);
-                LaneType laneType = new LaneType("CarLane", compatibility);
+                LaneType laneType = LaneType.ROAD;
                 OTSNode node = new OTSNode(this.network, "Node 0", new OTSPoint3D(this.startX.getSI(), 0, 0));
                 for (int laneNr = 0; laneNr < 10; laneNr++)
                 {

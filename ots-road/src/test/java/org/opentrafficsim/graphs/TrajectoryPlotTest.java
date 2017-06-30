@@ -59,10 +59,7 @@ public class TrajectoryPlotTest implements UNITS
     public final void trajectoryTest() throws Exception
     {
         OTSDEVSSimulator simulator = CarTest.makeSimulator();
-        GTUType gtuType = CAR;
-        Set<GTUType> gtuTypes = new HashSet<GTUType>();
-        gtuTypes.add(gtuType);
-        LaneType laneType = new LaneType("CarLane", gtuTypes);
+        LaneType laneType = LaneType.ROAD;
         OTSNetwork network = new OTSNetwork("trajectory plot test network");
         OTSNode node1 = new OTSNode(network, "node 1", new OTSPoint3D(100, 100, 0));
         OTSNode node2 = new OTSNode(network, "node 2", new OTSPoint3D(1100, 100, 0));

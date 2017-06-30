@@ -362,9 +362,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             int lanesOnCommon = lanesOnMain + lanesOnBranch;
             int lanesOnCommonCompressed = Integer.parseInt(networkType.split(" ")[merge ? 5 : 1]);
 
-            Set<GTUType> compatibility = new HashSet<>();
-            compatibility.add(this.gtuType);
-            LaneType laneType = new LaneType("CarLane", compatibility);
+            LaneType laneType = LaneType.ROAD;
             // Get car-following model name
             String carFollowingModelName = null;
             CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);

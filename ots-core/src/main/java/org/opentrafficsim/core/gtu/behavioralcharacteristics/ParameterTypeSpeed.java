@@ -45,11 +45,11 @@ public class ParameterTypeSpeed extends ParameterType<Speed> implements Serializ
      * Constructor without default value, with check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeSpeed(final String id, final String description, final Check check)
+    public ParameterTypeSpeed(final String id, final String description, final Constraint constraint)
     {
-        super(id, description, Speed.class, check);
+        super(id, description, Speed.class, constraint);
     }
 
     /**
@@ -57,11 +57,11 @@ public class ParameterTypeSpeed extends ParameterType<Speed> implements Serializ
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeSpeed(final String id, final String description, final Speed defaultValue, final Check check)
+    public ParameterTypeSpeed(final String id, final String description, final Speed defaultValue, final Constraint constraint)
     {
-        super(id, description, Speed.class, defaultValue, check);
+        super(id, description, Speed.class, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */

@@ -3,8 +3,8 @@ package ahfe;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.zip.ZipEntry;
@@ -12,12 +12,6 @@ import java.util.zip.ZipOutputStream;
 
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.language.Throw;
-import nl.tudelft.simulation.language.io.URLResource;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -29,6 +23,7 @@ import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
@@ -42,6 +37,12 @@ import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
 import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.language.Throw;
+import nl.tudelft.simulation.language.io.URLResource;
 
 /**
  * Simulation for AHFE congress.
@@ -235,6 +236,7 @@ public class AHFESimulation extends AbstractWrappableSimulation
      */
     public static void main(final String[] args) throws SimRuntimeException
     {
+        AbstractGTU.ALIGNED = false;
         long t1 = System.currentTimeMillis();
         boolean autorun = false;
         int replication = 1;
@@ -441,7 +443,7 @@ public class AHFESimulation extends AbstractWrappableSimulation
                     model.buildSimulator(Time.ZERO, Duration.ZERO, Duration.createSI(SIMEND.si), new ArrayList<AbstractProperty<?>>());
                     if (finalAutoRun)
                     {
-                        int lastReportedTime = -1;
+                        int lastReportedTime = -60;
                         int reportTimeClick = 60;
                         while (true)
                         {
@@ -457,7 +459,6 @@ public class AHFESimulation extends AbstractWrappableSimulation
                             }
                             catch (SimRuntimeException sre)
                             {
-                                sre.printStackTrace();
                                 if (sre.getCause() != null && sre.getCause().getCause() != null
                                         && sre.getCause().getCause().getMessage().equals(
                                                 "Model has calcalated a negative infinite or negative max value acceleration."))
@@ -591,7 +592,7 @@ public class AHFESimulation extends AbstractWrappableSimulation
             AHFESimulation.this.sampler.registerExtendedDataType(new TimeToCollision());
             try
             {
-                InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml");
+                URL stream = URLResource.getResource("/Network.xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
                 this.network = new OTSNetwork("AHFE");
                 nlp.build(stream, this.network);

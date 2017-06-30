@@ -1,12 +1,12 @@
 package org.opentrafficsim.road.network.lane;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.base.Type;
+import org.opentrafficsim.base.HierarchalType;
 import org.opentrafficsim.core.gtu.GTUType;
 
 import nl.tudelft.simulation.immutablecollections.ImmutableHashSet;
@@ -27,16 +27,16 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class LaneType extends Type<LaneType> implements Serializable, Identifiable
+public class LaneType extends HierarchalType<LaneType> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20140821L;
 
-    /** The id of the LaneType to make it identifiable. */
-    private final String id;
-
-    /** The compatibility of GTUs with this lane type. */
-    private final ImmutableSet<GTUType> compatibilitySet;
+    /**
+     * The compatibility of GTUs with this lane type. Compatibility is solely determined by a specific lane type, and
+     * independent of compatibility in super or sub types.
+     */
+    private final Set<GTUType> compatibilitySet;
 
     /** Lane type that does not allow any vehicles. */
     public static final LaneType NONE;
@@ -44,30 +44,86 @@ public class LaneType extends Type<LaneType> implements Serializable, Identifiab
     /** Lane type that allows all vehicles. */
     public static final LaneType ALL;
 
+    /** Vehicular roads (Dutch: weg). */
+    public static final LaneType ROAD;
+
+    /** Controlled access roads (Dutch: snelweg). */
+    public static final LaneType FREEWAY;
+
+    /** High speed vehicular roads (Dutch: autoweg). */
+    public static final LaneType HIGHWAY;
+
+    /** Rural vehicular roads (Dutch: weg buiten bebouwde kom). */
+    public static final LaneType RURAL_ROAD;
+
+    /** Urban vehicular roads (Dutch: weg binnen bebouwde kom). */
+    public static final LaneType URBAN_ROAD;
+
+    /** Residential vehicular roads (Dutch: woonerf). */
+    public static final LaneType RESIDENTIAL_ROAD;
+
+    /** Bus lane (Dutch: busstrook). */
+    public static final LaneType BUS_LANE;
+
+    /** Bicycle path (Dutch: (brom)fietspad). */
+    public static final LaneType MOPED_PATH;
+
+    /** Bicycle path (Dutch: fietspad). */
+    public static final LaneType BICYCLE_PATH;
+
+    /** Footpath (Dutch: voetpad). */
+    public static final LaneType FOOTPATH;
+
     static
     {
         NONE = new LaneType("NONE", new HashSet<GTUType>());
-        Set<GTUType> allSet = new HashSet<>();
-        allSet.add(GTUType.ALL);
-        ALL = new LaneType("ALL", allSet);
+        ALL = new LaneType("ALL", Arrays.asList(new GTUType[] { GTUType.ALL }));
+        ROAD = new LaneType("ROAD", ALL, Arrays.asList(new GTUType[] { GTUType.VEHICLE }));
+        FREEWAY = new LaneType("FREEWAY", ROAD, Arrays.asList(new GTUType[] { GTUType.VEHICLE }));
+        HIGHWAY = new LaneType("HIGHWAY", ROAD, Arrays.asList(new GTUType[] { GTUType.VEHICLE }));
+        RURAL_ROAD = new LaneType("RURAL_ROAD", ROAD,
+                Arrays.asList(new GTUType[] { GTUType.VEHICLE, GTUType.BICYCLE, GTUType.MOPED, GTUType.PEDESTRIAN }));
+        URBAN_ROAD = new LaneType("URBAN_ROAD", ROAD,
+                Arrays.asList(new GTUType[] { GTUType.VEHICLE, GTUType.BICYCLE, GTUType.MOPED, GTUType.PEDESTRIAN }));
+        RESIDENTIAL_ROAD = new LaneType("RESIDENTIAL_ROAD", ROAD,
+                Arrays.asList(new GTUType[] { GTUType.VEHICLE, GTUType.BICYCLE, GTUType.MOPED, GTUType.PEDESTRIAN }));
+        BUS_LANE = new LaneType("BUS_LANE", ALL, Arrays.asList(new GTUType[] { GTUType.BUS }));
+        MOPED_PATH = new LaneType("MOPED_PATH", ALL, Arrays.asList(new GTUType[] { GTUType.BICYCLE, GTUType.MOPED }));
+        BICYCLE_PATH = new LaneType("BICYCLE_PATH", ALL, Arrays.asList(new GTUType[] { GTUType.BICYCLE }));
+        FOOTPATH = new LaneType("FOOTPATH", ALL, Arrays.asList(new GTUType[] { GTUType.PEDESTRIAN }));
     }
 
     /**
-     * Create a new Lane type with an immutable compatibility set.
+     * Create a new Lane type with a compatibility set.
      * @param id the id of the lane type.
-     * @param compatibility the collection of compatible GTUTypes for this LaneType
+     * @param compatibility the collection of compatible GTUTypes for this LaneType. Compatibility is solely determined by a
+     *            specific lane type, and independent of compatibility in super or sub types.
      * @throws NullPointerException if either the id is null, or the compatibilitySet is null
      */
-    public LaneType(final String id, final Collection<GTUType> compatibility) throws NullPointerException
+    private LaneType(final String id, final Collection<GTUType> compatibility) throws NullPointerException
     {
-        Throw.whenNull(id, "id cannot be null for LaneType");
+        super(id);
         Throw.whenNull(compatibility, "compatibility collection cannot be null for LaneType with id = %s", id);
-
-        this.id = id;
-        this.compatibilitySet = new ImmutableHashSet<>(compatibility);
+        this.compatibilitySet = new HashSet<>(compatibility);
     }
 
     /**
+     * Create a new Lane type with a compatibility set.
+     * @param id the id of the lane type.
+     * @param parent parent type
+     * @param compatibility the collection of compatible GTUTypes for this LaneType. Compatibility is solely determined by a
+     *            specific lane type, and independent of compatibility in super or sub types.
+     * @throws NullPointerException if either the id is null, or the compatibilitySet is null
+     */
+    public LaneType(final String id, final LaneType parent, final Collection<GTUType> compatibility) throws NullPointerException
+    {
+        super(id, parent);
+        Throw.whenNull(compatibility, "compatibility collection cannot be null for LaneType with id = %s", id);
+        this.compatibilitySet = new HashSet<>(compatibility);
+    }
+
+    /**
+     * Compatibility is solely determined by a specific lane type, and independent of compatibility in super or sub types.
      * @param gtuType GTU type to look for compatibility.
      * @return whether the LaneType is compatible with the GTU type, or compatible with all GTU types.
      */
@@ -77,11 +133,30 @@ public class LaneType extends Type<LaneType> implements Serializable, Identifiab
     }
 
     /**
-     * @return id.
+     * Get the set of compatible GTU types.
+     * @return set of compatible GTU types
      */
-    public final String getId()
+    public final ImmutableSet<GTUType> getCompatbilitySet()
     {
-        return this.id;
+        return new ImmutableHashSet<>(this.compatibilitySet);
+    }
+
+    /**
+     * Remove GTU type from compatibility.
+     * @param gtuType GTU type to remove
+     */
+    public final void removeGtuCompatibility(final GTUType gtuType)
+    {
+        this.compatibilitySet.remove(gtuType);
+    }
+
+    /**
+     * Add GTU type to compatibility.
+     * @param gtuType GTU type to add
+     */
+    public final void addGtuCompatability(final GTUType gtuType)
+    {
+        this.compatibilitySet.add(gtuType);
     }
 
     /** {@inheritDoc} */
@@ -89,34 +164,47 @@ public class LaneType extends Type<LaneType> implements Serializable, Identifiab
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "LaneType [id=" + this.id + ", compatibilitySet=" + this.compatibilitySet + "]";
+        return "LaneType [id=" + this.getId() + ", compatibilitySet=" + this.compatibilitySet + "]";
     }
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public int hashCode()
     {
         final int prime = 31;
-        int result = 1;
-        result = prime * result + this.id.hashCode();
+        int result = super.hashCode();
+        result = prime * result + ((this.compatibilitySet == null) ? 0 : this.compatibilitySet.hashCode());
         return result;
     }
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
     public boolean equals(final Object obj)
     {
         if (this == obj)
+        {
             return true;
-        if (obj == null)
+        }
+        if (!super.equals(obj))
+        {
             return false;
+        }
         if (getClass() != obj.getClass())
+        {
             return false;
+        }
         LaneType other = (LaneType) obj;
-        if (!this.id.equals(other.id))
+        if (this.compatibilitySet == null)
+        {
+            if (other.compatibilitySet != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.compatibilitySet.equals(other.compatibilitySet))
+        {
             return false;
+        }
         return true;
     }
 

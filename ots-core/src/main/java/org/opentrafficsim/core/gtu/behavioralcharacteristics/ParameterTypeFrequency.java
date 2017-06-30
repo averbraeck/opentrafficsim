@@ -45,11 +45,11 @@ public class ParameterTypeFrequency extends ParameterType<Frequency> implements 
      * Constructor without default value, with check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeFrequency(final String id, final String description, final Check check)
+    public ParameterTypeFrequency(final String id, final String description, final Constraint constraint)
     {
-        super(id, description, Frequency.class, check);
+        super(id, description, Frequency.class, constraint);
     }
 
     /**
@@ -57,11 +57,12 @@ public class ParameterTypeFrequency extends ParameterType<Frequency> implements 
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeFrequency(final String id, final String description, final Frequency defaultValue, final Check check)
+    public ParameterTypeFrequency(final String id, final String description, final Frequency defaultValue,
+            final Constraint constraint)
     {
-        super(id, description, Frequency.class, defaultValue, check);
+        super(id, description, Frequency.class, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */

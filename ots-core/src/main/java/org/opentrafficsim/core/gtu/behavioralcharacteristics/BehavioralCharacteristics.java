@@ -132,7 +132,7 @@ public class BehavioralCharacteristics implements Serializable
     private <T extends DoubleScalarInterface> void saveSetParameter(final AbstractParameterType<T> parameterType, final T value)
             throws ParameterException
     {
-        parameterType.checkCheck(value);
+        parameterType.checkConstraint(value);
         checkCopyOnWrite();
         if (this.parameters.containsKey(parameterType))
         {
@@ -360,10 +360,12 @@ public class BehavioralCharacteristics implements Serializable
                 catch (IllegalAccessException iace)
                 {
                     // parameter type not public
+                    throw new RuntimeException(iace);
                 }
                 catch (ParameterException pe)
                 {
                     // do not set parameter without default value
+                    throw new RuntimeException(pe);
                 }
             }
         }
@@ -398,6 +400,7 @@ public class BehavioralCharacteristics implements Serializable
             catch (ParameterException pe)
             {
                 // We know the parameter has been set as we get the keySet from parameters
+                throw new RuntimeException(pe);
             }
         }
         out.append("]");

@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.NEGATIVE;
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.POSITIVE;
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.POSITIVEZERO;
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Constraint.NEGATIVE;
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Constraint.POSITIVE;
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Constraint.POSITIVEZERO;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;

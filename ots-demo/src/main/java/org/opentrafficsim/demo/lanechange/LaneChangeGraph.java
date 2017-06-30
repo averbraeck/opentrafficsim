@@ -277,9 +277,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         // Set up the network
         Network network = new OTSNetwork("lane change graph network");
         GTUType gtuType = CAR;
-        Set<GTUType> compatibility = new HashSet<>();
-        compatibility.add(gtuType);
-        LaneType laneType = new LaneType("CarLane", compatibility);
+        LaneType laneType = LaneType.ROAD;
         final Speed speedLimit = new Speed(120, KM_PER_HOUR);
 
         Lane[] lanes = LaneFactory.makeMultiLane(network, "Road with two lanes",

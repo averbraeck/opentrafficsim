@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check.POSITIVE;
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Constraint.POSITIVE;
 
 import java.util.SortedMap;
 

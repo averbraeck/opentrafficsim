@@ -24,7 +24,7 @@ import nl.tudelft.simulation.language.Throw;
 public abstract class AbstractParameterType<T extends DoubleScalarInterface> extends Type<AbstractParameterType<?>>
         implements Serializable, Identifiable
 {
-    
+
     /** */
     private static final long serialVersionUID = 20160400L;
 
@@ -42,11 +42,11 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected final T defaultValue;
 
-    /** Default check. */
-    private final Check check;
+    /** Default constraint. */
+    private final Constraint constraint;
 
-    /** List of default checks for ParameterTypes. */
-    public enum Check
+    /** List of default constraint for ParameterTypes. */
+    public enum Constraint
     {
 
         /** Checks for &gt;0. */
@@ -135,10 +135,12 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
          */
         @SuppressWarnings("redundantmodifier")
         @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED")
-        Check(final String failMessage)
+        Constraint(final String failMessage)
         {
-            Throw.whenNull(failMessage, "Default parameter check '%s' has null as fail message as given to the constructor,"
-                    + " which is not allowed.", this);
+            Throw.whenNull(failMessage,
+                    "Default parameter constraint '%s' has null as fail message as given to the constructor,"
+                            + " which is not allowed.",
+                    this);
             try
             {
                 // return value can be ignored
@@ -146,7 +148,7 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
             }
             catch (IllegalFormatException ife)
             {
-                throw new RuntimeException("Default parameter check " + this.toString()
+                throw new RuntimeException("Default parameter constraint " + this.toString()
                         + " has an illegal formatting of the fail message as given to the constructor."
                         + " It should contain a single '%s'.", ife);
             }
@@ -172,7 +174,7 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
     }
 
     /**
-     * Constructor without default value and check.
+     * Constructor without default value and constraint.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param valueClass Class of the value.
@@ -183,7 +185,7 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
     }
 
     /**
-     * Constructor with default value, without check.
+     * Constructor with default value, without constraint.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param valueClass Class of the value.
@@ -195,42 +197,43 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
     }
 
     /**
-     * Constructor without default value, with check.
+     * Constructor without default value, with constraint.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param valueClass Class of the value.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
-    public AbstractParameterType(final String id, final String description, final Class<T> valueClass, final Check check)
+    public AbstractParameterType(final String id, final String description, final Class<T> valueClass,
+            final Constraint constraint)
     {
-        this(id, description, valueClass, null, check, false);
+        this(id, description, valueClass, null, constraint, false);
     }
 
     /**
-     * Constructor with default value and check.
+     * Constructor with default value and constraint.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param valueClass Class of the value.
      * @param defaultValue Default value.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
     public AbstractParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue,
-            final Check check)
+            final Constraint constraint)
     {
-        this(id, description, valueClass, defaultValue, check, true);
+        this(id, description, valueClass, defaultValue, constraint, true);
     }
 
     /**
-     * Protected constructor with default value and check, which may check the default value.
+     * Protected constructor with default value and constraint, which may check the default value.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param valueClass Class of the value.
      * @param defaultValue Default value.
-     * @param check Check for parameter values.
+     * @param constraint Check for parameter values.
      * @param hasDefaultValue Whether to check the default value for null.
      */
     protected AbstractParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue,
-            final Check check, final boolean hasDefaultValue)
+            final Constraint constraint, final boolean hasDefaultValue)
     {
         Throw.whenNull(id, "Id may not be null.");
         Throw.whenNull(description, "Description may not be null.");
@@ -243,12 +246,12 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
         this.description = description;
         this.valueClass = valueClass;
         this.defaultValue = defaultValue;
-        this.check = check;
+        this.constraint = constraint;
         if (this.defaultValue != null)
         {
             try
             {
-                checkCheck(this.defaultValue);
+                checkConstraint(this.defaultValue);
             }
             catch (ParameterException pe)
             {
@@ -293,17 +296,17 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
     public abstract Object getDefaultValue() throws ParameterException;
 
     /**
-     * Checks the default checks given with the parameter type.
+     * Checks the default constraints given with the parameter type.
      * @param value The value to check.
      * @throws ParameterException If the value does not comply with constraints.
      */
-    protected final void checkCheck(final T value) throws ParameterException
+    protected final void checkConstraint(final T value) throws ParameterException
     {
-        if (this.check == null)
+        if (this.constraint == null)
         {
             return;
         }
-        Throw.when(this.check.fails(value.getSI()), ParameterException.class, this.check.failMessage(), this.id);
+        Throw.when(this.constraint.fails(value.getSI()), ParameterException.class, this.constraint.failMessage(), this.id);
     }
 
     /**
@@ -320,7 +323,7 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.check == null) ? 0 : this.check.hashCode());
+        result = prime * result + ((this.constraint == null) ? 0 : this.constraint.hashCode());
         result = prime * result + ((this.defaultValue == null) ? 0 : this.defaultValue.hashCode());
         result = prime * result + this.description.hashCode();
         result = prime * result + this.id.hashCode();
@@ -357,7 +360,7 @@ public abstract class AbstractParameterType<T extends DoubleScalarInterface> ext
         {
             return false;
         }
-        if (this.check != other.check)
+        if (this.constraint != other.constraint)
         {
             return false;
         }

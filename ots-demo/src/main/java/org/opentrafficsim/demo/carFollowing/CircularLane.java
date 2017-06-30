@@ -479,9 +479,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
 
             OTSNode start = new OTSNode(this.network, "Start", new OTSPoint3D(radius, 0, 0));
             OTSNode halfway = new OTSNode(this.network, "Halfway", new OTSPoint3D(-radius, 0, 0));
-            Set<GTUType> compatibility = new HashSet<>();
-            compatibility.add(this.gtuType);
-            LaneType laneType = new LaneType("CarLane", compatibility);
+            LaneType laneType = LaneType.ROAD;
 
             OTSPoint3D[] coordsHalf1 = new OTSPoint3D[127];
             for (int i = 0; i < coordsHalf1.length; i++)
