@@ -65,9 +65,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         Set<Class<? extends TacticalPlanner>> set = new HashSet<>();
         set.add(LMRS.class);
 
-        TACTICAL_PLANNER = new ParameterTypeClass<>("tactical planner", "Tactical planner class.",
-                (Class<Class<? extends TacticalPlanner>>) TacticalPlanner.class.getClass(), LMRS.class,
-                new ClassConstraint<>(set));
+        TACTICAL_PLANNER =
+                new ParameterTypeClass<>("tactical planner", "Tactical planner class.", LMRS.class, new ClassConstraint<>(set));
     }
 
     /** */
