@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Constraint;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint;
 
 /**
  * In order to define default constraints within a Parameter Type, an <tt>enum</tt> is available. This interface supplies easy
@@ -9,7 +9,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterTy
  * <tt>X</tt> is checked to be above zero. Note that model and parameterType do not have to be defined in the same class.
  * 
  * <pre>
- * public class myModel implements CheckInterface
+ * public class myModel implements ConstraintInterface
  * {
  * 
  *     public static final ParameterTypeLength X = new ParameterTypeLength(&quot;x&quot;, &quot;My x parameter.&quot;, POSITIVE);
@@ -22,7 +22,7 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterTy
  * Another way to access the <tt>enum</tt> fields is to import them, e.g.:
  * 
  * <pre>
- * import static org.opentrafficsim.core.gtu.drivercharacteristics.AbstractParameterType.Check.POSITIVE;
+ * import static org.opentrafficsim.core.gtu.drivercharacteristics.AbstractParameterType.Constraint.POSITIVE;
  * </pre>
  * 
  * <br>
@@ -72,16 +72,16 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterTy
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 @SuppressWarnings({ "checkstyle:interfaceistype", "checkstyle:javadoctype", "checkstyle:javadocvariable", "javadoc" })
-public interface CheckInterface
+public interface ConstraintInterface
 {
     // @formatter:off
     
-    Constraint POSITIVE     = Constraint.POSITIVE;
-    Constraint NEGATIVE     = Constraint.NEGATIVE;
-    Constraint POSITIVEZERO = Constraint.POSITIVEZERO;
-    Constraint NEGATIVEZERO = Constraint.NEGATIVEZERO;
-    Constraint NONZERO      = Constraint.NONZERO;
-    Constraint UNITINTERVAL = Constraint.UNITINTERVAL;
-    Constraint ATLEASTONE   = Constraint.ATLEASTONE;
+    NumericConstraint POSITIVE     = NumericConstraint.POSITIVE;
+    NumericConstraint NEGATIVE     = NumericConstraint.NEGATIVE;
+    NumericConstraint POSITIVEZERO = NumericConstraint.POSITIVEZERO;
+    NumericConstraint NEGATIVEZERO = NumericConstraint.NEGATIVEZERO;
+    NumericConstraint NONZERO      = NumericConstraint.NONZERO;
+    NumericConstraint UNITINTERVAL = NumericConstraint.UNITINTERVAL;
+    NumericConstraint ATLEASTONE   = NumericConstraint.ATLEASTONE;
     
 }

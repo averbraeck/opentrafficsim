@@ -2,11 +2,6 @@ package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.io.Serializable;
 
-import org.djunits.unit.DimensionlessUnit;
-import org.djunits.value.vdouble.scalar.Dimensionless;
-
-import nl.tudelft.simulation.language.Throw;
-
 /**
  * Wrapper class for boolean parameters.
  * <p>
@@ -17,7 +12,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeBoolean extends AbstractParameterType<Dimensionless> implements Serializable
+public class ParameterTypeBoolean extends AbstractParameterType<Boolean> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20160400L;
@@ -50,19 +45,10 @@ public class ParameterTypeBoolean extends AbstractParameterType<Dimensionless> i
      * @param defaultValue Default value.
      * @param hasDefaultValue Whether to check the default value for null.
      */
-    public ParameterTypeBoolean(final String id, final String description, final boolean defaultValue,
+    private ParameterTypeBoolean(final String id, final String description, final boolean defaultValue,
             final boolean hasDefaultValue)
     {
-        super(id, description, Dimensionless.class,
-                hasDefaultValue ? new Dimensionless(defaultValue ? 1.0 : 0.0, DimensionlessUnit.SI) : null, null,
-                hasDefaultValue);
-    }
-
-    /** {@inheritDoc} */
-    public final Boolean getDefaultValue() throws ParameterException
-    {
-        Throw.when(null == this.defaultValue, ParameterException.class, "No default value was set for '%s'.", getId());
-        return super.defaultValue.si != 0.0;
+        super(id, description, Boolean.class, hasDefaultValue ? defaultValue : null, null, hasDefaultValue);
     }
 
     /** {@inheritDoc} */

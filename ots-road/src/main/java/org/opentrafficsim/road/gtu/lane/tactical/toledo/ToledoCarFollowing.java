@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.toledo;
 
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Constraint.NEGATIVE;
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Constraint.POSITIVE;
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.NEGATIVE;
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.POSITIVE;
 
 import java.util.SortedMap;
 

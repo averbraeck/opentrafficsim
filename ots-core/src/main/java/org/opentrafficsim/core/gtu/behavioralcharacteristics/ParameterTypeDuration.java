@@ -14,7 +14,7 @@ import org.djunits.value.vdouble.scalar.Duration;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeDuration extends ParameterType<Duration> implements Serializable
+public class ParameterTypeDuration extends ParameterTypeNumeric<Duration> implements Serializable
 {
 
     /** */
@@ -47,7 +47,7 @@ public class ParameterTypeDuration extends ParameterType<Duration> implements Se
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeDuration(final String id, final String description, final Constraint constraint)
+    public ParameterTypeDuration(final String id, final String description, final NumericConstraint constraint)
     {
         super(id, description, Duration.class, constraint);
     }
@@ -60,7 +60,7 @@ public class ParameterTypeDuration extends ParameterType<Duration> implements Se
      * @param constraint Constraint for parameter values.
      */
     public ParameterTypeDuration(final String id, final String description, final Duration defaultValue,
-            final Constraint constraint)
+            final NumericConstraint constraint)
     {
         super(id, description, Duration.class, defaultValue, constraint);
     }

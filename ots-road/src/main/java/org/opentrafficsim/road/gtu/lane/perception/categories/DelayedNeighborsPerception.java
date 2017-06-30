@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Constraint.POSITIVE;
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Constraint.POSITIVEZERO;
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.POSITIVE;
+import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.POSITIVEZERO;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -179,12 +179,11 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
         this.gtuAlongside.clear();
         this.followers.clear();
         this.leaders.clear();
-        SortedSet<RelativeLane> crossSection = getDelayedCrossSection();
-        for (RelativeLane lane : crossSection)
+        try
         {
-
-            try
+            for (RelativeLane lane : getDelayedCrossSection())
             {
+
                 // adjacent lanes
                 if (lane.getNumLanes() == 1)
                 {
@@ -285,11 +284,44 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
                                 info.getAcceleration()));
                     }
                 }
+
             }
-            catch (@SuppressWarnings("unused") PerceptionException exception)
+
+            // add empty sets on all lanes in the current cross section that are not considered yet
+            for (RelativeLane lane : getPerception().getLaneStructure().getCrossSection())
             {
-                // lane change performed, info on a lane not present
+                if (!this.followers.containsKey(lane))
+                {
+                    this.followers.put(lane, new TreeSet<>());
+                }
+                if (!this.leaders.containsKey(lane))
+                {
+                    this.leaders.put(lane, new TreeSet<>());
+                }
+                if (lane.isLeft() || lane.isRight())
+                {
+                    if (!this.firstFollowers.containsKey(lane.getLateralDirectionality()))
+                    {
+                        this.firstFollowers.put(lane.getLateralDirectionality(), new TreeSet<>());
+                    }
+                    if (!this.firstLeaders.containsKey(lane.getLateralDirectionality()))
+                    {
+                        this.firstLeaders.put(lane.getLateralDirectionality(), new TreeSet<>());
+                    }
+                    if (!this.gtuAlongside.containsKey(lane.getLateralDirectionality()))
+                    {
+                        this.gtuAlongside.put(lane.getLateralDirectionality(), false);
+                    }
+                }
             }
+
+        }
+        catch (@SuppressWarnings("unused") PerceptionException exception)
+        {
+            // lane change performed, info on a lane not present
+        }
+        catch (ParameterException pe)
+        {
 
         }
 

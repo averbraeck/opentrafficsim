@@ -2,11 +2,7 @@ package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.io.Serializable;
 
-import org.djunits.unit.DimensionlessUnit;
 import org.djunits.value.formatter.EngineeringFormatter;
-import org.djunits.value.vdouble.scalar.Dimensionless;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Wrapper class for double parameters.
@@ -18,7 +14,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeDouble extends AbstractParameterType<Dimensionless> implements Serializable
+public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements Serializable
 {
 
     /** */
@@ -51,7 +47,7 @@ public class ParameterTypeDouble extends AbstractParameterType<Dimensionless> im
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeDouble(final String id, final String description, final Constraint constraint)
+    public ParameterTypeDouble(final String id, final String description, final NumericConstraint constraint)
     {
         this(id, description, Double.NaN, constraint, false);
     }
@@ -64,9 +60,9 @@ public class ParameterTypeDouble extends AbstractParameterType<Dimensionless> im
      * @param constraint Constraint for parameter values.
      */
     public ParameterTypeDouble(final String id, final String description, final double defaultValue,
-            final Constraint constraint)
+            final NumericConstraint constraint)
     {
-        super(id, description, Dimensionless.class, new Dimensionless(defaultValue, DimensionlessUnit.SI), constraint, true);
+        this(id, description, defaultValue, constraint, true);
     }
 
     /**
@@ -78,44 +74,15 @@ public class ParameterTypeDouble extends AbstractParameterType<Dimensionless> im
      * @param hasDefaultValue Whether to check the default value for null.
      */
     private ParameterTypeDouble(final String id, final String description, final double defaultValue,
-            final Constraint constraint, final boolean hasDefaultValue)
+            final NumericConstraint constraint, final boolean hasDefaultValue)
     {
-        super(id, description, Dimensionless.class,
-                hasDefaultValue ? new Dimensionless(defaultValue, DimensionlessUnit.SI) : null, constraint, hasDefaultValue);
-        try
-        {
-            // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of
-            // other parameter types.
-            check(defaultValue, new BehavioralCharacteristics());
-        }
-        catch (ParameterException exception)
-        {
-            throw new RuntimeException("Default value does not comply with constraints.", exception);
-        }
-    }
-
-    /** {@inheritDoc} */
-    public final Double getDefaultValue() throws ParameterException
-    {
-        Throw.when(null == this.defaultValue, ParameterException.class, "No default value was set for '%s'.", getId());
-        return super.defaultValue.si;
+        super(id, description, Double.class, hasDefaultValue ? defaultValue : null, constraint, hasDefaultValue);
     }
 
     /** {@inheritDoc} */
     public final String printValue(final BehavioralCharacteristics behavioralCharacteristics) throws ParameterException
     {
         return EngineeringFormatter.format(behavioralCharacteristics.getParameter(this));
-    }
-
-    /**
-     * Method to overwrite for checks with constraints.
-     * @param value Value to check with constraints.
-     * @param bc Set of behavioral characteristics.
-     * @throws ParameterException If the value does not comply with constraints.
-     */
-    public void check(final double value, final BehavioralCharacteristics bc) throws ParameterException
-    {
-        //
     }
 
     /** {@inheritDoc} */

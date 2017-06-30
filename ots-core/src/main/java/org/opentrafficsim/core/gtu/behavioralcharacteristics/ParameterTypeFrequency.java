@@ -14,7 +14,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeFrequency extends ParameterType<Frequency> implements Serializable
+public class ParameterTypeFrequency extends ParameterTypeNumeric<Frequency> implements Serializable
 {
 
     /** */
@@ -47,7 +47,7 @@ public class ParameterTypeFrequency extends ParameterType<Frequency> implements 
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeFrequency(final String id, final String description, final Constraint constraint)
+    public ParameterTypeFrequency(final String id, final String description, final NumericConstraint constraint)
     {
         super(id, description, Frequency.class, constraint);
     }
@@ -60,7 +60,7 @@ public class ParameterTypeFrequency extends ParameterType<Frequency> implements 
      * @param constraint Constraint for parameter values.
      */
     public ParameterTypeFrequency(final String id, final String description, final Frequency defaultValue,
-            final Constraint constraint)
+            final NumericConstraint constraint)
     {
         super(id, description, Frequency.class, defaultValue, constraint);
     }

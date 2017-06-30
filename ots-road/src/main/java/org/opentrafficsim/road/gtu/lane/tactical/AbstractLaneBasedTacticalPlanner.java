@@ -16,10 +16,13 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeClass;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDuration;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeClass.ClassConstraint;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
@@ -32,6 +35,7 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuil
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -53,6 +57,19 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
  */
 public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacticalPlanner, Serializable
 {
+
+    public final static ParameterTypeClass<TacticalPlanner> TACTICAL_PLANNER;
+
+    static
+    {
+        Set<Class<? extends TacticalPlanner>> set = new HashSet<>();
+        set.add(LMRS.class);
+
+        TACTICAL_PLANNER = new ParameterTypeClass<>("tactical planner", "Tactical planner class.",
+                (Class<Class<? extends TacticalPlanner>>) TacticalPlanner.class.getClass(), LMRS.class,
+                new ClassConstraint<>(set));
+    }
+
     /** */
     private static final long serialVersionUID = 20151125L;
 

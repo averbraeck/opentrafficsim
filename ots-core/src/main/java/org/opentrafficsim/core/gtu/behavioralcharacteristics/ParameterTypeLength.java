@@ -14,7 +14,7 @@ import org.djunits.value.vdouble.scalar.Length;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeLength extends ParameterType<Length> implements Serializable
+public class ParameterTypeLength extends ParameterTypeNumeric<Length> implements Serializable
 {
 
     /** */
@@ -47,7 +47,7 @@ public class ParameterTypeLength extends ParameterType<Length> implements Serial
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeLength(final String id, final String description, final Constraint constraint)
+    public ParameterTypeLength(final String id, final String description, final NumericConstraint constraint)
     {
         super(id, description, Length.class, constraint);
     }
@@ -60,7 +60,7 @@ public class ParameterTypeLength extends ParameterType<Length> implements Serial
      * @param constraint Constraint for parameter values.
      */
     public ParameterTypeLength(final String id, final String description, final Length defaultValue,
-            final Constraint constraint)
+            final NumericConstraint constraint)
     {
         super(id, description, Length.class, defaultValue, constraint);
     }

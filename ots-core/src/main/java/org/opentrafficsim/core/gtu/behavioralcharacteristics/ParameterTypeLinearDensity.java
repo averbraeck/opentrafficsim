@@ -14,7 +14,7 @@ import org.djunits.value.vdouble.scalar.LinearDensity;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeLinearDensity extends ParameterType<LinearDensity> implements Serializable
+public class ParameterTypeLinearDensity extends ParameterTypeNumeric<LinearDensity> implements Serializable
 {
 
     /** */
@@ -47,7 +47,7 @@ public class ParameterTypeLinearDensity extends ParameterType<LinearDensity> imp
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeLinearDensity(final String id, final String description, final Constraint constraint)
+    public ParameterTypeLinearDensity(final String id, final String description, final NumericConstraint constraint)
     {
         super(id, description, LinearDensity.class, constraint);
     }
@@ -60,7 +60,7 @@ public class ParameterTypeLinearDensity extends ParameterType<LinearDensity> imp
      * @param constraint Constraint for parameter values.
      */
     public ParameterTypeLinearDensity(final String id, final String description, final LinearDensity defaultValue,
-            final Constraint constraint)
+            final NumericConstraint constraint)
     {
         super(id, description, LinearDensity.class, defaultValue, constraint);
     }
