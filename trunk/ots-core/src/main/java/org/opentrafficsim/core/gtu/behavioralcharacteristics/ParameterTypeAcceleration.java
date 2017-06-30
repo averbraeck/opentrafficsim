@@ -45,11 +45,11 @@ public class ParameterTypeAcceleration extends ParameterType<Acceleration> imple
      * Constructor without default value, with check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeAcceleration(final String id, final String description, final Check check)
+    public ParameterTypeAcceleration(final String id, final String description, final Constraint constraint)
     {
-        super(id, description, Acceleration.class, check);
+        super(id, description, Acceleration.class, constraint);
     }
 
     /**
@@ -57,12 +57,12 @@ public class ParameterTypeAcceleration extends ParameterType<Acceleration> imple
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
     public ParameterTypeAcceleration(final String id, final String description, final Acceleration defaultValue,
-            final Check check)
+            final Constraint constraint)
     {
-        super(id, description, Acceleration.class, defaultValue, check);
+        super(id, description, Acceleration.class, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */

@@ -12,6 +12,9 @@
       <action issue="OTS-333" type="update">
         OTS-333. Create interface for getId()
       </action>
+      <action issue="OTS-332" type="update">
+        OTS-332. Make GTUType and LaneType hierarchal
+      </action>
     </release>
 
     <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">

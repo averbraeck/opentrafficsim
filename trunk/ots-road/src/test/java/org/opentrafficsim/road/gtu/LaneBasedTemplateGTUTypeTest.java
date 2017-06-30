@@ -266,18 +266,18 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         // Create some LaneTypes
         Set<GTUType> trucksForbiddenSet = new HashSet<>();
         trucksForbiddenSet.add(passengerCar.getGTUType());
-        LaneType trucksForbidden = new LaneType("No Trucks", trucksForbiddenSet);
+        LaneType trucksForbidden = new LaneType("No Trucks", LaneType.ALL, trucksForbiddenSet);
 
         Set<GTUType> trucksOnlySet = new HashSet<>();
         trucksOnlySet.add(truck.getGTUType());
-        LaneType trucksOnly = new LaneType("Trucks Only", trucksOnlySet);
+        LaneType trucksOnly = new LaneType("Trucks Only", LaneType.ALL, trucksOnlySet);
 
-        LaneType bicycleLane = new LaneType("Bicycles Only", new HashSet<GTUType>());
+        LaneType bicycleLane = new LaneType("Bicycles Only", LaneType.ALL, new HashSet<GTUType>());
 
         Set<GTUType> urbanRoadSet = new HashSet<>();
         urbanRoadSet.add(passengerCar.getGTUType());
         trucksOnlySet.add(truck.getGTUType());
-        LaneType urbanRoad = new LaneType("Urban road - open to all traffic", urbanRoadSet);
+        LaneType urbanRoad = new LaneType("Urban road - open to all traffic", LaneType.ALL, urbanRoadSet);
 
         // Now we test all combinations
         // TODO assertTrue("Passengers cars are allowed on a no trucks lane", passengerCar.isCompatible(trucksForbidden));

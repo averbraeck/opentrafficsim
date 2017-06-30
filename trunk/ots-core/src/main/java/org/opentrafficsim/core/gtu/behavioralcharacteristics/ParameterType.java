@@ -51,11 +51,11 @@ public class ParameterType<T extends DoubleScalarInterface> extends AbstractPara
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param valueClass Class of the value.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
-    public ParameterType(final String id, final String description, final Class<T> valueClass, final Check check)
+    public ParameterType(final String id, final String description, final Class<T> valueClass, final Constraint constraint)
     {
-        this(id, description, valueClass, null, check, false);
+        this(id, description, valueClass, null, constraint, false);
     }
 
     /**
@@ -64,12 +64,12 @@ public class ParameterType<T extends DoubleScalarInterface> extends AbstractPara
      * @param description Parameter description or full name.
      * @param valueClass Class of the value.
      * @param defaultValue Default value.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
     public ParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue,
-            final Check check)
+            final Constraint constraint)
     {
-        this(id, description, valueClass, defaultValue, check, true);
+        this(id, description, valueClass, defaultValue, constraint, true);
     }
 
     /**
@@ -78,13 +78,13 @@ public class ParameterType<T extends DoubleScalarInterface> extends AbstractPara
      * @param description Parameter description or full name.
      * @param valueClass Class of the value.
      * @param defaultValue Default value.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      * @param hasDefaultValue Whether to check the default value for null.
      */
     private ParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue,
-            final Check check, final boolean hasDefaultValue)
+            final Constraint constraint, final boolean hasDefaultValue)
     {
-        super(id, description, valueClass, defaultValue, check, hasDefaultValue);
+        super(id, description, valueClass, defaultValue, constraint, hasDefaultValue);
         try
         {
             // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of

@@ -45,11 +45,11 @@ public class ParameterTypeDuration extends ParameterType<Duration> implements Se
      * Constructor without default value, with check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeDuration(final String id, final String description, final Check check)
+    public ParameterTypeDuration(final String id, final String description, final Constraint constraint)
     {
-        super(id, description, Duration.class, check);
+        super(id, description, Duration.class, constraint);
     }
 
     /**
@@ -57,11 +57,12 @@ public class ParameterTypeDuration extends ParameterType<Duration> implements Se
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeDuration(final String id, final String description, final Duration defaultValue, final Check check)
+    public ParameterTypeDuration(final String id, final String description, final Duration defaultValue,
+            final Constraint constraint)
     {
-        super(id, description, Duration.class, defaultValue, check);
+        super(id, description, Duration.class, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */

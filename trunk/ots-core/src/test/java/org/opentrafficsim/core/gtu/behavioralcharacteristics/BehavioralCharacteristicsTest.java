@@ -21,7 +21,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Constraint;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -164,24 +164,24 @@ public class BehavioralCharacteristicsTest implements CheckInterface
     /**
      * Checks a default value.
      * @param value Value to check.
-     * @param check Check to perform.
+     * @param constraint Constraint to perform.
      * @param shouldFail Whether the check should fail.
      */
-    private void checkDefaultValue(final double value, final Check check, final boolean shouldFail)
+    private void checkDefaultValue(final double value, final Constraint constraint, final boolean shouldFail)
     {
         try
         {
-            new ParameterTypeAcceleration("a", "along", new Acceleration(value, AccelerationUnit.SI), check);
+            new ParameterTypeAcceleration("a", "along", new Acceleration(value, AccelerationUnit.SI), constraint);
             if (shouldFail)
             {
-                fail("Default value " + value + " fails default " + check + " check.");
+                fail("Default value " + value + " fails default " + constraint + " constraint.");
             }
         }
         catch (RuntimeException re)
         {
             if (!shouldFail)
             {
-                fail("Default value " + value + " does not fail default " + check + " check.");
+                fail("Default value " + value + " does not fail default " + constraint + " constraint.");
             }
         }
     }
@@ -189,26 +189,26 @@ public class BehavioralCharacteristicsTest implements CheckInterface
     /**
      * Checks a set value.
      * @param value Value to check.
-     * @param check Check to perform.
+     * @param constraint Constraint to perform.
      * @param shouldFail Whether the check should fail.
      */
-    private void checkSetValue(final double value, final Check check, final boolean shouldFail)
+    private void checkSetValue(final double value, final Constraint constraint, final boolean shouldFail)
     {
         try
         {
             BehavioralCharacteristics bc = new BehavioralCharacteristics();
-            ParameterTypeAcceleration a = new ParameterTypeAcceleration("a", "along", check);
+            ParameterTypeAcceleration a = new ParameterTypeAcceleration("a", "along", constraint);
             bc.setParameter(a, new Acceleration(value, AccelerationUnit.SI));
             if (shouldFail)
             {
-                fail("Set value " + value + " fails default " + check + " check.");
+                fail("Set value " + value + " fails default " + constraint + " constraint.");
             }
         }
         catch (ParameterException pe)
         {
             if (!shouldFail)
             {
-                fail("Set value " + value + " does not fail default " + check + " check.");
+                fail("Set value " + value + " does not fail default " + constraint + " constraint.");
             }
         }
     }
@@ -559,12 +559,13 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         {
             if (clazz.equals(ParameterType.class))
             {
-                ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, Check.class).newInstance("v",
+                ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, Constraint.class).newInstance("v",
                         "vcong", getClass(defaultValue), POSITIVE);
             }
             else
             {
-                ld = clazz.getDeclaredConstructor(String.class, String.class, Check.class).newInstance("v", "vcong", POSITIVE);
+                ld = clazz.getDeclaredConstructor(String.class, String.class, Constraint.class).newInstance("v", "vcong",
+                        POSITIVE);
             }
             try
             {
@@ -602,11 +603,11 @@ public class BehavioralCharacteristicsTest implements CheckInterface
             if (clazz.equals(ParameterType.class))
             {
                 ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, DoubleScalarInterface.class,
-                        Check.class).newInstance("v", "vcong", getClass(defaultValue), defaultValue, POSITIVE);
+                        Constraint.class).newInstance("v", "vcong", getClass(defaultValue), defaultValue, POSITIVE);
             }
             else
             {
-                ld = clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue), Check.class)
+                ld = clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue), Constraint.class)
                         .newInstance("v", "vcong", defaultValue, POSITIVE);
             }
             try

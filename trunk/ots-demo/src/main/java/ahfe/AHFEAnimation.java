@@ -25,6 +25,7 @@ import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
@@ -239,6 +240,7 @@ public class AHFEAnimation extends AbstractWrappableAnimation
      */
     public static void main(final String[] args) throws SimRuntimeException
     {
+        AbstractGTU.ALIGNED = false;
         long t1 = System.currentTimeMillis();
         boolean autorun = false;
         int replication = 1;

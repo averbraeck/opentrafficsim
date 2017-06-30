@@ -805,9 +805,7 @@ public class ModelControlDemo extends ModelStarter
                     }
                 }
                 GTUType gtuType = new GTUType("car", CAR);
-                Set<GTUType> compatibility = new HashSet<GTUType>();
-                compatibility.add(gtuType);
-                LaneType laneType = new LaneType("CarLane", compatibility);
+                LaneType laneType = LaneType.ROAD;
                 OTSNode start = new OTSNode(this.network, "Start", new OTSPoint3D(radius, 0, 0));
                 OTSNode halfway = new OTSNode(this.network, "Halfway", new OTSPoint3D(-radius, 0, 0));
 

@@ -2,10 +2,7 @@ package org.opentrafficsim.core.gtu;
 
 import java.io.Serializable;
 
-import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.base.Type;
-
-import nl.tudelft.simulation.language.Throw;
+import org.opentrafficsim.base.HierarchalType;
 
 /**
  * A GTU type identifies the type of a GTU. <br>
@@ -20,16 +17,10 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public final class GTUType extends Type<GTUType> implements Serializable, Identifiable
+public final class GTUType extends HierarchalType<GTUType> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20141231L;
-
-    /** The id of the GTUType to make it identifiable. */
-    private final String id;
-
-    /** Parent GTUType. */
-    private final GTUType parent;
 
     /** ALL GTUType to be used only for permeability and accessibility. */
     public static final GTUType ALL;
@@ -42,6 +33,9 @@ public final class GTUType extends Type<GTUType> implements Serializable, Identi
 
     /** Super type for bicycle. */
     public static final GTUType BICYCLE;
+    
+    /** Super type for mopeds. */
+    public static final GTUType MOPED;
 
     /** Super type for vehicles. */
     public static final GTUType VEHICLE;
@@ -81,8 +75,10 @@ public final class GTUType extends Type<GTUType> implements Serializable, Identi
         SHIP = new GTUType("SHIP", ALL);
         TRAIN = new GTUType("TRAIN", ALL);
         
+        MOPED = new GTUType("MOPED", ALL);
+        
         VEHICLE = new GTUType("VEHICLE", ALL);
-        EMERGENCY_VEHICLE = new GTUType("EMERGENCY_VEHICLE", ALL);
+        EMERGENCY_VEHICLE = new GTUType("EMERGENCY_VEHICLE", VEHICLE);
         CAR = new GTUType("CAR", VEHICLE);
         VAN = new GTUType("VAN", VEHICLE);
         BUS = new GTUType("BUS", VEHICLE);
@@ -96,9 +92,7 @@ public final class GTUType extends Type<GTUType> implements Serializable, Identi
      */
     private GTUType(final String id) throws NullPointerException
     {
-        Throw.whenNull(id, "id cannot be null for GTUType");
-        this.id = id;
-        this.parent = null;
+        super(id);
     }
 
     /**
@@ -108,82 +102,13 @@ public final class GTUType extends Type<GTUType> implements Serializable, Identi
      */
     public GTUType(final String id, final GTUType parent) throws NullPointerException
     {
-        Throw.whenNull(id, "id cannot be null for GTUType");
-        this.id = id;
-        this.parent = parent;
-    }
-
-    /**
-     * @return id.
-     */
-    public String getId()
-    {
-        return this.id;
-    }
-
-    /**
-     * @return parent.
-     */
-    public GTUType getParent()
-    {
-        return this.parent;
-    }
-
-    /**
-     * Whether this, or any of the parent GTU types, equals the given GTU type.
-     * @param gtuType GTUType; gtu type
-     * @return whether this, or any of the parent GTU types, equals the given GTU type
-     */
-    public boolean isOfType(final GTUType gtuType)
-    {
-        if (this.equals(gtuType))
-        {
-            return true;
-        }
-        if (this.parent != null)
-        {
-            return this.parent.isOfType(gtuType);
-        }
-        return false;
+        super(id, parent);
     }
 
     /** {@inheritDoc} */
     public String toString()
     {
-        return "GTUType: " + this.id;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-        result = prime * result + ((this.parent == null) ? 0 : this.parent.hashCode());
-        return result;
-    }
-
-    /** {@inheritDoc} */
-    @SuppressWarnings("checkstyle:needbraces")
-    @Override
-    public boolean equals(final Object obj)
-    {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        GTUType other = (GTUType) obj;
-        if (!this.id.equals(other.id))
-            return false;
-        if (this.parent == null)
-            if (other.parent != null)
-                return false;
-            else if (!this.parent.equals(other.parent))
-                return false;
-        return true;
+        return "GTUType: " + this.getId();
     }
 
 }

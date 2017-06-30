@@ -49,11 +49,11 @@ public class ParameterTypeDouble extends AbstractParameterType<Dimensionless> im
      * Constructor without default value, with check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeDouble(final String id, final String description, final Check check)
+    public ParameterTypeDouble(final String id, final String description, final Constraint constraint)
     {
-        this(id, description, Double.NaN, check, false);
+        this(id, description, Double.NaN, constraint, false);
     }
 
     /**
@@ -61,11 +61,12 @@ public class ParameterTypeDouble extends AbstractParameterType<Dimensionless> im
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeDouble(final String id, final String description, final double defaultValue, final Check check)
+    public ParameterTypeDouble(final String id, final String description, final double defaultValue,
+            final Constraint constraint)
     {
-        super(id, description, Dimensionless.class, new Dimensionless(defaultValue, DimensionlessUnit.SI), check, true);
+        super(id, description, Dimensionless.class, new Dimensionless(defaultValue, DimensionlessUnit.SI), constraint, true);
     }
 
     /**
@@ -73,14 +74,14 @@ public class ParameterTypeDouble extends AbstractParameterType<Dimensionless> im
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      * @param hasDefaultValue Whether to check the default value for null.
      */
-    private ParameterTypeDouble(final String id, final String description, final double defaultValue, final Check check,
-            final boolean hasDefaultValue)
+    private ParameterTypeDouble(final String id, final String description, final double defaultValue,
+            final Constraint constraint, final boolean hasDefaultValue)
     {
         super(id, description, Dimensionless.class,
-                hasDefaultValue ? new Dimensionless(defaultValue, DimensionlessUnit.SI) : null, check, hasDefaultValue);
+                hasDefaultValue ? new Dimensionless(defaultValue, DimensionlessUnit.SI) : null, constraint, hasDefaultValue);
         try
         {
             // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of

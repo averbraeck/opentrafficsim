@@ -45,11 +45,11 @@ public class ParameterTypeLinearDensity extends ParameterType<LinearDensity> imp
      * Constructor without default value, with check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeLinearDensity(final String id, final String description, final Check check)
+    public ParameterTypeLinearDensity(final String id, final String description, final Constraint constraint)
     {
-        super(id, description, LinearDensity.class, check);
+        super(id, description, LinearDensity.class, constraint);
     }
 
     /**
@@ -57,12 +57,12 @@ public class ParameterTypeLinearDensity extends ParameterType<LinearDensity> imp
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
     public ParameterTypeLinearDensity(final String id, final String description, final LinearDensity defaultValue,
-            final Check check)
+            final Constraint constraint)
     {
-        super(id, description, LinearDensity.class, defaultValue, check);
+        super(id, description, LinearDensity.class, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */

@@ -45,11 +45,11 @@ public class ParameterTypeLength extends ParameterType<Length> implements Serial
      * Constructor without default value, with check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeLength(final String id, final String description, final Check check)
+    public ParameterTypeLength(final String id, final String description, final Constraint constraint)
     {
-        super(id, description, Length.class, check);
+        super(id, description, Length.class, constraint);
     }
 
     /**
@@ -57,11 +57,12 @@ public class ParameterTypeLength extends ParameterType<Length> implements Serial
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeLength(final String id, final String description, final Length defaultValue, final Check check)
+    public ParameterTypeLength(final String id, final String description, final Length defaultValue,
+            final Constraint constraint)
     {
-        super(id, description, Length.class, defaultValue, check);
+        super(id, description, Length.class, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */

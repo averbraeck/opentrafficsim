@@ -47,11 +47,11 @@ public class ParameterTypeInteger extends AbstractParameterType<Dimensionless> i
      * Constructor without default value, with check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeInteger(final String id, final String description, final Check check)
+    public ParameterTypeInteger(final String id, final String description, final Constraint constraint)
     {
-        this(id, description, 0, check, false);
+        this(id, description, 0, constraint, false);
     }
 
     /**
@@ -59,11 +59,11 @@ public class ParameterTypeInteger extends AbstractParameterType<Dimensionless> i
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeInteger(final String id, final String description, final int defaultValue, final Check check)
+    public ParameterTypeInteger(final String id, final String description, final int defaultValue, final Constraint constraint)
     {
-        super(id, description, Dimensionless.class, new Dimensionless(defaultValue, DimensionlessUnit.SI), check, true);
+        super(id, description, Dimensionless.class, new Dimensionless(defaultValue, DimensionlessUnit.SI), constraint, true);
     }
 
     /**
@@ -71,14 +71,14 @@ public class ParameterTypeInteger extends AbstractParameterType<Dimensionless> i
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
-     * @param check Check for parameter values.
+     * @param constraint Constraint for parameter values.
      * @param hasDefaultValue Whether to check the default value for null.
      */
-    private ParameterTypeInteger(final String id, final String description, final int defaultValue, final Check check,
+    private ParameterTypeInteger(final String id, final String description, final int defaultValue, final Constraint constraint,
             final boolean hasDefaultValue)
     {
         super(id, description, Dimensionless.class,
-                hasDefaultValue ? new Dimensionless(defaultValue, DimensionlessUnit.SI) : null, check, hasDefaultValue);
+                hasDefaultValue ? new Dimensionless(defaultValue, DimensionlessUnit.SI) : null, constraint, hasDefaultValue);
         try
         {
             // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of

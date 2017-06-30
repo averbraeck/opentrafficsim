@@ -99,10 +99,7 @@ public class LaneBasedGTUTest implements UNITS
         SimpleSimulator simulator = new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
         GTUType carType = CAR;
         GTUType truckType = TRUCK;
-        Set<GTUType> compatibility = new HashSet<GTUType>();
-        compatibility.add(carType);
-        compatibility.add(truckType);
-        LaneType laneType = new LaneType("CarLane", compatibility);
+        LaneType laneType = LaneType.ROAD;
         // Create a series of Nodes (some closely bunched together)
         ArrayList<OTSNode> nodes = new ArrayList<OTSNode>();
         int[] linkBoundaries = { 0, 25, 50, 100, 101, 102, 103, 104, 105, 150, 175, 200 };
@@ -387,9 +384,7 @@ public class LaneBasedGTUTest implements UNITS
                 }
             }
             GTUType carType = CAR;
-            Set<GTUType> compatibility = new HashSet<GTUType>();
-            compatibility.add(carType);
-            LaneType laneType = new LaneType("CarLane", compatibility);
+            LaneType laneType = LaneType.ROAD;
             OTSNode fromNode = new OTSNode(this.network, "Node A", new OTSPoint3D(0, 0, 0));
             OTSNode toNode = new OTSNode(this.network, "Node B", new OTSPoint3D(1000, 0, 0));
             String linkName = "AB";

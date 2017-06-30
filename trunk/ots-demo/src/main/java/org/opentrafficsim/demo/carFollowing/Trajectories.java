@@ -282,9 +282,7 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
             OTSNode from = new OTSNode(this.network, "From", new OTSPoint3D(getMinimumDistance().getSI(), 0, 0));
             OTSNode to = new OTSNode(this.network, "To", new OTSPoint3D(getMaximumDistance().getSI(), 0, 0));
             OTSNode end = new OTSNode(this.network, "End", new OTSPoint3D(getMaximumDistance().getSI() + 50.0, 0, 0));
-            Set<GTUType> compatibility = new HashSet<>();
-            compatibility.add(this.gtuType);
-            LaneType laneType = new LaneType("CarLane", compatibility);
+            LaneType laneType = LaneType.ROAD;
             this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator,
                     LongitudinalDirectionality.DIR_PLUS);
             CrossSectionLink endLink =

@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Check;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.AbstractParameterType.Constraint;
 
 /**
  * In order to define default constraints within a Parameter Type, an <tt>enum</tt> is available. This interface supplies easy
@@ -76,12 +76,12 @@ public interface CheckInterface
 {
     // @formatter:off
     
-    Check POSITIVE     = Check.POSITIVE;
-    Check NEGATIVE     = Check.NEGATIVE;
-    Check POSITIVEZERO = Check.POSITIVEZERO;
-    Check NEGATIVEZERO = Check.NEGATIVEZERO;
-    Check NONZERO      = Check.NONZERO;
-    Check UNITINTERVAL = Check.UNITINTERVAL;
-    Check ATLEASTONE   = Check.ATLEASTONE;
+    Constraint POSITIVE     = Constraint.POSITIVE;
+    Constraint NEGATIVE     = Constraint.NEGATIVE;
+    Constraint POSITIVEZERO = Constraint.POSITIVEZERO;
+    Constraint NEGATIVEZERO = Constraint.NEGATIVEZERO;
+    Constraint NONZERO      = Constraint.NONZERO;
+    Constraint UNITINTERVAL = Constraint.UNITINTERVAL;
+    Constraint ATLEASTONE   = Constraint.ATLEASTONE;
     
 }

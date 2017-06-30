@@ -172,9 +172,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
     public final void changeRight() throws Exception
     {
         GTUType gtuType = CAR;
-        Set<GTUType> compatibility = new HashSet<GTUType>();
-        compatibility.add(gtuType);
-        LaneType laneType = new LaneType("CarLane", compatibility);
+        LaneType laneType = LaneType.ROAD;
         int laneCount = 2;
         Lane[] lanes =
                 makeMultiLane(this.network, "Road with two lanes", new OTSNode(this.network, "From", new OTSPoint3D(0, 0, 0)),
