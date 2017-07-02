@@ -24,7 +24,7 @@ public class ParameterTypeBoolean extends AbstractParameterType<Boolean> impleme
      */
     public ParameterTypeBoolean(final String id, final String description)
     {
-        this(id, description, false, false);
+        super(id, description, Boolean.class);
     }
 
     /**
@@ -35,20 +35,7 @@ public class ParameterTypeBoolean extends AbstractParameterType<Boolean> impleme
      */
     public ParameterTypeBoolean(final String id, final String description, final boolean defaultValue)
     {
-        this(id, description, defaultValue, true);
-    }
-
-    /**
-     * Private constructor with default value, which may check the default value.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param defaultValue Default value.
-     * @param hasDefaultValue Whether to check the default value for null.
-     */
-    private ParameterTypeBoolean(final String id, final String description, final boolean defaultValue,
-            final boolean hasDefaultValue)
-    {
-        super(id, description, Boolean.class, hasDefaultValue ? defaultValue : null, null, hasDefaultValue);
+        super(id, description, Boolean.class, defaultValue);
     }
 
     /** {@inheritDoc} */

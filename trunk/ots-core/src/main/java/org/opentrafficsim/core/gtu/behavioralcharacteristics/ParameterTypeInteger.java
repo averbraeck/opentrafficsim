@@ -24,7 +24,7 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
      */
     public ParameterTypeInteger(final String id, final String description)
     {
-        this(id, description, 0, null, false);
+        super(id, description, Integer.class);
     }
 
     /**
@@ -35,7 +35,7 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
      */
     public ParameterTypeInteger(final String id, final String description, final int defaultValue)
     {
-        this(id, description, defaultValue, null, true);
+        super(id, description, Integer.class, defaultValue);
     }
 
     /**
@@ -46,7 +46,7 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
      */
     public ParameterTypeInteger(final String id, final String description, final NumericConstraint constraint)
     {
-        this(id, description, 0, constraint, false);
+        super(id, description, Integer.class, constraint);
     }
 
     /**
@@ -56,33 +56,10 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
      * @param defaultValue Default value.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeInteger(final String id, final String description, final int defaultValue, final NumericConstraint constraint)
+    public ParameterTypeInteger(final String id, final String description, final int defaultValue,
+            final NumericConstraint constraint)
     {
-        this(id, description, defaultValue, constraint, true);
-    }
-
-    /**
-     * Private constructor with default value and check, which may check the default value.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param defaultValue Default value.
-     * @param constraint Constraint for parameter values.
-     * @param hasDefaultValue Whether to check the default value for null.
-     */
-    private ParameterTypeInteger(final String id, final String description, final int defaultValue, final NumericConstraint constraint,
-            final boolean hasDefaultValue)
-    {
-        super(id, description, Integer.class, hasDefaultValue ? defaultValue : null, constraint, hasDefaultValue);
-        try
-        {
-            // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of
-            // other parameter types.
-            check(defaultValue, new BehavioralCharacteristics());
-        }
-        catch (ParameterException exception)
-        {
-            throw new RuntimeException("Default value does not comply with constraints.", exception);
-        }
+        super(id, description, Integer.class, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */
