@@ -27,7 +27,7 @@ public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements
      */
     public ParameterTypeDouble(final String id, final String description)
     {
-        this(id, description, Double.NaN, null, false);
+        super(id, description, Double.class);
     }
 
     /**
@@ -38,7 +38,7 @@ public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements
      */
     public ParameterTypeDouble(final String id, final String description, final double defaultValue)
     {
-        this(id, description, defaultValue, null, true);
+        super(id, description, Double.class, defaultValue);
     }
 
     /**
@@ -49,7 +49,7 @@ public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements
      */
     public ParameterTypeDouble(final String id, final String description, final NumericConstraint constraint)
     {
-        this(id, description, Double.NaN, constraint, false);
+        super(id, description, Double.class, constraint);
     }
 
     /**
@@ -62,21 +62,7 @@ public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements
     public ParameterTypeDouble(final String id, final String description, final double defaultValue,
             final NumericConstraint constraint)
     {
-        this(id, description, defaultValue, constraint, true);
-    }
-
-    /**
-     * Private constructor with default value and check, which may check the default value.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param defaultValue Default value.
-     * @param constraint Constraint for parameter values.
-     * @param hasDefaultValue Whether to check the default value for null.
-     */
-    private ParameterTypeDouble(final String id, final String description, final double defaultValue,
-            final NumericConstraint constraint, final boolean hasDefaultValue)
-    {
-        super(id, description, Double.class, hasDefaultValue ? defaultValue : null, constraint, hasDefaultValue);
+        super(id, description, Double.class, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */

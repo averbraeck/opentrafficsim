@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.dsol.OTSClassUtil;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -17,12 +18,11 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeClass;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeClass.ClassConstraint;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDuration;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeClass.ClassConstraint;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
@@ -58,15 +58,17 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
 public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacticalPlanner, Serializable
 {
 
-    public final static ParameterTypeClass<TacticalPlanner> TACTICAL_PLANNER;
+    /** Tactical planner parameter. */
+    public static final ParameterTypeClass<LaneBasedTacticalPlanner> TACTICAL_PLANNER;
 
     static
     {
-        Set<Class<? extends TacticalPlanner>> set = new HashSet<>();
+        Set<Class<? extends LaneBasedTacticalPlanner>> set = new HashSet<>();
         set.add(LMRS.class);
 
-        TACTICAL_PLANNER =
-                new ParameterTypeClass<>("tactical planner", "Tactical planner class.", LMRS.class, new ClassConstraint<>(set));
+        TACTICAL_PLANNER = new ParameterTypeClass<>("tactical planner", "Tactical planner class.",
+                OTSClassUtil.getTypedClass(LaneBasedTacticalPlanner.class), LMRS.class, new ClassConstraint<>(set));
+
     }
 
     /** */

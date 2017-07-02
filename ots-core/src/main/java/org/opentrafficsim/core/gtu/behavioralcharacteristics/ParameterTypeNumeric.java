@@ -154,7 +154,7 @@ public class ParameterTypeNumeric<T extends Number> extends AbstractParameterTyp
      */
     public ParameterTypeNumeric(final String id, final String description, final Class<T> valueClass)
     {
-        this(id, description, valueClass, null, null, false);
+        super(id, description, valueClass);
     }
 
     /**
@@ -166,7 +166,7 @@ public class ParameterTypeNumeric<T extends Number> extends AbstractParameterTyp
      */
     public ParameterTypeNumeric(final String id, final String description, final Class<T> valueClass, final T defaultValue)
     {
-        this(id, description, valueClass, defaultValue, null, true);
+        super(id, description, valueClass, defaultValue);
     }
 
     /**
@@ -179,7 +179,7 @@ public class ParameterTypeNumeric<T extends Number> extends AbstractParameterTyp
     public ParameterTypeNumeric(final String id, final String description, final Class<T> valueClass,
             final NumericConstraint constraint)
     {
-        this(id, description, valueClass, null, constraint, false);
+        super(id, description, valueClass, constraint);
     }
 
     /**
@@ -193,33 +193,7 @@ public class ParameterTypeNumeric<T extends Number> extends AbstractParameterTyp
     public ParameterTypeNumeric(final String id, final String description, final Class<T> valueClass, final T defaultValue,
             final NumericConstraint constraint)
     {
-        this(id, description, valueClass, defaultValue, constraint, true);
-    }
-
-    /**
-     * Private constructor with default value and check, which may check the default value.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
-     * @param defaultValue Default value.
-     * @param constraint Constraint for parameter values.
-     * @param hasDefaultValue Whether to check the default value for null.
-     */
-    protected ParameterTypeNumeric(final String id, final String description, final Class<T> valueClass, final T defaultValue,
-            final NumericConstraint constraint, final boolean hasDefaultValue)
-    {
-        super(id, description, valueClass, defaultValue, constraint, hasDefaultValue);
-        try
-        {
-            // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of
-            // other parameter types.
-            check(defaultValue, new BehavioralCharacteristics());
-        }
-        catch (ParameterException pe)
-        {
-            throw new RuntimeException("Default value of parameter '" + getId() + "' does not comply with custom constraints.",
-                    pe);
-        }
+        super(id, description, valueClass, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */

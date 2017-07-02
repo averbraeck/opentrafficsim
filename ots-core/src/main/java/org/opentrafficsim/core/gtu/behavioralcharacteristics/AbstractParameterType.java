@@ -18,7 +18,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> Class of the value.
  */
-public abstract class AbstractParameterType<T> extends Type<AbstractParameterType<?>> implements Serializable, Identifiable
+public abstract class AbstractParameterType<T> extends Type<AbstractParameterType<T>> implements Serializable, Identifiable
 {
 
     /** */
@@ -100,7 +100,7 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
      * @param constraint Constraint to check the value.
      * @param hasDefaultValue Whether to check the default value for null.
      */
-    protected AbstractParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue,
+    private AbstractParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue,
             final Constraint<? super T> constraint, final boolean hasDefaultValue)
     {
         Throw.whenNull(id, "Id may not be null.");
@@ -125,6 +125,17 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
             {
                 throw new RuntimeException(
                         "Default value of parameter '" + this.id + "' does not comply with default constraints.", pe);
+            }
+            try
+            {
+                // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of
+                // other parameter types.
+                check(defaultValue, new BehavioralCharacteristics());
+            }
+            catch (ParameterException pe)
+            {
+                throw new RuntimeException("Default value of parameter '" + getId() + "' does not comply with custom constraints.",
+                        pe);
             }
         }
     }
