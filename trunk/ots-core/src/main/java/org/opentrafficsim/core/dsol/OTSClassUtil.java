@@ -1,7 +1,9 @@
 package org.opentrafficsim.core.dsol;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Utility class for class operations.
@@ -46,6 +48,42 @@ public final class OTSClassUtil
     {
         List<T> list = new ArrayList<>();
         return (Class<List<T>>) (list).getClass();
+    }
+    
+    /**
+     * Create typed list from classes.
+     * @param type type class
+     * @param objs classes for in the list
+     * @param <T> type class
+     * @return list of classes
+     */
+    @SafeVarargs
+    public static <T> List<Class<? extends T>> toTypedList(final Class<T> type, final Class<? extends T>... objs)
+    {
+        List<Class<? extends T>> list = new ArrayList<>();
+        for (Class<? extends T> clazz : objs)
+        {
+            list.add(clazz);
+        }
+        return list;
+    }
+    
+    /**
+     * Create typed set from classes.
+     * @param type type class
+     * @param objs classes for in the set
+     * @param <T> type class
+     * @return set of classes
+     */
+    @SafeVarargs
+    public static <T> Set<Class<? extends T>> toTypedSet(final Class<T> type, final Class<? extends T>... objs)
+    {
+        Set<Class<? extends T>> set = new HashSet<>();
+        for (Class<? extends T> clazz : objs)
+        {
+            set.add(clazz);
+        }
+        return set;
     }
     
 }

@@ -3,6 +3,8 @@ package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 import java.util.List;
 import java.util.Set;
 
+import org.opentrafficsim.core.dsol.OTSClassUtil;
+
 import nl.tudelft.simulation.language.Throw;
 
 /**
@@ -71,6 +73,18 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
             return "Value of parameter '%s' is not in the set of acceptable values.";
         }
 
+        /**
+         * Creates a new instance with given set.
+         * @param type type class
+         * @param objs acceptable classes
+         * @param <T> type class
+         * @return new instance with given set
+         */
+        @SafeVarargs
+        public static <T> ClassListConstraint<T> newInstance(final Class<T> type, final Class<? extends T>... objs)
+        {
+            return new ClassListConstraint<>(OTSClassUtil.toTypedSet(type, objs));
+        }
     }
 
     /**
@@ -105,11 +119,11 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
      * @param constraint Constraint for parameter values.
      */
     public ParameterTypeClassList(final String id, final String description, final Class<List<Class<? extends T>>> valueClass,
-            final ClassListConstraint<T> constraint)
+            final Constraint<? super List<Class<? extends T>>> constraint)
     {
         super(id, description, valueClass, constraint);
     }
-    
+
     /**
      * Constructor with default value and check.
      * @param id Short name of parameter.
@@ -119,7 +133,7 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
      * @param constraint Constraint for parameter values.
      */
     public ParameterTypeClassList(final String id, final String description, final Class<List<Class<? extends T>>> valueClass,
-            final List<Class<? extends T>> defaultValue, final ClassListConstraint<T> constraint)
+            final List<Class<? extends T>> defaultValue, final Constraint<? super List<Class<? extends T>>> constraint)
     {
         super(id, description, valueClass, defaultValue, constraint);
     }

@@ -19,6 +19,8 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacter
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeClass;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeClass.ClassConstraint;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeClassList;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeClassList.ClassListConstraint;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDuration;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
@@ -63,12 +65,9 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
 
     static
     {
-        Set<Class<? extends LaneBasedTacticalPlanner>> set = new HashSet<>();
-        set.add(LMRS.class);
-
+        Class<LaneBasedTacticalPlanner> type = LaneBasedTacticalPlanner.class;
         TACTICAL_PLANNER = new ParameterTypeClass<>("tactical planner", "Tactical planner class.",
-                OTSClassUtil.getTypedClass(LaneBasedTacticalPlanner.class), LMRS.class, new ClassConstraint<>(set));
-
+                OTSClassUtil.getTypedClass(type), LMRS.class, ClassConstraint.newInstance(type, LMRS.class));
     }
 
     /** */
