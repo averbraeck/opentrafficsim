@@ -2,6 +2,8 @@ package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.util.Set;
 
+import org.opentrafficsim.core.dsol.OTSClassUtil;
+
 import nl.tudelft.simulation.language.Throw;
 
 /**
@@ -63,6 +65,19 @@ public class ParameterTypeClass<T> extends AbstractParameterType<Class<? extends
             return "Value of parameter '%s' is not in the set of acceptable values.";
         }
 
+        /**
+         * Creates a new instance with given set.
+         * @param type type class
+         * @param objs acceptable classes
+         * @param <T> type class
+         * @return new instance with given set
+         */
+        @SafeVarargs
+        public static <T> ClassConstraint<T> newInstance(final Class<T> type, final Class<? extends T>... objs)
+        {
+            return new ClassConstraint<>(OTSClassUtil.toTypedSet(type, objs));
+        }
+
     }
 
     /**
@@ -97,7 +112,7 @@ public class ParameterTypeClass<T> extends AbstractParameterType<Class<? extends
      * @param constraint Constraint for parameter values.
      */
     public ParameterTypeClass(final String id, final String description, final Class<Class<? extends T>> valueClass,
-            final ClassConstraint<? super T> constraint)
+            final Constraint<Class<? extends T>> constraint)
     {
         super(id, description, valueClass, constraint);
     }
@@ -111,7 +126,7 @@ public class ParameterTypeClass<T> extends AbstractParameterType<Class<? extends
      * @param constraint Constraint for parameter values.
      */
     public ParameterTypeClass(final String id, final String description, final Class<Class<? extends T>> valueClass,
-            final Class<? extends T> defaultValue, final ClassConstraint<? super T> constraint)
+            final Class<? extends T> defaultValue, final Constraint<Class<? extends T>> constraint)
     {
         super(id, description, valueClass, defaultValue, constraint);
     }
